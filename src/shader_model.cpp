@@ -14,39 +14,39 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SOLARUSEDITOR_SHADER_EDITOR_H
-#define SOLARUSEDITOR_SHADER_EDITOR_H
-
-#include "widgets/editor.h"
-#include "ui_shader_editor.h"
+#include "editor_exception.h"
+#include "quest.h"
+#include "shader_model.h"
 
 namespace SolarusEditor {
 
-class ShaderModel;
-
 /**
- * \brief A widget to edit graphically a shader description file.
+ * @brief Creates a shader model.
+ * @param quest The quest.
+ * @param shader_id Id of the shader to represent
+ * @param parent Parent object or nullptr.
  */
-class ShaderEditor : public Editor {
-  Q_OBJECT
-
-public:
-
-  ShaderEditor(Quest& quest, const QString& path, QWidget* parent = nullptr);
-  ~ShaderEditor();
-
-  ShaderModel& get_model();
-
-  void save() override;
-
-  Ui::ShaderEditor ui;          /**< The shader editor widgets. */
-  QString shader_id;            /**< Id of the shader being edited. */
-  std::unique_ptr<ShaderModel>
-      model;                    /**< Shader model being edited. */
-  Quest& quest;                 /**< The quest. */
-
-};
+ShaderModel::ShaderModel(
+    const Quest& quest,
+    const QString& shader_id,
+    QObject* parent) :
+  QObject(parent),
+  quest(quest),
+  shader_id(shader_id) {
 
 }
 
-#endif
+/**
+ * @brief Saves the sprite to its data file.
+ * @throws EditorException If the file could not be saved.
+ */
+void ShaderModel::save() const {
+
+  QString path = quest.get_sprite_path(shader_id);
+
+  if (!shader.export_to_file(path.toStdString())) {
+    throw EditorException(tr("Cannot save shader '%1'").arg(path));
+  }
+}
+
+}

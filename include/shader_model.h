@@ -14,36 +14,34 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SOLARUSEDITOR_SHADER_EDITOR_H
-#define SOLARUSEDITOR_SHADER_EDITOR_H
+#ifndef SOLARUSEDITOR_SHADER_MODEL_H
+#define SOLARUSEDITOR_SHADER_MODEL_H
 
-#include "widgets/editor.h"
-#include "ui_shader_editor.h"
+#include <solarus/graphics/ShaderData.h>
+#include <QObject>
 
 namespace SolarusEditor {
 
-class ShaderModel;
+class Quest;
 
 /**
- * \brief A widget to edit graphically a shader description file.
+ * @brief Model that wraps a shader definition file.
  */
-class ShaderEditor : public Editor {
+class ShaderModel : public QObject {
   Q_OBJECT
 
 public:
+  ShaderModel(const Quest& quest, const QString& shader_id, QObject* parent = nullptr);
 
-  ShaderEditor(Quest& quest, const QString& path, QWidget* parent = nullptr);
-  ~ShaderEditor();
+  const Quest& get_quest() const;
+  QString get_shader_id() const;
 
-  ShaderModel& get_model();
+  void save() const;
 
-  void save() override;
-
-  Ui::ShaderEditor ui;          /**< The shader editor widgets. */
-  QString shader_id;            /**< Id of the shader being edited. */
-  std::unique_ptr<ShaderModel>
-      model;                    /**< Shader model being edited. */
-  Quest& quest;                 /**< The quest. */
+private:
+  const Quest& quest;             /**< The quest the shader belongs to. */
+  const QString shader_id;        /**< Id of the shader. */
+  Solarus::ShaderData shader;     /**< Shader data wrapped by this model. */
 
 };
 

@@ -759,7 +759,7 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   set_grid_supported(true);
 
   // Open the file.
-  model = new SpriteModel(quest, sprite_id, this);
+  model = std::unique_ptr<SpriteModel>(new SpriteModel(quest, sprite_id, this));
   get_undo_stack().setClean();
 
   // Prepare the gui.
@@ -767,10 +767,10 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   const int side_height = 550;
   ui.horizontal_splitter->setSizes({ side_width, width() - side_width });
   ui.vertical_splitter->setSizes({ side_height, height() - side_height });
-  ui.sprite_tree_view->set_model(model);
-  ui.sprite_view->set_model(model);
+  ui.sprite_tree_view->set_model(model.get());
+  ui.sprite_view->set_model(model.get());
   ui.sprite_view->set_view_settings(get_view_settings());
-  ui.sprite_previewer->set_model(model);
+  ui.sprite_previewer->set_model(model.get());
   ui.tileset_field->set_resource_type(ResourceType::TILESET);
   ui.tileset_field->set_quest(quest);
   ui.tileset_field->set_selected_id(model->get_sprite_id());
@@ -811,7 +811,7 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(ui.description_field, SIGNAL(editingFinished()),
           this, SLOT(set_description_from_gui()));
 
-  connect(model, SIGNAL(animation_image_changed(Index,QString)),
+  connect(model.get(), SIGNAL(animation_image_changed(Index ,QString)),
           this, SLOT(update_animation_source_image_field()));
 
   connect(ui.src_image_button, SIGNAL(clicked()),
@@ -822,46 +822,46 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(ui.tileset_field, SIGNAL(activated(QString)),
           this, SLOT(tileset_selector_activated()));
 
-  connect(model, SIGNAL(default_animation_changed(QString,QString)),
+  connect(model.get(), SIGNAL(default_animation_changed(QString, QString)),
           this, SLOT(update_default_animation_field()));
   connect(ui.default_animation_value, SIGNAL(clicked()),
           this, SLOT(change_default_animation_requested()));
 
-  connect(model, SIGNAL(animation_frame_delay_changed(Index,uint32_t)),
+  connect(model.get(), SIGNAL(animation_frame_delay_changed(Index, uint32_t)),
           this, SLOT(update_animation_frame_delay_field()));
   connect(ui.frame_delay_field, SIGNAL(editingFinished()),
           this, SLOT(change_animation_frame_delay_requested()));
 
-  connect(model, SIGNAL(animation_loop_on_frame_changed(Index,int)),
+  connect(model.get(), SIGNAL(animation_loop_on_frame_changed(Index,int)),
           this, SLOT(update_animation_loop_on_frame_field()));
   connect(ui.loop_on_frame_check_box, SIGNAL(clicked()),
           this, SLOT(change_animation_loop_on_frame_requested()));
   connect(ui.loop_on_frame_field, SIGNAL(editingFinished()),
           this, SLOT(change_animation_loop_on_frame_requested()));
 
-  connect(model, SIGNAL(direction_size_changed(Index,QSize)),
+  connect(model.get(), SIGNAL(direction_size_changed(Index,QSize)),
           this, SLOT(update_direction_size_field()));
   connect(ui.size_field, SIGNAL(editing_finished()),
           this, SLOT(change_direction_size_requested()));
 
-  connect(model, SIGNAL(direction_position_changed(Index,QPoint)),
+  connect(model.get(), SIGNAL(direction_position_changed(Index ,QPoint)),
           this, SLOT(update_direction_position_field()));
   connect(ui.position_field, SIGNAL(editing_finished()),
           this, SLOT(change_direction_position_requested_from_field()));
   connect(ui.sprite_view, SIGNAL(change_selected_direction_position_requested(QPoint)),
           this, SLOT(change_direction_position_requested(QPoint)));
 
-  connect(model, SIGNAL(direction_origin_changed(Index,QPoint)),
+  connect(model.get(), SIGNAL(direction_origin_changed(Index,QPoint)),
           this, SLOT(update_direction_origin_field()));
   connect(ui.origin_field, SIGNAL(editing_finished()),
           this, SLOT(change_direction_origin_requested()));
 
-  connect(model, SIGNAL(direction_num_frames_changed(Index,int)),
+  connect(model.get(), SIGNAL(direction_num_frames_changed(Index,int)),
           this, SLOT(update_direction_num_frames_field()));
   connect(ui.num_frames_field, SIGNAL(editingFinished()),
           this, SLOT(change_direction_num_frames_requested()));
 
-  connect(model, SIGNAL(direction_num_columns_changed(Index,int)),
+  connect(model.get(), SIGNAL(direction_num_columns_changed(Index,int)),
           this, SLOT(update_direction_num_columns_field()));
   connect(ui.num_columns_field, SIGNAL(editingFinished()),
           this, SLOT(change_direction_num_columns_requested()));
@@ -910,12 +910,6 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(&model->get_selection_model(),
           SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
           this, SLOT(update_selection()));
-}
-
-SpriteEditor::~SpriteEditor() {
-  if (model != nullptr) {
-    delete model;
-  }
 }
 
 /**

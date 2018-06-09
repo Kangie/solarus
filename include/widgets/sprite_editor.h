@@ -20,6 +20,7 @@
 #include "widgets/editor.h"
 #include "ui_sprite_editor.h"
 #include <QMenu>
+#include <memory>
 
 namespace SolarusEditor {
 
@@ -34,7 +35,6 @@ class SpriteEditor : public Editor {
 public:
 
   SpriteEditor(Quest& quest, const QString& path, QWidget* parent = nullptr);
-  ~SpriteEditor();
 
   SpriteModel& get_model();
 
@@ -99,7 +99,8 @@ private:
 
   Ui::SpriteEditor ui;          /**< The sprite editor widgets. */
   QString sprite_id;            /**< Id of the sprite being edited. */
-  SpriteModel* model;           /**< Sprite model being edited. */
+  std::unique_ptr<SpriteModel>
+      model;                    /**< Sprite model being edited. */
   Quest& quest;                 /**< The quest. */
   QMenu create_context_menu;    /**< The create context menu. */
   QAction* create_animation;    /**< The create animation action. */

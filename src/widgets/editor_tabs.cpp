@@ -15,15 +15,16 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/closable_tab_bar.h"
+#include "widgets/dialogs_editor.h"
 #include "widgets/editor_tabs.h"
 #include "widgets/gui_tools.h"
 #include "widgets/map_editor.h"
-#include "widgets/text_editor.h"
-#include "widgets/tileset_editor.h"
+#include "widgets/shader_editor.h"
 #include "widgets/sprite_editor.h"
 #include "widgets/quest_properties_editor.h"
 #include "widgets/strings_editor.h"
-#include "widgets/dialogs_editor.h"
+#include "widgets/text_editor.h"
+#include "widgets/tileset_editor.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "quest.h"
@@ -113,8 +114,7 @@ void EditorTabs::open_resource(
 
   case ResourceType::SHADER:
     // Open the shader file.
-    // TODO shader editor
-    open_text_editor(quest, quest.get_shader_path(id));
+    open_shader_editor(quest, quest.get_shader_path(id));
     break;
 
   case ResourceType::MUSIC:
@@ -148,7 +148,7 @@ void EditorTabs::open_quest_properties_editor(Quest& quest) {
 }
 
 /**
- * @brief Opens a file with a text editor in a new tab.
+ * @brief Opens a file with a text editor.
  *
  * The file may be a Lua script.
  *
@@ -180,7 +180,7 @@ void EditorTabs::open_text_editor(
 }
 
 /**
- * @brief Opens a file with a map editor in a new tab.
+ * @brief Opens a file with a map editor.
  * @param quest A Solarus quest.
  * @param path Path of the map data file to open.
  */
@@ -209,7 +209,7 @@ void EditorTabs::open_map_editor(
 }
 
 /**
- * @brief Opens a file with a tileset editor in a new tab.
+ * @brief Opens a file with a tileset editor.
  * @param quest A Solarus quest.
  * @param path Path of the tileset data file to open.
  */
@@ -238,7 +238,7 @@ void EditorTabs::open_tileset_editor(
 }
 
 /**
- * @brief Opens a file with a sprite editor in a new tab.
+ * @brief Opens a file with a sprite editor.
  * @param quest A Solarus quest.
  * @param path Path of the sprite data file to open.
  */
@@ -267,7 +267,36 @@ void EditorTabs::open_sprite_editor(
 }
 
 /**
- * @brief Opens a file with a language dialogs editor in a new tab.
+ * @brief Opens a file with a shader editor.
+ * @param quest A Solarus quest.
+ * @param path Path of the shader data file to open.
+ */
+void EditorTabs::open_shader_editor(
+    Quest& quest, const QString& path) {
+
+  if (!quest.is_in_root_path(path)) {
+    // Not a file of this quest.
+    return;
+  }
+
+  // Find the existing tab if any.
+  int index = find_editor(path);
+  if (index != -1) {
+    // Already open.
+    setCurrentIndex(index);
+    return;
+  }
+
+  try {
+    add_editor(std::unique_ptr<Editor>(new ShaderEditor(quest, path)));
+  }
+  catch (const EditorException& ex) {
+    ex.show_dialog();
+  }
+}
+
+/**
+ * @brief Opens a file with a language dialogs editor.
  * @param quest A Solarus quest.
  * @param path Path of the dialogs file to open.
  */
@@ -298,7 +327,7 @@ void EditorTabs::open_dialogs_editor(Quest& quest, const QString& language_id) {
 }
 
 /**
- * @brief Opens a file with a language strings list editor in a new tab.
+ * @brief Opens a file with a language strings list editor.
  * @param quest A Solarus quest.
  * @param language_id Language id of the strings file to open.
  */
