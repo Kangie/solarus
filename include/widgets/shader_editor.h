@@ -39,6 +39,13 @@ public:
 
   void save() override;
 
+private:
+
+  void update();
+  void update_shader_id_field();
+  void update_description_to_gui();
+  void set_description_from_gui();
+
   Ui::ShaderEditor ui;          /**< The shader editor widgets. */
   QString shader_id;            /**< Id of the shader being edited. */
   std::unique_ptr<ShaderModel>

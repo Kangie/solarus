@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "widgets/gui_tools.h"
 #include "widgets/shader_editor.h"
 #include "editor_exception.h"
 #include "quest.h"
@@ -56,8 +57,24 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   model = std::unique_ptr<ShaderModel>(new ShaderModel(quest, shader_id, this));
   get_undo_stack().setClean();
 
+  // Prepare the GUI.
+  ui.description_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.vertex_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.vertex_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.vertex_file_edit_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.fragment_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.fragment_file_edit_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   const int side_width = 300;
   ui.splitter->setSizes({ side_width, width() - side_width });
+  update();
+
+  // Make connections.
+  connect(&get_database(), &QuestDatabase::element_description_changed,
+          this, &ShaderEditor::update_description_to_gui);
+  connect(ui.description_field, &QLineEdit::editingFinished,
+          this, &ShaderEditor::set_description_from_gui);
+
 }
 
 /**
@@ -82,6 +99,66 @@ ShaderModel& ShaderEditor::get_model() {
 void ShaderEditor::save() {
 
   model->save();
+}
+
+/**
+ * @brief Updates everything in the GUI.
+ */
+void ShaderEditor::update() {
+
+  update_shader_id_field();
+  update_description_to_gui();
+  // TODO update shader file fields
+}
+
+/**
+ * @brief Updates the shader id displaying.
+ */
+void ShaderEditor::update_shader_id_field() {
+
+  ui.shader_id_field->setText(shader_id);
+}
+
+/**
+ * @brief Updates the content of the shader description text edit.
+ */
+void ShaderEditor::update_description_to_gui() {
+
+  QString description = get_database().get_description(ResourceType::SHADER, shader_id);
+  if (ui.description_field->text() != description) {
+    ui.description_field->setText(description);
+  }
+}
+
+/**
+ * @brief Modifies the shader description in the quest database with
+ * the new text entered by the user.
+ *
+ * If the new description is invalid, an error dialog is shown.
+ */
+void ShaderEditor::set_description_from_gui() {
+
+  QString description = ui.description_field->text();
+  if (description == get_database().get_description(ResourceType::SHADER, shader_id)) {
+    return;
+  }
+
+  if (description.isEmpty()) {
+    GuiTools::error_dialog(tr("Invalid description"));
+    update_description_to_gui();
+    return;
+  }
+
+  const bool was_blocked = blockSignals(true);
+  try {
+    get_database().set_description(ResourceType::SHADER, shader_id, description);
+    get_database().save();
+  }
+  catch (const EditorException& ex) {
+    ex.print_message();
+  }
+  update_description_to_gui();
+  blockSignals(was_blocked);
 }
 
 }
