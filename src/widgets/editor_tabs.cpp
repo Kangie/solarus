@@ -50,12 +50,10 @@ EditorTabs::EditorTabs(QWidget* parent):
   setMovable(true);
   setFocusPolicy(Qt::StrongFocus);
 
-  connect(tab_bar, SIGNAL(tabCloseRequested(int)),
-          this, SLOT(close_file_requested(int)));
-  connect(tab_bar, SIGNAL(currentChanged(int)),
-          this, SLOT(current_editor_changed(int)));
-  connect(tab_bar, SIGNAL(tabMoved(int, int)),
-          this, SLOT(update_recent_files_list()));
+  connect(tab_bar, &ClosableTabBar::tabCloseRequested,
+          this, &EditorTabs::close_file_requested);
+  connect(tab_bar, &ClosableTabBar::currentChanged,
+          this, &EditorTabs::current_editor_changed);
 }
 
 /**
@@ -792,7 +790,7 @@ void EditorTabs::current_editor_changed(int /* index */) {
 /**
  * @brief Saves the list of open tabs.
  */
-void EditorTabs::update_recent_files_list() {
+void EditorTabs::save_open_files_list() {
 
   EditorSettings settings;
   QStringList last_files;
@@ -864,26 +862,6 @@ void EditorTabs::keyPressEvent(QKeyEvent* event) {
   }
 
   QTabWidget::keyPressEvent(event);
-}
-
-/**
- * @brief Function called when a tab is inserted.
- * @param index Index of the inserted tab.
- */
-void EditorTabs::tabInserted(int index) {
-
-  Q_UNUSED(index);
-  update_recent_files_list();
-}
-
-/**
- * @brief Function called when a tab is removed.
- * @param index Index of the removed tab.
- */
-void EditorTabs::tabRemoved(int index) {
-
-  Q_UNUSED(index);
-  update_recent_files_list();
 }
 
 }

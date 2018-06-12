@@ -73,6 +73,7 @@ public:
   bool has_unsaved_files_other_than(const QSet<QString>& ignored_paths);
   QStringList get_unsaved_files();
   void close_without_confirmation();
+  void save_open_files_list();
 
   void reload_settings();
 
@@ -97,13 +98,10 @@ public slots:
 protected:
 
   void keyPressEvent(QKeyEvent* event) override;
-  void tabInserted(int index) override;
-  void tabRemoved(int index) override;
 
 private slots:
 
   void current_editor_changed(int index);
-  void update_recent_files_list();
   void current_editor_modification_state_changed(bool clean);
   void modification_state_changed(int index, bool clean);
 

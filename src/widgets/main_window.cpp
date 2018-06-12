@@ -896,6 +896,7 @@ void MainWindow::on_action_open_quest_properties_triggered() {
 void MainWindow::on_action_exit_triggered() {
 
   if (confirm_before_closing()) {
+    ui.tab_widget->save_open_files_list();
     QApplication::exit(0);
   }
 }
@@ -1703,6 +1704,7 @@ void MainWindow::open_file(Quest& quest, const QString& path) {
 void MainWindow::closeEvent(QCloseEvent* event) {
 
   if (confirm_before_closing()) {
+    ui.tab_widget->save_open_files_list();
     event->accept();
   }
   else {
