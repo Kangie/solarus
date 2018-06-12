@@ -780,11 +780,6 @@ void EditorTabs::current_editor_changed(int /* index */) {
 
     editor->setFocus();
   }
-
-  // Remember the current active tab.
-  QString file_path = (editor == nullptr) ? QString() : editor->get_file_path();
-  EditorSettings settings;
-  settings.set_value(EditorSettings::last_file, file_path);
 }
 
 /**
@@ -801,6 +796,10 @@ void EditorTabs::save_open_files_list() {
   }
 
   settings.set_value(EditorSettings::last_files, last_files);
+
+  Editor* editor = get_editor();
+  QString file_path = (editor == nullptr) ? QString() : editor->get_file_path();
+  settings.set_value(EditorSettings::last_file, file_path);
 }
 
 /**
