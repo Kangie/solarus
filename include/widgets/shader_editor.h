@@ -45,6 +45,8 @@ private:
   void update_shader_id_field();
   void update_description_to_gui();
   void set_description_from_gui();
+  void update_vertex_file_field();
+  void update_fragment_file_field();
 
   Ui::ShaderEditor ui;          /**< The shader editor widgets. */
   QString shader_id;            /**< Id of the shader being edited. */

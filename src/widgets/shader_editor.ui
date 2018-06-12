@@ -14,25 +14,13 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QFormLayout" name="formLayout">
+      <layout class="QFormLayout" name="shader_properties_layout">
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::ExpandingFieldsGrow</enum>
        </property>
@@ -79,17 +67,14 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="vertex_file_label">
-         <property name="text">
-          <string>Vertex shader</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontal_layout">
          <item>
-          <widget class="QLineEdit" name="vertex_file_field"/>
+          <widget class="QLineEdit" name="vertex_file_field">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="vertex_file_browse_button">
@@ -133,17 +118,14 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="fragment_file_lable">
-         <property name="text">
-          <string>Fragment shader</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="1">
         <layout class="QHBoxLayout" name="horizontal_layout_2">
          <item>
-          <widget class="QLineEdit" name="fragment_file_field"/>
+          <widget class="QLineEdit" name="fragment_file_field">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="fragment_file_browse_button">
@@ -186,6 +168,20 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="fragment_file_check_box">
+         <property name="text">
+          <string>Fragment shader</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="vertex_file_check_box">
+         <property name="text">
+          <string>Vertex shader</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

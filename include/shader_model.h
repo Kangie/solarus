@@ -36,6 +36,12 @@ public:
   const Quest& get_quest() const;
   QString get_shader_id() const;
 
+  QString get_vertex_file() const;
+  void set_vertex_file(const QString& vertex_file);
+
+  QString get_fragment_file() const;
+  void set_fragment_file(const QString& fragment_file);
+
   void save() const;
 
 private:

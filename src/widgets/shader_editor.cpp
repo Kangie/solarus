@@ -59,12 +59,16 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   // Prepare the GUI.
   ui.description_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.vertex_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_edit_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.fragment_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_edit_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.shader_properties_layout->setAlignment(ui.vertex_file_check_box, Qt::AlignVCenter);
+  ui.shader_properties_layout->setAlignment(ui.fragment_file_check_box, Qt::AlignVCenter);
   const int side_width = 300;
   ui.splitter->setSizes({ side_width, width() - side_width });
   update();
@@ -108,7 +112,8 @@ void ShaderEditor::update() {
 
   update_shader_id_field();
   update_description_to_gui();
-  // TODO update shader file fields
+  update_vertex_file_field();
+  update_fragment_file_field();
 }
 
 /**
@@ -159,6 +164,36 @@ void ShaderEditor::set_description_from_gui() {
   }
   update_description_to_gui();
   blockSignals(was_blocked);
+}
+
+/**
+ * @brief Updates the vertex file field from the data.
+ */
+void ShaderEditor::update_vertex_file_field() {
+
+  if (model == nullptr) {
+    return;
+  }
+  const QString& vertex_file = model->get_vertex_file();
+  ui.vertex_file_field->setText(vertex_file);
+  ui.vertex_file_check_box->setChecked(!vertex_file.isEmpty());
+  ui.vertex_file_field->setEnabled(!vertex_file.isEmpty());
+  ui.vertex_file_edit_button->setEnabled(!vertex_file.isEmpty());
+}
+
+/**
+ * @brief Updates the fragment file field from the data.
+ */
+void ShaderEditor::update_fragment_file_field() {
+
+  if (model == nullptr) {
+    return;
+  }
+  const QString& fragment_file = model->get_fragment_file();
+  ui.fragment_file_field->setText(fragment_file);
+  ui.fragment_file_check_box->setChecked(!fragment_file.isEmpty());
+  ui.fragment_file_field->setEnabled(!fragment_file.isEmpty());
+  ui.fragment_file_edit_button->setEnabled(!fragment_file.isEmpty());
 }
 
 }

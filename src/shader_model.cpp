@@ -37,6 +37,58 @@ ShaderModel::ShaderModel(
 }
 
 /**
+ * @brief Returns the quest this shader belongs to.
+ * @return The quest.
+ */
+const Quest& ShaderModel::get_quest() const {
+  return quest;
+}
+
+/**
+ * @brief Returns the id of this shader.
+ * @return The shader id.
+ */
+QString ShaderModel::get_shader_id() const {
+  return shader_id;
+}
+
+/**
+ * @brief Returns the name of the vertex shader file.
+ * @return The vertex shader filename or an empty string.
+ */
+QString ShaderModel::get_vertex_file() const {
+
+  return QString::fromStdString(shader.get_vertex_file());
+}
+
+/**
+ * @brief Sets the name of the vertex shader file.
+ * @param vertex_file The vertex shader filename or an empty string.
+ */
+void ShaderModel::set_vertex_file(const QString& vertex_file) {
+
+  shader.set_vertex_file(vertex_file.toStdString());
+}
+
+/**
+ * @brief Returns the name of the fragment shader file.
+ * @return The fragment shader filename or an empty string.
+ */
+QString ShaderModel::get_fragment_file() const {
+
+  return QString::fromStdString(shader.get_fragment_file());
+}
+
+/**
+ * @brief Sets the name of the fragment shader file.
+ * @param fragment_file The fragment shader filename or an empty string.
+ */
+void ShaderModel::set_fragment_file(const QString& fragment_file) {
+
+  shader.set_fragment_file(fragment_file.toStdString());
+}
+
+/**
  * @brief Saves the sprite to its data file.
  * @throws EditorException If the file could not be saved.
  */
