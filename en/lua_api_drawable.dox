@@ -47,7 +47,7 @@ The rotation angle is in radians and goes in trigonometric direction.
 
 \subsection lua_api_drawable_set_rotation drawable:set_rotation(rotation)
 
-Sets the rotation angle this object around its
+Sets the rotation angle of this object around its
 \ref lua_api_drawable_set_transformation_origin "transformation origin".
 The rotation angle is in radians and goes in trigonometric direction.
 - \c rotation (number): The rotation angle in radians around the
