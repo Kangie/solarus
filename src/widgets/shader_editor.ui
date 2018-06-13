@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QGroupBox" name="groupBox">
@@ -140,6 +140,20 @@
             </item>
            </layout>
           </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Scaling factor</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="spinBox_2">
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -148,101 +162,131 @@
          <property name="title">
           <string>Preview settings</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QFormLayout" name="formLayout_2">
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="radioButton">
-              <property name="text">
-               <string>Use a picture</string>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>Use a picture</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontal_layout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLineEdit" name="vertex_file_field_2">
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <layout class="QHBoxLayout" name="horizontal_layout_3">
-              <property name="spacing">
-               <number>0</number>
+            <item>
+             <widget class="QToolButton" name="vertex_file_edit_button_2">
+              <property name="toolTip">
+               <string>Edit vertex shader file</string>
               </property>
-              <item>
-               <widget class="QLineEdit" name="vertex_file_field_2">
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QToolButton" name="vertex_file_edit_button_2">
-                <property name="toolTip">
-                 <string>Edit vertex shader file</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../../resources/images.qrc">
-                  <normaloff>:/images/icon_open.png</normaloff>:/images/icon_open.png</iconset>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
-             <widget class="QRadioButton" name="radioButton_3">
               <property name="text">
-               <string>Use a map</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../../resources/images.qrc">
+                <normaloff>:/images/icon_open.png</normaloff>:/images/icon_open.png</iconset>
               </property>
              </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QComboBox" name="comboBox_2"/>
-            </item>
-            <item row="3" column="0">
-             <widget class="QRadioButton" name="radioButton_2">
-              <property name="text">
-               <string>Use a sprite</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QComboBox" name="comboBox"/>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Animation</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QComboBox" name="comboBox_3"/>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Direction</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QSpinBox" name="spinBox"/>
             </item>
            </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButton_3">
+            <property name="text">
+             <string>Use a map</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="comboBox_2">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="text">
+             <string>Use a sprite</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="comboBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Animation</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="comboBox_3">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Direction</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="spinBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+        <widget class="QFrame" name="frame_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
-        </spacer>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Input picture region picker</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -277,7 +321,7 @@
        <property name="currentIndex">
         <number>1</number>
        </property>
-       <widget class="QWidget" name="tabWidget_3Page1" native="true">
+       <widget class="QWidget" name="tabWidget_3Page1">
         <attribute name="title">
          <string>Vertex shader</string>
         </attribute>
