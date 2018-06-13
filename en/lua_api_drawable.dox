@@ -36,41 +36,65 @@ Draws a subrectangle of this object on a destination surface.
 - \c y (number, optional): Y coordinate of where to draw this rectangle.
   on the destination surface (default \c 0).
 
-\subsection lua_api_drawable_set_transform_origin drawable:set_transform_origin(x,y)
+\subsection lua_api_drawable_get_rotation drawable:get_rotation()
 
-Set the pivot point of this drawable, the point is relative to the drawable default origin. ((0,0) for \ref lua_api_surface "Surfaces" and \ref lua_api_text_surface "Text Surfaces", Sprite origin for \ref lua_api_sprite "Sprites")
-- \c x (number): X coordinate of the transform origin.
-- \c y (number): Y coordinate of the transform origin.
-
-\subsection lua_api_drawable_get_transform_origin drawable:get_transform_origin()
-
-Returns the transform origin of this drawable.
-- \c return value 1 (number): X coordinate of the transform point.
-- \c return value 2 (number): Y coordinate of the transform point.
+Returns the rotation angle of this object around its
+\ref lua_api_drawable_set_transformation_origin "transformation origin".
+The rotation angle is in radians and goes in trigonometric direction.
+- Return value 1 (number): The rotation angle in radians around the
+  transformation origin.
+  \c 0 means no rotation.
 
 \subsection lua_api_drawable_set_rotation drawable:set_rotation(rotation)
 
-Sets the rotation of this drawable around its \ref lua_api_drawable_set_transform_origin "Transform Origin". The rotation is in radians and goes in trigonometric direction.
-
-- \c rotation (number): rotation in radian around the transform origin.
-
-\subsection lua_api_drawable_get_rotation drawable:get_rotation()
-
-Returns the rotation of this drawable.
-
-\subsection lua_api_drawable_set_scale drawable:set_scale(x,y)
-
-Set scale factors in X and Y dimensions for this drawable. Scale of 1 correspond to drawable normal size. Drawable scales around its \ref lua_api_drawable_set_transform_origin "Transform Origin". Negative scales will flip the drawable in the corresponding axis.
-
-- \c x (number) : scale factor in the X dimension.
-- \c y (number) : scale factor in the Y dimension.
+Sets the rotation angle of this object around its
+\ref lua_api_drawable_set_transformation_origin "transformation origin".
+The rotation angle is in radians and goes in trigonometric direction.
+- \c rotation (number): The rotation angle in radians around the
+  transformation origin.
+  \c 0 means no rotation.
 
 \subsection lua_api_drawable_get_scale drawable:get_scale()
 
-Returns the scale of this drawable.
+Returns the scaling factors of this drawable object.
+- Return value 1 (number): Scale factor in the X dimension.
+- Return value 2 (number): Scale factor in the Y dimension.
 
-- \c return value 1 (number): scale factor in the X dimension.
-- \c return value 2 (number): scale factor in the Y dimension.
+\subsection lua_api_drawable_set_scale drawable:set_scale(x, y)
+
+Set the scale factors for this drawable object.
+A scale of \c 1 corresponds to a normal size.
+A negative scale will flip the drawable in the corresponding axis.
+Scaling is performed around the
+\ref lua_api_drawable_set_transformation_origin "transformation origin".
+- \c x (number) : Scale factor in the X dimension.
+- \c y (number) : Scale factor in the Y dimension.
+
+\subsection lua_api_drawable_get_transformation_origin drawable:get_transformation_origin()
+
+Returns the transformation origin of this drawable object.
+The tranformation origin point is the pivot point used for rotation and scaling.
+
+The transformation point is relative to the origin point of the drawable object,
+which is always the upper-left corner for
+\ref lua_api_surface "surfaces" and
+\ref lua_api_text_surface "text surfaces", and the
+sprite origin point for \ref lua_api_sprite "sprites".
+- Return value 1 (number): X coordinate of the transform point.
+- Return value 2 (number): Y coordinate of the transform point.
+
+\subsection lua_api_drawable_set_transformation_origin drawable:set_transformation_origin(x, y)
+
+Set the transformation origin point of this drawable object.
+The tranformation origin point is the pivot point used for rotation and scaling.
+
+The transformation point is relative to the origin point of the drawable object,
+which is always the upper-left corner for
+\ref lua_api_surface "surfaces" and
+\ref lua_api_text_surface "text surfaces", and the
+sprite origin point for \ref lua_api_sprite "sprites".
+- \c x (number): X coordinate of the transformation origin.
+- \c y (number): Y coordinate of the transformation origin.
 
 \subsection lua_api_drawable_get_blend_mode drawable:get_blend_mode()
 
@@ -110,6 +134,21 @@ when you call
     without degrading its content.<br>
     <tt>dstRGB = srcRGB * dstRGB</tt>
 
+\subsection lua_api_drawable_get_shader drawable:get_shader()
+
+Returns the shader applied to this object.
+
+- Return value (\ref lua_api_shader "shader"): The shader,
+  or \c nil if no shader is set.
+
+\subsection lua_api_drawable_set_shader drawable:set_shader(shader)
+
+Sets the shader used to draw this object.
+
+Default drawing is done with no shader.
+- \c shader (\ref lua_api_shader "shader"): The shader to set,
+  or \c nil to reset drawing to normal.
+
 \subsection lua_api_drawable_get_opacity drawable:get_opacity()
 
 Returns the opacity of this drawable.
@@ -121,18 +160,6 @@ Sets the opacity of this drawable.
 
 All drawables are initially opaque.
 - \c opacity (integer): The opacity: \c 0 (transparent) to \c 255 (opaque).
-
-
-\subsection lua_api_drawable_get_shader drawable:get_shader()
-
-Get the shader applied to this object.
-
-- Return value (\ref lua_api_shader "shader"): The shader, nil if none is set.
-
-\subsection lua_api_drawable_set_shader drawable:set_shader(shader)
-
-Set the shader used to draw this entity. Default drawing is done with no shader (nil).
-- \c shader(\ref lua_api_shader "shader"): An shader, passing nil will reset drawing to normal.
 
 \subsection lua_api_drawable_fade_in drawable:fade_in([delay], [callback])
 
@@ -227,4 +254,3 @@ Returns the current movement of this drawable object.
 Stops the current movement of this drawable object if any.
 
 */
-
