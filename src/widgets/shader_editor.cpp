@@ -23,6 +23,72 @@
 
 namespace SolarusEditor {
 
+namespace {
+
+/**
+ * @brief Parent class of all undoable commands of the shader editor.
+ */
+class ShaderEditorCommand : public QUndoCommand {
+
+public:
+
+  ShaderEditorCommand(ShaderEditor& editor, const QString& text) :
+    QUndoCommand(text),
+    editor(editor) {
+  }
+
+  ShaderEditor& get_editor() const {
+    return editor;
+  }
+
+  ShaderModel& get_shader() const {
+    return editor.get_shader();
+  }
+
+private:
+
+  ShaderEditor& editor;
+
+};
+
+/**
+ * @brief Changing the vertex file of a shader program.
+ */
+class SetVertexFileCommand : public ShaderEditorCommand {
+
+public:
+  SetVertexFileCommand(ShaderEditor& editor, const QString& vertex_file) :
+    ShaderEditorCommand(editor, ShaderEditor::tr("Vertex file")),
+    before(get_shader().get_vertex_file()),
+    after(vertex_file) { }
+
+  void undo() override { get_shader().set_vertex_file(before); }
+  void redo() override { get_shader().set_vertex_file(after); }
+
+private:
+  QString before, after;
+};
+
+/**
+ * @brief Changing the fragment file of a shader program.
+ */
+class SetFragmentFileCommand : public ShaderEditorCommand {
+
+public:
+  SetFragmentFileCommand(ShaderEditor& editor, const QString& fragment_file) :
+    ShaderEditorCommand(editor, ShaderEditor::tr("Fragment file")),
+    before(get_shader().get_fragment_file()),
+    after(fragment_file) { }
+
+  void undo() override { get_shader().set_fragment_file(before); }
+  void redo() override { get_shader().set_fragment_file(after); }
+
+private:
+  QString before, after;
+};
+
+}  // Anonymous namespace.
+
 /**
  * @brief Creates a shader editor.
  * @param quest The quest containing the file.
@@ -32,7 +98,7 @@ namespace SolarusEditor {
  */
 ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   Editor(quest, path, parent),
-  model(nullptr),
+  shader(nullptr),
   quest(quest) {
 
   ui.setupUi(this);
@@ -54,7 +120,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
         tr("Shader '%1' has been modified. Save changes?").arg(shader_id));
 
   // Open the file.
-  model = std::unique_ptr<ShaderModel>(new ShaderModel(quest, shader_id, this));
+  shader = std::unique_ptr<ShaderModel>(new ShaderModel(quest, shader_id, this));
   get_undo_stack().setClean();
 
   // Prepare the GUI.
@@ -79,6 +145,20 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(ui.description_field, &QLineEdit::editingFinished,
           this, &ShaderEditor::set_description_from_gui);
 
+  connect(ui.vertex_file_check_box, &QCheckBox::stateChanged,
+          this, &ShaderEditor::vertex_file_check_box_changed);
+  connect(ui.vertex_file_browse_button, &QToolButton::clicked,
+          this, &ShaderEditor::browse_vertex_file);
+  connect(shader.get(), &ShaderModel::vertex_file_changed,
+          this, &ShaderEditor::update_vertex_file_field);
+
+  connect(ui.fragment_file_check_box, &QCheckBox::stateChanged,
+          this, &ShaderEditor::fragment_file_check_box_changed);
+  connect(ui.fragment_file_browse_button, &QToolButton::clicked,
+          this, &ShaderEditor::browse_fragment_file);
+  connect(shader.get(), &ShaderModel::fragment_file_changed,
+          this, &ShaderEditor::update_fragment_file_field);
+
 }
 
 /**
@@ -93,8 +173,8 @@ ShaderEditor::~ShaderEditor() {
  * @brief Returns the shader model being edited.
  * @return The shader model.
  */
-ShaderModel& ShaderEditor::get_model() {
-  return *model;
+ShaderModel& ShaderEditor::get_shader() {
+  return *shader;
 }
 
 /**
@@ -102,7 +182,7 @@ ShaderModel& ShaderEditor::get_model() {
  */
 void ShaderEditor::save() {
 
-  model->save();
+  shader->save();
 }
 
 /**
@@ -171,14 +251,48 @@ void ShaderEditor::set_description_from_gui() {
  */
 void ShaderEditor::update_vertex_file_field() {
 
-  if (model == nullptr) {
+  if (shader == nullptr) {
     return;
   }
-  const QString& vertex_file = model->get_vertex_file();
+  const QString& vertex_file = shader->get_vertex_file();
   ui.vertex_file_field->setText(vertex_file);
-  ui.vertex_file_check_box->setChecked(!vertex_file.isEmpty());
-  ui.vertex_file_field->setEnabled(!vertex_file.isEmpty());
-  ui.vertex_file_edit_button->setEnabled(!vertex_file.isEmpty());
+  const bool has_file = !vertex_file.isEmpty();
+  ui.vertex_file_check_box->setChecked(has_file);
+  ui.vertex_file_field->setEnabled(!has_file);
+  ui.vertex_file_edit_button->setEnabled(!has_file);
+}
+
+/**
+ * @brief Called when the user clicks the vertex file check box.
+ */
+void ShaderEditor::vertex_file_check_box_changed() {
+
+  const bool checked = ui.vertex_file_check_box->isChecked();
+  if (checked) {
+    ui.vertex_file_field->setEnabled(true);
+    ui.vertex_file_edit_button->setEnabled(!shader->get_vertex_file().isEmpty());
+    if (shader->get_vertex_file().isEmpty() &&
+        !ui.vertex_file_field->text().isEmpty()) {
+      // Use the text that was still in the disabled field.
+      try_command(new SetVertexFileCommand(*this, ui.vertex_file_field->text()));
+    }
+  }
+  else {
+    ui.vertex_file_field->setEnabled(false);
+    ui.vertex_file_edit_button->setEnabled(false);
+    if (!shader->get_vertex_file().isEmpty()) {
+      // Remove the value but keep the text in the field.
+      try_command(new SetVertexFileCommand(*this, ""));
+    }
+  }
+}
+
+/**
+ * @brief Lets the user choose a vertex code file.
+ */
+void ShaderEditor::browse_vertex_file() {
+
+  // TODO
 }
 
 /**
@@ -186,14 +300,49 @@ void ShaderEditor::update_vertex_file_field() {
  */
 void ShaderEditor::update_fragment_file_field() {
 
-  if (model == nullptr) {
+  if (shader == nullptr) {
     return;
   }
-  const QString& fragment_file = model->get_fragment_file();
+  const QString& fragment_file = shader->get_fragment_file();
   ui.fragment_file_field->setText(fragment_file);
-  ui.fragment_file_check_box->setChecked(!fragment_file.isEmpty());
-  ui.fragment_file_field->setEnabled(!fragment_file.isEmpty());
-  ui.fragment_file_edit_button->setEnabled(!fragment_file.isEmpty());
+  const bool has_file = !fragment_file.isEmpty();
+  ui.fragment_file_check_box->setChecked(has_file);
+  ui.fragment_file_field->setEnabled(!has_file);
+  ui.fragment_file_browse_button->setEnabled(!has_file);
+  ui.fragment_file_edit_button->setEnabled(!has_file);
+}
+
+/**
+ * @brief Called when the user clicks the fragment file check box.
+ */
+void ShaderEditor::fragment_file_check_box_changed() {
+
+  const bool checked = ui.fragment_file_check_box->isChecked();
+  if (checked) {
+    ui.fragment_file_field->setEnabled(true);
+    ui.fragment_file_edit_button->setEnabled(!shader->get_fragment_file().isEmpty());
+    if (shader->get_fragment_file().isEmpty() &&
+        !ui.fragment_file_field->text().isEmpty()) {
+      // Use the text that was still in the disabled field.
+      try_command(new SetFragmentFileCommand(*this, ui.fragment_file_field->text()));
+    }
+  }
+  else {
+    ui.fragment_file_field->setEnabled(false);
+    ui.fragment_file_edit_button->setEnabled(false);
+    if (!shader->get_fragment_file().isEmpty()) {
+      // Remove the value but keep the text in the field.
+      try_command(new SetFragmentFileCommand(*this, ""));
+    }
+  }
+}
+
+/**
+ * @brief Lets the user choose a fragment code file.
+ */
+void ShaderEditor::browse_fragment_file() {
+
+  // TODO
 }
 
 }

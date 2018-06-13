@@ -44,6 +44,10 @@ public:
 
   void save() const;
 
+signals:
+  void vertex_file_changed(const QString& vertex_file);
+  void fragment_file_changed(const QString& fragment_file);
+
 private:
   const Quest& quest;             /**< The quest the shader belongs to. */
   const QString shader_id;        /**< Id of the shader. */

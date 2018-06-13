@@ -35,7 +35,7 @@ public:
   ShaderEditor(Quest& quest, const QString& path, QWidget* parent = nullptr);
   ~ShaderEditor();
 
-  ShaderModel& get_model();
+  ShaderModel& get_shader();
 
   void save() override;
 
@@ -45,13 +45,19 @@ private:
   void update_shader_id_field();
   void update_description_to_gui();
   void set_description_from_gui();
+
   void update_vertex_file_field();
+  void vertex_file_check_box_changed();
+  void browse_vertex_file();
+
   void update_fragment_file_field();
+  void fragment_file_check_box_changed();
+  void browse_fragment_file();
 
   Ui::ShaderEditor ui;          /**< The shader editor widgets. */
   QString shader_id;            /**< Id of the shader being edited. */
   std::unique_ptr<ShaderModel>
-      model;                    /**< Shader model being edited. */
+      shader;                   /**< Shader model being edited. */
   Quest& quest;                 /**< The quest. */
 
 };

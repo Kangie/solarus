@@ -63,11 +63,21 @@ QString ShaderModel::get_vertex_file() const {
 
 /**
  * @brief Sets the name of the vertex shader file.
+ *
+ * Emits vertex_file_changed() if there is a change.
+ *
  * @param vertex_file The vertex shader filename or an empty string.
  */
 void ShaderModel::set_vertex_file(const QString& vertex_file) {
 
-  shader.set_vertex_file(vertex_file.toStdString());
+  const std::string& std_vertex_file = vertex_file.toStdString();
+
+  if (std_vertex_file == shader.get_vertex_file()) {
+    return;
+  }
+
+  shader.set_vertex_file(std_vertex_file);
+  emit vertex_file_changed(vertex_file);
 }
 
 /**
@@ -81,11 +91,21 @@ QString ShaderModel::get_fragment_file() const {
 
 /**
  * @brief Sets the name of the fragment shader file.
+ *
+ * Emits fragment_file_changed() if there is a change.
+ *
  * @param fragment_file The fragment shader filename or an empty string.
  */
 void ShaderModel::set_fragment_file(const QString& fragment_file) {
 
-  shader.set_fragment_file(fragment_file.toStdString());
+  const std::string& std_fragment_file = fragment_file.toStdString();
+
+  if (std_fragment_file == shader.get_fragment_file()) {
+    return;
+  }
+
+  shader.set_fragment_file(std_fragment_file);
+  emit fragment_file_changed(fragment_file);
 }
 
 /**
