@@ -36,6 +36,42 @@ Draws a subrectangle of this object on a destination surface.
 - \c y (number, optional): Y coordinate of where to draw this rectangle.
   on the destination surface (default \c 0).
 
+\subsection lua_api_drawable_set_transform_origin drawable:set_transform_origin(x,y)
+
+Set the pivot point of this drawable, the point is relative to the drawable default origin. ((0,0) for \ref lua_api_surface "Surfaces" and \ref lua_api_text_surface "Text Surfaces", Sprite origin for \ref lua_api_sprite "Sprites")
+- \c x (number): X coordinate of the transform origin.
+- \c y (number): Y coordinate of the transform origin.
+
+\subsection lua_api_drawable_get_transform_origin drawable:get_transform_origin()
+
+Returns the transform origin of this drawable.
+- \c return value 1 (number): X coordinate of the transform point.
+- \c return value 2 (number): Y coordinate of the transform point.
+
+\subsection lua_api_drawable_set_rotation drawable:set_rotation(rotation)
+
+Sets the rotation of this drawable around its \ref lua_api_drawable_set_transform_origin "Transform Origin". The rotation is in radians and goes in trigonometric direction.
+
+- \c rotation (number): rotation in radian around the transform origin.
+
+\subsection lua_api_drawable_get_rotation drawable:get_rotation()
+
+Returns the rotation of this drawable.
+
+\subsection lua_api_drawable_set_scale drawable:set_scale(x,y)
+
+Set scale factors in X and Y dimensions for this drawable. Scale of 1 correspond to drawable normal size. Drawable scales around its \ref lua_api_drawable_set_transform_origin "Transform Origin". Negative scales will flip the drawable in the corresponding axis.
+
+- \c x (number) : scale factor in the X dimension.
+- \c y (number) : scale factor in the Y dimension.
+
+\subsection lua_api_drawable_get_scale drawable:get_scale()
+
+Returns the scale of this drawable.
+
+- \c return value 1 (number): scale factor in the X dimension.
+- \c return value 2 (number): scale factor in the Y dimension.
+
 \subsection lua_api_drawable_get_blend_mode drawable:get_blend_mode()
 
 Returns the blend mode of this drawable object.
@@ -73,7 +109,6 @@ when you call
     Can be used to darken the destination surface
     without degrading its content.<br>
     <tt>dstRGB = srcRGB * dstRGB</tt>
-
 
 \subsection lua_api_drawable_get_opacity drawable:get_opacity()
 
