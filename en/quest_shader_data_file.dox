@@ -94,6 +94,8 @@ The following properties are supported:
   will then still be fitted to the window).
   If no value is set, the output texture of the shader will have the size of
   the window.
+  This value only has an effect when the shader is applied to the window,
+  and does nothing when the shader is applied to a drawable object.
 
 Example of a shader description file:
 
