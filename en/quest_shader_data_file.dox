@@ -90,7 +90,8 @@ The following properties are supported:
   window, indicates how much the input texture will be scaled by the shader.
   Only useful for scaling shaders.
   If a value is set, the output texture of the shader will have the size of the
-  input texture multiplied by this scaling factor.
+  input texture multiplied by this scaling factor (however, the output texture
+  will then still be fitted to the window).
   If no value is set, the output texture of the shader will have the size of
   the window.
 
