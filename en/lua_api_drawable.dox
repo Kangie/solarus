@@ -41,7 +41,7 @@ Draws a subrectangle of this object on a destination surface.
 Returns the rotation angle of this object around its
 \ref lua_api_drawable_set_transformation_origin "transformation origin".
 The rotation angle is in radians and goes in trigonometric direction.
-- Return value 1 (number): The rotation angle in radians around the
+- Return value (number): The rotation angle in radians around the
   transformation origin.
   \c 0 means no rotation.
 
