@@ -54,6 +54,8 @@ private:
   void fragment_file_check_box_changed();
   void browse_fragment_file();
 
+  void preview_radio_changed();
+
   Ui::ShaderEditor ui;          /**< The shader editor widgets. */
   QString shader_id;            /**< Id of the shader being edited. */
   std::unique_ptr<ShaderModel>

@@ -156,6 +156,14 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(shader.get(), &ShaderModel::fragment_file_changed,
           this, &ShaderEditor::update_fragment_file_field);
 
+  connect(ui.preview_picture_radio, &QRadioButton::clicked,
+          this, &ShaderEditor::preview_radio_changed);
+  connect(ui.preview_map_radio, &QRadioButton::clicked,
+          this, &ShaderEditor::preview_radio_changed);
+  connect(ui.preview_sprite_radio, &QRadioButton::clicked,
+          this, &ShaderEditor::preview_radio_changed);
+
+  preview_radio_changed();
 }
 
 /**
@@ -335,6 +343,23 @@ void ShaderEditor::fragment_file_check_box_changed() {
 void ShaderEditor::browse_fragment_file() {
 
   // TODO
+}
+
+/**
+ * @brief Shows the appropriate preview settings page depending on the radio
+ * button checked.
+ */
+void ShaderEditor::preview_radio_changed() {
+
+  if (ui.preview_picture_radio->isChecked()) {
+    ui.preview_file_widget->setCurrentWidget(ui.preview_picture_page);
+  }
+  else if (ui.preview_map_radio->isChecked()) {
+    ui.preview_file_widget->setCurrentWidget(ui.preview_map_page);
+  }
+  else if (ui.preview_sprite_radio->isChecked()) {
+    ui.preview_file_widget->setCurrentWidget(ui.preview_sprite_page);
+  }
 }
 
 }
