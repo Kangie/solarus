@@ -127,10 +127,16 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.description_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.vertex_file_new_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.vertex_file_save_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.vertex_shader_page->layout()->setAlignment(ui.vertex_file_check_box, Qt::AlignTop);
   ui.fragment_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.fragment_file_new_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.fragment_file_save_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.fragment_shader_page->layout()->setAlignment(ui.fragment_file_check_box, Qt::AlignTop);
 
   ui.preview_picture_page->layout()->setAlignment(ui.preview_picture_field_layout, Qt::AlignTop);
   ui.preview_map_page->layout()->setAlignment(ui.preview_map_field, Qt::AlignTop);
@@ -169,6 +175,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::preview_radio_changed);
 
   preview_radio_changed();
+  vertex_file_check_box_changed();
+  fragment_file_check_box_changed();
 }
 
 /**
@@ -279,7 +287,8 @@ void ShaderEditor::vertex_file_check_box_changed() {
 
   const bool checked = ui.vertex_file_check_box->isChecked();
   if (checked) {
-    ui.vertex_file_field->setEnabled(true);
+    ui.vertex_file_widget->setVisible(true);
+    ui.vertex_shader_text_edit->setVisible(true);
     if (shader->get_vertex_file().isEmpty() &&
         !ui.vertex_file_field->text().isEmpty()) {
       // Use the text that was still in the disabled field.
@@ -287,7 +296,8 @@ void ShaderEditor::vertex_file_check_box_changed() {
     }
   }
   else {
-    ui.vertex_file_field->setEnabled(false);
+    ui.vertex_file_widget->setVisible(false);
+    ui.vertex_shader_text_edit->setVisible(false);
     if (!shader->get_vertex_file().isEmpty()) {
       // Remove the value but keep the text in the field.
       try_command(new SetVertexFileCommand(*this, ""));
@@ -326,7 +336,8 @@ void ShaderEditor::fragment_file_check_box_changed() {
 
   const bool checked = ui.fragment_file_check_box->isChecked();
   if (checked) {
-    ui.fragment_file_field->setEnabled(true);
+    ui.fragment_file_widget->setVisible(true);
+    ui.fragment_shader_text_edit->setVisible(true);
     if (shader->get_fragment_file().isEmpty() &&
         !ui.fragment_file_field->text().isEmpty()) {
       // Use the text that was still in the disabled field.
@@ -334,7 +345,8 @@ void ShaderEditor::fragment_file_check_box_changed() {
     }
   }
   else {
-    ui.fragment_file_field->setEnabled(false);
+    ui.fragment_file_widget->setVisible(false);
+    ui.fragment_shader_text_edit->setVisible(false);
     if (!shader->get_fragment_file().isEmpty()) {
       // Remove the value but keep the text in the field.
       try_command(new SetFragmentFileCommand(*this, ""));

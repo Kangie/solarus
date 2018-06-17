@@ -24,6 +24,9 @@
           <string>Shader properties</string>
          </property>
          <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="shader_id_label">
             <property name="toolTip">
@@ -189,13 +192,6 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLineEdit" name="preview_picture_field">
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QToolButton" name="preview_picture_browse_button">
                   <property name="toolTip">
                    <string>Edit vertex shader file</string>
@@ -206,6 +202,13 @@
                   <property name="icon">
                    <iconset resource="../../resources/images.qrc">
                     <normaloff>:/images/icon_open.png</normaloff>:/images/icon_open.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="preview_picture_field">
+                  <property name="readOnly">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -310,7 +313,7 @@
                 <item row="1" column="1">
                  <widget class="QSpinBox" name="preview_sprite_direction_field">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -390,54 +393,83 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QCheckBox" name="vertex_file_check_box">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="vertex_file_layout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLineEdit" name="vertex_file_field">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="vertex_file_browse_button">
-               <property name="toolTip">
-                <string>Edit vertex shader file</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../../resources/images.qrc">
-                 <normaloff>:/images/icon_open.png</normaloff>:/images/icon_open.png</iconset>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QToolButton" name="vertex_file_save_button">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../../resources/images.qrc">
-               <normaloff>:/images/icon_save.png</normaloff>:/images/icon_save.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QCheckBox" name="vertex_file_check_box">
+           <property name="text">
+            <string>Use a vertex shader</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="vertex_file_widget" native="true">
+           <layout class="QHBoxLayout" name="vertex_file_layout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="vertex_file_new_button">
+              <property name="icon">
+               <iconset resource="../../resources/images.qrc">
+                <normaloff>:/images/icon_file.png</normaloff>:/images/icon_file.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="vertex_file_open_layout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QToolButton" name="vertex_file_browse_button">
+                <property name="toolTip">
+                 <string>Edit vertex shader file</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resources/images.qrc">
+                  <normaloff>:/images/icon_open.png</normaloff>:/images/icon_open.png</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="vertex_file_field">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QToolButton" name="vertex_file_save_button">
+              <property name="icon">
+               <iconset resource="../../resources/images.qrc">
+                <normaloff>:/images/icon_save.png</normaloff>:/images/icon_save.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontal_spacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
           <widget class="QPlainTextEdit" name="vertex_shader_text_edit"/>
@@ -450,57 +482,86 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QCheckBox" name="fragment_file_check_box">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="fragment_file_layout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLineEdit" name="fragment_file_field">
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="fragment_file_browse_button">
-               <property name="toolTip">
-                <string>Edit fragment shader file</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../../resources/images.qrc">
-                 <normaloff>:/images/icon_open.png</normaloff>:/images/icon_open.png</iconset>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QToolButton" name="fragment_file_save_button">
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../../resources/images.qrc">
-               <normaloff>:/images/icon_save.png</normaloff>:/images/icon_save.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QCheckBox" name="fragment_file_check_box">
+           <property name="text">
+            <string>Use a fragment shader</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <widget class="QPlainTextEdit" name="fragement_shader_text_edit"/>
+          <widget class="QWidget" name="fragment_file_widget" native="true">
+           <layout class="QHBoxLayout" name="fragment_file_layout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="fragment_file_new_button">
+              <property name="icon">
+               <iconset resource="../../resources/images.qrc">
+                <normaloff>:/images/icon_file.png</normaloff>:/images/icon_file.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="fragment_file_open_layout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QToolButton" name="fragment_file_browse_button">
+                <property name="toolTip">
+                 <string>Edit fragment shader file</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resources/images.qrc">
+                  <normaloff>:/images/icon_open.png</normaloff>:/images/icon_open.png</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="fragment_file_field">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QToolButton" name="fragment_file_save_button">
+              <property name="icon">
+               <iconset resource="../../resources/images.qrc">
+                <normaloff>:/images/icon_save.png</normaloff>:/images/icon_save.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontal_spacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="fragment_shader_text_edit"/>
          </item>
         </layout>
        </widget>
