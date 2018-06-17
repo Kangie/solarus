@@ -131,10 +131,9 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.fragment_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-// TODO  ui.shader_properties_layout->setAlignment(ui.vertex_file_check_box, Qt::AlignVCenter);
-//  ui.shader_properties_layout->setAlignment(ui.fragment_file_check_box, Qt::AlignVCenter);
-//  const int side_width = 300;
-//  ui.splitter->setSizes({ side_width, width() - side_width });
+
+  const int side_width = 300;
+  ui.main_splitter->setSizes({ side_width, width() - side_width });
   update();
 
   // Make connections.
