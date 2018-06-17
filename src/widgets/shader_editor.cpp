@@ -132,6 +132,10 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 
+  ui.preview_picture_page->layout()->setAlignment(ui.preview_picture_field_layout, Qt::AlignTop);
+  ui.preview_map_page->layout()->setAlignment(ui.preview_map_field, Qt::AlignTop);
+
+
   const int side_width = 300;
   ui.main_splitter->setSizes({ side_width, width() - side_width });
   update();
