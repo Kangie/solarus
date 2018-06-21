@@ -21,6 +21,8 @@
 #include <QPointer>
 #include <QWidget>
 
+class QLabel;  // TODO remove
+
 namespace SolarusEditor {
 
 class ShaderModel;
@@ -40,10 +42,13 @@ public:
   ShaderPreviewMode get_preview_mode() const;
   void set_preview_mode(ShaderPreviewMode preview_mode);
 
+  void set_preview_image(QImage image);
+
 private:
 
-  QPointer<ShaderModel> model;     /**< The shader model. */
-  ShaderPreviewMode preview_mode;  /**< Display mode of the preview. */
+  QPointer<ShaderModel> model;        /**< The shader model. */
+  ShaderPreviewMode preview_mode;     /**< Display mode of the preview. */
+  QLabel* test_label;  // TODO temporary for testing
 
 };
 

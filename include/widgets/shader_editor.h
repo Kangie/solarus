@@ -56,6 +56,7 @@ private:
   void browse_fragment_file();
 
   void preview_radio_changed();
+  void update_preview_image();
 
   Ui::ShaderEditor ui;          /**< The shader editor widgets. */
   QString shader_id;            /**< Id of the shader being edited. */

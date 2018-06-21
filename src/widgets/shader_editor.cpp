@@ -19,6 +19,7 @@
 #include "editor_exception.h"
 #include "quest.h"
 #include "shader_model.h"
+#include "sprite_model.h"
 #include <QUndoStack>
 
 namespace SolarusEditor {
@@ -124,20 +125,22 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   get_undo_stack().setClean();
 
   // Prepare the GUI.
-  ui.description_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.scaling_factor_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.preview_mode_selector->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+
+  ui.preview_picture_page->layout()->setAlignment(ui.preview_picture_field_layout, Qt::AlignTop);
+  ui.preview_map_page->layout()->setAlignment(ui.preview_map_field, Qt::AlignTop);
+  ui.preview_map_field->set_resource_type(ResourceType::MAP);
+  ui.preview_map_field->set_quest(quest);
+  ui.preview_sprite_field->set_resource_type(ResourceType::SPRITE);
+  ui.preview_sprite_field->set_quest(quest);
+
   ui.vertex_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_shader_page->layout()->setAlignment(ui.vertex_file_check_box, Qt::AlignTop);
   ui.fragment_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_shader_page->layout()->setAlignment(ui.fragment_file_check_box, Qt::AlignTop);
-
-  ui.preview_picture_page->layout()->setAlignment(ui.preview_picture_field_layout, Qt::AlignTop);
-  ui.preview_map_page->layout()->setAlignment(ui.preview_map_field, Qt::AlignTop);
-  ui.preview_map_field->set_resource_type(ResourceType::MAP);
-  ui.preview_sprite_field->set_resource_type(ResourceType::SPRITE);
 
   const int side_width = 300;
   ui.main_splitter->setSizes({ side_width, width() - side_width });
@@ -147,6 +150,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.right_splitter->setSizes({ preview_height, height() - preview_height });
   ui.right_splitter->setStretchFactor(0, 1);
   ui.right_splitter->setStretchFactor(1, 1);
+
+  ui.preview_widget->set_model(shader.get());
   update();
 
   // Make connections.
@@ -166,6 +171,12 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::preview_radio_changed);
   connect(ui.preview_sprite_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
+  connect(ui.preview_sprite_field, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, &ShaderEditor::update_preview_image);
+  connect(ui.preview_sprite_animation_field, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, &ShaderEditor::update_preview_image);
+  connect(ui.preview_sprite_direction_field, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &ShaderEditor::update_preview_image);
 
   connect(ui.vertex_file_check_box, &QCheckBox::stateChanged,
           this, &ShaderEditor::vertex_file_check_box_changed);
@@ -184,6 +195,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   preview_radio_changed();
   vertex_file_check_box_changed();
   fragment_file_check_box_changed();
+
+  // TODO remember last preview settings in QSettings
 }
 
 /**
@@ -383,6 +396,25 @@ void ShaderEditor::preview_radio_changed() {
   }
   else if (ui.preview_sprite_radio->isChecked()) {
     ui.preview_file_widget->setCurrentWidget(ui.preview_sprite_page);
+  }
+
+  update_preview_image();
+}
+
+/**
+ * @brief Updates the image to be displayed in the preview widget.
+ */
+void ShaderEditor::update_preview_image() {
+
+  if (ui.preview_sprite_radio->isChecked()) {
+    const QString& sprite_id = ui.preview_sprite_field->get_selected_id();
+    if (!sprite_id.isEmpty() &&
+        quest.get_database().exists(ResourceType::SPRITE, sprite_id) &&
+        quest.exists(quest.get_sprite_path(sprite_id))) {
+      SpriteModel sprite(get_quest(), sprite_id);
+      QPixmap pixmap = sprite.get_direction_first_frame({ sprite.get_default_animation_name(), 0 });
+      ui.preview_widget->set_preview_image(pixmap.toImage());
+    }
   }
 }
 

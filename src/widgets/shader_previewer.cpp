@@ -17,6 +17,8 @@
 #include "widgets/shader_previewer.h"
 #include "shader_model.h"
 
+#include <QLabel>  // TODO remove
+
 namespace SolarusEditor {
 
 /**
@@ -26,8 +28,10 @@ namespace SolarusEditor {
 ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   QWidget(parent),
   model(nullptr),
-  preview_mode(ShaderPreviewMode::SIDE_BY_SIDE) {
+  preview_mode(ShaderPreviewMode::SIDE_BY_SIDE),
+  test_label(new QLabel(this)) {
 
+  test_label->setText("Preview");
 }
 
 /**
@@ -65,6 +69,16 @@ ShaderPreviewMode ShaderPreviewer::get_preview_mode() const {
 void ShaderPreviewer::set_preview_mode(ShaderPreviewMode preview_mode) {
   this->preview_mode = preview_mode;
   // TODO
+}
+
+/**
+ * @brief Changes the image to be displayed in the preview widget.
+ * @param image The new image to show.
+ */
+void ShaderPreviewer::set_preview_image(QImage image) {
+
+  // TODO
+  test_label->setPixmap(QPixmap::fromImage(image));
 }
 
 }

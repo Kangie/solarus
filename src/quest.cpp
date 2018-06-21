@@ -776,7 +776,7 @@ bool Quest::is_resource_element(
 }
 
 /**
- * @brief Return whether a path is a directory containing at least one declared
+ * @brief Returns whether a path is a directory containing at least one declared
  * resource element.
  *
  * Only the path string is tested: whether files actually exist does not
