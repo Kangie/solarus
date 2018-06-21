@@ -11,7 +11,7 @@ The quest size is in a range specified in the
 This quest size is the logical size: it determines
 how much content the player can see on the map.
 
-The quest size is typicall 320x240 pixels,
+The quest size is typically 320x240 pixels,
 but some systems may prefer other sizes, like 400x240 on Android.
 You can set a range of supported quest sizes in the quest properties files
 for portability.
