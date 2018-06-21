@@ -125,17 +125,13 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   // Prepare the GUI.
   ui.description_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.scaling_factor_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+  ui.preview_mode_selector->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-  ui.vertex_file_new_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-  ui.vertex_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-  ui.vertex_file_save_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.vertex_shader_page->layout()->setAlignment(ui.vertex_file_check_box, Qt::AlignTop);
   ui.fragment_file_check_box->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-  ui.fragment_file_new_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-  ui.fragment_file_browse_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-  ui.fragment_file_save_button->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_shader_page->layout()->setAlignment(ui.fragment_file_check_box, Qt::AlignTop);
 
   ui.preview_picture_page->layout()->setAlignment(ui.preview_picture_field_layout, Qt::AlignTop);
@@ -145,6 +141,12 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   const int side_width = 300;
   ui.main_splitter->setSizes({ side_width, width() - side_width });
+  ui.main_splitter->setStretchFactor(0, 0);
+  ui.main_splitter->setStretchFactor(1, 1);
+  const int preview_height = 400;
+  ui.right_splitter->setSizes({ preview_height, height() - preview_height });
+  ui.right_splitter->setStretchFactor(0, 1);
+  ui.right_splitter->setStretchFactor(1, 1);
   update();
 
   // Make connections.
@@ -152,6 +154,18 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::update_description_to_gui);
   connect(ui.description_field, &QLineEdit::editingFinished,
           this, &ShaderEditor::set_description_from_gui);
+
+  connect(ui.preview_mode_selector, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          [this]() {
+    ui.preview_widget->set_preview_mode(ui.preview_mode_selector->get_selected_value());
+  });
+
+  connect(ui.preview_picture_radio, &QRadioButton::clicked,
+          this, &ShaderEditor::preview_radio_changed);
+  connect(ui.preview_map_radio, &QRadioButton::clicked,
+          this, &ShaderEditor::preview_radio_changed);
+  connect(ui.preview_sprite_radio, &QRadioButton::clicked,
+          this, &ShaderEditor::preview_radio_changed);
 
   connect(ui.vertex_file_check_box, &QCheckBox::stateChanged,
           this, &ShaderEditor::vertex_file_check_box_changed);
@@ -166,13 +180,6 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::browse_fragment_file);
   connect(shader.get(), &ShaderModel::fragment_file_changed,
           this, &ShaderEditor::update_fragment_file_field);
-
-  connect(ui.preview_picture_radio, &QRadioButton::clicked,
-          this, &ShaderEditor::preview_radio_changed);
-  connect(ui.preview_map_radio, &QRadioButton::clicked,
-          this, &ShaderEditor::preview_radio_changed);
-  connect(ui.preview_sprite_radio, &QRadioButton::clicked,
-          this, &ShaderEditor::preview_radio_changed);
 
   preview_radio_changed();
   vertex_file_check_box_changed();

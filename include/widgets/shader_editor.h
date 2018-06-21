@@ -18,6 +18,7 @@
 #define SOLARUSEDITOR_SHADER_EDITOR_H
 
 #include "widgets/editor.h"
+#include "widgets/enum_selector.h"
 #include "ui_shader_editor.h"
 
 namespace SolarusEditor {
@@ -25,7 +26,7 @@ namespace SolarusEditor {
 class ShaderModel;
 
 /**
- * \brief A widget to edit graphically a shader description file.
+ * @brief A widget to edit graphically a shader description file.
  */
 class ShaderEditor : public Editor {
   Q_OBJECT

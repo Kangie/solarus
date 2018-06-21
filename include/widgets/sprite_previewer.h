@@ -30,13 +30,12 @@ namespace SolarusEditor {
 /**
  * @brief A widget to preview animation directions of sprites.
  */
-class SpritePreviewer : public QWidget
-{
+class SpritePreviewer : public QWidget {
   Q_OBJECT
 
 public:
 
-  SpritePreviewer(QWidget* parent = 0);
+  SpritePreviewer(QWidget* parent = nullptr);
 
   void set_model(SpriteModel* model);
 

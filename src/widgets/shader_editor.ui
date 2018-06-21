@@ -101,7 +101,31 @@
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_10">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QFormLayout" name="preview_mode_layout">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::ExpandingFieldsGrow</enum>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="preview_mode_label">
+              <property name="text">
+               <string>Preview mode</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::ShaderPreviewMode&gt;" name="preview_mode_selector">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item>
            <layout class="QHBoxLayout" name="preview_type_layout">
             <item>
@@ -348,28 +372,14 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QFrame" name="preview_frame">
+      <widget class="SolarusEditor::ShaderPreviewer" name="preview_widget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="preview_label">
-          <property name="text">
-           <string>Preview</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QVBoxLayout" name="verticalLayout"/>
       </widget>
       <widget class="QTabWidget" name="shader_files_tab_widget">
        <property name="currentIndex">
@@ -564,6 +574,17 @@
    <class>SolarusEditor::ResourceSelector</class>
    <extends>QComboBox</extends>
    <header>include/widgets/resource_selector.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SolarusEditor::EnumSelector&lt;SolarusEditor::ShaderPreviewMode&gt;</class>
+   <extends>QComboBox</extends>
+   <header>include/shader_preview_mode_traits.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SolarusEditor::ShaderPreviewer</class>
+   <extends>QWidget</extends>
+   <header>include/widgets/shader_previewer.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

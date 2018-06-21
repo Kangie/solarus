@@ -166,6 +166,7 @@ set(solarus_quest_editor_SOURCES
   include/widgets/resource_selector.h
   include/widgets/settings_dialog.h
   include/widgets/shader_editor.h
+  include/widgets/shader_previewer.h
   include/widgets/sound_chooser.h
   include/widgets/sprite_editor.h
   include/widgets/sprite_tree_view.h
@@ -215,6 +216,8 @@ set(solarus_quest_editor_SOURCES
   include/size.h
   include/sprite_model.h
   include/shader_model.h
+  include/shader_preview_mode.h
+  include/shader_preview_mode_traits.h
   include/starting_location_mode_traits.h
   include/strings_model.h
   include/tileset_model.h
@@ -288,6 +291,7 @@ set(solarus_quest_editor_SOURCES
   src/widgets/resource_selector.cpp
   src/widgets/settings_dialog.cpp
   src/widgets/shader_editor.cpp
+  src/widgets/shader_previewer.cpp
   src/widgets/sound_chooser.cpp
   src/widgets/sprite_editor.cpp
   src/widgets/sprite_tree_view.cpp
@@ -331,6 +335,7 @@ set(solarus_quest_editor_SOURCES
   src/rectangle.cpp
   src/refactoring.cpp
   src/shader_model.cpp
+  src/shader_preview_mode_traits.cpp
   src/size.cpp
   src/sprite_model.cpp
   src/starting_location_mode_traits.cpp
