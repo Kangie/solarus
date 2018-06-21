@@ -212,7 +212,6 @@ Returns an array of all video modes supported.
 - \c Return value (table): An array of names of all video modes supported.
 
 \warning This method is deprecated because since Solarus 1.6,
-  video modes are deprecated.
   \ref lua_api_shader "shaders" are the new recommended way
   to implement video filters.
 
@@ -226,7 +225,6 @@ Restores the size of the window to a default value that depends on the
 current video mode.
 
 \warning This method is deprecated because since Solarus 1.6,
-  video modes are deprecated.
   \ref lua_api_shader "shaders" are the new recommended way
   to implement video filters.
 
@@ -235,4 +233,3 @@ Use
 instead.
 
 */
-
