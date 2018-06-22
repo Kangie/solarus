@@ -232,4 +232,14 @@ Use
 \ref lua_api_video_set_window_size "sol.video.set_window_size()"
 instead.
 
+\section lua_api_video_events Events of sol.video
+
+\subsection lua_api_video_on_draw sol.video:on_draw(screen)
+
+Called at the very end of the engine rendering. This event allow you to draw directly on the screen after the quest surface has been rendered using software filters or shaders. The drawing is not scaled like everywhere else. One pixel in your drawable will correspond to one pixel on-screen.
+
+- \c screen (surface): Special surface representing the screen or window.
+
+Note that the screen cannot be used as a source surface. (i.e. you cannot draw it on another surface). But you can still use get_pixels() to get screen content.
+
 */
