@@ -45,6 +45,9 @@
             <property name="text">
              <string/>
             </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -588,6 +591,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../resources/images.qrc"/>
   <include location="../../resources/images.qrc"/>
  </resources>
  <connections/>

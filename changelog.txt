@@ -28,6 +28,7 @@ ________________________________________
 * Sprite editor: fix scrollbars reset when adding directions by Maxs (#277).
 * Dialog editor: show the line and column number.
 * Script editor: allow a replace option to the find dialog by Akadream (#3).
+* Allow to select map/tileset/sprite/etc. ids to copy-paste them (#170).
 * Clear the console when a quest is started (#230).
 * Fix memory not released when closing an editor (#306).
 

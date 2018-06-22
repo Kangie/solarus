@@ -53,6 +53,9 @@
         <property name="text">
          <string/>
         </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -618,7 +621,7 @@
   <customwidget>
    <class>SolarusEditor::ResourceSelector</class>
    <extends>QComboBox</extends>
-   <header>widgets/resource_selector.h</header>
+   <header>include/widgets/resource_selector.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::DialogsTreeView</class>
@@ -637,6 +640,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../resources/images.qrc"/>
   <include location="../../resources/images.qrc"/>
  </resources>
  <connections/>

@@ -65,8 +65,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>816</width>
-             <height>390</height>
+             <width>817</width>
+             <height>387</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -95,6 +95,9 @@
                 </property>
                 <property name="text">
                  <string/>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                 </property>
                </widget>
               </item>
@@ -433,20 +436,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SolarusEditor::TilesetView</class>
-   <extends>QGraphicsView</extends>
-   <header>widgets/tileset_view.h</header>
-  </customwidget>
-  <customwidget>
    <class>SolarusEditor::ResourceSelector</class>
    <extends>QComboBox</extends>
-   <header>widgets/resource_selector.h</header>
+   <header>include/widgets/resource_selector.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::PairSpinBox</class>
    <extends>QWidget</extends>
    <header>widgets/pair_spin_box.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SolarusEditor::TilesetView</class>
+   <extends>QGraphicsView</extends>
+   <header>widgets/tileset_view.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::MapView</class>
@@ -466,6 +469,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../resources/images.qrc"/>
   <include location="../../resources/images.qrc"/>
  </resources>
  <connections/>
