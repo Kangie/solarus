@@ -34,6 +34,14 @@ ShaderModel::ShaderModel(
   quest(quest),
   shader_id(shader_id) {
 
+  Q_ASSERT(!shader_id.isEmpty());
+
+  // Load the shader data file.
+  QString path = quest.get_shader_data_file_path(shader_id);
+
+  if (!shader.import_from_file(path.toStdString())) {
+    throw EditorException(tr("Cannot open shader data file '%1'").arg(path));
+  }
 }
 
 /**

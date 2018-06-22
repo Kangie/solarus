@@ -24,6 +24,7 @@
 namespace SolarusEditor {
 
 class ShaderModel;
+class TextEditor;
 
 /**
  * @brief A widget to edit graphically a shader description file.
@@ -47,22 +48,25 @@ private:
   void update_description_to_gui();
   void set_description_from_gui();
 
-  void update_vertex_file_field();
+  void update_vertex_file_tab();
   void vertex_file_check_box_changed();
   void browse_vertex_file();
 
-  void update_fragment_file_field();
+  void update_fragment_file_tab();
   void fragment_file_check_box_changed();
   void browse_fragment_file();
 
   void preview_radio_changed();
   void update_preview_image();
 
-  Ui::ShaderEditor ui;          /**< The shader editor widgets. */
-  QString shader_id;            /**< Id of the shader being edited. */
+  Ui::ShaderEditor ui;                /**< The shader editor widgets. */
+  QString shader_id;                  /**< Id of the shader being edited. */
   std::unique_ptr<ShaderModel>
-      shader;                   /**< Shader model being edited. */
-  Quest& quest;                 /**< The quest. */
+      shader;                         /**< Shader model being edited. */
+  Quest& quest;                       /**< The quest. */
+
+  TextEditor* vertex_editor;          /**< Code editor of the vertex file. */
+  TextEditor* fragment_editor;        /**< Code editor of the fragment file. */
 
 };
 

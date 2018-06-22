@@ -112,7 +112,7 @@ void EditorTabs::open_resource(
 
   case ResourceType::SHADER:
     // Open the shader file.
-    open_shader_editor(quest, quest.get_shader_path(id));
+    open_shader_editor(quest, quest.get_shader_data_file_path(id));
     break;
 
   case ResourceType::MUSIC:
