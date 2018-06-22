@@ -241,7 +241,7 @@ them.
 
 Called at the very end of the engine rendering. This event allows you to draw
 directly on the screen after the quest surface has been scaled to fit the size
-of the window.
+of the window (possibly using shaders).
 One pixel in the surface parameter will correspond to one pixel on screen.
 - \c screen (surface): Special surface representing the window.
 
