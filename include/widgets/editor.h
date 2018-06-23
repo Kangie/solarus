@@ -42,6 +42,7 @@ class Editor : public QWidget {
 public:
 
   Editor(Quest& quest, const QString& path, QWidget* parent = nullptr);
+  ~Editor();
 
   const Quest& get_quest() const;
   Quest& get_quest();

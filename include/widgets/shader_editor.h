@@ -67,7 +67,8 @@ private:
 
   TextEditor* vertex_editor;          /**< Code editor of the vertex file. */
   TextEditor* fragment_editor;        /**< Code editor of the fragment file. */
-
+  QString last_vertex_file;           /**< Name of the last vertex GLSL file set. */
+  QString last_fragment_file;         /**< Name of the last fragment GLSL file set. */
 };
 
 }

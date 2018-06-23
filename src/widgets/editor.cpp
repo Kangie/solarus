@@ -174,6 +174,16 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
 }
 
 /**
+ * @brief Destructor.
+ */
+Editor::~Editor() {
+
+  // Make sure QUndoStack will not send signals from its destructor.
+  disconnect(undo_stack, SIGNAL(cleanChanged(bool)),
+             nullptr, nullptr);
+}
+
+/**
  * @brief Returns the quest the edited file belongs to.
  * @return The quest.
  */

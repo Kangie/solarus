@@ -21,6 +21,7 @@
 #include "quest.h"
 #include "shader_model.h"
 #include "sprite_model.h"
+#include <QFileDialog>
 #include <QUndoStack>
 
 namespace SolarusEditor {
@@ -161,14 +162,16 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
         QString() : quest.get_shader_glsl_file_path(vertex_file);
   vertex_editor = new TextEditor(
         quest, vertex_file_path, this);
-  ui.vertex_shader_page->layout()->addWidget(vertex_editor);
+  ui.vertex_editor_layout->addWidget(vertex_editor);
+  ui.vertex_editor_layout->removeItem(ui.vertex_editor_placeholder);
 
   QString fragment_file = shader->get_fragment_file();
   QString fragment_file_path = fragment_file.isEmpty() ?
         QString() : quest.get_shader_glsl_file_path(fragment_file);
   fragment_editor = new TextEditor(
         quest, fragment_file_path, this);
-  ui.fragment_shader_page->layout()->addWidget(fragment_editor);
+  ui.fragment_editor_layout->addWidget(fragment_editor);
+  ui.fragment_editor_layout->removeItem(ui.fragment_editor_placeholder);
 
   update();
 
@@ -211,8 +214,6 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::update_fragment_file_tab);
 
   preview_radio_changed();
-  vertex_file_check_box_changed();
-  fragment_file_check_box_changed();
 
   // TODO remember last preview settings in QSettings
 }
@@ -345,8 +346,12 @@ void ShaderEditor::update_fragment_file_tab() {
   }
   const bool has_file = !fragment_file.isEmpty();
   ui.fragment_file_check_box->setChecked(has_file);
-  ui.fragment_file_field->setEnabled(has_file);
-  ui.fragment_file_browse_button->setEnabled(has_file);
+  if (has_file) {
+    ui.fragment_editor_stacked_widget->setCurrentWidget(ui.fragment_editor_normal_page);
+  }
+  else {
+    ui.fragment_editor_stacked_widget->setCurrentWidget(ui.fragment_editor_empty_page);
+  }
 }
 
 /**
@@ -356,19 +361,19 @@ void ShaderEditor::fragment_file_check_box_changed() {
 
   const bool checked = ui.fragment_file_check_box->isChecked();
   if (checked) {
-    ui.fragment_file_toolbar->setEnabled(true);
-    fragment_editor->setEnabled(true);
     if (shader->get_fragment_file().isEmpty() &&
-        !ui.fragment_file_field->text().isEmpty()) {
-      // Use the text that was still in the disabled field.
-      try_command(new SetFragmentFileCommand(*this, ui.fragment_file_field->text()));
+       !last_fragment_file.isEmpty()) {
+      // Use the previous file name.
+      try_command(new SetFragmentFileCommand(*this, last_fragment_file));
+    }
+    else {
+      browse_fragment_file();
     }
   }
   else {
-    ui.fragment_file_toolbar->setEnabled(false);
-    fragment_editor->setEnabled(false);
     if (!shader->get_fragment_file().isEmpty()) {
-      // Remove the value but keep the text in the field.
+      // Remove the value but remember it.
+      last_fragment_file = shader->get_fragment_file();
       try_command(new SetFragmentFileCommand(*this, ""));
     }
   }
@@ -379,7 +384,30 @@ void ShaderEditor::fragment_file_check_box_changed() {
  */
 void ShaderEditor::browse_fragment_file() {
 
-  // TODO
+  if (shader == nullptr) {
+    return;
+  }
+
+  const QString directory = QFileInfo(get_file_path()).dir().path();
+
+  QString file_name = QFileDialog::getOpenFileName(
+      this,
+      tr("Open a GLSL file"),
+      directory,
+      tr("GLSL shader file (*.glsl)")
+  );
+
+  if (file_name.isEmpty()) {
+    return;
+  }
+
+  const QString shaders_directory = get_quest().get_resource_path(ResourceType::SHADER);
+  if (!file_name.startsWith(shaders_directory)) {
+    throw EditorException(tr("Shader GLSL files must be in the shaders directory"));
+  }
+
+  file_name = file_name.right(shaders_directory.size() + 1);
+  shader->set_fragment_file(file_name);
 }
 
 /**
