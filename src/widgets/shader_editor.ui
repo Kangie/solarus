@@ -389,6 +389,10 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="vertex_shader_page">
+        <attribute name="icon">
+         <iconset resource="../../resources/images.qrc">
+          <normaloff>:/images/icon_shader_code.png</normaloff>:/images/icon_shader_code.png</iconset>
+        </attribute>
         <attribute name="title">
          <string>Vertex shader</string>
         </attribute>
@@ -531,6 +535,10 @@
         </layout>
        </widget>
        <widget class="QWidget" name="fragment_shader_page">
+        <attribute name="icon">
+         <iconset resource="../../resources/images.qrc">
+          <normaloff>:/images/icon_shader_code.png</normaloff>:/images/icon_shader_code.png</iconset>
+        </attribute>
         <attribute name="title">
          <string>Fragment shader</string>
         </attribute>

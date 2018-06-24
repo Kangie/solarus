@@ -53,16 +53,15 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   layout->addWidget(text_widget);
 
   // Open map shorcut.
-  if (quest.is_map_script(file_path, map_id)) {
-    QAction* open_map_action = new QAction(this);
-    open_map_action->setShortcut(tr("F4"));
-    open_map_action->setShortcutContext(Qt::WindowShortcut);
-    connect(open_map_action, SIGNAL(triggered(bool)),
-            this, SLOT(open_map_requested()));
-    addAction(open_map_action);
-  } else {
+  QAction* open_map_action = new QAction(this);
+  open_map_action->setShortcut(tr("F4"));
+  open_map_action->setShortcutContext(Qt::WindowShortcut);
+  addAction(open_map_action);
+  if (!quest.is_map_script(file_path, map_id)) {
     map_id.clear();
   }
+  connect(open_map_action, SIGNAL(triggered(bool)),
+          this, SLOT(open_map_requested()));
 
   connect(text_widget, SIGNAL(copyAvailable(bool)),
           this, SIGNAL(can_cut_changed(bool)));
@@ -150,6 +149,11 @@ QIcon TextEditor::create_icon() const {
  * @copydoc Editor::save
  */
 void TextEditor::save() {
+
+  if (get_file_path().isEmpty()) {
+    // Empty editor.
+    return;
+  }
 
   QFile file(get_file_path());
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {

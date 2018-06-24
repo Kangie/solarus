@@ -748,8 +748,9 @@ void EditorTabs::reload_settings() {
  * @brief Slot called when the current tab changes.
  * @param index Index of the new current tab.
  */
-void EditorTabs::current_editor_changed(int /* index */) {
+void EditorTabs::current_editor_changed(int index) {
 
+  Q_UNUSED(index);
   Editor* editor = get_editor();
   if (editor == nullptr) {
     get_undo_group().setActiveStack(nullptr);

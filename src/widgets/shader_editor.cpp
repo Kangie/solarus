@@ -206,8 +206,12 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::new_vertex_file);
   connect(ui.vertex_file_browse_button, &QToolButton::clicked,
           this, &ShaderEditor::browse_vertex_file);
+  connect(ui.vertex_file_save_button, &QToolButton::clicked,
+          this, &ShaderEditor::save_vertex_file);
   connect(shader.get(), &ShaderModel::vertex_file_changed,
           this, &ShaderEditor::update_vertex_file_tab);
+  connect(&vertex_editor->get_undo_stack(), &QUndoStack::cleanChanged,
+          this, &ShaderEditor::vertex_editor_modification_state_changed);
 
   connect(ui.fragment_file_check_box, &QCheckBox::stateChanged,
           this, &ShaderEditor::fragment_file_check_box_changed);
@@ -215,8 +219,12 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::new_fragment_file);
   connect(ui.fragment_file_browse_button, &QToolButton::clicked,
           this, &ShaderEditor::browse_fragment_file);
+  connect(ui.fragment_file_save_button, &QToolButton::clicked,
+          this, &ShaderEditor::save_fragment_file);
   connect(shader.get(), &ShaderModel::fragment_file_changed,
           this, &ShaderEditor::update_fragment_file_tab);
+  connect(&fragment_editor->get_undo_stack(), &QUndoStack::cleanChanged,
+          this, &ShaderEditor::fragment_editor_modification_state_changed);
 
   preview_radio_changed();
 
@@ -245,6 +253,18 @@ ShaderModel& ShaderEditor::get_shader() {
 void ShaderEditor::save() {
 
   shader->save();
+  save_vertex_file();
+  save_fragment_file();
+}
+
+/**
+ * @copydoc Editor::has_unsaved_changes
+ */
+bool ShaderEditor::has_unsaved_changes() const {
+
+  return Editor::has_unsaved_changes() ||
+      vertex_editor->has_unsaved_changes() ||
+      fragment_editor->has_unsaved_changes();
 }
 
 /**
@@ -333,6 +353,7 @@ void ShaderEditor::vertex_file_check_box_changed() {
  */
 void ShaderEditor::new_vertex_file() {
 
+  // TODO
 }
 
 /**
@@ -341,6 +362,28 @@ void ShaderEditor::new_vertex_file() {
 void ShaderEditor::browse_vertex_file() {
 
   // TODO
+}
+
+/**
+ * @brief Saves the vertex shader GLSL file.
+ */
+void ShaderEditor::save_vertex_file() {
+
+  // TODO
+}
+
+/**
+ * @brief Called when the is-modified state of the vertex editor has changed.
+ * @param clean @c true if the file is now clean, @c false if it is now
+ * modified.
+ */
+void ShaderEditor::vertex_editor_modification_state_changed(bool clean) {
+
+  QString title = "Vertex shader";
+  if (!clean) {
+    title += '*';
+  }
+  ui.shader_files_tab_widget->setTabText(0, title);
 }
 
 /**
@@ -353,11 +396,12 @@ void ShaderEditor::update_fragment_file_tab() {
   }
 
   const QString& fragment_file = shader->get_fragment_file();
-  if (ui.fragment_file_field->text() != fragment_file) {
-    ui.fragment_file_field->setText(fragment_file);
-  }
+  ui.fragment_file_field->setText(fragment_file);
   const bool has_file = !fragment_file.isEmpty();
-  ui.fragment_file_check_box->setChecked(has_file);
+  {
+    QSignalBlocker blocker(ui.fragment_file_check_box);
+    ui.fragment_file_check_box->setChecked(has_file);
+  }
   if (has_file) {
     ui.fragment_editor_stacked_widget->setCurrentWidget(ui.fragment_editor_normal_page);
   }
@@ -401,6 +445,10 @@ void ShaderEditor::new_fragment_file() {
   }
 
   try {
+    if (!fragment_editor->confirm_before_closing()) {
+      return;
+    }
+
     bool ok = false;
     QString file_name = QInputDialog::getText(
           this,
@@ -464,6 +512,33 @@ void ShaderEditor::browse_fragment_file() {
   catch (const EditorException& ex) {
     GuiTools::error_dialog(ex.get_message());
   }
+}
+
+/**
+ * @brief Saves the fragment shader GLSL file.
+ */
+void ShaderEditor::save_fragment_file() {
+
+  if (shader == nullptr) {
+    return;
+  }
+
+  fragment_editor->save();
+  fragment_editor->get_undo_stack().setClean();
+}
+
+/**
+ * @brief Called when the is-modified state of the fragment editor has changed.
+ * @param clean @c true if the file is now clean, @c false if it is now
+ * modified.
+ */
+void ShaderEditor::fragment_editor_modification_state_changed(bool clean) {
+
+  QString title = "Fragment shader";
+  if (!clean) {
+    title += '*';
+  }
+  ui.shader_files_tab_widget->setTabText(1, title);
 }
 
 /**
