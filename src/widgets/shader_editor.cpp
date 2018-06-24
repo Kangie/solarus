@@ -22,6 +22,7 @@
 #include "shader_model.h"
 #include "sprite_model.h"
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QUndoStack>
 
 namespace SolarusEditor {
@@ -201,6 +202,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(ui.vertex_file_check_box, &QCheckBox::stateChanged,
           this, &ShaderEditor::vertex_file_check_box_changed);
+  connect(ui.vertex_file_new_button, &QToolButton::clicked,
+          this, &ShaderEditor::new_vertex_file);
   connect(ui.vertex_file_browse_button, &QToolButton::clicked,
           this, &ShaderEditor::browse_vertex_file);
   connect(shader.get(), &ShaderModel::vertex_file_changed,
@@ -208,6 +211,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(ui.fragment_file_check_box, &QCheckBox::stateChanged,
           this, &ShaderEditor::fragment_file_check_box_changed);
+  connect(ui.fragment_file_new_button, &QToolButton::clicked,
+          this, &ShaderEditor::new_fragment_file);
   connect(ui.fragment_file_browse_button, &QToolButton::clicked,
           this, &ShaderEditor::browse_fragment_file);
   connect(shader.get(), &ShaderModel::fragment_file_changed,
@@ -324,6 +329,13 @@ void ShaderEditor::vertex_file_check_box_changed() {
 }
 
 /**
+ * @brief Lets the user choose a vertex code file to create.
+ */
+void ShaderEditor::new_vertex_file() {
+
+}
+
+/**
  * @brief Lets the user choose a vertex code file.
  */
 void ShaderEditor::browse_vertex_file() {
@@ -380,7 +392,46 @@ void ShaderEditor::fragment_file_check_box_changed() {
 }
 
 /**
- * @brief Lets the user choose a fragment code file.
+ * @brief Lets the user choose a fragment code file to create.
+ */
+void ShaderEditor::new_fragment_file() {
+
+  if (shader == nullptr) {
+    return;
+  }
+
+  try {
+    bool ok = false;
+    QString file_name = QInputDialog::getText(
+          this,
+          tr("New GLSL file"),
+          tr("File name:"),
+          QLineEdit::Normal,
+          shader_id + ".frag.glsl",
+          &ok);
+
+    if (ok) {
+      // Automatically add .glsl extension if not present.
+      if (!file_name.contains(".")) {
+        file_name = file_name + ".lua";
+      }
+      Quest::check_valid_file_name(file_name);
+      const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);
+      QString file_path = shaders_path + '/' + file_name;
+
+      get_quest().create_file(file_path);
+
+      file_name = file_name.right(shaders_path.size() + 1);
+      try_command(new SetFragmentFileCommand(*this, file_name));
+    }
+  }
+  catch (const EditorException& ex) {
+    GuiTools::error_dialog(ex.get_message());
+  }
+}
+
+/**
+ * @brief Lets the user choose a fragment code file to open.
  */
 void ShaderEditor::browse_fragment_file() {
 
@@ -388,26 +439,31 @@ void ShaderEditor::browse_fragment_file() {
     return;
   }
 
-  const QString directory = QFileInfo(get_file_path()).dir().path();
+  try {
+    const QString& directory = QFileInfo(get_file_path()).dir().path();
 
-  QString file_name = QFileDialog::getOpenFileName(
-      this,
-      tr("Open a GLSL file"),
-      directory,
-      tr("GLSL shader file (*.glsl)")
-  );
+    QString file_name = QFileDialog::getOpenFileName(
+        this,
+        tr("Open a GLSL file"),
+        directory,
+        tr("GLSL shader file (*.glsl)")
+    );
 
-  if (file_name.isEmpty()) {
-    return;
+    if (file_name.isEmpty()) {
+      return;
+    }
+
+    const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);
+    if (!file_name.startsWith(shaders_path)) {
+      throw EditorException(tr("Shader GLSL files must be in the shaders directory"));
+    }
+
+    file_name = file_name.right(file_name.size() - shaders_path.size() - 1);
+    try_command(new SetFragmentFileCommand(*this, file_name));
   }
-
-  const QString shaders_directory = get_quest().get_resource_path(ResourceType::SHADER);
-  if (!file_name.startsWith(shaders_directory)) {
-    throw EditorException(tr("Shader GLSL files must be in the shaders directory"));
+  catch (const EditorException& ex) {
+    GuiTools::error_dialog(ex.get_message());
   }
-
-  file_name = file_name.right(shaders_directory.size() + 1);
-  shader->set_fragment_file(file_name);
 }
 
 /**

@@ -50,10 +50,12 @@ private:
 
   void update_vertex_file_tab();
   void vertex_file_check_box_changed();
+  void new_vertex_file();
   void browse_vertex_file();
 
   void update_fragment_file_tab();
   void fragment_file_check_box_changed();
+  void new_fragment_file();
   void browse_fragment_file();
 
   void preview_radio_changed();
