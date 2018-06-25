@@ -122,7 +122,7 @@ void ShaderModel::set_fragment_file(const QString& fragment_file) {
  */
 void ShaderModel::save() const {
 
-  QString path = quest.get_sprite_path(shader_id);
+  QString path = quest.get_shader_data_file_path(shader_id);
 
   if (!shader.export_to_file(path.toStdString())) {
     throw EditorException(tr("Cannot save shader '%1'").arg(path));

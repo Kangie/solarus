@@ -96,7 +96,7 @@ private:
 /**
  * @brief Creates a shader editor.
  * @param quest The quest containing the file.
- * @param path Path of the sprite data file to open.
+ * @param path Path of the shader data file to open.
  * @param parent The parent object or nullptr.
  * @throws EditorException If the file could not be opened.
  */
