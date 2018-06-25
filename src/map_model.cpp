@@ -54,7 +54,7 @@ MapModel::MapModel(
   // Create the tileset object.
   QString tileset_id = get_tileset_id();
   if (!tileset_id.isEmpty()) {
-    tileset_model = new TilesetModel(quest, tileset_id, this);
+    tileset_model = quest.get_tileset(tileset_id);
   }
 
   // Create entities.

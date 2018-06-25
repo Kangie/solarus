@@ -179,7 +179,8 @@ private:
   Quest& quest;                   /**< The quest the tileset belongs to. */
   const QString map_id;           /**< Id of the map. */
   Solarus::MapData map;           /**< Map data wrapped by this model. */
-  TilesetModel* tileset_model;    /**< Tileset of this map. nullptr if not set. */
+  QPointer<TilesetModel>
+      tileset_model;              /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
   QString current_border_set_id;  /**< Border set currently selected by the user. */

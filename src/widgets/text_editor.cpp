@@ -52,7 +52,7 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   text_widget = new TextEditorWidget(file_path, *this);
   layout->addWidget(text_widget);
 
-  // Open map shorcut.
+  // Open map shortcut.
   QAction* open_map_action = new QAction(this);
   open_map_action->setShortcut(tr("F4"));
   open_map_action->setShortcutContext(Qt::WindowShortcut);
