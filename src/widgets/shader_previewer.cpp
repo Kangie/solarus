@@ -79,6 +79,7 @@ void ShaderPreviewer::set_preview_image(QImage image) {
 
   // TODO
   test_label->setPixmap(QPixmap::fromImage(image));
+  test_label->adjustSize();
 }
 
 }
