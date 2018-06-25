@@ -1138,8 +1138,6 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, SLOT(tileset_selector_activated()));
   connect(map, SIGNAL(tileset_id_changed(QString)),
           this, SLOT(tileset_id_changed(QString)));
-  connect(ui.tileset_refresh_button, SIGNAL(clicked()),
-          this, SLOT(refresh_tileset_requested()));
   connect(ui.tileset_edit_button, SIGNAL(clicked()),
           this, SLOT(open_tileset_requested()));
 
@@ -1762,18 +1760,6 @@ void MapEditor::tileset_selector_activated() {
   }
 
   try_command(new SetTilesetCommand(*this, new_tileset_id));
-}
-
-/**
- * @brief Slot called when the user wants to refresh the selected tileset.
- */
-void MapEditor::refresh_tileset_requested() {
-
-  // Refresh the map model.
-  get_map().reload_tileset();
-
-  // Rebuild the tileset view.
-  update_tileset_view();
 }
 
 /**

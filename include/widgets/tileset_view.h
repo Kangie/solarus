@@ -118,6 +118,8 @@ private:
   void dragLeaveEvent(QDragLeaveEvent* event) override;
   void dropEvent(QDropEvent* event) override;
 
+  void notify_tileset_changed();
+
   QPointer<TilesetModel> model;        /**< The tileset model. */
   TilesetScene* scene;                 /**< The scene viewed. */
   QAction* change_pattern_id_action;   /**< Action of changing a pattern id. */

@@ -44,6 +44,7 @@
 #include "quest.h"
 #include "quest_database.h"
 #include "sprite_model.h"
+#include "tileset_model.h"
 #include <QDebug>
 #include <QPainter>
 
@@ -464,7 +465,7 @@ QString EntityModel::get_map_tileset_id() const {
  * @return The tileset or nullptr if no tileset is set.
  */
 const TilesetModel* EntityModel::get_map_tileset() const {
-  return get_map().get_tileset_model();
+  return get_map().get_tileset_model().data();
 }
 
 /**
@@ -473,7 +474,7 @@ const TilesetModel* EntityModel::get_map_tileset() const {
  * Non-const version.
  */
 TilesetModel* EntityModel::get_map_tileset() {
-  return get_map().get_tileset_model();
+  return get_map().get_tileset_model().data();
 }
 
 /**

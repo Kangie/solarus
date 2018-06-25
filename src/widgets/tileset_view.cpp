@@ -111,6 +111,8 @@ void TilesetView::set_model(TilesetModel* model) {
   double zoom = 2.0;  // Initial zoom: x2.
 
   if (this->model != nullptr) {
+    disconnect(this->model, nullptr,
+               this, nullptr);
     this->model = nullptr;
     this->scene = nullptr;
     horizontal_scrollbar_value = horizontalScrollBar()->value();
@@ -147,7 +149,20 @@ void TilesetView::set_model(TilesetModel* model) {
     // Install panning and zooming helpers.
     new PanTool(this);
     new ZoomTool(this);
+
+    connect(model, &TilesetModel::modelReset,
+            this, &TilesetView::notify_tileset_changed);
   }
+}
+
+/**
+ * @brief Called when the tileset model has changed.
+ */
+void TilesetView::notify_tileset_changed() {
+
+  clear_current_areas();
+  initially_selected_items.clear();
+  start_state_normal();
 }
 
 /**

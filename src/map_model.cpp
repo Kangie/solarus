@@ -40,7 +40,7 @@ MapModel::MapModel(
   QObject(parent),
   quest(quest),
   map_id(map_id),
-  tileset_model(nullptr),
+  tileset(nullptr),
   entities(),
   current_border_set_id() {
 
@@ -54,7 +54,7 @@ MapModel::MapModel(
   // Create the tileset object.
   QString tileset_id = get_tileset_id();
   if (!tileset_id.isEmpty()) {
-    tileset_model = quest.get_tileset(tileset_id);
+    set_tileset(quest.get_tileset(tileset_id));
   }
 
   // Create entities.
@@ -64,6 +64,7 @@ MapModel::MapModel(
       entities[layer].emplace_back(EntityModel::create(*this, index));
     }
   }
+
 }
 
 /**
@@ -352,9 +353,35 @@ void MapModel::set_tileset_id(const QString& tileset_id) {
   }
   map.set_tileset_id(std_tileset_id);
 
-  reload_tileset();
+  if (tileset_id.isEmpty()) {
+    set_tileset(nullptr);
+  }
+  else {
+    set_tileset(quest.get_tileset(tileset_id));
+  }
+
+  notify_tileset_changed();
 
   emit tileset_id_changed(tileset_id);
+}
+
+/**
+ * @brief Sets the tileset of this map.
+ * @param tileset The new tileset.
+ */
+void MapModel::set_tileset(QPointer<TilesetModel> tileset) {
+
+  if (this->tileset != nullptr) {
+    disconnect(this->tileset, nullptr,
+               this, nullptr);
+  }
+
+  if (tileset != nullptr) {
+    connect(tileset, &TilesetModel::modelReset,
+            this, &MapModel::notify_tileset_changed);
+  }
+
+  this->tileset = tileset;
 }
 
 /**
@@ -362,18 +389,11 @@ void MapModel::set_tileset_id(const QString& tileset_id) {
  *
  * The tileset is refreshed.
  *
- * Emis tileset_reloaded().
+ * Emis tileset_changed().
  */
-void MapModel::reload_tileset() {
+void MapModel::notify_tileset_changed() {
 
   const QString& tileset_id = get_tileset_id();
-
-  if (tileset_id.isEmpty()) {
-    tileset_model = nullptr;
-  }
-  else {
-    tileset_model = new TilesetModel(quest, tileset_id, this);
-  }
 
   // Notify children.
   for (auto& kvp : entities) {
@@ -382,16 +402,14 @@ void MapModel::reload_tileset() {
       entity->notify_tileset_changed(tileset_id);
     }
   }
-
-  emit tileset_reloaded();
 }
 
 /**
  * @brief Returns the tileset of this map.
  * @return The tileset. Returns nullptr if no tileset is set.
  */
-TilesetModel* MapModel::get_tileset_model() const {
-  return tileset_model;
+QPointer<TilesetModel> MapModel::get_tileset_model() const {
+  return tileset;
 }
 
 /**
