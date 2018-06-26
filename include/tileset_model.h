@@ -22,6 +22,7 @@
 #include "pattern_separation.h"
 #include <solarus/entities/TilesetData.h>
 #include <QAbstractItemModel>
+#include <QFileSystemWatcher>
 #include <QImage>
 #include <QItemSelectionModel>
 #include <QList>
@@ -59,8 +60,9 @@ public:
   const Quest& get_quest() const;
   Quest& get_quest();
   QString get_tileset_id() const;
-  void notify_data_file_changed();
   void load();
+  bool get_auto_refresh_data_file();
+  void set_auto_refresh_data_file(bool auto_refresh_data_file);
 
   // Tileset data.
   QColor get_background_color() const;
@@ -147,7 +149,6 @@ public:
 signals:
 
   void background_color_changed(const QColor& background_color);
-  void image_changed();
 
   void pattern_created(int new_index, const QString& new_id);
   void pattern_deleted(int old_index, const QString& old_id);
@@ -169,6 +170,9 @@ signals:
       const QString& pattern_id
   );
   void border_set_inner_changed(const QString& border_set_id, bool inner);
+
+  void tileset_image_file_reloaded();
+  void tileset_data_file_changed();
 
 public slots:
 
@@ -211,12 +215,21 @@ private:
     mutable QPixmap icon;         /**< 32x32 icon of the pattern. */
   };
 
+  void tileset_data_file_changing();
+  void tileset_image_file_changing();
   void build_index_map();
 
   Quest& quest;                   /**< The quest the tileset belongs to. */
   const QString tileset_id;       /**< Id of the tileset. */
   Solarus::TilesetData tileset;   /**< Tileset data wrapped by this model. */
   QImage patterns_image;          /**< PNG image of all tile patterns. */
+
+  QFileSystemWatcher
+      data_file_watcher;          /**< Detects changes of the tileset data file on disk. */
+  QFileSystemWatcher
+      image_file_watcher;         /**< Detects changes of the tileset PNG file on disk. */
+  bool auto_refresh_data_file;    /**< Whether to automatically reload the
+                                   * tileset data file when it has changed on the disk. */
 
   std::map<QString, int, NaturalComparator>
       ids_to_indexes;             /**< Index in the list of each pattern.

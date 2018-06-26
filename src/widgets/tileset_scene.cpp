@@ -96,8 +96,8 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
           this, SLOT(pattern_deleted(int, QString)));
   connect(&model, SIGNAL(pattern_id_changed(int, QString, int, QString)),
           this, SLOT(pattern_id_changed(int, QString, int, QString)));
-  connect(&model, SIGNAL(image_changed()),
-          this, SLOT(image_changed()));
+  connect(&model, &TilesetModel::tileset_image_file_reloaded,
+          this, &TilesetScene::image_changed);
 
   connect(&model, &TilesetModel::modelReset,
           this, &TilesetScene::build);

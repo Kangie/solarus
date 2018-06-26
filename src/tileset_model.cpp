@@ -20,7 +20,10 @@
 #include "rectangle.h"
 #include "pattern_animation_traits.h"
 #include "tileset_model.h"
+#include <QDebug>
+#include <QFileSystemWatcher>
 #include <QIcon>
+#include <QTimer>
 
 namespace SolarusEditor {
 
@@ -40,11 +43,23 @@ TilesetModel::TilesetModel(
   QAbstractListModel(parent),
   quest(quest),
   tileset_id(tileset_id),
+  data_file_watcher(),
+  image_file_watcher(),
+  auto_refresh_data_file(true),
   selection_model(this) {
 
   Q_ASSERT(!tileset_id.isEmpty());
 
+  data_file_watcher.addPath(quest.get_tileset_data_file_path(tileset_id));
+  connect(&data_file_watcher, &QFileSystemWatcher::fileChanged,
+          this, &TilesetModel::tileset_data_file_changing);
+
+  image_file_watcher.addPath(quest.get_tileset_tiles_image_path(tileset_id));
+  connect(&image_file_watcher, &QFileSystemWatcher::fileChanged,
+          this, &TilesetModel::tileset_image_file_changing);
+
   load();
+  reload_patterns_image();
 }
 
 /**
@@ -70,13 +85,23 @@ QString TilesetModel::get_tileset_id() const {
 }
 
 /**
- * @brief Called when the tileset data file has changed on disk.
- *
- * Reloads the tileset.
+ * @brief Returns whether to automatically refresh after changes on disk.
+ * @return @c true if the tileset automatically refreshes.
  */
-void TilesetModel::notify_data_file_changed() {
+bool TilesetModel::get_auto_refresh_data_file() {
+  return auto_refresh_data_file;
+}
 
-  load();
+/**
+ * @brief Sets whether to automatically refresh after changes on disk.
+ *
+ * Use the tileset_data_file_changed() signal if you want to do something
+ * specific instead of automatically refreshing the model.
+ *
+ * @param auto_refresh_data_file @c true to automatically refresh.
+ */
+void TilesetModel::set_auto_refresh_data_file(bool auto_refresh_data_file) {
+  this->auto_refresh_data_file = auto_refresh_data_file;
 }
 
 /**
@@ -98,7 +123,6 @@ void TilesetModel::load() {
     patterns.append(PatternModel(pattern_id));
   }
 
-  reload_patterns_image();
   endResetModel();
 }
 
@@ -113,8 +137,52 @@ void TilesetModel::save() const {
   if (!tileset.export_to_file(path.toStdString())) {
     throw EditorException(tr("Cannot save tileset data file '%1'").arg(path));
   }
+}
 
-  get_quest().tileset_saved(this);
+/**
+ * @brief Called when the tileset data file is being modified on the filesystem.
+ */
+void TilesetModel::tileset_data_file_changing() {
+
+  // To avoid any risk of duplicate refreshes.
+  QString path = quest.get_tileset_data_file_path(tileset_id);
+  data_file_watcher.removePath(path);
+
+  QTimer::singleShot(100, this, [this, path]() {
+    if (auto_refresh_data_file) {
+      try {
+        load();
+      }
+      catch (const EditorException& ex) {
+        qWarning() << tr("Failed to refresh tileset: %1").arg(ex.get_message());
+      }
+    }
+
+    // Watch the path again because saving the tileset might have removed it
+    // from the watcher.
+    data_file_watcher.addPath(path);
+
+    emit tileset_data_file_changed();
+  });
+}
+
+/**
+ * @brief Called when the tileset image file is being modified on the filesystem.
+ */
+void TilesetModel::tileset_image_file_changing() {
+
+  // To avoid any risk of duplicate refreshes.
+  QString path = quest.get_tileset_tiles_image_path(tileset_id);
+  image_file_watcher.removePath(path);
+
+  QTimer::singleShot(500, this, [this, path]() {
+
+    // Watch the path again because saving the tileset might have removed it
+    // from the watcher.
+    image_file_watcher.addPath(path);
+
+    reload_patterns_image();
+  });
 }
 
 /**
@@ -1310,13 +1378,14 @@ QImage TilesetModel::get_patterns_image() const {
  */
 void TilesetModel::reload_patterns_image() {
 
-  patterns_image = QImage(quest.get_tileset_tiles_image_path(tileset_id));
+  QString path = quest.get_tileset_tiles_image_path(tileset_id);
+  patterns_image = QImage(path);
 
   for (PatternModel& pattern : patterns) {
     pattern.set_image_dirty();
   }
 
-  emit image_changed();
+  emit tileset_image_file_reloaded();
 }
 
 /**

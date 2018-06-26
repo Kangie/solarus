@@ -2051,18 +2051,4 @@ TilesetModel* Quest::get_tileset(const QString& tileset_id) const {
   return tileset;
 }
 
-/**
- * @brief This function is called when a tileset data file has changed.
- * @param tileset The tileset that has just been saved.
- */
-void Quest::tileset_saved(const TilesetModel* new_tileset) const {
-
-  TilesetModel* tileset = tilesets.value(new_tileset->get_tileset_id(), nullptr);
-  if (tileset == nullptr) {
-    return;
-  }
-
-  tileset->notify_data_file_changed();
-}
-
 }

@@ -53,7 +53,6 @@ public slots:
   void set_description_from_gui();
 
   void update_pattern_view();
-  void tileset_image_changed();
   void update_pattern_id_field();
   void change_selected_patterns_position_requested(const QPoint& delta);
   void update_ground_field();
@@ -91,13 +90,9 @@ public slots:
       const QStringList& pattern_ids
   );
 
-protected:
-
-  void editor_made_visible() override;
-
 private:
 
-  void set_model(TilesetModel* model);
+  void tileset_data_file_changed();
   QStringList change_pattern_id_in_maps(
       const QString& old_pattern_id, const QString& new_pattern_id);
   bool change_pattern_id_in_map(
@@ -109,8 +104,6 @@ private:
   Ui::TilesetEditor ui;         /**< The tileset editor widgets. */
   QString tileset_id;           /**< Id of the tileset being edited. */
   TilesetModel* model;          /**< Tileset model being edited. */
-  bool tileset_image_dirty;     /**< Whether the PNG image has changed externally. */
-
 };
 
 }
