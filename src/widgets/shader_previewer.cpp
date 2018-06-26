@@ -16,6 +16,7 @@
  */
 #include "widgets/shader_previewer.h"
 #include "shader_model.h"
+#include "quest.h"
 
 #include <QLabel>  // TODO remove
 
@@ -26,12 +27,12 @@ namespace SolarusEditor {
  * @param parent The parent object or nullptr.
  */
 ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
-  QWidget(parent),
+  QOpenGLWidget(parent),
   model(nullptr),
-  preview_mode(ShaderPreviewMode::SIDE_BY_SIDE),
-  test_label(new QLabel(this)) {
+  preview_mode(ShaderPreviewMode::SIDE_BY_SIDE)
+{
 
-  test_label->setText("Preview");
+  //test_label->setText("Preview");
 }
 
 /**
@@ -51,6 +52,8 @@ void ShaderPreviewer::set_model(ShaderModel* model) {
 
   if (model != nullptr) {
     // TODO set up any connections to the model here.
+    connect(model,SIGNAL(fragment_file_changed(QString)),this,SLOT(on_fragment_file_changed(QString)));
+    connect(model,SIGNAL(vertex_file_changed(QString)),this,SLOT(on_vertex_file_changed(QString)));
   }
 }
 
@@ -68,7 +71,57 @@ ShaderPreviewMode ShaderPreviewer::get_preview_mode() const {
  */
 void ShaderPreviewer::set_preview_mode(ShaderPreviewMode preview_mode) {
   this->preview_mode = preview_mode;
-  // TODO
+}
+
+void ShaderPreviewer::setup_framebuffers(const QSize& output_size) {
+  makeCurrent();
+  if(input_fb){
+    delete input_fb;
+  }
+  if(output_fb) {
+    delete output_fb;
+  }
+  input_fb = new QOpenGLFramebufferObject(model->get_quest().get_properties().get_normal_quest_size());
+  output_fb = new QOpenGLFramebufferObject(output_size);
+}
+
+void ShaderPreviewer::render_swipe(float factor) {
+
+}
+
+void ShaderPreviewer::paintGL() {
+  switch (preview_mode) {
+  case ShaderPreviewMode::INPUT:
+    break;
+  case ShaderPreviewMode::OUTPUT:
+    break;
+  case ShaderPreviewMode::SIDE_BY_SIDE:
+    break;
+  case ShaderPreviewMode::SWIPE:
+    break;
+  default:
+    break;
+  }
+}
+
+void ShaderPreviewer::initializeGL() {
+
+}
+
+void ShaderPreviewer::resizeGL(int w, int h) {
+
+}
+
+void ShaderPreviewer::on_source_changed() {
+
+}
+
+void ShaderPreviewer::on_vertex_file_changed(const QString &filename) {
+
+}
+
+void ShaderPreviewer::on_fragment_file_changed(const QString &filename) {
+
 }
 
 /**
@@ -78,7 +131,6 @@ void ShaderPreviewer::set_preview_mode(ShaderPreviewMode preview_mode) {
 void ShaderPreviewer::set_preview_image(QImage image) {
 
   // TODO
-  test_label->setPixmap(QPixmap::fromImage(image));
 }
 
 }
