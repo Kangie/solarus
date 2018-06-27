@@ -65,8 +65,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>816</width>
-             <height>390</height>
+             <width>817</width>
+             <height>387</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -95,6 +95,9 @@
                 </property>
                 <property name="text">
                  <string/>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                 </property>
                </widget>
               </item>
@@ -297,26 +300,6 @@
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="tileset_refresh_button">
-                <property name="toolTip">
-                 <string>Refresh tileset</string>
-                </property>
-                <property name="text">
-                 <string>...</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../../resources/images.qrc">
-                  <normaloff>:/images/icon_refresh.png</normaloff>:/images/icon_refresh.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QToolButton" name="tileset_edit_button">
                 <property name="toolTip">
                  <string>Edit tileset (Ctrl-T)</string>
@@ -433,20 +416,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SolarusEditor::TilesetView</class>
-   <extends>QGraphicsView</extends>
-   <header>widgets/tileset_view.h</header>
-  </customwidget>
-  <customwidget>
    <class>SolarusEditor::ResourceSelector</class>
    <extends>QComboBox</extends>
-   <header>widgets/resource_selector.h</header>
+   <header>include/widgets/resource_selector.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::PairSpinBox</class>
    <extends>QWidget</extends>
    <header>widgets/pair_spin_box.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SolarusEditor::TilesetView</class>
+   <extends>QGraphicsView</extends>
+   <header>widgets/tileset_view.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::MapView</class>
@@ -466,6 +449,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../resources/images.qrc"/>
   <include location="../../resources/images.qrc"/>
  </resources>
  <connections/>

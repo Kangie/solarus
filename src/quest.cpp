@@ -364,7 +364,7 @@ QStringList Quest::get_resource_element_paths(ResourceType resource_type,
     break;
 
   case ResourceType::SHADER:
-    paths << get_shader_path(element_id);
+    paths << get_shader_data_file_path(element_id);
     break;
 
   }
@@ -598,12 +598,23 @@ QString Quest::get_tileset_entities_image_path(
 
 /**
  * @brief Returns the path to a shader data file.
- * @param shader_id If of a shader.
+ * @param shader_id Id of a shader.
  * @return The path to the shader data file.
  */
-QString Quest::get_shader_path(const QString& shader_id) const {
+QString Quest::get_shader_data_file_path(const QString& shader_id) const {
 
   return get_data_path() + "/shaders/" + shader_id + ".dat";
+}
+
+/**
+ * @brief Returns the path to a shader GLSL file.
+ * @param glsl_file Filename relative to the \c shaders directory,
+ * including its extension.
+ * @return The path to the shader GLSL file.
+ */
+QString Quest::get_shader_glsl_file_path(const QString& glsl_file) const {
+
+  return get_data_path() + "/shaders/" + glsl_file;
 }
 
 /**
@@ -2041,12 +2052,17 @@ TilesetModel* Quest::get_tileset(const QString& tileset_id) const {
 }
 
 /**
- * @brief This function is called when a tileset file has changed.
+ * @brief This function is called when a tileset data file has changed.
  * @param tileset The tileset that has just been saved.
  */
-void Quest::tileset_saved(const TilesetModel* tileset) const {
+void Quest::tileset_saved(const TilesetModel* new_tileset) const {
 
-  tilesets.remove(tileset->get_tileset_id());
+  TilesetModel* tileset = tilesets.value(new_tileset->get_tileset_id(), nullptr);
+  if (tileset == nullptr) {
+    return;
+  }
+
+  tileset->notify_data_file_changed();
 }
 
 }

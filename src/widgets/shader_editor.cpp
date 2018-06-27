@@ -16,10 +16,13 @@
  */
 #include "widgets/gui_tools.h"
 #include "widgets/shader_editor.h"
+#include "widgets/text_editor.h"
 #include "editor_exception.h"
 #include "quest.h"
 #include "shader_model.h"
 #include "sprite_model.h"
+#include <QFileDialog>
+#include <QInputDialog>
 #include <QUndoStack>
 
 namespace SolarusEditor {
@@ -93,14 +96,16 @@ private:
 /**
  * @brief Creates a shader editor.
  * @param quest The quest containing the file.
- * @param path Path of the sprite data file to open.
+ * @param path Path of the shader data file to open.
  * @param parent The parent object or nullptr.
  * @throws EditorException If the file could not be opened.
  */
 ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   Editor(quest, path, parent),
   shader(nullptr),
-  quest(quest) {
+  quest(quest),
+  vertex_editor(nullptr),
+  fragment_editor(nullptr) {
 
   ui.setupUi(this);
 
@@ -152,6 +157,23 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.right_splitter->setStretchFactor(1, 1);
 
   ui.preview_widget->set_model(shader.get());
+
+  QString vertex_file = shader->get_vertex_file();
+  QString vertex_file_path = vertex_file.isEmpty() ?
+        QString() : quest.get_shader_glsl_file_path(vertex_file);
+  vertex_editor = new TextEditor(
+        quest, vertex_file_path, this);
+  ui.vertex_editor_layout->addWidget(vertex_editor);
+  ui.vertex_editor_layout->removeItem(ui.vertex_editor_placeholder);
+
+  QString fragment_file = shader->get_fragment_file();
+  QString fragment_file_path = fragment_file.isEmpty() ?
+        QString() : quest.get_shader_glsl_file_path(fragment_file);
+  fragment_editor = new TextEditor(
+        quest, fragment_file_path, this);
+  ui.fragment_editor_layout->addWidget(fragment_editor);
+  ui.fragment_editor_layout->removeItem(ui.fragment_editor_placeholder);
+
   update();
 
   // Make connections.
@@ -180,21 +202,31 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(ui.vertex_file_check_box, &QCheckBox::stateChanged,
           this, &ShaderEditor::vertex_file_check_box_changed);
+  connect(ui.vertex_file_new_button, &QToolButton::clicked,
+          this, &ShaderEditor::new_vertex_file);
   connect(ui.vertex_file_browse_button, &QToolButton::clicked,
           this, &ShaderEditor::browse_vertex_file);
+  connect(ui.vertex_file_save_button, &QToolButton::clicked,
+          this, &ShaderEditor::save_vertex_file);
   connect(shader.get(), &ShaderModel::vertex_file_changed,
-          this, &ShaderEditor::update_vertex_file_field);
+          this, &ShaderEditor::update_vertex_file_tab);
+  connect(&vertex_editor->get_undo_stack(), &QUndoStack::cleanChanged,
+          this, &ShaderEditor::vertex_editor_modification_state_changed);
 
   connect(ui.fragment_file_check_box, &QCheckBox::stateChanged,
           this, &ShaderEditor::fragment_file_check_box_changed);
+  connect(ui.fragment_file_new_button, &QToolButton::clicked,
+          this, &ShaderEditor::new_fragment_file);
   connect(ui.fragment_file_browse_button, &QToolButton::clicked,
           this, &ShaderEditor::browse_fragment_file);
+  connect(ui.fragment_file_save_button, &QToolButton::clicked,
+          this, &ShaderEditor::save_fragment_file);
   connect(shader.get(), &ShaderModel::fragment_file_changed,
-          this, &ShaderEditor::update_fragment_file_field);
+          this, &ShaderEditor::update_fragment_file_tab);
+  connect(&fragment_editor->get_undo_stack(), &QUndoStack::cleanChanged,
+          this, &ShaderEditor::fragment_editor_modification_state_changed);
 
   preview_radio_changed();
-  vertex_file_check_box_changed();
-  fragment_file_check_box_changed();
 
   // TODO remember last preview settings in QSettings
 }
@@ -221,6 +253,18 @@ ShaderModel& ShaderEditor::get_shader() {
 void ShaderEditor::save() {
 
   shader->save();
+  save_vertex_file();
+  save_fragment_file();
+}
+
+/**
+ * @copydoc Editor::has_unsaved_changes
+ */
+bool ShaderEditor::has_unsaved_changes() const {
+
+  return Editor::has_unsaved_changes() ||
+      vertex_editor->has_unsaved_changes() ||
+      fragment_editor->has_unsaved_changes();
 }
 
 /**
@@ -230,8 +274,8 @@ void ShaderEditor::update() {
 
   update_shader_id_field();
   update_description_to_gui();
-  update_vertex_file_field();
-  update_fragment_file_field();
+  update_vertex_file_tab();
+  update_fragment_file_tab();
 }
 
 /**
@@ -285,19 +329,15 @@ void ShaderEditor::set_description_from_gui() {
 }
 
 /**
- * @brief Updates the vertex file field from the data.
+ * @brief Updates the vertex file tab from the data.
  */
-void ShaderEditor::update_vertex_file_field() {
+void ShaderEditor::update_vertex_file_tab() {
 
   if (shader == nullptr) {
     return;
   }
-  const QString& vertex_file = shader->get_vertex_file();
-  ui.vertex_file_field->setText(vertex_file);
-  const bool has_file = !vertex_file.isEmpty();
-  ui.vertex_file_check_box->setChecked(has_file);
-  ui.vertex_file_field->setEnabled(!has_file);
 
+  // TODO
 }
 
 /**
@@ -305,24 +345,15 @@ void ShaderEditor::update_vertex_file_field() {
  */
 void ShaderEditor::vertex_file_check_box_changed() {
 
-  const bool checked = ui.vertex_file_check_box->isChecked();
-  if (checked) {
-    ui.vertex_file_widget->setVisible(true);
-    ui.vertex_shader_text_edit->setVisible(true);
-    if (shader->get_vertex_file().isEmpty() &&
-        !ui.vertex_file_field->text().isEmpty()) {
-      // Use the text that was still in the disabled field.
-      try_command(new SetVertexFileCommand(*this, ui.vertex_file_field->text()));
-    }
-  }
-  else {
-    ui.vertex_file_widget->setVisible(false);
-    ui.vertex_shader_text_edit->setVisible(false);
-    if (!shader->get_vertex_file().isEmpty()) {
-      // Remove the value but keep the text in the field.
-      try_command(new SetVertexFileCommand(*this, ""));
-    }
-  }
+  // TODO
+}
+
+/**
+ * @brief Lets the user choose a vertex code file to create.
+ */
+void ShaderEditor::new_vertex_file() {
+
+  // TODO
 }
 
 /**
@@ -334,19 +365,49 @@ void ShaderEditor::browse_vertex_file() {
 }
 
 /**
- * @brief Updates the fragment file field from the data.
+ * @brief Saves the vertex shader GLSL file.
  */
-void ShaderEditor::update_fragment_file_field() {
+void ShaderEditor::save_vertex_file() {
+
+  // TODO
+}
+
+/**
+ * @brief Called when the is-modified state of the vertex editor has changed.
+ * @param clean @c true if the file is now clean, @c false if it is now
+ * modified.
+ */
+void ShaderEditor::vertex_editor_modification_state_changed(bool clean) {
+
+  QString title = "Vertex shader";
+  if (!clean) {
+    title += '*';
+  }
+  ui.shader_files_tab_widget->setTabText(0, title);
+}
+
+/**
+ * @brief Updates the fragment tab field from the data.
+ */
+void ShaderEditor::update_fragment_file_tab() {
 
   if (shader == nullptr) {
     return;
   }
+
   const QString& fragment_file = shader->get_fragment_file();
   ui.fragment_file_field->setText(fragment_file);
   const bool has_file = !fragment_file.isEmpty();
-  ui.fragment_file_check_box->setChecked(has_file);
-  ui.fragment_file_field->setEnabled(!has_file);
-  ui.fragment_file_browse_button->setEnabled(!has_file);
+  {
+    QSignalBlocker blocker(ui.fragment_file_check_box);
+    ui.fragment_file_check_box->setChecked(has_file);
+  }
+  if (has_file) {
+    ui.fragment_editor_stacked_widget->setCurrentWidget(ui.fragment_editor_normal_page);
+  }
+  else {
+    ui.fragment_editor_stacked_widget->setCurrentWidget(ui.fragment_editor_empty_page);
+  }
 }
 
 /**
@@ -356,30 +417,128 @@ void ShaderEditor::fragment_file_check_box_changed() {
 
   const bool checked = ui.fragment_file_check_box->isChecked();
   if (checked) {
-    ui.fragment_file_widget->setVisible(true);
-    ui.fragment_shader_text_edit->setVisible(true);
     if (shader->get_fragment_file().isEmpty() &&
-        !ui.fragment_file_field->text().isEmpty()) {
-      // Use the text that was still in the disabled field.
-      try_command(new SetFragmentFileCommand(*this, ui.fragment_file_field->text()));
+       !last_fragment_file.isEmpty()) {
+      // Use the previous file name.
+      try_command(new SetFragmentFileCommand(*this, last_fragment_file));
+    }
+    else {
+      browse_fragment_file();
     }
   }
   else {
-    ui.fragment_file_widget->setVisible(false);
-    ui.fragment_shader_text_edit->setVisible(false);
     if (!shader->get_fragment_file().isEmpty()) {
-      // Remove the value but keep the text in the field.
+      // Remove the value but remember it.
+      last_fragment_file = shader->get_fragment_file();
       try_command(new SetFragmentFileCommand(*this, ""));
     }
   }
 }
 
 /**
- * @brief Lets the user choose a fragment code file.
+ * @brief Lets the user choose a fragment code file to create.
+ */
+void ShaderEditor::new_fragment_file() {
+
+  if (shader == nullptr) {
+    return;
+  }
+
+  try {
+    if (!fragment_editor->confirm_before_closing()) {
+      return;
+    }
+
+    bool ok = false;
+    QString file_name = QInputDialog::getText(
+          this,
+          tr("New GLSL file"),
+          tr("File name:"),
+          QLineEdit::Normal,
+          shader_id + ".frag.glsl",
+          &ok);
+
+    if (ok) {
+      // Automatically add .glsl extension if not present.
+      if (!file_name.contains(".")) {
+        file_name = file_name + ".lua";
+      }
+      Quest::check_valid_file_name(file_name);
+      const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);
+      QString file_path = shaders_path + '/' + file_name;
+
+      get_quest().create_file(file_path);
+
+      file_name = file_name.right(shaders_path.size() + 1);
+      try_command(new SetFragmentFileCommand(*this, file_name));
+    }
+  }
+  catch (const EditorException& ex) {
+    GuiTools::error_dialog(ex.get_message());
+  }
+}
+
+/**
+ * @brief Lets the user choose a fragment code file to open.
  */
 void ShaderEditor::browse_fragment_file() {
 
-  // TODO
+  if (shader == nullptr) {
+    return;
+  }
+
+  try {
+    const QString& directory = QFileInfo(get_file_path()).dir().path();
+
+    QString file_name = QFileDialog::getOpenFileName(
+        this,
+        tr("Open a GLSL file"),
+        directory,
+        tr("GLSL shader file (*.glsl)")
+    );
+
+    if (file_name.isEmpty()) {
+      return;
+    }
+
+    const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);
+    if (!file_name.startsWith(shaders_path)) {
+      throw EditorException(tr("Shader GLSL files must be in the shaders directory"));
+    }
+
+    file_name = file_name.right(file_name.size() - shaders_path.size() - 1);
+    try_command(new SetFragmentFileCommand(*this, file_name));
+  }
+  catch (const EditorException& ex) {
+    GuiTools::error_dialog(ex.get_message());
+  }
+}
+
+/**
+ * @brief Saves the fragment shader GLSL file.
+ */
+void ShaderEditor::save_fragment_file() {
+
+  if (shader == nullptr) {
+    return;
+  }
+
+  fragment_editor->save();
+  fragment_editor->get_undo_stack().setClean();
+}
+
+/**
+ * @brief Called when the is-modified state of the fragment editor has changed.
+ * @param clean @c true if the file is now clean, @c false if it is now
+ * modified.
+ */
+void ShaderEditor::fragment_editor_modification_state_changed(bool clean) {
+
+  QString title = "Fragment shader";
+  if (!clean) {
+    title += '*';
+  }
+  ui.shader_files_tab_widget->setTabText(1, title);
 }
 
 /**

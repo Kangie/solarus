@@ -278,8 +278,7 @@ void MapView::set_map(MapModel* map) {
     // Connect signals.
     connect(map, SIGNAL(tileset_id_changed(QString)),
             this, SLOT(tileset_id_changed(QString)));
-    connect(map, SIGNAL(tileset_reloaded()),
-            this, SLOT(tileset_reloaded()));
+    tileset_id_changed(map->get_tileset_id());
 
     // Start the state mechanism.
     start_state_doing_nothing();
@@ -1150,18 +1149,22 @@ void MapView::tileset_selection_changed() {
 void MapView::tileset_id_changed(const QString& tileset_id) {
 
   Q_UNUSED(tileset_id);
-  if (scene == nullptr) {
-    return;
-  }
-  scene->update();
+  disconnect(this, SLOT(notify_tileset_changed()));
 
-  start_state_doing_nothing();
+  if (map->get_tileset_model() != nullptr) {
+    // Watch changes of this tileset.
+    connect(map->get_tileset_model(), &TilesetModel::modelReset,
+            this, &MapView::notify_tileset_changed);
+  }
+
+  // TODO only if there is really a change
+  notify_tileset_changed();
 }
 
 /**
- * @brief Slot called when the tileset file is reloaded.
+ * @brief Slot called when the tileset has changed.
  */
-void MapView::tileset_reloaded() {
+void MapView::notify_tileset_changed() {
 
   if (scene == nullptr) {
     return;

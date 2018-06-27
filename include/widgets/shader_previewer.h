@@ -23,6 +23,9 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLTexture>
+#include <QOpenGLShader>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
 #include <QOpenGLWidget>
 #include <QFileSystemWatcher>
 #include <QMatrix4x4>
@@ -49,7 +52,6 @@ public:
   void set_preview_mode(ShaderPreviewMode preview_mode);
   void setup_framebuffers(const QSize& output_size);
 
-  void render_swipe(float factor);
 
   void set_preview_image(QImage image);
 
@@ -64,9 +66,12 @@ public slots:
  void on_fragment_file_changed(const QString &filename);
 
 private:
+  void render_fbs();
+  void render_swipe(float factor);
   QOpenGLFramebufferObject* input_fb; /**< Framebuffer to chich the input is drawn */
   QOpenGLFramebufferObject* output_fb;/**< Framebuffer to which the output is drawn */
-  QOpenGLVertexArrayObject* quad;     /**< quad array */
+  QOpenGLBuffer* vertex_buffer;       /**< quad buffer; */
+  QOpenGLShaderProgram program;       /**< shader program*/
   QOpenGLTexture* input_texture;      /**< Texture of the input*/
   QPointer<ShaderModel> model;        /**< The shader model. */
   ShaderPreviewMode preview_mode;     /**< Display mode of the preview. */

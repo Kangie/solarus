@@ -16,6 +16,7 @@
  */
 #include "widgets/shader_previewer.h"
 #include "shader_model.h"
+#include "solarus/graphics/VertexArray.h"
 #include "quest.h"
 
 #include <QLabel>  // TODO remove
@@ -28,6 +29,7 @@ namespace SolarusEditor {
  */
 ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   QOpenGLWidget(parent),
+  program(this),
   model(nullptr),
   preview_mode(ShaderPreviewMode::SIDE_BY_SIDE)
 {
@@ -52,8 +54,10 @@ void ShaderPreviewer::set_model(ShaderModel* model) {
 
   if (model != nullptr) {
     // TODO set up any connections to the model here.
-    connect(model,SIGNAL(fragment_file_changed(QString)),this,SLOT(on_fragment_file_changed(QString)));
-    connect(model,SIGNAL(vertex_file_changed(QString)),this,SLOT(on_vertex_file_changed(QString)));
+    connect(model,&ShaderModel::fragment_file_changed,this,&ShaderPreviewer::on_fragment_file_changed);
+    connect(model,&ShaderModel::vertex_file_changed,this,&ShaderPreviewer::on_vertex_file_changed);
+
+    //setup_framebuffers(model->);
   }
 }
 
@@ -85,6 +89,10 @@ void ShaderPreviewer::setup_framebuffers(const QSize& output_size) {
   output_fb = new QOpenGLFramebufferObject(output_size);
 }
 
+void ShaderPreviewer::render_fbs() {
+
+}
+
 void ShaderPreviewer::render_swipe(float factor) {
 
 }
@@ -92,12 +100,15 @@ void ShaderPreviewer::render_swipe(float factor) {
 void ShaderPreviewer::paintGL() {
   switch (preview_mode) {
   case ShaderPreviewMode::INPUT:
+    render_swipe(1.f);
     break;
   case ShaderPreviewMode::OUTPUT:
+    render_swipe(0.f);
     break;
   case ShaderPreviewMode::SIDE_BY_SIDE:
     break;
   case ShaderPreviewMode::SWIPE:
+    render_swipe(0.5f); //TODO pass actual factor
     break;
   default:
     break;
@@ -105,7 +116,16 @@ void ShaderPreviewer::paintGL() {
 }
 
 void ShaderPreviewer::initializeGL() {
-
+  //Setup quad
+  vertex_buffer = new QOpenGLBuffer();
+  if(!vertex_buffer->create()) {
+    qDebug() << "Failed to create glbuffer!"; //TODO fail gracefully
+  }
+  Solarus::VertexArray array;
+  array.add_quad(Solarus::Rectangle(0,0,1,1),
+                 Solarus::Rectangle(0,1,1,-1),
+                 Solarus::Color::white);
+  vertex_buffer->allocate(array.data(),array.vertex_count()*sizeof(Solarus::Vertex));
 }
 
 void ShaderPreviewer::resizeGL(int w, int h) {
@@ -113,7 +133,7 @@ void ShaderPreviewer::resizeGL(int w, int h) {
 }
 
 void ShaderPreviewer::on_source_changed() {
-
+  //program.addShaderFromSourceCode()
 }
 
 void ShaderPreviewer::on_vertex_file_changed(const QString &filename) {
@@ -129,7 +149,6 @@ void ShaderPreviewer::on_fragment_file_changed(const QString &filename) {
  * @param image The new image to show.
  */
 void ShaderPreviewer::set_preview_image(QImage image) {
-
   // TODO
 }
 

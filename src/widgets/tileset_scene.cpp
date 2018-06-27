@@ -98,6 +98,9 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
           this, SLOT(pattern_id_changed(int, QString, int, QString)));
   connect(&model, SIGNAL(image_changed()),
           this, SLOT(image_changed()));
+
+  connect(&model, &TilesetModel::modelReset,
+          this, &TilesetScene::build);
 }
 
 /**

@@ -77,7 +77,6 @@ private slots:
   void update_tileset_field();
   void tileset_id_changed(const QString& tileset_id);
   void tileset_selector_activated();
-  void refresh_tileset_requested();
   void open_tileset_requested();
   void update_music_field();
   void music_selector_activated();

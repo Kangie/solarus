@@ -42,6 +42,7 @@ class Editor : public QWidget {
 public:
 
   Editor(Quest& quest, const QString& path, QWidget* parent = nullptr);
+  ~Editor();
 
   const Quest& get_quest() const;
   Quest& get_quest();
@@ -56,7 +57,7 @@ public:
   QUndoStack& get_undo_stack();
   const QMap<QString, QAction*>& get_common_actions() const;
   void set_common_actions(const QMap<QString, QAction*>& common_actions);
-  bool has_unsaved_changes() const;
+  virtual bool has_unsaved_changes() const;
   bool confirm_before_closing();
 
   bool is_select_all_supported() const;

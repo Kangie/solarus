@@ -19,6 +19,8 @@ ________________________________________
 * Map editor: add shortcuts to show/hide negative layers too.
 * Map editor: keep the selection after adding entities with ctrl or shift.
 * Map editor: add a shortcut to open the tileset by Akadream (#241).
+* Map editor: don't reload the tileset if it is already open elsewhere (#350).
+* Map editor: automatically reload the tileset when it has changed (#362).
 * Tileset editor: allow to duplicate tile patterns (#188).
 * Tileset editor: allow to move several patterns at once (#171).
 * Sprite editor: allow to reorder directions by Maxs (#144).
@@ -28,6 +30,7 @@ ________________________________________
 * Sprite editor: fix scrollbars reset when adding directions by Maxs (#277).
 * Dialog editor: show the line and column number.
 * Script editor: allow a replace option to the find dialog by Akadream (#3).
+* Allow to select map/tileset/sprite/etc. ids to copy-paste them (#170).
 * Clear the console when a quest is started (#230).
 * Fix memory not released when closing an editor (#306).
 

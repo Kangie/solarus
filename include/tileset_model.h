@@ -59,6 +59,8 @@ public:
   const Quest& get_quest() const;
   Quest& get_quest();
   QString get_tileset_id() const;
+  void notify_data_file_changed();
+  void load();
 
   // Tileset data.
   QColor get_background_color() const;

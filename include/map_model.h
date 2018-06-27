@@ -68,10 +68,10 @@ public:
   void set_floor(int floor);
   QPoint get_location() const;
   void set_location(const QPoint& location);
-  TilesetModel* get_tileset_model() const;
+  QPointer<TilesetModel> get_tileset_model() const;
   QString get_tileset_id() const;
   void set_tileset_id(const QString& tileset_id);
-  void reload_tileset();
+  void notify_tileset_changed();
   QString get_music_id() const;
   void set_music_id(const QString& music_id);
   QString get_current_border_set_id();
@@ -150,7 +150,6 @@ signals:
   void floor_changed(int floor);
   void location_changed(const QPoint& location);
   void tileset_id_changed(const QString& tileset_id);
-  void tileset_reloaded();
   void music_id_changed(const QString& music_id);
 
   void entities_about_to_be_added(const EntityIndexes& indexes);
@@ -174,12 +173,14 @@ public slots:
 
 private:
 
+  void set_tileset(QPointer<TilesetModel> tileset);
   void rebuild_entity_indexes(int layer);
 
   Quest& quest;                   /**< The quest the tileset belongs to. */
   const QString map_id;           /**< Id of the map. */
   Solarus::MapData map;           /**< Map data wrapped by this model. */
-  TilesetModel* tileset_model;    /**< Tileset of this map. nullptr if not set. */
+  QPointer<TilesetModel>
+      tileset;                    /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
   QString current_border_set_id;  /**< Border set currently selected by the user. */

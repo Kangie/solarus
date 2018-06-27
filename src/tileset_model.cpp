@@ -44,20 +44,7 @@ TilesetModel::TilesetModel(
 
   Q_ASSERT(!tileset_id.isEmpty());
 
-  // Load the tileset data file.
-  QString path = quest.get_tileset_data_file_path(tileset_id);
-
-  if (!tileset.import_from_file(path.toStdString())) {
-    throw EditorException(tr("Cannot open tileset data file '%1'").arg(path));
-  }
-
-  build_index_map();
-  for (const auto& kvp : ids_to_indexes) {
-    const QString& pattern_id = kvp.first;
-    patterns.append(PatternModel(pattern_id));
-  }
-
-  reload_patterns_image();
+  load();
 }
 
 /**
@@ -80,6 +67,39 @@ Quest& TilesetModel::get_quest() {
  */
 QString TilesetModel::get_tileset_id() const {
   return tileset_id;
+}
+
+/**
+ * @brief Called when the tileset data file has changed on disk.
+ *
+ * Reloads the tileset.
+ */
+void TilesetModel::notify_data_file_changed() {
+
+  load();
+}
+
+/**
+ * @brief Loads the tileset from its data file.
+ */
+void TilesetModel::load() {
+
+  QString path = quest.get_tileset_data_file_path(tileset_id);
+
+  beginResetModel();
+  if (!tileset.import_from_file(path.toStdString())) {
+    throw EditorException(tr("Cannot open tileset data file '%1'").arg(path));
+  }
+
+  build_index_map();
+  patterns.clear();
+  for (const auto& kvp : ids_to_indexes) {
+    const QString& pattern_id = kvp.first;
+    patterns.append(PatternModel(pattern_id));
+  }
+
+  reload_patterns_image();
+  endResetModel();
 }
 
 /**

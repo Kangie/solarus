@@ -163,7 +163,7 @@ public slots:
   void update_entity_type_visibility(EntityType type);
   void tileset_selection_changed();
   void tileset_id_changed(const QString& tileset_id);
-  void tileset_reloaded();
+  void notify_tileset_changed();
 
   void cancel_state_requested();
   void undo_last_command();
