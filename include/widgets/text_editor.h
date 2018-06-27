@@ -36,7 +36,9 @@ public:
   QString create_title() const;
   QIcon create_icon() const;
 
+  void load();
   void save() override;
+  void path_changed() override;
   bool can_cut() const override;
   void cut() override;
   bool can_copy() const override;

@@ -41,7 +41,7 @@ class Editor : public QWidget {
 
 public:
 
-  Editor(Quest& quest, const QString& path, QWidget* parent = nullptr);
+  Editor(Quest& quest, const QString& file_path, QWidget* parent = nullptr);
   ~Editor();
 
   const Quest& get_quest() const;
@@ -49,6 +49,7 @@ public:
   const QuestDatabase& get_database() const;
   QuestDatabase& get_database();
   QString get_file_path() const;
+  void set_file_path(const QString& file_path);
   QString get_file_name() const;
   QString get_file_name_without_extension() const;
   QString get_title() const;
@@ -74,6 +75,7 @@ public:
   ViewSettings& get_view_settings();
 
   virtual void save() = 0;
+  virtual void path_changed();
   virtual bool can_cut() const;
   virtual void cut();
   virtual bool can_copy() const;
