@@ -27,6 +27,7 @@
 #include <QPlainTextEdit>
 #include <QScrollBar>
 #include <QTextStream>
+#include <QUndoStack>
 
 namespace SolarusEditor {
 
@@ -78,7 +79,17 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   text_widget->document()->setModified(false);
 
   // Open the file.
+  load();
+}
+
+/**
+ * @brief Loads the content of the current file in the text editor.
+ */
+void TextEditor::load() {
+
+  const QString& file_path = get_file_path();
   if (file_path.isEmpty()) {
+    text_widget->clear();
     return;
   }
 
@@ -89,60 +100,14 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   QTextStream out(&file);
   out.setCodec("UTF-8");
   text_widget->setPlainText(out.readAll());
+  get_undo_stack().setClean();
 }
 
 /**
- * @brief Chooses an appropriate title for this editor.
- * @return A title.
+ * @copydoc Editor::path_changed
  */
-QString TextEditor::create_title() const {
-
-  QString path = get_file_path();
-  QString language_id;
-
-  if (get_quest().is_dialogs_file(path, language_id)) {
-    return get_file_name() + " (" + language_id + ')';
-  }
-
-  if (get_quest().is_strings_file(path, language_id)) {
-    return get_file_name() + " (" + language_id + ')';
-  }
-
-  return Editor::get_title();
-}
-
-/**
- * @brief Chooses an appropriate icon for this editor.
- * @return An icon.
- */
-QIcon TextEditor::create_icon() const {
-
-  QString path = get_file_path();
-  ResourceType resource_type;
-  QString element_id;
-
-  if (get_quest().is_resource_element(path, resource_type, element_id)) {
-    // A resource element that is a Lua file (enemy, custom entity or item).
-    QString resource_lua_name = get_database().get_lua_name(resource_type);
-    return QIcon(":/images/icon_resource_" + resource_lua_name + ".png");
-  }
-
-  if (get_quest().is_map_script(path, element_id)) {
-    // A map Lua script.
-    return QIcon(":/images/icon_script_map.png");
-  }
-
-  if (get_quest().is_script(path)) {
-    // Another Lua script.
-    return QIcon(":/images/icon_script.png");
-  }
-
-  if (get_quest().is_shader_code(path)) {
-    // A GLSL file.
-    return QIcon(":/images/icon_shader_code.png");
-  }
-
-  return QIcon(":/images/icon_file.png");
+void TextEditor::path_changed() {
+  load();
 }
 
 /**
@@ -313,6 +278,59 @@ void TextEditor::open_map_requested() {
     emit open_file_requested(
       get_quest(), get_quest().get_map_data_file_path(map_id));
   }
+}
+/**
+ * @brief Chooses an appropriate title for this editor.
+ * @return A title.
+ */
+QString TextEditor::create_title() const {
+
+  QString path = get_file_path();
+  QString language_id;
+
+  if (get_quest().is_dialogs_file(path, language_id)) {
+    return get_file_name() + " (" + language_id + ')';
+  }
+
+  if (get_quest().is_strings_file(path, language_id)) {
+    return get_file_name() + " (" + language_id + ')';
+  }
+
+  return Editor::get_title();
+}
+
+/**
+ * @brief Chooses an appropriate icon for this editor.
+ * @return An icon.
+ */
+QIcon TextEditor::create_icon() const {
+
+  QString path = get_file_path();
+  ResourceType resource_type;
+  QString element_id;
+
+  if (get_quest().is_resource_element(path, resource_type, element_id)) {
+    // A resource element that is a Lua file (enemy, custom entity or item).
+    QString resource_lua_name = get_database().get_lua_name(resource_type);
+    return QIcon(":/images/icon_resource_" + resource_lua_name + ".png");
+  }
+
+  if (get_quest().is_map_script(path, element_id)) {
+    // A map Lua script.
+    return QIcon(":/images/icon_script_map.png");
+  }
+
+  if (get_quest().is_script(path)) {
+    // Another Lua script.
+    return QIcon(":/images/icon_script.png");
+  }
+
+  if (get_quest().is_shader_code(path)) {
+    // A GLSL file.
+    return QIcon(":/images/icon_shader_code.png");
+  }
+
+  return QIcon(":/images/icon_file.png");
 }
 
 }

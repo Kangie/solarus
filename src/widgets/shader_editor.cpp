@@ -404,6 +404,7 @@ void ShaderEditor::update_fragment_file_tab() {
   }
   if (has_file) {
     ui.fragment_editor_stacked_widget->setCurrentWidget(ui.fragment_editor_normal_page);
+    fragment_editor->set_file_path(get_quest().get_shader_glsl_file_path(fragment_file));
   }
   else {
     ui.fragment_editor_stacked_widget->setCurrentWidget(ui.fragment_editor_empty_page);
@@ -488,6 +489,9 @@ void ShaderEditor::browse_fragment_file() {
   }
 
   try {
+    if (!fragment_editor->confirm_before_closing()) {
+      return;
+    }
     const QString& directory = QFileInfo(get_file_path()).dir().path();
 
     QString file_name = QFileDialog::getOpenFileName(

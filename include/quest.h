@@ -170,7 +170,6 @@ public:
   void set_current_music_id(const QString& music_id);
 
   TilesetModel* get_tileset(const QString& tileset_id) const;
-  void tileset_saved(const TilesetModel* tileset) const;
 
 signals:
 

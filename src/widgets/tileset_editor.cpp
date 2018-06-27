@@ -29,7 +29,6 @@
 #include <QColorDialog>
 #include <QDebug>
 #include <QFile>
-#include <QFileSystemWatcher>
 #include <QInputDialog>
 #include <QItemSelectionModel>
 #include <QMessageBox>
@@ -789,8 +788,7 @@ private:
  */
 TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent) :
   Editor(quest, path, parent),
-  model(nullptr),
-  tileset_image_dirty(false) {
+  model(nullptr) {
 
   ui.setupUi(this);
 
@@ -816,6 +814,7 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
 
   // Open the file.
   model = new TilesetModel(quest, tileset_id, this);
+  model->set_auto_refresh_data_file(false);
   get_undo_stack().setClean();
 
   // Prepare the gui.
@@ -926,10 +925,8 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   connect(ui.border_sets_tree_view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
           this, SLOT(update_border_set_view()));
 
-  QFileSystemWatcher* watcher = new QFileSystemWatcher(this);
-  watcher->addPath(quest.get_tileset_tiles_image_path(tileset_id));
-  connect(watcher, SIGNAL(fileChanged(QString)),
-          this, SLOT(tileset_image_changed()));
+  connect(model, &TilesetModel::tileset_data_file_changed,
+          this, &TilesetEditor::tileset_data_file_changed);
 }
 
 /**
@@ -949,6 +946,27 @@ void TilesetEditor::save() {
     return;
   }
   model->save();
+}
+
+/**
+ * @brief Called when the tileset data file has changed on disk.
+ *
+ * Reloads the tileset unless there are unsaved changes.
+ */
+void TilesetEditor::tileset_data_file_changed() {
+
+  if (model == nullptr) {
+    return;
+  }
+  if (has_unsaved_changes()) {
+    return;
+  }
+  try {
+    model->load();
+  }
+  catch (const EditorException& ex) {
+    GuiTools::error_dialog(ex.get_message());
+  }
 }
 
 /**
@@ -1096,14 +1114,6 @@ void TilesetEditor::update_pattern_view() {
 
   // If no pattern is selected, disable the tile pattern view.
   ui.pattern_properties_group_box->setEnabled(!model->is_selection_empty());
-}
-
-/**
- * @brief Slot called when the PNG file of the tileset has changed.
- */
-void TilesetEditor::tileset_image_changed() {
-
-  tileset_image_dirty = true;
 }
 
 /**
@@ -1734,35 +1744,6 @@ void TilesetEditor::border_set_inner_selector_activated() {
   }
 
   try_command(new SetBorderSetInnerCommand(*this, border_set_id, new_inner));
-}
-
-/**
- * @copydoc Editor::editor_made_visible
- */
-void TilesetEditor::editor_made_visible() {
-
-  Editor::editor_made_visible();
-
-  if (tileset_image_dirty) {
-    tileset_image_dirty = false;
-    QMessageBox::StandardButton answer = QMessageBox::question(
-          this,
-          tr("Image was modified externally"),
-          tr("The tileset image was modified.\nDo you want to refresh the tileset?"),
-          QMessageBox::Yes | QMessageBox::No,
-          QMessageBox::Yes
-          );
-
-    if (answer == QMessageBox::QMessageBox::No) {
-      return;
-    }
-
-    model->reload_patterns_image();
-
-    // Refresh both views.
-    ui.tileset_view->update();
-    // TODO ui.patterns_list_view->
-  }
 }
 
 /**

@@ -226,6 +226,37 @@ QString Editor::get_file_path() const {
 }
 
 /**
+ * @brief Sets the file to be displayed in the editor.
+ * @param file_path Path of the file to set.
+ */
+void Editor::set_file_path(const QString& file_path) {
+
+  if (file_path == this->file_path) {
+    return;
+  }
+
+  bool title_is_file_name = (get_title() == get_file_name());
+
+  this->file_path = file_path;
+  if (title_is_file_name) {
+    // Upddate the title as well unless it was customized.
+    set_title(get_file_name());
+  }
+
+  path_changed();
+}
+
+/**
+ * @brief Called when the path to be displayed in the editor has changed.
+ *
+ * Editors that supports changing the file should reimplement this
+ * method and load the new file that was set.
+ * The default implementation does nothing.
+ */
+void Editor::path_changed() {
+}
+
+/**
  * @brief Returns the name of the file being edited.
  *
  * The file name is the last component of the path.

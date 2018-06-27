@@ -152,6 +152,8 @@ void TilesetView::set_model(TilesetModel* model) {
 
     connect(model, &TilesetModel::modelReset,
             this, &TilesetView::notify_tileset_changed);
+    connect(model, &TilesetModel::tileset_image_file_reloaded,
+            this, QOverload<>::of(&TilesetView::update));
   }
 }
 
