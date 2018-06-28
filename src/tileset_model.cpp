@@ -20,6 +20,7 @@
 #include "rectangle.h"
 #include "pattern_animation_traits.h"
 #include "tileset_model.h"
+#include <QCryptographicHash>
 #include <QDebug>
 #include <QFileSystemWatcher>
 #include <QIcon>
@@ -134,7 +135,32 @@ void TilesetModel::save() const {
 
   QString path = quest.get_tileset_data_file_path(tileset_id);
 
-  if (!tileset.export_to_file(path.toStdString())) {
+  std::string new_data;
+  tileset.export_to_buffer(new_data);
+
+  // First read the existing file if it exists,
+  // to check if there are actual changes.
+  QFile file(path);
+  if (file.open(QIODevice::ReadOnly)) {
+      QCryptographicHash hasher(QCryptographicHash::Sha1);
+      hasher.addData(&file);
+      QByteArray old_file_hash = hasher.result();
+
+      hasher.reset();
+      hasher.addData(new_data.data(), new_data.size());
+
+      if (hasher.result() == old_file_hash) {
+        // The saved version is already up-to-date: nothing to save.
+        // Avoid unnecessary refreshes of the tileset.
+        return;
+      }
+      file.close();
+  }
+
+  // Now write the file.
+  file.open(QIODevice::WriteOnly);
+  qint64 bytes = file.write(new_data.data(), new_data.size());
+  if (bytes != static_cast<qint64>(new_data.size())) {
     throw EditorException(tr("Cannot save tileset data file '%1'").arg(path));
   }
 }
