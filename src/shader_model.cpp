@@ -117,6 +117,23 @@ void ShaderModel::set_fragment_file(const QString& fragment_file) {
 }
 
 /**
+ * @brief get the scaling factor of this shader
+ * @return scaling factor >= 0, other values mean there is no scaling factor
+ */
+double ShaderModel::get_scaling_factor() const {
+  return shader.get_scaling_factor();
+}
+
+/**
+ * @brief Sets this shader scaling factor
+ * @param factor
+ */
+void ShaderModel::set_scaling_factor(double factor) {
+  shader.set_scaling_factor(factor);
+  emit scaling_factor_changed(factor);
+}
+
+/**
  * @brief Saves the sprite to its data file.
  * @throws EditorException If the file could not be saved.
  */

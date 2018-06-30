@@ -28,7 +28,9 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLWidget>
 #include <QFileSystemWatcher>
+#include <QOpenGLDebugLogger>
 #include <QMatrix4x4>
+#include <QTimer>
 
 class QLabel;  // TODO remove
 
@@ -52,32 +54,62 @@ public:
   void set_preview_mode(ShaderPreviewMode preview_mode);
   void setup_framebuffers(const QSize& output_size);
 
+  /// Mouse events
+  void mouseMoveEvent(QMouseEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
+  void wheelEvent(QWheelEvent* event) override;
 
   void set_preview_image(QImage image);
 
-  //Opengl events
+  /// Opengl events
   virtual void paintGL() override;
   virtual void initializeGL() override;
   virtual void resizeGL(int w, int h) override;
 
 public slots:
  void on_source_changed();
- void on_vertex_file_changed(const QString& filename);
- void on_fragment_file_changed(const QString &filename);
+ void on_scaling_factor_changed(double factor);
 
 private:
+  using Textures = std::vector<std::pair<const char*,GLuint>>;
+
+  /// Render utils
+  void render_quad(QOpenGLShaderProgram& shader, const Textures& textures);
   void render_fbs();
   void render_swipe(float factor);
-  QOpenGLFramebufferObject* input_fb; /**< Framebuffer to chich the input is drawn */
-  QOpenGLFramebufferObject* output_fb;/**< Framebuffer to which the output is drawn */
-  QOpenGLBuffer* vertex_buffer;       /**< quad buffer; */
-  QOpenGLShaderProgram program;       /**< shader program*/
-  QOpenGLTexture* input_texture;      /**< Texture of the input*/
-  QPointer<ShaderModel> model;        /**< The shader model. */
-  ShaderPreviewMode preview_mode;     /**< Display mode of the preview. */
-  QFileSystemWatcher* source_watcher; /**< Watcher to catch source modifications */
-  QMatrix4x4 ortho;                   /**< */
-  QMatrix4x4 view;
+  void render_sbs();
+  void compile_program();
+  bool should_recompile = true;
+
+  QSize get_letter_box(const QSize &qsize, const QSize& basesize) const;
+
+  /// Move
+  bool grabbing = false;                        /**< grab state */
+  float zoom = 1.f;                             /**< zoom factor*/
+  QPointF last_mouse_pos;                       /**< last registered mouse position */
+  QVector2D translation;                        /**< Translation vector */
+  QCursor grab_cursor;                          /**< Cursor displayedd while grabbing */
+  QCursor hover_cursor;                         /**< Cursor displayed while hovering */
+
+  /// Opengl
+  QOpenGLFramebufferObject* input_fb = nullptr; /**< Framebuffer to chich the input is drawn */
+  QOpenGLFramebufferObject* output_fb = nullptr;/**< Framebuffer to which the output is drawn */
+  QOpenGLBuffer* vertex_buffer = nullptr;       /**< quad buffer; */
+  QOpenGLVertexArrayObject* vao = nullptr;      /**< Empty vertex array for core profiles*/
+  QOpenGLShaderProgram program;                 /**< shader program*/
+  QOpenGLTexture* input_texture = nullptr;      /**< Texture of the input*/
+  QPointer<ShaderModel> model;                  /**< The shader model. */
+  ShaderPreviewMode preview_mode;               /**< Display mode of the preview. */
+  QOpenGLShaderProgram simple_program;          /**< simple default shader for bliting*/
+  QOpenGLShaderProgram swipe_program;           /**< swipe shader to draw two textures */
+
+  QTimer time;                                  /**< Timer to update opengl viewport */
+#ifdef QT_DEBUG
+  QOpenGLDebugLogger gl_logger;                 /**< Logger to track opengl error in debug mode*/
+private slots:
+  void on_gl_log(const QOpenGLDebugMessage& message);
+#endif
 };
 
 }

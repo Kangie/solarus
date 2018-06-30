@@ -26,6 +26,7 @@
 #include <QList>
 #include <QPlainTextEdit>
 #include <QScrollBar>
+#include <QAction>
 #include <QTextStream>
 #include <QUndoStack>
 

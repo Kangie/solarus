@@ -23,6 +23,7 @@
 #include "pattern_separation.h"
 #include <QGraphicsView>
 #include <QPointer>
+#include <QMenu>
 
 class QAction;
 
