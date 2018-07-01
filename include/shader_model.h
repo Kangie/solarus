@@ -42,11 +42,14 @@ public:
   QString get_fragment_file() const;
   void set_fragment_file(const QString& fragment_file);
 
-  void save() const;
+  double get_scaling_factor() const;
+  void set_scaling_factor(double factor);
 
+  void save() const;
 signals:
   void vertex_file_changed(const QString& vertex_file);
   void fragment_file_changed(const QString& fragment_file);
+  void scaling_factor_changed(float);
 
 private:
   const Quest& quest;             /**< The quest the shader belongs to. */
