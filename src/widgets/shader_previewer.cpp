@@ -30,7 +30,7 @@
 
 namespace SolarusEditor {
 
-constexpr auto SWIPE_FRAGMENT_SHADER =
+constexpr const char* SWIPE_FRAGMENT_SHADER =
     R"(
       #if __VERSION__ >= 130
       #define COMPAT_VARYING in
@@ -68,7 +68,7 @@ constexpr auto SWIPE_FRAGMENT_SHADER =
       }
     )";
 
-constexpr auto UV_DEBUG =
+constexpr const char* UV_DEBUG =
     R"(
       #if __VERSION__ >= 130
       #define COMPAT_VARYING in
@@ -112,6 +112,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   ,gl_logger(this)
 #endif
 {
+  Q_UNUSED(UV_DEBUG);
 
   //test_label->setText("Preview");
   time.setInterval(16);
@@ -344,17 +345,17 @@ void ShaderPreviewer::render_quad(QOpenGLShaderProgram& shader,  const Textures&
   int pos_loc = shader.attributeLocation(Solarus::Shader::POSITION_NAME);
   if(pos_loc>-1) {
     gl->glEnableVertexAttribArray(pos_loc);
-    gl->glVertexAttribPointer(pos_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),offsetof(Solarus::Vertex,Solarus::Vertex::position));
+    gl->glVertexAttribPointer(pos_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex, position));
   }
   int uv_loc = shader.attributeLocation(Solarus::Shader::TEXCOORD_NAME);
   if(uv_loc>-1) {
     gl->glEnableVertexAttribArray(uv_loc);
-    gl->glVertexAttribPointer(uv_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex,Solarus::Vertex::texcoords));
+    gl->glVertexAttribPointer(uv_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex, texcoords));
   }
   int color_loc = shader.attributeLocation(Solarus::Shader::COLOR_NAME);
   if(color_loc>-1) {
     gl->glEnableVertexAttribArray(color_loc);
-    gl->glVertexAttribPointer(color_loc,4,GL_UNSIGNED_BYTE,GL_TRUE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex,Solarus::Vertex::color));
+    gl->glVertexAttribPointer(color_loc,4,GL_UNSIGNED_BYTE,GL_TRUE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex, color));
   }
 
   for(size_t i = 0; i < textures.size(); ++i) {
