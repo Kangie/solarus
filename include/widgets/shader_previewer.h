@@ -32,6 +32,8 @@
 #include <QMatrix4x4>
 #include <QTimer>
 
+//#define SOL_DEBUG_GL
+
 class QLabel;  // TODO remove
 
 namespace SolarusEditor {
@@ -105,7 +107,7 @@ private:
   QOpenGLShaderProgram swipe_program;           /**< swipe shader to draw two textures */
 
   QTimer time;                                  /**< Timer to update opengl viewport */
-#ifdef QT_DEBUG
+#ifdef SOL_DEBUG_GL
   QOpenGLDebugLogger gl_logger;                 /**< Logger to track opengl error in debug mode*/
 private slots:
   void on_gl_log(const QOpenGLDebugMessage& message);
