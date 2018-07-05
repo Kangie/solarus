@@ -78,7 +78,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   program(this),
   model(nullptr),
   preview_mode(ShaderPreviewMode::SIDE_BY_SIDE)
-#ifdef SOL_DEBUG_GL
+#ifdef SOLARUSEDITOR_DEBUG_GL
   ,gl_logger(this)
 #endif
 {
@@ -90,13 +90,10 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
 
   QSurfaceFormat format;
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
-#ifdef SOL_DEBUG_GL
-  // asks for a OpenGL 3.2 debug context using the Core profile
+#ifdef SOLARUSEDITOR_DEBUG_GL
   format.setMajorVersion(3);
   format.setMinorVersion(2);
   format.setOption(QSurfaceFormat::DebugContext);
-#else
-  format.setProfile(QSurfaceFormat::CompatibilityProfile);
 #endif
   setFormat(format);
   //Setup cursors
@@ -315,17 +312,17 @@ void ShaderPreviewer::render_quad(QOpenGLShaderProgram& shader,  const Textures&
   int pos_loc = shader.attributeLocation(Solarus::Shader::POSITION_NAME);
   if(pos_loc>-1) {
     gl->glEnableVertexAttribArray(pos_loc);
-    gl->glVertexAttribPointer(pos_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),offsetof(Solarus::Vertex,Solarus::Vertex::position));
+    gl->glVertexAttribPointer(pos_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex,position));
   }
   int uv_loc = shader.attributeLocation(Solarus::Shader::TEXCOORD_NAME);
   if(uv_loc>-1) {
     gl->glEnableVertexAttribArray(uv_loc);
-    gl->glVertexAttribPointer(uv_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex,Solarus::Vertex::texcoords));
+    gl->glVertexAttribPointer(uv_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex,texcoords));
   }
   int color_loc = shader.attributeLocation(Solarus::Shader::COLOR_NAME);
   if(color_loc>-1) {
     gl->glEnableVertexAttribArray(color_loc);
-    gl->glVertexAttribPointer(color_loc,4,GL_UNSIGNED_BYTE,GL_TRUE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex,Solarus::Vertex::color));
+    gl->glVertexAttribPointer(color_loc,4,GL_UNSIGNED_BYTE,GL_TRUE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex,color));
   }
 
   for(size_t i = 0; i < textures.size(); ++i) {
@@ -433,7 +430,7 @@ void ShaderPreviewer::paintGL() {
  */
 void ShaderPreviewer::initializeGL() {
 
-#ifdef SOL_DEBUG_GL
+#ifdef SOLARUSEDITOR_DEBUG_GL
   gl_logger.initialize();
   gl_logger.startLogging(QOpenGLDebugLogger::SynchronousLogging);
   connect(&gl_logger,&QOpenGLDebugLogger::messageLogged, this, &ShaderPreviewer::on_gl_log);
@@ -566,7 +563,7 @@ void ShaderPreviewer::compile_program() {
   should_recompile = false;
 }
 
-#ifdef SOL_DEBUG_GL
+#ifdef SOLARUSEDITOR_DEBUG_GL
 /**
  * @brief OpenGL error log slot
  * @param message
