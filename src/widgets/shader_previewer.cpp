@@ -50,52 +50,21 @@ constexpr const char* SWIPE_FRAGMENT_SHADER =
       #endif
 
       uniform float factor;
-      uniform sampler2D input;
-      uniform sampler2D output;
+      uniform sampler2D input_tex;
+      uniform sampler2D output_tex;
       uniform vec2 sol_output_size;
       COMPAT_VARYING vec2 sol_vtex_coord;
       COMPAT_VARYING vec4 sol_vcolor;
 
 
       void main() {
-        vec4 tex_i = COMPAT_TEXTURE(input, sol_vtex_coord);
-        vec4 tex_o = COMPAT_TEXTURE(output, vec2(sol_vtex_coord.x,1.0-sol_vtex_coord.y));
+        vec4 tex_i = COMPAT_TEXTURE(input_tex, sol_vtex_coord);
+        vec4 tex_o = COMPAT_TEXTURE(output_tex, vec2(sol_vtex_coord.x,1.0-sol_vtex_coord.y));
         if(sol_vtex_coord.x<factor) {
           FragColor = tex_i;
         } else {
           FragColor = tex_o;
         }
-      }
-    )";
-
-constexpr const char* UV_DEBUG =
-    R"(
-      #if __VERSION__ >= 130
-      #define COMPAT_VARYING in
-      #define COMPAT_TEXTURE texture
-      out vec4 FragColor;
-      #else
-      #define COMPAT_VARYING varying
-      #define FragColor gl_FragColor
-      #define COMPAT_TEXTURE texture2D
-      #endif
-
-      #ifdef GL_ES
-      precision mediump float;
-      #define COMPAT_PRECISION mediump
-      #else
-      #define COMPAT_PRECISION
-      #endif
-
-      uniform sampler2D sol_texture;
-      uniform vec2 sol_output_size;
-      COMPAT_VARYING vec2 sol_vtex_coord;
-      COMPAT_VARYING vec4 sol_vcolor;
-
-
-      void main() {
-        vec4 texel = COMPAT_TEXTURE(sol_texture, sol_vtex_coord);
-        FragColor = vec4(sol_vtex_coord,0,1);
       }
     )";
 
@@ -108,27 +77,22 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   program(this),
   model(nullptr),
   preview_mode(ShaderPreviewMode::SIDE_BY_SIDE)
-#ifdef QT_DEBUG
+#ifdef SOLARUSEDITOR_DEBUG_GL
   ,gl_logger(this)
 #endif
 {
-  Q_UNUSED(UV_DEBUG);
-
-  //test_label->setText("Preview");
   time.setInterval(16);
   time.start(0);
   connect(&time,SIGNAL(timeout()),this,SLOT(update()));
 
-#ifdef QT_DEBUG
   QSurfaceFormat format;
-  // asks for a OpenGL 3.2 debug context using the Core profile
+  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+#ifdef SOLARUSEDITOR_DEBUG_GL
   format.setMajorVersion(3);
   format.setMinorVersion(2);
-  format.setProfile(QSurfaceFormat::CoreProfile);
   format.setOption(QSurfaceFormat::DebugContext);
-  setFormat(format);
 #endif
-
+  setFormat(format);
   //Setup cursors
   grab_cursor.setShape(Qt::ClosedHandCursor);
   hover_cursor.setShape(Qt::OpenHandCursor);
@@ -386,7 +350,7 @@ void ShaderPreviewer::render_swipe(float factor) {
   swipe_program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME,uvm);
   swipe_program.setUniformValue(Solarus::Shader::MVP_MATRIX_NAME,mvp);
   swipe_program.setUniformValue("factor",factor);
-  render_quad(swipe_program,{{"input",input_fb->texture()},{"output",output_fb->texture()}});
+  render_quad(swipe_program,{{"input_tex",input_fb->texture()},{"output_tex",output_fb->texture()}});
 }
 
 /**
@@ -463,7 +427,7 @@ void ShaderPreviewer::paintGL() {
  */
 void ShaderPreviewer::initializeGL() {
 
-#ifdef QT_DEBUG
+#ifdef SOLARUSEDITOR_DEBUG_GL
   gl_logger.initialize();
   gl_logger.startLogging(QOpenGLDebugLogger::SynchronousLogging);
   connect(&gl_logger,&QOpenGLDebugLogger::messageLogged, this, &ShaderPreviewer::on_gl_log);
@@ -596,7 +560,7 @@ void ShaderPreviewer::compile_program() {
   should_recompile = false;
 }
 
-#ifdef QT_DEBUG
+#ifdef SOLARUSEDITOR_DEBUG_GL
 /**
  * @brief OpenGL error log slot
  * @param message
