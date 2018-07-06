@@ -27,6 +27,14 @@ class ShaderModel;
 class TextEditor;
 
 /**
+ * @brief A type of shader source editor.
+ */
+enum class WhichGlslEditor {
+  VERTEX_EDITOR,
+  FRAGMENT_EDITOR
+};
+
+/**
  * @brief A widget to edit graphically a shader description file.
  */
 class ShaderEditor : public Editor {
@@ -49,19 +57,13 @@ private:
   void update_description_to_gui();
   void set_description_from_gui();
 
-  void update_vertex_file_tab();
-  void vertex_file_check_box_changed();
-  void new_vertex_file();
-  void browse_vertex_file();
-  void save_vertex_file();
-  void vertex_editor_modification_state_changed(bool clean);
-
-  void update_fragment_file_tab();
-  void fragment_file_check_box_changed();
-  void new_fragment_file();
-  void browse_fragment_file();
-  void save_fragment_file();
-  void fragment_editor_modification_state_changed(bool clean);
+  TextEditor* get_glsl_editor(WhichGlslEditor which);
+  void update_source_editor_tab(WhichGlslEditor which);
+  void source_file_check_box_changed(WhichGlslEditor which);
+  void new_source_file(WhichGlslEditor which);
+  void browse_source_file(WhichGlslEditor which);
+  void save_source_file(WhichGlslEditor which);
+  void source_editor_modification_state_changed(WhichGlslEditor which, bool clean);
 
   void preview_radio_changed();
   void update_preview_image();

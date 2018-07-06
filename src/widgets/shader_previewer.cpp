@@ -83,7 +83,8 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
 {
   time.setInterval(16);
   time.start(0);
-  connect(&time,SIGNAL(timeout()),this,SLOT(update()));
+  connect(&time, &QTimer::timeout,
+          this, QOverload<>::of(&ShaderPreviewer::update));
 
   QSurfaceFormat format;
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
