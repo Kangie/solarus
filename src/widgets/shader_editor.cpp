@@ -202,6 +202,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(ui.preview_picture_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
+  connect(ui.preview_picture_browse_button, &QToolButton::clicked,
+          this, &ShaderEditor::browse_preview_picture);
   connect(ui.preview_map_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
   connect(ui.preview_sprite_radio, &QRadioButton::clicked,
@@ -612,20 +614,60 @@ void ShaderEditor::preview_radio_changed() {
 }
 
 /**
+ * @brief Lets the user choose a PNG file for the preview.
+ */
+void ShaderEditor::browse_preview_picture() {
+
+  if (shader == nullptr) {
+    return;
+  }
+
+  try {
+    const QString& directory = get_quest().get_resource_path(ResourceType::SPRITE);
+    QString file_name = QFileDialog::getOpenFileName(
+        this,
+        tr("Open a PNG picture"),
+        directory,
+        tr("PNG file (*.png)")
+    );
+
+    if (file_name.isEmpty()) {
+      return;
+    }
+
+    ui.preview_picture_field->setText(file_name);
+    update_preview_image();
+  }
+  catch (const EditorException& ex) {
+    GuiTools::error_dialog(ex.get_message());
+  }
+}
+
+/**
  * @brief Updates the image to be displayed in the preview widget.
  */
 void ShaderEditor::update_preview_image() {
 
-  if (ui.preview_sprite_radio->isChecked()) {
+  QImage image;
+
+  if (ui.preview_picture_radio->isChecked()) {
+    const QString& picture_file_name = ui.preview_picture_field->text();
+    if (!picture_file_name.isEmpty()) {
+      image = QImage(picture_file_name);
+    }
+  }
+  else if (ui.preview_sprite_radio->isChecked()) {
     const QString& sprite_id = ui.preview_sprite_field->get_selected_id();
     if (!sprite_id.isEmpty() &&
         quest.get_database().exists(ResourceType::SPRITE, sprite_id) &&
         quest.exists(quest.get_sprite_path(sprite_id))) {
       SpriteModel sprite(get_quest(), sprite_id);
       QPixmap pixmap = sprite.get_direction_first_frame({ sprite.get_default_animation_name(), 0 });
-      ui.preview_widget->set_preview_image(pixmap.toImage());
+      image = pixmap.toImage();
     }
   }
+
+  ui.preview_widget->set_preview_image(image);
 }
 
 }

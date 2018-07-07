@@ -66,6 +66,7 @@ private:
   void source_editor_modification_state_changed(WhichGlslEditor which, bool clean);
 
   void preview_radio_changed();
+  void browse_preview_picture();
   void update_preview_image();
 
   Ui::ShaderEditor ui;                /**< The shader editor widgets. */

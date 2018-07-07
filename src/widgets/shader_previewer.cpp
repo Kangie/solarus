@@ -81,8 +81,6 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   ,gl_logger(this)
 #endif
 {
-  time.setInterval(16);
-  time.start(0);
 
   QSurfaceFormat format;
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
@@ -577,12 +575,19 @@ void ShaderPreviewer::on_gl_log(const QOpenGLDebugMessage& message) {
  * @param image The new image to show.
  */
 void ShaderPreviewer::set_preview_image(QImage image) {
+
+  if (image == this->preview_image) {
+    return;
+  }
+  this->preview_image = image;
+
   // TODO manage memory
   makeCurrent();
-  if (input_texture) {
-    delete input_texture;
+  delete input_texture;
+
+  if (!image.isNull()) {
+    input_texture = new QOpenGLTexture(image, QOpenGLTexture::MipMapGeneration::DontGenerateMipMaps);
   }
-  input_texture = new QOpenGLTexture(image, QOpenGLTexture::MipMapGeneration::DontGenerateMipMaps);
   zoom = 1;
   translation = QVector2D();
 

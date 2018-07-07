@@ -80,9 +80,11 @@ private:
   void render_swipe(float factor);
   void render_sbs();
   void compile_program();
-  bool should_recompile = true;
 
   QSize get_letter_box(const QSize &qsize, const QSize& basesize) const;
+
+  bool should_recompile = true;
+  QImage preview_image;
 
   /// Move
   bool grabbing = false;                        /**< grab state */
@@ -104,7 +106,6 @@ private:
   QOpenGLShaderProgram simple_program;          /**< simple default shader for bliting*/
   QOpenGLShaderProgram swipe_program;           /**< swipe shader to draw two textures */
 
-  QTimer time;                                  /**< Timer to update opengl viewport */
 #ifdef SOLARUSEDITOR_DEBUG_GL
   QOpenGLDebugLogger gl_logger;                 /**< Logger to track opengl error in debug mode*/
 private slots:
