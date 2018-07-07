@@ -92,7 +92,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   format.setOption(QSurfaceFormat::DebugContext);
 #endif
   setFormat(format);
-  //Setup cursors
+  // Setup cursors
   grab_cursor.setShape(Qt::ClosedHandCursor);
   hover_cursor.setShape(Qt::OpenHandCursor);
 
@@ -105,7 +105,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
  */
 void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
   Q_UNUSED(event);
-  if(grabbing) {
+  if (grabbing) {
     QPointF d = event->localPos() - last_mouse_pos;
     d.setY(-d.y());
     translation += QVector2D(d)*0.5f/zoom;
@@ -121,7 +121,7 @@ void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
  */
 void ShaderPreviewer::mousePressEvent(QMouseEvent* event) {
   Q_UNUSED(event);
-  if(event->button() == Qt::LeftButton) {
+  if (event->button() == Qt::LeftButton) {
     grabbing = true;
     last_mouse_pos = event->localPos();
     setCursor(grab_cursor);
@@ -135,7 +135,7 @@ void ShaderPreviewer::mousePressEvent(QMouseEvent* event) {
  */
 void ShaderPreviewer::mouseReleaseEvent(QMouseEvent* event) {
   Q_UNUSED(event);
-  if(event->button() == Qt::LeftButton) {
+  if (event->button() == Qt::LeftButton) {
     grabbing = false;
     setCursor(hover_cursor);
     event->accept();
@@ -171,10 +171,10 @@ void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
 QSize ShaderPreviewer::get_letter_box(const QSize& qsize, const QSize& basesize) const {
   float qratio = qsize.width() / (float) qsize.height();
   float wratio = basesize.width() / (float) basesize.height();
-  if(qratio > wratio) {
-    return QSize(basesize.width(),basesize.width()/qratio);
+  if (qratio > wratio) {
+    return QSize(basesize.width(), basesize.width() / qratio);
   } else {
-    return QSize(basesize.height()*qratio, basesize.height());
+    return QSize(basesize.height() * qratio, basesize.height());
   }
 }
 
@@ -194,9 +194,10 @@ void ShaderPreviewer::set_model(ShaderModel* model) {
   this->model = model;
 
   if (model != nullptr) {
-    // TODO set up any connections to the model here.
-    connect(model,&ShaderModel::fragment_file_changed,this,&ShaderPreviewer::on_source_changed);
-    connect(model,&ShaderModel::vertex_file_changed,this,&ShaderPreviewer::on_source_changed);
+    connect(model, &ShaderModel::fragment_file_changed,
+            this, &ShaderPreviewer::on_source_changed);
+    connect(model, &ShaderModel::vertex_file_changed,
+            this, &ShaderPreviewer::on_source_changed);
 
     on_source_changed();
   }
@@ -224,19 +225,16 @@ void ShaderPreviewer::set_preview_mode(ShaderPreviewMode preview_mode) {
  */
 void ShaderPreviewer::setup_framebuffers(const QSize& output_size) {
   makeCurrent();
-  if(input_fb){
-    delete input_fb;
-  }
-  if(output_fb) {
-    delete output_fb;
-  }
+  delete input_fb;
+  delete output_fb;
+
   QSize size = model->get_quest().get_properties().get_normal_quest_size();
   input_fb = new QOpenGLFramebufferObject(size);
-  if(!input_fb->isValid()) {
+  if (!input_fb->isValid()) {
     qWarning() << "Failed to create input frame buffer with size" << size;
   }
   output_fb = new QOpenGLFramebufferObject(output_size);
-  if(!output_fb->isValid()) {
+  if (!output_fb->isValid()) {
     qWarning() << "Failed to create output frame buffer with size" << output_size;
   }
 }
@@ -245,10 +243,10 @@ void ShaderPreviewer::setup_framebuffers(const QSize& output_size) {
  * @brief Render input to input buffer and rerender it with shader to output buffer
  */
 void ShaderPreviewer::render_fbs() {
-  if(!input_texture) {
+  if (input_texture == nullptr) {
     return;
   }
-  auto gl = context()->functions();
+  QOpenGLFunctions* gl = context()->functions();
   { //Render input to simulate quest surface
     input_fb->bind();
     QMatrix4x4 mvp;
@@ -264,8 +262,8 @@ void ShaderPreviewer::render_fbs() {
     simple_program.bind();
     simple_program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME,uvm);
     simple_program.setUniformValue(Solarus::Shader::MVP_MATRIX_NAME,mvp);
-    const char* patate = Solarus::Shader::TEXTURE_NAME;
-    render_quad(simple_program, {{patate,input_texture->textureId()}});
+    const char* texture_name = Solarus::Shader::TEXTURE_NAME;
+    render_quad(simple_program, {{texture_name, input_texture->textureId()}});
     input_fb->release();
   }
   { //Render output to simulate screen
@@ -306,24 +304,24 @@ void ShaderPreviewer::render_quad(QOpenGLShaderProgram& shader,  const Textures&
   shader.bind();
   vao->bind();
   vertex_buffer->bind();
-  auto gl = context()->functions();
+  QOpenGLFunctions* gl = context()->functions();
   int pos_loc = shader.attributeLocation(Solarus::Shader::POSITION_NAME);
-  if(pos_loc>-1) {
+  if (pos_loc>-1) {
     gl->glEnableVertexAttribArray(pos_loc);
     gl->glVertexAttribPointer(pos_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex, position));
   }
   int uv_loc = shader.attributeLocation(Solarus::Shader::TEXCOORD_NAME);
-  if(uv_loc>-1) {
+  if (uv_loc>-1) {
     gl->glEnableVertexAttribArray(uv_loc);
     gl->glVertexAttribPointer(uv_loc,2,GL_FLOAT,GL_FALSE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex, texcoords));
   }
   int color_loc = shader.attributeLocation(Solarus::Shader::COLOR_NAME);
-  if(color_loc>-1) {
+  if (color_loc>-1) {
     gl->glEnableVertexAttribArray(color_loc);
     gl->glVertexAttribPointer(color_loc,4,GL_UNSIGNED_BYTE,GL_TRUE,sizeof(Solarus::Vertex),(void*)offsetof(Solarus::Vertex, color));
   }
 
-  for(size_t i = 0; i < textures.size(); ++i) {
+  for (size_t i = 0; i < textures.size(); ++i) {
     int tex_loc = shader.uniformLocation(textures[i].first);
     gl->glUniform1i(tex_loc,i);
     gl->glActiveTexture(GL_TEXTURE0+i);
@@ -335,7 +333,6 @@ void ShaderPreviewer::render_quad(QOpenGLShaderProgram& shader,  const Textures&
   vertex_buffer->release();
   vao->release();
   shader.release();
-  //qDebug() << "Quad rendered";
 }
 
 /**
@@ -361,46 +358,48 @@ void ShaderPreviewer::render_sbs() {
   QSize qsize = model->get_quest().get_properties().get_normal_quest_size();
   qsize.setWidth(qsize.width()*2);
   QSize letterb = get_letter_box(qsize,frameSize());
-  auto render_side = [&](GLuint tex,bool invert) {
+  auto render_side = [&](GLuint tex, bool invert) {
     QMatrix4x4 mvp;
     mvp.translate(-1,-1,0);
     mvp.scale(2);
     QMatrix3x3 uvm;
-    if(invert) {
+    if (invert) {
       uvm.data()[4] = -1;
       uvm.data()[7] = 1;
     }
     simple_program.bind();
-    simple_program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME,uvm);
-    simple_program.setUniformValue(Solarus::Shader::MVP_MATRIX_NAME,mvp);
+    simple_program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME, uvm);
+    simple_program.setUniformValue(Solarus::Shader::MVP_MATRIX_NAME, mvp);
     const char* name = Solarus::Shader::TEXTURE_NAME;
-    render_quad(simple_program,{{name,tex}});
+    render_quad(simple_program, {{name, tex}});
   };
-  auto gl = context()->functions();
+  QOpenGLFunctions* gl = context()->functions();
   int x = (frameSize().width() - letterb.width()) / 2;
   int y = (frameSize().height() - letterb.height()) / 2;
-  gl->glViewport(x,y,letterb.width()/2,letterb.height());
-  render_side(input_fb->texture(),false);
-  gl->glViewport(x+letterb.width()/2,y,letterb.width()/2,letterb.height());
-  render_side(output_fb->texture(),true);
+  gl->glViewport(x, y, letterb.width() / 2, letterb.height());
+  render_side(input_fb->texture(), false);
+  gl->glViewport(x + letterb.width() / 2, y, letterb.width()/2, letterb.height());
+  render_side(output_fb->texture(), true);
 }
 
 /**
  * @brief QOpengl pain event all drawing happens here
  */
 void ShaderPreviewer::paintGL() {
-  auto gl = context()->functions();
+  QOpenGLFunctions* gl = context()->functions();
   gl->glClearColor(0.3,0.3,0.3,1);
   gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  if(!model) return;
-  if(should_recompile) {
+  if (model == nullptr) {
+    return;
+  }
+  if (should_recompile) {
     compile_program();
   }
   render_fbs();
-  QSize letterb = get_letter_box(model->get_quest().get_properties().get_normal_quest_size(),frameSize());
+  QSize letterb = get_letter_box(model->get_quest().get_properties().get_normal_quest_size(), frameSize());
   int x = (frameSize().width() - letterb.width()) / 2;
   int y = (frameSize().height() - letterb.height()) / 2;
-  gl->glViewport(x,y,letterb.width(),letterb.height());
+  gl->glViewport(x, y, letterb.width(), letterb.height());
   switch (preview_mode) {
   case ShaderPreviewMode::INPUT:
     render_swipe(1.f);
@@ -414,8 +413,8 @@ void ShaderPreviewer::paintGL() {
   case ShaderPreviewMode::SWIPE:
   {
     QPoint p = mapFromGlobal(QCursor::pos());
-    float factor = (p.x()-x)/(float)letterb.width();
-    render_swipe(factor); //TODO pass actual factor
+    float factor = (p.x() - x) / (float) letterb.width();
+    render_swipe(factor); // TODO pass actual factor
     break;
   }
   default:
@@ -435,15 +434,15 @@ void ShaderPreviewer::initializeGL() {
 #endif
 
   //Setup quad
-  auto gl = context()->functions();
+  QOpenGLFunctions* gl = context()->functions();
   gl->initializeOpenGLFunctions();
   gl->glClearColor(0.3,0.3,0.3,1);
   gl->glDisable(GL_DEPTH_TEST);
   gl->glDisable(GL_CULL_FACE);
-  qDebug() << "GLSL VERSION : " << (char*)context()->functions()->glGetString(GL_SHADING_LANGUAGE_VERSION);
+  qDebug() << "GLSL VERSION : " << (char*) context()->functions()->glGetString(GL_SHADING_LANGUAGE_VERSION);
   vertex_buffer = new QOpenGLBuffer();
-  if(!vertex_buffer->create()) {
-    qWarning() << "Failed to create glbuffer!"; //TODO fail gracefully
+  if (!vertex_buffer->create()) {
+    qWarning() << "Failed to create glbuffer!"; // TODO fail gracefully
   }
   Solarus::VertexArray array;
   array.add_quad(Solarus::Rectangle(0,0,1,1),
@@ -453,7 +452,7 @@ void ShaderPreviewer::initializeGL() {
   vertex_buffer->bind();
   vertex_buffer->allocate(array.data(),array.vertex_count()*sizeof(Solarus::Vertex));
   vertex_buffer->release();
-  //Create empty vao for core profiles
+  // Create empty vao for core profiles
   vao = new QOpenGLVertexArrayObject();
   vao->create();
 
@@ -464,7 +463,7 @@ void ShaderPreviewer::initializeGL() {
   simple_program.addShaderFromSourceCode(
         QOpenGLShader::Fragment,
         Solarus::Shader::default_fragment_source().c_str());
-  if(!simple_program.link()) {
+  if (!simple_program.link()) {
     qDebug() << "ERROR SIMPLE" << simple_program.log();
   }
 
@@ -477,7 +476,7 @@ void ShaderPreviewer::initializeGL() {
   swipe_program.addShaderFromSourceCode(
         QOpenGLShader::Fragment,
         SWIPE_FRAGMENT_SHADER);
-  if(!swipe_program.link()) {
+  if (!swipe_program.link()) {
     qDebug() << "ERROR SWIPE" << swipe_program.log();
   }
 }
@@ -492,11 +491,11 @@ void ShaderPreviewer::resizeGL(int w, int h) {
   Q_UNUSED(h);
   if(model) {
     if(model->get_scaling_factor()>0) {
-      //Intermediary surface with fixed size
+      // Intermediate surface with fixed size
       setup_framebuffers(
-          model->get_scaling_factor()*model->get_quest().get_properties().get_normal_quest_size());
+          model->get_scaling_factor() * model->get_quest().get_properties().get_normal_quest_size());
     } else {
-      QSize letterb = get_letter_box(model->get_quest().get_properties().get_normal_quest_size(),frameSize());
+      QSize letterb = get_letter_box(model->get_quest().get_properties().get_normal_quest_size(), frameSize());
       setup_framebuffers(letterb);
     }
   }
@@ -508,7 +507,7 @@ void ShaderPreviewer::resizeGL(int w, int h) {
  */
 void ShaderPreviewer::on_scaling_factor_changed(double factor) {
   setup_framebuffers(
-        factor*model->get_quest().get_properties().get_normal_quest_size());
+        factor * model->get_quest().get_properties().get_normal_quest_size());
   update();
 }
 
@@ -525,37 +524,37 @@ void ShaderPreviewer::on_source_changed() {
  */
 void ShaderPreviewer::compile_program() {
   program.removeAllShaders();
-  if(model->get_vertex_file().size()) {
+  if (model->get_vertex_file().size()) {
     qDebug() << "Using provided vertex shader";
-    if(!program.addShaderFromSourceFile(
+    if (!program.addShaderFromSourceFile(
           QOpenGLShader::Vertex,
          model->get_quest().get_shader_glsl_file_path(model->get_vertex_file()))) {
-      qWarning() << "ERROR" << program.log(); //TODO log better
+      qWarning() << "ERROR" << program.log(); // TODO log better
     }
   } else {
      qDebug() << "Using default vertex shader";
-    if(!program.addShaderFromSourceCode(
+    if (!program.addShaderFromSourceCode(
           QOpenGLShader::Vertex,
           Solarus::Shader::default_vertex_source().c_str())) {
-      qWarning() << "ERROR" << program.log(); //TODO log better
+      qWarning() << "ERROR" << program.log(); // TODO log better
     }
   }
   if(model->get_fragment_file().size()) {
     qDebug() << "Using provided fragment shader";
-    if(!program.addShaderFromSourceFile(
+    if (!program.addShaderFromSourceFile(
          QOpenGLShader::Fragment,
          model->get_quest().get_shader_glsl_file_path(model->get_fragment_file()))) {
       qWarning() << "ERROR" << program.log();
     }
   } else {
      qDebug() << "Using default fragment shader";
-    if(!program.addShaderFromSourceCode(
+    if (!program.addShaderFromSourceCode(
           QOpenGLShader::Fragment,
           Solarus::Shader::default_fragment_source().c_str())) {
-      qWarning() << "ERROR" << program.log(); //TODO log better
+      qWarning() << "ERROR" << program.log(); // TODO log better
     }
   }
-  if(!program.link()) {
+  if (!program.link()) {
     qWarning() << "ERROR" << program.log();
   }
 
@@ -578,12 +577,12 @@ void ShaderPreviewer::on_gl_log(const QOpenGLDebugMessage& message) {
  * @param image The new image to show.
  */
 void ShaderPreviewer::set_preview_image(QImage image) {
-  //TODO manage memory
+  // TODO manage memory
   makeCurrent();
-  if(input_texture) {
+  if (input_texture) {
     delete input_texture;
   }
-  input_texture = new QOpenGLTexture(image,QOpenGLTexture::MipMapGeneration::DontGenerateMipMaps);
+  input_texture = new QOpenGLTexture(image, QOpenGLTexture::MipMapGeneration::DontGenerateMipMaps);
   zoom = 1;
   translation = QVector2D();
 
