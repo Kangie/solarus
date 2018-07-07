@@ -95,6 +95,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   hover_cursor.setShape(Qt::OpenHandCursor);
 
   setCursor(hover_cursor);
+  setMouseTracking(true);
 }
 
 /**
@@ -106,11 +107,11 @@ void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
   if (grabbing) {
     QPointF d = event->localPos() - last_mouse_pos;
     d.setY(-d.y());
-    translation += QVector2D(d)*0.5f/zoom;
+    translation += QVector2D(d)  *0.5f / zoom;
     last_mouse_pos = event->localPos();
     event->accept();
-    update();
   }
+  update();
 }
 
 /**
@@ -119,7 +120,8 @@ void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
  */
 void ShaderPreviewer::mousePressEvent(QMouseEvent* event) {
   Q_UNUSED(event);
-  if (event->button() == Qt::LeftButton) {
+  if (event->button() == Qt::LeftButton ||
+      event->button() == Qt::MiddleButton) {
     grabbing = true;
     last_mouse_pos = event->localPos();
     setCursor(grab_cursor);
@@ -155,8 +157,8 @@ void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
       amount = numSteps.y();
   }
 
-  float factor = std::pow(2,amount);
-  zoom*=factor;
+  float factor = std::pow(2, amount);
+  zoom *= factor;
   update();
 }
 
@@ -215,6 +217,7 @@ ShaderPreviewMode ShaderPreviewer::get_preview_mode() const {
  */
 void ShaderPreviewer::set_preview_mode(ShaderPreviewMode preview_mode) {
   this->preview_mode = preview_mode;
+  update();
 }
 
 /**
@@ -249,17 +252,17 @@ void ShaderPreviewer::render_fbs() {
     input_fb->bind();
     QMatrix4x4 mvp;
     //TODO mouse control
-    mvp.ortho(0,input_fb->width(),input_fb->height(),0,-1,1);
+    mvp.ortho(0, input_fb->width(), input_fb->height(), 0, -1, 1);
     mvp.scale(zoom);
-    mvp.translate((int)translation.x(),(int)translation.y(),0);
-    mvp.scale(input_texture->width(),input_texture->height(),1);
+    mvp.translate((int)translation.x(), (int)translation.y(),0);
+    mvp.scale(input_texture->width(), input_texture->height(),1);
     QMatrix3x3 uvm;
-    gl->glClearColor(0,0,0,0);
-    gl->glViewport(0,0,input_fb->width(),input_fb->height());
+    gl->glClearColor(0, 0, 0, 0);
+    gl->glViewport(0, 0, input_fb->width(), input_fb->height());
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     simple_program.bind();
-    simple_program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME,uvm);
-    simple_program.setUniformValue(Solarus::Shader::MVP_MATRIX_NAME,mvp);
+    simple_program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME, uvm);
+    simple_program.setUniformValue(Solarus::Shader::MVP_MATRIX_NAME, mvp);
     const char* texture_name = Solarus::Shader::TEXTURE_NAME;
     render_quad(simple_program, {{texture_name, input_texture->textureId()}});
     input_fb->release();
@@ -267,11 +270,11 @@ void ShaderPreviewer::render_fbs() {
   { //Render output to simulate screen
     output_fb->bind();
     QMatrix4x4 mvp;
-    mvp.translate(-1,-1,0);
+    mvp.translate(-1, -1, 0);
     mvp.scale(2);
     QMatrix3x3 uvm;
-    gl->glClearColor(0,0,0,0);
-    gl->glViewport(0,0,output_fb->width(),output_fb->height());
+    gl->glClearColor(0, 0, 0, 0);
+    gl->glViewport(0, 0, output_fb->width(), output_fb->height());
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     program.bind();
     program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME,uvm);
@@ -279,15 +282,15 @@ void ShaderPreviewer::render_fbs() {
     QSize isize = model->get_quest().get_properties().get_normal_quest_size();
     program.setUniformValue(
           Solarus::Shader::INPUT_SIZE_NAME,
-          QVector2D(isize.width(),isize.height()));
+          QVector2D(isize.width(), isize.height()));
     program.setUniformValue(
           Solarus::Shader::OUTPUT_SIZE_NAME,
-          QVector2D(output_fb->width(),output_fb->height()));
+          QVector2D(output_fb->width(), output_fb->height()));
     int time_loc = program.uniformLocation(Solarus::Shader::TIME_NAME);
     int ms = QTime::currentTime().msecsSinceStartOfDay();
-    gl->glUniform1i(time_loc,ms);
-    const char* patate = Solarus::Shader::TEXTURE_NAME;
-    render_quad(program, {{patate,input_fb->texture()}});
+    gl->glUniform1i(time_loc, ms);
+    const char* texture_name = Solarus::Shader::TEXTURE_NAME;
+    render_quad(program, {{texture_name, input_fb->texture()}});
     output_fb->release();
   }
 
