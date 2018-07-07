@@ -868,13 +868,13 @@ QMenu* MapView::create_direction_context_menu(const EntityIndexes& indexes) {
 }
 
 /**
- * @brief Exports the current view to an image file.
- * @param file_name Name of the image file to write.
+ * @brief Exports the current view to an image.
+ * @return The map image.
  */
-void MapView::export_to_image(const QString& file_name) {
+QImage MapView::export_to_image() {
 
   if (scene == nullptr) {
-    return;
+    return QImage();
   }
 
   // Clear the selection first (we don't want selection markers.
@@ -887,10 +887,11 @@ void MapView::export_to_image(const QString& file_name) {
   QPainter painter(&image);
   scene->render(&painter, image.rect(),
                 QRect(scene->get_margin_top_left(), map->get_size()));
-  image.save(file_name);
 
   // Restore the selection.
   set_selected_entities(selected_indexes);
+
+  return image;
 }
 
 /**

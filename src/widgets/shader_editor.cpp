@@ -15,9 +15,11 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/gui_tools.h"
+#include "widgets/map_view.h"
 #include "widgets/shader_editor.h"
 #include "widgets/text_editor.h"
 #include "editor_exception.h"
+#include "map_model.h"
 #include "quest.h"
 #include "shader_model.h"
 #include "sprite_model.h"
@@ -206,6 +208,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::browse_preview_picture);
   connect(ui.preview_map_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
+  connect(ui.preview_map_field, QOverload<int>::of(&ResourceSelector::currentIndexChanged),
+          this, &ShaderEditor::update_preview_image);
   connect(ui.preview_sprite_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
   connect(ui.preview_sprite_field, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -215,7 +219,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(ui.preview_sprite_direction_field, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &ShaderEditor::update_preview_image);
 
-  connect(ui.vertex_file_check_box, &QCheckBox::stateChanged, [this]() {
+  connect(ui.vertex_file_check_box, &QCheckBox::clicked, [this]() {
     source_file_check_box_changed(WhichGlslEditor::VERTEX_EDITOR);
   });
   connect(ui.vertex_file_new_button, &QToolButton::clicked, [this]() {
@@ -234,7 +238,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
     source_editor_modification_state_changed(WhichGlslEditor::VERTEX_EDITOR, clean);
   });
 
-  connect(ui.fragment_file_check_box, &QCheckBox::stateChanged, [this]() {
+  connect(ui.fragment_file_check_box, &QCheckBox::clicked, [this]() {
     source_file_check_box_changed(WhichGlslEditor::FRAGMENT_EDITOR);
   });
   connect(ui.fragment_file_new_button, &QToolButton::clicked, [this]() {
@@ -409,10 +413,7 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
 
   file_name_field->setText(file_name);
   const bool has_file = !file_name.isEmpty();
-  {
-    QSignalBlocker blocker(check_box);
-    check_box->setChecked(has_file);
-  }
+  check_box->setChecked(has_file);
   if (has_file) {
     stacked_widget->setCurrentIndex(1);  // Normal page.
     QString path = get_quest().get_shader_glsl_file_path(file_name);
@@ -523,33 +524,33 @@ void ShaderEditor::browse_source_file(WhichGlslEditor which) {
   }
 
   try {
-    if (!get_glsl_editor(which)->confirm_before_closing()) {
-      return;
+    if (get_glsl_editor(which)->confirm_before_closing()) {
+      const QString& directory = QFileInfo(get_file_path()).dir().path();
+      QString file_name = QFileDialog::getOpenFileName(
+          this,
+          tr("Open a GLSL file"),
+          directory,
+          tr("GLSL shader file (*.glsl)")
+      );
+
+      if (!file_name.isEmpty()) {
+        const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);
+        if (!file_name.startsWith(shaders_path)) {
+          throw EditorException(tr("Shader GLSL files must be in the shaders directory"));
+        }
+
+        file_name = file_name.right(file_name.size() - shaders_path.size() - 1);
+        if (!file_name.isEmpty()) {
+          try_command(new SetGlslFileCommand(*this, which, file_name));
+        }
+      }
     }
-    const QString& directory = QFileInfo(get_file_path()).dir().path();
-
-    QString file_name = QFileDialog::getOpenFileName(
-        this,
-        tr("Open a GLSL file"),
-        directory,
-        tr("GLSL shader file (*.glsl)")
-    );
-
-    if (file_name.isEmpty()) {
-      return;
-    }
-
-    const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);
-    if (!file_name.startsWith(shaders_path)) {
-      throw EditorException(tr("Shader GLSL files must be in the shaders directory"));
-    }
-
-    file_name = file_name.right(file_name.size() - shaders_path.size() - 1);
-    try_command(new SetGlslFileCommand(*this, which, file_name));
   }
   catch (const EditorException& ex) {
     GuiTools::error_dialog(ex.get_message());
   }
+
+  update_source_editor_tab(which);
 }
 
 /**
@@ -654,6 +655,15 @@ void ShaderEditor::update_preview_image() {
     const QString& picture_file_name = ui.preview_picture_field->text();
     if (!picture_file_name.isEmpty()) {
       image = QImage(picture_file_name);
+    }
+  }
+  else if (ui.preview_map_radio->isChecked()) {
+    const QString& map_id = ui.preview_map_field->get_selected_id();
+    if (!map_id.isEmpty()) {
+      MapModel map(get_quest(), map_id);
+      MapView view;
+      view.set_map(&map);
+      image = view.export_to_image();
     }
   }
   else if (ui.preview_sprite_radio->isChecked()) {

@@ -1297,7 +1297,8 @@ void MapEditor::export_to_image() {
         tr("PNG image (*.png)"));
 
   if (!file_name.isEmpty()) {
-    ui.map_view->export_to_image(file_name);
+    QImage image = ui.map_view->export_to_image();
+    image.save(file_name);
   }
 }
 
