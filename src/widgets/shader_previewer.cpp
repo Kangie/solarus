@@ -83,8 +83,6 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
 {
   time.setInterval(16);
   time.start(0);
-  connect(&time, &QTimer::timeout,
-          this, QOverload<>::of(&ShaderPreviewer::update));
 
   QSurfaceFormat format;
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
@@ -113,6 +111,7 @@ void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
     translation += QVector2D(d)*0.5f/zoom;
     last_mouse_pos = event->localPos();
     event->accept();
+    update();
   }
 }
 
@@ -160,6 +159,7 @@ void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
 
   float factor = std::pow(2,amount);
   zoom*=factor;
+  update();
 }
 
 /**
@@ -509,6 +509,7 @@ void ShaderPreviewer::resizeGL(int w, int h) {
 void ShaderPreviewer::on_scaling_factor_changed(double factor) {
   setup_framebuffers(
         factor*model->get_quest().get_properties().get_normal_quest_size());
+  update();
 }
 
 /**
@@ -516,6 +517,7 @@ void ShaderPreviewer::on_scaling_factor_changed(double factor) {
  */
 void ShaderPreviewer::on_source_changed() {
   should_recompile = true;
+  update();
 }
 
 /**
@@ -584,6 +586,8 @@ void ShaderPreviewer::set_preview_image(QImage image) {
   input_texture = new QOpenGLTexture(image,QOpenGLTexture::MipMapGeneration::DontGenerateMipMaps);
   zoom = 1;
   translation = QVector2D();
+
+  update();
 }
 
 }
