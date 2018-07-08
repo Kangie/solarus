@@ -15,17 +15,17 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/shader_previewer.h"
+#include "quest.h"
 #include "shader_model.h"
+#include "view_settings.h"
 #include <solarus/graphics/VertexArray.h>
 #define GLM_FORCE_INLINE
 #include <solarus/graphics/Shader.h>
 
-#include "quest.h"
-
-#include <QOpenGLContext>
-#include <QOpenGLFunctions>
 #include <QMatrix3x3>
 #include <QMouseEvent>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
 #include <QWheelEvent>
 
 namespace SolarusEditor {
@@ -135,7 +135,8 @@ void ShaderPreviewer::mousePressEvent(QMouseEvent* event) {
  */
 void ShaderPreviewer::mouseReleaseEvent(QMouseEvent* event) {
   Q_UNUSED(event);
-  if (event->button() == Qt::LeftButton) {
+  if (event->button() == Qt::LeftButton ||
+      event->button() == Qt::MiddleButton) {
     grabbing = false;
     setCursor(hover_cursor);
     event->accept();
@@ -143,22 +144,72 @@ void ShaderPreviewer::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 /**
- * @brief handle wheel event
- * @param event
+ * @brief Receives a mouse wheel event.
+ * @param event The event to handle.
  */
 void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
-  QPoint numPixels = event->pixelDelta();
-  QPoint numDegrees = event->angleDelta() / 8;
-  float amount = 0;
-  if (!numPixels.isNull()) {
-      amount = numPixels.y();
-  } else if (!numDegrees.isNull()) {
-      QPoint numSteps = numDegrees / 15;
-      amount = numSteps.y();
+
+  if (event->delta() > 0) {
+    zoom_in();
+  }
+  else {
+    zoom_out();
+  }
+}
+
+/**
+ * @brief Scales the view by a factor of 2.
+ *
+ * Zooming will be anchored at the mouse position.
+ * The maximum zoom value is 4.0: this function does nothing if you try to
+ * zoom more.
+ */
+void ShaderPreviewer::zoom_in() {
+
+  if (view_settings == nullptr) {
+    return;
   }
 
-  float factor = std::pow(2, amount);
-  zoom *= factor;
+  view_settings->set_zoom(view_settings->get_zoom() * 2.0);
+}
+
+/**
+ * @brief Scales the view by a factor of 0.5.
+ *
+ * Zooming will be anchored at the mouse position.
+ * The maximum zoom value is 0.25: this function does nothing if you try to
+ * zoom less.
+ */
+void ShaderPreviewer::zoom_out() {
+
+  if (view_settings == nullptr) {
+    return;
+  }
+
+  view_settings->set_zoom(view_settings->get_zoom() / 2.0);
+}
+
+/**
+ * @brief Sets the zoom level of the view from the settings.
+ *
+ * Zooming will be anchored at the mouse position.
+ * The zoom value will be clamped between 0.25 and 4.0.
+ */
+
+void ShaderPreviewer::update_zoom() {
+
+  if (view_settings == nullptr) {
+    return;
+  }
+
+  float zoom = static_cast<float>(view_settings->get_zoom());
+  zoom = qMin(4.0f, qMax(0.25f, zoom));
+
+  if (zoom == this->zoom) {
+    return;
+  }
+
+  this->zoom = zoom;
   update();
 }
 
@@ -201,6 +252,22 @@ void ShaderPreviewer::set_model(ShaderModel* model) {
 
     on_source_changed();
   }
+}
+
+/**
+ * @brief Sets the view settings for this view.
+ *
+ * When they change, the view is updated accordingly.
+ *
+ * @param view_settings The settings to watch.
+ */
+void ShaderPreviewer::set_view_settings(ViewSettings& view_settings) {
+
+  this->view_settings = &view_settings;
+
+  connect(&view_settings, &ViewSettings::zoom_changed,
+          this, &ShaderPreviewer::update_zoom);
+  update_zoom();
 }
 
 /**

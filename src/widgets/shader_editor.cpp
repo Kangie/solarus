@@ -139,6 +139,8 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   set_icon(QIcon(":/images/icon_resource_shader.png"));
   set_close_confirm_message(
         tr("Shader '%1' has been modified. Save changes?").arg(shader_id));
+  set_zoom_supported(true);
+  ui.preview_widget->set_view_settings(get_view_settings());
 
   // Open the file.
   shader = std::unique_ptr<ShaderModel>(new ShaderModel(quest, shader_id, this));

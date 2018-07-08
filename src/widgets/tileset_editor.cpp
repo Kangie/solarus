@@ -809,7 +809,6 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
         tr("Tileset '%1' has been modified. Save changes?").arg(tileset_id));
   set_select_all_supported(true);
   set_zoom_supported(true);
-  ViewSettings& view_settings = get_view_settings();
   set_grid_supported(true);
 
   // Open the file.
@@ -823,7 +822,7 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   ui.patterns_list_view->set_model(*model);
   ui.border_sets_tree_view->set_tileset(*model);
   ui.tileset_view->set_model(model);
-  ui.tileset_view->set_view_settings(view_settings);
+  ui.tileset_view->set_view_settings(get_view_settings());
 
   load_settings();
   update();

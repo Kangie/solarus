@@ -18,25 +18,26 @@
 #define SOLARUSEDITOR_SHADER_PREVIEWER_H
 
 #include "shader_preview_mode.h"
-#include <QPointer>
-#include <QWidget>
-#include <QOpenGLVertexArrayObject>
+#include <QFileSystemWatcher>
+#include <QMatrix4x4>
+#include <QOpenGLBuffer>
+#include <QOpenGLDebugLogger>
 #include <QOpenGLFramebufferObject>
-#include <QOpenGLTexture>
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
+#include <QOpenGLTexture>
+#include <QOpenGLVertexArrayObject>
 #include <QOpenGLWidget>
-#include <QFileSystemWatcher>
-#include <QOpenGLDebugLogger>
-#include <QMatrix4x4>
+#include <QPointer>
 #include <QTimer>
+#include <QWidget>
 
 // #define SOLARUSEDITOR_DEBUG_GL
 
 namespace SolarusEditor {
 
 class ShaderModel;
+class ViewSettings;
 
 /**
  * @brief A widget to preview shaders.
@@ -49,10 +50,14 @@ public:
   ShaderPreviewer(QWidget* parent = nullptr);
 
   void set_model(ShaderModel* model);
+  void set_view_settings(ViewSettings& view_settings);
 
   ShaderPreviewMode get_preview_mode() const;
   void set_preview_mode(ShaderPreviewMode preview_mode);
   void setup_framebuffers(const QSize& output_size);
+
+  void zoom_in();
+  void zoom_out();
 
   /// Mouse events
   void mouseMoveEvent(QMouseEvent* event) override;
@@ -81,10 +86,13 @@ private:
   void render_sbs();
   void compile_program();
 
+  void update_zoom();
   QSize get_letter_box(const QSize& qsize, const QSize& basesize) const;
 
   bool should_recompile = true;
   QImage preview_image;
+  QPointer<ViewSettings>
+      view_settings;                            /**< How the view is displayed. */
 
   /// Move
   bool grabbing = false;                        /**< grab state */
@@ -97,7 +105,7 @@ private:
   /// Opengl
   QOpenGLFramebufferObject* input_fb = nullptr; /**< Framebuffer to chich the input is drawn */
   QOpenGLFramebufferObject* output_fb = nullptr;/**< Framebuffer to which the output is drawn */
-  QOpenGLBuffer* vertex_buffer = nullptr;       /**< quad buffer; */
+  QOpenGLBuffer* vertex_buffer = nullptr;       /**< quad buffer */
   QOpenGLVertexArrayObject* vao = nullptr;      /**< Empty vertex array for core profiles*/
   QOpenGLShaderProgram program;                 /**< shader program*/
   QOpenGLTexture* input_texture = nullptr;      /**< Texture of the input*/
