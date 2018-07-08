@@ -150,15 +150,15 @@ file.
 You usually don't have to call this function, unless you need to change it
 dynamically for some reason.
 
-- \c quest_write_dir (string): The quest write directory, relative to the Solarus
-  write directory, or \c nil to unset it.
+- \c quest_write_dir (string): The quest write directory, relative to the
+  Solarus write directory, or \c nil to unset it.
 
 \subsection lua_api_main_load_settings sol.main.load_settings([file_name])
 
 Loads and applies the built-in settings from a file previously saved with
 \ref lua_api_main_save_settings "sol.main.save_settings()".
-Settings from the file include user preferences such as the language
-and the audio volume.
+Settings from the file include user preferences such as the language,
+the video mode and the audio volume.
 
 Note that all these settings can already be modified individually with the Lua
 API, so you can either use this function or implement something more fitted
@@ -186,7 +186,7 @@ This file can be reloaded later with \ref lua_api_main_load_settings
 "sol.main.load_settings()" to
 restore the saved settings.
 Settings saved include user preferences such as the current language,
-and the current audio volume.
+the current video mode and the current audio volume.
 
 Note that all these settings can already be modified individually with the Lua
 API, so you can either use this function or implement something more fitted
@@ -593,4 +593,3 @@ Called when the user moves a finger.
   return \c true, the event won't be propagated to other objects.
 
 */
-
