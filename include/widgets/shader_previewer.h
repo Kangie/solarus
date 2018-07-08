@@ -81,14 +81,14 @@ private:
   void render_sbs();
   void compile_program();
 
-  QSize get_letter_box(const QSize &qsize, const QSize& basesize) const;
+  QSize get_letter_box(const QSize& qsize, const QSize& basesize) const;
 
   bool should_recompile = true;
   QImage preview_image;
 
   /// Move
   bool grabbing = false;                        /**< grab state */
-  float zoom = 1.f;                             /**< zoom factor*/
+  float zoom = 1.f;                             /**< zoom factor */
   QPointF last_mouse_pos;                       /**< last registered mouse position */
   QVector2D translation;                        /**< Translation vector */
   QCursor grab_cursor;                          /**< Cursor displayedd while grabbing */

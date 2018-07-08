@@ -659,6 +659,20 @@ void SpriteModel::set_animation_name(const Index& index, const QString& new_name
 }
 
 /**
+ * @brief Returns the name of all animations of this sprite.
+ * @return The animation names.
+ */
+QStringList SpriteModel::get_animation_names() const {
+
+  QStringList animation_names;
+  for (const AnimationModel& animation : animations) {
+    animation_names << animation.get_animation_name();
+  }
+
+  return animation_names;
+}
+
+/**
  * @brief Returns an animation data.
  * @param index An animation index.
  * @return The animation data.

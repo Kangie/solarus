@@ -122,6 +122,7 @@ public:
   void delete_animation(const Index& index);
   void set_animation_name(const Index& index, const QString& new_name);
 
+  QStringList get_animation_names() const;
   Solarus::SpriteAnimationData get_animation_data(const Index& index) const;
   QString get_animation_source_image(const Index& index) const;
   bool is_animation_image_is_tileset(const Index& index) const;
@@ -246,7 +247,16 @@ private:
     }
 
     /**
+     * @brief Returns the name of this animation.
+     * @return The animation name.
+     */
+    QString get_animation_name() const {
+      return index->animation_name;
+    }
+
+    /**
      * @brief Changes the name of this animation.
+     * @param animation_name The animation name.
      */
     void set_animation_name(const QString& animation_name) {
       index->animation_name = animation_name;

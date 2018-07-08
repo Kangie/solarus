@@ -66,6 +66,8 @@ private:
   void source_editor_modification_state_changed(WhichGlslEditor which, bool clean);
 
   void preview_radio_changed();
+  void preview_selected_sprite_changed();
+  void preview_sprite_animation_changed();
   void browse_preview_picture();
   void update_preview_image();
 

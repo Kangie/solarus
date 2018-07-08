@@ -107,7 +107,7 @@ void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
   if (grabbing) {
     QPointF d = event->localPos() - last_mouse_pos;
     d.setY(-d.y());
-    translation += QVector2D(d)  *0.5f / zoom;
+    translation += QVector2D(d) * 0.5f / zoom;
     last_mouse_pos = event->localPos();
     event->accept();
   }

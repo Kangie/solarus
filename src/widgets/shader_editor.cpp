@@ -213,9 +213,9 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(ui.preview_sprite_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
   connect(ui.preview_sprite_field, QOverload<int>::of(&QComboBox::currentIndexChanged),
-          this, &ShaderEditor::update_preview_image);
+          this, &ShaderEditor::preview_selected_sprite_changed);
   connect(ui.preview_sprite_animation_field, QOverload<int>::of(&QComboBox::currentIndexChanged),
-          this, &ShaderEditor::update_preview_image);
+          this, &ShaderEditor::preview_sprite_animation_changed);
   connect(ui.preview_sprite_direction_field, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &ShaderEditor::update_preview_image);
 
@@ -609,8 +609,47 @@ void ShaderEditor::preview_radio_changed() {
   }
   else if (ui.preview_sprite_radio->isChecked()) {
     ui.preview_file_widget->setCurrentWidget(ui.preview_sprite_page);
+    preview_selected_sprite_changed();
   }
 
+  update_preview_image();
+}
+
+/**
+ * @brief Sets up the sprite animation and direction fields according
+ * to the selected sprite.
+ */
+void ShaderEditor::preview_selected_sprite_changed() {
+
+  ui.preview_sprite_animation_field->clear();
+
+  const QString& sprite_id = ui.preview_sprite_field->get_selected_id();
+  if (sprite_id.isEmpty() ||
+      !quest.get_database().exists(ResourceType::SPRITE, sprite_id) ||
+      !quest.exists(quest.get_sprite_path(sprite_id))) {
+    update_preview_image();
+    return;
+  }
+
+  SpriteModel sprite(get_quest(), sprite_id);
+  ui.preview_sprite_animation_field->addItems(sprite.get_animation_names());
+  ui.preview_sprite_animation_field->setCurrentText(sprite.get_default_animation_name());
+}
+
+/**
+ * @brief Called when the user selects a sprite animation.
+ */
+void ShaderEditor::preview_sprite_animation_changed() {
+
+  const QString& sprite_id = ui.preview_sprite_field->get_selected_id();
+  if (!sprite_id.isEmpty() &&
+      quest.get_database().exists(ResourceType::SPRITE, sprite_id) &&
+      quest.exists(quest.get_sprite_path(sprite_id))) {
+    SpriteModel sprite(get_quest(), sprite_id);
+    const QString& animation = ui.preview_sprite_animation_field->currentText();
+    int num_directions = sprite.get_animation_num_directions({animation, 0});
+    ui.preview_sprite_direction_field->setMaximum(num_directions - 1);
+  }
   update_preview_image();
 }
 
@@ -672,7 +711,15 @@ void ShaderEditor::update_preview_image() {
         quest.get_database().exists(ResourceType::SPRITE, sprite_id) &&
         quest.exists(quest.get_sprite_path(sprite_id))) {
       SpriteModel sprite(get_quest(), sprite_id);
-      QPixmap pixmap = sprite.get_direction_first_frame({ sprite.get_default_animation_name(), 0 });
+      QString animation = ui.preview_sprite_animation_field->currentText();
+      int direction = ui.preview_sprite_direction_field->value();
+      if (!sprite.animation_exists(animation)) {
+        animation = sprite.get_default_animation_name();
+      }
+      if (direction < 0 || direction >= sprite.get_animation_num_directions({animation, 0})) {
+        direction = 0;
+      }
+      QPixmap pixmap = sprite.get_direction_first_frame({ animation, direction });
       image = pixmap.toImage();
     }
   }
