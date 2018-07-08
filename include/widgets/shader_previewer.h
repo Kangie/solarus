@@ -85,6 +85,7 @@ private:
   void render_swipe(float factor);
   void render_sbs();
   void compile_program();
+  void build_preview_texture();
 
   void update_zoom();
   QSize get_letter_box(const QSize& qsize, const QSize& basesize) const;

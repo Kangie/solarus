@@ -82,6 +82,14 @@ public:
   static const QString tileset_grid_style;
   static const QString tileset_grid_color;
 
+  // Shader editor keys.
+  static const QString shader_preview_type;
+  static const QString shader_preview_picture_file;
+  static const QString shader_preview_map_id;
+  static const QString shader_preview_sprite_id;
+  static const QString shader_preview_sprite_animation;
+  static const QString shader_preview_sprite_direction;
+
   EditorSettings();
 
   static void load_default_application_settings();

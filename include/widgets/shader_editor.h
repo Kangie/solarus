@@ -49,6 +49,7 @@ public:
 
   void save() override;
   bool has_unsaved_changes() const override;
+  void reload_settings() override;
 
 private:
 

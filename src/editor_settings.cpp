@@ -86,6 +86,14 @@ const QString EditorSettings::tileset_grid_size = "tileset_editor/grid_size";
 const QString EditorSettings::tileset_grid_style = "tileset_editor/grid_style";
 const QString EditorSettings::tileset_grid_color = "tileset_editor/grid_color";
 
+// Shader editor keys.
+const QString EditorSettings::shader_preview_type = "shader_editor/preview_type";
+const QString EditorSettings::shader_preview_picture_file = "shader_editor/preview_picture_file";
+const QString EditorSettings::shader_preview_map_id = "shader_editor/preview_map_id";
+const QString EditorSettings::shader_preview_sprite_id = "shader_editor/preview_sprite_id";
+const QString EditorSettings::shader_preview_sprite_animation = "shader_editor/preview_sprite_animation";
+const QString EditorSettings::shader_preview_sprite_direction = "shader_editor/preview_sprite_direction";
+
 QMap<QString, QVariant> EditorSettings::default_values = {
 
   // General.
@@ -139,7 +147,15 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::tileset_grid_show_at_opening, false },
   { EditorSettings::tileset_grid_size, QSize(16, 16) },
   { EditorSettings::tileset_grid_style, static_cast<int>(GridStyle::DASHED) },
-  { EditorSettings::tileset_grid_color, "#000000" }
+  { EditorSettings::tileset_grid_color, "#000000" },
+
+  // Shader editor.
+  { EditorSettings::shader_preview_type, "picture" },
+  { EditorSettings::shader_preview_picture_file, "" },
+  { EditorSettings::shader_preview_map_id, "" },
+  { EditorSettings::shader_preview_sprite_id, "" },
+  { EditorSettings::shader_preview_sprite_animation, "" },
+  { EditorSettings::shader_preview_sprite_direction, 0 },
 };
 
 /**

@@ -19,6 +19,7 @@
 #include "widgets/shader_editor.h"
 #include "widgets/text_editor.h"
 #include "editor_exception.h"
+#include "editor_settings.h"
 #include "map_model.h"
 #include "quest.h"
 #include "shader_model.h"
@@ -192,6 +193,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.fragment_editor_layout->removeItem(ui.fragment_editor_placeholder);
 
   update();
+  reload_settings();
 
   // Make connections.
   connect(&get_database(), &QuestDatabase::element_description_changed,
@@ -258,19 +260,13 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(&fragment_editor->get_undo_stack(), &QUndoStack::cleanChanged, [this](bool clean) {
     source_editor_modification_state_changed(WhichGlslEditor::FRAGMENT_EDITOR, clean);
   });
-
-  preview_radio_changed();
-
-  // TODO remember last preview settings in QSettings
 }
 
 /**
  * @brief Destructor.
  */
 ShaderEditor::~ShaderEditor() {
-
 }
-
 
 /**
  * @brief Returns the shader model being edited.
@@ -298,6 +294,42 @@ bool ShaderEditor::has_unsaved_changes() const {
   return Editor::has_unsaved_changes() ||
       vertex_editor->has_unsaved_changes() ||
       fragment_editor->has_unsaved_changes();
+}
+
+/**
+ * @copydoc Editor::reload_settings
+ */
+void ShaderEditor::reload_settings() {
+
+  EditorSettings settings;
+
+  QString file = settings.get_value_string(EditorSettings::shader_preview_picture_file);
+  ui.preview_picture_field->setText(file);
+  QString map_id = settings.get_value_string(EditorSettings::shader_preview_map_id);
+  ui.preview_map_field->set_selected_id(map_id);
+  QString sprite_id = settings.get_value_string(EditorSettings::shader_preview_sprite_id);
+  QString animation = settings.get_value_string(EditorSettings::shader_preview_sprite_animation);
+  int direction = settings.get_value_int(EditorSettings::shader_preview_sprite_direction);
+  ui.preview_sprite_field->set_selected_id(sprite_id);
+  preview_selected_sprite_changed();
+  ui.preview_sprite_animation_field->setCurrentText(animation);
+  preview_sprite_animation_changed();
+  ui.preview_sprite_direction_field->setValue(direction);
+
+  QString preview_type = settings.get_value_string(EditorSettings::shader_preview_type);
+  if (preview_type.isEmpty() || preview_type == "picture") {
+    ui.preview_picture_radio->setChecked(true);
+    ui.preview_file_widget->setCurrentWidget(ui.preview_picture_page);
+  }
+  else if (preview_type == "map") {
+    ui.preview_map_radio->setChecked(true);
+    ui.preview_file_widget->setCurrentWidget(ui.preview_map_page);
+  }
+  else if (preview_type == "sprite") {
+    ui.preview_sprite_radio->setChecked(true);
+    ui.preview_file_widget->setCurrentWidget(ui.preview_sprite_page);
+  }
+  update_preview_image();
 }
 
 /**
@@ -650,9 +682,10 @@ void ShaderEditor::preview_sprite_animation_changed() {
     SpriteModel sprite(get_quest(), sprite_id);
     const QString& animation = ui.preview_sprite_animation_field->currentText();
     int num_directions = sprite.get_animation_num_directions({animation, 0});
-    ui.preview_sprite_direction_field->setMaximum(num_directions - 1);
+    if (num_directions > 0) {
+      ui.preview_sprite_direction_field->setMaximum(num_directions - 1);
+    }
   }
-  update_preview_image();
 }
 
 /**
@@ -691,24 +724,37 @@ void ShaderEditor::browse_preview_picture() {
 void ShaderEditor::update_preview_image() {
 
   QImage image;
+  EditorSettings settings;
+
+  const QString& picture_file_name = ui.preview_picture_field->text();
+  if (!picture_file_name.isEmpty()) {
+    settings.set_value(EditorSettings::shader_preview_picture_file, picture_file_name);
+  }
+  const QString& map_id = ui.preview_map_field->get_selected_id();
+  if (!map_id.isEmpty()) {
+    settings.set_value(EditorSettings::shader_preview_map_id, map_id);
+  }
+  const QString& sprite_id = ui.preview_sprite_field->get_selected_id();
+  if (!sprite_id.isEmpty()) {
+    settings.set_value(EditorSettings::shader_preview_sprite_id, sprite_id);
+  }
 
   if (ui.preview_picture_radio->isChecked()) {
-    const QString& picture_file_name = ui.preview_picture_field->text();
     if (!picture_file_name.isEmpty()) {
       image = QImage(picture_file_name);
     }
+    settings.set_value(EditorSettings::shader_preview_type, "picture");
   }
   else if (ui.preview_map_radio->isChecked()) {
-    const QString& map_id = ui.preview_map_field->get_selected_id();
     if (!map_id.isEmpty()) {
       MapModel map(get_quest(), map_id);
       MapView view;
       view.set_map(&map);
       image = view.export_to_image();
     }
+    settings.set_value(EditorSettings::shader_preview_type, "map");
   }
   else if (ui.preview_sprite_radio->isChecked()) {
-    const QString& sprite_id = ui.preview_sprite_field->get_selected_id();
     if (!sprite_id.isEmpty() &&
         quest.get_database().exists(ResourceType::SPRITE, sprite_id) &&
         quest.exists(quest.get_sprite_path(sprite_id))) {
@@ -723,7 +769,10 @@ void ShaderEditor::update_preview_image() {
       }
       QPixmap pixmap = sprite.get_direction_first_frame({ animation, direction });
       image = pixmap.toImage();
+      settings.set_value(EditorSettings::shader_preview_sprite_animation, animation);
+      settings.set_value(EditorSettings::shader_preview_sprite_direction, direction);
     }
+    settings.set_value(EditorSettings::shader_preview_type, "sprite");
   }
 
   ui.preview_widget->set_preview_image(image);
