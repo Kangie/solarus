@@ -16,7 +16,7 @@ Shaders are programs executed by the GPU during a rendering pass.
 They are written in a shading language
 (GLSL or GLSL ES in Solarus).
 Solarus compiles them at runtime when you create them
-with \ref lua_api_shader_create "sol.shader.create()".
+with \ref lua_api_shader_create_id "sol.shader.create()".
 If you activate them with
 \ref lua_api_video_set_shader "sol.video.set_shader()",
 they are then executed on the GPU at each rendering frame.
@@ -188,14 +188,43 @@ are not supported and will result in undefined behaviour. Same for the attribute
 
 \section lua_api_shader_functions Functions of sol.shader
 
-\subsection lua_api_shader_create sol.shader.create(shader_id)
+\subsection lua_api_shader_create_id sol.shader.create(shader_id)
 
-Loads and returns a shader program.
+Loads and returns a shader program from a shader description file.
 
 If the loading or the compilation of the shader program fails,
 a Lua error is raised.
 - \c shader_id (string): Id of the shader program to load
   (filename without extension, relative to the \c shaders directory).
+- Return value (shader): The shader program created.
+
+\subsection lua_api_shader_create_properties sol.shader.create(properties)
+
+Loads and returns a shader program from the given parameters.
+
+This function can be used for advanced purposes, but the normal way is to use
+\ref lua_api_shader_create_id "sol.shader.create(shader_id)",
+that is, to load a shader already described in a data file.
+
+If the loading or the compilation of the shader program fails,
+a Lua error is raised.
+- \c properties (table): Source and parameters of the  shader program.
+  Can have the following entries:
+  - \c vertex_source (string, optional): GLSL code of the vertex shader.
+    No values means to use a default shader that does nothing special
+  - \c fragment_source (string, optional): GLSL code of the fragment shader.
+    No values means to use a default shader that does nothing special.
+  - \c scaling_factor (number, optional): When the shader is applied to the
+    whole window, indicates how much the input texture will be scaled by the
+    shader.
+    Only useful for scaling shaders.
+    If a value is set, the output texture of the shader will have the size of
+    the input texture multiplied by this scaling factor
+    (however, the output texture will then still be fitted to the window).
+    If no value is set, the output texture of the shader will have the size of
+    the window.
+    This value only has an effect when the shader is applied to the window,
+    and does nothing when the shader is applied to a drawable object.
 - Return value (shader): The shader program created.
 
 \subsection lua_api_shader_get_opengl_version sol.shader.get_opengl_version()
@@ -223,12 +252,24 @@ Returns the name of the vertex shader file of this shader program.
   relative to the \c "shaders" directory,
   or \c nil if no vertex shader file was set.
 
+\subsection lua_api_shader_get_vertex_source shader:get_vertex_source()
+
+Returns the vertex shader code of this shader program.
+- Return value (string): The vertex shader code.
+  If no vertex shader was set, returns the default vertex shader code.
+
 \subsection lua_api_shader_get_fragment_file shader:get_fragment_file()
 
 Returns the name of the fragment shader file of this shader program.
 - Return value (string): The fragment shader file name,
   relative to the \c "shaders" directory,
   or \c nil if no fragment shader file was set.
+
+\subsection lua_api_shader_get_fragment_source shader:get_fragment_source()
+
+Returns the fragment shader code of this shader program.
+- Return value (string): The fragment shader code.
+  If no fragment shader was set, returns the default fragment shader code.
 
 \subsection lua_api_shader_set_uniform shader:set_uniform(uniform_name, value)
 
