@@ -378,7 +378,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="SolarusEditor::ShaderPreviewer" name="preview_widget" native="true">
+      <widget class="SolarusEditor::ShaderPreviewer" name="shader_previewer" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>

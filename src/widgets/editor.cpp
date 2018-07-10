@@ -169,8 +169,8 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
   set_close_confirm_message(
         tr("File '%1' has been modified. Save changes?").arg(get_file_name()));
 
-  connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
-          this, SLOT(application_state_changed(Qt::ApplicationState)));
+  connect(qApp, &QGuiApplication::applicationStateChanged,
+          this, &Editor::application_state_changed);
 }
 
 /**

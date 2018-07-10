@@ -131,6 +131,7 @@ private:
   QMenu* create_show_entities_menu();
   bool is_console_visible() const;
   void set_console_visible(bool console_visible);
+  void log_message_to_console(const QString& log_level, const QString& message);
 
   void refactor_map_id(const QString& map_id_before, const QString& map_id_after);
   bool update_destination_map_in_map(

@@ -72,6 +72,11 @@ public:
   virtual void initializeGL() override;
   virtual void resizeGL(int w, int h) override;
 
+signals:
+  void shader_compilation_started(const QString& shader_id);
+  void shader_compilation_finished(const QString& shader_id);
+  void shader_error(const QString& message);
+
 public slots:
  void on_source_changed();
  void on_scaling_factor_changed(double factor);

@@ -514,12 +514,12 @@ void ShaderPreviewer::initializeGL() {
     qWarning() << "Failed to create glbuffer!"; // TODO fail gracefully
   }
   Solarus::VertexArray array;
-  array.add_quad(Solarus::Rectangle(0,0,1,1),
-                 Solarus::Rectangle(0,1,1,-1),
+  array.add_quad(Solarus::Rectangle(0, 0, 1, 1),
+                 Solarus::Rectangle(0, 1, 1, -1),
                  Solarus::Color::white);
   qDebug() << "Vertex count" << array.vertex_count();
   vertex_buffer->bind();
-  vertex_buffer->allocate(array.data(),array.vertex_count()*sizeof(Solarus::Vertex));
+  vertex_buffer->allocate(array.data(), array.vertex_count() * sizeof(Solarus::Vertex));
   vertex_buffer->release();
   // Create empty vao for core profiles
   vao = new QOpenGLVertexArrayObject();
@@ -533,7 +533,7 @@ void ShaderPreviewer::initializeGL() {
         QOpenGLShader::Fragment,
         Solarus::DefaultShaders::get_default_fragment_source().c_str());
   if (!simple_program.link()) {
-    qDebug() << "ERROR SIMPLE" << simple_program.log();
+    emit shader_error("Failed to link basic shader program:\n" + simple_program.log());
   }
 
   // Create swipe shader
@@ -545,7 +545,7 @@ void ShaderPreviewer::initializeGL() {
         QOpenGLShader::Fragment,
         SWIPE_FRAGMENT_SHADER);
   if (!swipe_program.link()) {
-    qDebug() << "ERROR SWIPE" << swipe_program.log();
+    emit shader_error("Failed to link swipe shader program:\n" + swipe_program.log());
   }
 
   // OpenGL is now ready, build the texture if it was already set.
@@ -595,19 +595,20 @@ void ShaderPreviewer::on_source_changed() {
  */
 void ShaderPreviewer::compile_program() {
   program.removeAllShaders();
+  emit shader_compilation_started(model->get_shader_id());
   if (!model->get_vertex_file().isEmpty()) {
     qDebug() << "Using provided vertex shader";
     if (!program.addShaderFromSourceFile(
           QOpenGLShader::Vertex,
          model->get_quest().get_shader_code_file_path(model->get_vertex_file()))) {
-      qWarning() << "ERROR" << program.log(); // TODO log better
+      emit shader_error("Failed to compile vertex shader:\n" + program.log());
     }
   } else {
      qDebug() << "Using default vertex shader";
     if (!program.addShaderFromSourceCode(
           QOpenGLShader::Vertex,
           Solarus::DefaultShaders::get_default_vertex_source().c_str())) {
-      qWarning() << "ERROR" << program.log(); // TODO log better
+      emit shader_error("Failed to compile default vertex shader:\n" + program.log());
     }
   }
   if (!model->get_fragment_file().isEmpty()) {
@@ -615,22 +616,22 @@ void ShaderPreviewer::compile_program() {
     if (!program.addShaderFromSourceFile(
          QOpenGLShader::Fragment,
          model->get_quest().get_shader_code_file_path(model->get_fragment_file()))) {
-      qWarning() << "ERROR" << program.log();
+      emit shader_error("Failed to compile fragment shader:\n" + program.log());
     }
   } else {
      qDebug() << "Using default fragment shader";
     if (!program.addShaderFromSourceCode(
           QOpenGLShader::Fragment,
           Solarus::DefaultShaders::get_default_fragment_source().c_str())) {
-      qWarning() << "ERROR" << program.log(); // TODO log better
+      emit shader_error("Failed to compile default fragment shader:\n" + program.log());
     }
   }
   if (!program.link()) {
-    qWarning() << "ERROR" << program.log();
+    emit shader_error("Failed to link shader program:\n" + program.log());
   }
 
-  qDebug() << "Shader compilation end";
   should_recompile = false;
+  emit shader_compilation_finished(model->get_shader_id());
 }
 
 #ifdef SOLARUSEDITOR_DEBUG_GL

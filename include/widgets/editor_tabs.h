@@ -83,6 +83,8 @@ signals:
   void can_copy_changed(bool can_copy);
   void can_paste_changed(bool can_paste);
   void refactoring_requested(const Refactoring& refactoring);
+  void clear_console();
+  void log_message_to_console(const QString& log_level, const QString& message);
 
 public slots:
 

@@ -95,6 +95,8 @@ signals:
   void can_paste_changed(bool can_paste);
   void open_file_requested(Quest& quest, const QString& path);
   void refactoring_requested(const Refactoring& refactoring);
+  void clear_console();
+  void log_message_to_console(const QString& log_level, const QString& message);
 
 public slots:
 

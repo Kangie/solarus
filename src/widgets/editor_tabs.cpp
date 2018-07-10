@@ -757,24 +757,30 @@ void EditorTabs::current_editor_changed(int index) {
     emit can_cut_changed(false);
     emit can_copy_changed(false);
     emit can_paste_changed(false);
+    // FIXME disconnect not working
+    disconnect(nullptr, SIGNAL(can_cut_changed(bool)),
+               this, SIGNAL(can_cut_changed(bool)));
+    disconnect(nullptr, SIGNAL(can_copy_changed(bool)),
+               this, SIGNAL(can_copy_changed(bool)));
+    disconnect(nullptr, SIGNAL(can_paste_changed(bool)),
+               this, SIGNAL(can_paste_changed(bool)));
+    disconnect(nullptr, SIGNAL(clear_console()),
+               this, SIGNAL(clear_console()));
+    disconnect(nullptr, SIGNAL(log_message_to_console(QString, QString)),
+               this, SIGNAL(log_message_to_console(QString, QString)));
   }
   else {
     get_undo_group().setActiveStack(&editor->get_undo_stack());
-    connect(editor, &Editor::can_cut_changed, [this, editor](bool can_cut) {
-      if (get_editor() == editor) {
-        emit can_cut_changed(can_cut);
-      }
-    });
-    connect(editor, &Editor::can_copy_changed, [this, editor](bool can_copy) {
-      if (get_editor() == editor) {
-        emit can_copy_changed(can_copy);
-      }
-    });
-    connect(editor, &Editor::can_paste_changed, [this, editor](bool can_paste) {
-      if (get_editor() == editor) {
-        emit can_paste_changed(can_paste);
-      }
-    });
+    connect(editor, SIGNAL(can_cut_changed(bool)),
+            this, SIGNAL(can_cut_changed(bool)));
+    connect(editor, SIGNAL(can_copy_changed(bool)),
+            this, SIGNAL(can_copy_changed(bool)));
+    connect(editor, SIGNAL(can_paste_changed(bool)),
+            this, SIGNAL(can_paste_changed(bool)));
+    connect(editor, SIGNAL(clear_console()),
+            this, SIGNAL(clear_console()));
+    connect(editor, SIGNAL(log_message_to_console(QString, QString)),
+            this, SIGNAL(log_message_to_console(QString, QString)));
     emit can_cut_changed(editor->can_cut());
     emit can_copy_changed(editor->can_copy());
     emit can_paste_changed(editor->can_paste());

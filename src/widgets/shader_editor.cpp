@@ -141,7 +141,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   set_close_confirm_message(
         tr("Shader '%1' has been modified. Save changes?").arg(shader_id));
   set_zoom_supported(true);
-  ui.preview_widget->set_view_settings(get_view_settings());
+  ui.shader_previewer->set_view_settings(get_view_settings());
 
   // Open the file.
   shader = std::unique_ptr<ShaderModel>(new ShaderModel(quest, shader_id, this));
@@ -174,7 +174,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.right_splitter->setStretchFactor(0, 1);
   ui.right_splitter->setStretchFactor(1, 1);
 
-  ui.preview_widget->set_model(shader.get());
+  ui.shader_previewer->set_model(shader.get());
 
   QString vertex_file = shader->get_vertex_file();
   QString vertex_file_path = vertex_file.isEmpty() ?
@@ -203,7 +203,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(ui.preview_mode_selector, QOverload<int>::of(&QComboBox::currentIndexChanged),
           [this]() {
-    ui.preview_widget->set_preview_mode(ui.preview_mode_selector->get_selected_value());
+    ui.shader_previewer->set_preview_mode(ui.preview_mode_selector->get_selected_value());
   });
 
   connect(ui.preview_picture_radio, &QRadioButton::clicked,
@@ -259,6 +259,13 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   });
   connect(&fragment_editor->get_undo_stack(), &QUndoStack::cleanChanged, [this](bool clean) {
     source_editor_modification_state_changed(WhichGlslEditor::FRAGMENT_EDITOR, clean);
+  });
+
+  connect(ui.shader_previewer, &ShaderPreviewer::shader_compilation_started,
+          this, &ShaderEditor::clear_console);
+  connect(ui.shader_previewer, &ShaderPreviewer::shader_error,
+        [this](const QString& message) {
+    emit log_message_to_console("Error", message);
   });
 }
 
@@ -645,6 +652,11 @@ void ShaderEditor::source_editor_modification_state_changed(WhichGlslEditor whic
     title += '*';
   }
   ui.shader_files_tab_widget->setTabText(tab_index, title);
+
+  if (clean) {
+    // A GLSL file was just saved: tell the preview to update.
+    ui.shader_previewer->on_source_changed();
+  }
 }
 
 /**
@@ -793,7 +805,7 @@ void ShaderEditor::update_preview_image() {
     settings.set_value(EditorSettings::shader_preview_type, "sprite");
   }
 
-  ui.preview_widget->set_preview_image(image);
+  ui.shader_previewer->set_preview_image(image);
 }
 
 }

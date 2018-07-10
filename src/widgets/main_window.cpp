@@ -225,6 +225,10 @@ MainWindow::MainWindow(QWidget* parent) :
           ui.action_paste, SLOT(setEnabled(bool)));
   connect(ui.tab_widget, SIGNAL(refactoring_requested(Refactoring)),
           this, SLOT(refactoring_requested(Refactoring)));
+  connect(ui.tab_widget, &EditorTabs::clear_console,
+          ui.console_widget, &SolarusGui::Console::clear);
+  connect(ui.tab_widget, &EditorTabs::log_message_to_console,
+          this, &MainWindow::log_message_to_console);
 
   connect(grid_size, SIGNAL(value_changed(int,int)),
           this, SLOT(change_grid_size()));
@@ -1087,6 +1091,17 @@ void MainWindow::set_console_visible(bool console_visible) {
   }
 
   ui.console_widget->setVisible(console_visible);
+}
+
+/**
+ * @brief Adds a message to the console and shows it.
+ * @param log_level Log level of the message.
+ * @param message The message to log.
+ */
+void MainWindow::log_message_to_console(const QString& log_level, const QString& message) {
+
+  set_console_visible(true);
+  ui.console_widget->add_message(log_level, message);
 }
 
 /**
