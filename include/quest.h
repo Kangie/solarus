@@ -128,6 +128,10 @@ public:
 
   // Create, rename and delete paths.
   void create_file(const QString& path);
+  void create_file_from_string(
+      const QString& path,
+      const QString& content
+  );
   void create_file_from_template(
       const QString& output_file_path,
       const QString& template_file_path,

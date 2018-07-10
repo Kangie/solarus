@@ -520,8 +520,22 @@ void ShaderEditor::new_source_file(WhichGlslEditor which) {
   }
 
   try {
-    if (!get_glsl_editor(which)->confirm_before_closing()) {
+    TextEditor* glsl_editor = get_glsl_editor(which);
+    if (!glsl_editor->confirm_before_closing()) {
       return;
+    }
+
+    QString suffix;
+    QString content;
+    switch (which) {
+    case WhichGlslEditor::VERTEX_EDITOR:
+      suffix = ".vert.glsl";
+      content = ShaderModel::get_default_vertex_source();
+      break;
+    case WhichGlslEditor::FRAGMENT_EDITOR:
+      suffix = ".frag.glsl";
+      content = ShaderModel::get_default_fragment_source();
+      break;
     }
 
     bool ok = false;
@@ -530,7 +544,7 @@ void ShaderEditor::new_source_file(WhichGlslEditor which) {
           tr("New GLSL file"),
           tr("File name:"),
           QLineEdit::Normal,
-          shader_id + ".frag.glsl",
+          shader_id + suffix,
           &ok);
 
     if (ok) {
@@ -542,7 +556,7 @@ void ShaderEditor::new_source_file(WhichGlslEditor which) {
       const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);
       QString file_path = shaders_path + '/' + file_name;
 
-      get_quest().create_file(file_path);
+      get_quest().create_file_from_string(file_path, content);
 
       file_name = file_name.right(shaders_path.size() + 1);
       try_command(new SetGlslFileCommand(*this, which, file_name));

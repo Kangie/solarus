@@ -1322,6 +1322,31 @@ void Quest::create_file(const QString& path) {
 }
 
 /**
+ * @brief Creates a file in this quest with the given content.
+ * @param path Path of the file to create. It must not exist.
+ * @param content Content of the file.
+ * @throws EditorException In case of error.
+ */
+void Quest::create_file_from_string(
+    const QString& path,
+    const QString& content
+) {
+  check_is_in_root_path(path);
+  check_not_exists(path);
+
+  QFile file(path);
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    throw EditorException(tr("Cannot write file '%1'").arg(path));
+  }
+  QTextStream out(&file);
+  out.setCodec("UTF-8");
+  out << content;
+  file.close();
+
+  emit file_created(path);
+}
+
+/**
  * @brief Attempts to create a file in this quest from a template file.
  * @param output_file_path Path of the file to create. It must not exist.
  * @param template_file_path Path of the template file to use.
@@ -1335,7 +1360,6 @@ void Quest::create_file_from_template(
     const QRegularExpression& pattern,
     const QString& replacement
 ) {
-
   check_is_in_root_path(output_file_path);
   check_not_exists(output_file_path);
 

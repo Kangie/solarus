@@ -42,10 +42,14 @@ public:
   QString get_fragment_file() const;
   void set_fragment_file(const QString& fragment_file);
 
+  static QString get_default_vertex_source();
+  static QString get_default_fragment_source();
+
   double get_scaling_factor() const;
   void set_scaling_factor(double factor);
 
   void save() const;
+
 signals:
   void vertex_file_changed(const QString& vertex_file);
   void fragment_file_changed(const QString& fragment_file);

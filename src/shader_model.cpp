@@ -17,6 +17,7 @@
 #include "editor_exception.h"
 #include "quest.h"
 #include "shader_model.h"
+#include <solarus/graphics/DefaultShaders.h>
 
 namespace SolarusEditor {
 
@@ -114,6 +115,26 @@ void ShaderModel::set_fragment_file(const QString& fragment_file) {
 
   shader.set_fragment_file(std_fragment_file);
   emit fragment_file_changed(fragment_file);
+}
+
+/**
+ * @brief Returns the default vertex shader GLSL code.
+ * @return The default vertex shader.
+ */
+QString ShaderModel::get_default_vertex_source() {
+
+  return QString::fromStdString(
+        Solarus::DefaultShaders::get_default_vertex_source());
+}
+
+/**
+ * @brief Returns the default fragment shader GLSL code.
+ * @return The default fragment shader.
+ */
+QString ShaderModel::get_default_fragment_source() {
+
+  return QString::fromStdString(
+        Solarus::DefaultShaders::get_default_fragment_source());
 }
 
 /**

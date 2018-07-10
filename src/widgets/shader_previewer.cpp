@@ -20,6 +20,7 @@
 #include "view_settings.h"
 #include <solarus/graphics/VertexArray.h>
 #define GLM_FORCE_INLINE
+#include <solarus/graphics/DefaultShaders.h>
 #include <solarus/graphics/Shader.h>
 
 #include <QMatrix3x3>
@@ -527,10 +528,10 @@ void ShaderPreviewer::initializeGL() {
   // Create simple shader
   simple_program.addShaderFromSourceCode(
         QOpenGLShader::Vertex,
-        Solarus::Shader::default_vertex_source().c_str());
+        Solarus::DefaultShaders::get_default_vertex_source().c_str());
   simple_program.addShaderFromSourceCode(
         QOpenGLShader::Fragment,
-        Solarus::Shader::default_fragment_source().c_str());
+        Solarus::DefaultShaders::get_default_fragment_source().c_str());
   if (!simple_program.link()) {
     qDebug() << "ERROR SIMPLE" << simple_program.log();
   }
@@ -538,7 +539,7 @@ void ShaderPreviewer::initializeGL() {
   // Create swipe shader
   swipe_program.addShaderFromSourceCode(
         QOpenGLShader::Vertex,
-        Solarus::Shader::default_vertex_source().c_str());
+        Solarus::DefaultShaders::get_default_vertex_source().c_str());
 
   swipe_program.addShaderFromSourceCode(
         QOpenGLShader::Fragment,
@@ -605,7 +606,7 @@ void ShaderPreviewer::compile_program() {
      qDebug() << "Using default vertex shader";
     if (!program.addShaderFromSourceCode(
           QOpenGLShader::Vertex,
-          Solarus::Shader::default_vertex_source().c_str())) {
+          Solarus::DefaultShaders::get_default_vertex_source().c_str())) {
       qWarning() << "ERROR" << program.log(); // TODO log better
     }
   }
@@ -620,7 +621,7 @@ void ShaderPreviewer::compile_program() {
      qDebug() << "Using default fragment shader";
     if (!program.addShaderFromSourceCode(
           QOpenGLShader::Fragment,
-          Solarus::Shader::default_fragment_source().c_str())) {
+          Solarus::DefaultShaders::get_default_fragment_source().c_str())) {
       qWarning() << "ERROR" << program.log(); // TODO log better
     }
   }
