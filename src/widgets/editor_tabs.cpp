@@ -380,13 +380,23 @@ void EditorTabs::insert_editor(std::unique_ptr<Editor> editor, int index) {
   setTabToolTip(index, editor->get_file_path());
 
   // Show an asterisk in tab title when a file is modified.
-  connect(undo_stack, SIGNAL(cleanChanged(bool)),
-          this, SLOT(current_editor_modification_state_changed(bool)));
+  connect(undo_stack, &QUndoStack::cleanChanged,
+          this, &EditorTabs::current_editor_modification_state_changed);
 
-  connect(editor.get(), SIGNAL(open_file_requested(Quest&, QString)),
-          this, SLOT(open_file_requested(Quest&, QString)));
-  connect(editor.get(), SIGNAL(refactoring_requested(Refactoring)),
-          this, SIGNAL(refactoring_requested(Refactoring)));
+  connect(editor.get(), &Editor::can_cut_changed,
+          this, &EditorTabs::can_cut_changed);
+  connect(editor.get(), &Editor::can_copy_changed,
+          this, &EditorTabs::can_copy_changed);
+  connect(editor.get(), &Editor::can_paste_changed,
+          this, &EditorTabs::can_paste_changed);
+  connect(editor.get(), &Editor::clear_console,
+          this, &EditorTabs::clear_console);
+  connect(editor.get(), &Editor::log_message_to_console,
+          this, &EditorTabs::log_message_to_console);
+  connect(editor.get(), &Editor::open_file_requested,
+          this, &EditorTabs::open_file_requested);
+  connect(editor.get(), &Editor::refactoring_requested,
+          this, &EditorTabs::refactoring_requested);
 
   editors.emplace(path, std::move(editor));
 }
@@ -751,40 +761,19 @@ void EditorTabs::reload_settings() {
 void EditorTabs::current_editor_changed(int index) {
 
   Q_UNUSED(index);
+
   Editor* editor = get_editor();
   if (editor == nullptr) {
     get_undo_group().setActiveStack(nullptr);
     emit can_cut_changed(false);
     emit can_copy_changed(false);
     emit can_paste_changed(false);
-    // FIXME disconnect not working
-    disconnect(nullptr, SIGNAL(can_cut_changed(bool)),
-               this, SIGNAL(can_cut_changed(bool)));
-    disconnect(nullptr, SIGNAL(can_copy_changed(bool)),
-               this, SIGNAL(can_copy_changed(bool)));
-    disconnect(nullptr, SIGNAL(can_paste_changed(bool)),
-               this, SIGNAL(can_paste_changed(bool)));
-    disconnect(nullptr, SIGNAL(clear_console()),
-               this, SIGNAL(clear_console()));
-    disconnect(nullptr, SIGNAL(log_message_to_console(QString, QString)),
-               this, SIGNAL(log_message_to_console(QString, QString)));
   }
   else {
     get_undo_group().setActiveStack(&editor->get_undo_stack());
-    connect(editor, SIGNAL(can_cut_changed(bool)),
-            this, SIGNAL(can_cut_changed(bool)));
-    connect(editor, SIGNAL(can_copy_changed(bool)),
-            this, SIGNAL(can_copy_changed(bool)));
-    connect(editor, SIGNAL(can_paste_changed(bool)),
-            this, SIGNAL(can_paste_changed(bool)));
-    connect(editor, SIGNAL(clear_console()),
-            this, SIGNAL(clear_console()));
-    connect(editor, SIGNAL(log_message_to_console(QString, QString)),
-            this, SIGNAL(log_message_to_console(QString, QString)));
     emit can_cut_changed(editor->can_cut());
     emit can_copy_changed(editor->can_copy());
     emit can_paste_changed(editor->can_paste());
-
     editor->setFocus();
   }
 }
