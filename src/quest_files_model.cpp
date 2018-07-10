@@ -610,7 +610,7 @@ QString QuestFilesModel::get_quest_file_displayed_name(const QModelIndex& index)
       return tr("Script");
     }
 
-    if (quest.is_shader_code(path)) {
+    if (quest.is_shader_code_file(path)) {
       return tr("GLSL shader code");
     }
 
@@ -705,7 +705,7 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
   }
 
   // Shader code icon.
-  else if (quest.is_shader_code(file_path)) {
+  else if (quest.is_shader_code_file(file_path)) {
     icon_file_name = "icon_shader_code.png";
   }
 
@@ -839,7 +839,7 @@ bool QuestFilesModel::filterAcceptsRow(int source_row, const QModelIndex& source
   }
 
   // Keep shader code files.
-  if (quest.is_shader_code(file_path)) {
+  if (quest.is_shader_code_file(file_path)) {
     return true;
   }
 

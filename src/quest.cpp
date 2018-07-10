@@ -612,7 +612,7 @@ QString Quest::get_shader_data_file_path(const QString& shader_id) const {
  * including its extension.
  * @return The path to the shader GLSL file.
  */
-QString Quest::get_shader_glsl_file_path(const QString& glsl_file) const {
+QString Quest::get_shader_code_file_path(const QString& glsl_file) const {
 
   return get_data_path() + "/shaders/" + glsl_file;
 }
@@ -1265,9 +1265,24 @@ void Quest::check_is_script(const QString& path) const {
  * @return @c true if this path ends with ".glsl",
  * even if it does not exist yet.
  */
-bool Quest::is_shader_code(const QString& path) const {
+bool Quest::is_shader_code_file(const QString& path) const {
 
   return is_in_root_path(path) && path.endsWith(".glsl");
+}
+
+/**
+ * @brief Checks that a path of this quest corresponds to a shader code file.
+ *
+ * It is okay if the file does not exist yet.
+ *
+ * @throws EditorException If the path does not end with ".glsl".
+ */
+void Quest::check_is_shader_code_file(const QString& path) const {
+
+  if (!is_shader_code_file(path)) {
+    QString file_name(QFileInfo(path).fileName());
+    throw EditorException(tr("Wrong GLSL shader file name: '%1' (should end with '.glsl')").arg(file_name));
+  }
 }
 
 /**
@@ -1376,9 +1391,9 @@ void Quest::create_script(const QString& path) {
 }
 
 /**
- * @brief Attempts to create a file in this quest if it does not exist yet.
- * @param path Path of the file to create. If it already exists, it must not
- * be a directory.
+ * @brief Attempts to create a Lua script in this quest if it does not exist yet.
+ * @param path Path of the file to create. It must end with ".lua".
+ * If it already exists, it must not be a directory.
  * @throws EditorException In case of error.
  * @return @c true if the file was created, @c false if it already existed.
  */
@@ -1390,6 +1405,38 @@ bool Quest::create_script_if_not_exists(const QString& path) {
   }
 
   create_script(path);
+  return true;
+}
+
+/**
+ * @brief Attempts to create an empty GLSL shader file in this quest.
+ * @param path Path of the file to create. It must end with ".glsl".
+ * It must not exist.
+ * @throws EditorException In case of error.
+ */
+void Quest::create_shader_code_file(const QString& path) {
+
+  // Check that the file name ends with ".lua" and create it as an empty file.
+  check_is_shader_code_file(path);
+  create_file(path);
+}
+
+/**
+ * @brief Attempts to create a GLSL shader file in this quest
+ * if it does not exist yet.
+ * @param path Path of the file to create. It must end with ".glsl".
+ * If it already exists, it must not be a directory.
+ * @throws EditorException In case of error.
+ * @return @c true if the file was created, @c false if it already existed.
+ */
+bool Quest::create_shader_code_file_if_not_exists(const QString& path) {
+
+  if (exists(path)) {
+    check_is_shader_code_file(path);
+    return false;
+  }
+
+  create_shader_code_file(path);
   return true;
 }
 

@@ -178,7 +178,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   QString vertex_file = shader->get_vertex_file();
   QString vertex_file_path = vertex_file.isEmpty() ?
-        QString() : quest.get_shader_glsl_file_path(vertex_file);
+        QString() : quest.get_shader_code_file_path(vertex_file);
   vertex_editor = new TextEditor(
         quest, vertex_file_path, this);
   ui.vertex_editor_layout->addWidget(vertex_editor);
@@ -186,7 +186,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   QString fragment_file = shader->get_fragment_file();
   QString fragment_file_path = fragment_file.isEmpty() ?
-        QString() : quest.get_shader_glsl_file_path(fragment_file);
+        QString() : quest.get_shader_code_file_path(fragment_file);
   fragment_editor = new TextEditor(
         quest, fragment_file_path, this);
   ui.fragment_editor_layout->addWidget(fragment_editor);
@@ -450,7 +450,7 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
   check_box->setChecked(has_file);
   if (has_file) {
     stacked_widget->setCurrentIndex(1);  // Normal page.
-    QString path = get_quest().get_shader_glsl_file_path(file_name);
+    QString path = get_quest().get_shader_code_file_path(file_name);
     get_glsl_editor(which)->set_file_path(path);
   }
   else {
@@ -543,7 +543,7 @@ void ShaderEditor::new_source_file(WhichGlslEditor which) {
     }
   }
   catch (const EditorException& ex) {
-    GuiTools::error_dialog(ex.get_message());
+    ex.show_dialog();
   }
 }
 
@@ -581,7 +581,7 @@ void ShaderEditor::browse_source_file(WhichGlslEditor which) {
     }
   }
   catch (const EditorException& ex) {
-    GuiTools::error_dialog(ex.get_message());
+    ex.show_dialog();
   }
 
   update_source_editor_tab(which);
@@ -714,7 +714,7 @@ void ShaderEditor::browse_preview_picture() {
     update_preview_image();
   }
   catch (const EditorException& ex) {
-    GuiTools::error_dialog(ex.get_message());
+    ex.show_dialog();
   }
 }
 

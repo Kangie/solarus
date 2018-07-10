@@ -964,7 +964,7 @@ void TilesetEditor::tileset_data_file_changed() {
     model->load();
   }
   catch (const EditorException& ex) {
-    GuiTools::error_dialog(ex.get_message());
+    ex.show_dialog();
   }
 }
 

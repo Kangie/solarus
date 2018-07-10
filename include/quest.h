@@ -87,7 +87,7 @@ public:
   QString get_tileset_tiles_image_path(const QString& tileset_id) const;
   QString get_tileset_entities_image_path(const QString& tileset_id) const;
   QString get_shader_data_file_path(const QString& shader_id) const;
-  QString get_shader_glsl_file_path(const QString& glsl_file) const;
+  QString get_shader_code_file_path(const QString& code_file) const;
 
   // Check path properties.
   static bool is_valid_file_name(const QString& file_name);
@@ -103,7 +103,8 @@ public:
   void check_not_is_dir(const QString& path) const;
   bool is_script(const QString& path) const;
   void check_is_script(const QString& path) const;
-  bool is_shader_code(const QString& path) const;
+  bool is_shader_code_file(const QString& path) const;
+  void check_is_shader_code_file(const QString& path) const;
   bool is_data_file(const QString& path) const;
   bool is_image(const QString& path) const;
   bool is_properties_path(const QString& path) const;
@@ -136,6 +137,8 @@ public:
   bool create_file_if_not_exists(const QString& path);
   void create_script(const QString& path);
   bool create_script_if_not_exists(const QString& path);
+  void create_shader_code_file(const QString& path);
+  bool create_shader_code_file_if_not_exists(const QString& path);
   void create_map_data_file(const QString& map_id);
   bool create_map_data_file_if_not_exists(const QString& map_id);
   void create_map_script(const QString& map_id);

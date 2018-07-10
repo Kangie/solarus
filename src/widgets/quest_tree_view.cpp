@@ -405,29 +405,40 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QString& path) {
 
   if (new_resource_element_action != nullptr) {
 
-    connect(new_resource_element_action, SIGNAL(triggered()),
-            this, SLOT(new_element_action_triggered()));
+    connect(new_resource_element_action, &QAction::triggered,
+            this, &QuestTreeView::new_element_action_triggered);
     menu.addAction(new_resource_element_action);
+
+    if (is_dir && resource_type == ResourceType::SHADER) {
+      QAction* action = new QAction(
+            QIcon(":/images/icon_shader_code.png"),
+            tr("New GLSL file..."),
+            this);
+      connect(action, &QAction::triggered,
+              this, &QuestTreeView::new_shader_code_file_action_triggered);
+      menu.addAction(action);
+    }
+
     menu.addSeparator();
   }
 
   if (is_dir) {
-    // Any directory: create directory and create script.
+    // Any directory.
 
     QAction* action = new QAction(
           QIcon(":/images/icon_folder_closed.png"),
           tr("New folder..."),
           this);
-    connect(action, SIGNAL(triggered()),
-            this, SLOT(new_directory_action_triggered()));
+    connect(action, &QAction::triggered,
+            this, &QuestTreeView::new_directory_action_triggered);
     menu.addAction(action);
 
     action = new QAction(
           QIcon(":/images/icon_script.png"),
           tr("New script..."),
           this);
-    connect(action, SIGNAL(triggered()),
-            this, SLOT(new_script_action_triggered()));
+    connect(action, &QAction::triggered,
+            this, &QuestTreeView::new_script_action_triggered);
     menu.addAction(action);
   }
 }
@@ -565,7 +576,7 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
     open_action->setIcon(QIcon(":/images/icon_script.png"));
     menu.addAction(open_action);
   }
-  else if (quest.is_shader_code(path)) {
+  else if (quest.is_shader_code_file(path)) {
     // Open a GLSL file.
     open_action->setIcon(QIcon(":/images/icon_shader_code.png"));
     menu.addAction(open_action);
@@ -816,6 +827,57 @@ void QuestTreeView::new_script_action_triggered() {
 
       // Open it.
       open_file_requested(quest, script_path);
+    }
+  }
+  catch (const EditorException& ex) {
+    ex.show_dialog();
+  }
+
+}
+
+/**
+ * @brief Slot called when the user wants to create a new Lua script
+ * under the selected directory.
+ *
+ * The file name will be prompted to the user.
+ */
+void QuestTreeView::new_shader_code_file_action_triggered() {
+
+  if (is_read_only()) {
+    return;
+  }
+
+  QString parent_path = get_selected_path();
+  if (parent_path.isEmpty()) {
+    return;
+  }
+
+  try {
+    bool ok = false;
+    QString file_name = QInputDialog::getText(
+          this,
+          tr("New GLSL file"),
+          tr("File name:"),
+          QLineEdit::Normal,
+          "",
+          &ok);
+
+    if (ok) {
+
+      // Automatically add .glsl extension if not present.
+      if (!file_name.contains(".")) {
+        file_name = file_name + ".glsl";
+      }
+      Quest::check_valid_file_name(file_name);
+      Quest& quest = model->get_quest();
+      QString path = parent_path + '/' + file_name;
+      quest.create_shader_code_file(path);
+
+      // Select the file created.
+      set_selected_path(path);
+
+      // Open it.
+      open_file_requested(quest, path);
     }
   }
   catch (const EditorException& ex) {

@@ -62,6 +62,7 @@ public slots:
   void new_element_action_triggered();
   void new_directory_action_triggered();
   void new_script_action_triggered();
+  void new_shader_code_file_action_triggered();
   void play_action_triggered();
   void open_action_triggered();
   void open_map_script_action_triggered();

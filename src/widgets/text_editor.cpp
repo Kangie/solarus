@@ -326,7 +326,7 @@ QIcon TextEditor::create_icon() const {
     return QIcon(":/images/icon_script.png");
   }
 
-  if (get_quest().is_shader_code(path)) {
+  if (get_quest().is_shader_code_file(path)) {
     // A GLSL file.
     return QIcon(":/images/icon_shader_code.png");
   }

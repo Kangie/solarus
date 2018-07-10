@@ -254,7 +254,7 @@ void ImportDialog::import_button_triggered() {
     }
   }
   catch (const EditorException& ex) {
-    GuiTools::error_dialog(ex.get_message());
+    ex.show_dialog();
   }
 
   destination_quest.get_database().save();

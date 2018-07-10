@@ -594,11 +594,11 @@ void ShaderPreviewer::on_source_changed() {
  */
 void ShaderPreviewer::compile_program() {
   program.removeAllShaders();
-  if (model->get_vertex_file().size()) {
+  if (!model->get_vertex_file().isEmpty()) {
     qDebug() << "Using provided vertex shader";
     if (!program.addShaderFromSourceFile(
           QOpenGLShader::Vertex,
-         model->get_quest().get_shader_glsl_file_path(model->get_vertex_file()))) {
+         model->get_quest().get_shader_code_file_path(model->get_vertex_file()))) {
       qWarning() << "ERROR" << program.log(); // TODO log better
     }
   } else {
@@ -609,11 +609,11 @@ void ShaderPreviewer::compile_program() {
       qWarning() << "ERROR" << program.log(); // TODO log better
     }
   }
-  if(model->get_fragment_file().size()) {
+  if (!model->get_fragment_file().isEmpty()) {
     qDebug() << "Using provided fragment shader";
     if (!program.addShaderFromSourceFile(
          QOpenGLShader::Fragment,
-         model->get_quest().get_shader_glsl_file_path(model->get_fragment_file()))) {
+         model->get_quest().get_shader_code_file_path(model->get_fragment_file()))) {
       qWarning() << "ERROR" << program.log();
     }
   } else {
