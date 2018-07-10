@@ -467,6 +467,7 @@ void ShaderEditor::source_file_check_box_changed(WhichGlslEditor which) {
   QCheckBox* check_box = nullptr;
   QString* last_file_name = nullptr;
   QString current_file_name;
+  QStackedWidget* stacked_widget = nullptr;
 
   switch (which) {
 
@@ -474,12 +475,14 @@ void ShaderEditor::source_file_check_box_changed(WhichGlslEditor which) {
     last_file_name = &last_vertex_file;
     current_file_name = shader->get_vertex_file();
     check_box = ui.vertex_file_check_box;
+    stacked_widget = ui.vertex_editor_stacked_widget;
     break;
 
   case WhichGlslEditor::FRAGMENT_EDITOR:
     last_file_name = &last_fragment_file;
     current_file_name = shader->get_fragment_file();
     check_box = ui.fragment_file_check_box;
+    stacked_widget = ui.fragment_editor_stacked_widget;
     break;
   }
 
@@ -491,7 +494,7 @@ void ShaderEditor::source_file_check_box_changed(WhichGlslEditor which) {
       try_command(new SetGlslFileCommand(*this, which, *last_file_name));
     }
     else {
-      browse_source_file(which);
+      stacked_widget->setCurrentIndex(1);  // Normal page.
     }
   }
   else {
@@ -499,6 +502,9 @@ void ShaderEditor::source_file_check_box_changed(WhichGlslEditor which) {
       // Remove the value but remember it.
       *last_file_name = current_file_name;
       try_command(new SetGlslFileCommand(*this, which, ""));
+    }
+    else {
+      stacked_widget->setCurrentIndex(0);  // Empty page.
     }
   }
 }
@@ -583,8 +589,6 @@ void ShaderEditor::browse_source_file(WhichGlslEditor which) {
   catch (const EditorException& ex) {
     ex.show_dialog();
   }
-
-  update_source_editor_tab(which);
 }
 
 /**

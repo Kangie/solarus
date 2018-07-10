@@ -409,6 +409,9 @@
          </item>
          <item>
           <widget class="QStackedWidget" name="vertex_editor_stacked_widget">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
            <widget class="QWidget" name="vertex_editor_empty_page">
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
@@ -469,7 +472,7 @@
                 <item>
                  <widget class="QToolButton" name="vertex_file_save_button">
                   <property name="toolTip">
-                   <string>Save</string>
+                   <string>Save vertex shader file</string>
                   </property>
                   <property name="icon">
                    <iconset resource="../../resources/images.qrc">
@@ -555,6 +558,9 @@
          </item>
          <item>
           <widget class="QStackedWidget" name="fragment_editor_stacked_widget">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
            <widget class="QWidget" name="fragment_editor_empty_page">
             <layout class="QVBoxLayout" name="verticalLayout_11">
              <item>
@@ -615,7 +621,7 @@
                 <item>
                  <widget class="QToolButton" name="fragment_file_save_button">
                   <property name="toolTip">
-                   <string>Save</string>
+                   <string>Save fragment shader file</string>
                   </property>
                   <property name="icon">
                    <iconset resource="../../resources/images.qrc">
