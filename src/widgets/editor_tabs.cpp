@@ -757,17 +757,6 @@ void EditorTabs::current_editor_changed(int index) {
     emit can_cut_changed(false);
     emit can_copy_changed(false);
     emit can_paste_changed(false);
-    // FIXME disconnect not working
-    disconnect(nullptr, SIGNAL(can_cut_changed(bool)),
-               this, SIGNAL(can_cut_changed(bool)));
-    disconnect(nullptr, SIGNAL(can_copy_changed(bool)),
-               this, SIGNAL(can_copy_changed(bool)));
-    disconnect(nullptr, SIGNAL(can_paste_changed(bool)),
-               this, SIGNAL(can_paste_changed(bool)));
-    disconnect(nullptr, SIGNAL(clear_console()),
-               this, SIGNAL(clear_console()));
-    disconnect(nullptr, SIGNAL(log_message_to_console(QString, QString)),
-               this, SIGNAL(log_message_to_console(QString, QString)));
   }
   else {
     get_undo_group().setActiveStack(&editor->get_undo_stack());
