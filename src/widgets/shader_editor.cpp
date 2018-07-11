@@ -434,6 +434,8 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
   QLineEdit* file_name_field = nullptr;
   QCheckBox* check_box = nullptr;
   QStackedWidget* stacked_widget = nullptr;
+  TextEditor* glsl_editor = nullptr;
+  QToolButton* save_button = nullptr;
 
   switch (which) {
 
@@ -442,6 +444,8 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
     file_name_field = ui.vertex_file_field;
     check_box = ui.vertex_file_check_box;
     stacked_widget = ui.vertex_editor_stacked_widget;
+    glsl_editor = vertex_editor;
+    save_button = ui.vertex_file_save_button;
     break;
 
   case WhichGlslEditor::FRAGMENT_EDITOR:
@@ -449,6 +453,8 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
     file_name_field = ui.fragment_file_field;
     check_box = ui.fragment_file_check_box;
     stacked_widget = ui.fragment_editor_stacked_widget;
+    glsl_editor = fragment_editor;
+    save_button = ui.fragment_file_save_button;
     break;
   }
 
@@ -459,9 +465,13 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
     stacked_widget->setCurrentIndex(1);  // Normal page.
     QString path = get_quest().get_shader_code_file_path(file_name);
     get_glsl_editor(which)->set_file_path(path);
+    glsl_editor->setEnabled(true);
+    save_button->setEnabled(true);
   }
   else {
     stacked_widget->setCurrentIndex(0);  // Empty page.
+    glsl_editor->setEnabled(false);
+    save_button->setEnabled(false);
   }
 }
 
