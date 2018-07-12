@@ -42,6 +42,7 @@ EntityModelPtr DynamicTile::create_from_normal_tile(MapModel& map, const EntityI
 
   EntityModelPtr dynamic_tile = EntityModel::create(map, EntityType::DYNAMIC_TILE);
   dynamic_tile->set_field("pattern", map.get_entity_field(tile_index, "pattern"));
+  dynamic_tile->set_field("tileset", map.get_entity_field(tile_index, "tileset"));
   dynamic_tile->set_xy(map.get_entity_xy(tile_index));
   dynamic_tile->set_size(map.get_entity_size(tile_index));
   return dynamic_tile;
