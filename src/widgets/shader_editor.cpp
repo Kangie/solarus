@@ -59,6 +59,30 @@ private:
 };
 
 /**
+ * @brief Changing the scaling factor of a shader.
+ */
+class SetScalingFactorCommand : public ShaderEditorCommand {
+
+public:
+  SetScalingFactorCommand(ShaderEditor& editor, double scaling_factor) :
+    ShaderEditorCommand(editor, ShaderEditor::tr("Scaling factor")),
+    before(get_shader().get_scaling_factor()),
+    after(scaling_factor) {
+  }
+
+  void undo() override {
+    get_shader().set_scaling_factor(before);
+  }
+
+  void redo() override {
+    get_shader().set_scaling_factor(after);
+  }
+
+private:
+  double before, after;
+};
+
+/**
  * @brief Changing a source file in a shader program.
  */
 class SetGlslFileCommand : public ShaderEditorCommand {
@@ -200,6 +224,13 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::update_description_to_gui);
   connect(ui.description_field, &QLineEdit::editingFinished,
           this, &ShaderEditor::set_description_from_gui);
+
+  connect(shader.get(), &ShaderModel::scaling_factor_changed,
+          this, &ShaderEditor::update_scaling_factor_field);
+  connect(ui.scaling_factor_check_box, &QCheckBox::clicked,
+          this, &ShaderEditor::scaling_factor_check_box_changed);
+  connect(ui.scaling_factor_field, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+          this, &ShaderEditor::scaling_factor_field_changed);
 
   connect(ui.preview_mode_selector, QOverload<int>::of(&QComboBox::currentIndexChanged),
           [this]() {
@@ -346,6 +377,7 @@ void ShaderEditor::update() {
 
   update_shader_id_field();
   update_description_to_gui();
+  update_scaling_factor_field();
   update_source_editor_tab(WhichGlslEditor::VERTEX_EDITOR);
   update_source_editor_tab(WhichGlslEditor::FRAGMENT_EDITOR);
 }
@@ -401,6 +433,51 @@ void ShaderEditor::set_description_from_gui() {
 }
 
 /**
+ * @brief Updates the scaling factor from data to the GUI.
+ */
+void ShaderEditor::update_scaling_factor_field() {
+
+  double scaling_factor = get_shader().get_scaling_factor();
+  if (scaling_factor == 0.0) {
+    ui.scaling_factor_check_box->setChecked(false);
+    ui.scaling_factor_field->setEnabled(false);
+  }
+  else {
+    ui.scaling_factor_check_box->setChecked(true);
+    ui.scaling_factor_field->setEnabled(true);
+    ui.scaling_factor_field->setValue(scaling_factor);
+  }
+}
+
+/**
+ * @brief Called when the user changes the scaling factor check box.
+ */
+void ShaderEditor::scaling_factor_check_box_changed() {
+
+  double old_scaling_factor = get_shader().get_scaling_factor();
+  double new_scaling_factor = 0.0;
+  if (ui.scaling_factor_check_box->isChecked()) {
+    new_scaling_factor = ui.scaling_factor_field->value();;
+  }
+
+  if (new_scaling_factor != old_scaling_factor) {
+    try_command(new SetScalingFactorCommand(*this, new_scaling_factor));
+  }
+}
+
+/**
+ * @brief Called when the user changes the scaling factor value.
+ */
+void ShaderEditor::scaling_factor_field_changed() {
+
+  double scaling_factor = ui.scaling_factor_field->value();
+  if (scaling_factor == get_shader().get_scaling_factor()) {
+    return;
+  }
+  try_command(new SetScalingFactorCommand(*this, scaling_factor));
+}
+
+/**
  * @brief Returns the specified GLSL code editor widget.
  * @param which Which GLSL editor to return.
  * @return The corresponding code editor.
@@ -434,8 +511,8 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
   QLineEdit* file_name_field = nullptr;
   QCheckBox* check_box = nullptr;
   QStackedWidget* stacked_widget = nullptr;
-  TextEditor* glsl_editor = nullptr;
   QToolButton* save_button = nullptr;
+  TextEditor* glsl_editor = get_glsl_editor(which);
 
   switch (which) {
 
@@ -444,7 +521,6 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
     file_name_field = ui.vertex_file_field;
     check_box = ui.vertex_file_check_box;
     stacked_widget = ui.vertex_editor_stacked_widget;
-    glsl_editor = vertex_editor;
     save_button = ui.vertex_file_save_button;
     break;
 
@@ -453,7 +529,6 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
     file_name_field = ui.fragment_file_field;
     check_box = ui.fragment_file_check_box;
     stacked_widget = ui.fragment_editor_stacked_widget;
-    glsl_editor = fragment_editor;
     save_button = ui.fragment_file_save_button;
     break;
   }

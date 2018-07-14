@@ -57,6 +57,9 @@ private:
   void update_shader_id_field();
   void update_description_to_gui();
   void set_description_from_gui();
+  void update_scaling_factor_field();
+  void scaling_factor_check_box_changed();
+  void scaling_factor_field_changed();
 
   TextEditor* get_glsl_editor(WhichGlslEditor which);
   void update_source_editor_tab(WhichGlslEditor which);

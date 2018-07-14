@@ -81,9 +81,15 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QSpinBox" name="scaling_factor_field">
-            <property name="value">
+           <widget class="QDoubleSpinBox" name="scaling_factor_field">
+            <property name="decimals">
              <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
             </property>
            </widget>
           </item>
