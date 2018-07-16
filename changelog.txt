@@ -33,6 +33,7 @@ ________________________________________
 * Allow to select map/tileset/sprite/etc. ids to copy-paste them (#170).
 * Clear the console when a quest is started (#230).
 * Fix memory not released when closing an editor (#306).
+* Initial quest: add some shaders (#320).
 
 _______________________________________
 
@@ -293,8 +294,7 @@ Bug fixes
 * Fix encoding of non-ascii characters in project_db.dat with Windows.
 * Fix Ctrl+S shortcut not always working.
 * Fix entities restored to the front when undoing removing entities.
-* Fix entities restored to the front when undoing changing their layer. 
+* Fix entities restored to the front when undoing changing their layer.
 * Fix separators resizing that could allow illegal sizes.
 * Fix jumpers size reset after undoing changing their direction.
 * Fix walls being initially traversable by everything when they are created.
-

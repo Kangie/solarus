@@ -201,6 +201,7 @@ sound{ id = "wrong", description = "wrong" }
 sound{ id = "wrong2", description = "wrong2" }
 sound{ id = "wrong3", description = "wrong3" }
 
+
 enemy{ id = "slime_green", description = "Green Slime" }
 
 
@@ -209,3 +210,21 @@ language{ id = "en", description = "English" }
 font{ id = "8_bit", description = "8 bit" }
 font{ id = "minecraftia", description = "Minecraftia" }
 
+shader{ id = "6xbrz", description = "6xBRZ" }
+shader{ id = "default", description = "default" }
+shader{ id = "grayscale", description = "grayscale" }
+shader{ id = "hq2x", description = "hq2x" }
+shader{ id = "sepia", description = "sepia" }
+
+file{ path = "shaders/6xbrz.dat", author = "Christopho", license = "GPL v3" }
+file{ path = "shaders/6xbrz.frag.glsl", author = "Hyllian", license = "GPL v3" }
+file{ path = "shaders/6xbrz.vert.glsl", author = "Hyllian", license = "GPL v3" }
+file{ path = "shaders/default.dat", author = "Christopho", license = "GPL v3" }
+file{ path = "shaders/default.frag.glsl", author = "std::gregwar", license = "GPL v3" }
+file{ path = "shaders/default.vert.glsl", author = "std::gregwar", license = "GPL v3" }
+file{ path = "shaders/grayscale.dat", author = "Christopho", license = "GPL v3" }
+file{ path = "shaders/grayscale.frag.glsl", author = "Vlag", license = "GPL v3" }
+file{ path = "shaders/hq2x.dat", author = "Christopho", license = "GPL v3" }
+file{ path = "shaders/hq2x.frag.glsl", author = "slime73, Vlag", license = "GPL v3" }
+file{ path = "shaders/sepia.dat", author = "Christopho", license = "GPL v3" }
+file{ path = "shaders/sepia.frag.glsl", author = "Vlag", license = "GPL v3" }
