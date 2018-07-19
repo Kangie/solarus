@@ -106,6 +106,9 @@ in a vertex shader or in a fragment shader:
   Solarus was started.
   Equal to
   \ref lua_api_main_get_elapsed_time "sol.main.get_elapsed_time()".
+- <tt>uniform float opacity</tt>: Opacity of the object the shader is applied
+  to, between \c 0.0 and \c 1.0.
+  Aways \c 1.0 if the shader is applied to the window.
 
 \subsection lua_api_shader_overview_examples Shader examples
 
@@ -308,7 +311,7 @@ the input texture multiplied by this scaling factor
 actual window).
 This is only useful for scaling shaders.
 - \c scaling_factor (number): The scaling factor.
-  A \c nil values means to set no scaling factor.
+  A \c nil value means to set no scaling factor.
 
 \subsection lua_api_shader_set_uniform shader:set_uniform(uniform_name, value)
 
@@ -342,9 +345,9 @@ does nothing.
 - value (boolean, number, table or surface): The value to set.
   If it is a table, it should be an array of 2, 3 or 4 numbers.
 
-\remark The value is always passed by copy to the shader, including if it is
-  an object like an array of number or a surface.
-  If you modify the object later, you need to call this function again if you
-  want the update the shader with the new value.
+\remark If the value is a \ref lua_api_surface "surface",
+  it is passed by reference.
+  This means that if you modify the surface later,
+  the shader with automatically have its updated content.
 
 */
