@@ -144,7 +144,7 @@ uniform sampler2D sol_texture;
 in vec2 sol_vtex_coord;
 in vec4 sol_vcolor;
 void main() {
-  vec4 tex_color = texture(sol_texture, ol_vtex_coord);
+  vec4 tex_color = texture(sol_texture, sol_vtex_coord);
   gl_FragColor = tex_color * sol_vcolor;
 }
 \endverbatim
