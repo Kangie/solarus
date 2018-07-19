@@ -101,7 +101,7 @@ Example of a shader description file:
 
 \verbatim
 shader{
-  vertex_file = "default.vertex.glsl",
+  vertex_file = "scale2x.vertex.glsl",
   fragment_file = "scale_2x.fragment.glsl",
   scaling_factor = 2,
 }

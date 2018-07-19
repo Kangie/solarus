@@ -8,18 +8,16 @@ an OpenGL or OpenGL ES shader program.
 
 \section lua_api_shader_overview Overview
 
-Shaders allow you to modify the video rendering,
-for example to apply a smoothing filter or to
-make some advanced visual effects.
+Shaders allow you to modify the video rendering of the window or of
+drawable objects like sprites, surfaces and text surfaces.
+
+For example, shaders can be used to apply a smoothing filter or to
+make some advanced visual effects to a sprite, to a surface or to
+the whole window.
 
 Shaders are programs executed by the GPU during a rendering pass.
 They are written in a shading language
 (GLSL or GLSL ES in Solarus).
-Solarus compiles them at runtime when you create them
-with \ref lua_api_shader_create_id "sol.shader.create()".
-If you activate them with
-\ref lua_api_video_set_shader "sol.video.set_shader()",
-they are then executed on the GPU at each rendering frame.
 
 A shader program, represented by the \c shader Solarus datatype,
 is composed of a vertex shader and of a fragment shader
@@ -29,7 +27,7 @@ At every rendering frame,
 the vertex shader is called for each of the four corners of the input texture.
 If no vertex shader is defined in your shader program,
 then a default one is used.
-The fragment shader is then called for each pixel of the window.
+The fragment shader is then called for each pixel of the texture.
 If no fragment shader is defined in your shader program,
 then a default one that keeps pixels unchanged is used.
 
@@ -40,23 +38,33 @@ knowledge of shaders and GLSL or GLSL ES.
 See the documentation of OpenGL and OpenGL ES for more information
 about shaders and shading languages.
 
-\subsection lua_api_shader_overview_current Current shader
+Solarus compiles them at runtime when you create them
+with \ref lua_api_shader_create_id "sol.shader.create()".
+You can either apply a shader to the whole window with
+\ref lua_api_video_set_shader "sol.video.set_shader()",
+or to an individual surface, text surface or sprite with
+\ref lua_api_drawable_set_shader "drawable:set_shader()".
 
-During the execution, a shader may be applied to the rendering.
+\subsection lua_api_shader_overview_current Current window shader
+
+During the execution, a shader may be applied to the rendering of the whole
+window.
 Use \ref lua_api_video_get_shader "sol.video.get_shader()"
 and \ref lua_api_video_set_shader "sol.video.set_shader()"
 to control this.
 
-The id of the shader applied if any can be saved and loaded
-with the global settings,
-(as well as other preferences like the language and the volume),
-independently of any savegame.
-See \ref lua_api_main_load_settings "sol.main.load_settings()".
+This defines how the quest surface (whose size is
+\ref lua_api_video_get_quest_size "sol.video.get_quest_size()"
+is drawn and scaled to fit to the window, which may be bigger.
+Thus, by default, the fragment shader works on an output texture of the size
+of the window.
+This can be changed using
+\ref lua_api_shader_set_scaling_factor "shader:set_scaling_factor()".
 
-\subsection lua_api_shader_overview_drawables Shader on drawable
+\subsection lua_api_shader_overview_drawables Shaders on drawable objects
 
-Shaders can also alter how drawables are put to the screen.
-See \ref lua_api_drawable_set_shader "drawable:set_shader()"
+Shaders can also alter how drawable objects are drawn on the screen,
+using \ref lua_api_drawable_set_shader "drawable:set_shader()".
 
 \subsection lua_api_shader_overview_built_in_variables Built-in attributes and uniforms
 
@@ -64,7 +72,8 @@ Additionally to the modern OpenGL or OpenGL ES built-in variables,
 Solarus automatically passes some additional useful variables to your shaders.
 Solarus built-in variables are always prefixed with \c "sol_".
 
-Note that using the Lua API, you can also pass your own variables.
+Note that using the Lua API described below,
+you can also pass your own variables.
 
 In a vertex shader, the following three attributes are automatically passed
 as input:
@@ -102,8 +111,9 @@ in a vertex shader or in a fragment shader:
 
 Here is a shader program that does nothing special:
 it just scales the input texture to fit the window,
-just like when no shader is set. Note that <tt>\#version 100</tt> tells
-glsl compiler to treat this shader as GLSL ES.
+just like when no shader is set.
+Note that <tt>\#version 100</tt> tells
+the GLSL compiler to treat this shader as GLSL ES.
 
 \verbatim
 // Vertex shader:
@@ -119,39 +129,39 @@ attribute vec4 sol_color;
 varying vec2 sol_vtex_coord;
 varying vec4 sol_vcolor;
 void main() {
-  gl_Position = sol_mvp_matrix * vec4(sol_vertex,0,1);
+  gl_Position = sol_mvp_matrix * vec4(sol_vertex, 0.0, 1.0);
   sol_vcolor = sol_color;
-  sol_vtex_coord = (sol_uv_matrix * vec3(sol_tex_coord,1)).xy;
+  sol_vtex_coord = (sol_uv_matrix * vec3(sol_tex_coord, 1.0)).xy;
 }
 
 // Fragment shader:
 #version 100
 precision mediump float;
 uniform sampler2D sol_texture;
-varying vec2 sol_vtex_coord;
-varying vec4 sol_vcolor;
+in vec2 sol_vtex_coord;
+in vec4 sol_vcolor;
 void main() {
-  vec4 tex_color = texture2D(sol_texture,sol_vtex_coord);
-  gl_FragColor = tex_color*sol_vcolor;
+  vec4 tex_color = texture(sol_texture, ol_vtex_coord);
+  gl_FragColor = tex_color * sol_vcolor;
 }
-
 \endverbatim
 
 Now, another example of a shader program
 that removes the red component of all pixels:
 
 \verbatim
-// No vertex shader:
+// No vertex shader.
 
 // Fragment shader:
 #version 100
 precision mediump float;
 uniform sampler2D sol_texture;
-varying vec2 sol_vtex_coord;
-varying vec4 sol_vcolor;
+in vec2 sol_vtex_coord;
+in vec4 sol_vcolor;
+out vec4 FragColor;
 void main() {
-  vec4 tex_color = texture2D(sol_texture,sol_vtex_coord);
-  gl_FragColor = tex_color*sol_vcolor*vec4(0,1,1,1);
+  vec4 tex_color = texture(sol_texture, sol_vtex_coord);
+  FragColor = tex_color * sol_vcolor * vec4(0.0, 1.0, 1.0, 1.0);
 }
 \endverbatim
 
@@ -163,16 +173,17 @@ Typically, on desktop platforms, Solarus is compiled with OpenGL support
 and the shader language used is some version of GLSL.
 On mobile platforms, OpenGL ES and GLSL ES are normally used instead.
 
-For maximum portability, there are three possible approaches:
+For maximum portability, there are two possible approaches:
 - Shaders can be written carefully to make sure that they work
   with both GLSL and GLSL ES.
-  This requires using a lot of portability macros because there are some
+  This requires using portability macros because there are some
   incompatibilities.
+  This is the approach that we use in all our shaders.
   If you use the \c \#version macro, be careful because
   GLSL and GLSL ES have their own history of version numbers.
-- For more clarity, another solution is to load different shaders
+- Another solution is to load different shaders
   for GLSL and GLSL ES (but there will be some duplicated code).
-  To do this. you can try to load a first shader, and in case of failure,
+  To do this, you can try to load a first shader, and in case of failure,
   catch the Lua error and try to load an alternative one.
   Or you can try to guess the correct one using
   \ref lua_api_shader_get_opengl_version "sol.shader.get_opengl_version()"
@@ -180,11 +191,12 @@ For maximum portability, there are three possible approaches:
   \ref lua_api_shader_get_shading_language_version
   "sol.shader.get_shader_language_version()".
 
-In any case, the legacy opengl variables such as \c gl_ModelViewProjectionMatrix
-are not supported and will result in undefined behaviour. Same for the attributes
-(\c gl_Vertex and so on), they are likely to fail. Use exclusively
+In any case, the legacy OpenGL variables and attributes such as
+\c gl_ModelViewProjectionMatrix and \c gl_Vertex
+are not supported on modern plaftorms.
+You should therefore only use
 \ref lua_api_shader_overview_built_in_variables "Solarus built-in variables"
-(plus your own ones).
+plus your own ones.
 
 \section lua_api_shader_functions Functions of sol.shader
 
@@ -217,14 +229,8 @@ a Lua error is raised.
   - \c scaling_factor (number, optional): When the shader is applied to the
     whole window, indicates how much the input texture will be scaled by the
     shader.
-    Only useful for scaling shaders.
-    If a value is set, the output texture of the shader will have the size of
-    the input texture multiplied by this scaling factor
-    (however, the output texture will then still be fitted to the window).
-    If no value is set, the output texture of the shader will have the size of
-    the window.
-    This value only has an effect when the shader is applied to the window,
-    and does nothing when the shader is applied to a drawable object.
+    See \ref lua_api_shader_set_scaling_factor "shader:set_scaling_factor()"
+    for more details.
 - Return value (shader): The shader program created.
 
 \subsection lua_api_shader_get_opengl_version sol.shader.get_opengl_version()
@@ -270,6 +276,39 @@ Returns the name of the fragment shader file of this shader program.
 Returns the fragment shader code of this shader program.
 - Return value (string): The fragment shader code.
   If no fragment shader was set, returns the default fragment shader code.
+
+\subsection lua_api_shader_get_scaling_factor shader:get_scaling_factor()
+
+Returns the scaling factor of this shader.
+
+The scaling factor indicates how much the input texture will be scaled by the
+shader.
+See \ref lua_api_shader_set_scaling_factor "shader:set_scaling_factor()"
+for more details.
+- Return value (number): The scaling factor.
+  Returns \c nil if no scaling factor is set.
+
+\subsection lua_api_shader_set_scaling_factor shader:set_scaling_factor(scaling_factor)
+
+Sets the scaling factor of this shader.
+
+The scaling factor indicates how much the input texture will be scaled by the
+shader when the shader is applied to the window.
+
+This value only has an effect when the shader is applied to the window (with
+\ref lua_api_video_set_shader "sol.video.set_shader()"),
+and does nothing when the shader is applied to a drawable object (with
+\ref lua_api_drawable_set_shader "drawable:set_shader()").
+
+If no value is set (the default),
+then the output texture of the shader will directly have the size of the window.
+If a value is set, then the output texture of the shader will have the size of
+the input texture multiplied by this scaling factor
+(however, that output texture will then be scaled a second time to fit to the
+actual window).
+This is only useful for scaling shaders.
+- \c scaling_factor (number): The scaling factor.
+  A \c nil values means to set no scaling factor.
 
 \subsection lua_api_shader_set_uniform shader:set_uniform(uniform_name, value)
 
