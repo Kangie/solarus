@@ -49,6 +49,8 @@ public:
   void set_view_settings(ViewSettings& view_settings);
   bool is_read_only() const;
   void set_read_only(bool read_only);
+  bool is_multi_selection_enabled() const;
+  void set_multi_selection_enabled(bool multi_selection_enabled);
 
 signals:
 
@@ -149,6 +151,7 @@ private:
   double zoom;                         /**< Zoom factor currently applied. */
 
   bool read_only;                      /**< Whether the view forbids editing the tileset. */
+  bool multi_selection_enabled;        /**< Whether it is allowed to select multiple patterns. */
 
 };
 

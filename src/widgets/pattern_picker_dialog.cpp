@@ -33,8 +33,7 @@ PatternPickerDialog::PatternPickerDialog(
 
   ui.tileset_view->set_model(&tileset);
   ui.tileset_view->set_read_only(true);
-  // TODO disable multi-selection
-  // TODO make sure that Return and Escape shortcuts act on the dialog
+  ui.tileset_view->set_multi_selection_enabled(false);
 }
 
 /**

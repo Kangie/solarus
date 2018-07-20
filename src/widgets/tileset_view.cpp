@@ -51,7 +51,8 @@ TilesetView::TilesetView(QWidget* parent) :
   state(State::NORMAL),
   view_settings(nullptr),
   zoom(1.0),
-  read_only(false) {
+  read_only(false),
+  multi_selection_enabled(true) {
 
   setAcceptDrops(true);
   setAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -222,6 +223,22 @@ void TilesetView::set_read_only(bool read_only) {
 }
 
 /**
+ * @brief Returns whether multiple selection is allowed.
+ * @return @c true if the user can select multiple patterns.
+ */
+bool TilesetView::is_multi_selection_enabled() const {
+  return multi_selection_enabled;
+}
+
+/**
+ * @brief Sets whether multiple selection is allowed.
+ * @return param multi_selection_enabled @c true to allow multiple selection.
+ */
+void TilesetView::set_multi_selection_enabled(bool multi_selection_enabled) {
+  this->multi_selection_enabled = multi_selection_enabled;
+}
+
+/**
  * @brief Sets the zoom level of the view from the settings.
  *
  * Zooming will be anchored at the mouse position.
@@ -312,6 +329,11 @@ void TilesetView::select_all() {
     return;
   }
 
+  if (!multi_selection_enabled &&
+      model->get_num_patterns() > 1) {
+    return;
+  }
+
   scene->select_all();
 }
 
@@ -371,7 +393,7 @@ void TilesetView::mousePressEvent(QMouseEvent* event) {
     const bool control_or_shift = (event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
 
     bool keep_selected = false;
-    if (control_or_shift) {
+    if (control_or_shift && is_multi_selection_enabled()) {
       // If ctrl or shift is pressed, keep the existing selection.
       keep_selected = true;
     }
@@ -379,6 +401,7 @@ void TilesetView::mousePressEvent(QMouseEvent* event) {
       // When clicking an already selected item, keep the existing selection too.
       keep_selected = true;
     }
+
     if (!keep_selected) {
       scene->clearSelection();
     }
@@ -393,9 +416,28 @@ void TilesetView::mousePressEvent(QMouseEvent* event) {
         start_state_moving_patterns(event->pos());
       }
       else {
-        // Otherwise initialize a selection rectangle.
-        initially_selected_items = scene->selectedItems();
-        start_state_drawing_rectangle(event->pos());
+        if (is_multi_selection_enabled()) {
+          // Don't select the item yet, initialize a selection rectangle.
+          initially_selected_items = scene->selectedItems();
+          start_state_drawing_rectangle(event->pos());
+        }
+        else {
+          // No multiple selection is allowed: don't draw a selection rectangle,
+          // directly consider this as a click.
+          if (item != nullptr) {
+            // An item was clicked.
+            if (control_or_shift) {
+              // Toggle the selected state of the item.
+
+              item->setSelected(!item->isSelected());
+              emit selection_changed_by_user();
+            } else {
+              // Select the clicked item.
+              item->setSelected(true);
+              emit selection_changed_by_user();
+            }
+          }
+        }
       }
     }
     else {
