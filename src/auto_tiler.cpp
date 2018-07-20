@@ -16,7 +16,6 @@
  */
 #include "auto_tiler.h"
 #include "tileset_model.h"
-#include <QDebug>
 #include <iostream>
 #include <iomanip>
 
@@ -373,12 +372,24 @@ void AutoTiler::detect_border_info_outer(int cell_0) {
   // 0 1
   case 1:
     set_which_border(cell_0, BorderKind::TOP_LEFT_CONVEX);
+    if (!has_border(cell_1)) {
+      set_which_border(cell_1, BorderKind::TOP);
+    }
+    if (!has_border(cell_2)) {
+      set_which_border(cell_2, BorderKind::LEFT);
+    }
     break;
 
   // 0 0
   // 1 0
   case 2:
     set_which_border(cell_1, BorderKind::TOP_RIGHT_CONVEX);
+    if (!has_border(cell_0)) {
+      set_which_border(cell_0, BorderKind::TOP);
+    }
+    if (!has_border(cell_3)) {
+      set_which_border(cell_3, BorderKind::RIGHT);
+    }
     break;
 
   // 0 0
@@ -396,6 +407,12 @@ void AutoTiler::detect_border_info_outer(int cell_0) {
   // 0 0
   case 4:
     set_which_border(cell_2, BorderKind::BOTTOM_LEFT_CONVEX);
+    if (!has_border(cell_0)) {
+      set_which_border(cell_0, BorderKind::LEFT);
+    }
+    if (!has_border(cell_3)) {
+      set_which_border(cell_3, BorderKind::BOTTOM);
+    }
     break;
 
   // 0 1
@@ -426,6 +443,12 @@ void AutoTiler::detect_border_info_outer(int cell_0) {
   // 0 0
   case 8:
     set_which_border(cell_3, BorderKind::BOTTOM_RIGHT_CONVEX);
+    if (!has_border(cell_1)) {
+      set_which_border(cell_1, BorderKind::RIGHT);
+    }
+    if (!has_border(cell_2)) {
+      set_which_border(cell_2, BorderKind::BOTTOM);
+    }
     break;
 
   // 1 0
