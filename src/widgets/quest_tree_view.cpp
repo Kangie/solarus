@@ -571,6 +571,11 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
     }
 
   }
+  else if (quest.is_image(path)) {
+    // Open a PNG file.
+    open_action->setIcon(QIcon(":/images/icon_image.png"));
+    menu.addAction(open_action);
+  }
   else if (quest.is_script(path)) {
     // Open a Lua script that is not a resource.
     open_action->setIcon(QIcon(":/images/icon_script.png"));

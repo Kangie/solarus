@@ -61,6 +61,7 @@ public:
   virtual bool has_unsaved_changes() const;
   bool confirm_before_closing();
 
+  bool is_save_supported() const;
   bool is_select_all_supported() const;
   bool is_find_supported() const;
   bool is_zoom_supported() const;
@@ -74,7 +75,7 @@ public:
   const ViewSettings& get_view_settings() const;
   ViewSettings& get_view_settings();
 
-  virtual void save() = 0;
+  virtual void save();
   virtual void path_changed();
   virtual bool can_cut() const;
   virtual void cut();
@@ -106,6 +107,7 @@ protected:
 
   void set_title(const QString& title);
   void set_icon(const QIcon& icon);
+  void set_save_supported(bool save_supported);
   void set_select_all_supported(bool select_all_supported);
   void set_find_supported(bool find_supported);
   void set_zoom_supported(bool zoom_supported);
@@ -137,6 +139,7 @@ private:
   QString close_confirm_message;            /**< Message proposing to save changes when closing. */
   QUndoStack* undo_stack;                   /**< The undo/redo history of editing this file. */
   QMap<QString, QAction*> common_actions;   /**< Actions available to all editors. */
+  bool save_supported;                      /**< Whether the editor supports saving the file. */
   bool select_all_supported;                /**< Whether the editor supports selecting all. */
   bool find_supported;                      /**< Whether the editor supports finding. */
   bool zoom_supported;                      /**< Whether the editor supports zooming. */

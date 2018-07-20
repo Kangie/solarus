@@ -151,6 +151,7 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
   title(get_file_name()),
   undo_stack(new QUndoStack(this)),
   common_actions(),
+  save_supported(true),
   select_all_supported(false),
   find_supported(false),
   zoom_supported(false),
@@ -433,6 +434,8 @@ void Editor::undo() {
  *
  * @throws EditorException In case of failure.
  */
+void Editor::save() {
+}
 
 /**
  * @brief Returns whether the user made changes that are not saved yet.
@@ -577,6 +580,26 @@ void Editor::set_export_to_image_supported(bool export_to_image_supported) {
  * Subclasses that support exporting to an image should reimplement this function.
  */
 void Editor::export_to_image() {
+}
+
+/**
+ * @brief Returns whether this editor supports saving the file.
+ * @return @c true if saving is supported.
+ */
+bool Editor::is_save_supported() const {
+  return save_supported;
+}
+
+/**
+ * @brief Sets whether this editor supports saving the file.
+ *
+ * If your editor supports select all operations, you are responsible to
+ * reimplement save().
+ *
+ * @param save_supported @c true to support saving.
+ */
+void Editor::set_save_supported(bool save_supported) {
+  this->save_supported = save_supported;
 }
 
 /**

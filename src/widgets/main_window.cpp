@@ -1241,6 +1241,9 @@ void MainWindow::current_editor_changed(int index) {
   const bool export_to_image_supported = has_editor && editor->is_export_to_image_supported();
   ui.action_export_to_image->setEnabled(export_to_image_supported);
 
+  const bool save_supported = has_editor && editor->is_save_supported();
+  ui.action_save->setEnabled(save_supported);
+
   const bool select_all_supported = has_editor && editor->is_select_all_supported();
   ui.action_select_all->setEnabled(select_all_supported);
 

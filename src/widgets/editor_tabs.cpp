@@ -18,6 +18,7 @@
 #include "widgets/dialogs_editor.h"
 #include "widgets/editor_tabs.h"
 #include "widgets/gui_tools.h"
+#include "widgets/image_editor.h"
 #include "widgets/map_editor.h"
 #include "widgets/shader_editor.h"
 #include "widgets/sprite_editor.h"
@@ -139,6 +140,38 @@ void EditorTabs::open_quest_properties_editor(Quest& quest) {
 
   try {
     add_editor(std::unique_ptr<Editor>(new QuestPropertiesEditor(quest)));
+  }
+  catch (const EditorException& ex) {
+    ex.show_dialog();
+  }
+}
+
+/**
+ * @brief Opens a file with an image editor.
+ *
+ * The file should be a PNG image.
+ *
+ * @param quest A Solarus quest.
+ * @param path Path of the PNG file to open.
+ */
+void EditorTabs::open_image_editor(
+    Quest& quest, const QString& path) {
+
+  if (!quest.is_in_root_path(path)) {
+    // Not a file of this quest.
+    return;
+  }
+
+  // Find the existing tab if any.
+  int index = find_editor(path);
+  if (index != -1) {
+    // Already open.
+    setCurrentIndex(index);
+    return;
+  }
+
+  try {
+    add_editor(std::unique_ptr<Editor>(new ImageEditor(quest, path)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -547,6 +580,10 @@ void EditorTabs::open_file_requested(Quest& quest, const QString& path) {
   }
   else if (quest.is_strings_file(canonical_path, element_id)) {
     open_strings_editor(quest, element_id);
+  }
+  else if (quest.is_image(canonical_path)) {
+    // A PNG image.
+    open_image_editor(quest, canonical_path);
   }
   else if (quest.is_script(canonical_path)) {
     // A Lua script that is not a resource element.

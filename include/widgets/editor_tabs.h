@@ -55,6 +55,8 @@ public:
       Quest& quest, const QString& path);
   void open_shader_editor(
       Quest& quest, const QString& path);
+  void open_image_editor(
+      Quest& quest, const QString& path);
   void open_text_editor(
       Quest& quest, const QString& path);
   void open_dialogs_editor(

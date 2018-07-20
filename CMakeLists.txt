@@ -143,6 +143,8 @@ set(solarus_quest_editor_SOURCES
   include/widgets/find_text_dialog.h
   include/widgets/get_animation_name_dialog.h
   include/widgets/gui_tools.h
+  include/widgets/image_editor.h
+  include/widgets/image_view.h
   include/widgets/import_dialog.h
   include/widgets/lua_syntax_highlighter.h
   include/widgets/map_editor.h
@@ -269,6 +271,8 @@ set(solarus_quest_editor_SOURCES
   src/widgets/find_text_dialog.cpp
   src/widgets/get_animation_name_dialog.cpp
   src/widgets/gui_tools.cpp
+  src/widgets/image_editor.cpp
+  src/widgets/image_view.cpp
   src/widgets/import_dialog.cpp
   src/widgets/lua_syntax_highlighter.cpp
   src/widgets/main_window.cpp
