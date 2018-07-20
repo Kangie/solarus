@@ -18,7 +18,6 @@
 #define SOLARUSEDITOR_TILESET_MODEL_H
 
 #include "natural_comparator.h"
-#include "pattern_animation.h"
 #include "pattern_separation.h"
 #include <solarus/entities/TilesetData.h>
 #include <QAbstractItemModel>
@@ -34,7 +33,8 @@ namespace SolarusEditor {
 class Quest;
 
 using Ground = Solarus::Ground;
-using TilePatternRepeatMode = Solarus::TilePatternRepeatMode;
+using PatternScrolling = Solarus::PatternScrolling;
+using PatternRepeatMode = Solarus::PatternRepeatMode;
 using BorderKind = Solarus::BorderKind;
 
 /**
@@ -85,7 +85,10 @@ public:
   static bool is_valid_pattern_id(const QString& pattern_id);
 
   bool is_pattern_multi_frame(int index) const;
-  int get_pattern_num_frames(int index) const;
+  bool are_patterns_multi_frame(const QList<int>& indexes) const;
+  int get_pattern_num_frames(int index) const;  // TODO-683
+  bool is_common_pattern_num_frames(const QList<int>& indexes, int& num_frames) const;  // TODO-683
+  void set_pattern_num_frames(int index, int num_frames);
   QRect get_pattern_frame(int index) const;
   QList<QRect> get_pattern_frames(int index) const;
   QRect get_pattern_frames_bounding_box(int index) const;
@@ -96,12 +99,12 @@ public:
   int get_pattern_default_layer(int index) const;
   bool is_common_pattern_default_layer(const QList<int>& indexes, int& default_layer) const;
   void set_pattern_default_layer(int index, int default_layer);
-  TilePatternRepeatMode get_pattern_repeat_mode(int index) const;
-  bool is_common_pattern_repeat_mode(const QList<int>& indexes, TilePatternRepeatMode& repeat_mode) const;
-  void set_pattern_repeat_mode(int index, TilePatternRepeatMode repeat_mode);
-  PatternAnimation get_pattern_animation(int index) const;
-  bool is_common_pattern_animation(const QList<int>& indexes, PatternAnimation& animation) const;
-  void set_pattern_animation(int index, PatternAnimation animation);
+  PatternRepeatMode get_pattern_repeat_mode(int index) const;
+  bool is_common_pattern_repeat_mode(const QList<int>& indexes, PatternRepeatMode& repeat_mode) const;
+  void set_pattern_repeat_mode(int index, PatternRepeatMode repeat_mode);
+  PatternScrolling get_pattern_scrolling(int index) const;
+  bool is_common_pattern_scrolling(const QList<int>& indexes, PatternScrolling& scrolling) const;
+  void set_pattern_scrolling(int index, PatternScrolling animation);
   PatternSeparation get_pattern_separation(int index) const;
   bool is_common_pattern_separation(const QList<int>& indexes, PatternSeparation& separation) const;
   void set_pattern_separation(int index, PatternSeparation separation);
@@ -157,8 +160,8 @@ signals:
   void pattern_position_changed(int index, const QPoint& position);
   void pattern_ground_changed(int index, Ground ground);
   void pattern_default_layer_changed(int index, int default_layer);
-  void pattern_repeat_mode_changed(int index, TilePatternRepeatMode repeat_mode);
-  void pattern_animation_changed(int index, PatternAnimation animation);
+  void pattern_repeat_mode_changed(int index, PatternRepeatMode repeat_mode);
+  void pattern_scrolling_changed(int index, PatternScrolling animation);
   void pattern_separation_changed(int index, PatternSeparation separation);
 
   void border_set_created(const QString& border_set_id);

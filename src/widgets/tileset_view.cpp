@@ -21,7 +21,6 @@
 #include "widgets/tileset_view.h"
 #include "widgets/zoom_tool.h"
 #include "ground_traits.h"
-#include "pattern_animation_traits.h"
 #include "pattern_separation_traits.h"
 #include "point.h"
 #include "rectangle.h"
@@ -73,17 +72,17 @@ TilesetView::TilesetView(QWidget* parent) :
           this, SIGNAL(delete_selected_patterns_requested()));
   addAction(delete_patterns_action);
 
-  set_repeat_mode_actions = EnumMenus<TilePatternRepeatMode>::create_actions(
+  set_repeat_mode_actions = EnumMenus<PatternRepeatMode>::create_actions(
         *this,
         EnumMenuCheckableOption::CHECKABLE_EXCLUSIVE,
-        [this](TilePatternRepeatMode repeat_mode) {
+        [this](PatternRepeatMode repeat_mode) {
     emit change_selected_patterns_repeat_mode_requested(repeat_mode);
   });
   // TODO add shortcut support to EnumMenus
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::ALL)]->setShortcut(tr("A"));
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::HORIZONTAL)]->setShortcut(tr("H"));
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::VERTICAL)]->setShortcut(tr("V"));
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::NONE)]->setShortcut(tr("N"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::ALL)]->setShortcut(tr("A"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::HORIZONTAL)]->setShortcut(tr("H"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::VERTICAL)]->setShortcut(tr("V"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::NONE)]->setShortcut(tr("N"));
   for (QAction* action : set_repeat_mode_actions) {
     action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   }
@@ -628,10 +627,10 @@ void TilesetView::show_context_menu(const QPoint& where) {
   menu->addMenu(repeat_mode_menu);
 
   // Animation.
-  QMenu* animation_menu = new QMenu(tr("Animation"), this);
-  build_context_menu_animation(*animation_menu, selected_indexes);
+  QMenu* scrolling_menu = new QMenu(tr("Scrolling"), this);
+  build_context_menu_scrolling(*scrolling_menu, selected_indexes);
   menu->addSeparator();
-  menu->addMenu(animation_menu);
+  menu->addMenu(scrolling_menu);
 
   // Change pattern id.
   menu->addSeparator();
@@ -726,7 +725,7 @@ void TilesetView::build_context_menu_repeat_mode(
   }
 
   // See if the repeat mode is common.
-  TilePatternRepeatMode repeat_mode = TilePatternRepeatMode::ALL;
+  PatternRepeatMode repeat_mode = PatternRepeatMode::ALL;
   bool common = model->is_common_pattern_repeat_mode(indexes, repeat_mode);
 
   menu.addActions(set_repeat_mode_actions);
@@ -739,59 +738,33 @@ void TilesetView::build_context_menu_repeat_mode(
 }
 
 /**
- * @brief Builds the animation part of a context menu for patterns.
+ * @brief Builds the scrolling property part of a context menu for patterns.
  * @param menu The menu to fill.
  * @param indexes Patterns to build a context menu for.
  */
-void TilesetView::build_context_menu_animation(
+void TilesetView::build_context_menu_scrolling(
     QMenu& menu, const QList<int>& indexes) {
 
   if (indexes.empty()) {
     return;
   }
 
-  // See if the animation and the separation are common.
-  PatternAnimation animation;
-  PatternSeparation separation;
-  bool common_animation = model->is_common_pattern_animation(indexes, animation);
-  bool common_separation = model->is_common_pattern_separation(indexes, separation);
-  bool enable_separation = common_animation &&
-      PatternAnimationTraits::is_multi_frame(animation);
+  // See if the scrolling is common.
+  PatternScrolling scrolling;
+  bool common = model->is_common_pattern_scrolling(indexes, scrolling);
 
   // Add actions to the menu.
-  QList<QAction*> animation_actions = EnumMenus<PatternAnimation>::create_actions(
+  QList<QAction*> scrolling_actions = EnumMenus<PatternScrolling>::create_actions(
         menu,
         EnumMenuCheckableOption::CHECKABLE_EXCLUSIVE,
-        [this](PatternAnimation animation) {
-    emit change_selected_patterns_animation_requested(animation);
-  });
-  menu.addSeparator();
-  QList<QAction*> separation_actions = EnumMenus<PatternSeparation>::create_actions(
-        menu,
-        EnumMenuCheckableOption::CHECKABLE_EXCLUSIVE,
-        [this](PatternSeparation separation) {
-    emit change_selected_patterns_separation_requested(separation);
+        [this](PatternScrolling animation) {
+    emit change_selected_patterns_scrolling_requested(animation);
   });
 
-  if (common_animation) {
-    int animation_index = static_cast<int>(animation);
-    QAction* checked_action = animation_actions[animation_index];
+  if (common) {
+    int scrolling_index = static_cast<int>(scrolling);
+    QAction* checked_action = scrolling_actions[scrolling_index];
     checked_action->setChecked(true);
-  }
-
-  if (enable_separation) {
-    if (common_separation) {
-      int separation_index = static_cast<int>(separation);
-      QAction* checked_action = separation_actions[separation_index];
-      checked_action->setChecked(true);
-      // Add a checkmark (there is none when there is already an icon).
-      checked_action->setText("\u2714 " + checked_action->text());
-    }
-  }
-  else {
-    for (QAction* action : separation_actions) {
-      action->setEnabled(false);
-    }
   }
 }
 

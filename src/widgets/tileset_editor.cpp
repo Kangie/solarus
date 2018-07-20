@@ -33,8 +33,8 @@
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QRegExp>
-#include <QUndoStack>
 #include <QTextStream>
+#include <QUndoStack>
 
 namespace SolarusEditor {
 
@@ -256,7 +256,7 @@ class SetPatternsRepeatModeCommand : public TilesetEditorCommand {
 
 public:
 
-  SetPatternsRepeatModeCommand(TilesetEditor& editor, const QList<int>& indexes, TilePatternRepeatMode repeat_mode) :
+  SetPatternsRepeatModeCommand(TilesetEditor& editor, const QList<int>& indexes, PatternRepeatMode repeat_mode) :
     TilesetEditorCommand(editor, TilesetEditor::tr("Repeat mode")),
     indexes(indexes),
     repeat_mode_after(repeat_mode) {
@@ -287,25 +287,25 @@ public:
 private:
 
   QList<int> indexes;
-  QList<TilePatternRepeatMode> repeat_modes_before;
-  TilePatternRepeatMode repeat_mode_after;
+  QList<PatternRepeatMode> repeat_modes_before;
+  PatternRepeatMode repeat_mode_after;
 };
 
 /**
- * @brief Changing the animation property of tile patterns.
+ * @brief Changing the scrolling property of tile patterns.
  */
-class SetPatternsAnimationCommand : public TilesetEditorCommand {
+class SetPatternsScrollingCommand : public TilesetEditorCommand {
 
 public:
 
-  SetPatternsAnimationCommand(
-      TilesetEditor& editor, const QList<int>& indexes, PatternAnimation animation) :
+  SetPatternsScrollingCommand(
+      TilesetEditor& editor, const QList<int>& indexes, PatternScrolling scrolling) :
     TilesetEditorCommand(editor, TilesetEditor::tr("Animation")),
     indexes(indexes),
-    animation_after(animation) {
+    scrolling_after(scrolling) {
 
     for (int index : indexes) {
-      animations_before << get_model().get_pattern_animation(index);
+      scrollings_before << get_model().get_pattern_scrolling(index);
     }
   }
 
@@ -313,7 +313,7 @@ public:
 
     int i = 0;
     for (int index : indexes) {
-      get_model().set_pattern_animation(index, animations_before[i]);
+      get_model().set_pattern_scrolling(index, scrollings_before[i]);
       ++i;
     }
     get_model().set_selected_indexes(indexes);
@@ -323,7 +323,7 @@ public:
 
     // TODO don't do anything if one fails.
     for (int index : indexes) {
-      get_model().set_pattern_animation(index, animation_after);
+      get_model().set_pattern_scrolling(index, scrolling_after);
     }
     get_model().set_selected_indexes(indexes);
   }
@@ -331,8 +331,8 @@ public:
 private:
 
   QList<int> indexes;
-  QList<PatternAnimation> animations_before;
-  PatternAnimation animation_after;
+  QList<PatternScrolling> scrollings_before;
+  PatternScrolling scrolling_after;
 };
 
 /**
@@ -384,8 +384,10 @@ class CreatePatternCommand : public TilesetEditorCommand {
 
 public:
 
-  CreatePatternCommand(TilesetEditor& editor, const QString& pattern_id,
-                       const QRect& frame, Ground ground) :
+  CreatePatternCommand(TilesetEditor& editor,
+                       const QString& pattern_id,
+                       const QRect& frame,
+                       Ground ground) :
     TilesetEditorCommand(editor, TilesetEditor::tr("Create pattern")),
     index(-1),
     pattern_id(pattern_id),
@@ -456,8 +458,8 @@ public:
       frames.translate(delta);
 
       int new_index = get_model().create_pattern(new_id, frames);
-      get_model().set_pattern_animation(
-        new_index, get_model().get_pattern_animation(index));
+      get_model().set_pattern_scrolling(
+        new_index, get_model().get_pattern_scrolling(index));
       get_model().set_pattern_default_layer(
         new_index, get_model().get_pattern_default_layer(index));
       get_model().set_pattern_ground(
@@ -466,6 +468,8 @@ public:
         new_index, get_model().get_pattern_repeat_mode(index));
       get_model().set_pattern_separation(
         new_index, get_model().get_pattern_separation(index));
+
+      // TODO-683 new properties
 
       new_ids.append(new_id);
       get_model().add_to_selected(new_index);
@@ -495,7 +499,7 @@ public:
       pattern.frames_bounding_box = get_model().get_pattern_frames_bounding_box(index);
       pattern.ground = get_model().get_pattern_ground(index);
       pattern.default_layer = get_model().get_pattern_default_layer(index);
-      pattern.animation = get_model().get_pattern_animation(index);
+      pattern.scrolling = get_model().get_pattern_scrolling(index);
       pattern.separation = get_model().get_pattern_separation(index);
       pattern.repeat_mode = get_model().get_pattern_repeat_mode(index);
       patterns << pattern;
@@ -508,7 +512,7 @@ public:
       int index = get_model().create_pattern(pattern.id, pattern.frames_bounding_box);
       get_model().set_pattern_ground(index, pattern.ground);
       get_model().set_pattern_default_layer(index, pattern.default_layer);
-      get_model().set_pattern_animation(index, pattern.animation);
+      get_model().set_pattern_scrolling(index, pattern.scrolling);
       get_model().set_pattern_separation(index, pattern.separation);
       get_model().set_pattern_repeat_mode(index, pattern.repeat_mode);
     }
@@ -536,9 +540,10 @@ private:
     QRect frames_bounding_box;
     Ground ground;
     int default_layer;
-    PatternAnimation animation;
+    PatternScrolling scrolling;
     PatternSeparation separation;
-    TilePatternRepeatMode repeat_mode;
+    PatternRepeatMode repeat_mode;
+    // TODO-683 new properties
   };
 
   QList<Pattern> patterns;
@@ -866,19 +871,25 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
 
   connect(ui.repeat_mode_field, SIGNAL(activated(QString)),
           this, SLOT(repeat_mode_selector_activated()));
-  connect(ui.tileset_view, SIGNAL(change_selected_patterns_repeat_mode_requested(TilePatternRepeatMode)),
-          this, SLOT(change_selected_patterns_repeat_mode_requested(TilePatternRepeatMode)));
-  connect(model, SIGNAL(pattern_repeat_mode_changed(int, TilePatternRepeatMode)),
+  connect(ui.tileset_view, SIGNAL(change_selected_patterns_repeat_mode_requested(PatternRepeatMode)),
+          this, SLOT(change_selected_patterns_repeat_mode_requested(PatternRepeatMode)));
+  connect(model, SIGNAL(pattern_repeat_mode_changed(int, PatternRepeatMode)),
           this, SLOT(update_repeat_mode_field()));
 
-  connect(ui.animation_type_field, SIGNAL(activated(QString)),
-          this, SLOT(animation_type_selector_activated()));
-  connect(ui.tileset_view, SIGNAL(change_selected_patterns_animation_requested(PatternAnimation)),
-          this, SLOT(change_selected_patterns_animation_requested(PatternAnimation)));
-  connect(model, SIGNAL(pattern_animation_changed(int, PatternAnimation)),
-          this, SLOT(update_animation_type_field()));
-  connect(model, SIGNAL(pattern_animation_changed(int, PatternAnimation)),
-          this, SLOT(update_animation_separation_field()));
+  connect(ui.scrolling_field, QOverload<int>::of(&QComboBox::activated),
+          this, &TilesetEditor::scrolling_selector_activated);
+  connect(ui.tileset_view, &TilesetView::change_selected_patterns_scrolling_requested,
+          this, &TilesetEditor::change_selected_patterns_scrolling_requested);
+  connect(model, &TilesetModel::pattern_scrolling_changed,
+          this, &TilesetEditor::update_scrolling_field);
+
+  // TODO-683 when the number of frames changes, update the separation field
+  /*
+  connect(model, &TilesetModel::pattern_num_frames_changed,
+          this, &TilesetEditor::update_animation_separation_field);
+          */
+
+  // TODO-683 new properties
 
   connect(ui.animation_separation_field, SIGNAL(activated(QString)),
           this, SLOT(animation_separation_selector_activated()));
@@ -1106,7 +1117,7 @@ void TilesetEditor::update_pattern_view() {
 
   update_pattern_id_field();
   update_ground_field();
-  update_animation_type_field();
+  update_scrolling_field();
   update_animation_separation_field();
   update_default_layer_field();
   update_repeat_mode_field();
@@ -1333,57 +1344,57 @@ void TilesetEditor::change_selected_patterns_ground_requested(Ground ground) {
 }
 
 /**
- * @brief Updates the animation type selector from the model.
+ * @brief Updates the scrolling selector from the model.
  */
-void TilesetEditor::update_animation_type_field() {
+void TilesetEditor::update_scrolling_field() {
 
-  PatternAnimation animation = PatternAnimation::NONE;
-  bool enable = model->is_common_pattern_animation(
-        model->get_selected_indexes(), animation);
+  PatternScrolling scrolling = PatternScrolling::NONE;
+  bool enable = model->is_common_pattern_scrolling(
+        model->get_selected_indexes(), scrolling);
 
-  ui.animation_label->setEnabled(enable);
-  ui.animation_type_field->setEnabled(enable);
+  ui.scrolling_label->setEnabled(enable);
+  ui.scrolling_field->setEnabled(enable);
 
   if (enable) {
-    ui.animation_type_field->set_selected_value(animation);
+    ui.scrolling_field->set_selected_value(scrolling);
   }
 }
 
 /**
- * @brief Slot called when the user changes the animation kind in the selector.
+ * @brief Slot called when the user changes the scrolling in the selector.
  */
-void TilesetEditor::animation_type_selector_activated() {
+void TilesetEditor::scrolling_selector_activated() {
 
   if (model->is_selection_empty()) {
     return;
   }
 
   QList<int> indexes = model->get_selected_indexes();
-  PatternAnimation new_animation = ui.animation_type_field->get_selected_value();
-  PatternAnimation old_common_animation;
-  if (model->is_common_pattern_animation(indexes, old_common_animation) &&
-      new_animation == old_common_animation) {
+  PatternScrolling new_scrolling = ui.scrolling_field->get_selected_value();
+  PatternScrolling old_common_scrolling;
+  if (model->is_common_pattern_scrolling(indexes, old_common_scrolling) &&
+      new_scrolling == old_common_scrolling) {
     // No change.
     return;
   }
 
-  if (!try_command(new SetPatternsAnimationCommand(*this,  indexes, new_animation))) {
+  if (!try_command(new SetPatternsScrollingCommand(*this, indexes, new_scrolling))) {
     // In case of failure, restore the selector.
-    update_animation_type_field();
+    update_scrolling_field();
   }
 }
 
 /**
- * @brief Slot called when the user changes the animation of selected patterns.
- * @param animation The new animation.
+ * @brief Slot called when the user changes the scrolling of selected patterns.
+ * @param scrolling The new scrolling.
  */
-void TilesetEditor::change_selected_patterns_animation_requested(PatternAnimation animation) {
+void TilesetEditor::change_selected_patterns_scrolling_requested(PatternScrolling scrolling) {
 
   if (model->is_selection_empty()) {
     return;
   }
 
-  try_command(new SetPatternsAnimationCommand(*this, model->get_selected_indexes(), animation));
+  try_command(new SetPatternsScrollingCommand(*this, model->get_selected_indexes(), scrolling));
 }
 
 /**
@@ -1391,14 +1402,11 @@ void TilesetEditor::change_selected_patterns_animation_requested(PatternAnimatio
  */
 void TilesetEditor::update_animation_separation_field() {
 
-  PatternAnimation animation = PatternAnimation::NONE;
-  bool multi_frame =
-      model->is_common_pattern_animation(model->get_selected_indexes(), animation) &&
-      PatternAnimationTraits::is_multi_frame(animation);
+  const QList<int>& indexes = model->get_selected_indexes();
+  bool multi_frame = false; // model->are_patterns_multi_frame(indexes); // TODO-683
 
   PatternSeparation separation = PatternSeparation::HORIZONTAL;
-  bool enable = multi_frame && model->is_common_pattern_separation(
-        model->get_selected_indexes(), separation);
+  bool enable = multi_frame && model->is_common_pattern_separation(indexes, separation);
 
   ui.animation_separation_field->setEnabled(enable);
 
@@ -1486,7 +1494,7 @@ void TilesetEditor::change_selected_patterns_default_layer_requested(int default
  */
 void TilesetEditor::update_repeat_mode_field() {
 
-  TilePatternRepeatMode repeat_mode = TilePatternRepeatMode::ALL;
+  PatternRepeatMode repeat_mode = PatternRepeatMode::ALL;
   bool enable = model->is_common_pattern_repeat_mode(
       model->get_selected_indexes(), repeat_mode);
 
@@ -1508,8 +1516,8 @@ void TilesetEditor::repeat_mode_selector_activated() {
   }
 
   QList<int> indexes = model->get_selected_indexes();
-  TilePatternRepeatMode new_repeat_mode = ui.repeat_mode_field->get_selected_value();
-  TilePatternRepeatMode old_common_repeat_mode;
+  PatternRepeatMode new_repeat_mode = ui.repeat_mode_field->get_selected_value();
+  PatternRepeatMode old_common_repeat_mode;
   if (model->is_common_pattern_repeat_mode(indexes, old_common_repeat_mode) &&
       new_repeat_mode == old_common_repeat_mode) {
     // No change.
@@ -1523,7 +1531,7 @@ void TilesetEditor::repeat_mode_selector_activated() {
  * @brief Slot called when the user changes the repeat mode of selected patterns.
  * @param repeat_mode The new repeat mode.
  */
-void TilesetEditor::change_selected_patterns_repeat_mode_requested(TilePatternRepeatMode repeat_mode) {
+void TilesetEditor::change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode) {
 
   if (model->is_selection_empty()) {
     return;

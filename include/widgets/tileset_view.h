@@ -18,8 +18,8 @@
 #define SOLARUSEDITOR_TILESET_VIEW_H
 
 #include "ground_traits.h"
-#include "pattern_animation.h"
 #include "pattern_repeat_mode_traits.h"
+#include "pattern_scrolling_traits.h"
 #include "pattern_separation.h"
 #include <QGraphicsView>
 #include <QPointer>
@@ -61,8 +61,8 @@ signals:
   void change_selected_patterns_position_requested(const QPoint& delta);
   void change_selected_patterns_ground_requested(Ground ground);
   void change_selected_patterns_default_layer_requested(int layer);
-  void change_selected_patterns_repeat_mode_requested(TilePatternRepeatMode repeat_mode);
-  void change_selected_patterns_animation_requested(PatternAnimation animation);
+  void change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode);
+  void change_selected_patterns_scrolling_requested(PatternScrolling scrolling);
   void change_selected_patterns_separation_requested(PatternSeparation separation);
   void duplicate_selected_patterns_requested(const QPoint& delta);
   void selection_changed_by_user();
@@ -103,7 +103,7 @@ private:
   void build_context_menu_ground(QMenu& menu, const QList<int>& indexes);
   void build_context_menu_layer(QMenu& menu, const QList<int>& indexes);
   void build_context_menu_repeat_mode(QMenu& menu, const QList<int>& indexes);
-  void build_context_menu_animation(QMenu& menu, const QList<int>& indexes);
+  void build_context_menu_scrolling(QMenu& menu, const QList<int>& indexes);
 
   void start_state_normal();
   void start_state_drawing_rectangle(const QPoint& initial_point);

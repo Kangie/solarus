@@ -58,9 +58,9 @@ public slots:
   void update_ground_field();
   void ground_selector_activated();
   void change_selected_patterns_ground_requested(Ground ground);
-  void update_animation_type_field();
-  void animation_type_selector_activated();
-  void change_selected_patterns_animation_requested(PatternAnimation animation);
+  void update_scrolling_field();
+  void scrolling_selector_activated();
+  void change_selected_patterns_scrolling_requested(PatternScrolling animation);
   void update_animation_separation_field();
   void animation_separation_selector_activated();
   void change_selected_patterns_separation_requested(PatternSeparation separation);
@@ -68,7 +68,7 @@ public slots:
   void change_selected_patterns_default_layer_requested(int default_layer);
   void update_repeat_mode_field();
   void repeat_mode_selector_activated();
-  void change_selected_patterns_repeat_mode_requested(TilePatternRepeatMode repeat_mode);
+  void change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode);
 
   void create_pattern_requested(
       const QString& pattern_id, const QRect& frame, Ground ground);

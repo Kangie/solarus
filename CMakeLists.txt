@@ -201,9 +201,8 @@ set(solarus_quest_editor_SOURCES
   include/new_quest_builder.h
   include/obsolete_editor_exception.h
   include/obsolete_quest_exception.h
-  include/pattern_animation.h
-  include/pattern_animation_traits.h
   include/pattern_repeat_mode_traits.h
+  include/pattern_scrolling_traits.h
   include/pattern_separation.h
   include/pattern_separation_traits.h
   include/point.h
@@ -327,8 +326,8 @@ set(solarus_quest_editor_SOURCES
   src/new_quest_builder.cpp
   src/obsolete_editor_exception.cpp
   src/obsolete_quest_exception.cpp
-  src/pattern_animation_traits.cpp
   src/pattern_repeat_mode_traits.cpp
+  src/pattern_scrolling_traits.cpp
   src/pattern_separation_traits.cpp
   src/point.cpp
   src/quest.cpp
