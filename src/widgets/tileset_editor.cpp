@@ -354,7 +354,6 @@ public:
   }
 
   virtual void undo() override {
-
     int i = 0;
     for (int index : indexes) {
       get_model().set_pattern_separation(index, separations_before[i]);
@@ -363,7 +362,6 @@ public:
   }
 
   virtual void redo() override {
-
     for (int index : indexes) {
       get_model().set_pattern_separation(index, separation_after);
     }
@@ -375,6 +373,46 @@ private:
   QList<int> indexes;
   QList<PatternSeparation> separations_before;
   PatternSeparation separation_after;
+};
+
+/**
+ * @brief Changing the number of frames of tile patterns.
+ */
+class SetPatternsNumFramesCommand : public TilesetEditorCommand {
+
+public:
+
+  SetPatternsNumFramesCommand(TilesetEditor& editor, const QList<int>& indexes, int num_frames) :
+    TilesetEditorCommand(editor, TilesetEditor::tr("Frame delay")),
+    indexes(indexes),
+    num_frames_after(num_frames) {
+
+    for (int index : indexes) {
+      num_frames_before << get_model().get_pattern_num_frames(index);
+    }
+  }
+
+  virtual void undo() override {
+    int i = 0;
+    for (int index : indexes) {
+      get_model().set_pattern_num_frames(index, num_frames_before[i]);
+      ++i;
+    }
+    get_model().set_selected_indexes(indexes);
+  }
+
+  virtual void redo() override {
+    for (int index : indexes) {
+      get_model().set_pattern_num_frames(index, num_frames_after);
+    }
+    get_model().set_selected_indexes(indexes);
+  }
+
+private:
+
+  QList<int> indexes;
+  QList<int> num_frames_before;
+  int num_frames_after;
 };
 
 /**
@@ -963,6 +1001,11 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   connect(model, &TilesetModel::pattern_scrolling_changed,
           this, &TilesetEditor::update_scrolling_field);
 
+  connect(ui.num_frames_field, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &TilesetEditor::change_selected_patterns_num_frames_requested);
+  connect(model, &TilesetModel::pattern_num_frames_changed,
+          this, &TilesetEditor::update_num_frames_field);
+
   connect(ui.frame_delay_field, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &TilesetEditor::change_selected_patterns_frame_delay_requested);
   connect(model, &TilesetModel::pattern_frame_delay_changed,
@@ -973,12 +1016,10 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   connect(model, &TilesetModel::pattern_mirror_loop_changed,
           this, &TilesetEditor::update_mirror_loop_field);
 
-  connect(ui.animation_separation_field, SIGNAL(activated(QString)),
-          this, SLOT(animation_separation_selector_activated()));
-  connect(ui.tileset_view, SIGNAL(change_selected_patterns_separation_requested(PatternSeparation)),
-          this, SLOT(change_selected_patterns_separation_requested(PatternSeparation)));
-  connect(model, SIGNAL(pattern_separation_changed(int, PatternSeparation)),
-          this, SLOT(update_animation_separation_field()));
+  connect(ui.animation_separation_field, QOverload<int>::of(&EnumSelector<PatternSeparation>::activated),
+          this, &TilesetEditor::animation_separation_selector_activated);
+  connect(model, &TilesetModel::pattern_separation_changed,
+          this, &TilesetEditor::update_animation_separation_field);
 
   connect(ui.tileset_view, SIGNAL(create_pattern_requested(QString, QRect, Ground)),
           this, SLOT(create_pattern_requested(QString, QRect, Ground)));
@@ -1190,10 +1231,6 @@ void TilesetEditor::set_description_from_gui() {
 
 /**
  * @brief Fills the tile pattern view.
- *
- * If a single pattern is selected, its properties are displayed in the tile
- * pattern view.
- * Otherwise, the tile pattern view becomes disabled.
  */
 void TilesetEditor::update_pattern_view() {
 
@@ -1202,7 +1239,7 @@ void TilesetEditor::update_pattern_view() {
   update_default_layer_field();
   update_repeat_mode_field();
   update_scrolling_field();
-  // TODO-683 update_frame_number_field();
+  update_num_frames_field();
   update_animation_separation_field();
   update_frame_delay_field();
   update_mirror_loop_field();
@@ -1567,12 +1604,51 @@ void TilesetEditor::change_selected_patterns_scrolling_requested(PatternScrollin
 }
 
 /**
+ * @brief Updates the number of frames selector from the model.
+ */
+void TilesetEditor::update_num_frames_field() {
+
+  int num_frames = 0;
+  bool enable = model->is_common_pattern_num_frames(
+      model->get_selected_indexes(), num_frames);
+
+  ui.num_frames_label->setEnabled(enable);
+  ui.num_frames_field->setEnabled(enable);
+
+  if (enable) {
+    const bool was_blocked = ui.num_frames_field->signalsBlocked();
+    ui.num_frames_field->blockSignals(true);
+    ui.num_frames_field->setValue(num_frames);
+    ui.num_frames_field->blockSignals(was_blocked);
+  }
+
+  // Enable or disable fields depending on whether
+  // this pattern has multiple frames.
+  update_animation_separation_field();
+  update_frame_delay_field();
+  update_mirror_loop_field();
+}
+
+/**
+ * @brief Slot called when the user changes the number of frames of selected patterns.
+ * @param num_frames The new number of frames.
+ */
+void TilesetEditor::change_selected_patterns_num_frames_requested(int num_frames) {
+
+  if (model->is_selection_empty()) {
+    return;
+  }
+
+  try_command(new SetPatternsNumFramesCommand(*this, model->get_selected_indexes(), num_frames));
+}
+
+/**
  * @brief Updates the animation separation selector from the model.
  */
 void TilesetEditor::update_animation_separation_field() {
 
   const QList<int>& indexes = model->get_selected_indexes();
-  bool multi_frame = false; // model->are_patterns_multi_frame(indexes); // TODO-683
+  bool multi_frame = model->are_patterns_multi_frame(indexes);
 
   PatternSeparation separation = PatternSeparation::HORIZONTAL;
   bool enable = multi_frame && model->is_common_pattern_separation(indexes, separation);
@@ -1582,7 +1658,6 @@ void TilesetEditor::update_animation_separation_field() {
   if (enable) {
     ui.animation_separation_field->set_selected_value(separation);
   }
-
 }
 
 /**

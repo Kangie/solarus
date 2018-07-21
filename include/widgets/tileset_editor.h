@@ -66,6 +66,8 @@ public slots:
   void update_scrolling_field();
   void scrolling_selector_activated();
   void change_selected_patterns_scrolling_requested(PatternScrolling animation);
+  void update_num_frames_field();
+  void change_selected_patterns_num_frames_requested(int frame_delay);
   void update_animation_separation_field();
   void animation_separation_selector_activated();
   void change_selected_patterns_separation_requested(PatternSeparation separation);

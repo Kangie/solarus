@@ -87,7 +87,7 @@ public:
   bool is_pattern_multi_frame(int index) const;
   bool are_patterns_multi_frame(const QList<int>& indexes) const;
   int get_pattern_num_frames(int index) const;
-  bool is_common_pattern_num_frames(const QList<int>& indexes, int& num_frames) const;  // TODO-683
+  bool is_common_pattern_num_frames(const QList<int>& indexes, int& num_frames) const;
   void set_pattern_num_frames(int index, int num_frames);
   QRect get_pattern_frame(int index) const;
   QList<QRect> get_pattern_frames(int index) const;
@@ -169,6 +169,7 @@ signals:
   void pattern_repeat_mode_changed(int index, PatternRepeatMode repeat_mode);
   void pattern_scrolling_changed(int index, PatternScrolling animation);
   void pattern_separation_changed(int index, PatternSeparation separation);
+  void pattern_num_frames_changed(int index, int num_frames);
   void pattern_frame_delay_changed(int index, int frame_delay);
   void pattern_mirror_loop_changed(int index, bool mirror_loop);
 

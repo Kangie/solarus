@@ -63,7 +63,6 @@ signals:
   void change_selected_patterns_default_layer_requested(int layer);
   void change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode);
   void change_selected_patterns_scrolling_requested(PatternScrolling scrolling);
-  void change_selected_patterns_separation_requested(PatternSeparation separation);
   void duplicate_selected_patterns_requested(const QPoint& delta);
   void selection_changed_by_user();
 

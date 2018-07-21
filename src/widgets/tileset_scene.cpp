@@ -86,6 +86,8 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
           this, SLOT(update_pattern_position(int)));
   connect(&model, SIGNAL(pattern_separation_changed(int, PatternSeparation)),
           this, SLOT(update_pattern_position(int)));
+  connect(&model, SIGNAL(pattern_num_frames_changed(int, int)),
+          this, SLOT(update_pattern_position(int)));
 
   // Watch changes in the pattern list.
   connect(&model, SIGNAL(pattern_created(int, QString)),
@@ -289,9 +291,10 @@ void TilesetScene::update_pattern_position(int index) {
   const QRect& box = model.get_pattern_frames_bounding_box(index);
   PatternItem* pattern_item = qgraphicsitem_cast<PatternItem*>(pattern_items[index]);
   if (pattern_item != nullptr) {
+    pattern_item->rebuild_pixmap();
     pattern_item->setPos(box.topLeft());
-    pattern_item->setPixmap(model.get_pattern_image_all_frames(index));
   }
+  update(box);
 }
 
 /**
