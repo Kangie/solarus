@@ -593,7 +593,7 @@ bool Editor::is_save_supported() const {
 /**
  * @brief Sets whether this editor supports saving the file.
  *
- * If your editor supports select all operations, you are responsible to
+ * If your editor supports save operations, you are responsible to
  * reimplement save().
  *
  * @param save_supported @c true to support saving.
