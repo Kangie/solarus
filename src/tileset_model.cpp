@@ -769,7 +769,6 @@ void TilesetModel::set_pattern_num_frames(int index, int num_frames) {
       frames[i].add_y(i * first.get_height());
     }
   }
-  // TODO check that we don't overlap existing patterns
   pattern.set_frames(frames);
   patterns[index].set_image_dirty();
 
@@ -1185,7 +1184,6 @@ void TilesetModel::set_pattern_separation(int index, PatternSeparation separatio
       frames[i].add_y(i * first.get_height());
     }
   }
-  // TODO check that we don't overlap existing patterns
   pattern.set_frames(frames);
 
   patterns[index].set_image_dirty();

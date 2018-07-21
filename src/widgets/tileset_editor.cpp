@@ -572,10 +572,10 @@ public:
         new_id = QString("%1_%2").arg(id).arg(integer_id);
       } while (get_model().id_to_index(new_id) != -1);
 
-      QRect frames = get_model().get_pattern_frames_bounding_box(index);
-      frames.translate(delta);
+      QRect first_frame = get_model().get_pattern_frame(index);
+      first_frame.translate(delta);
 
-      int new_index = get_model().create_pattern(new_id, frames);
+      int new_index = get_model().create_pattern(new_id, first_frame);
       get_model().set_pattern_scrolling(
         new_index, get_model().get_pattern_scrolling(index));
       get_model().set_pattern_default_layer(
@@ -584,10 +584,14 @@ public:
         new_index, get_model().get_pattern_ground(index));
       get_model().set_pattern_repeat_mode(
         new_index, get_model().get_pattern_repeat_mode(index));
+      get_model().set_pattern_num_frames(
+        new_index, get_model().get_pattern_num_frames(index));
       get_model().set_pattern_separation(
         new_index, get_model().get_pattern_separation(index));
-
-      // TODO-683 new properties
+      get_model().set_pattern_frame_delay(
+        new_index, get_model().get_pattern_frame_delay(index));
+      get_model().set_pattern_mirror_loop(
+        new_index, get_model().is_pattern_mirror_loop(index));
 
       new_ids.append(new_id);
       get_model().add_to_selected(new_index);
@@ -614,11 +618,14 @@ public:
     for (int index : indexes) {
       Pattern pattern;
       pattern.id = get_model().index_to_id(index);
-      pattern.frames_bounding_box = get_model().get_pattern_frames_bounding_box(index);
+      pattern.first_frame = get_model().get_pattern_frame(index);
       pattern.ground = get_model().get_pattern_ground(index);
       pattern.default_layer = get_model().get_pattern_default_layer(index);
       pattern.scrolling = get_model().get_pattern_scrolling(index);
+      pattern.num_frames = get_model().get_pattern_num_frames(index);
       pattern.separation = get_model().get_pattern_separation(index);
+      pattern.frame_delay = get_model().get_pattern_frame_delay(index);
+      pattern.mirror_loop = get_model().is_pattern_mirror_loop(index);
       pattern.repeat_mode = get_model().get_pattern_repeat_mode(index);
       patterns << pattern;
     }
@@ -627,11 +634,14 @@ public:
   virtual void undo() override {
 
     for (const Pattern& pattern : patterns) {
-      int index = get_model().create_pattern(pattern.id, pattern.frames_bounding_box);
+      int index = get_model().create_pattern(pattern.id, pattern.first_frame);
       get_model().set_pattern_ground(index, pattern.ground);
       get_model().set_pattern_default_layer(index, pattern.default_layer);
       get_model().set_pattern_scrolling(index, pattern.scrolling);
+      get_model().set_pattern_num_frames(index, pattern.num_frames);
       get_model().set_pattern_separation(index, pattern.separation);
+      get_model().set_pattern_frame_delay(index, pattern.frame_delay);
+      get_model().set_pattern_mirror_loop(index, pattern.mirror_loop);
       get_model().set_pattern_repeat_mode(index, pattern.repeat_mode);
     }
 
@@ -655,13 +665,15 @@ private:
 
   struct Pattern {
     QString id;
-    QRect frames_bounding_box;
+    QRect first_frame;
     Ground ground;
-    int default_layer;
+    int default_layer = 0;
     PatternScrolling scrolling;
+    int num_frames = 0;
     PatternSeparation separation;
+    int frame_delay = 0;
+    bool mirror_loop = false;
     PatternRepeatMode repeat_mode;
-    // TODO-683 new properties
   };
 
   QList<Pattern> patterns;
@@ -1639,6 +1651,8 @@ void TilesetEditor::change_selected_patterns_num_frames_requested(int num_frames
     return;
   }
 
+  // TODO check that we don't overlap existing patterns
+
   try_command(new SetPatternsNumFramesCommand(*this, model->get_selected_indexes(), num_frames));
 }
 
@@ -1678,10 +1692,7 @@ void TilesetEditor::animation_separation_selector_activated() {
     return;
   }
 
-  if (!try_command(new SetPatternsSeparationCommand(*this, indexes, new_separation))) {
-    // In case of failure, restore the selector.
-    update_animation_separation_field();
-  }
+  change_selected_patterns_separation_requested(new_separation);
 }
 
 /**
@@ -1693,6 +1704,8 @@ void TilesetEditor::change_selected_patterns_separation_requested(PatternSeparat
   if (model->is_selection_empty()) {
     return;
   }
+
+  // TODO check that we don't overlap existing patterns
 
   if (!try_command(new SetPatternsSeparationCommand(*this, model->get_selected_indexes(), separation))) {
     // In case of failure, restore the selector.
