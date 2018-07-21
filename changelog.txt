@@ -9,7 +9,7 @@ ________________________________________
 * Quest tree: allow to set the author and license information of files.
 * Quest tree: automatically select the currently open file (#336).
 * Allow to view PNG files (#335).
-* Allow to generate borders automatically (autotiles).
+* Map editor, tileset editor: to generate borders automatically (autotiles).
 * Map editor: add support of custom properties for entities by Maxs (#327).
 * Map editor: allow to use multiple tilesets in the same map.
 * Map editor: allow to change the pattern of existing tiles (#280).
@@ -22,6 +22,7 @@ ________________________________________
 * Map editor: add a shortcut to open the tileset by Akadream (#241).
 * Map editor: don't reload the tileset if it is already open elsewhere (#350).
 * Map editor: automatically reload the tileset when it has changed (#362, #375).
+* Tileset editor: allow to change the frame number and delay of patterns.
 * Tileset editor: allow to duplicate tile patterns (#188).
 * Tileset editor: allow to move several patterns at once (#171).
 * Sprite editor: allow to reorder directions by Maxs (#144).
