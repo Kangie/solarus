@@ -153,16 +153,16 @@ ResizeMode Tile::get_pattern_resize_mode() const {
 
   switch (tileset->get_pattern_repeat_mode(pattern_index)) {
 
-  case TilePatternRepeatMode::ALL:
+  case PatternRepeatMode::ALL:
     return ResizeMode::MULTI_DIMENSION_ALL;
 
-  case TilePatternRepeatMode::HORIZONTAL:
+  case PatternRepeatMode::HORIZONTAL:
     return ResizeMode::HORIZONTAL_ONLY;
 
-  case TilePatternRepeatMode::VERTICAL:
+  case PatternRepeatMode::VERTICAL:
     return ResizeMode::VERTICAL_ONLY;
 
-  case TilePatternRepeatMode::NONE:
+  case PatternRepeatMode::NONE:
     return ResizeMode::NONE;
 
   }

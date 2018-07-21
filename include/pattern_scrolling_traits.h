@@ -14,23 +14,28 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SOLARUSEDITOR_PATTERN_ANIMATION_H
-#define SOLARUSEDITOR_PATTERN_ANIMATION_H
+#ifndef SOLARUSEDITOR_PATTERN_SCROLLING_TRAITS_H
+#define SOLARUSEDITOR_PATTERN_SCROLLING_TRAITS_H
+
+#include "enum_traits.h"
+#include <solarus/entities/TilesetData.h>
 
 namespace SolarusEditor {
 
-/**
- * \brief The possible kinds of animations for a pattern in a tileset.
- */
-enum class PatternAnimation {
+using PatternScrolling = Solarus::PatternScrolling;
+using PatternScrollingTraits = EnumTraits<PatternScrolling>;
 
-  NONE,
-  SEQUENCE_012,
-  SEQUENCE_0121,
-  SELF_SCROLLING,
-  PARALLAX_SCROLLING,
-  SEQUENCE_012_PARALLAX,
-  SEQUENCE_0121_PARALLAX
+/**
+ * \brief Provides useful properties of tile pattern scrolling enum values.
+ */
+template<>
+class EnumTraits<PatternScrolling> {
+
+public:
+
+  static QList<PatternScrolling> get_values();
+  static QString get_friendly_name(PatternScrolling value);
+  static QIcon get_icon(PatternScrolling value);
 
 };
 
