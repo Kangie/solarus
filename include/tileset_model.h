@@ -112,7 +112,7 @@ public:
   bool is_common_pattern_frame_delay(const QList<int>& indexes, int& frame_delay) const;
   void set_pattern_frame_delay(int index, int frame_delay);
   bool is_pattern_mirror_loop(int index) const;
-  bool is_pattern_common_mirror_loop(const QList<int>& indexes, bool& mirror_loop) const;
+  bool is_common_pattern_mirror_loop(const QList<int>& indexes, bool& mirror_loop) const;
   void set_pattern_mirror_loop(int index, bool mirror_loop);
 
   QPixmap get_pattern_image(int index) const;

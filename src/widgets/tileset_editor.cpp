@@ -378,6 +378,86 @@ private:
 };
 
 /**
+ * @brief Changing the frame delay of tile patterns.
+ */
+class SetPatternsFrameDelayCommand : public TilesetEditorCommand {
+
+public:
+
+  SetPatternsFrameDelayCommand(TilesetEditor& editor, const QList<int>& indexes, int frame_delay) :
+    TilesetEditorCommand(editor, TilesetEditor::tr("Frame delay")),
+    indexes(indexes),
+    frame_delay_after(frame_delay) {
+
+    for (int index : indexes) {
+      frame_delays_before << get_model().get_pattern_frame_delay(index);
+    }
+  }
+
+  virtual void undo() override {
+    int i = 0;
+    for (int index : indexes) {
+      get_model().set_pattern_frame_delay(index, frame_delays_before[i]);
+      ++i;
+    }
+    get_model().set_selected_indexes(indexes);
+  }
+
+  virtual void redo() override {
+    for (int index : indexes) {
+      get_model().set_pattern_frame_delay(index, frame_delay_after);
+    }
+    get_model().set_selected_indexes(indexes);
+  }
+
+private:
+
+  QList<int> indexes;
+  QList<int> frame_delays_before;
+  int frame_delay_after;
+};
+
+/**
+ * @brief Changing the mirror loop property of tile patterns.
+ */
+class SetPatternsMirrorLoopCommand : public TilesetEditorCommand {
+
+public:
+
+  SetPatternsMirrorLoopCommand(TilesetEditor& editor, const QList<int>& indexes, bool mirror_loop) :
+    TilesetEditorCommand(editor, TilesetEditor::tr("Mirror loop")),
+    indexes(indexes),
+    mirror_loop_after(mirror_loop) {
+
+    for (int index : indexes) {
+      mirror_loops_before << get_model().is_pattern_mirror_loop(index);
+    }
+  }
+
+  virtual void undo() override {
+    int i = 0;
+    for (int index : indexes) {
+      get_model().set_pattern_mirror_loop(index, mirror_loops_before[i]);
+      ++i;
+    }
+    get_model().set_selected_indexes(indexes);
+  }
+
+  virtual void redo() override {
+    for (int index : indexes) {
+      get_model().set_pattern_mirror_loop(index, mirror_loop_after);
+    }
+    get_model().set_selected_indexes(indexes);
+  }
+
+private:
+
+  QList<int> indexes;
+  QList<bool> mirror_loops_before;
+  bool mirror_loop_after;
+};
+
+/**
  * @brief Creating a tile pattern.
  */
 class CreatePatternCommand : public TilesetEditorCommand {
@@ -883,13 +963,15 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   connect(model, &TilesetModel::pattern_scrolling_changed,
           this, &TilesetEditor::update_scrolling_field);
 
-  // TODO-683 when the number of frames changes, update the separation field
-  /*
-  connect(model, &TilesetModel::pattern_num_frames_changed,
-          this, &TilesetEditor::update_animation_separation_field);
-          */
+  connect(ui.frame_delay_field, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &TilesetEditor::change_selected_patterns_frame_delay_requested);
+  connect(model, &TilesetModel::pattern_frame_delay_changed,
+          this, &TilesetEditor::update_frame_delay_field);
 
-  // TODO-683 new properties
+  connect(ui.mirror_loop_field, &QCheckBox::clicked,
+          this, &TilesetEditor::change_selected_patterns_mirror_loop_requested);
+  connect(model, &TilesetModel::pattern_mirror_loop_changed,
+          this, &TilesetEditor::update_mirror_loop_field);
 
   connect(ui.animation_separation_field, SIGNAL(activated(QString)),
           this, SLOT(animation_separation_selector_activated()));
@@ -1117,10 +1199,13 @@ void TilesetEditor::update_pattern_view() {
 
   update_pattern_id_field();
   update_ground_field();
-  update_scrolling_field();
-  update_animation_separation_field();
   update_default_layer_field();
   update_repeat_mode_field();
+  update_scrolling_field();
+  // TODO-683 update_frame_number_field();
+  update_animation_separation_field();
+  update_frame_delay_field();
+  update_mirror_loop_field();
 
   // If no pattern is selected, disable the tile pattern view.
   ui.pattern_properties_group_box->setEnabled(!model->is_selection_empty());
@@ -1344,6 +1429,90 @@ void TilesetEditor::change_selected_patterns_ground_requested(Ground ground) {
 }
 
 /**
+ * @brief Updates the default layer selector from the model.
+ */
+void TilesetEditor::update_default_layer_field() {
+
+  int default_layer = 0;
+  bool enable = model->is_common_pattern_default_layer(
+      model->get_selected_indexes(), default_layer);
+
+  ui.default_layer_label->setEnabled(enable);
+  ui.default_layer_field->setEnabled(enable);
+
+  if (enable) {
+    const bool was_blocked = ui.default_layer_field->signalsBlocked();
+    ui.default_layer_field->blockSignals(true);
+    ui.default_layer_field->setValue(default_layer);
+    ui.default_layer_field->blockSignals(was_blocked);
+  }
+}
+
+/**
+ * @brief Slot called when the user changes the default layer of selected patterns.
+ * @param default_layer The new default layer.
+ */
+void TilesetEditor::change_selected_patterns_default_layer_requested(int default_layer) {
+
+  if (model->is_selection_empty()) {
+    return;
+  }
+
+  try_command(new SetPatternsDefaultLayerCommand(*this, model->get_selected_indexes(), default_layer));
+}
+
+/**
+ * @brief Updates the repeat mode selector from the model.
+ */
+void TilesetEditor::update_repeat_mode_field() {
+
+  PatternRepeatMode repeat_mode = PatternRepeatMode::ALL;
+  bool enable = model->is_common_pattern_repeat_mode(
+      model->get_selected_indexes(), repeat_mode);
+
+  ui.repeat_mode_label->setEnabled(enable);
+  ui.repeat_mode_field->setEnabled(enable);
+
+  if (enable) {
+    ui.repeat_mode_field->set_selected_value(repeat_mode);
+  }
+}
+
+/**
+ * @brief Slot called when the user changes the repeat mode in the selector.
+ */
+void TilesetEditor::repeat_mode_selector_activated() {
+
+  if (model->is_selection_empty()) {
+    return;
+  }
+
+  QList<int> indexes = model->get_selected_indexes();
+  PatternRepeatMode new_repeat_mode = ui.repeat_mode_field->get_selected_value();
+  PatternRepeatMode old_common_repeat_mode;
+  if (model->is_common_pattern_repeat_mode(indexes, old_common_repeat_mode) &&
+      new_repeat_mode == old_common_repeat_mode) {
+    // No change.
+    return;
+  }
+
+  try_command(new SetPatternsRepeatModeCommand(*this, indexes, new_repeat_mode));
+}
+
+/**
+ * @brief Slot called when the user changes the repeat mode of selected patterns.
+ * @param repeat_mode The new repeat mode.
+ */
+void TilesetEditor::change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode) {
+
+  if (model->is_selection_empty()) {
+    return;
+  }
+
+  try_command(new SetPatternsRepeatModeCommand(*this, model->get_selected_indexes(), repeat_mode));
+}
+
+/**
  * @brief Updates the scrolling selector from the model.
  */
 void TilesetEditor::update_scrolling_field() {
@@ -1457,87 +1626,65 @@ void TilesetEditor::change_selected_patterns_separation_requested(PatternSeparat
 }
 
 /**
- * @brief Updates the default layer selector from the model.
+ * @brief Updates the frame delay selector from the model.
  */
-void TilesetEditor::update_default_layer_field() {
+void TilesetEditor::update_frame_delay_field() {
 
-  int default_layer = 0;
-  bool enable = model->is_common_pattern_default_layer(
-      model->get_selected_indexes(), default_layer);
+  int frame_delay = 0;
+  bool enable = model->is_common_pattern_frame_delay(
+      model->get_selected_indexes(), frame_delay);
 
-  ui.default_layer_label->setEnabled(enable);
-  ui.default_layer_field->setEnabled(enable);
+  ui.frame_delay_label->setEnabled(enable);
+  ui.frame_delay_field->setEnabled(enable);
 
   if (enable) {
-    const bool was_blocked = ui.default_layer_field->signalsBlocked();
-    ui.default_layer_field->blockSignals(true);
-    ui.default_layer_field->setValue(default_layer);
-    ui.default_layer_field->blockSignals(was_blocked);
+    const bool was_blocked = ui.frame_delay_field->signalsBlocked();
+    ui.frame_delay_field->blockSignals(true);
+    ui.frame_delay_field->setValue(frame_delay);
+    ui.frame_delay_field->blockSignals(was_blocked);
   }
 }
 
 /**
- * @brief Slot called when the user changes the default layer of selected patterns.
- * @param default_layer The new default layer.
+ * @brief Slot called when the user changes the frame delay of selected patterns.
+ * @param frame_delay The new frame delay.
  */
-void TilesetEditor::change_selected_patterns_default_layer_requested(int default_layer) {
+void TilesetEditor::change_selected_patterns_frame_delay_requested(int frame_delay) {
 
   if (model->is_selection_empty()) {
     return;
   }
 
-  try_command(new SetPatternsDefaultLayerCommand(*this, model->get_selected_indexes(), default_layer));
+  try_command(new SetPatternsFrameDelayCommand(*this, model->get_selected_indexes(), frame_delay));
 }
 
 /**
- * @brief Updates the repeat mode selector from the model.
+ * @brief Updates the mirror loop check box from the model.
  */
-void TilesetEditor::update_repeat_mode_field() {
+void TilesetEditor::update_mirror_loop_field() {
 
-  PatternRepeatMode repeat_mode = PatternRepeatMode::ALL;
-  bool enable = model->is_common_pattern_repeat_mode(
-      model->get_selected_indexes(), repeat_mode);
+  bool mirror_loop = false;
+  bool enable = model->is_common_pattern_mirror_loop(
+      model->get_selected_indexes(), mirror_loop);
 
-  ui.repeat_mode_label->setEnabled(enable);
-  ui.repeat_mode_field->setEnabled(enable);
+  ui.mirror_loop_field->setEnabled(enable);
 
   if (enable) {
-    ui.repeat_mode_field->set_selected_value(repeat_mode);
+    ui.mirror_loop_field->setChecked(mirror_loop);
   }
 }
 
 /**
- * @brief Slot called when the user changes the repeat mode in the selector.
+ * @brief Slot called when the user changes the mirror loop property of selected patterns.
+ * @param mirror_loop The new mirror loop value.
  */
-void TilesetEditor::repeat_mode_selector_activated() {
+void TilesetEditor::change_selected_patterns_mirror_loop_requested(int mirror_loop) {
 
   if (model->is_selection_empty()) {
     return;
   }
 
-  QList<int> indexes = model->get_selected_indexes();
-  PatternRepeatMode new_repeat_mode = ui.repeat_mode_field->get_selected_value();
-  PatternRepeatMode old_common_repeat_mode;
-  if (model->is_common_pattern_repeat_mode(indexes, old_common_repeat_mode) &&
-      new_repeat_mode == old_common_repeat_mode) {
-    // No change.
-    return;
-  }
-
-  try_command(new SetPatternsRepeatModeCommand(*this, indexes, new_repeat_mode));
-}
-
-/**
- * @brief Slot called when the user changes the repeat mode of selected patterns.
- * @param repeat_mode The new repeat mode.
- */
-void TilesetEditor::change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode) {
-
-  if (model->is_selection_empty()) {
-    return;
-  }
-
-  try_command(new SetPatternsRepeatModeCommand(*this, model->get_selected_indexes(), repeat_mode));
+  try_command(new SetPatternsMirrorLoopCommand(*this, model->get_selected_indexes(), mirror_loop));
 }
 
 /**

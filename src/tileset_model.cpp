@@ -1368,7 +1368,7 @@ bool TilesetModel::is_pattern_mirror_loop(int index) const {
  * same mirror loop value.
  * If the list is empty, @c false is returned.
  */
-bool TilesetModel::is_pattern_common_mirror_loop(const QList<int>& indexes, bool& mirror_loop) const {
+bool TilesetModel::is_common_pattern_mirror_loop(const QList<int>& indexes, bool& mirror_loop) const {
 
   if (indexes.empty()) {
     return false;
