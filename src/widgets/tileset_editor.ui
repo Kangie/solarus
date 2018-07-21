@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>736</height>
+    <height>733</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
          <x>0</x>
          <y>0</y>
          <width>597</width>
-         <height>728</height>
+         <height>725</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -175,18 +175,6 @@
             <string>Patterns</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="leftMargin">
-             <number>9</number>
-            </property>
-            <property name="topMargin">
-             <number>9</number>
-            </property>
-            <property name="rightMargin">
-             <number>9</number>
-            </property>
-            <property name="bottomMargin">
-             <number>9</number>
-            </property>
             <item>
              <widget class="SolarusEditor::TilePatternsListView" name="patterns_list_view"/>
             </item>
@@ -203,7 +191,7 @@
               </property>
               <layout class="QFormLayout" name="formLayout_2">
                <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                <enum>QFormLayout::ExpandingFieldsGrow</enum>
                </property>
                <item row="0" column="0">
                 <widget class="QLabel" name="pattern_id_label">
@@ -287,7 +275,7 @@
                <item row="1" column="1">
                 <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::Ground&gt;" name="ground_field">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -307,6 +295,19 @@
                  </property>
                 </widget>
                </item>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="default_layer_field">
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::UpDownArrows</enum>
+                 </property>
+                 <property name="minimum">
+                  <number>-9999</number>
+                 </property>
+                 <property name="maximum">
+                  <number>9999</number>
+                 </property>
+                </widget>
+               </item>
                <item row="3" column="0">
                 <widget class="QLabel" name="repeat_mode_label">
                  <property name="text">
@@ -317,93 +318,12 @@
                <item row="3" column="1">
                 <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::PatternRepeatMode&gt;" name="repeat_mode_field">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
                 </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="animation_label">
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>Animation</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QWidget" name="animation_field" native="true">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_6">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <layout class="QVBoxLayout" name="vertical_layout">
-                    <item>
-                     <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::PatternSeparation&gt;" name="animation_separation_field">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="toolTip">
-                       <string>Horizontal or vertical separation (only for multi-frame patterns)</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <layout class="QHBoxLayout" name="default_layer_layout">
-                 <item>
-                  <widget class="QSpinBox" name="default_layer_field">
-                   <property name="buttonSymbols">
-                    <enum>QAbstractSpinBox::UpDownArrows</enum>
-                   </property>
-                   <property name="minimum">
-                    <number>-9999</number>
-                   </property>
-                   <property name="maximum">
-                    <number>9999</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="default_layer_spacer">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
                </item>
                <item row="4" column="0">
                 <widget class="QLabel" name="scrolling_label">
@@ -415,13 +335,77 @@
                <item row="4" column="1">
                 <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::PatternScrolling&gt;" name="scrolling_field">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
                   <string>Kind of animation of the pattern</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="num_frames_label">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>Frames</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <layout class="QHBoxLayout" name="horizontal_layout_2">
+                 <item>
+                  <widget class="QSpinBox" name="num_frames_field">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::PatternSeparation&gt;" name="animation_separation_field">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>Horizontal or vertical separation (only for multi-frame patterns)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="frame_delay_label">
+                 <property name="text">
+                  <string>Delay</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QSpinBox" name="frame_delay_field">
+                 <property name="suffix">
+                  <string> ms</string>
+                 </property>
+                 <property name="maximum">
+                  <number>999999</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>250</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="1">
+                <widget class="QCheckBox" name="mirror_loop_field">
+                 <property name="text">
+                  <string>Mirror loop</string>
                  </property>
                 </widget>
                </item>
