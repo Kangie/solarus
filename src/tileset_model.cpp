@@ -688,7 +688,7 @@ bool TilesetModel::is_pattern_multi_frame(int index) const {
 /**
  * @brief Returns the number of frames of a pattern.
  * @param index A pattern index.
- * @return The number of frames in the tileset (1, 3 or 4).
+ * @return The number of frames in the tileset.
  */
 int TilesetModel::get_pattern_num_frames(int index) const {
 
@@ -1142,6 +1142,7 @@ void TilesetModel::set_pattern_scrolling(int index, PatternScrolling scrolling) 
 
 /**
  * @brief Returns the separation of the frames if the pattern is multi-frame.
+ * @param index A pattern index.
  * @return The type of separation of the frames.
  * Returns TilePatternSeparation::HORIZONTAL if the pattern is single-frame.
  */
@@ -1193,6 +1194,7 @@ bool TilesetModel::is_common_pattern_separation(const QList<int>& indexes, Patte
  *
  * Nothing is done if the tile pattern is single-frame.
  *
+ * @param index A pattern index.
  * @param separation The type of separation of the frames.
  * @throws EditorException If the separation is not valid, i.e. if the size of
  * each frame after separation is not divisible by 8.
@@ -1269,6 +1271,147 @@ void TilesetModel::set_pattern_separation(int index, PatternSeparation separatio
 
   emit pattern_separation_changed(index, separation);
   */
+}
+
+/**
+ * @brief Returns the delay between frames for a multi-frame pattern.
+ * @param index A pattern index.
+ * @return The frame delay in milliseconds.
+ */
+int TilesetModel::get_pattern_frame_delay(int index) const {
+
+  const std::string& pattern_id = index_to_id(index).toStdString();
+  const Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  return pattern.get_frame_delay();
+}
+
+/**
+ * @brief Gets the frame delay of the specified patterns if it is the same.
+ * @param[in] indexes A list of pattern indexes.
+ * @param[out] frame_delay The common frame delay if any.
+ * The value is left unchanged if the frame delay is not common
+ * or if all patterns are not multi-frame.
+ * @return @c true if all specified patterns are multi-frame and have the
+ * same frame delay.
+ * If the list is empty, @c false is returned.
+ */
+bool TilesetModel::is_common_pattern_frame_delay(const QList<int>& indexes, int& frame_delay) const {
+
+  if (indexes.empty()) {
+    return false;
+  }
+
+  int candidate = get_pattern_frame_delay(indexes.first());
+  for (int index : indexes) {
+    if (!is_pattern_multi_frame(index) ||
+        get_pattern_frame_delay(index) != candidate) {
+      return false;
+    }
+  }
+
+  frame_delay = candidate;
+  return true;
+}
+
+/**
+ * Sets the frame delay of a multi-tile pattern.
+ *
+ * Emits pattern_frame_delay_changed() if there is a change.
+ *
+ * Nothing is done if the tile pattern is single frame.
+ *
+ * @param index A pattern index.
+ * @param frame_delay The frame delay to set in milliseconds.
+ * @throws EditorException In case of error.
+ */
+void TilesetModel::set_pattern_frame_delay(int index, int frame_delay) {
+
+  if (frame_delay <= 0) {
+    throw EditorException("Invalid frame delay");
+  }
+
+  if (frame_delay == get_pattern_frame_delay(index)) {
+    return;
+  }
+
+  if (!is_pattern_multi_frame(index)) {
+    return;
+  }
+
+  const std::string& pattern_id = index_to_id(index).toStdString();
+  Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+
+  pattern.set_frame_delay(frame_delay);
+
+  emit pattern_frame_delay_changed(index, frame_delay);
+}
+
+/**
+ * @brief Returns whether a multi-frame patterns does a mirror loop.
+ * @param index A pattern index.
+ * @return @c true if the animation plays backwards when looping.
+ */
+bool TilesetModel::is_pattern_mirror_loop(int index) const {
+
+  const std::string& pattern_id = index_to_id(index).toStdString();
+  const Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  return pattern.is_mirror_loop();
+}
+
+/**
+ * @brief Gets the mirror loop property of patterns if it is the same.
+ * @param[in] indexes A list of pattern indexes.
+ * @param[out] mirror_loop The common mirror loop value if any.
+ * The value is left unchanged if mirror loop is not common
+ * or if all patterns are not multi-frame.
+ * @return @c true if all specified patterns are multi-frame and have the
+ * same mirror loop value.
+ * If the list is empty, @c false is returned.
+ */
+bool TilesetModel::is_pattern_common_mirror_loop(const QList<int>& indexes, bool& mirror_loop) const {
+
+  if (indexes.empty()) {
+    return false;
+  }
+
+  bool candidate = is_pattern_mirror_loop(indexes.first());
+  for (int index : indexes) {
+    if (!is_pattern_multi_frame(index) ||
+        is_pattern_mirror_loop(index) != candidate) {
+      return false;
+    }
+  }
+
+  mirror_loop = candidate;
+  return true;
+}
+
+/**
+ * Sets the mirror loop property of a multi-tile pattern.
+ *
+ * Emits pattern_mirror_loop_changed() if there is a change.
+ *
+ * Nothing is done if the tile pattern is single-frame.
+ *
+ * @param index A pattern index.
+ * @param mirror_loop Whether to play the animation backwards when looping.
+ */
+void TilesetModel::set_pattern_mirror_loop(int index, bool mirror_loop) {
+
+  if (mirror_loop == is_pattern_mirror_loop(index)) {
+    return;
+  }
+
+  if (!is_pattern_multi_frame(index)) {
+    return;
+  }
+
+  const std::string& pattern_id = index_to_id(index).toStdString();
+  Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+
+  pattern.set_mirror_loop(mirror_loop);
+
+  emit pattern_mirror_loop_changed(index, mirror_loop);
 }
 
 /**

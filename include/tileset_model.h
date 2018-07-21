@@ -86,7 +86,7 @@ public:
 
   bool is_pattern_multi_frame(int index) const;
   bool are_patterns_multi_frame(const QList<int>& indexes) const;
-  int get_pattern_num_frames(int index) const;  // TODO-683
+  int get_pattern_num_frames(int index) const;
   bool is_common_pattern_num_frames(const QList<int>& indexes, int& num_frames) const;  // TODO-683
   void set_pattern_num_frames(int index, int num_frames);
   QRect get_pattern_frame(int index) const;
@@ -108,6 +108,12 @@ public:
   PatternSeparation get_pattern_separation(int index) const;
   bool is_common_pattern_separation(const QList<int>& indexes, PatternSeparation& separation) const;
   void set_pattern_separation(int index, PatternSeparation separation);
+  int get_pattern_frame_delay(int index) const;
+  bool is_common_pattern_frame_delay(const QList<int>& indexes, int& frame_delay) const;
+  void set_pattern_frame_delay(int index, int frame_delay);
+  bool is_pattern_mirror_loop(int index) const;
+  bool is_pattern_common_mirror_loop(const QList<int>& indexes, bool& mirror_loop) const;
+  void set_pattern_mirror_loop(int index, bool mirror_loop);
 
   QPixmap get_pattern_image(int index) const;
   QPixmap get_pattern_image_all_frames(int index) const;
@@ -163,6 +169,8 @@ signals:
   void pattern_repeat_mode_changed(int index, PatternRepeatMode repeat_mode);
   void pattern_scrolling_changed(int index, PatternScrolling animation);
   void pattern_separation_changed(int index, PatternSeparation separation);
+  void pattern_frame_delay_changed(int index, int frame_delay);
+  void pattern_mirror_loop_changed(int index, bool mirror_loop);
 
   void border_set_created(const QString& border_set_id);
   void border_set_deleted(const QString& border_set_id);
