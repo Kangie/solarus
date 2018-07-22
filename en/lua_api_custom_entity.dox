@@ -388,6 +388,24 @@ with a
 \ref lua_api_movement "movement"
 may be enough.
 
+\subsection lua_api_custom_entity_get_follow_streams custom_entity:get_follow_streams()
+
+Returns whether this custom entity follows
+\ref lua_api_stream "streams".
+
+By default, custom entities are not affected by streams and ignore them.
+- Return value (boolean): \c true if this custom entity follows streams,
+  \c false if it ignores them.
+
+\subsection lua_api_custom_entity_set_follow_streams custom_entity:set_follow_streams(follow_streams)
+
+Sets whether this custom entity should follow
+\ref lua_api_stream "streams".
+
+By default, custom entities are not affected by streams and ignore them.
+- \c follow_streams (boolean): \c true to make this custom entity follow
+  streams, \c false to ignore them.
+
 \section lua_api_custom_entity_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define
@@ -488,4 +506,3 @@ facing this custom entity.
   \ref lua_api_npc_on_interaction_item "NPCs".
 
 */
-
