@@ -403,8 +403,9 @@ Sets whether this custom entity should follow
 \ref lua_api_stream "streams".
 
 By default, custom entities are not affected by streams and ignore them.
-- \c follow_streams (boolean): \c true to make this custom entity follow
+- \c follow_streams (boolean, optional): \c true to make this custom entity follow
   streams, \c false to ignore them.
+  No value means \c true.
 
 \section lua_api_custom_entity_inherited_events Events inherited from map entity
 
