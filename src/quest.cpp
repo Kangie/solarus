@@ -92,6 +92,9 @@ void Quest::set_root_path(const QString& root_path) {
     this->root_path = root_path;
   }
 
+  // Clear cached resources.
+  tilesets.clear();
+
   emit root_path_changed(root_path);
 }
 
