@@ -661,17 +661,24 @@ You can use this function to make sure that an
 \subsection lua_api_entity_test_obstacles entity:test_obstacles([dx, dy, [layer]])
 
 Returns whether there would be a collision with obstacles
-if this map entity was translated.
-- \c dx (number, optional): X component of the translation in pixels
+if this map entity was placed at a given offset from its current position.
+- \c dx (number, optional): X offset in pixels
   (\c 0 means the current X position).
   No value means \c 0.
-- \c dy (number, optional): Y component of the translation in pixels
+- \c dy (number, optional): Y offset in pixels
   (\c 0 means the current Y position).
   No value means \c 0.
 - \c layer (number, optional): Layer to test.
   No value means the current layer.
 - Return value (boolean): \c true if there would be a collision in this
 position.
+
+\subsection lua_api_entity_get_active_stream entity:get_active_stream()
+
+Returns the \ref lua_api_stream "stream"
+that is currently affecting this entity, if any.
+- Return value (\ref lua_api_stream "stream"): The current stream,
+  or \c nil if this entity is not currently affected by a stream.
 
 \subsection lua_api_entity_get_sprite entity:get_sprite([name])
 
@@ -885,4 +892,3 @@ Called when the
 of the entity is finished (if there is an end).
 
 */
-
