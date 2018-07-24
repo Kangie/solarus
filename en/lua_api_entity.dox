@@ -673,13 +673,6 @@ if this map entity was placed at a given offset from its current position.
 - Return value (boolean): \c true if there would be a collision in this
 position.
 
-\subsection lua_api_entity_get_active_stream entity:get_active_stream()
-
-Returns the \ref lua_api_stream "stream"
-that is currently affecting this entity, if any.
-- Return value (\ref lua_api_stream "stream"): The current stream,
-  or \c nil if this entity is not currently affected by a stream.
-
 \subsection lua_api_entity_get_sprite entity:get_sprite([name])
 
 Returns a \ref lua_api_sprite "sprite" representing this entity.
@@ -781,6 +774,13 @@ When the entity is hidden, its sprites (if any) are not displayed, but
 everything else continues normally, including collisions.
 - \c visible (boolean, optional): \c true to show the entity, \c false to hide
   it. No value means \c true.
+
+\subsection lua_api_entity_get_controlling_stream entity:get_controlling_stream()
+
+Returns the \ref lua_api_stream "stream"
+that is currently controlling this entity, if any.
+- Return value (\ref lua_api_stream "stream"): The current stream,
+  or \c nil if this entity is not being controlled by a stream.
 
 \subsection lua_api_entity_get_movement entity:get_movement()
 

@@ -553,7 +553,7 @@ enabled or disabled, respectively.
 - \c prefix (string): Prefix of the name of doors to open.
 
 \remark The doors will be really closed once the opening animation of
-  their sprite is finished. However, they immediately become obstalces.
+  their sprite is finished. However, they immediately become obstacles.
 
 \subsection lua_api_map_close_doors map:close_doors(prefix)
 
@@ -2141,4 +2141,3 @@ or the callback parameter of
 \ref lua_api_movement_start "movement:start()"
 
 */
-

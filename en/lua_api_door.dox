@@ -43,7 +43,9 @@ are automatically
 enabled or disabled, respectively.
 This helps a lot to make tiles follow harmoniously the state of doors.
 See
-\ref lua_api_map_open_doors "map:open_doors()"
+\ref lua_api_door_open "door:open()",
+and
+\ref lua_api_map_open_doors "map:open_doors(prefix)"
 for more information about these mechanisms.
 
 A door may be opened by one of the following methods:
@@ -102,6 +104,39 @@ Returns whether this door is being closed.
 - Return value (boolean): \c true if this door is being closed, \c false if it is
   closed, open or opening.
 
+\subsection lua_api_door_open door:open()
+
+Opens this door, enables
+\ref lua_api_dynamic_tile "dynamic tiles"
+whose name starts with the door's name followed by <tt>_open</tt>
+and plays the \c "door_open" \ref lua_api_audio_play_sound
+"sound".
+
+\remark The door will be really closed once the opening animation of
+  its sprite is finished. However, it immediately becomes an obstacle.
+
+\subsection lua_api_door_close door:close()
+
+Closes this door, disables
+\ref lua_api_dynamic_tile "dynamic tiles"
+whose name starts with the door's name followed by <tt>_closed</tt>
+and plays the \c "door_closed" \ref lua_api_audio_play_sound
+"sound".
+
+\subsection lua_api_door_set_open door:set_open([open])
+
+Makes the door open or closed like
+\ref lua_api_door_open "door:open()" or
+\ref lua_api_door_close "door:close()",
+but does not play any sound or any sprite animation.
+
+This function is intended to be called when you don't want the player
+to notice the change, typically when your map starts
+(i.e. from the \ref lua_api_map_on_started "map:on_started()" event).
+- \c open (boolean, optional): \c true to open the door,
+  \c false to close it.
+  No value means \c true.
+
 \section lua_api_door_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define
@@ -125,5 +160,3 @@ Called when this door starts being opened.
 Called when this door starts being closed.
 
 */
-
-
