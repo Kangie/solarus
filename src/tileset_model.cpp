@@ -22,6 +22,7 @@
 #include "tileset_model.h"
 #include <QCryptographicHash>
 #include <QDebug>
+#include <QFile>
 #include <QFileSystemWatcher>
 #include <QIcon>
 #include <QTimer>
