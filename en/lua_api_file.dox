@@ -13,7 +13,8 @@ Data files of the quest are located either in a
 Files that you write are in the
 \ref lua_api_main_set_quest_write_dir "write directory" of the quest.
 
-This module encapsulates the transparent search of these files in both locations.
+This module encapsulates the transparent search of these files in both
+locations.
 You can access them independently of their actual place.
 
 However, note that all built-in file accesses in Solarus
@@ -131,5 +132,12 @@ otherwise this function generates a Lua error.
 - Return value (boolean or nil+string): \c true in case of success, \c nil plus
   an error message in case of failure.
 
-*/
+\subsection lua_api_file_list sol.file.list(dir_name)
 
+Returns the list of files in a directory.
+- \c dir_name (string): Name of the directory to explore.
+- Return value (table): An array with the name of files and directories inside
+  the directory.
+  Names are ordered alphabetically.
+
+*/
