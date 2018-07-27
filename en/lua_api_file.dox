@@ -135,7 +135,9 @@ otherwise this function generates a Lua error.
 \subsection lua_api_file_list sol.file.list(dir_name)
 
 Returns the list of files in a directory.
-- \c dir_name (string): Name of the directory to explore.
+- \c dir_name (string): Name of the directory to explore, relative
+  to the \ref lua_api_main_get_quest_write_dir "quest write directory"
+  or to the data directory.
 - Return value (table): An array with the name of files and directories inside
   the directory.
   Names are ordered alphabetically.
