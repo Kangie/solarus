@@ -76,8 +76,8 @@ parameters, and returns its results.
 
 \subsection lua_api_file_exists sol.file.exists(file_name)
 
-Returns whether the specified file exists
-in the quest write directory of in the data directory.
+Returns whether the specified file or directory exists
+in the quest write directory or in the data directory.
 
 If a valid quest write directory is set
 (in your
@@ -88,7 +88,23 @@ Then, the \c data directory of your quest is tried.
 - \c file_name (string): Name of the file to test, relative
   to the \ref lua_api_main_get_quest_write_dir "quest write directory"
   or to the data directory.
-- Return value (boolean): \c true if there exists a file with this name.
+- Return value (boolean): \c true if there exists a file or directory with this
+  name.
+
+\subsection lua_api_file_exists sol.file.is_dir(file_name)
+
+Returns whether the specified file exists and is a directory.
+
+If a valid quest write directory is set
+(in your
+\ref quest_properties_file "quest.dat file" or by
+calling \ref lua_api_main_set_quest_write_dir "sol.main.set_quest_write_dir()"),
+that directory is tried first.
+Then, the \c data directory of your quest is tried.
+- \c file_name (string): Name of the file to test, relative
+  to the \ref lua_api_main_get_quest_write_dir "quest write directory"
+  or to the data directory.
+- Return value (boolean): \c true if there exists a directory with this name.
 
 \subsection lua_api_file_remove sol.file.remove(file_name)
 
@@ -132,7 +148,7 @@ otherwise this function generates a Lua error.
 - Return value (boolean or nil+string): \c true in case of success, \c nil plus
   an error message in case of failure.
 
-\subsection lua_api_file_list sol.file.list(dir_name)
+\subsection lua_api_file_list sol.file.list_dir(dir_name)
 
 Returns the list of files in a directory.
 - \c dir_name (string): Name of the directory to explore, relative
