@@ -141,5 +141,6 @@ Returns the list of files in a directory.
 - Return value (table): An array with the name of files and directories inside
   the directory.
   Names are ordered alphabetically.
+  Returns \c nil if the given name is not a directory or does not exist.
 
 */
