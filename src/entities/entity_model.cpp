@@ -315,6 +315,13 @@ EntityModelPtr EntityModel::create(
     );
   }
 
+  if (entity->has_origin_fields()) {
+    entity->set_origin(QPoint(
+        entity->get_field("origin_x").toInt(),
+        entity->get_field("origin_y").toInt())
+    );
+  }
+
   // Notify the entity of its properties.
   // Do this after its constructor because of the virtual call.
   for (const auto& kvp : entity->get_entity().get_specific_properties()) {
@@ -754,6 +761,10 @@ QPoint EntityModel::get_origin() const {
  */
 void EntityModel::set_origin(const QPoint& origin) {
   this->origin = origin;
+  if (has_origin_fields()) {
+    set_field("origin_x", origin.x());
+    set_field("origin_y", origin.y());
+  }
 }
 
 /**
