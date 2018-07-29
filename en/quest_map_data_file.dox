@@ -668,12 +668,6 @@ An enemy can be declared in the map data file with
 Additional properties:
 - \c direction (number): Initial direction of the enemy, between
   \c 0 (East) and \c 3 (South).
-- \c origin_x (number, optional): X coordinate of the origin point,
-  relative to the entity's upper left corner.
-  The default origin is <tt>8, 13</tt>.
-- \c origin_y (number, optional): Y coordinate of the origin point,
-  relative to the entity's upper left corner.
-  The default origin is <tt>8, 13</tt>.
 - \c breed (string): Model of enemy to create.
 - \c savegame_variable (string, optional): Name of the boolean value that
   stores in the savegame whether this enemy is dead.
