@@ -91,7 +91,7 @@ Then, the \c data directory of your quest is tried.
 - Return value (boolean): \c true if there exists a file or directory with this
   name.
 
-\subsection lua_api_file_exists sol.file.is_dir(file_name)
+\subsection lua_api_file_is_dir sol.file.is_dir(file_name)
 
 Returns whether the specified file exists and is a directory.
 

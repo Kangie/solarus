@@ -483,7 +483,7 @@ custom entity has changed.
 It may change because this custom entity is moving,
 or when because another entity changes it.
 - \c ground_below (string): The kind of ground at the
-  \ref lua_api_custom_entity_get_ground_position "ground point"
+  \ref lua_api_entity_get_ground_position "ground point"
   of this custom entity.
   \c nil means empty, that is, there is no ground at this point on the
   current layer.
