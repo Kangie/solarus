@@ -379,6 +379,7 @@ void EditEntityDialog::initialize() {
   initialize_model();
   initialize_name();
   initialize_opening_method();
+  initialize_origin();
   initialize_pattern();
   initialize_savegame_variable();
   initialize_size();
@@ -419,6 +420,7 @@ void EditEntityDialog::apply() {
   apply_model();
   apply_name();
   apply_opening_method();
+  apply_origin();
   apply_pattern();  // Before applying the size.
   apply_savegame_variable();
   apply_size();
@@ -1291,6 +1293,36 @@ void EditEntityDialog::apply_opening_method() {
 }
 
 /**
+ * @brief Initializes the origin fields.
+ */
+void EditEntityDialog::initialize_origin() {
+
+  if (!entity_before.has_origin_fields()) {
+    remove_field(ui.origin_label, ui.origin_field);
+    return;
+  }
+
+  // Initialize spinboxes.
+  ui.origin_field->config("x", -999999, 999999);
+
+  // Show the current value in the spinboxes.
+  ui.origin_field->set_point(entity_before.get_origin());
+}
+
+/**
+ * @brief Updates the entity from the origin fields.
+ */
+void EditEntityDialog::apply_origin() {
+
+  if (entity_after->has_origin_fields()) {
+    QPoint origin = ui.origin_field->get_point();
+    QPoint old_top_left = entity_after->get_top_left();
+    entity_after->set_origin(origin);
+    entity_after->set_top_left(old_top_left);
+  }
+}
+
+/**
  * @brief Initializes the pattern field.
  */
 void EditEntityDialog::initialize_pattern() {
@@ -1776,7 +1808,8 @@ void EditEntityDialog::initialize_xy() {
  */
 void EditEntityDialog::apply_xy() {
 
-  entity_after->set_xy(ui.xy_field->get_point());
+  // The origin might have changed as well.
+  entity_after->set_top_left(ui.xy_field->get_point() - entity_before.get_origin());
 }
 
 /**

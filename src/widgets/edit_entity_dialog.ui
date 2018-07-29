@@ -137,17 +137,14 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="SolarusEditor::PairSpinBox" name="size_field" native="true"/>
-     </item>
-     <item row="5" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="direction_label">
        <property name="text">
         <string>Direction</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="6" column="1">
       <widget class="QWidget" name="direction_layout" native="true">
        <layout class="QHBoxLayout" name="layout_4">
         <property name="leftMargin">
@@ -181,7 +178,7 @@
        </layout>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="7" column="0">
       <widget class="QWidget" name="sprite_label_checkbox" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="leftMargin">
@@ -213,47 +210,47 @@
        </layout>
       </widget>
      </item>
-     <item row="6" column="1">
+     <item row="7" column="1">
       <widget class="SolarusEditor::ResourceSelector" name="sprite_field"/>
      </item>
-     <item row="7" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="subtype_label">
        <property name="text">
         <string>Subtype</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="8" column="1">
       <widget class="QComboBox" name="subtype_field"/>
      </item>
-     <item row="8" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="breed_label">
        <property name="text">
         <string>Breed</string>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="9" column="1">
       <widget class="SolarusEditor::ResourceSelector" name="breed_field"/>
      </item>
-     <item row="9" column="0">
+     <item row="10" column="0">
       <widget class="QCheckBox" name="model_checkbox">
        <property name="text">
         <string>Custom entity script</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
+     <item row="10" column="1">
       <widget class="SolarusEditor::ResourceSelector" name="model_field"/>
      </item>
-     <item row="10" column="0">
+     <item row="11" column="0">
       <widget class="QCheckBox" name="savegame_variable_checkbox">
        <property name="text">
         <string>Save the state</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
+     <item row="11" column="1">
       <widget class="QWidget" name="savegame_variable_layout" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="leftMargin">
@@ -281,14 +278,14 @@
        </layout>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="12" column="0">
       <widget class="QLabel" name="treasure_label">
        <property name="text">
         <string>Treasure</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="1">
+     <item row="12" column="1">
       <widget class="QWidget" name="treasure_layout" native="true">
        <layout class="QVBoxLayout" name="layout_3">
         <property name="leftMargin">
@@ -370,64 +367,64 @@
        </layout>
       </widget>
      </item>
-     <item row="12" column="0">
+     <item row="13" column="0">
       <widget class="QLabel" name="font_label">
        <property name="text">
         <string>Price font</string>
        </property>
       </widget>
      </item>
-     <item row="12" column="1">
+     <item row="13" column="1">
       <widget class="SolarusEditor::ResourceSelector" name="font_field"/>
      </item>
-     <item row="13" column="0">
+     <item row="14" column="0">
       <widget class="QCheckBox" name="sound_checkbox">
        <property name="text">
         <string>Play a sound</string>
        </property>
       </widget>
      </item>
-     <item row="13" column="1">
+     <item row="14" column="1">
       <widget class="SolarusEditor::SoundChooser" name="sound_field" native="true"/>
      </item>
-     <item row="14" column="0">
+     <item row="15" column="0">
       <widget class="QLabel" name="transition_label">
        <property name="text">
         <string>Transition</string>
        </property>
       </widget>
      </item>
-     <item row="14" column="1">
+     <item row="15" column="1">
       <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::TransitionStyle&gt;" name="transition_field"/>
      </item>
-     <item row="15" column="0">
+     <item row="16" column="0">
       <widget class="QLabel" name="destination_map_label">
        <property name="text">
         <string>Destination map</string>
        </property>
       </widget>
      </item>
-     <item row="15" column="1">
+     <item row="16" column="1">
       <widget class="SolarusEditor::ResourceSelector" name="destination_map_field"/>
      </item>
-     <item row="16" column="0">
+     <item row="17" column="0">
       <widget class="QLabel" name="destination_label">
        <property name="text">
         <string>Destination</string>
        </property>
       </widget>
      </item>
-     <item row="16" column="1">
+     <item row="17" column="1">
       <widget class="SolarusEditor::EntitySelector" name="destination_field"/>
      </item>
-     <item row="17" column="0">
+     <item row="18" column="0">
       <widget class="QCheckBox" name="weight_checkbox">
        <property name="text">
         <string>Can be lifted</string>
        </property>
       </widget>
      </item>
-     <item row="17" column="1">
+     <item row="18" column="1">
       <widget class="QWidget" name="weight_layout" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="leftMargin">
@@ -481,14 +478,14 @@
        </layout>
       </widget>
      </item>
-     <item row="18" column="0">
+     <item row="19" column="0">
       <widget class="QCheckBox" name="damage_on_enemies_checkbox">
        <property name="text">
         <string>Can hurt enemies</string>
        </property>
       </widget>
      </item>
-     <item row="18" column="1">
+     <item row="19" column="1">
       <widget class="QWidget" name="damage_on_enemies_layout" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <property name="leftMargin">
@@ -542,34 +539,34 @@
        </layout>
       </widget>
      </item>
-     <item row="19" column="0">
+     <item row="20" column="0">
       <widget class="QCheckBox" name="ground_checkbox">
        <property name="text">
         <string>Set a special ground</string>
        </property>
       </widget>
      </item>
-     <item row="19" column="1">
+     <item row="20" column="1">
       <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::Ground&gt;" name="ground_field"/>
      </item>
-     <item row="20" column="0">
+     <item row="21" column="0">
       <widget class="QLabel" name="maximum_moves_label">
        <property name="text">
         <string>Maximum moves</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="1">
+     <item row="21" column="1">
       <widget class="QComboBox" name="maximum_moves_field"/>
      </item>
-     <item row="21" column="0">
+     <item row="22" column="0">
       <widget class="QLabel" name="opening_method_label">
        <property name="text">
         <string>Opening mode</string>
        </property>
       </widget>
      </item>
-     <item row="21" column="1">
+     <item row="22" column="1">
       <widget class="QWidget" name="opening_method_layout" native="true">
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="leftMargin">
@@ -697,14 +694,14 @@
        </layout>
       </widget>
      </item>
-     <item row="22" column="0">
+     <item row="23" column="0">
       <widget class="QLabel" name="behavior_label">
        <property name="text">
         <string>Action</string>
        </property>
       </widget>
      </item>
-     <item row="22" column="1">
+     <item row="23" column="1">
       <widget class="QWidget" name="behavior_layout" native="true">
        <layout class="QVBoxLayout" name="layout_5">
         <property name="leftMargin">
@@ -764,49 +761,49 @@
        </layout>
       </widget>
      </item>
-     <item row="23" column="0">
+     <item row="24" column="0">
       <widget class="QLabel" name="starting_location_mode_label">
        <property name="text">
         <string>Update starting location</string>
        </property>
       </widget>
      </item>
-     <item row="23" column="1">
+     <item row="24" column="1">
       <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::StartingLocationMode&gt;" name="starting_location_mode_field">
        <property name="toolTip">
         <string>Only possible if the destination has a name</string>
        </property>
       </widget>
      </item>
-     <item row="24" column="0">
+     <item row="25" column="0">
       <widget class="QLabel" name="pattern_label">
        <property name="text">
         <string>Pattern</string>
        </property>
       </widget>
      </item>
-     <item row="24" column="1">
+     <item row="25" column="1">
       <widget class="SolarusEditor::PatternChooser" name="pattern_field">
        <property name="toolTip">
         <string>Click to choose another pattern</string>
        </property>
       </widget>
      </item>
-     <item row="25" column="0">
+     <item row="26" column="0">
       <widget class="QLabel" name="tileset_label">
        <property name="text">
         <string>Tileset</string>
        </property>
       </widget>
      </item>
-     <item row="26" column="0">
+     <item row="27" column="0">
       <widget class="QLabel" name="user_properties_label">
        <property name="text">
         <string>User properties</string>
        </property>
       </widget>
      </item>
-     <item row="26" column="1">
+     <item row="27" column="1">
       <layout class="QHBoxLayout" name="custom_properties_layout">
        <item>
         <widget class="QTreeWidget" name="user_properties_table">
@@ -982,7 +979,7 @@
        </item>
       </layout>
      </item>
-     <item row="25" column="1">
+     <item row="26" column="1">
       <widget class="QWidget" name="tileset_layout" native="true">
        <layout class="QVBoxLayout" name="tileset_layout_3">
         <property name="leftMargin">
@@ -1027,6 +1024,19 @@
         </item>
        </layout>
       </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="origin_label">
+       <property name="text">
+        <string>Origin</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="SolarusEditor::PairSpinBox" name="size_field" native="true"/>
+     </item>
+     <item row="5" column="1">
+      <widget class="SolarusEditor::PairSpinBox" name="origin_field" native="true"/>
      </item>
     </layout>
    </item>

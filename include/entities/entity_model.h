@@ -98,6 +98,7 @@ public:
   void set_bottom_right(const QPoint& bottom_right);
   QPoint get_center() const;
   void set_center(const QPoint& center);
+  bool has_origin_fields() const;
   QPoint get_origin() const;
   void set_origin(const QPoint& origin);
   bool has_size_fields() const;

@@ -14,6 +14,7 @@ ________________________________________
 * Map editor: allow to use multiple tilesets in the same map.
 * Map editor: allow to change the pattern of existing tiles (#280).
 * Map editor: allow to change the pattern of all similar tiles at once (#329).
+* Map editor: allow to change the origin of custom entities.
 * Map editor: allow to export the view as a PNG file (#81).
 * Map editor: allow to lock layers (#94).
 * Map editor: show the layer under the cursor in the status bar (#91).

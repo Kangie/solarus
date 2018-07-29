@@ -91,6 +91,8 @@ private:
   void apply_name();
   void initialize_opening_method();
   void apply_opening_method();
+  void initialize_origin();
+  void apply_origin();
   void initialize_pattern();
   void apply_pattern();
   void initialize_savegame_variable();

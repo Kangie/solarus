@@ -727,6 +727,14 @@ void EntityModel::set_center(const QPoint& center) {
 }
 
 /**
+ * @brief Returns whether fields origin_x and origin_y exist for this entity.
+ * @return @c true if this entity has origin fields.
+ */
+bool EntityModel::has_origin_fields() const {
+  return has_field("origin_x") && has_field("origin_y");
+}
+
+/**
  * @brief Returns the origin point of this entity.
  * @return The origin point.
  */
