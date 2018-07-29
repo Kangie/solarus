@@ -80,7 +80,6 @@ public:
   const Solarus::EntityData& get_entity() const;
   Solarus::EntityData& get_entity();
 
-
   // Access data.
   bool has_name() const;
   QString get_name() const;
