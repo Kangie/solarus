@@ -97,14 +97,23 @@ The origin point is also the point of synchronization of an entity with its
 \ref lua_api_sprite "sprites" (because again, an entity that has a given
 size may have sprites with different sizes).
 
-The default values is <tt>8,13</tt> and is usually okay for custom entities of
+The default value is <tt>8,13</tt> and is usually okay for custom entities of
 size \c 16x16.
-See \ref lua_api_entity_get_origin "entity:get_origin()" for more explanations
+See \ref lua_api_entity_get_origin "entity:get_origin()" for more details
 about the origin point.
 - \c origin_x (number): X coordinate of the origin point in pixels,
   relative to the upper left corner of the custom entity's bounding box.
 - \c origin_y (number): Y coordinate of the origin point in pixels,
   relative to the upper left corner of the custom entity's bounding box.
+
+\remark When you call this method,
+  the bounding box of the entity is moved so its coordinates
+  (as returned by
+  \ref lua_api_entity_get_position "entity:get_position()")
+  do not change.
+  If this is not what you need, you can call
+  \ref lua_api_entity_set_position "entity:set_position()" then to adjust the
+  entity's position to the coordinates you want.
 
 \subsection lua_api_custom_entity_get_direction custom_entity:get_direction()
 
