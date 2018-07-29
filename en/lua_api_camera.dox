@@ -55,7 +55,7 @@ It is possible to set a smaller size to the camera, in order to show the
 map only on a subpart of the screen.
 You can then use the rest of the screen to display some information like a HUD.
 Use
-\ref lua_api_camera_set_size "camera:set_size()"
+\ref lua_api_entity_set_size "camera:set_size()"
 and \ref lua_api_camera_set_position_on_screen "camera:set_position_on_screen()"
 to indicate the exact subpart of the screen where you want
 the camera to be displayed.
@@ -82,17 +82,6 @@ See \ref lua_api_entity_methods to know these methods.
 
 The following methods are specific to cameras.
 
-\subsection lua_api_camera_set_size camera:set_size(width, height)
-
-Sets the size of the camera.
-
-This is the size of the rectangle the camera occupies on the screen.
-By default, this is the
-\ref lua_api_video_get_quest_size "quest size",
-meaning that the camera has the size of the whole screen.
-- \c width (number): Width of the camera in pixels.
-- \c height (number): Height of the camera in pixels.
-
 \subsection lua_api_camera_get_position_on_screen camera:get_position_on_screen()
 
 Returns where the camera is displayed on the quest screen.
@@ -109,7 +98,7 @@ the camera is displayed on the upper left corner of the screen.
 Sets where the camera is displayed on the quest screen.
 
 You can use this function in conjunction with
-\ref lua_api_camera_set_size "camera:set_size()"
+\ref lua_api_entity_set_size "camera:set_size()"
 to display the camera only on a subpart of the screen and for example
 keep the rest of the space for the HUD.
 
@@ -199,4 +188,3 @@ Called when the state of the camera changes.
   \c "tracking", because the camera initially tracks the hero.
 
 */
-

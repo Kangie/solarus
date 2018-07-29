@@ -224,6 +224,20 @@ other entities.
 - Return value 1 (number): Width of the entity in pixels.
 - Return value 2 (number): Height of the entity in pixels.
 
+\subsection lua_api_entity_set_size entity:set_size(width, height)
+
+Sets the size of the
+\ref lua_api_entity_get_bounding_box "bounding box"
+of this entity.
+
+This is the effective size used to detect obstacles when moving,
+but the \ref lua_api_sprite "sprite(s)"
+of the entity may be larger.
+
+The default value depends on the type of entity and is often \c 16x16 pixels.
+- \c width (number): Width of the entity in pixels.
+- \c height (number): Height of the entity in pixels.
+
 \remark Note that the \ref lua_api_sprite "sprites" of an entity may have a
   different size than the entity itself.
   See
@@ -242,25 +256,36 @@ is at those coordinates.
 It is not necessarily the upper left corner of the entity's
 bounding box.
 
-The origin point is usually be the central point of contact between the entity
-and the ground. For example, the origin point of the \ref lua_api_hero "hero",
-\ref lua_api_enemy "enemies", \ref lua_api_npc
-"non-playing characters" and most entities
-is the center of their shadow.
-Thus, for entities of size (<tt>16,16</tt>), the origin point is
-often (<tt>8,13</tt>).
+The default origin point depends on the type of entity.
+By convention, it is usually be the central point of contact between the entity
+and the soil.
+For most entities, including
+the \ref lua_api_hero "hero",
+\ref lua_api_enemy "enemies",
+\ref lua_api_npc "non-playing characters"
+and
+\ref lua_api_custom_entity "custom entities",
+the default origin point is <tt>8, 13</tt>
+as their default size is <tt>16x16</tt>.
+More generally, the convention is to have an origin point of
+<tt>width / 2, height - 3</tt>.
 
 This origin point property allows entities of different sizes to have
-comparable reference points that can be used by the engine.
-Indeed, when two enemies overlap, the engine needs to determine which one
+comparable reference points.
+Indeed, when two entities to be
+drawn in Y order overlap,
+the engine needs to determine which one
 has to be displayed first
 (it is always the one with the lowest Y coordinate).
-Sometimes, the engine also needs to compute an angle between two entities,
-for example to push away an enemy that was just hit.
-Using the upper left corner of their
-\ref lua_api_entity_get_bounding_box "bounding box"
-would not give the correct
-angle (unless both entities had the same size).
+Using the upper left corner Y coordinate for this would not work well with
+entities of different sizes.
+
+Similarly, if you need to compute an
+\ref lua_api_entity_get_angle "angle" between two entities
+to move an entity away from another one,
+the calculation uses the origin point of both entities.
+Using the upper left corner of their bounding box would not give the
+accurate angle with entities of different sizes.
 
 The origin point is also the point of synchronization of an entity with its
 \ref lua_api_sprite "sprites" (because again, an entity that has a given
@@ -269,6 +294,28 @@ size may have sprites with different sizes).
   relative to the upper left corner of the entity's bounding box.
 - Return value 2 (number): Y coordinate of the origin point in pixels,
   relative to the upper left corner of the entity's bounding box.
+
+\subsection lua_api_entity_set_origin entity:set_origin(origin_x, origin_y)
+
+Sets the origin point of this entity, relative to the upper left corner
+of its
+\ref lua_api_entity_get_bounding_box "bounding box".
+
+See \ref lua_api_entity_get_origin "entity:get_origin()" for details
+about the origin point.
+- \c origin_x (number): X coordinate of the origin point in pixels,
+  relative to the upper left corner of the entity's bounding box.
+- \c origin_y (number): Y coordinate of the origin point in pixels,
+  relative to the upper left corner of the entity's bounding box.
+
+\remark When you call this method,
+  the bounding box of the entity is moved so that coordinates
+  (as returned by
+  \ref lua_api_entity_get_position "entity:get_position()")
+  do not change.
+  If this is not what you need, you can call
+  \ref lua_api_entity_set_position "entity:set_position()" then to adjust the
+  entity's position to the coordinates you want.
 
 \subsection lua_api_entity_get_position entity:get_position()
 
