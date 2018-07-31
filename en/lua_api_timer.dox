@@ -217,21 +217,21 @@ The map is suspended by the engine in a few cases, like when the game is
 paused, when there is a dialog or when the camera is being moved by a script.
 When this happens, all \ref lua_api_entity "map entities" stop moving and most
 \ref lua_api_sprite "sprites" stop their animation.
-With this setting, you can choose whether your timer gets suspended too.
+With this setting, you can choose whether your timer gets suspended
+automatically as well.
 
 By default, \ref lua_api_map "map" timers,
+\ref lua_api_entity "entity" timers
 and
 \ref lua_api_item "item" timers are suspended with the
 map.
-\ref lua_api_entity "Entity" timers are more complex: an entity
-(and its timers) also get suspended when the entity gets
-\ref lua_api_entity_set_enabled "disabled". You should not use this function
-on entity timers.
-- \c suspended_with_map (boolean, optional): \c true to suspend the timer when
-  the map is suspended, \c false to continue (no value means \c true).
+- \c suspended_with_map (boolean, optional):
+  \c true to suspend the timer when the map is suspended,
+  \c false to continue (no value means \c true).
 
-\remark Even when this setting is set to \c true, you can override its
-behavior by calling \ref lua_api_timer_set_suspended "timer:set_suspended()".
+\remark When this setting is \c true,
+entity timers also get automatically suspended when the entity is
+\ref lua_api_entity_set_enabled "disabled".
 
 \subsection lua_api_timer_get_remaining_time timer:get_remaining_time()
 
@@ -253,4 +253,3 @@ This function has no effect if the timer is already finished.
   called this function in the meantime.
 
 */
-
