@@ -8,11 +8,12 @@ They may be rooms, houses, entire dungeon floors, parts of the outside
 world or any place.
 The active map contains many objects called
 \ref lua_api_entity "map entities" (or just "entities" to be short).
-%Map entities include everything that has a position on the map:
-the \ref lua_api_hero "hero",
+%Map entities are everything that has a position on the map,
+including the \ref lua_api_hero "hero",
 the \ref lua_api_tile "tiles",
 the \ref lua_api_enemy "enemies",
-the \ref lua_api_pickable "pickable treasures", etc.
+the \ref lua_api_pickable "pickable treasures"
+and even the  \ref lua_api_camera "camera".
 See the \ref lua_api_entity "entity API" for more details.
 
 \section lua_api_map_overview Overview
@@ -26,7 +27,7 @@ stay aligned on a grid of squares of 8x8 pixels (except when they are moving).
 Thus, each \ref lua_api_entity "entity" has some coordinates <tt>X,Y</tt>
 on the map. But its position is also defined by a third value: its layer.
 The map has a number of distinct layers that are stacked.
-Each layer has its own set of entities.
+Each layer has its own list of entities.
 Layers are identified by a number.
 There is always a layer \c 0, and maps can add additional
 layers above or below \c 0.
@@ -38,7 +39,7 @@ between two higher platforms. The \ref lua_api_hero "hero"
 walk either above or under the bridge, depending on his layer.
 Entities like \ref lua_api_stairs "stairs" and
 \ref lua_api_jumper "jumpers" can change the layer of the hero
-automatically, and you can also do that from your Lua scripts.
+automatically, but you can also do that from your Lua scripts.
 
 \subsection lua_api_map_overview_tileset Tileset
 
@@ -47,7 +48,8 @@ The tileset defines the small patterns used to draw \ref lua_api_tile "tiles"
 and also some other \ref lua_api_entity "entities" that may depend on the
 skin.
 For example, you can have a forest tileset, a castle tileset, etc.
-Each map has only one tileset, but tilesets have no special size limitation.
+Tilesets have no special size limitation.
+It is possible to use multiple tilesets in the same map.
 
 \subsection lua_api_map_overview_files Map files
 
@@ -56,7 +58,7 @@ A map can contain many types of \ref lua_api_entity "entities".
 map data file or created dynamically.
 Thus, a map with id \c XXXX is managed by two distinct files:
 - In the data file
-  \ref quest_map_data_file "maps/XXXX.dat"
+  \c maps/XXXX.dat
   are declared all entities that
   initially compose your map (most importantly: the
   \ref lua_api_tile "tiles").
@@ -68,7 +70,7 @@ Thus, a map with id \c XXXX is managed by two distinct files:
   \c "maps/XXXX.lua"
   (which is optional),
   you define the dynamic behavior
-  of your map, using the features of the map Lua type described on this page
+  of your map, using the features of the \c map Lua type described on this page
   (and the rest of the Solarus API will also be very useful).
 
 When the player enters a map, the engine first creates the \ref lua_api_entity
@@ -85,22 +87,23 @@ Here is a basic example of script for a map that does nothing special
 except playing a special music and showing an evil welcome dialog when the
 hero enters it.
 \verbatim
--- First, we put the parameter into a variable called "my_map".
+-- First, we put the parameter into a variable called "map".
 -- (In Lua, the notation "..." refers to the parameter(s) of the script.)
-local my_map = ...
+local map = ...
+local game = map:get_game()
 
 -- Event called when the player enters the map, at initialization time.
-function my_map:on_started()
+function map:on_started()
 
   -- Play an evil music.
   sol.audio.play_music("evil")
 end
 
--- Event called when the player enters the map, after the opening transition.
-function my_map:on_opening_transition_finished()
+-- Event called when the player takes control, after the opening transition.
+function map:on_opening_transition_finished()
 
   -- Show an evil welcome dialog.
-  my_map:get_game():start_dialog("welcome_to_darkness")
+  game:start_dialog("welcome_to_darkness")
 end
 \endverbatim
 
@@ -152,7 +155,7 @@ Like other essential Solarus types (including \ref lua_api_game "game",
 a fundamental property of maps is that even if they
 are userdata, they can also be used like Lua tables.
 
-This property is actually what allows you to define callbacks on your map.
+This property is actually what allows you to define events on your map.
 But you can store any data in your map object,
 including new functions specific to your particular map.
 Here is an example that uses this feature:
@@ -160,6 +163,7 @@ Here is an example that uses this feature:
 -- Example of a map with 3 switches to activate in the correct order.
 -- We assume that 3 switches exist with names "puzzle_switch_1", "puzzle_switch_2" and "puzzle_switch_3".
 local map = ...
+local game = map:get_game()
 
 function map:on_started()
   map.next_switch_index = 1
@@ -187,7 +191,7 @@ function map:check_switch(switch)
     if map.next_switch_index > 3 then
       -- Finished!
       sol.audio.play_sound("secret")
-      map:get_game():start_dialog("congratulations")
+      game:start_dialog("congratulations")
     end
   else
     -- Wrong switch: reset the puzzle.
@@ -199,12 +203,12 @@ function map:check_switch(switch)
   end
 end
 \endverbatim
-In this example, you see that we add three values to the map object, like it
+In this example, you see that we add three values to the map object, like if it
 was a table:
 \c next_switch_index (a number),
 \c on_started (a function) and
 \c check_switch (a function).
-Actually, we also use this feature on the three switches:
+Actually, we also use this feature on the three switches as well:
 we add a value \c on_activated on them.
 
 \remark You may wonder how we can access \c puzzle_switch_1,
@@ -223,6 +227,7 @@ To make your map easier to maintain, the following and equivalent version is
 much more preferred:
 \verbatim
 local map = ...
+local game = map:get_game()
 
 function map:on_started()
   map.next_switch_index = 1
@@ -246,7 +251,7 @@ function map:check_switch(switch)
     if map.next_switch_index > map.nb_switches then
       -- Finished!
       sol.audio.play_sound("secret")
-      map:start_dialog("congratulations")
+      game:start_dialog("congratulations")
     end
   else
     -- Wrong switch: reset the puzzle.
@@ -261,8 +266,9 @@ end
 
 This improved version is more evolutive: it does not even hardcode the number
 of \ref lua_api_switch "switches" in the puzzle.
-Thus, if you add a switch called \c "puzzle_switch_4" from the editor one day,
-the script will be directly take it into account in the puzzle.
+Thus, if you add a switch called \c "puzzle_switch_4" from the quest editor one
+day, you won't event have to change your scripts:
+it will directly take it into account in the puzzle.
 
 \section lua_api_map_methods Methods of the type map
 
