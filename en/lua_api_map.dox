@@ -267,7 +267,7 @@ end
 This improved version is more evolutive: it does not even hardcode the number
 of \ref lua_api_switch "switches" in the puzzle.
 Thus, if you add a switch called \c "puzzle_switch_4" from the quest editor one
-day, you won't event have to change your scripts:
+day, you won't even have to change your scripts:
 it will directly take it into account in the puzzle.
 
 \section lua_api_map_methods Methods of the type map
