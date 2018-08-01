@@ -603,7 +603,9 @@ bool MainWindow::open_quest(const QString& quest_path) {
 
     // Make sure all resource directories exist.
     for (ResourceType resource_type : Solarus::EnumInfo<ResourceType>::enums()) {
-      quest.create_dir_if_not_exists(quest.get_resource_path(resource_type));
+      if (QFileInfo(quest.get_data_path()).isWritable()) {
+        quest.create_dir_if_not_exists(quest.get_resource_path(resource_type));
+      }
     }
 
     connect(&quest, SIGNAL(file_renamed(QString, QString)),

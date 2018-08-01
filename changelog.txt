@@ -36,6 +36,7 @@ ________________________________________
 * Allow to select map/tileset/sprite/etc. ids to copy-paste them (#170).
 * Clear the console when a quest is started (#230).
 * Fix crash when opening quest in non-UTF8 filesystems (#373).
+* Fix error message when opening a read-only quest (#264).
 * Fix memory not released when closing an editor (#306).
 * Initial quest: add some shaders (#320).
 
