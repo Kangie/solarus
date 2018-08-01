@@ -66,8 +66,8 @@ bool open_quest(const Quest& quest) {
   // TODO factorize this more.
   QStringList arguments = QApplication::arguments();
   QString program_name = arguments.isEmpty() ? QString() : arguments.first();
-  return Solarus::QuestFiles::open_quest(program_name.toStdString(),
-                                         quest.get_root_path().toStdString());
+  return Solarus::QuestFiles::open_quest(program_name.toLocal8Bit().toStdString(),
+                                         quest.get_root_path().toLocal8Bit().toStdString());
 }
 
 /**

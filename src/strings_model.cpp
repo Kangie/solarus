@@ -41,7 +41,7 @@ StringsModel::StringsModel(
 
   // Load the strings data file.
   QString path = quest.get_strings_path(language_id);
-  if (!resources.import_from_file(path.toStdString())) {
+  if (!resources.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open strings data file '%1'").arg(path));
   }
 
@@ -79,7 +79,7 @@ void StringsModel::save() const {
 
   QString path = quest.get_strings_path(language_id);
 
-  if (!resources.export_to_file(path.toStdString())) {
+  if (!resources.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save strings data file '%1'").arg(path));
   }
 }
@@ -786,7 +786,7 @@ void StringsModel::reload_translation() {
 
   QString path = quest.get_strings_path(translation_id);
   translation_resources.clear();
-  if (!translation_resources.import_from_file(path.toStdString())) {
+  if (!translation_resources.import_from_file(path.toLocal8Bit().toStdString())) {
     translation_id = "";
     throw EditorException(tr("Cannot open strings data file '%1'").arg(path));
   }

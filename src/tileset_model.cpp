@@ -114,7 +114,7 @@ void TilesetModel::load() {
   QString path = quest.get_tileset_data_file_path(tileset_id);
 
   beginResetModel();
-  if (!tileset.import_from_file(path.toStdString())) {
+  if (!tileset.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open tileset data file '%1'").arg(path));
   }
 

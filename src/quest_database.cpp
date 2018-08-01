@@ -102,7 +102,7 @@ void QuestDatabase::reload() {
 
   // TODO don't try this if the quest format is obsolete
   if (quest.exists()) {
-    database.import_from_file(quest.get_resource_list_path().toStdString());
+    database.import_from_file(quest.get_resource_list_path().toLocal8Bit().toStdString());
     // TODO throw an exception in case of error
   }
 }
@@ -118,7 +118,7 @@ void QuestDatabase::save() const {
   }
 
   QString file_name = quest.get_resource_list_path();
-  if (!database.export_to_file(file_name.toStdString())) {
+  if (!database.export_to_file(file_name.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot write file '%1'").arg(file_name));
   }
 }

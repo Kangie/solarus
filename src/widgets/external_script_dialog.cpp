@@ -34,14 +34,15 @@ namespace {
  *
  * This function expects an upvalue of type string indicating the path of the
  * current script (necessary to know its directory).
+ * That path is encoded in system 8-bit encoding.
  *
  * @param l A Lua state.
  * @return Number of values to return to Lua.
  */
 int l_loader_from_current_dir(lua_State* l) {
 
-  QString current_script_path = QString::fromUtf8(lua_tostring(l, lua_upvalueindex(1)));
-  QString required_name = QString::fromUtf8(luaL_checkstring(l, 1));
+  QString current_script_path = QString::fromLocal8Bit(lua_tostring(l, lua_upvalueindex(1)));
+  QString required_name = QString::fromLocal8Bit(luaL_checkstring(l, 1));
 
   if (QFileInfo(required_name).isAbsolute()) {
     // An absolute path was specified: not our job here (and it is not an error).
@@ -201,14 +202,14 @@ void ExternalScriptDialog::run_script() {
   }
   else {
     QByteArray buffer = script_file.readAll();
-    QByteArray path_utf8 = path.toUtf8();
-    if (luaL_loadbuffer(l, buffer.constData(), buffer.size(), path_utf8.constData()) != 0) {
+    QByteArray path_8_bit = path.toLocal8Bit();
+    if (luaL_loadbuffer(l, buffer.constData(), buffer.size(), path_8_bit.constData()) != 0) {
       // Loading the script failed.
       output = QString::fromStdString(std::string(lua_tostring(l, -1)));
     }
     else {
       // Make require able to find files relative to the script's directory.
-      lua_pushstring(l, path_utf8.constData());
+      lua_pushstring(l, path_8_bit.constData());
       lua_pushcclosure(l, l_loader_from_current_dir, 1);
       lua_setglobal(l, "loader_from_current_dir");
       luaL_dostring(l, "table.insert(package.loaders, 2, loader_from_current_dir)");  // TODO clean this

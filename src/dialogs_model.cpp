@@ -42,7 +42,7 @@ DialogsModel::DialogsModel(
 
   // Load the strings data file.
   QString path = quest.get_dialogs_path(language_id);
-  if (!resources.import_from_file(path.toStdString())) {
+  if (!resources.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open dialogs data file '%1'").arg(path));
   }
 
@@ -80,7 +80,7 @@ void DialogsModel::save() const {
 
   QString path = quest.get_dialogs_path(language_id);
 
-  if (!resources.export_to_file(path.toStdString())) {
+  if (!resources.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save dialogs data file '%1'").arg(path));
   }
 }

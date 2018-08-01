@@ -47,7 +47,7 @@ MapModel::MapModel(
   // Load the map data file.
   QString path = quest.get_map_data_file_path(map_id);
 
-  if (!map.import_from_file(path.toStdString())) {
+  if (!map.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open map data file '%1'").arg(path));
   }
 
@@ -99,7 +99,7 @@ void MapModel::save() const {
 
   QString path = quest.get_map_data_file_path(map_id);
 
-  if (!map.export_to_file(path.toStdString())) {
+  if (!map.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save map data file '%1'").arg(path));
   }
 }

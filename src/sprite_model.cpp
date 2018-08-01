@@ -47,7 +47,7 @@ SpriteModel::SpriteModel(
   // Load the sprite data file.
   QString path = quest.get_sprite_path(sprite_id);
 
-  if (!sprite.import_from_file(path.toStdString())) {
+  if (!sprite.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open sprite '%1'").arg(path));
   }
 
@@ -199,7 +199,7 @@ void SpriteModel::save() const {
 
   QString path = quest.get_sprite_path(sprite_id);
 
-  if (!sprite.export_to_file(path.toStdString())) {
+  if (!sprite.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save sprite '%1'").arg(path));
   }
 }
