@@ -641,29 +641,62 @@ of the \ref lua_api_map "map".
 Places this entity in front of all other entities on the same layer.
 
 Since entities that are on the same layer can overlap,
-you can use this function to change their Z-index.
+you can use this function to change their Z order.
 
-\remark Some entities like NPCs, enemies, the hero
-  and some
-  \ref lua_api_custom_entity_is_drawn_in_y_order "custom entities"
+\remark Some entities can have
   have the property to be
-  displayed in Y order.
-  The Z-index of these entities is already managed by the engine to show
-  entities more to the north behind the ones more to the south.
-  Therefore, this function has no effect on their drawing order.
+  \ref lua_api_entity_is_drawn_in_y_order "drawn in Y order"
+  rather than in Z order.
+  This function only has an effect on entities drawn in Z order.
 
 \subsection lua_api_entity_bring_to_back entity:bring_to_back()
 
 Places this entity behind all other entities on the same layer.
 
 Since entities that are on the same layer can overlap,
-you can use this function to change their Z-index.
+you can use this function to change their Z order.
 
-\remark Some entities like NPCs, enemies and the hero have the property to be
-  displayed in Y order.
-  The Z-index of these entities is already managed by the engine to show
-  entities more to the north behind the ones more to the south.
-  Therefore, this function has no effect on their drawing.
+\remark Some entities can have
+  have the property to be
+  \ref lua_api_entity_is_drawn_in_y_order "drawn in Y order"
+  rather than in Z order.
+  This function only has an effect on entities drawn in Z order.
+
+\subsection lua_api_entity_is_drawn_in_y_order entity:is_drawn_in_y_order()
+
+Returns whether this entity should be drawn in Y order or in Z order.
+
+The map is drawn layer by layer, and each layer is drawn in two passes:
+first, entities displayed in Z order, and then,
+entities displayed in Y order.
+
+The Z order is the creation order of entities unless you call
+\ref lua_api_entity_bring_to_front "entity:bring_to_front()"
+or
+\ref lua_api_entity_bring_to_back "entity:bring_to_back()".
+
+The Y order compares the Y coordinate of entities on the map.
+Entities drawn in Y order are displayed from the one the most to the
+north to the one the most to the south.
+
+Usually, entities representing a character or something that is standing
+should be drawn in Y order, so that it looks correct when some of them overlap
+with each other,
+and flat entities should be drawn in Z order.
+
+The default setting depends on the type of entities.
+- Return value (boolean): \c true if this entity is displayed in Y
+  order, \c false if it is displayed in Z order.
+
+\subsection lua_api_entity_set_drawn_in_y_order entity:set_drawn_in_y_order([y_order])
+
+Sets whether this entity should be drawn in Y order or in Z order.
+
+See \ref lua_api_entity_is_drawn_in_y_order "entity:is_drawn_in_y_order()" for
+details about the Y order and the Z order.
+- \c y_order (boolean, optional): \c true to display this entity in Y
+  order, \c false to display it in Z order.
+  No value means \c true.
 
 \subsection lua_api_entity_get_optimization_distance entity:get_optimization_distance()
 
