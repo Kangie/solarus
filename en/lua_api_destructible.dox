@@ -3,7 +3,8 @@
 
 \tableofcontents
 
-A destructible object is an entity that can be cut or lifted
+A destructible object is an entity that can be cut or
+\ref lua_api_entity_get_weight "lifted"
 by the \ref lua_api_hero "hero" and that may hide a
 \ref lua_api_pickable "pickable treasure".
 
@@ -74,24 +75,6 @@ Sets the sound to be played when this object is cut or broken.
 - \c destruction_sound_id (string): Id of the destruction sound.
   \c nil means that no sound will be played.
 
-\subsection lua_api_destructible_get_weight destructible:get_weight()
-
-Returns the weight of this destructible object.
-The weight corresponds to the \c "lift"
-\ref lua_api_game_get_ability "ability" required to lift the object.
-- Return value (number): The level of \c "lift" ability required.
-  \c 0 allows the player to lift the object unconditionally.
-  The special value \c -1 means that the object can never be lifted.
-
-\subsection lua_api_destructible_set_weight destructible:set_weight(weight)
-
-Sets the weight of this destructible object.
-The weight corresponds to the \c "lift"
-\ref lua_api_game_get_ability "ability" required to lift the object.
-- \c weight (number): The level of \c "lift" ability required.
-  \c 0 allows the player to lift the object unconditionally.
-  The special value \c -1 means that the object can never be lifted.
-
 \subsection lua_api_destructible_get_can_be_cut destructible:get_can_be_cut()
 
 Returns whether this object can be cut by the sword.
@@ -157,7 +140,7 @@ traversable too but with an additional grass sprite below the hero.
 Events are callback methods automatically called by the engine if you define
 them.
 
-Destructible objects a reparticular \ref lua_api_entity "map entities".
+Destructible objects are particular \ref lua_api_entity "map entities".
 Therefore, they inherit all events from the type map entity.
 
 See \ref lua_api_entity_events to know these events.
@@ -186,20 +169,6 @@ of them.
 
 Called when the hero has just cut this destructible object.
 
-\subsection lua_api_destructible_on_lifting destructible:on_lifting()
-
-Called when the hero starts lifting this destructible object.
-
-At this point, the \ref lua_api_hero "hero" is in
-\ref lua_api_hero_get_state "state" \c "lifting".
-The animation \c "lifting" of his sprites is playing and the player
-cannot control the hero.
-
-\remark This destructible object no longer exists (unless it can
-  \ref lua_api_destructible_get_can_regenerate "regenerate").
-  It is replaced by a
-  \ref lua_api_carried_object "carried object" with the same sprite.
-
 \subsection lua_api_destructible_on_exploded destructible:on_exploded()
 
 Called when this destructible object is exploding.
@@ -219,4 +188,3 @@ the destructible object regenerates after a delay when it was lifted
 or exploded.
 
 */
-

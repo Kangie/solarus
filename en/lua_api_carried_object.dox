@@ -11,10 +11,8 @@ is lifting, carrying or throwing.
 
 A carried object is created automatically by the engine when
 the \ref lua_api_hero "hero" lifts a
-\ref lua_api_entity "map entity".
-Map entities that can be lifted include
-\ref lua_api_destructible "destructible objects"
-and \ref lua_api_bomb "bombs".
+\ref lua_api_entity "map entity", typically a
+\ref lua_api_destructible "destructible object".
 The carried object takes the sprite and the features of the lifted entity
 it is created from.
 
@@ -26,13 +24,17 @@ He can even go to another map: the carried object is preserved.
 Two sprites for a carried object are automatically created by the engine.
 You can access them like for any other entity, specifying their name in
 \ref lua_api_entity_get_sprite "entity:get_sprite([name])".
-- \c "main": Main sprite representing the carried object.
+- \c "main" (default): Main sprite representing the carried object.
   Its animation set is the one of the original entity he was created from
-  (like a \ref lua_api_destructible "destructible object"),
-  with the animation \c "stopped" or \c "walking" depending on the hero state,
-  and the same direction as the hero.
-  This is the default sprite in
-  \ref lua_api_entity_get_sprite "entity:get_sprite([name])".
+  (like a \ref lua_api_destructible "destructible object").
+  It should have animations \c "stopped", \c "walking" and \c "destroy",
+  with the same direction as the hero.
+  These animations will be played depending on the actions of the hero
+  on the carried object.
+  If the carried object was created from a
+  \ref lua_api_destructible "destructible object" that can explode, then
+  animations \c "stopped_explosion_soon" and  \c "walking_explosion_soon" will
+  be played instead.
 - \c "shadow": Shadow displayed under the carried object when thrown.
   Its animation set is \c "entities/shadow",
   with the animation name \c "big".
@@ -63,4 +65,3 @@ See \ref lua_api_entity_events to know these events.
 None.
 
 */
-

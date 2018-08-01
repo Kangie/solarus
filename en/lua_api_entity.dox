@@ -855,6 +855,38 @@ everything else continues normally, including collisions.
 - \c visible (boolean, optional): \c true to show the entity, \c false to hide
   it. No value means \c true.
 
+\subsection lua_api_entity_get_weight entity:get_weight()
+
+Returns the weight of this entity, if any.
+
+If the entity has a weight, then the
+\ref lua_api_hero "hero" is allowed to lift it if his
+\ref lua_api_game_get_ability "lift ability"
+is greater than or equal to that weight.
+You can use
+\ref lua_api_entity_on_lifting "entity:on_lifting()" to know when
+an entity starts being lifted.
+
+The default weight depends on the type of entity.
+Most entities cannot be lifted by default.
+- Return value (number): The level of \c "lift" ability required to lift this
+  entity.
+  \c 0 allows the
+  \ref lua_api_hero "hero" to lift the entity unconditionally.
+  The special value \c -1 means that the entity can never be lifted.
+
+\subsection lua_api_entity_set_weight entity:set_weight(weight)
+
+Sets the weight of this entity.
+
+See
+\ref lua_api_entity_get_weight "entity:get_weight()" for more details.
+- \c weight (number): The level of \c "lift" ability required to lift this
+  entity.
+  \c 0 allows the
+  \ref lua_api_hero "hero" to lift the entity unconditionally.
+  The special value \c -1 means that the entity can never be lifted.
+
 \subsection lua_api_entity_get_controlling_stream entity:get_controlling_stream()
 
 Returns the \ref lua_api_stream "stream"
@@ -970,5 +1002,23 @@ Called when some characteristics of this entity's
 Called when the
 \ref lua_api_movement "movement"
 of the entity is finished (if there is an end).
+
+\subsection lua_api_entity_on_lifting entity:on_lifting(carrier, carried_object)
+
+Called when this entity starts being lifted.
+
+At this point, the \ref lua_api_hero "hero" is in
+\ref lua_api_hero_get_state "state" \c "lifting".
+The animation \c "lifting" of his sprites is playing and the player
+cannot control the hero.
+
+This entity no longer exists (unless it is a destructible object that can
+\ref lua_api_destructible_get_can_regenerate "regenerate").
+It is replaced by a
+\ref lua_api_carried_object "carried object" with the same sprite.
+- \c carrier (\ref lua_api_entity "entity"): Entity that is lifting this
+destructible object (can only be the \ref lua_api_hero "hero" for now).
+- \c carried_object (\ref lua_api_carried_object "carried object"): The carried
+  object that was created.
 
 */
