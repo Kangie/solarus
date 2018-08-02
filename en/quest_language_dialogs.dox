@@ -56,8 +56,8 @@ Only \c id and \c text are recognized by the engine
 (because the default minimal built-in dialog box use them),
 but you can add other properties depending on your dialog box implementation.
 Properties of a dialog are always of type string.
-Numbers and booleans are also accepted, but they will be converted to
-strings.
+Numbers and booleans are also accepted for historical reasons,
+but they will be converted to strings at runtime.
 For booleans, \c true is replaced by the string "1"
 and \c false is replaced by the string "0".
 
@@ -128,4 +128,3 @@ your immense bravery.
   The engine internally uses Lua to parse it.
 
 */
-
