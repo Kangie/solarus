@@ -228,7 +228,7 @@ specified vector.
 
 \subsection lua_api_main_get_resource_ids sol.main.get_resource_ids(resource_type)
 
-Returns an array of all resource elements IDs of the given type in the quest.
+Returns an array of all resource elements ids of the given type in the quest.
 - \c resource_type (string): Name of the resource type to list elements from.
   Can be one of:
   - \c "enemy",

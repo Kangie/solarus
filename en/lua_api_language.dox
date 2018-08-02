@@ -40,9 +40,10 @@ Returns the human-readable name of a language.
 \subsection lua_api_language_get_languages sol.language.get_languages()
 
 Returns the list of available languages.
-- Return value (table): An array of all language codes defined in
-  \ref quest_database_file "project_db.dat".
-  Languages are in the same order as in \c project_db.dat.
+- Return value (table): An array of all language ids declared in the quest.
+
+\remark Equivalent to
+  \ref lua_api_main_get_resource_ids "sol.main.get_resource_ids(\"language\")"
 
 \subsection lua_api_language_get_string sol.language.get_string(key)
 
@@ -82,4 +83,3 @@ language-specific directory (e.g. \c languages/en/text/dialogs.dat).
   replaced by the string \c "1" for \c true and \c "0" for \c false.
 
 */
-
