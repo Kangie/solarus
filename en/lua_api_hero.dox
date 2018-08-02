@@ -376,6 +376,14 @@ if you also want to make the hero invincible.
   Only possible when you set \c blinking to \c true.
   No value means unlimited.
 
+\subsection lua_api_hero_get_carried_object hero:get_carried_object()
+
+Returns the
+\ref lua_api_carried_object "carried object"
+the hero is currently lifting, carrying or throwing, if any.
+- Return value (\ref lua_api_carried_object "carried object"):
+  The current carried object or \c nil.
+
 \subsection lua_api_hero_get_state hero:get_state()
 
 Returns the name of the current built-in state of the hero.
@@ -651,4 +659,3 @@ to give better resistance to injuries.
   \ref lua_api_hero_start_hurt "hero:start_hurt()".
 
 */
-

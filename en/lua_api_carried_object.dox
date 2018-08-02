@@ -10,8 +10,8 @@ is lifting, carrying or throwing.
 \section lua_api_carried_object_overview Overview
 
 A carried object is created automatically by the engine when
-the \ref lua_api_hero "hero" lifts a
-\ref lua_api_entity "map entity", typically a
+the \ref lua_api_hero "hero"
+\ref lua_api_entity_get_weight "lifts a map entity", typically a
 \ref lua_api_destructible "destructible object".
 The carried object takes the sprite and the features of the lifted entity
 it is created from.
@@ -48,7 +48,33 @@ See \ref lua_api_entity_methods to know these methods.
 
 \section lua_api_carried_object_methods Methods of the type carried object
 
-None.
+The following methods are specific to carried objects.
+
+\subsection lua_api_carried_object_get_damage_on_enemies carried_object:get_damage_on_enemies()
+
+Returns the number of life points that an \ref lua_api_enemy "enemy"
+loses when the \ref lua_api_hero "hero" throws this object at it.
+- Return value (number): The number of life points to remove to an enemy
+  hit by this object. \c 0 means that enemies will ignore this object.
+
+\subsection lua_api_carried_object_set_damage_on_enemies carried_object:set_damage_on_enemies(damage_on_enemies)
+
+Sets the number of life points that an \ref lua_api_enemy "enemy"
+loses when the \ref lua_api_hero "hero" throws this object at it.
+- \c damage_on_enemies (number): The number of life points to remove to an enemy
+  hit by this object. \c 0 means that enemies will ignore this object.
+
+\subsection lua_api_carried_object_get_destruction_sound carried_object:get_destruction_sound()
+
+Returns the sound to be played when this object is cut or broken.
+- Return value (string): Id of the destruction sound.
+  \c nil means that no sound will be played.
+
+\subsection lua_api_carried_object_set_destruction_sound carried_object:set_destruction_sound(destruction_sound_id)
+
+Sets the sound to be played when this object is cut or broken.
+- \c destruction_sound_id (string): Id of the destruction sound.
+  \c nil means that no sound will be played.
 
 \section lua_api_carried_object_inherited_events Events inherited from map entity
 

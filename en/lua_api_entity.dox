@@ -46,8 +46,8 @@ Here are the existing types of entities.
 - \subpage lua_api_destructible "Destructible object": An entity that can be cut
   or lifted by \ref lua_api_hero "hero", and that may hide a
   \ref lua_api_pickable "pickable treasure".
-- \subpage lua_api_carried_object "Carried object": A \ref lua_api_destructible
-  "destructible object" lifted and carried by the \ref lua_api_hero "hero".
+- \subpage lua_api_carried_object "Carried object": Something lifted and
+  carried by the \ref lua_api_hero "hero".
 - \subpage lua_api_chest "Chest": A chest that contains a treasure.
 - \subpage lua_api_shop_treasure "Shop treasure": A treasure that the \ref
   lua_api_hero "hero" can buy for a price.
