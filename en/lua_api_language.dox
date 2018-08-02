@@ -31,19 +31,22 @@ Returns the id of the current language.
 - Return value (string): The code that identifies the current language, or
   \c nil if no language was set.
 
-\subsection lua_api_language_set_language sol.language.set_language(code)
+\subsection lua_api_language_set_language sol.language.set_language(language_id)
 
 Changes the current language.
-- \c code (string): The code that identifies the new language to set.
+- \c language_id (string): The code that identifies the new language to set.
   It must be a valid id as defined in your
   \ref quest_database_file "quest database file".
 
-\subsection lua_api_language_get_language_name sol.language.get_language_name([code])
+\subsection lua_api_language_get_language_name sol.language.get_language_name([language_id])
 
 Returns the human-readable description of a language.
-- \c code (string, optional): A language id
+- \c language_id (string, optional): A language id
   (no value means the current language).
 - Return value (string): The human-readable name of this language.
+
+\remark Equivalent to
+  \ref lua_api_main_get_resource_description "sol.main.get_resource_description(\"language\", language_id)"
 
 \subsection lua_api_language_get_languages sol.language.get_languages()
 
