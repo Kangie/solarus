@@ -31,6 +31,41 @@
 
 namespace SolarusEditor {
 
+constexpr const char* SWIPE_VERTEX_SHADER =
+    R"(
+      #if __VERSION__ >= 130
+      #define COMPAT_VARYING out
+      #define COMPAT_ATTRIBUTE in
+      #else
+      #define COMPAT_VARYING varying
+      #define COMPAT_ATTRIBUTE attribute
+      #endif
+
+      #ifdef GL_ES
+      precision mediump float;
+      #define COMPAT_PRECISION mediump
+      #else
+      #define COMPAT_PRECISION
+      #endif
+
+      uniform mat4 sol_mvp_matrix;
+      uniform mat3 sol_uv_matrix;
+      COMPAT_ATTRIBUTE vec2 sol_vertex;
+      COMPAT_ATTRIBUTE vec2 sol_tex_coord;
+      COMPAT_ATTRIBUTE vec4 sol_color;
+
+      COMPAT_VARYING vec2 sol_vtex_coord;
+      COMPAT_VARYING vec4 sol_vcolor;
+      COMPAT_VARYING float vfactor;
+
+      void main() {
+         gl_Position = sol_mvp_matrix * vec4(sol_vertex,0,1);
+         vfactor = (gl_Position.x + 1.0)*0.5;
+         sol_vcolor = sol_color;
+         sol_vtex_coord = (sol_uv_matrix * vec3(sol_tex_coord,1)).xy;
+      }
+    )";
+
 constexpr const char* SWIPE_FRAGMENT_SHADER =
     R"(
       #if __VERSION__ >= 130
@@ -56,12 +91,12 @@ constexpr const char* SWIPE_FRAGMENT_SHADER =
       uniform vec2 sol_output_size;
       COMPAT_VARYING vec2 sol_vtex_coord;
       COMPAT_VARYING vec4 sol_vcolor;
-
+      COMPAT_VARYING float vfactor;
 
       void main() {
         vec4 tex_i = COMPAT_TEXTURE(input_tex, sol_vtex_coord);
         vec4 tex_o = COMPAT_TEXTURE(output_tex, vec2(sol_vtex_coord.x,1.0-sol_vtex_coord.y));
-        if(sol_vtex_coord.x<factor) {
+        if(vfactor<factor) {
           FragColor = tex_i;
         } else {
           FragColor = tex_o;
@@ -108,7 +143,7 @@ void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
   if (grabbing) {
     QPointF d = event->localPos() - last_mouse_pos;
     d.setY(-d.y());
-    translation += QVector2D(d) * 0.5f / zoom;
+    translation += QVector2D(d) / (zoom*pixelFactor());
     last_mouse_pos = event->localPos();
     event->accept();
   }
@@ -204,7 +239,7 @@ void ShaderPreviewer::update_zoom() {
   }
 
   float zoom = static_cast<float>(view_settings->get_zoom());
-  zoom = qMin(4.0f, qMax(0.25f, zoom));
+  zoom = qMin(4.0f, qMax(1.f, zoom));
 
   if (zoom == this->zoom) {
     return;
@@ -228,6 +263,15 @@ QSize ShaderPreviewer::get_letter_box(const QSize& qsize, const QSize& basesize)
   } else {
     return QSize(basesize.height() * qratio, basesize.height());
   }
+}
+
+/**
+ * @brief return the factor between inputframebuffer pixels and screen pixels
+ * @return
+ */
+float ShaderPreviewer::pixelFactor() const  {
+  QSize lb = get_letter_box(model->get_quest().get_properties().get_normal_quest_size(),frameSize());
+  return lb.width() / (float) input_fb->width();
 }
 
 /**
@@ -321,8 +365,8 @@ void ShaderPreviewer::render_fbs() {
     QMatrix4x4 mvp;
     //TODO mouse control
     mvp.ortho(0, input_fb->width(), input_fb->height(), 0, -1, 1);
-    mvp.scale(zoom);
-    mvp.translate((int) translation.x(), (int) translation.y(), 0);
+    //mvp.scale(zoom);
+    mvp.translate(floor(translation.x()), floor(translation.y()), 0);
     mvp.scale(input_texture->width(), input_texture->height(), 1);
     QMatrix3x3 uvm;
     gl->glClearColor(0, 0, 0, 0);
@@ -411,12 +455,17 @@ void ShaderPreviewer::render_quad(QOpenGLShaderProgram& shader,  const Textures&
 void ShaderPreviewer::render_swipe(float factor) {
   swipe_program.bind();
   QMatrix4x4 mvp;
+  mvp.scale(zoom);
   mvp.translate(-1, -1, 0);
   mvp.scale(2);
   QMatrix3x3 uvm;
   swipe_program.setUniformValue(Solarus::Shader::UV_MATRIX_NAME, uvm);
   swipe_program.setUniformValue(Solarus::Shader::MVP_MATRIX_NAME, mvp);
   swipe_program.setUniformValue("factor", factor);
+  QSize vp = get_letter_box(model->get_quest().get_properties().get_normal_quest_size(), frameSize());
+  swipe_program.setUniformValue(
+        Solarus::Shader::OUTPUT_SIZE_NAME,
+        QVector2D(vp.width(),vp.height()));
   render_quad(swipe_program, {{"input_tex", input_fb->texture()}, {"output_tex", output_fb->texture()}});
 }
 
@@ -429,6 +478,7 @@ void ShaderPreviewer::render_sbs() {
   QSize letterb = get_letter_box(qsize,frameSize());
   auto render_side = [&](GLuint tex, bool invert) {
     QMatrix4x4 mvp;
+    mvp.scale(zoom);
     mvp.translate(-1, -1, 0);
     mvp.scale(2);
     QMatrix3x3 uvm;
@@ -456,7 +506,7 @@ void ShaderPreviewer::render_sbs() {
  */
 void ShaderPreviewer::paintGL() {
   QOpenGLFunctions* gl = context()->functions();
-  gl->glClearColor(0.3, 0.3, 0.3, 1);
+  gl->glClearColor(0.3f, 0.3f, 0.3f, 1);
   gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   if (model == nullptr) {
     return;
@@ -505,7 +555,7 @@ void ShaderPreviewer::initializeGL() {
   // Setup quad
   QOpenGLFunctions* gl = context()->functions();
   gl->initializeOpenGLFunctions();
-  gl->glClearColor(0.3,0.3,0.3,1);
+  gl->glClearColor(0.3f,0.3f,0.3f,1);
   gl->glDisable(GL_DEPTH_TEST);
   gl->glDisable(GL_CULL_FACE);
   qDebug() << "GLSL VERSION : " << (char*) context()->functions()->glGetString(GL_SHADING_LANGUAGE_VERSION);
@@ -539,7 +589,7 @@ void ShaderPreviewer::initializeGL() {
   // Create swipe shader
   swipe_program.addShaderFromSourceCode(
         QOpenGLShader::Vertex,
-        Solarus::DefaultShaders::get_default_vertex_source().c_str());
+        SWIPE_VERTEX_SHADER);
 
   swipe_program.addShaderFromSourceCode(
         QOpenGLShader::Fragment,
