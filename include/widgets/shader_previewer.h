@@ -92,6 +92,7 @@ private:
   void compile_program();
   void build_preview_texture();
 
+  QVector2D to_frame_center(const QPoint& mouse_position) const;
   float pixelFactor() const;
 
   void update_zoom();

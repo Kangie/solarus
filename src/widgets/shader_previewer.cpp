@@ -179,18 +179,58 @@ void ShaderPreviewer::mouseReleaseEvent(QMouseEvent* event) {
   }
 }
 
+
+/**
+ * @brief get displacement to the frame center
+ * @param mouse_position
+ * @return
+ */
+QVector2D ShaderPreviewer::to_frame_center(const QPoint& mouse_position) const {
+  auto center = [&]()->QVector2D{
+    switch(preview_mode) {
+    case ShaderPreviewMode::SIDE_BY_SIDE:
+    {
+      float y = frameSize().height() / 2.f;
+      QSize qsize = model->get_quest().get_properties().get_normal_quest_size();
+      qsize.setWidth(qsize.width()*2);
+      QSize letterb = get_letter_box(qsize,frameSize());
+      int rx = (frameSize().width() - letterb.width()) / 2;
+      if(mouse_position.x() < frameSize().width() / 2) {
+        return {rx+letterb.width()/4.f,y};
+      } else {
+        return {rx+(letterb.width()*3.f)/4.f,y};
+      }
+    }
+    default:
+    {
+      QSize fsize = frameSize();
+      return {fsize.width()/2.f,fsize.height()/2.f};
+    }
+    };
+  };
+  return (center() - QVector2D(mouse_position))*QVector2D(1,-1);
+}
+
 /**
  * @brief Receives a mouse wheel event.
  * @param event The event to handle.
  */
 void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
 
+  float old_zoom = zoom;
   if (event->delta() > 0) {
     zoom_in();
+    if(zoom != old_zoom) {
+      translation += (to_frame_center(event->pos())/zoom) / pixelFactor();
+    }
   }
   else {
     zoom_out();
+    if(zoom != old_zoom) {
+      translation -= 0.5*(to_frame_center(event->pos())/zoom) / pixelFactor();
+    }
   }
+
 }
 
 /**
@@ -229,7 +269,7 @@ void ShaderPreviewer::zoom_out() {
  * @brief Sets the zoom level of the view from the settings.
  *
  * Zooming will be anchored at the mouse position.
- * The zoom value will be clamped between 0.25 and 4.0.
+ * The zoom value will be clamped between 1 and 4.0.
  */
 
 void ShaderPreviewer::update_zoom() {
@@ -240,10 +280,12 @@ void ShaderPreviewer::update_zoom() {
 
   float zoom = static_cast<float>(view_settings->get_zoom());
   zoom = qMin(4.0f, qMax(1.f, zoom));
+  view_settings->set_zoom(zoom);
 
   if (zoom == this->zoom) {
     return;
   }
+
 
   this->zoom = zoom;
   update();
@@ -270,8 +312,18 @@ QSize ShaderPreviewer::get_letter_box(const QSize& qsize, const QSize& basesize)
  * @return
  */
 float ShaderPreviewer::pixelFactor() const  {
-  QSize lb = get_letter_box(model->get_quest().get_properties().get_normal_quest_size(),frameSize());
-  return lb.width() / (float) input_fb->width();
+  QSize qsize = model->get_quest().get_properties().get_normal_quest_size();
+  switch(preview_mode) {
+    case ShaderPreviewMode::SIDE_BY_SIDE: {
+      qsize.setWidth(qsize.width()*2);
+      QSize lb = get_letter_box(qsize,frameSize());
+      return 0.5f*lb.width() / (float) input_fb->width();
+    }
+    default: {
+      QSize lb = get_letter_box(qsize,frameSize());
+      return lb.width() / (float) input_fb->width();
+    }
+  }
 }
 
 /**
@@ -369,7 +421,7 @@ void ShaderPreviewer::render_fbs() {
     mvp.translate(floor(translation.x()), floor(translation.y()), 0);
     mvp.scale(input_texture->width(), input_texture->height(), 1);
     QMatrix3x3 uvm;
-    gl->glClearColor(0, 0, 0, 0);
+    gl->glClearColor(0, 0, 0, 1.f);
     gl->glViewport(0, 0, input_fb->width(), input_fb->height());
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     simple_program.bind();
