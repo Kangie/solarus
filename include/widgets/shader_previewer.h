@@ -92,6 +92,8 @@ private:
   void compile_program();
   void build_preview_texture();
 
+  float pixelFactor() const;
+
   void update_zoom();
   QSize get_letter_box(const QSize& qsize, const QSize& basesize) const;
 
