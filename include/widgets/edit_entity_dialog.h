@@ -107,6 +107,8 @@ private:
   void apply_starting_location_mode();
   void initialize_subtype();
   void apply_subtype();
+  void initialize_tiled();
+  void apply_tiled();
   void initialize_tileset();
   void apply_tileset();
   void update_pattern_chooser_tileset();

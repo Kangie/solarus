@@ -47,6 +47,7 @@ const QString savegame_variable_field_name = "savegame_variable";
 const QString sound_field_name = "sound";
 const QString sprite_field_name = "sprite";
 const QString starting_location_mode_field_name = "starting_location_mode";
+const QString tiled_field_name = "tiled";
 const QString tileset_field_name = "tileset";
 const QString transition_field_name = "transition";
 const QString treasure_name_field_name = "treasure_name";
@@ -385,6 +386,7 @@ void EditEntityDialog::initialize() {
   initialize_size();
   initialize_sound();
   initialize_sprite();
+  initialize_tiled();
   initialize_starting_location_mode();
   initialize_subtype();
   initialize_tileset();
@@ -426,6 +428,7 @@ void EditEntityDialog::apply() {
   apply_size();
   apply_sound();
   apply_sprite();
+  apply_tiled();
   apply_starting_location_mode();
   apply_subtype();
   apply_tileset();
@@ -492,15 +495,19 @@ void EditEntityDialog::initialize_possibly_optional_field(const QString& field_n
 
 /**
  * @brief Removes a row of the form layout.
- * @param label Label of the row.
- * @param field Field of the row.
+ * @param label Label of the row or nullptr if there is no label to remove.
+ * @param field Field of the row or nullptr if there is no field to remove.
  */
 void EditEntityDialog::remove_field(QWidget* label, QWidget* field) {
 
-  label->hide();
-  ui.form_layout->removeWidget(label);
-  field->hide();
-  ui.form_layout->removeWidget(field);
+  if (label != nullptr) {
+    label->hide();
+    ui.form_layout->removeWidget(label);
+  }
+  if (field != nullptr) {
+    field->hide();
+    ui.form_layout->removeWidget(field);
+  }
 }
 
 /**
@@ -1507,6 +1514,8 @@ void EditEntityDialog::initialize_sprite() {
     return;
   }
 
+  ui.sprite_label_checkbox->layout()->setAlignment(ui.sprite_label, Qt::AlignTop);
+  ui.sprite_label_checkbox->layout()->setAlignment(ui.sprite_checkbox, Qt::AlignTop);
   initialize_possibly_optional_field(
         sprite_field_name,
         ui.sprite_label_checkbox->layout(),
@@ -1518,6 +1527,9 @@ void EditEntityDialog::initialize_sprite() {
   ui.sprite_field->set_tileset_id(get_map().get_tileset_id());
   QString sprite = entity_before.get_field(sprite_field_name).toString();
   ui.sprite_field->set_selected_id(sprite);
+
+  connect(ui.sprite_checkbox, &QCheckBox::clicked,
+          ui.tiled_field, &QCheckBox::setEnabled);
 }
 
 /**
@@ -1587,6 +1599,35 @@ void EditEntityDialog::apply_subtype() {
 
   if (entity_after->has_subtype_field()) {
     entity_after->set_subtype(ui.subtype_field->currentData().toString());
+  }
+}
+
+/**
+ * @brief Initializes the tiled field.
+ */
+void EditEntityDialog::initialize_tiled() {
+
+  if (!entity_before.has_field(tiled_field_name)) {
+    remove_field(nullptr, ui.tiled_field);
+    return;
+  }
+
+  if (!ui.sprite_checkbox->isChecked()) {
+    ui.tiled_field->setEnabled(false);
+  }
+  else {
+    ui.tiled_field->setEnabled(true);
+  }
+  ui.tiled_field->setChecked(entity_before.get_field(tiled_field_name).toBool());
+}
+
+/**
+ * @brief Updates the entity from the tiled field.
+ */
+void EditEntityDialog::apply_tiled() {
+
+  if (entity_after->has_field(tiled_field_name)) {
+    entity_after->set_field(tiled_field_name, ui.tiled_field->isChecked());
   }
 }
 

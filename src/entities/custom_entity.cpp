@@ -39,4 +39,18 @@ CustomEntity::CustomEntity(MapModel& map, const EntityIndex& index) :
   set_draw_shape_info(info);
 }
 
+/**
+ * @copydoc EntityModel::notify_field_changed
+ */
+void CustomEntity::notify_field_changed(const QString& key, const QVariant& value) {
+
+  EntityModel::notify_field_changed(key, value);
+
+  if (key == "tiled") {
+    DrawSpriteInfo sprite_info = get_draw_sprite_info();
+    sprite_info.tiled = value.toBool();
+    set_draw_sprite_info(sprite_info);
+  }
+}
+
 }
