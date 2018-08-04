@@ -22,12 +22,14 @@
 #include "quest.h"
 #include "quest_files_model.h"
 #include <QContextMenuEvent>
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QUrl>
 
 namespace SolarusEditor {
 
@@ -510,6 +512,12 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
   open_action->setText(tr("Open"));  // Restore the normal Open text and icon.
   open_action->setIcon(QIcon());
 
+  if (quest.is_dir(path)) {
+    open_action->setText(tr("Open with system explorer"));
+    menu.addAction(open_action);
+    return;
+  }
+
   ResourceType resource_type;
   QString element_id;
   if (quest.is_resource_element(path, resource_type, element_id)) {
@@ -960,6 +968,12 @@ void QuestTreeView::open_action_triggered() {
 
   QString path = get_selected_path();
   if (path.isEmpty()) {
+    return;
+  }
+
+  const Quest& quest = model->get_quest();
+  if (quest.is_dir(path)) {
+    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
     return;
   }
 
