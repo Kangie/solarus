@@ -157,7 +157,7 @@ Returns the frame size of this sprite in an animation and direction.
 
 \subsection lua_api_sprite_get_origin sprite:get_origin([animation_name, direction])
 
-Returns the coordinates of the origin point of this sprite in an 
+Returns the coordinates of the origin point of this sprite in an
 animation and direction, relative to the upper left corner of a frame.
 
 The origin is the point of synchronization for sprites that have several
@@ -201,12 +201,22 @@ Pauses or resumes the animation of this sprite.
 - \c paused (boolean, optional): \c true to pause the sprite,
   \c false to unpause it. No value means \c true.
 
+\subsection lua_api_sprite_get_ignore_suspend sprite:get_ignore_suspend()
+
+Returns whether the animation should continue even when the
+\ref lua_api_game "game" is suspended.
+
+This setting only has an effect when a game is running.
+The default value is \c false.
+- Return value (boolean): \c true to continue the animation even when the
+  game is suspended.
+
 \subsection lua_api_sprite_set_ignore_suspend sprite:set_ignore_suspend([ignore])
 
-During a game, sets whether the animation should continue even when the map is
-suspended.
-- \c ignore (boolean, optional): \c true to continue animation even when the map is
-  suspended, \c false otherwise. No value means \c true.
+Sets whether the animation should continue even when the
+\ref lua_api_game "game" is suspended.
+- \c ignore (boolean, optional): \c true to continue the animation even when the
+  game is suspended. No value means \c true.
 
 \subsection lua_api_sprite_synchronize sprite:synchronize([reference_sprite])
 
@@ -251,4 +261,3 @@ Called whenever the frame of this sprite has changed.
 - \c frame (number): The new current frame (the first one is \c 0).
 
 */
-

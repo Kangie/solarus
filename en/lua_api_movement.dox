@@ -134,6 +134,29 @@ The object controlled by this movement may be a
 - \c x (number): X coordinate to set.
 - \c y (number): Y coordinate to set.
 
+\subsection lua_api_movement_is_suspended movement:is_suspended()
+
+Returns whether this movement is currently suspended.
+- Return value (boolean): \c true if the movement is suspended.
+
+\subsection lua_api_movement_get_ignore_suspend movement:get_ignore_suspend()
+
+Returns whether the movement should continue even when the
+\ref lua_api_game "game" is suspended.
+
+This setting only has an effect for movements attached to a
+\ref lua_api_entity "map entity" during a game.
+The default value is \c false.
+- Return value (boolean): \c true to continue the movement even when the
+  game is suspended.
+
+\subsection lua_api_movement_set_ignore_suspend movement:set_ignore_suspend([ignore])
+
+Sets whether the movement should continue even when the
+\ref lua_api_game "game" is suspended.
+- \c ignore (boolean, optional): \c true to continue the movement even when the
+  game is suspended. No value means \c true.
+
 \subsection lua_api_movement_get_ignore_obstacles movement:get_ignore_obstacles()
 
 Returns whether this movement ignores obstacles of the map.
@@ -241,4 +264,3 @@ just changed.
 Called when this movement has just finished (if there is an end).
 
 */
-
