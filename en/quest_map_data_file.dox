@@ -1191,6 +1191,10 @@ Additional properties:
 - \c sprite (string, optional): Id of the animation set of a
   \ref quest_sprite_data_file "sprite" to create for the custom entity.
   No value means no sprite (the custom entity will then be invisible).
+- \c tiled (boolean, optional): Whether to repeat the sprite with
+  tiling to fit the size of the custom entity, when the size is bigger
+  than the sprite.
+  No value means \c false.
 - \c model (string, optional): Model of custom entity to create.
   The model is the name of a Lua script in the \c "entities" directory of
   your quest. It will define the behavior of your entity.

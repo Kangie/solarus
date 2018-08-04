@@ -92,6 +92,21 @@ or when you called
 - \c sprite (\ref lua_api_sprite "sprite", optional): The sprite to remove.
   The default value is the first sprite that was created.
 
+\subsection lua_api_custom_entity_is_tiled custom_entity:is_tiled()
+
+Returns whether the sprite is repeated with
+tiling to fit the size of the custom entity
+when the size is bigger than the sprite.
+- Return value (boolean): \c true if the sprite is tiled.
+
+\subsection lua_api_custom_entity_set_tiled custom_entity:set_tiled([tiled])
+
+Sets whether the sprite should be repeated with
+tiling to fit the size of the custom entity
+when the size is bigger than the sprite.
+- \c tiled (boolean, optional): \c true to make the sprite tiled.
+  No value means \c true.
+
 \subsection lua_api_custom_entity_set_traversable_by custom_entity:set_traversable_by([entity_type], traversable)
 
 Sets whether this custom entity can be traversed by other entities.
