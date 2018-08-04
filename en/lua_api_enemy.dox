@@ -518,6 +518,11 @@ Nothing happens if the enemy is currently invulnerable
 \remark If you just want to silently remove some life, call
 \ref lua_api_enemy_remove_life "enemy:remove_life()" instead.
 
+\subsection lua_api_enemy_is_immobilized enemy:is_immobilized()
+
+Returns whether the enemy is currently immobilized.
+- Return value (boolean): \c true if the enemy is immobilized.
+
 \subsection lua_api_enemy_immobilize enemy:immobilize()
 
 Immobilizes this enemy for a while if possible.
