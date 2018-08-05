@@ -912,6 +912,13 @@ void QuestTreeView::default_action_triggered() {
   const Quest& quest = model->get_quest();
   ResourceType resource_type;
   QString element_id;
+
+  if (quest.is_dir(path)) {
+    // Double-clicking a directory already expands it,
+    // we don't want to trigger the open action here.
+    return;
+  }
+
   if (quest.is_potential_resource_element(path, resource_type, element_id)) {
 
     if (quest.exists(path)) {
