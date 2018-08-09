@@ -512,12 +512,6 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
   open_action->setText(tr("Open"));  // Restore the normal Open text and icon.
   open_action->setIcon(QIcon());
 
-  if (quest.is_dir(path)) {
-    open_action->setText(tr("Open with system explorer"));
-    menu.addAction(open_action);
-    return;
-  }
-
   ResourceType resource_type;
   QString element_id;
   if (quest.is_resource_element(path, resource_type, element_id)) {
@@ -599,6 +593,16 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
     open_action->setText(tr("Open Properties"));
     menu.addAction(open_action);
   }
+
+  if (quest.is_dir(path)) {
+    QAction* explore_action = new QAction(
+          tr("Explore folder"),
+          this
+    );
+    menu.addAction(explore_action);
+    return;
+  }
+
 }
 
 /**
