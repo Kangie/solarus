@@ -16,12 +16,12 @@ It can also be created dynamically with
 
 Blocks that can move may be pushable, pullable
 or both pushable and pullable.
-A block can be moved either once or have an unlimited number of moves.
-It can be moved to any direction (the four main directions)
+A block can optionally be moved a limited number of times.
+It can be moved either to any direction (the four main directions)
 or to a specific direction only.
 
-The size of a block is always 16x16 pixels (the size of the hero),
-but as usual, its sprite may be larger.
+The size of a block is by default 16x16 pixels (the default size of the hero),
+but as always, its sprite may be larger.
 
 Blocks are normally always moved by steps of 16 pixels.
 Thus, they can stay aligned on the 8x8 grid of the
@@ -30,7 +30,7 @@ However, they may get stopped in the middle of their movement if they collide
 with entities like
 \ref lua_api_enemy "enemies" or \ref lua_api_npc "non-playing characters".
 In this case, they lose their alignment on the grid, and this might be a
-problem because you often want the to move a block
+problem when want the to move a block
 precisely through narrow places
 and place it at an exact position to solve a puzzle.
 To deal with this potential issue,
@@ -54,7 +54,8 @@ Restores the block at its initial position and resets
 its counter of moves.
 
 It means that the hero will be able to move again
-a block that could be moved only once and that already moved.
+a block that could only be moved a limited number of times even if the limit
+was reached.
 
 \subsection lua_api_block_is_pushable block:is_pushable()
 
@@ -90,23 +91,23 @@ maximum number of times.
 - \c pullable (boolean): \c true to make this block pullable.
   No value means \c true.
 
-\subsection lua_api_block_get_maximum_moves block:get_maximum_moves()
+\subsection lua_api_block_get_max_moves block:get_max_moves()
 
-Returns a value indicating the maximum number of times the block can be moved.
+Returns the maximum number of times the block can be moved.
 
 This function returns the maximum moves value that was set at creation time
-or by \ref lua_api_block_set_maximum_moves "block:set_maximum_moves()",
+or by \ref lua_api_block_set_max_moves "block:set_max_moves()",
 no matter if the block was moved then.
-- Return value (integer): How many times the block can be moved:
-  \c 0: none, \c 1: once, \c nil: infinite.
+- Return value (number): How many times the block can be moved.
+  \c nil means unlimited.
 
-\subsection lua_api_block_set_maximum_moves block:set_maximum_moves(maximum_moves)
+\subsection lua_api_block_set_max_moves block:set_max_moves(max_moves)
 
 Sets the maximum number of times the block can be moved.
 
 This resets the remaining allowed moves.
-- \c maximum_moves (integer): How many times the block can be moved:
-  \c 0: none, \c 1: once, \c nil: infinite.
+- \c maximum_moves (number): How many times the block can be moved.
+  \c nil means unlimited.
 
 \section lua_api_block_inherited_events Events inherited from map entity
 
@@ -131,5 +132,36 @@ Called when the \ref lua_api_hero "hero" starts moving the block of a step.
 Called when the \ref lua_api_hero "hero" has just moved this block
 of a step.
 
-*/
+\section lua_api_block_methods_deprecated Deprecated methods of the type block
 
+The following methods are deprecated and may be removed it future releases.
+
+\subsection lua_api_block_get_maximum_moves block:get_maximum_moves()
+
+Same as
+\ref lua_api_block_get_max_moves "block:get_max_moves()".
+- Return value (number): How many times the block can be moved.
+  \c nil means unlimited.
+
+\warning This method is deprecated since Solarus 1.6 because the
+  corresponding parameter \c maximum_moves of
+  \ref lua_api_map_create_block "map:create_block()"
+  is also deprecated.
+
+Use \ref lua_api_block_get_max_moves "block:get_max_moves()" instead.
+
+\subsection lua_api_block_set_maximum_moves block:set_maximum_moves(maximum_moves)
+
+Same as
+\ref lua_api_block_get_max_moves "block:set_max_moves()".
+- \c maximum_moves (number): How many times the block can be moved.
+  \c nil means unlimited.
+
+\warning This method is deprecated since Solarus 1.6 because the
+  corresponding parameter \c maximum_moves of
+  \ref lua_api_map_create_block "map:create_block()"
+  is also deprecated.
+
+Use \ref lua_api_block_set_max_moves "block:set_max_moves()" instead.
+
+*/

@@ -1219,14 +1219,21 @@ on the map.
   - \c y (number): Y coordinate on the map.
   - \c direction (number, optional): The only direction where the block can be
     moved, between \c 0 (East) and \c 3 (South).
-    No value means no restriction and allows the block to be moved in any of the
+    \c nil means no restriction and allows the block to be moved in any of the
     four main directions.
+    The default value is \c nil.
   - \c sprite (string): Name of the animation set of a
-    \ref lua_api_sprite "sprite" to create for the block.
+    \ref quest_sprite_data_file "sprite" to create for the block.
   - \c pushable (boolean): \c true to allow the block to be pushed.
   - \c pullable (boolean): \c true to allow the block to be pulled.
-  - \c maximum_moves (number): \c Indicates how many times the block can be
-    moved (\c 0: none, \c 1: once, \c 2: infinite).
+  - \c max_moves (number, optional): \c How many times the block can be
+    moved (\c nil means unlimited).
+    The default value is \c nil.
+  - \c maximum_moves (number, optional, deprecated):
+    Like \c max_moves, but for historical reasons, only supports \c 0, \c 1
+    or the special value \c 2 to mean infinite.
+    New scripts should only use \c max_moves.
+    It is an error to set both values.
   - \c properties (table, optional): Additional user-defined properties.
     See \ref lua_api_entity_set_properties "entity:set_properties()"
     for the specification.
