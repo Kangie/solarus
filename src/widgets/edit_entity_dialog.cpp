@@ -37,6 +37,7 @@ const QString destination_map_field_name = "destination_map";
 const QString destruction_sound_field_name = "destruction_sound";
 const QString font_field_name = "font";
 const QString ground_field_name = "ground";
+const QString max_moves_field_name = "max_moves";
 const QString maximum_moves_field_name = "maximum_moves";
 const QString model_field_name = "model";
 const QString opening_method_field_name = "opening_method";
@@ -376,7 +377,7 @@ void EditEntityDialog::initialize() {
   initialize_font();
   initialize_ground();
   initialize_layer();
-  initialize_maximum_moves();
+  initialize_max_moves();
   initialize_model();
   initialize_name();
   initialize_opening_method();
@@ -418,7 +419,7 @@ void EditEntityDialog::apply() {
   apply_font();
   apply_ground();
   apply_layer();
-  apply_maximum_moves();
+  apply_max_moves();
   apply_model();
   apply_name();
   apply_opening_method();
@@ -521,8 +522,8 @@ void EditEntityDialog::initialize_simple_booleans() {
     SimpleBooleanField("can_be_cut", tr("Cutting the object"), tr("Can be cut"), ui.damage_on_enemies_layout) <<
     SimpleBooleanField("can_explode", tr("Exploding"), tr("Can explode"), ui.damage_on_enemies_layout) <<
     SimpleBooleanField("can_regenerate", tr("Regeneration"), tr("Can regenerate"), ui.damage_on_enemies_layout) <<
-    SimpleBooleanField("pushable", tr("Interactions"), tr("Can be pushed")) <<
-    SimpleBooleanField("pullable", "", tr("Can be pulled")) <<
+    SimpleBooleanField("pushable", tr("Interactions"), tr("Can be pushed"), ui.max_moves_layout) <<
+    SimpleBooleanField("pullable", "", tr("Can be pulled"), ui.max_moves_layout) <<
     SimpleBooleanField("needs_block", tr("Activation"), tr("Requires a block to be activated")) <<
     SimpleBooleanField("inactivate_when_leaving", tr("Leaving the switch"), tr("Deactivate when leaving")) <<
     SimpleBooleanField("stops_hero", tr("Hero"), tr("Obstacle for the hero")) <<
@@ -540,19 +541,19 @@ void EditEntityDialog::initialize_simple_booleans() {
       QCheckBox* checkbox = new QCheckBox(field.checkbox_text, this);
       checkbox->setChecked(entity_before.get_field(field.field_name).toBool());
       field.checkbox = checkbox;
+      int row = 0;
+      QFormLayout::ItemRole role;
       if (field.before_widget != nullptr) {
-        int row = 0;
-        QFormLayout::ItemRole role;
         ui.form_layout->getWidgetPosition(field.before_widget, &row, &role);
-        if (row != -1) {
-          ui.form_layout->insertRow(row, label, checkbox);
-        }
-        else {
-          // Widget not found.
-          ui.form_layout->addRow(label, checkbox);
-        }
       }
       else {
+        ui.form_layout->getLayoutPosition(ui.custom_properties_layout, &row, &role);
+      }
+      if (row != -1) {
+        ui.form_layout->insertRow(row, label, checkbox);
+      }
+      else {
+        // Widget not found.
         ui.form_layout->addRow(label, checkbox);
       }
     }
@@ -993,7 +994,7 @@ void EditEntityDialog::apply_font() {
 void EditEntityDialog::initialize_ground() {
 
   if (!entity_before.has_field(ground_field_name)) {
-    remove_field(ui.ground_checkbox, ui.ground_field);
+    remove_field(ui.ground_check_box, ui.ground_field);
     return;
   }
 
@@ -1001,7 +1002,7 @@ void EditEntityDialog::initialize_ground() {
         ground_field_name,
         nullptr,
         nullptr,
-        ui.ground_checkbox,
+        ui.ground_check_box,
         ui.ground_field);
 
   QString ground_name = entity_before.get_field(ground_field_name).toString();
@@ -1014,7 +1015,7 @@ void EditEntityDialog::initialize_ground() {
 void EditEntityDialog::apply_ground() {
 
   if (entity_after->has_field(ground_field_name)) {
-    Ground ground = ui.ground_checkbox->isChecked() ? ui.ground_field->get_selected_value() : Ground::WALL;
+    Ground ground = ui.ground_check_box->isChecked() ? ui.ground_field->get_selected_value() : Ground::WALL;
     entity_after->set_field(ground_field_name, GroundTraits::get_lua_name(ground));
   }
 }
@@ -1040,32 +1041,51 @@ void EditEntityDialog::apply_layer() {
 /**
  * @brief Initializes the maximum moves field.
  */
-void EditEntityDialog::initialize_maximum_moves() {
+void EditEntityDialog::initialize_max_moves() {
 
-  if (!entity_before.has_field(maximum_moves_field_name)) {
-    remove_field(ui.maximum_moves_label, ui.maximum_moves_field);
+  if (!entity_before.has_field(max_moves_field_name) &&
+      !entity_before.has_field(maximum_moves_field_name)) {
+    remove_field(nullptr, ui.max_moves_layout);
     return;
   }
 
-  ui.maximum_moves_field->addItem(tr("Cannot move"), 0);
-  ui.maximum_moves_field->addItem(tr("1 move only"), 1);
-  ui.maximum_moves_field->addItem(tr("Unlimited"), 2);
+  int max_moves = entity_before.get_field(max_moves_field_name).toInt();
+  int maximum_moves = entity_before.get_field(maximum_moves_field_name).toInt();
 
-  int value = entity_before.get_field(maximum_moves_field_name).toInt();
-  int index = ui.maximum_moves_field->findData(value);
-  if (index != -1) {
-    ui.maximum_moves_field->setCurrentIndex(index);
+  if (max_moves == -1 && maximum_moves != -1) {
+    // The legacy maximum_moves value was set.
+    if (maximum_moves == 2) {
+      max_moves = -1;  // Unlimited.
+    }
+    else {
+      max_moves = maximum_moves;
+    }
   }
+
+  if (max_moves == -1) {
+    ui.max_moves_check_box->setChecked(false);
+    ui.max_moves_field->setEnabled(false);
+  }
+  else {
+    ui.max_moves_check_box->setChecked(true);
+    ui.max_moves_field->setEnabled(true);
+    ui.max_moves_field->setValue(max_moves);
+  }
+
+  connect(ui.max_moves_check_box, SIGNAL(toggled(bool)),
+          ui.max_moves_field, SLOT(setEnabled(bool)));
 }
 
 /**
  * @brief Updates the entity from the maximum moves field.
  */
-void EditEntityDialog::apply_maximum_moves() {
+void EditEntityDialog::apply_max_moves() {
 
-  if (entity_after->has_field(maximum_moves_field_name)) {
-    int value = ui.maximum_moves_field->currentData().toInt();
-    entity_after->set_field(maximum_moves_field_name, value);
+  if (entity_after->has_field(max_moves_field_name) ||
+      entity_after->has_field(maximum_moves_field_name)) {
+    entity_after->set_field(max_moves_field_name, ui.max_moves_check_box->isChecked() ?
+                              ui.max_moves_field->value() : -1);
+    entity_after->set_field(maximum_moves_field_name, -1);  // Make sure maximum_moves is always unset.
   }
 }
 

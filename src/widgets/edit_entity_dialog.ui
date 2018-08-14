@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>614</width>
-    <height>1488</height>
+    <height>1495</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -564,7 +564,7 @@
       </widget>
      </item>
      <item row="20" column="0">
-      <widget class="QCheckBox" name="ground_checkbox">
+      <widget class="QCheckBox" name="ground_check_box">
        <property name="text">
         <string>Set a special ground</string>
        </property>
@@ -572,16 +572,6 @@
      </item>
      <item row="20" column="1">
       <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::Ground&gt;" name="ground_field"/>
-     </item>
-     <item row="21" column="0">
-      <widget class="QLabel" name="maximum_moves_label">
-       <property name="text">
-        <string>Maximum moves</string>
-       </property>
-      </widget>
-     </item>
-     <item row="21" column="1">
-      <widget class="QComboBox" name="maximum_moves_field"/>
      </item>
      <item row="22" column="0">
       <widget class="QLabel" name="opening_method_label">
@@ -1049,6 +1039,57 @@
        </item>
       </layout>
      </item>
+     <item row="21" column="1">
+      <widget class="QWidget" name="max_moves_layout" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="max_moves_check_box">
+          <property name="text">
+           <string>Maximum moves</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="max_moves_field">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="maximum">
+           <number>999999</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontal_spacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -1111,7 +1152,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources/images.qrc"/>
   <include location="../../resources/images.qrc"/>
  </resources>
  <connections>

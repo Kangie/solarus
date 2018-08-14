@@ -83,8 +83,8 @@ private:
   void apply_ground();
   void initialize_layer();
   void apply_layer();
-  void initialize_maximum_moves();
-  void apply_maximum_moves();
+  void initialize_max_moves();
+  void apply_max_moves();
   void initialize_model();
   void apply_model();
   void initialize_name();
