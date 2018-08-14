@@ -27,11 +27,11 @@ function converter.convert(quest_path)
 
   output_file:write("quest{\n")
   output_file:write("  solarus_version = \"1.6\",\n")
-  output_file:write("  title = \"" .. properties.title .. "\",\n")
 
   if properties.write_dir ~= nil then
     output_file:write("  write_dir = \"" .. properties.write_dir .. "\",\n")
   end
+  output_file:write("  title = \"" .. properties.title .. "\",\n")
   if properties.short_description ~= nil then
     output_file:write("  short_description = \"" .. properties.short_description .. "\",\n")
   end
@@ -66,4 +66,3 @@ function converter.convert(quest_path)
 end
 
 return converter
-

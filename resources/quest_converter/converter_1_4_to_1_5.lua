@@ -38,10 +38,8 @@ function converter.convert(quest_path)
   end
   write_info("  All maps were converted.")
 
-
   write_info("Update successful!")
 
 end
 
 return converter
-
