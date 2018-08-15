@@ -30,6 +30,7 @@ Creates a text surface with the specified properties.
     auto-detected in this order:
     \c <tt>.png</tt>,
     \c <tt>.ttf</tt>,
+    \c <tt>.otf</tt>,
     \c <tt>.ttc</tt>
     and
     \c <tt>.fon</tt>.
@@ -182,4 +183,3 @@ Returns the size of this text surface.
 The size is determined by the text and the font.
 
 */
-

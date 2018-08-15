@@ -15,7 +15,7 @@ processor. They are composed of vector lines and curves,
 and can be scaled to any size without pixellation.
 
 In Solarus, the formats of outline fonts supported are the ones of the
-SDL_ttf library, including \c .ttf, \c .tcc and \c fon.
+SDL_ttf library, including \c .ttf, \c .otf, \c .tcc and \c .fon.
 At runtime, you can set their size and their color
 (see the
 \ref lua_api_text_surface "text surface API").
@@ -60,4 +60,3 @@ Therefore, unless you have characters that need more than two bytes in
 UTF-8, you can draw your text with a PNG font.
 
 */
-
