@@ -405,7 +405,7 @@ QString Quest::get_entity_script_path(
  * If no such file exists yet, the path corresponding to
  * the preferred extension is returned.
  *
- * @param font_id Id of a music.
+ * @param font_id Id of a font.
  * @return The path to the font file.
  */
 QString Quest::get_font_path(
@@ -413,7 +413,7 @@ QString Quest::get_font_path(
 
   QString prefix = get_data_path() + "/fonts/" + font_id;
   QStringList extensions;
-  extensions << ".png" << ".ttf" << ".ttc" << ".fon";
+  extensions << ".png" << ".ttf" << ".otf" << ".ttc" << ".fon";
   for (const QString& extension : extensions) {
     QString path = prefix + extension;
     if (QFileInfo(path).exists()) {
