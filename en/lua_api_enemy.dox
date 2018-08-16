@@ -210,9 +210,12 @@ The default values is \c "normal".
 
 Returns the id of the sprite to show when this enemy is dying.
 
-This sprite is displayed during the dying animation, unless the
+This sprite is displayed during the usual dying animation.
+It is not used when the dying animation is a special one,
+for example if the
 \ref lua_api_enemy_get_hurt_style "hurt style"
-is \c "boss", in which case explosions are displayed instead.
+is \c "boss" (in which case explosions are displayed instead)
+or if the enemy was killed by bad ground like water or holes.
 
 The default dying sprite id is \c "enemies/enemy_killed".
 - Return value (string or nil): Id of the sprite to use for the dying animation,
@@ -785,7 +788,7 @@ if any (which is by default \c "enemies/enemy_killed").
 - If the hurt style is \c "boss", your sprites continue to exist and to play
 animation "hurt", while explosions appear on the enemy.
 
-In both cases, the enemy will be removed from the map when the dying animation
+In all cases, the enemy will be removed from the map when the dying animation
 ends.
 
 \remark This event is called right after
