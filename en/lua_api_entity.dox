@@ -966,6 +966,16 @@ Called when this entity has just been created on the map.
 Called when this entity is about to be removed from the map
 (and therefore destroyed).
 
+\subsection lua_api_entity_on_enabled entity:on_enabled()
+
+called when this entity has just been
+\ref lua_api_entity_is_enabled "enabled".
+
+\subsection lua_api_entity_on_disabled entity:on_disabled()
+
+called when this entity has just been
+\ref lua_api_entity_is_enabled "disabled".
+
 \subsection lua_api_entity_on_position_changed entity:on_position_changed(x, y, layer)
 
 Called when the coordinates of this entity have just changed.
