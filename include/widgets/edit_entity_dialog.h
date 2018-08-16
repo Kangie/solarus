@@ -77,6 +77,8 @@ private:
   void apply_destination_map();
   void initialize_direction();
   void apply_direction();
+  void initialize_enabled_at_start();
+  void apply_enabled_at_start();
   void initialize_font();
   void apply_font();
   void initialize_ground();
@@ -128,7 +130,7 @@ private:
   void initialize_possibly_optional_field(const QString& field_name,
                                           QLayout* label_layout,
                                           QWidget* label,
-                                          QCheckBox* checkbox,
+                                          QCheckBox* check_box,
                                           QWidget* field);
   void remove_field(QWidget* label, QWidget* field);
 
@@ -151,7 +153,7 @@ private:
   ResizeMode resize_mode;              /**< The current resize mode. */
 
   /**
-   * @brief Info about basic boolean fields represented by a checkbox.
+   * @brief Info about basic boolean fields represented by a check box.
    *
    * This is used for fields that do not need special code.
    */
@@ -160,19 +162,19 @@ private:
     SimpleBooleanField(
         const QString& field_name,
         const QString& label_text,
-        const QString& checkbox_text,
+        const QString& check_box_text,
         QWidget* before_widget = nullptr) :
       field_name(field_name),
       label_text(label_text),
-      checkbox_text(checkbox_text),
-      checkbox(nullptr),
+      check_box_text(check_box_text),
+      check_box(nullptr),
       before_widget(before_widget) {
     }
 
     QString field_name;
     QString label_text;
-    QString checkbox_text;
-    const QCheckBox* checkbox;
+    QString check_box_text;
+    const QCheckBox* check_box;
     QWidget* before_widget;
   };
 
@@ -219,7 +221,7 @@ private:
         QWidget* before_widget = nullptr) :
       field_name(field_name),
       label_text(label_text),
-      checkbox(nullptr),
+      check_box(nullptr),
       line_edit(nullptr),
       validator(validator),
       before_widget(before_widget) {
@@ -227,7 +229,7 @@ private:
 
     QString field_name;
     QString label_text;
-    QCheckBox* checkbox;
+    QCheckBox* check_box;
     const QLineEdit* line_edit;
     QValidator* validator;
     QWidget* before_widget;

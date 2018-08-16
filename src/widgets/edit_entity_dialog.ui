@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>614</width>
-    <height>1495</height>
+    <height>1528</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,7 +55,7 @@
         <widget class="QLineEdit" name="name_field"/>
        </item>
        <item>
-        <widget class="QCheckBox" name="name_update_teletransporters_checkbox">
+        <widget class="QCheckBox" name="name_update_teletransporters_check_box">
          <property name="text">
           <string>Update existing teletransporters</string>
          </property>
@@ -192,7 +192,7 @@
       </widget>
      </item>
      <item row="7" column="0">
-      <widget class="QWidget" name="sprite_label_checkbox" native="true">
+      <widget class="QWidget" name="sprite_label_check_box" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="leftMargin">
          <number>0</number>
@@ -214,7 +214,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="sprite_checkbox">
+         <widget class="QCheckBox" name="sprite_check_box">
           <property name="text">
            <string>Sprite</string>
           </property>
@@ -258,7 +258,7 @@
       <widget class="SolarusEditor::ResourceSelector" name="breed_field"/>
      </item>
      <item row="10" column="0">
-      <widget class="QCheckBox" name="model_checkbox">
+      <widget class="QCheckBox" name="model_check_box">
        <property name="text">
         <string>Custom entity script</string>
        </property>
@@ -268,7 +268,7 @@
       <widget class="SolarusEditor::ResourceSelector" name="model_field"/>
      </item>
      <item row="11" column="0">
-      <widget class="QCheckBox" name="savegame_variable_checkbox">
+      <widget class="QCheckBox" name="savegame_variable_check_box">
        <property name="text">
         <string>Save the state</string>
        </property>
@@ -368,7 +368,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="save_treasure_checkbox">
+         <widget class="QCheckBox" name="save_treasure_check_box">
           <property name="text">
            <string>Save the treasure state</string>
           </property>
@@ -402,7 +402,7 @@
       <widget class="SolarusEditor::ResourceSelector" name="font_field"/>
      </item>
      <item row="14" column="0">
-      <widget class="QCheckBox" name="sound_checkbox">
+      <widget class="QCheckBox" name="sound_check_box">
        <property name="text">
         <string>Play a sound</string>
        </property>
@@ -442,7 +442,7 @@
       <widget class="SolarusEditor::EntitySelector" name="destination_field"/>
      </item>
      <item row="18" column="0">
-      <widget class="QCheckBox" name="weight_checkbox">
+      <widget class="QCheckBox" name="weight_check_box">
        <property name="text">
         <string>Can be lifted</string>
        </property>
@@ -503,7 +503,7 @@
       </widget>
      </item>
      <item row="19" column="0">
-      <widget class="QCheckBox" name="damage_on_enemies_checkbox">
+      <widget class="QCheckBox" name="damage_on_enemies_check_box">
        <property name="text">
         <string>Can hurt enemies</string>
        </property>
@@ -642,7 +642,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="opening_condition_savegame_variable_consumed_checkbox">
+           <widget class="QCheckBox" name="opening_condition_savegame_variable_consumed_check_box">
             <property name="text">
              <string>Reset/decrement when opening</string>
             </property>
@@ -690,7 +690,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="opening_condition_item_consumed_checkbox">
+           <widget class="QCheckBox" name="opening_condition_item_consumed_check_box">
             <property name="text">
              <string>Remove/decrement when opening</string>
             </property>
@@ -856,14 +856,14 @@
        </layout>
       </widget>
      </item>
-     <item row="27" column="0">
+     <item row="28" column="0">
       <widget class="QLabel" name="user_properties_label">
        <property name="text">
         <string>User properties</string>
        </property>
       </widget>
      </item>
-     <item row="27" column="1">
+     <item row="28" column="1">
       <layout class="QHBoxLayout" name="custom_properties_layout">
        <item>
         <widget class="QTreeWidget" name="user_properties_table">
@@ -1088,6 +1088,20 @@
          </spacer>
         </item>
        </layout>
+      </widget>
+     </item>
+     <item row="27" column="1">
+      <widget class="QCheckBox" name="enabled_at_start_field">
+       <property name="text">
+        <string>Enabled at start</string>
+       </property>
+      </widget>
+     </item>
+     <item row="27" column="0">
+      <widget class="QLabel" name="enabled_at_start_label">
+       <property name="text">
+        <string>Initial state</string>
+       </property>
       </widget>
      </item>
     </layout>

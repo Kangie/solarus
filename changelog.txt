@@ -16,6 +16,7 @@ ________________________________________
 * Map editor: allow to change the pattern of existing tiles (#280).
 * Map editor: allow to change the pattern of all similar tiles at once (#329).
 * Map editor: allow to change the origin of custom entities.
+* Map editor: allow to initially enable or disable any entity.
 * Map editor: allow to export the view as a PNG file (#81).
 * Map editor: allow to lock layers (#94).
 * Map editor: show the layer under the cursor in the status bar (#91).
@@ -35,7 +36,7 @@ ________________________________________
 * Dialog editor: show the line and column number.
 * Script editor: allow a replace option to the find dialog by Akadream (#3).
 * Allow to select map/tileset/sprite/etc. ids to copy-paste them (#170).
-* Lua console: provide variables game, map, entities and tp function (#268).
+* Lua console: provide variables game, map, entities and function tp (#268).
 * Clear the console when a quest is started (#230).
 * Fix crash when opening quest in non-UTF8 filesystems (#373).
 * Fix error message when opening a read-only quest (#264).

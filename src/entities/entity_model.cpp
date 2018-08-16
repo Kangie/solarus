@@ -991,6 +991,22 @@ void EntityModel::set_direction(int direction) {
 }
 
 /**
+ * @brief Returns whether this entity is initially enabled.
+ * @return @c true if this entity is initially enabled.
+ */
+bool EntityModel::is_enabled_at_start() const {
+  return get_entity().is_enabled_at_start();
+}
+
+/**
+ * @brief Sets whether this entity should be initially enabled.
+ * @param enabled_at_start @c true to make this entity initially enabled.
+ */
+void EntityModel::set_enabled_at_start(bool enabled_at_start) {
+  get_entity().set_enabled_at_start(enabled_at_start);
+}
+
+/**
  * @brief Returns whether this entity has a "subtype" field.
  * @return @c true if a subtype property exists.
  */

@@ -116,6 +116,8 @@ public:
   int get_num_directions() const;
   int get_direction() const;
   void set_direction(int direction);
+  bool is_enabled_at_start() const;
+  void set_enabled_at_start(bool enabled_at_start);
   bool has_subtype_field() const;
   SubtypeList get_existing_subtypes() const;
   QString get_subtype() const;
