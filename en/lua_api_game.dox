@@ -911,7 +911,10 @@ For example, you may use this event if some parts of your HUD needs to be
 changed on particular maps.
 - \c map (\ref lua_api_map "map"): The new active map.
 
-\remark This event is also called for the first map (when your game starts).
+\remark When \ref lua_api_game_start "start or restart" the game,
+  this event is always called,
+  even if the game happens to restart on the same map
+  as where the previous run finished.
 
 \subsection lua_api_game_on_world_changed game:on_world_changed(previous_world, new_world)
 
@@ -919,13 +922,25 @@ Called when the player has just entered a map whose
 \ref lua_api_map_get_world "world" is different from
 the previous one.
 
+Recall that maps without a world property are considered to be in their own
+world, different to all other maps.
+Therefore, if at least one of the previous and the new map
+has no world property, this event is necessarily called.
+
 This event is called right after
-\ref lua_api_game_on_map_changed "game:on_map_changed()"
+\ref lua_api_game_on_map_changed "game:on_map_changed()".
 - \c previous_world (string): The world of the previous map if any,
-  or \c nil if the previous map had no world set or if there was no previous
-  map.
+  or \c nil if the previous map had no world set
+  or if there was no previous map.
 - \c new_world (string): The world of the new map if any,
   or \c nil if the mew map had no world set.
+
+\remark When \ref lua_api_game_start "start or restart" the game,
+  this event is always called,
+  even if the game happens to restart on a map with the same world
+  (or even on the same map) as where the previous run finished.
+
+\remark Since the world is considered to be different from any other
 
 \subsection lua_api_game_on_paused game:on_paused()
 
