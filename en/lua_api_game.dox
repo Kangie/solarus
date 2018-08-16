@@ -913,6 +913,20 @@ changed on particular maps.
 
 \remark This event is also called for the first map (when your game starts).
 
+\subsection lua_api_game_on_world_changed game:on_world_changed(previous_world, new_world)
+
+Called when the player has just entered a map whose
+\ref lua_api_game_get_world "world" is different from
+the previous one.
+
+This event is called right after
+\ref lua_api_game_on_map_changed "game:on_map_changed()"
+- \c previous_world (string): The world of the previous map if any,
+  or \c nil if the previous map had no world set or if there was no previous
+  map.
+- \c new_world (string): The world of the new map if any,
+  or \c nil if the mew map had no world set.
+
 \subsection lua_api_game_on_paused game:on_paused()
 
 Called when the game has just been paused.
@@ -1238,4 +1252,3 @@ Called when the user moves a finger while the game is running.
   return \c true, the event won't be propagated to other objects.
 
 */
-
