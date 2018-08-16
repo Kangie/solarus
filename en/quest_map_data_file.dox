@@ -192,7 +192,8 @@ Therefore, tiles are always declared first in the map data file for each layer.
 
 \subsubsection quest_map_data_file_syntax_common Common properties
 
-The following properties exist for all types of entities:
+The following properties exist for all types of entities
+(with some exceptions for tiles, see below):
 - \c name (string, optional): Name identifying the entity on the map.
   The name is optional: you will only need it if you need to refer to this
   entity individually, for example to make a
@@ -202,9 +203,6 @@ The following properties exist for all types of entities:
   If the name is already used by another entity, a suffix (of the form
   \c "_2", \c "_3", etc.) will be automatically appended to keep entity names
   unique.
-  All entities can have a name except
-  \ref quest_map_data_file_syntax_tile "tiles": this is because tiles
-  don't exist individually at runtime for performance reasons.
 - \c layer (number): Layer where the entity is on the map.
 - \c x (number): X coordinate of the entity relative to the upper-left corner
   of the map.
@@ -212,6 +210,9 @@ The following properties exist for all types of entities:
   placed at these coordinates (for tiles, it is the upper-left corner).
 - \c y (number): Y coordinate of the entity relative to the upper-left corner
   of the map.
+- \c enabled_at_start (boolean, optional): Whether the entity should initially
+  be enabled on the map.
+  The default value is \c true.
 - \c properties (table, optional): Array of additional properties.
   The engine does nothing special with them,
   but your scripts can use them to store some custom extra information.
@@ -222,11 +223,14 @@ The following properties exist for all types of entities:
     (only alphanumeric ASCII characters or \c '_').
   - \c value (string): Value of the property.
 
-\c name, \c x, \c y, \c layer and \c properties
-are common to all types of entities
-(except \c name for \ref quest_map_data_file_syntax_tile "tiles").
+\c name, \c x, \c y, \c layer, \c enabled_at_start and \c properties
+are common to all types of entities,
+except \c name and \c enabled_at_start that do not exist for
+\ref quest_map_data_file_syntax_tile "tiles".
+This is because tiles
+don't exist individually at runtime for performance reasons.
 
-Example of entity that includes additional properties:
+Example of an entity that includes additional properties:
 
 \verbatim
 sensor{
