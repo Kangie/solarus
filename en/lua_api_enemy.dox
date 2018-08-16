@@ -206,6 +206,27 @@ Sets the style of sounds and animations to play when this enemy is hurt.
 The default values is \c "normal".
 - \c hurt_style (string): \c "normal", \c "monster" or \c "boss".
 
+\subsection lua_api_enemy_get_dying_sprite_id enemy:get_dying_sprite_id()
+
+Returns the id of the sprite to show when this enemy is dying.
+
+This sprite is displayed during the dying animation, unless the
+\ref lua_api_enemy_get_hurt_style "hurt style"
+is \c "boss", in which case explosions are displayed instead.
+
+The default dying sprite id is \c "enemies/enemy_killed".
+- Return value (string or nil): Id of the sprite to use for the dying animation,
+  or \c nil to show no dying animation.
+
+\subsection lua_api_enemy_set_dying_sprite_id enemy:set_dying_sprite_id(dying_sprite_id)
+
+Sets the id of the sprite to show when this enemy is dying.
+
+See \ref lua_api_enemy_get_dying_sprite_id "enemy:get_dying_sprite_id()"
+for more details.
+- \c dying_sprite_id (string or nil): Id of the sprite to use for the dying
+  animation, or \c nil to show no dying animation.
+
 \subsection lua_api_enemy_get_can_attack enemy:get_can_attack()
 
 Returns whether this enemy can currently attack the
@@ -756,10 +777,12 @@ its timers are stopped too, the dying animation starts and a sound
 is played.
 The details of the dying animation and the sound played depend on the
 \ref lua_api_enemy_set_hurt_style "hurt style" property.
-If the hurt style is \c "enemy" or \c "monster", any sprite you created
-on the enemy is automatically removed and replaced by the sprite
-\c "enemies/enemy_killed".
-If the hurt style is \c "boss", your sprites continue to exist and to play
+- If the hurt style is \c "enemy" or \c "monster", any sprite
+of the enemy is automatically removed and replaced by the sprite
+indicated by
+\ref lua_api_enemy_get_dying_sprite_id "enemy:get_dying_sprite_id()"
+if any (which is by default \c "enemies/enemy_killed").
+- If the hurt style is \c "boss", your sprites continue to exist and to play
 animation "hurt", while explosions appear on the enemy.
 
 In both cases, the enemy will be removed from the map when the dying animation
