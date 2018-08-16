@@ -17,6 +17,12 @@ See \ref lua_api_movement_methods to know these methods.
 
 The following methods are specific to circle movements.
 
+\subsection lua_api_movement_get_center circle_movement:get_center()
+
+Returns the center point of this movement.
+- Return value 1 (number): X coordinate of the center.
+- Return value 2 (number): Y coordinate of the center.
+
 \subsection lua_api_circle_movement_set_center circle_movement:set_center(x, y), circle_movement:set_center(entity, [dx, dy])
 
 Sets the center of this movement as a fixed point or a \ref lua_api_entity
@@ -180,4 +186,3 @@ Therefore, they inherit all events from the type movement.
 See \ref lua_api_movement_events to know these events.
 
 */
-
