@@ -916,7 +916,7 @@ changed on particular maps.
 \subsection lua_api_game_on_world_changed game:on_world_changed(previous_world, new_world)
 
 Called when the player has just entered a map whose
-\ref lua_api_game_get_world "world" is different from
+\ref lua_api_map_get_world "world" is different from
 the previous one.
 
 This event is called right after
