@@ -911,9 +911,9 @@ For example, you may use this event if some parts of your HUD needs to be
 changed on particular maps.
 - \c map (\ref lua_api_map "map"): The new active map.
 
-\remark When \ref lua_api_game_start "start or restart" the game,
+\remark When you \ref lua_api_game_start "start or restart" the game,
   this event is always called,
-  even if the game happens to restart on the same map
+  even if the new run happens to start on the same map
   as where the previous run finished.
 
 \subsection lua_api_game_on_world_changed game:on_world_changed(previous_world, new_world)
@@ -935,9 +935,9 @@ This event is called right after
 - \c new_world (string): The world of the new map if any,
   or \c nil if the mew map had no world set.
 
-\remark When \ref lua_api_game_start "start or restart" the game,
+\remark When you \ref lua_api_game_start "start or restart" the game,
   this event is always called,
-  even if the game happens to restart on a map with the same world
+  even if the new happens to start on a map with the same world
   (or even on the same map) as where the previous run finished.
 
 \remark Since the world is considered to be different from any other
