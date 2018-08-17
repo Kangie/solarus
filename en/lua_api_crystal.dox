@@ -12,6 +12,12 @@ This type of \ref lua_api_entity "map entity" can be declared in the
 It can also be created dynamically with
 \ref lua_api_map_create_crystal "map:create_crystal()".
 
+\remark Crystals provide very specific behavior for historical reasons
+  and are not very customizable.
+  If you need more flexibility, we recommend to use
+  \ref lua_api_custom_entity "custom entities" instead
+  and to script the behavior you want.
+
 \section lua_api_crystal_overview Overview
 
 A crystal is essentially a solid switch that
@@ -57,4 +63,3 @@ See \ref lua_api_entity_events to know these events.
 None.
 
 */
-

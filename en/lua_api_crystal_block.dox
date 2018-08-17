@@ -11,6 +11,12 @@ This type of \ref lua_api_entity "map entity" can be declared in the
 It can also be created dynamically with
 \ref lua_api_map_create_crystal_block "map:create_crystal_block()".
 
+\remark Crystal blocks provide very specific behavior for historical reasons
+  and are not very customizable.
+  If you need more flexibility, we recommend to use
+  \ref lua_api_custom_entity "custom entities" instead
+  and to script the behavior you want.
+
 \section lua_api_crystal_block_overview Overview
 
 An entity of type crystal block is a pattern of size 16x16 pixels that may be
@@ -59,4 +65,3 @@ See \ref lua_api_entity_events to know these events.
 None.
 
 */
-

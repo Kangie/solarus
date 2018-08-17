@@ -7,6 +7,11 @@ A hookshot \ref lua_api_entity "map entity"
 is used to implement the
 \ref lua_api_hero "hero"'s hookshot state.
 
+\remark Hookshot entities exist for historical reasons
+  and are not very customizable.
+  In new projects, we recommend to use
+  \ref lua_api_custom_entity "custom entities" instead.
+
 \section lua_api_hookshot_overview Overview
 
 A hookshot entity is created when you call
@@ -50,4 +55,3 @@ See \ref lua_api_entity_events to know these events.
 None.
 
 */
-

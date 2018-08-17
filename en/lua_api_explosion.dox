@@ -15,6 +15,11 @@ only dynamically with
 It cannot be declared in the
 \ref lua_api_map_overview_files "map data file".
 
+\remark Explosion entities exist for historical reasons
+  and are not very customizable.
+  In new projects, we recommend to use
+  \ref lua_api_custom_entity "custom entities" instead.
+
 \section lua_api_explosion_overview Overview
 
 Explosions are automatically created by \ref lua_api_bomb "bombs"
@@ -52,4 +57,3 @@ See \ref lua_api_entity_events to know these events.
 None.
 
 */
-
