@@ -29,6 +29,7 @@
 #include <QOpenGLFunctions>
 #include <QWheelEvent>
 
+
 namespace SolarusEditor {
 
 constexpr const char* SWIPE_VERTEX_SHADER =
@@ -132,6 +133,12 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
 
   setCursor(hover_cursor);
   setMouseTracking(true);
+
+  connect(&fps_timer,&QTimer::timeout,[this]{
+    update();
+  });
+  fps_timer.setInterval(10);
+  fps_timer.start();
 }
 
 /**
@@ -346,7 +353,8 @@ void ShaderPreviewer::set_model(ShaderModel* model) {
             this, &ShaderPreviewer::on_source_changed);
     connect(model, &ShaderModel::vertex_file_changed,
             this, &ShaderPreviewer::on_source_changed);
-
+    connect(model, &ShaderModel::scaling_factor_changed,
+            this, &ShaderPreviewer::on_scaling_factor_changed);
     on_source_changed();
   }
 }
@@ -679,8 +687,10 @@ void ShaderPreviewer::resizeGL(int w, int h) {
  * @param factor
  */
 void ShaderPreviewer::on_scaling_factor_changed(double factor) {
-  setup_framebuffers(
-        factor * model->get_quest().get_properties().get_normal_quest_size());
+  Q_UNUSED(factor);
+  /*setup_framebuffers(
+        factor * model->get_quest().get_properties().get_normal_quest_size());*/
+  resizeGL(0,0);
   update();
 }
 
@@ -698,38 +708,46 @@ void ShaderPreviewer::on_source_changed() {
 void ShaderPreviewer::compile_program() {
   program.removeAllShaders();
   emit shader_compilation_started(model->get_shader_id());
+  auto check_warnings = [this]{
+    if(program.log().size()) {
+      emit shader_warning(program.log());
+    }
+  };
+  auto fail = [this](const QString& s){
+    emit shader_error(s);
+    should_recompile = false;
+  };
   if (!model->get_vertex_file().isEmpty()) {
-    qDebug() << "Using provided vertex shader";
     if (!program.addShaderFromSourceFile(
           QOpenGLShader::Vertex,
          model->get_quest().get_shader_code_file_path(model->get_vertex_file()))) {
-      emit shader_error("Failed to compile vertex shader:\n" + program.log());
+      return fail("Failed to compile vertex shader:\n" + program.log());
     }
   } else {
-     qDebug() << "Using default vertex shader";
     if (!program.addShaderFromSourceCode(
           QOpenGLShader::Vertex,
           Solarus::DefaultShaders::get_default_vertex_source().c_str())) {
-      emit shader_error("Failed to compile default vertex shader:\n" + program.log());
+      return fail("Failed to compile default vertex shader:\n" + program.log());
     }
   }
+  //check_warnings();
   if (!model->get_fragment_file().isEmpty()) {
-    qDebug() << "Using provided fragment shader";
     if (!program.addShaderFromSourceFile(
          QOpenGLShader::Fragment,
          model->get_quest().get_shader_code_file_path(model->get_fragment_file()))) {
-      emit shader_error("Failed to compile fragment shader:\n" + program.log());
+      return fail("Failed to compile fragment shader:\n" + program.log());
     }
   } else {
-     qDebug() << "Using default fragment shader";
     if (!program.addShaderFromSourceCode(
           QOpenGLShader::Fragment,
           Solarus::DefaultShaders::get_default_fragment_source().c_str())) {
-      emit shader_error("Failed to compile default fragment shader:\n" + program.log());
+      return fail("Failed to compile default fragment shader:\n" + program.log());
     }
   }
   if (!program.link()) {
-    emit shader_error("Failed to link shader program:\n" + program.log());
+    return fail("Failed to link shader program:\n" + program.log());
+  } else {
+    check_warnings();
   }
 
   should_recompile = false;

@@ -76,6 +76,7 @@ signals:
   void shader_compilation_started(const QString& shader_id);
   void shader_compilation_finished(const QString& shader_id);
   void shader_error(const QString& message);
+  void shader_warning(const QString& message);
 
 public slots:
  void on_source_changed();
@@ -122,6 +123,8 @@ private:
   ShaderPreviewMode preview_mode;               /**< Display mode of the preview. */
   QOpenGLShaderProgram simple_program;          /**< simple default shader for bliting*/
   QOpenGLShaderProgram swipe_program;           /**< swipe shader to draw two textures */
+
+  QTimer fps_timer;                             /**< timer to update output periodically */
 
 #ifdef SOLARUSEDITOR_DEBUG_GL
   QOpenGLDebugLogger gl_logger;                 /**< Logger to track opengl error in debug mode*/
