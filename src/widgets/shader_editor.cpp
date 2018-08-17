@@ -298,6 +298,10 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
         [this](const QString& message) {
     emit log_message_to_console("Error", message);
   });
+  connect(ui.shader_previewer, &ShaderPreviewer::shader_warning,
+          [this](const QString& message) {
+    emit log_message_to_console("Warning", message);
+  });
 }
 
 /**
