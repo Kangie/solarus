@@ -81,36 +81,40 @@ The number of pixels should match the size of the surface
 - \c pixels (string): The pixels as a pack of bytes in 32-bit RGBA format.
   Every pixel is stored on 4 bytes (red, green, blue, alpha).
 
-\subsection lua_api_surface_bind_as_target surface:bind_as_target()
+\subsection lua_api_surface_gl_bind_as_target surface:gl_bind_as_target()
 
-Bind this surface as target for OpenGL rendering.
+Binds this surface as a target for next OpenGL calls.
 
-This method is meant to be used in conjunction with an Opengl lua binding via
-Luajit-FFI for example. This is equivalent to
-- \c glBindFramebuffer(GL_DRAW_FRAMEBUFFER,...)
+This method is only useful for advanced users who want to directly call
+OpenGL primitives,
+which is possible with Lua bindings, for example via LuaJIT FFI.
 
-and will make this surface the destination for any further opengl draw call. Note that solarus
-surfaces have no depth-buffer attached. A new framebuffer with depth attachement must be used
-to profit from \c GL_DEPTH_TEST.
+This is equivalent to <tt>glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ...)</tt>.
+It will make this surface the destination for any further OpenGL draw call.
 
-
-As lua-side opengl call will most probably share the same opengl context as the engine, it is crucial to restore any previous opengl state
-while interfacing raw opengl-calls. Engine won't do it automatically and
-inconsistent opengl state can screw solarus rendering. In particular pay attention
-to restore :
-
-- Currently bound glProgram
-- Current glBlendModes
-- Currently bound VertexBufferObjects
+When you call OpenGL directly, it is your responsability to restore the OpenGL
+state if you want the Solarus rendering to remain correct.
+In particular, pay attention to restore :
+- The currently bound \c glProgram
+- The current \c glBlendModes
+- The currently bound \c VertexBufferObjects
 - Face culling and alpha tests.
 
-\subsection lua_api_surface_bind_as_texture surface:bind_as_texture()
+\remark Note that Solarus surfaces have no depth buffer attached.
+A new framebuffer with depth attachement must be used
+to benefit from \c GL_DEPTH_TEST.
 
-Bind this surface as texture for OpenGL rendering.
-Equivalent to a call to
-- \c glBindTexture(...)
+\subsection lua_api_surface_gl_bind_as_texture surface:gl_bind_as_texture()
 
-See \ref lua_api_surface_bind_as_target for details about opengl interfacing.
+Bind this surface as the current texture for next OpenGL calls.
+
+This method is only useful for advanced users who want to directly call
+OpenGL primitives,
+which is possible with Lua bindings, for example via LuaJIT FFI.
+
+This is equivalent to <tt>glBindTexture(...)</tt>.
+
+See \ref lua_api_surface_gl_bind_as_target for details about calling
+OpenGL directly.
 
 */
-
