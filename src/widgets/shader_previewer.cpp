@@ -687,6 +687,7 @@ void ShaderPreviewer::resizeGL(int w, int h) {
  * @param factor
  */
 void ShaderPreviewer::on_scaling_factor_changed(double factor) {
+  Q_UNUSED(factor);
   /*setup_framebuffers(
         factor * model->get_quest().get_properties().get_normal_quest_size());*/
   resizeGL(0,0);
