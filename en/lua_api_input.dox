@@ -88,7 +88,7 @@ the returned coordinates are the last position of the mouse in the window.
 - Return value 2 (integer): The \c y position of the mouse in
   \ref lua_api_video_get_quest_size "quest size" coordinates.
 
-\subsection lua_api_input_is_moutton_button_pressed sol.input.is_moutton_button_pressed(button)
+\subsection lua_api_input_is_mouse_button_pressed sol.input.is_mouse_button_pressed(button)
 
 Returns whether a mouse button is currently down.
 - \c button (string): The name of a mouse button.
