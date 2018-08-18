@@ -113,11 +113,6 @@ This is typically used for items like the bow and the counter of bombs.
 - Return value (string): The savegame variable that should store the possessed
   amount of this item, or \c nil to make this item have no associated amount.
 
-\subsection lua_api_item_is_being_used item:is_being_used()
-
-Returns whether the item is currently being used by the
-\ref lua_api_hero "hero".
-
 \subsection lua_api_item_is_obtainable item:is_obtainable()
 
 Returns whether the player is allowed to obtain this item.
@@ -385,6 +380,11 @@ The default value is \c 1000.
   Therefore, you have to set the maximum amount of appropriate items when
   they are loaded (typically from event \ref lua_api_item_on_started
   "item:on_started()").
+
+\subsection lua_api_item_is_being_used item:is_being_used()
+
+Returns whether the item is currently being used by the
+\ref lua_api_hero "hero".
 
 \subsection lua_api_item_set_finished item:set_finished()
 
