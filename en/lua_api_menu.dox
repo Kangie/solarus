@@ -21,19 +21,19 @@ i.e. callback methods like
 \ref lua_api_menu_on_draw "menu:on_draw()",
 \ref lua_api_menu_on_key_pressed "menu:on_key_pressed()",
 etc.,
-to notify your menu of something (the player pressed a key, your menu needs
-to be redrawn, etc.).
+to notify your menu of something
+(the player pressed a key, your menu needs to be redrawn, etc.).
 
-If you prefer, you can also make menus without this API.
-Indeed, the
+This menu API does not provide anything fundamental:
+indeed, the
 \ref lua_api_map "map",
 \ref lua_api_game "game" and
 \ref lua_api_main "sol.main"
-APIs already have everything you need,
-so you can do what you want from there manually.
-But menus built with the API described on this page
-are just handy, because they automatically receive events
-whenever they need to be notified.
+APIs already provide the necessary features,
+so you could do what you want from there manually.
+But the API described on this page makes your life easier
+because menus automatically receive events whenever they need to be notified,
+and automatically stop being active when their context no longer exists.
 
 \section lua_api_menu_functions Functions of sol.menu
 
@@ -66,8 +66,8 @@ it is stopped.
     This allows to make nested menus.
     Example: a popup that shows some information above another menu.
   - \c menu (table): The menu to activate. It can be any table. The only thing
-  that makes it special is the presence of callback functions (events) as
-  described in section \ref lua_api_menu_events.
+    that makes it special is the presence of callback functions (events) as
+    described in section \ref lua_api_menu_events.
 - \c on_top (boolean, optional): Whether this menu should be drawn on top
   of other existing menus of the same context or behind them.
   If \c true, the
@@ -90,8 +90,8 @@ Nothing happens is the menu was already stopped or never started.
 \subsection lua_api_menu_stop_all sol.menu.stop_all(context)
 
 Stops all menus that are currently running in a context.
-- \c context (\ref lua_api_map "map", \ref lua_api_game "game" or
-  \ref lua_api_main "sol.main"): The context where you want to stop
+- \c context (\ref lua_api_map "map", \ref lua_api_game "game",
+  \ref lua_api_main "sol.main" or table): The context where you want to stop
   menus.
 
 This function is not often needed since menus are already automatically
@@ -102,6 +102,24 @@ stopped when their context is closed.
 Returns whether a table is a currently active menu.
 - \c menu (table): The menu to test.
 - Return value (boolean): \c true if this is an active menu.
+
+\subsection lua_api_menu_bring_to_front sol.menu.bring_to_front(menu)
+
+Places this menu in front of other menus of the same context.
+
+Your menu will then be the first one to receive input events
+(keyboard, joypad and mouse events)
+and the last one to be drawn.
+- \c menu (table): The menu to bring to the front.
+
+\subsection lua_api_menu_bring_to_back sol.menu.bring_to_back(menu)
+
+Places this menu behind other menus of the same context.
+
+Your menu will then be the last one to receive input events
+(keyboard, joypad and mouse events)
+and the first one to be drawn.
+- \c menu (table): The menu to bring to the back.
 
 \section lua_api_menu_events Events of a menu
 
@@ -157,7 +175,9 @@ When several menus exist in the same context, they are updated from the back
 one to the front one.
 You can control this order thanks to the
 \c on_top parameter of
-\ref lua_api_menu_start "menu:start()" when you start a menu.
+\ref lua_api_menu_start "sol.menu.start()" when you start a menu,
+or with \ref lua_api_menu_bring_to_front "sol.menu.bring_to_front()"
+and \ref lua_api_menu_bring_to_back "sol.menu.bring_to_back()"
 
 \subsection lua_api_menu_on_key_pressed menu:on_key_pressed(key, modifiers)
 
@@ -171,13 +191,14 @@ Called when the user presses a keyboard key while your menu is active.
   (like other menus or the built-in \ref lua_api_game_overview_commands
   "game commands").
 
-For all keyboard and joypad events, most recent menus are notified
-first. For example, if some dialog box is shown during the pause menu and
+For all keyboard, joypad and mouse events, menus are notified from the front
+one to the back one.
+For example, if some dialog box is shown during the pause menu and
 appears above that pause menu, it will naturally receive keyboard and joypad
 events first.
 
 When a menu handles the event, it should return \c true to make the event stop
-being propagated. Menus (and other objects) below it won't be not notified.
+being propagated. Menus (and other objects) below it won't be notified then.
 On the contrary, if no script has handled the event, then the engine can handle
 it with a built-in behavior.
 
@@ -375,4 +396,3 @@ Called when the user moves a finger while the menu is running.
   return \c true, the event won't be propagated to other objects.
 
 */
-
