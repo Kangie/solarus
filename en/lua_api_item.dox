@@ -115,7 +115,8 @@ This is typically used for items like the bow and the counter of bombs.
 
 \subsection lua_api_item_is_being_used item:is_being_used()
 
-Returns whether the item is currently being used somehow.
+Returns whether the item is currently being used by the
+\ref lua_api_hero "hero".
 
 \subsection lua_api_item_is_obtainable item:is_obtainable()
 
@@ -601,4 +602,3 @@ Only possible when the \ref lua_api_game "game" is running.
   and has the property to notify your item.
 
 */
-
