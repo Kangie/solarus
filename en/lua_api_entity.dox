@@ -508,7 +508,7 @@ of size 1x1):
 - Return value (boolean): \c true if the bounding box of this entity overlaps
   the rectangle.
 
-\subsection lua_api_entity_overlaps_entity entity:overlaps(other_entity, [collision_mode])
+\subsection lua_api_entity_overlaps_entity entity:overlaps(other_entity, [collision_mode, [entity_sprite, [other_entity_sprite]]])
 
 Returns whether another entity collides with this entity according to
 the specified collision test.
@@ -546,6 +546,17 @@ the specified collision test.
   - \c "sprite": Collision if a sprite of the other entity overlaps a sprite of
     this entity.
     The collision test is pixel precise.
+    The last two optional sprite parameters can then indicate which sprite of
+    both entities you want to test.
+    If you don't set them, all sprites of both entities will be tested.
+- \c entity_sprite (\ref lua_api_sprite "sprite" or nil, optional):
+  Sprite of this entity you want to test
+  (only with collision mode \c "sprite").
+  \c nil or no value means to test all sprites of this entity.
+- \c other_entity_sprite (\ref lua_api_sprite "sprite" or nil, optional):
+  Sprite of the other entity you want to test
+  (only with collision mode \c "sprite").
+  \c nil or no value means to test all sprites of the other entity.
 - Return value (boolean): \c true if a collision is detected with this collision test.
 
 \remark For custom entities, see also
