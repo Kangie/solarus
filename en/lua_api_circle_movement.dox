@@ -3,8 +3,10 @@
 
 \tableofcontents
 
-A circle movement makes a circular trajectory around a center point or
-a \ref lua_api_entity "map entity".
+A circle movement makes a circular trajectory around a center point.
+
+The center can either be some fixed coordinates or a possibly moving
+\ref lua_api_entity "map entity".
 
 \section lua_api_circle_movement_inherited_methods Methods inherited from movement
 
@@ -82,25 +84,29 @@ Returns whether circles are made clockwise or counter-clockwise.
 Sets whether circles are made clockwise or counter-clockwise.
 - \c clockwise (boolean, optional): \c true to make circles clockwise. No value means \c true.
 
-\subsection lua_api_circle_movement_get_initial_angle circle_movement:get_initial_angle()
+\subsection lua_api_circle_movement_get_angle_from_center circle_movement:get_angle_from_center()
 
-Returns the angle from where the first circle starts.
-- Return value (number): The initial angle in degrees.
+Returns the angle indicating the current position on the circle.
 
-\subsection lua_api_circle_movement_set_initial_angle circle_movement:set_initial_angle(initial_angle)
+This is the angle of the vector between the center and the current position.
+- Return value (number): The angle in radians.
 
-Sets the angle from where the first circle should start.
-- \c initial_angle (number): The initial angle in degrees.
+\subsection lua_api_circle_movement_set_angle_from_center circle_movement:set_angle_from_center(angle_from_center)
 
-\subsection lua_api_circle_movement_get_angle_speed circle_movement:get_angle_speed()
+Sets the position on the circle as an angle from its center.
+
+This is the angle of the vector between the center and the new position to set.
+- \c initial_angle (number): The angle in radians.
+
+\subsection lua_api_circle_movement_get_angular_speed circle_movement:get_angular_speed()
 
 Returns the speed of the angle variation.
-- Return value (number): The angle speed in degrees per second.
+- Return value (number): The angle speed in radians per second.
 
-\subsection lua_api_circle_movement_set_angle_speed circle_movement:set_angle_speed(angle_speed)
+\subsection lua_api_circle_movement_set_angular_speed circle_movement:set_angular_speed(angular_speed)
 
 Sets the speed of the angle variation.
-- \c angle_speed (number): The new angle speed in degrees per second.
+- \c angular_speed (number): The new angle speed in radians per second.
 
 \subsection lua_api_circle_movement_get_max_rotations circle_movement:get_max_rotations()
 
@@ -184,5 +190,53 @@ Circle movements are particular \ref lua_api_movement "movement" objects.
 Therefore, they inherit all events from the type movement.
 
 See \ref lua_api_movement_events to know these events.
+
+\section lua_api_circle_movement_methods_deprecated Deprecated methods of the type circle movement
+
+The following methods are deprecated and may be removed it future releases.
+
+\subsection lua_api_circle_movement_get_initial_angle circle_movement:get_initial_angle()
+
+Returns the angle from where the first circle starts.
+- Return value (number): The initial angle in degrees.
+
+\warning This method is deprecated since Solarus 1.6 because angle functions
+  now all use radians for consistency.
+
+Use \ref lua_api_circle_movement_get_angle_from_center
+"circle_movement:get_angle_from_center()" instead.
+
+\subsection lua_api_circle_movement_set_initial_angle circle_movement:set_initial_angle(initial_angle)
+
+Sets the angle from where the first circle should start.
+- \c initial_angle (number): The initial angle in degrees.
+
+\warning This method is deprecated since Solarus 1.6 because angle functions
+  now all use radians for consistency.
+
+Use \ref lua_api_circle_movement_set_angle_from_center
+"circle_movement:set_angle_from_center()" instead.
+
+\subsection lua_api_circle_movement_get_angle_speed circle_movement:get_angle_speed()
+
+Returns the speed of the angle variation.
+- Return value (number): The angle speed in degrees per second.
+
+\warning This method is deprecated since Solarus 1.6 because angle functions
+  now all use radians for consistency.
+
+Use \ref lua_api_circle_movement_get_angular_speed
+"circle_movement:get_angular_speed()" instead.
+
+\subsection lua_api_circle_movement_set_angle_speed circle_movement:set_angle_speed(angle_speed)
+
+Sets the speed of the angle variation.
+- \c angle_speed (number): The new angle speed in degrees per second.
+
+\warning This method is deprecated since Solarus 1.6 because angle functions
+  now all use radians for consistency.
+
+Use \ref lua_api_circle_movement_set_angular_speed
+"circle_movement:set_angular_speed()" instead.
 
 */

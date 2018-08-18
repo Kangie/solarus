@@ -129,6 +129,24 @@ Sets a shader to be applied to the rendering.
   It replaces the previous shader if any.
   A \c nil value means to apply no shader.
 
+\section lua_api_video_events Events of sol.video
+
+Events are callback methods automatically called by the engine if you define
+them.
+
+\subsection lua_api_video_on_draw sol.video:on_draw(screen)
+
+Called at the very end of the engine rendering. This event allows you to draw
+directly on the screen after the quest surface has been scaled to fit the size
+of the window (possibly using \ref lua_api_shader "shaders").
+One pixel in the surface parameter will correspond to one pixel on screen.
+- \c screen (surface): Special surface representing the window.
+
+\remark Note that the screen cannot be used as a source surface
+(i.e. you cannot draw it onto another surface).
+But you can still use
+\ref lua_api_surface_get_pixels "get_pixels()" to get the screen content.
+
 \section lua_api_video_functions_deprecated Deprecated functions of sol.video
 
 The following functions are deprecated and may be removed it future releases.
@@ -231,23 +249,5 @@ current video mode.
 Use
 \ref lua_api_video_set_window_size "sol.video.set_window_size()"
 instead.
-
-\section lua_api_video_events Events of sol.video
-
-Events are callback methods automatically called by the engine if you define
-them.
-
-\subsection lua_api_video_on_draw sol.video:on_draw(screen)
-
-Called at the very end of the engine rendering. This event allows you to draw
-directly on the screen after the quest surface has been scaled to fit the size
-of the window (possibly using shaders).
-One pixel in the surface parameter will correspond to one pixel on screen.
-- \c screen (surface): Special surface representing the window.
-
-Note that the screen cannot be used as a source surface
-(i.e. you cannot draw it onto another surface).
-But you can still use
-\ref lua_api_surface_get_pixels "get_pixels()" to get the screen content.
 
 */
