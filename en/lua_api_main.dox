@@ -425,8 +425,10 @@ overridden.
 
 Similarly, you can even remove (by assigning \c nil)
 or modify (by assigning a new value) any function of the Solarus API.
-We don't recommend to do that because introducing differences with the
-official API would be surprising for people who contribute to your game.
+We don't recommend to do this because introducing differences with the
+official API changes the global behavior.
+It would be unexpected for other people who contribute to your game,
+and for people you share your scripts with.
 - \c type_name (string): Name of a Solarus userdata Lua type
   (see the list of types in
   \ref lua_api_main_get_type "sol.main.get_type()" above).
