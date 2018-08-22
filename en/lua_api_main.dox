@@ -438,11 +438,10 @@ and for people you share your scripts with.
 \remark
 If you are a Lua expert, you know that metatables are a very powerful
 mechanism. They are where the magic happens.
-Solarus uses metatables to do a lot of things, like allowing you
+Solarus uses metatables internally to do a lot of things, like allowing you
 to access userdata as tables. Therefore, you should never touch any metamethod
 (fields whose name starts with two underscores) in the metatable of a userdata
 type, in particular \c __index, \c __newindex and \c __gc.
-This may result in unspecified behavior, but most likely crashes.
 
 \subsection lua_api_main_api_get_os sol.main.get_os()
 
