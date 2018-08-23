@@ -829,6 +829,22 @@ end
 \endverbatim
 - Return value (function): An iterator to all sprites of this entity.
 
+\subsection lua_api_entity_create_sprite entity:create_sprite(animation_set_id, [sprite_name])
+
+Creates a \ref lua_api_sprite "sprite" for this entity.
+- \c animation_set_id (string): Animation set to use for the sprite.
+- \c sprite_name (string, optional): An optional name to identify the created
+  sprite. Only useful for entities with multiple sprites (see
+  \ref lua_api_entity_get_sprite "entity:get_sprite()").
+- Return value (\ref lua_api_sprite "sprite"): The sprite created.
+
+\subsection lua_api_entity_remove_sprite entity:remove_sprite([sprite])
+
+Removes and destroys a
+\ref lua_api_sprite "sprite" of this entity.
+- \c sprite (\ref lua_api_sprite "sprite", optional): The sprite to remove.
+  The default value is the first sprite that was created.
+
 \subsection lua_api_entity_bring_sprite_to_front entity:bring_sprite_to_front(sprite)
 
 Reorders a

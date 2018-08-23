@@ -553,27 +553,6 @@ Immobilizes this enemy for a while if possible.
 
 After a few seconds, the enemy shakes and then restarts.
 
-\subsection lua_api_enemy_create_sprite enemy:create_sprite(animation_set_id, [sprite_name])
-
-Creates a \ref lua_api_sprite "sprite" for this enemy.
-- \c animation_set_id (string): Animation set to use for the sprite.
-- \c sprite_name (string, optional): An optional name to identify the created
-  sprite. Only useful for entities with multiple sprites (see
-  \ref lua_api_entity_get_sprite "entity:get_sprite()").
-- Return value (\ref lua_api_sprite "sprite"): The sprite created.
-
-\remark If you don't create a sprite, your enemy will be invisible.
-
-\subsection lua_api_enemy_remove_sprite enemy:remove_sprite([sprite])
-
-Removes and destroys a
-\ref lua_api_sprite "sprite" of this enemy.
-
-The sprite must have been created before by
-\ref lua_api_enemy_create_sprite "enemy:create_sprite()".
-- \c sprite (\ref lua_api_sprite "sprite"): The sprite to remove.
-  The default value is the first sprite that was created.
-
 \subsection lua_api_enemy_create_enemy enemy:create_enemy(properties)
 
 Creates another enemy on the \ref lua_api_map "map",
