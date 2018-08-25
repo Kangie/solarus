@@ -110,8 +110,8 @@ public:
   QPoint get_entity_origin(const EntityIndex& index) const;
   QSize get_entity_size(const EntityIndex& index) const;
   void set_entity_size(const EntityIndex& index, const QSize& size);
-  QSize get_entity_closest_base_size_multiple(const EntityIndex& index) const;
-  QSize get_entity_closest_base_size_multiple(const EntityIndex& index, const QSize& size) const;
+  QSize get_entity_closest_valid_size(const EntityIndex& index) const;
+  QSize get_entity_closest_valid_size(const EntityIndex& index, const QSize& size) const;
   bool is_entity_size_valid(const EntityIndex& index) const;
   bool is_entity_size_valid(const EntityIndex& index, const QSize& size) const;
   QSize get_entity_valid_size(const EntityIndex& index) const;

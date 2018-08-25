@@ -128,6 +128,7 @@ void PatternChooser::update_style_sheet() {
  */
 void PatternChooser::pick_pattern_requested() {
 
+  tileset->set_selected_index(tileset->id_to_index(get_pattern_id()));
   PatternPickerDialog dialog(*tileset);
   int result = dialog.exec();
 

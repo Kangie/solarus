@@ -36,7 +36,6 @@ public:
 
   QSize get_valid_size() const override;
 
-
   void draw(QPainter& painter) const override;
 
 protected:

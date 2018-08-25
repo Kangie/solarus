@@ -1147,23 +1147,23 @@ void MapModel::set_entity_size(const EntityIndex& index, const QSize& size) {
 }
 
 /**
- * @brief Returns an entity size rounded to the closest multiple of its base size.
+ * @brief Returns a valid size the closest to the current size of an entity.
  * @param index Index of the entity to check.
- * @return @c the rounded size.
+ * @return @c A valid size.
  */
-QSize MapModel::get_entity_closest_base_size_multiple(
+QSize MapModel::get_entity_closest_valid_size(
     const EntityIndex& index) const {
 
-  return get_entity_closest_base_size_multiple(index, get_entity_size(index));
+  return get_entity_closest_valid_size(index, get_entity_size(index));
 }
 
 /**
- * @brief Returns a size rounded to the closest multiple of an entity's base size.
+ * @brief Returns a valid size the closest to the given size for an entity.
  * @param index Index of the entity to check.
  * @param size The size to check.
- * @return @c the rounded size.
+ * @return @c A valid size.
  */
-QSize MapModel::get_entity_closest_base_size_multiple(
+QSize MapModel::get_entity_closest_valid_size(
     const EntityIndex& index, const QSize& size) const {
 
   if (!entity_exists(index)) {
@@ -1171,7 +1171,7 @@ QSize MapModel::get_entity_closest_base_size_multiple(
   }
 
   const EntityModel& entity = get_entity(index);
-  return entity.get_closest_base_size_multiple(size);
+  return entity.get_closest_valid_size(size);
 }
 
 /**

@@ -1376,24 +1376,6 @@ void EntityModel::set_base_size(const QSize& base_size) {
 }
 
 /**
- * @brief Rounds a size to the closest multiple of the base size.
- * @param size The size to check.
- * @return @c the rounded size.
- */
-QSize EntityModel::get_closest_base_size_multiple(const QSize& size) const {
-
-  float base_width = get_base_size().width();
-  float base_height = get_base_size().height();
-
-  QSize rounded_size;
-  rounded_size.setWidth(qMax(base_width,
-      qRound(size.width() / base_width) * base_width));
-  rounded_size.setHeight(qMax(base_height,
-      qRound(size.height() / base_height) * base_height));
-  return rounded_size;
-}
-
-/**
  * @brief Returns whether this entity has a legal size.
  *
  * By default, the size should be non-null and a multiple of 8.
@@ -1451,6 +1433,75 @@ bool EntityModel::is_size_valid(const QSize& size) const {
   }
 
   return true;
+}
+
+/**
+ * @brief Rounds legal size the closest to the given size.
+ *
+ * This takes into account the resizing mode.
+ *
+ * @param size The size to check.
+ * @return @c the rounded size.
+ */
+QSize EntityModel::get_closest_valid_size(const QSize& size) const {
+
+  QSize valid_size = get_base_size();
+  bool extend_width = false;
+  bool extend_height = false;
+
+  switch (resize_mode) {
+
+  case ResizeMode::NONE:
+    break;
+
+  case ResizeMode::HORIZONTAL_ONLY:
+    extend_width = true;
+    break;
+
+  case ResizeMode::VERTICAL_ONLY:
+    extend_height = true;
+    break;
+
+  case ResizeMode::SQUARE:
+  {
+    int min = qMin(size.width(), size.height());
+    valid_size = QSize(min, min);
+    break;
+  }
+
+  case ResizeMode::MULTI_DIMENSION_ONE:
+  case ResizeMode::MULTI_DIMENSION_ALL:
+    extend_width = true;
+    extend_height = true;
+    break;
+
+  case ResizeMode::SINGLE_DIMENSION:
+    if (size.width() > size.height()) {
+      extend_width = true;
+    }
+    else {
+      extend_height = true;
+    }
+    break;
+  }
+
+  if (extend_width) {
+    float base_width = get_base_size().width();
+    valid_size.setWidth(qMax(base_width,
+        qRound(size.width() / base_width) * base_width));
+  }
+  if (extend_height) {
+    float base_height = get_base_size().height();
+    valid_size.setHeight(qMax(base_height,
+        qRound(size.height() / base_height) * base_height));
+  }
+
+  if (!is_size_valid(valid_size)) {
+    // Safety check.
+    return get_valid_size();
+  }
+
+  return valid_size;
 }
 
 /**
