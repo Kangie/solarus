@@ -305,6 +305,42 @@ bool TilesetModel::pattern_exists(const QString& pattern_id) const {
 }
 
 /**
+ * @brief Returns the given id, possibly modified to make it unique.
+ * @param pattern_id A candidate pattern id.
+ * @return The same value if it does not exist yet,
+ * or a modified value different from all patterns of this tileset.
+ */
+QString TilesetModel::get_unique_pattern_id(const QString& pattern_id) const {
+
+  if (!pattern_exists(pattern_id)) {
+    return pattern_id;
+  }
+
+  // Extract the prefix.
+  int counter = 1;
+  QString prefix = pattern_id;
+  QStringList words = pattern_id.split('_');
+  if (words.size() > 1) {
+    QString last_word = words.last();
+    bool is_int = false;
+    counter = last_word.toInt(&is_int);
+    if (is_int) {
+      words.removeLast();
+      prefix = words.join('_');
+    }
+  }
+
+  // Add the first available integer as suffix.
+  QString new_id;
+  do {
+    ++counter;
+    new_id = QString("%1_%2").arg(prefix).arg(counter);
+  } while (pattern_exists(new_id));
+
+  return new_id;
+}
+
+/**
  * @brief Returns the list index of the specified pattern.
  * @param pattern_id Id of a tile pattern
  * @return The corresponding index in the list.

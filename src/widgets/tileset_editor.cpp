@@ -564,14 +564,7 @@ public:
     for (QString id : ids) {
 
       int index = get_model().id_to_index(id);
-
-      int integer_id = 1;
-      QString new_id;
-      do {
-        ++integer_id;
-        new_id = QString("%1_%2").arg(id).arg(integer_id);
-      } while (get_model().id_to_index(new_id) != -1);
-
+      QString new_id = get_model().get_unique_pattern_id(id);
       QRect first_frame = get_model().get_pattern_frame(index);
       first_frame.translate(delta);
 
