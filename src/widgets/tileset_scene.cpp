@@ -178,6 +178,16 @@ void TilesetScene::build() {
     pattern_items.append(pattern_item);
   }
 
+  // Initial selection.
+  const QList<int>& selected_indexes = model.get_selected_indexes();
+  for (int index : selected_indexes) {
+    if (model.pattern_exists(index)) {
+      pattern_items[index]->setSelected(true);
+    }
+  }
+  if (!selected_indexes.isEmpty()) {
+    emit selectionChanged();
+  }
 }
 
 /**

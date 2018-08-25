@@ -16,6 +16,7 @@
  */
 #include "widgets/pattern_picker_dialog.h"
 #include "tileset_model.h"
+#include <QDebug>
 
 namespace SolarusEditor {
 

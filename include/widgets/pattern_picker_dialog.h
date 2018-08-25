@@ -30,7 +30,7 @@ class PatternPickerDialog : public QDialog {
 
 public:
 
-  PatternPickerDialog(TilesetModel& tileset, QWidget* parent = nullptr);
+  explicit PatternPickerDialog(TilesetModel& tileset, QWidget* parent = nullptr);
 
   QString get_pattern_id() const;
 
