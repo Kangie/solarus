@@ -63,7 +63,7 @@ void initialize_assets() {
   // Try the install path if we are running the installed executable.
 #ifdef SOLARUSEDITOR_DATADIR_PATH
   if (running_installed_executable) {
-    potential_paths << SOLARUSEDITOR_DATADIR_PATH;
+    potential_paths << SOLARUSEDITOR_DATADIR_PATH "/assets";
   }
 #endif
 
