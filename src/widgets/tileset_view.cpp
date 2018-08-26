@@ -44,6 +44,7 @@ namespace SolarusEditor {
 TilesetView::TilesetView(QWidget* parent) :
   QGraphicsView(parent),
   scene(nullptr),
+  create_border_set_action(nullptr),
   change_pattern_id_action(nullptr),
   delete_patterns_action(nullptr),
   last_integer_pattern_id(0),
@@ -56,20 +57,35 @@ TilesetView::TilesetView(QWidget* parent) :
   setAcceptDrops(true);
   setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
+  create_border_set_action = new QAction(
+      QIcon(":/images/border_kind_5.png"),
+      tr("Create border set..."),
+      this
+  );
+  create_border_set_action->setShortcut(tr("Ctrl+B"));
+  create_border_set_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  connect(create_border_set_action, &QAction::triggered,
+          this, [this]() {
+    QStringList pattern_ids = get_model()->get_selected_ids();
+    pattern_ids.sort();
+    emit create_border_set_requested(pattern_ids);
+  });
+  addAction(create_border_set_action);
+
   change_pattern_id_action = new QAction(
       QIcon(":/images/icon_edit.png"), tr("Change id..."), this);
   change_pattern_id_action->setShortcut(tr("F2"));
   change_pattern_id_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(change_pattern_id_action, SIGNAL(triggered()),
-          this, SIGNAL(change_selected_pattern_id_requested()));
+  connect(change_pattern_id_action, &QAction::triggered,
+          this, &TilesetView::change_selected_pattern_id_requested);
   addAction(change_pattern_id_action);
 
   delete_patterns_action = new QAction(
       QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
   delete_patterns_action->setShortcut(QKeySequence::Delete);
   delete_patterns_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(delete_patterns_action, SIGNAL(triggered()),
-          this, SIGNAL(delete_selected_patterns_requested()));
+  connect(delete_patterns_action, &QAction::triggered,
+          this, &TilesetView::delete_selected_patterns_requested);
   addAction(delete_patterns_action);
 
   set_repeat_mode_actions = EnumMenus<PatternRepeatMode>::create_actions(
@@ -623,14 +639,17 @@ void TilesetView::show_context_menu(const QPoint& where) {
   // Repeat mode.
   QMenu* repeat_mode_menu = new QMenu(tr("Repeatable"), this);
   build_context_menu_repeat_mode(*repeat_mode_menu, selected_indexes);
-  menu->addSeparator();
   menu->addMenu(repeat_mode_menu);
 
   // Animation.
   QMenu* scrolling_menu = new QMenu(tr("Scrolling"), this);
   build_context_menu_scrolling(*scrolling_menu, selected_indexes);
-  menu->addSeparator();
   menu->addMenu(scrolling_menu);
+
+  // Border set.
+  if (selected_indexes.size() <= 12) {
+    menu->addAction(create_border_set_action);
+  }
 
   // Change pattern id.
   menu->addSeparator();

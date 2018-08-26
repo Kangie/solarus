@@ -56,6 +56,7 @@ signals:
 
   void create_pattern_requested(
       const QString& pattern_id, const QRect& frame, Ground ground);
+  void duplicate_selected_patterns_requested(const QPoint& delta);
   void delete_selected_patterns_requested();
   void change_selected_pattern_id_requested();
   void change_selected_patterns_position_requested(const QPoint& delta);
@@ -63,7 +64,7 @@ signals:
   void change_selected_patterns_default_layer_requested(int layer);
   void change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode);
   void change_selected_patterns_scrolling_requested(PatternScrolling scrolling);
-  void duplicate_selected_patterns_requested(const QPoint& delta);
+  void create_border_set_requested(const QStringList& pattern_ids);
   void selection_changed_by_user();
 
 public slots:
@@ -124,6 +125,7 @@ private:
 
   QPointer<TilesetModel> model;        /**< The tileset model. */
   TilesetScene* scene;                 /**< The scene viewed. */
+  QAction* create_border_set_action;   /**< Action of creating a border set. */
   QAction* change_pattern_id_action;   /**< Action of changing a pattern id. */
   QAction* delete_patterns_action;     /**< Action of deleting the selected
                                         * patterns. */

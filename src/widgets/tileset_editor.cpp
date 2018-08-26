@@ -846,25 +846,28 @@ class CreateBorderSetCommand : public TilesetEditorCommand {
 
 public:
 
-  CreateBorderSetCommand(TilesetEditor& editor, const QString& border_set_id) :
+  CreateBorderSetCommand(
+      TilesetEditor& editor,
+      const QString& border_set_id,
+      const QStringList& pattern_ids) :
     TilesetEditorCommand(editor, TilesetEditor::tr("Create border set")),
-    border_set_id(border_set_id) {
-
+    border_set_id(border_set_id),
+    pattern_ids(pattern_ids) {
   }
 
   virtual void undo() override {
-
     get_model().delete_border_set(border_set_id);
   }
 
   virtual void redo() override {
-
     get_model().create_border_set(border_set_id);
+    get_model().set_border_set_patterns(border_set_id, pattern_ids);
   }
 
 private:
 
   QString border_set_id;
+  QStringList pattern_ids;
 };
 
 /**
@@ -956,50 +959,50 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   update();
 
   // Make connections.
-  connect(&get_database(), SIGNAL(element_description_changed(ResourceType, const QString&, const QString&)),
-          this, SLOT(update_description_to_gui()));
-  connect(ui.description_field, SIGNAL(editingFinished()),
-          this, SLOT(set_description_from_gui()));
+  connect(&get_database(), &QuestDatabase::element_description_changed,
+          this, &TilesetEditor::update_description_to_gui);
+  connect(ui.description_field, &QLineEdit::editingFinished,
+          this, &TilesetEditor::set_description_from_gui);
 
-  connect(ui.background_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_background_color()));
-  connect(model, SIGNAL(background_color_changed(const QColor&)),
-          this, SLOT(update_background_color()));
+  connect(ui.background_field, &ColorChooser::color_changed,
+          this, &TilesetEditor::change_background_color);
+  connect(model, &TilesetModel::background_color_changed,
+          this, &TilesetEditor::update_background_color);
 
-  connect(ui.pattern_id_button, SIGNAL(clicked()),
-          this, SLOT(change_selected_pattern_id_requested()));
-  connect(ui.tileset_view, SIGNAL(change_selected_pattern_id_requested()),
-          this, SLOT(change_selected_pattern_id_requested()));
-  connect(ui.patterns_list_view, SIGNAL(change_selected_pattern_id_requested()),
-          this, SLOT(change_selected_pattern_id_requested()));
-  connect(model, SIGNAL(pattern_id_changed(int, QString, int, QString)),
-          this, SLOT(update_pattern_id_field()));
+  connect(ui.pattern_id_button, &QToolButton::clicked,
+          this, &TilesetEditor::change_selected_pattern_id_requested);
+  connect(ui.tileset_view, &TilesetView::change_selected_pattern_id_requested,
+          this, &TilesetEditor::change_selected_pattern_id_requested);
+  connect(ui.patterns_list_view, &TilePatternsListView::change_selected_pattern_id_requested,
+          this, &TilesetEditor::change_selected_pattern_id_requested);
+  connect(model, &TilesetModel::pattern_id_changed,
+          this, &TilesetEditor::update_pattern_id_field);
 
-  connect(ui.tileset_view, SIGNAL(change_selected_patterns_position_requested(QPoint)),
-          this, SLOT(change_selected_patterns_position_requested(QPoint)));
+  connect(ui.tileset_view, &TilesetView::change_selected_patterns_position_requested,
+          this, &TilesetEditor::change_selected_patterns_position_requested);
 
-  connect(ui.ground_field, SIGNAL(activated(QString)),
-          this, SLOT(ground_selector_activated()));
-  connect(ui.tileset_view, SIGNAL(change_selected_patterns_ground_requested(Ground)),
-          this, SLOT(change_selected_patterns_ground_requested(Ground)));
-  connect(model, SIGNAL(pattern_ground_changed(int, Ground)),
-          this, SLOT(update_ground_field()));
+  connect(ui.ground_field, QOverload<int>::of(&EnumSelector<Ground>::activated),
+          this, &TilesetEditor::ground_selector_activated);
+  connect(ui.tileset_view, &TilesetView::change_selected_patterns_ground_requested,
+          this, &TilesetEditor::change_selected_patterns_ground_requested);
+  connect(model, &TilesetModel::pattern_ground_changed,
+          this, &TilesetEditor::update_ground_field);
 
-  connect(ui.default_layer_field, SIGNAL(valueChanged(int)),
-          this, SLOT(change_selected_patterns_default_layer_requested(int)));
-  connect(ui.tileset_view, SIGNAL(change_selected_patterns_default_layer_requested(int)),
-          this, SLOT(change_selected_patterns_default_layer_requested(int)));
-  connect(model, SIGNAL(pattern_default_layer_changed(int, int)),
-          this, SLOT(update_default_layer_field()));
+  connect(ui.default_layer_field, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &TilesetEditor::change_selected_patterns_default_layer_requested);
+  connect(ui.tileset_view, &TilesetView::change_selected_patterns_default_layer_requested,
+          this, &TilesetEditor::change_selected_patterns_default_layer_requested);
+  connect(model, &TilesetModel::pattern_default_layer_changed,
+          this, &TilesetEditor::update_default_layer_field);
 
-  connect(ui.repeat_mode_field, SIGNAL(activated(QString)),
-          this, SLOT(repeat_mode_selector_activated()));
-  connect(ui.tileset_view, SIGNAL(change_selected_patterns_repeat_mode_requested(PatternRepeatMode)),
-          this, SLOT(change_selected_patterns_repeat_mode_requested(PatternRepeatMode)));
-  connect(model, SIGNAL(pattern_repeat_mode_changed(int, PatternRepeatMode)),
-          this, SLOT(update_repeat_mode_field()));
+  connect(ui.repeat_mode_field, QOverload<int>::of(&EnumSelector<PatternRepeatMode>::activated),
+          this, &TilesetEditor::repeat_mode_selector_activated);
+  connect(ui.tileset_view, &TilesetView::change_selected_patterns_repeat_mode_requested,
+          this, &TilesetEditor::change_selected_patterns_repeat_mode_requested);
+  connect(model, &TilesetModel::pattern_repeat_mode_changed,
+          this, &TilesetEditor::update_repeat_mode_field);
 
-  connect(ui.scrolling_field, QOverload<int>::of(&QComboBox::activated),
+  connect(ui.scrolling_field, QOverload<int>::of(&EnumSelector<PatternScrolling>::activated),
           this, &TilesetEditor::scrolling_selector_activated);
   connect(ui.tileset_view, &TilesetView::change_selected_patterns_scrolling_requested,
           this, &TilesetEditor::change_selected_patterns_scrolling_requested);
@@ -1026,42 +1029,45 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   connect(model, &TilesetModel::pattern_separation_changed,
           this, &TilesetEditor::update_animation_separation_field);
 
-  connect(ui.tileset_view, SIGNAL(create_pattern_requested(QString, QRect, Ground)),
-          this, SLOT(create_pattern_requested(QString, QRect, Ground)));
+  connect(ui.tileset_view, &TilesetView::create_pattern_requested,
+          this, &TilesetEditor::create_pattern_requested);
+  connect(ui.tileset_view, &TilesetView::duplicate_selected_patterns_requested,
+          this, &TilesetEditor::duplicate_selected_patterns_requested);
+  connect(ui.tileset_view, &TilesetView::create_border_set_requested,
+          this, &TilesetEditor::create_border_set_requested);
 
-  connect(ui.tileset_view, SIGNAL(duplicate_selected_patterns_requested(QPoint)),
-          this, SLOT(duplicate_selected_patterns_requested(QPoint)));
+  connect(ui.patterns_list_view, &TilePatternsListView::delete_selected_patterns_requested,
+          this, &TilesetEditor::delete_selected_patterns_requested);
+  connect(ui.tileset_view, &TilesetView::delete_selected_patterns_requested,
+          this, &TilesetEditor::delete_selected_patterns_requested);
 
-  connect(ui.patterns_list_view, SIGNAL(delete_selected_patterns_requested()),
-          this, SLOT(delete_selected_patterns_requested()));
-  connect(ui.tileset_view, SIGNAL(delete_selected_patterns_requested()),
-          this, SLOT(delete_selected_patterns_requested()));
+  connect(ui.delete_border_set_button, &QPushButton::clicked,
+          this, &TilesetEditor::delete_border_set_selection_requested);
+  connect(ui.border_sets_tree_view, &BorderSetTreeView::delete_border_sets_requested,
+          this, &TilesetEditor::delete_border_sets_requested);
+  connect(ui.border_sets_tree_view, &BorderSetTreeView::delete_border_set_patterns_requested,
+          this, &TilesetEditor::delete_border_set_patterns_requested);
+  connect(ui.create_border_set_button, &QPushButton::clicked,
+          this, [this]() {
+    create_border_set_requested({});
+  });
+  connect(ui.border_sets_tree_view, &BorderSetTreeView::change_border_set_patterns_requested,
+          this, &TilesetEditor::change_border_set_patterns_requested);
+  connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
+          this, &TilesetEditor::update_pattern_view);
 
-  connect(ui.delete_border_set_button, SIGNAL(clicked(bool)),
-          this, SLOT(delete_border_set_selection_requested()));
-  connect(ui.border_sets_tree_view, SIGNAL(delete_border_sets_requested(QStringList)),
-          this, SLOT(delete_border_sets_requested(QStringList)));
-  connect(ui.border_sets_tree_view, SIGNAL(delete_border_set_patterns_requested(QList<QPair<QString, BorderKind>>)),
-          this, SLOT(delete_border_set_patterns_requested(QList<QPair<QString, BorderKind>>)));
-  connect(ui.create_border_set_button, SIGNAL(clicked(bool)),
-          this, SLOT(create_border_set_requested()));
-  connect(ui.border_sets_tree_view, SIGNAL(change_border_set_patterns_requested(QString, QStringList)),
-          this, SLOT(change_border_set_patterns_requested(QString, QStringList)));
-  connect(&model->get_selection_model(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_pattern_view()));
-
-  connect(ui.rename_border_set_button, SIGNAL(clicked()),
-          this, SLOT(change_selected_border_set_id_requested()));
-  connect(ui.border_set_id_button, SIGNAL(clicked()),
-          this, SLOT(change_selected_border_set_id_requested()));
-  connect(model, SIGNAL(border_set_id_changed(QString, QString)),
-          this, SLOT(update_border_set_id_field()));
-  connect(ui.border_set_inner_field, SIGNAL(activated(QString)),
-          this, SLOT(border_set_inner_selector_activated()));
-  connect(model, SIGNAL(border_set_inner_changed(QString, bool)),
-          this, SLOT(update_border_set_inner_field()));
-  connect(ui.border_sets_tree_view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_border_set_view()));
+  connect(ui.rename_border_set_button, &QPushButton::clicked,
+          this, &TilesetEditor::change_selected_border_set_id_requested);
+  connect(ui.border_set_id_button, &QToolButton::clicked,
+          this, &TilesetEditor::change_selected_border_set_id_requested);
+  connect(model, &TilesetModel::border_set_id_changed,
+          this, &TilesetEditor::update_border_set_id_field);
+  connect(ui.border_set_inner_field, QOverload<int>::of(&QComboBox::activated),
+          this, &TilesetEditor::border_set_inner_selector_activated);
+  connect(model, &TilesetModel::border_set_inner_changed,
+          this, &TilesetEditor::update_border_set_inner_field);
+  connect(ui.border_sets_tree_view->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &TilesetEditor::update_border_set_view);
 
   connect(model, &TilesetModel::tileset_data_file_changed,
           this, &TilesetEditor::tileset_data_file_changed);
@@ -1850,8 +1856,9 @@ void TilesetEditor::update_border_set_view() {
 
 /**
  * @brief Slot called when the user wants to create a border set.
+ * @param pattern_ids Patterns to create the border set from (can be empty).
  */
-void TilesetEditor::create_border_set_requested() {
+void TilesetEditor::create_border_set_requested(const QStringList& pattern_ids) {
 
   bool ok = false;
   QString border_set_id = QInputDialog::getText(
@@ -1866,7 +1873,9 @@ void TilesetEditor::create_border_set_requested() {
     return;
   }
 
-  try_command(new CreateBorderSetCommand(*this, border_set_id));
+  if (try_command(new CreateBorderSetCommand(*this, border_set_id, pattern_ids))) {
+    ui.patterns_border_sets_tab_widget->setCurrentWidget(ui.border_sets_view);
+  }
 }
 
 /**

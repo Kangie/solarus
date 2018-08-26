@@ -1552,6 +1552,16 @@ int TilesetModel::get_selected_index() const {
 }
 
 /**
+ * @brief Returns the id of the selected pattern.
+ * @return The selected pattern id.
+ * Returns an empty string if no pattern is selected or if multiple patterns
+ * are selected.
+ */
+QString TilesetModel::get_selected_id() const {
+  return index_to_id(get_selected_index());
+}
+
+/**
  * @brief Returns all selected pattern indexes.
  * @return The selected pattern indexes.
  */
@@ -1561,6 +1571,20 @@ QList<int> TilesetModel::get_selected_indexes() const {
   const QModelIndexList& selected_indexes = selection_model.selectedIndexes();
   for (const QModelIndex& index : selected_indexes) {
     result << index.row();
+  }
+  return result;
+}
+
+/**
+ * @brief Returns all selected pattern ids.
+ * @return The selected pattern ids.
+ */
+QStringList TilesetModel::get_selected_ids() const {
+
+  QStringList result;
+  const QModelIndexList& selected_indexes = selection_model.selectedIndexes();
+  for (const QModelIndex& index : selected_indexes) {
+    result << index_to_id(index.row());
   }
   return result;
 }
@@ -1866,7 +1890,6 @@ QStringList TilesetModel::get_border_set_patterns(const QString& border_set_id) 
  *
  * @param border_set_id A border set id.
  * @param patterns The pattern ids in the order of the BorderKind enum.
- * It must have 12 elements.
  * @throws EditorException in case of error.
  */
 void TilesetModel::set_border_set_patterns(
@@ -1878,10 +1901,11 @@ void TilesetModel::set_border_set_patterns(
     throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
   }
 
-  Q_ASSERT(patterns.size() == 12);
-
   for (int i = 0; i < 12; ++i) {
     BorderKind border_kind = static_cast<BorderKind>(i);
+    if (i >= patterns.size()) {
+      return;
+    }
     set_border_set_pattern(border_set_id, border_kind, patterns[i]);
   }
 }

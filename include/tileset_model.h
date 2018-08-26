@@ -127,7 +127,9 @@ public:
   bool is_selection_empty() const;
   int get_selection_count() const;
   int get_selected_index() const;
+  QString get_selected_id() const;
   QList<int> get_selected_indexes() const;
+  QStringList get_selected_ids() const;
   void set_selected_index(int index);
   void set_selected_indexes(const QList<int>& indexes);
   void add_to_selected(int index);
