@@ -337,6 +337,7 @@ for userdata known by Solarus, it returns the exact Solarus type name.
   \c "circle_movement",
   \c "jump_movement",
   \c "pixel_movement",
+  \c "state",
   \c "hero",
   \c "dynamic_tile",
   \c "teletransporter",

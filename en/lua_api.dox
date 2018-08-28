@@ -81,7 +81,7 @@ See the specification page of each feature for more details.
 - \subpage lua_api_main "sol.main": some general-purpose features.
 - \subpage lua_api_audio "sol.audio": playing musics and sounds.
 - \subpage lua_api_video "sol.video": changing video settings.
-- \subpage lua_api_shader "sol.shader": modifying the rendering. 
+- \subpage lua_api_shader "sol.shader": modifying the rendering.
 - \subpage lua_api_input "sol.input": checking keyboard and joypad state.
 - \subpage lua_api_file "sol.file": directly accessing data files.
 - \subpage lua_api_menu "sol.menu": showing various information on the screen.
@@ -96,9 +96,9 @@ See the specification page of each feature for more details.
   equipment item and its behavior.
 - \subpage lua_api_map "sol.map": handling the current map and its
   properties (only during a game).
-- \subpage lua_api_entity "sol.entity": controls entities placed on the map
+- \subpage lua_api_entity "sol.entity": managing entities placed on the map
   (only during a game), like the hero, enemies, chests, non-playing
   characters, etc.
-
+- \subpage lua_api_state "sol.state": customizing the behavior of
+  the hero entity.
 */
-
