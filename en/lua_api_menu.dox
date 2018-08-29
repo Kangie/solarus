@@ -171,7 +171,7 @@ Menus of are drawn in the following order:
 -# \ref lua_api_game "Game" menus (only during a game).
 -# \ref lua_api_main "Main" menus (the more general ones).
 
-When several menus exist in the same context, they are updated from the back
+When several menus exist in the same context, they are drawn from the back
 one to the front one.
 You can control this order thanks to the
 \c on_top parameter of
