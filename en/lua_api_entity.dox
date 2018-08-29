@@ -769,10 +769,8 @@ position.
 Returns a \ref lua_api_sprite "sprite" representing this entity.
 
 To manage entities with multiple sprites, you can set names
-with sprite creation methods like
-\ref lua_api_enemy_create_sprite "enemy:create_sprite()"
-and
-\ref lua_api_custom_entity_create_sprite "custom_entity:create_sprite()".
+when you create sprites with
+\ref lua_api_entity_create_sprite "entity:create_sprite()".
 However, it is easier to just leave the names blank and simply store the
 result of these sprite creation methods.
 The name is more useful for built-in entities that have multiple
