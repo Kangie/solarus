@@ -412,8 +412,10 @@ Returns the name of the current built-in state of the hero.
   \c "sword swinging",
   \c "sword tapping",
   \c "treasure",
-  \c "using item"
-  or \c "victory".
+  \c "using item",
+  \c "victory"
+  or
+  \c "custom".
 
 \subsection lua_api_hero_freeze hero:freeze()
 

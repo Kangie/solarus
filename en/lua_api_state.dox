@@ -1,11 +1,94 @@
 /**
-\page lua_api_state State
+\page lua_api_state Custom states
 
 \tableofcontents
 
-TODO
+This module provides a datatype \c state
+that represents a custom state allowing advanced customization of the
+\ref lua_api_hero "hero".
 
 \section lua_api_state_overview Overview
+
+Custom states can be used to precisely control everything that can happen to
+the \ref lua_api_hero "hero" in particular situations.
+
+The engine provides a number of built-in states like
+\c "free", \c "frozen", \c "hurt", \c "swimming", \c "pushing" and more
+(see \ref lua_api_hero "hero:get_state()" for the whole list).
+In every state, the hero can or cannot do specific actions (like moving),
+and can react or ignore other entities.
+
+Most of the time, you don't need custom states.
+Custom states are for advanced users who want more control.
+Remember that in any built-in state, you can already customize the essential
+features like sprites and movements.
+More often that not, the \c "frozen" built-in state is enough to make a lot of
+things, like cutscenes.
+
+Sometimes however, you may want more advanced customization.
+For instance, if the built-in \c "swimming" state does not fit your needs,
+you can make a custom state instead with your own swimming implementation.
+Or sometimes, you just want a completely new behavior that is not
+covered by any existing built-in state.
+
+\subsection lua_api_state_overview_how_to How to implement a custom state
+
+The \ref lua_api_hero "hero" always has only one current state.
+It can either be a built-in state or a custom state.
+
+To make a custom state, first create a custom state object with
+\ref lua_api_state_create "sol.state.create()".
+Then, use some of the many methods and events documented below,
+and finally start your state on the \ref lua_api_hero "hero"
+with \ref lua_api_hero_start_state "hero:start_state(state)".
+
+After this operation, the current state string of the hero
+(as returned by \ref lua_api_hero "hero:get_state()")
+is \c "custom", and no longer a usual built-in state like
+\c "free", \c "frozen", \c "swimming", etc.
+You can then use
+\ref lua_api_hero_get_custom_state "hero:get_custom_state()" to
+retrieve the actual custom state object that you created.
+
+When your state finishes, because you or the engine started another state
+(built-in or custom), it is your responsibility to clean things that you may
+have done on objects other than the state.
+For instance, if you
+\ref lua_api_entity_create_sprite "added a sprite" to the hero for your
+custom state, maybe you want to remove it when the state finishes.
+The event \ref lua_api_state_on_finished "state:on_finished()"
+is the appropriate place to do so, because it is called no matter who is
+changing the state.
+
+\subsection lua_api_state_overview_example Example
+
+This short example is a state that allows the
+\ref lua_api_hero "hero" to move,
+but keeps his sprites direction fixed.
+
+\verbatim
+local state = sol.state.create()      -- Create a custom state object.
+state:set_can_control_movement(true)  -- Set up its properties.
+state:set_can_control_direction(false)
+hero:start_state(state)               -- Associate it to the hero.
+\endverbatim
+
+There are other ways to implement such feature,
+but custom states make this easier.
+
+\section lua_api_state_functions Functions of sol.state
+
+TODO
+
+\section lua_api_state_methods Methods of the type state
+
+TODO
+
+\section lua_api_state_events Events of a state
+
+Events are callback methods automatically called by the engine if you define
+them.
+In the case of states, they are only called on the current state.
 
 TODO
 
