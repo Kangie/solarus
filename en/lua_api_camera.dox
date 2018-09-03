@@ -166,6 +166,8 @@ Switches the camera to manual state.
 \subsection lua_api_camera_get_surface camera:get_surface()
 
 Returns the \ref lua_api_surface "surface" this camera draws its content to.
+
+The size of this surface is the size of the camera.
 - Return value (\ref lua_api_surface "surface"): The camera's surface.
 
 \section lua_api_camera_inherited_events Events inherited from map entity
