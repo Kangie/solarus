@@ -163,6 +163,11 @@ Switches the camera to manual state.
 \remark The camera automatically switches to manual state if you start
   a \ref lua_api_movement_start "movement" on it.
 
+\subsection lua_api_camera_get_surface camera:get_surface()
+
+Returns the \ref lua_api_surface "surface" this camera draws its content to.
+- Return value (\ref lua_api_surface "surface"): The camera's surface.
+
 \section lua_api_camera_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define
