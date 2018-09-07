@@ -384,43 +384,14 @@ the hero is currently lifting, carrying or throwing, if any.
 - Return value (\ref lua_api_carried_object "carried object"):
   The current carried object or \c nil.
 
-\subsection lua_api_hero_get_state hero:get_state()
-
-Returns the name of the current built-in state of the hero.
-- Return value (\c string): The current state. Can be one of:
-  \c "back to solid ground",
-  \c "boomerang",
-  \c "bow",
-  \c "carrying",
-  \c "falling",
-  \c "forced walking",
-  \c "free",
-  \c "frozen",
-  \c "grabbing",
-  \c "hookshot",
-  \c "hurt",
-  \c "jumping",
-  \c "lifting",
-  \c "plunging",
-  \c "pulling",
-  \c "pushing",
-  \c "running",
-  \c "stairs",
-  \c "swimming",
-  \c "sword loading",
-  \c "sword spin attack",
-  \c "sword swinging",
-  \c "sword tapping",
-  \c "treasure",
-  \c "using item",
-  \c "victory"
-  or
-  \c "custom".
-
 \subsection lua_api_hero_freeze hero:freeze()
 
 Prevents the player from moving the hero until you call \ref
 lua_api_hero_unfreeze "hero:unfreeze()".
+
+After you call this method, the
+\ref lua_api_hero_get_state "state" of the hero is
+\c "frozen".
 
 \subsection lua_api_hero_unfreeze hero:unfreeze()
 
@@ -609,6 +580,55 @@ and possibly its sprite.
   unless you override this default calculation in
   \ref lua_api_hero_on_taking_damage "hero:on_taking_damage()".
 
+\subsection lua_api_hero_get_state hero:get_state()
+
+Returns the name of the current built-in state of the hero.
+- Return value (\c string): The current state. Can be one of:
+  \c "back to solid ground",
+  \c "boomerang",
+  \c "bow",
+  \c "carrying",
+  \c "falling",
+  \c "forced walking",
+  \c "free",
+  \c "frozen",
+  \c "grabbing",
+  \c "hookshot",
+  \c "hurt",
+  \c "jumping",
+  \c "lifting",
+  \c "plunging",
+  \c "pulling",
+  \c "pushing",
+  \c "running",
+  \c "stairs",
+  \c "swimming",
+  \c "sword loading",
+  \c "sword spin attack",
+  \c "sword swinging",
+  \c "sword tapping",
+  \c "treasure",
+  \c "using item",
+  \c "victory"
+  or
+  \c "custom".
+
+\subsection lua_api_hero_start_state hero:start_state(state)
+
+Starts a \ref lua_api_state "custom state" on the hero.
+
+Custom states allow advanced customization of the hero's behavior.
+After you call this method, the hero state string as returned by
+\ref lua_api_hero_get_state "hero:get_state()" is \c "custom".
+Use \ref lua_api_hero_get_custom_state "hero:get_custom_state()"
+to get the actual custom state object.
+
+\subsection lua_api_hero_get_custom_state hero:get_custom_state()
+
+Returns the current custom state of the hero, if any.
+- Return value (\ref lua_api_state "state") : The custom state,
+  or \c nil if the current state is not a custom one.
+
 \section lua_api_hero_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define
@@ -626,10 +646,20 @@ The following events are specific to the hero.
 Recall that the hero persists when the player goes to another map, and
 so do the events defined on the hero.
 
-\subsection lua_api_hero_on_state_changed hero:on_state_changed(state)
+\subsection lua_api_hero_on_state_changing hero:on_state_changing(state, new_state)
 
-Called when the built-in state of the hero changes.
-- \c state (string): Name of the new state. See
+Called when the state of the hero is about to change.
+- \c state (string): Name of the current built-in state. See
+  \ref lua_api_hero_get_state "hero:get_state()" for the list of possible
+  built-in states.
+- \c new_state (string): Name of the built-in state about to start. See
+  \ref lua_api_hero_get_state "hero:get_state()" for the list of possible
+  built-in states.
+
+\subsection lua_api_hero_on_state_changed hero:on_state_changed(new_state)
+
+Called when the state of the hero has just changed.
+- \c new_state (string): Name of the new state. See
   \ref lua_api_hero_get_state "hero:get_state()" for the list of possible
   states.
 

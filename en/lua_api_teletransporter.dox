@@ -122,5 +122,8 @@ The following events are specific to teletransporters.
 Called when the user takes this teletransporter, just before the map closing
 transition starts.
 
-*/
+\remark If you \ref lua_api_entity_set_enabled "disable"
+  or \ref lua_api_entity_remove "remove" the teletransporter
+  during this event, then the teletransportation does not occur.
 
+*/
