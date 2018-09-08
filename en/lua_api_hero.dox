@@ -661,7 +661,7 @@ Called when the state of the hero is about to change.
 Called when the state of the hero has just changed.
 - \c new_state_name (string): Name of the new state. See
   \ref lua_api_hero_get_state "hero:get_state()" for the list of possible
-  states.
+  state names.
 
 \remark This event is called even for the initial state of the hero,
   right after \ref lua_api_game_on_started "game:on_started()".
