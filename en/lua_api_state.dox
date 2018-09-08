@@ -73,7 +73,7 @@ state:set_can_control_direction(false)
 hero:start_state(state)               -- Associate it to the hero.
 \endverbatim
 
-There are other ways to implement such feature,
+There are other ways to implement such a feature,
 but custom states make this easier.
 
 \section lua_api_state_functions Functions of sol.state
