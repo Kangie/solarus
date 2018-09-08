@@ -646,13 +646,13 @@ The following events are specific to the hero.
 Recall that the hero persists when the player goes to another map, and
 so do the events defined on the hero.
 
-\subsection lua_api_hero_on_state_changing hero:on_state_changing(state_name, new_state_name)
+\subsection lua_api_hero_on_state_changing hero:on_state_changing(state_name, next_state_name)
 
 Called when the state of the hero is about to change.
 - \c state_name (string): Name of the current built-in state. See
   \ref lua_api_hero_get_state "hero:get_state()" for the list of possible
   built-in states.
-- \c new_state_name (string): Name of the built-in state about to start. See
+- \c next_state_name (string): Name of the built-in state about to start. See
   \ref lua_api_hero_get_state "hero:get_state()" for the list of possible
   built-in states.
 
