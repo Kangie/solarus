@@ -85,7 +85,7 @@ Sets the current animation of this sprite.
 
 Stops playing the current animation of this sprite.
 
-This function makes the animation stop like if the last frame was finished.
+The sprite stops being displayed, like when the last frame finishes.
 
 \subsection lua_api_sprite_is_animation_started sprite:is_animation_started()
 
