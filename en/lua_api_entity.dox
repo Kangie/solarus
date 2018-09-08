@@ -1001,6 +1001,19 @@ called when this entity has just been
 called when this entity has just been
 \ref lua_api_entity_is_enabled "disabled".
 
+\subsection lua_api_entity_on_suspended entity:on_suspended(suspended)
+
+Called when the \ref lua_api_map "map"
+has just been suspended or resumed.
+
+The map is suspended by the engine in a few cases, like when the \ref
+lua_api_game "game" is
+paused or when the camera is being moved by a script.
+When this happens, all \ref lua_api_entity "map entities" stop moving and most
+\ref lua_api_sprite "sprites" stop their animation.
+- \c suspended (boolean): \c true if the map was just suspended, \c false if it
+  was resumed.
+
 \subsection lua_api_entity_on_position_changed entity:on_position_changed(x, y, layer)
 
 Called when the coordinates of this entity have just changed.
