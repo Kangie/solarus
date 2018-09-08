@@ -76,6 +76,7 @@ If the delay is set to zero, the function is called immediately.
   \ref lua_api_game "game",
   \ref lua_api_item "item",
   \ref lua_api_entity "map entity",
+  \ref lua_api_state "state",
   \ref lua_api_menu "menu"
   or
   \ref lua_api_main "sol.main"; optional): Determines the lifetime of
@@ -99,14 +100,18 @@ If the delay is set to zero, the function is called immediately.
     canceled when the entity is removed from the map.
     In the case of an enemy, the timer is also canceled when the enemy
     is hurt, immobilized or restarts.
-    Also note that while the entity is suspended, the timer is temporarily
-    paused.
+    Also note that while the entity is suspended, the timer is also
+    suspended.
     An entity may be suspended when the
     \ref lua_api_game_is_suspended "game is suspended",
     or when the entity is
     \ref lua_api_entity_set_enabled "disabled".<br>
     Example: a boss who shoots fireballs every 10 seconds.
     Most enemy scripts usually create timers.
+  - If you set the context to a \ref lua_api_state "state", the timer is
+    canceled when the custom hero state finishes or when the hero is removed.
+    Like entity timers, state timers get suspended when the hero is suspended.
+    Example: charging an attack during 3 seconds in a custom state.
   - If you set the context to a \ref lua_api_menu "menu", the timer is
     canceled when the menu is closed.<br>
     Example: in the title screen, show some animations after a few seconds
@@ -248,8 +253,9 @@ This function has no effect if the timer is already finished.
 - \c remaining_time (number): The time remaining in milliseconds.
   \c 0 makes the timer finish now and immediately executes its callback.
 
-\remark When a timer is repeated (that is, if its callback returns \c true),
-  the timer gets rescheduled with its initial delay again, no matter if you
+\remark When a timer is repeated
+  (that is, if its callback returns \c true or a number),
+  the timer gets rescheduled with its full delay again, no matter if you
   called this function in the meantime.
 
 */
