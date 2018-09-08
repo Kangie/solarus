@@ -648,16 +648,6 @@ If your enemy should move, this is the right place to create its movement.
 automatically destroyed.
 Thus, you should also recreate them from this event.
 
-\subsection lua_api_enemy_on_pre_draw enemy:on_pre_draw()
-
-Called just before the enemy is drawn on the map.
-You may display additional things below the enemy.
-
-\subsection lua_api_enemy_on_post_draw enemy:on_post_draw()
-
-Called just after the enemy is drawn on the map.
-You may display additional things above the enemy.
-
 \subsection lua_api_enemy_on_collision_enemy enemy:on_collision_enemy(other_enemy, other_sprite, my_sprite)
 
 Called when a \ref lua_api_sprite "sprite"

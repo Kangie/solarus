@@ -1069,4 +1069,26 @@ destructible object (can only be the \ref lua_api_hero "hero" for now).
 - \c carried_object (\ref lua_api_carried_object "carried object"): The carried
   object that was created.
 
+\subsection lua_api_entity_on_pre_draw entity:on_pre_draw(camera)
+
+Called just before the entity is drawn on the map.
+
+You may display additional things below the entity.
+To do so, you can either call
+\ref lua_api_map_draw_visual "map:draw_visual()"
+or draw on \ref lua_api_camera "camera:get_surface()".
+- \c camera (\ref lua_api_camera "camera"): The camera where this entity is
+  being drawn.
+
+\subsection lua_api_entity_on_post_draw entity:on_post_draw(camera)
+
+Called just after the entity is drawn on the map.
+
+You may display additional things above the entity.
+To do so, you can either call
+\ref lua_api_map_draw_visual "map:draw_visual()"
+or draw on \ref lua_api_camera "camera:get_surface()".
+- \c camera (\ref lua_api_camera "camera"): The camera where this entity is
+  being drawn.
+
 */

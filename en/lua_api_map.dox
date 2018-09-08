@@ -489,7 +489,7 @@ This function should only be called during the drawing phase of the map,
 for example from
 \ref lua_api_map_on_draw "map:on_draw()"
 or from
-\ref lua_api_custom_entity_on_pre_draw "custom_entity:on_pre_draw()".
+\ref lua_api_entity_on_post_draw "custom_entity:on_post_draw()".
 - \c drawable (\ref lua_api_drawable "drawable"): The visual object to draw
   on the map.
 - \c x (number): X coordinate of where to draw the object, in map coordinates.

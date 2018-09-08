@@ -341,16 +341,6 @@ Called at each cycle while this custom entity lives on the map.
 \remark As this function is called at each cycle, it is recommended to use other
 solutions when possible, like \ref lua_api_timer "timers" and other events.
 
-\subsection lua_api_custom_entity_on_pre_draw custom_entity:on_pre_draw()
-
-Called just before this custom entity is drawn on the map.
-You may display additional things below the sprites.
-
-\subsection lua_api_custom_entity_on_post_draw custom_entity:on_post_draw()
-
-Called just after this custom entity is drawn on the map.
-You may display additional things above the sprites.
-
 \subsection lua_api_custom_entity_on_ground_below_changed custom_entity:on_ground_below_changed(ground_below)
 
 Called when the kind of
