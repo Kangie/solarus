@@ -53,6 +53,13 @@ Returns the name of the animation set used by this sprite.
   This name corresponds to a sprite sheet data file in the \c sprites directory
   (without its extension).
 
+\subsection lua_api_sprite_has_animation sprite:has_animation(animation_name)
+
+Returns whether the specified animation exists on a sprite.
+- \c animation_name (string): Name of the animation to check.
+- Return value (boolean): \c true if the sprite animation set contains an
+  animation with this name.
+
 \subsection lua_api_sprite_get_animation sprite:get_animation()
 
 Returns the name of the current animation of this sprite.
@@ -74,12 +81,18 @@ Sets the current animation of this sprite.
   No value means no action after the animation finishes: in this case, the
   sprite stops being displayed.
 
-\subsection lua_api_sprite_has_animation sprite:has_animation(animation_name)
+\subsection lua_api_sprite_stop_animation sprite:stop_animation()
 
-Returns whether the specified animation exists on a sprite.
-- \c animation_name (string): Name of the animation to check.
-- Return value (boolean): \c true if the sprite animation set contains an
-  animation with this name.
+Stops playing the current animation of this sprite.
+
+This function makes the animation stop like if the last frame was finished.
+
+\subsection lua_api_sprite_is_animation_started sprite:is_animation_started()
+
+Returns whether the current animation is being played.
+- Return value (boolean): \c true if the current animation is playing,
+  \c false if it is finished or was
+  \ref lua_api_sprite_stop_animation "stopped".
 
 \subsection lua_api_sprite_get_direction sprite:get_direction()
 
@@ -190,6 +203,17 @@ Returns the coordinates of a frame in its source image.
 - Return value 1 (number): X coordinate of the upper left corner of the frame in its source image.
 - Return value 2 (number): Y coordinate of the upper left corner of the frame in its source image.
 
+\subsection lua_api_sprite_is_paused sprite:is_paused()
+
+Returns whether this sprite is paused.
+- Return value (boolean): \c true if this sprite is paused.
+
+\subsection lua_api_sprite_set_paused sprite:set_paused([paused])
+
+Pauses or resumes the animation of this sprite.
+- \c paused (boolean, optional): \c true to pause the sprite,
+  \c false to unpause it. No value means \c true.
+
 \subsection lua_api_sprite_get_ignore_suspend sprite:get_ignore_suspend()
 
 Returns whether the animation should continue even when the
@@ -216,30 +240,6 @@ will now always set its current frame to the current frame of its reference
 sprite.
 - \c reference_sprite (sprite, optional): The reference sprite. \c nil means
   stopping any previous synchronization.
-
-\subsection lua_api_sprite_is_paused sprite:is_paused()
-
-Returns whether this sprite is paused.
-- Return value (boolean): \c true if this sprite is paused.
-
-\subsection lua_api_sprite_set_paused sprite:set_paused([paused])
-
-Pauses or resumes the animation of this sprite.
-- \c paused (boolean, optional): \c true to pause the sprite,
-  \c false to unpause it. No value means \c true.
-
-\subsection lua_api_sprite_is_animation_started sprite:is_animation_started()
-
-Returns whether the current animation is being played.
-- Return value (boolean): \c true if the current animation is playing,
-  \c false if it is finished or was
-  \ref lua_api_sprite_stop_animation "stopped".
-
-\subsection lua_api_sprite_stop_animation sprite:stop_animation()
-
-Stops playing the current animation of this sprite.
-
-This function makes the animation stop like if the last frame was finished.
 
 \section lua_api_sprite_events Events of the type sprite
 
