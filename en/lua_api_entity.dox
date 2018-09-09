@@ -880,6 +880,34 @@ everything else continues normally, including collisions.
 - \c visible (boolean, optional): \c true to show the entity, \c false to hide
   it. No value means \c true.
 
+\subsection lua_api_entity_get_draw_override entity:get_draw_override()
+
+Returns the draw function of this entity.
+
+See \ref lua_api_entity_set_draw_override "entity:set_draw_override()"
+for more details.
+- Return value (function or nil): The drawing function, or \c nil if the draw
+  function was not overridden.
+
+\subsection lua_api_entity_set_draw_override entity:set_draw_override(draw_override)
+
+Changes how this entity is drawn.
+
+You can use this to replace the built-in draw implementation of the engine by
+your own function, if the default behavior does not fit your needs.
+To do so, your function can either call
+\ref lua_api_map_draw_visual "map:draw_visual()"
+or draw on \ref lua_api_camera "camera:get_surface()".
+- \c draw_override (function or nil): The draw function, or \c nil to
+  restore the built-in drawing.
+  Your function will receive the following parameters:
+  - \c entity (entity): The entity to draw.
+  - \c camera (\ref lua_api_camera "camera"): Camera where this entity is drawn.
+
+\remark Even when you set a draw override, events
+  \ref lua_api_entity_on_pre_draw "entity:on_pre_draw()" and
+  \ref lua_api_entity_on_post_draw "entity:on_post_draw()" are still called.
+
 \subsection lua_api_entity_get_weight entity:get_weight()
 
 Returns the weight of this entity, if any.
