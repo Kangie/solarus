@@ -88,14 +88,122 @@ Creates a custom state but does not start it yet.
 
 \section lua_api_state_methods Methods of the type state
 
+\subsection lua_api_state_get_description state:get_description()
+
 TODO
+
+\subsection lua_api_state_set_description state:set_description()
+
+TODO
+
+\subsection lua_api_state_get_entity state:get_entity()
+
+TODO
+
+\subsection lua_api_state_get_map state:get_map()
+
+TODO
+
+\subsection lua_api_state_get_game state:get_game()
+
+TODO
+
+\subsection lua_api_state_is_started state:is_started()
+
+TODO
+
+\subsection lua_api_state_is_stopping state:is_stopping()
+
+TODO
+
+state:is/set_visible()
+
+state:get/set_draw_override()
+
+state:get/set_can_control_direction()
+
+state:get/set_can_control_movement()
+
+state:is/set_affected_by_ground(ground)  -- deep water, hole, ice, lava, prickles (TODO shallow_water, grass)
+
+state:is/set_touching_ground()
+
+state:get/set_can_come_from_bad_ground()
+
+state:get/set_are_collisions_ignored()
+
+state:get/set_can_traverse_ground(ground)  -- Accepts a callback
+
+state:is/set_affected_by(entity_type)  -- teletransporter, stream, sensor, explosion, switch
+
+state:get/set_can_traverse(entity_type)  --   -- Accepts a callback
+
+state:is/set_teletransporter_delayed()
+
+state:get/set_can_persist_on_stream()
+
+state:get/set_can_be_hurt()  -- Accepts a callback
+
+state:get/set_can_use_sword()
+
+state:get/set_can_use_shield()
+
+state:get/set_can_use_item()
+
+state:get/set_can_pick_treasure()
+
+state:get/set_can_take_stairs()
+
+state:get/set_can_take_jumper()
+
+state:get/set_previous_carried_object_behavior()  -- throw, destroy, keep
 
 \section lua_api_state_events Events of a state
 
 Events are callback methods automatically called by the engine if you define
 them.
-In the case of states, they are only called on the current state.
+In the case of states, they are only called on an active state.
 
 TODO
+
+state:on_started(previous_state_name, [previous_state])
+
+state:on_finished(next_state_name, [next_state])
+
+state:on_update()
+
+state:on_pre_draw(camera)
+
+state:on_post_draw(camera)
+
+state:on_suspended(suspended)
+
+state:on_map_changed()
+
+state:on_map_finished()
+
+state:on_map_started()
+
+state:on_map_opening_transition_finished()
+
+state:on_position_changed()
+
+state:on_layer_changed()
+
+state:on_ground_changed()
+
+state:on_movement_changed()
+
+state:on_movement_finished()
+
+state:on_obstacle_reached()
+
+state:on_walking_speed_changed()
+
+state:on_attacked_enemy(attack, victim, victim_sprite, reaction)
+
+state:on_jumper_activated(jumper)
+
+state:on_command/key/joypad/mouse/finger_*()
 
 */
