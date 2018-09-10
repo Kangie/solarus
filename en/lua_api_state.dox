@@ -78,12 +78,12 @@ but custom states make this easier.
 
 \section lua_api_state_functions Functions of sol.state
 
-\subsection lua_api_state_create sol.state.create([name])
+\subsection lua_api_state_create sol.state.create([description])
 
 Creates a custom state but does not start it yet.
-- \c name (string, optional): A name describing your state.
-  The engine does nothing special with this name,
-  but it may help you identify the current state.
+- \c description (string, optional): An optional description of your state.
+  The engine does nothing special with this description,
+  but it may help you distinguish states.
 - Return value (state): The custom state created.
 
 \section lua_api_state_methods Methods of the type state
