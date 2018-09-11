@@ -90,11 +90,17 @@ Creates a custom state but does not start it yet.
 
 \subsection lua_api_state_get_description state:get_description()
 
-TODO
+Returns the description of this state.
+- Return value (string): The description, or \c nil if no description was set.
 
-\subsection lua_api_state_set_description state:set_description()
+\subsection lua_api_state_set_description state:set_description(description)
 
-TODO
+Sets the description of this state.
+
+The engine does nothing special with this description,
+but it may help you distinguish states.
+- \c description (string or nil): The description to set,
+  or \c nil to set no description.
 
 \subsection lua_api_state_get_entity state:get_entity()
 
