@@ -104,21 +104,32 @@ but it may help you distinguish states.
 
 \subsection lua_api_state_get_entity state:get_entity()
 
-TODO
+Returns the \ref lua_api_entity "entity" controlled by this state.
+- Return value (\ref lua_api_entity "entity"): The entity controlled by this
+  state (which can only by the \ref lua_api_hero "hero"),
+  or \c nil if the state is not associated to an entity yet.
+
+\remark Even if the state is finished, this method still returns the entity
+  that was controlled.
 
 \subsection lua_api_state_get_map state:get_map()
 
-TODO
+Returns the \ref lua_api_map "map" of the entity controlled by this state.
+- Return value (\ref lua_api_map "map"): The map,
+  or \c nil if the state is not associated to an entity yet.
 
 \subsection lua_api_state_get_game state:get_game()
 
-TODO
+Returns the \ref lua_api_game "game" of the entity controlled by this state.
+- Return value (\ref lua_api_game "game"): The game,
+  or \c nil if the state is not associated to an entity yet.
 
 \subsection lua_api_state_is_started state:is_started()
 
-TODO
-
-\subsection lua_api_state_is_stopping state:is_stopping()
+Returns whether this state is started, that is, if it was activated on an
+entity (see \ref lua_api_hero_start_state "hero:start_state()")
+and is not finished yet.
+- Return value (boolean): \c true if the state is started.
 
 TODO
 
