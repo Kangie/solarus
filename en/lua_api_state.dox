@@ -135,7 +135,7 @@ and is not finished yet.
 
 TODO
 
-\subsection lua_api_state_set_visible state:set_visible()
+\subsection lua_api_state_set_visible state:set_visible(visible)
 
 TODO
 
