@@ -131,9 +131,21 @@ entity (see \ref lua_api_hero_start_state "hero:start_state()")
 and is not finished yet.
 - Return value (boolean): \c true if the state is started.
 
+\subsection lua_api_state_is_visible state:is_visible()
+
 TODO
 
-state:is/set_visible()
+\subsection lua_api_state_set_visible state:set_visible()
+
+TODO
+
+\subsection lua_api_state_get_draw_override state:get_draw_override()
+
+TODO
+
+\subsection lua_api_state_set_draw_override state:set_draw_override(draw_override)
+
+TODO
 
 state:get/set_draw_override()
 
