@@ -226,7 +226,8 @@ With this setting, you can choose whether your timer gets suspended
 automatically as well.
 
 By default, \ref lua_api_map "map" timers,
-\ref lua_api_entity "entity" timers
+\ref lua_api_entity "entity" timers,
+\ref lua_api_entity "state" timers
 and
 \ref lua_api_item "item" timers are suspended with the
 map.
