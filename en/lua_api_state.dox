@@ -133,11 +133,16 @@ and is not finished yet.
 
 \subsection lua_api_state_is_visible state:is_visible()
 
-TODO
+Returns whether the entity is visible during this state.
+- Return value (boolean): \c true if the entity is visible during this state,
+  \c false if it is hidden.
 
-\subsection lua_api_state_set_visible state:set_visible(visible)
+\subsection lua_api_state_set_visible state:set_visible([visible])
 
-TODO
+Returns whether the entity should be visible during this state.
+- \c visible (boolean): \c true to make the entity visible during this state,
+  \c false to hide it.
+  No value means \c true.
 
 \subsection lua_api_state_get_draw_override state:get_draw_override()
 
@@ -146,8 +151,6 @@ TODO
 \subsection lua_api_state_set_draw_override state:set_draw_override(draw_override)
 
 TODO
-
-state:get/set_draw_override()
 
 state:get/set_can_control_direction()
 
