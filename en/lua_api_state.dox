@@ -146,9 +146,31 @@ Returns whether the entity should be visible during this state.
 
 \subsection lua_api_state_get_draw_override state:get_draw_override()
 
-TODO
+Returns the draw function of this state.
+
+See \ref lua_api_state_set_draw_override "state:set_draw_override()"
+for more details.
+- Return value (function or nil): The draw function, or \c nil if the draw
+  function was not overridden.
 
 \subsection lua_api_state_set_draw_override state:set_draw_override(draw_override)
+
+Changes how this entity is drawn during this state.
+
+You can use this to replace the built-in draw implementation of the engine by
+your own function, if the default behavior does not fit your needs.
+To do so, your function can either call
+\ref lua_api_map_draw_visual "map:draw_visual()"
+or draw on \ref lua_api_camera "camera:get_surface()".
+- \c draw_override (function or nil): The draw function, or \c nil to
+  restore the built-in drawing.
+  Your function will receive the following parameters:
+  - \c entity (entity): The entity to draw.
+  - \c camera (\ref lua_api_camera "camera"): Camera where this entity is drawn.
+
+\remark Even when you set a draw override, events
+  \ref lua_api_state_on_pre_draw "state:on_pre_draw()" and
+  \ref lua_api_state_on_post_draw "state:on_post_draw()" are still called.
 
 TODO
 

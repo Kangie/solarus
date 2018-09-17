@@ -886,7 +886,7 @@ Returns the draw function of this entity.
 
 See \ref lua_api_entity_set_draw_override "entity:set_draw_override()"
 for more details.
-- Return value (function or nil): The drawing function, or \c nil if the draw
+- Return value (function or nil): The draw function, or \c nil if the draw
   function was not overridden.
 
 \subsection lua_api_entity_set_draw_override entity:set_draw_override(draw_override)
