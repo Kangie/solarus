@@ -1750,8 +1750,8 @@ void EditEntityDialog::initialize_transition() {
     return;
   }
 
-  QString tileset_id = entity_before.get_field(tileset_field_name).toString();
-  ui.tileset_field->set_selected_id(tileset_id);
+  QString transition_name = entity_before.get_field(transition_field_name).toString();
+  ui.transition_field->set_selected_value(TransitionTraits::get_by_lua_name(transition_name));
 }
 
 /**
