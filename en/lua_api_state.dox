@@ -172,11 +172,44 @@ or draw on \ref lua_api_camera "camera:get_surface()".
   \ref lua_api_state_on_pre_draw "state:on_pre_draw()" and
   \ref lua_api_state_on_post_draw "state:on_post_draw()" are still called.
 
+\subsection lua_api_state_get_can_control_direction state:get_can_control_direction()
+
+Returns whether the player controls the direction of entity's sprites during
+this state.
+- Return value (boolean): \c true if the player controls the sprites direction.
+
+\subsection lua_api_state_set_can_control_direction state:set_can_control_direction([can_control_direction])
+
+Sets whether the player controls the direction of entity's sprites during
+this state.
+
+The initial value is \c true. If you set this to \c false, then the entity's
+sprites no longer automatically take the direction pressed by the player.
+- \c can_control_direction (boolean): \c true to let the player control the
+  sprites direction.
+  No value means \c true.
+
+\subsection lua_api_state_get_can_control_movement state:get_can_control_movement()
+
+Returns whether the player controls the movement of the entity during
+this state.
+- Return value (boolean): \c true if the player controls the movement.
+
+\subsection lua_api_state_set_can_control_movement state:set_can_control_movement([can_control_movement])
+
+Sets whether the player controls the movement of the entity during
+this state.
+
+The initial value is \c true.
+If this setting is \c true, a movement is automatically created on the entity
+and this movement reacts to the player's input.
+If you set this to \c false, then the entity has no automatic movement during
+this state.
+- \c can_control_movement (boolean): \c true to let the player control the
+  movement.
+  No value means \c true.
+
 TODO
-
-state:get/set_can_control_direction()
-
-state:get/set_can_control_movement()
 
 state:is/set_affected_by_ground(ground)  -- deep water, hole, ice, lava, prickles (TODO shallow_water, grass)
 
