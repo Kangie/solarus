@@ -209,17 +209,23 @@ this state.
   movement.
   No value means \c true.
 
+\subsection lua_api_state_is_affected_by_ground state:is_affected_by_ground(ground)
+
 TODO
 
-state:is/set_affected_by_ground(ground)  -- deep water, hole, ice, lava, prickles (TODO shallow_water, grass)
+\subsection lua_api_state_set_affected_by_ground state:set_affected_by_ground(ground, [affected])
 
-state:is/set_touching_ground()
+TODO
+
+\subsection lua_api_state_is_touching_ground state:is_touching_ground()
+
+\subsection lua_api_state_set_touching_ground state:set_touching_ground([touching_ground])
 
 state:get/set_can_come_from_bad_ground()
 
-state:get/set_are_collisions_ignored()
-
 state:get/set_can_traverse_ground(ground)  -- Accepts a callback
+
+state:get/set_are_collisions_ignored()
 
 state:is/set_affected_by(entity_type)  -- teletransporter, stream, sensor, explosion, switch
 
