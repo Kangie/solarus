@@ -211,15 +211,30 @@ this state.
 
 \subsection lua_api_state_is_affected_by_ground state:is_affected_by_ground(ground)
 
-TODO
+Returns whether the given kind of ground affects the entity during this state.
+- \c ground (string): Name of a ground type.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the list of possible
+  values.
+- Return value (boolean): \c true if this ground affects the entity during
+  this state.
 
 \subsection lua_api_state_set_affected_by_ground state:set_affected_by_ground(ground, [affected])
 
-TODO
+Sets whether a kind of ground affects the entity during this state.
+- \c ground (string): Name of a ground type.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the list of possible
+  values.
+- \c affected (boolean, optional): \c true to make this ground affect the
+  entity during this state.
+  No value means \c true.
 
 \subsection lua_api_state_is_touching_ground state:is_touching_ground()
 
+TODO
+
 \subsection lua_api_state_set_touching_ground state:set_touching_ground([touching_ground])
+
+TODO
 
 state:get/set_can_come_from_bad_ground()
 
