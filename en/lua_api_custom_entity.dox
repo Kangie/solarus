@@ -122,8 +122,8 @@ By default, this depends on the other entities: for example,
 while \ref lua_api_door "doors" cannot unless they are open.
 - \c entity_type (string, optional): A type of entity.
   See \ref lua_api_entity_get_type "entity:get_type()" for the possible values.
-  If not specified, the setting will be applied to all entity types that do
-  not override it.
+  If not specified, the setting will be applied to all entity types for which
+  you don't override this setting.
 - \c traversable (boolean, function or \c nil): Whether your custom entity can
   traverse the other entity type. This can be:
   - A boolean: \c true to allow your custom entity to traverse entities of the

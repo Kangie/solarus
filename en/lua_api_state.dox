@@ -209,44 +209,97 @@ this state.
   movement.
   No value means \c true.
 
+\subsection lua_api_state_is_touching_ground state:is_touching_ground()
+
+Returns whether the entity is touching the ground during this state.
+- Return value (boolean): \c true if the entity is touching ground during
+  this state.
+
+\subsection lua_api_state_set_touching_ground state:set_touching_ground([touching_ground])
+
+Sets whether the entity is touching ground during this state.
+
+The initial value is \c true.
+You should typically set this to \c false when the entity is jumping of flying.
+
+If you can set it to \c false, then the entity won't be affected by any
+\ref lua_api_map_get_ground "ground",
+by \ref lua_api_teletransporter "teletransporters",
+\ref lua_api_stream "streams" or
+\ref lua_api_switch "switches",
+won't fall to a lower layer when the ground is empty,
+and the position won't be saved as solid ground coordinates to come back to
+if falling into bad ground.
+- \c touching_ground (boolean, optional): \c true to set that the entity is
+  touching ground.
+
 \subsection lua_api_state_is_affected_by_ground state:is_affected_by_ground(ground)
 
 Returns whether the given kind of ground affects the entity during this state.
-- \c ground (string): Name of a ground type.
-  See \ref lua_api_map_get_ground "map:get_ground()" for the list of possible
-  values.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
 - Return value (boolean): \c true if this ground affects the entity during
   this state.
 
 \subsection lua_api_state_set_affected_by_ground state:set_affected_by_ground(ground, [affected])
 
 Sets whether a kind of ground affects the entity during this state.
-- \c ground (string): Name of a ground type.
-  See \ref lua_api_map_get_ground "map:get_ground()" for the list of possible
-  values.
+
+This setting only has an effect when
+\ref lua_api_state_is_touching_ground "state:is_touching_ground()" is \c true.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
 - \c affected (boolean, optional): \c true to make this ground affect the
   entity during this state.
   No value means \c true.
 
-\subsection lua_api_state_is_touching_ground state:is_touching_ground()
+\subsection lua_api_state_get_can_traverse_ground state:get_can_traverse_ground(ground)
 
-TODO
+Returns whether the entity can traverse the given kind of ground
+during this state.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- Return value (boolean): \c true if the ground can be traversed during this
+  state.
 
-\subsection lua_api_state_set_touching_ground state:set_touching_ground([touching_ground])
+\subsection lua_api_state_set_can_traverse_ground state:get_san_traverse_ground(ground, traversable)
 
-TODO
+Sets whether the entity can traverse the given kind of ground
+during this state.
 
-state:get/set_can_come_from_bad_ground()
+By default, this depends on the the ground: for example,
+the \c "grass" ground can be traversed by default
+while the \c "low wall" ground cannot.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- \c traversable (boolean): Whether the entity can
+  traverse this kind of ground during this state.
 
-state:get/set_can_traverse_ground(ground)  -- Accepts a callback
+\subsection lua_api_custom_state_set_can_traverse state:set_can_traverse([entity_type], traversable)
 
-state:get/set_are_collisions_ignored()
+Sets whether the entity can traverse other entities in this state.
 
-state:is/set_affected_by(entity_type)  -- teletransporter, stream, sensor, explosion, switch
-
-state:get/set_can_traverse(entity_type)  --   -- Accepts a callback
-
-state:is/set_teletransporter_delayed()
+By default, this depends on the other entities: for example,
+\ref lua_api_sensor "sensors" can be traversed by default
+while \ref lua_api_door "doors" cannot unless they are open.
+- \c entity_type (string, optional): A type of entity.
+  See \ref lua_api_entity_get_type "entity:get_type()" for the possible values.
+  If not specified, the setting will be applied to all entity types for which
+  you don't override this setting.
+- \c traversable (boolean, function or \c nil): Whether the entity controlled
+  by this state can traverse the other entity type. This can be:
+  - A boolean: \c true to allow your entity to traverse entities of the
+    specified type, \c false otherwise.
+  - A function: Custom test.
+    This allows you to decide dynamically.
+    The function takes your entity (the one controlled by this state)
+    and then the other entity as parameters, and should return \c true if you
+    allow your entity to traverse the other entity.
+    When your entity has a \ref lua_api_movement "movement",
+    this function will be called every time it is about to overlap an entity
+    of the specified type.
+  - \c nil: Clears any previous setting for this entity type and therefore
+    restores the default value.
 
 state:get/set_can_persist_on_stream()
 
