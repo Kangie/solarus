@@ -49,7 +49,7 @@ Returns whether a keyboard key is currently down.
 Returns the keyboard key modifiers currently active.
 - Return value (table): A table whose keys indicate what modifiers are currently down.
   Possible table keys are \c "shift", \c "control", \c "alt" and \c "caps lock".
-  Table values don't matter.
+  Table values are \c true.
 
 \subsection lua_api_input_is_joypad_button_pressed sol.input.is_joypad_button_pressed(button)
 

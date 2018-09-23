@@ -1848,7 +1848,7 @@ Called when the map has just been suspended or resumed.
 
 The map is suspended by the engine in a few cases, like when the \ref
 lua_api_game "game" is
-paused or when the camera is being moved by a script.
+paused or when a dialog is active.
 When this happens, all \ref lua_api_entity "map entities" stop moving and most
 \ref lua_api_sprite "sprites" stop their animation.
 - \c suspended (boolean): \c true if the map was just suspended, \c
@@ -1857,8 +1857,6 @@ When this happens, all \ref lua_api_entity "map entities" stop moving and most
 \subsection lua_api_map_on_opening_transition_finished map:on_opening_transition_finished(destination)
 
 When the map begins, called when the opening transition effect finishes.
-After that moment, the player has the control of the \ref
-lua_api_hero "hero".
 - \c destination (\ref lua_api_destination "destination"): The destination
   entity from where the \ref lua_api_hero "hero" arrived on the map,
   or \c nil if he used another way than a destination entity
@@ -1900,7 +1898,7 @@ Called when the user presses a keyboard key while your map is active.
 - \c key (string): Name of the raw key that was pressed.
 - \c modifiers (table): A table whose keys indicate what modifiers were
   down during the event. Possible table keys are \c "shift", \c "control" and
-  \c "alt". Table values don't matter.
+  \c "alt". Table values are `true.
 - Return value (boolean): Indicates whether the event was handled. If you
   return \c true, the event won't be propagated to other objects.
   If you return \c false or nothing, the event will continue its propagation
@@ -1918,7 +1916,7 @@ Called when the user releases a keyboard key while your map is active.
 - \c key (string): Name of the raw key that was released.
 - \c modifiers (table): A table whose keys indicate what modifiers were
   down during the event. Possible table keys are \c "shift", \c "control" and
-  \c "alt". Table values don't matter.
+  \c "alt". Table values are `true.
 - Return value (boolean): Indicates whether the event was handled. If you
   return \c true, the event won't be propagated to other objects.
   If you return \c false or nothing, the event will continue its propagation

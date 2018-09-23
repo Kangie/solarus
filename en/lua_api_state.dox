@@ -411,6 +411,20 @@ The default value is \c true.
 - \c can_take_jumper (boolean): \c true to allow the entity to take jumpers
 during this state.
 
+\subsection lua_api_state_get_jumper_delay state:get_jumper_delay()
+
+Returns the delay before jumping when taking a jumper during this state.
+- Return value (number): The jump delay in milliseconds
+  (\c 0 means no delay).
+
+\subsection lua_api_state_set_jumper_delay state:set_jumper_delay(jumper_delay)
+
+Sets the delay before jumping when taking a jumper during this state.
+
+The default value is \c 200 ms.
+- \c jumper_delay (number): The jump delay in milliseconds
+  (\c 0 for no delay).
+
 \subsection lua_api_get_previous_carried_object_behavior state:get_previous_carried_object_behavior()
 
 Returns what happens during this state to an object
@@ -437,43 +451,166 @@ Events are callback methods automatically called by the engine if you define
 them.
 In the case of states, they are only called on an active state.
 
-\subsection lua_api_state_on_started state:on_started(previous_state_name, [previous_state])
+\subsection lua_api_state_on_started state:on_started(previous_state_name, previous_state)
 
-\subsection lua_api_state_on_finished state:on_finished(next_state_name, [next_state])
+Called when this state starts.
+- \c previous_state_name (string or nil): Name of the state that was active before.
+  See \ref lua_api_hero_get_state "hero:get_state()" for the possible values.
+  This value is \c nil if there was no state before
+  (only possible for the first state of an entity).
+- \c previous_state (state or nil): Custom state object that was active before,
+  if it was a custom one, \c nil otherwise.
+
+\subsection lua_api_state_on_finished state:on_finished(next_state_name, next_state)
+
+Called when this state finishes.
+- \c next_state_name (string or nil): Name of the state that is about to be
+  active after yours.
+  See \ref lua_api_hero_get_state "hero:get_state()" for the possible values.
+  This value is \c nil if there is no state after yours
+  (only possible if the entity is being removed).
+- \c next_state (state or nil): Custom state object about to start,
+  if it is a custom one, \c nil otherwise.
 
 \subsection lua_api_state_on_update state:on_update()
 
+Called at each cycle of the main loop while this state is active.
+
+\remark As this function is called at each cycle, it is recommended to use other
+solutions when possible, like \ref lua_api_timer "timers" and other events.
+
 \subsection lua_api_state_on_pre_draw state:on_pre_draw(camera)
+
+Called just before the entity is drawn on the map during this state.
+
+You may display additional things below the entity.
+To do so, you can either call
+\ref lua_api_map_draw_visual "map:draw_visual()"
+or draw on \ref lua_api_camera "camera:get_surface()".
+- \c camera (\ref lua_api_camera "camera"): The camera where this entity is
+  being drawn.
 
 \subsection lua_api_state_on_post_draw state:on_post_draw(camera)
 
+Called just after the entity is drawn on the map during this state.
+
+You may display additional things above the entity.
+To do so, you can either call
+\ref lua_api_map_draw_visual "map:draw_visual()"
+or draw on \ref lua_api_camera "camera:get_surface()".
+- \c camera (\ref lua_api_camera "camera"): The camera where this entity is
+  being drawn.
+
 \subsection lua_api_state_on_suspended state:on_suspended(suspended)
 
-\subsection lua_api_state_on_map_changed state:on_map_changed()
+Called when the \ref lua_api_entity "entity"
+has just been suspended or resumed.
+
+The entity is suspended by the engine in a few cases, like when the \ref
+lua_api_game "game" is
+paused or when a dialog is active.
+When this happens, all \ref lua_api_entity "map entities" stop moving and most
+\ref lua_api_sprite "sprites" stop their animation.
+- \c suspended (boolean): \c true if the entity was just suspended,
+  \c false if it was resumed.
+
+\subsection lua_api_state_on_map_started state:on_map_started(map, destination)
+
+Called when a map starts (when the player enters it) during this state.
+- \c map (\ref lua_api_map "map"): The new map.
+- \c destination (\ref lua_api_destination "destination"): The destination
+  entity from where the \ref lua_api_hero "hero" arrives on the map,
+  or \c nil if he used another way than a destination entity
+  (like the side of the map or direct coordinates).
 
 \subsection lua_api_state_on_map_finished state:on_map_finished()
 
-\subsection lua_api_state_on_map_started state:on_map_started()
+Called when the map stops (when the player leaves it) during this state.
 
-\subsection lua_api_state_on_map_opening_transition_finished state:on_map_opening_transition_finished()
+\subsection lua_api_state_on_map_changed state:on_map_changed(map)
 
-\subsection lua_api_state_on_position_changed state:on_position_changed()
+Called when the player has just entered a map during this state.
 
-\subsection lua_api_state_on_layer_changed state:on_layer_changed()
+The new map is already started at this point,
+and the \ref lua_api_hero "hero" is on this new map.
+- \c map (\ref lua_api_map "map"): The new active map.
 
-\subsection lua_api_state_on_ground_changed state:on_ground_changed()
+\subsection lua_api_state_on_map_opening_transition_finished state:on_map_opening_transition_finished(map, destination)
 
-\subsection lua_api_state_on_movement_changed state:on_movement_changed()
+When a map begins during this state,
+called when the opening transition effect finishes.
+- \c map (\ref lua_api_map "map"): The map.
+- \c destination (\ref lua_api_destination "destination"): The destination
+  entity from where the \ref lua_api_hero "hero" arrived on the map,
+  or \c nil if he used another way than a destination entity
+  (like the side of the map or direct coordinates).
+
+\subsection lua_api_state_on_position_changed state:on_position_changed(x, y, layer)
+
+Called when the coordinates of the entity controlled by this state
+have just changed.
+- \c x (number): The new X coordinate of the entity.
+- \c y (number): The new Y coordinate of the entity.
+- \c layer (number): The new layer of the entity.
+
+\subsection lua_api_state_on_ground_below_changed state:on_ground_below_changed(ground_below)
+
+Called when the kind of
+\ref lua_api_map_get_ground "ground" on the map below the entity controlled
+by this state has changed.
+It may change because the entity is moving,
+or when because another entity changes it.
+- \c ground_below (string): The kind of ground at the
+  \ref lua_api_entity_get_ground_position "ground point"
+  of the entity controlled by this state.
+  \c nil means empty, that is, there is no ground at this point on the
+  current layer.
+
+\subsection lua_api_state_on_movement_started state:on_movement_started(movement)
+
+Called when a
+\ref lua_api_movement "movement"
+is started on the entity controlled by this state.
+- \c movement (\ref lua_api_movement "movement"): The movement that was just
+  started on the entity.
+
+\subsection lua_api_state_on_movement_changed state:on_movement_changed(movement)
+
+Called when some characteristics of the entity's
+\ref lua_api_movement "movement"
+(like the speed or the angle) have just changed during this state.
+- \c movement (\ref lua_api_movement "movement"): The movement of the entity.
 
 \subsection lua_api_state_on_movement_finished state:on_movement_finished()
 
+Called when the
+\ref lua_api_movement "movement"
+of the entity controlled by this state is finished (if there is an end).
+
 \subsection lua_api_state_on_obstacle_reached state:on_obstacle_reached()
 
-\subsection lua_api_state_on_walking_speed_changed state:on_walking_speed_changed()
+Called when the \ref lua_api_movement "movement"
+of the entity was stopped because of an obstacle during this state.
 
-\subsection lua_api_state_on_attacked_enemy state:on_attacked_enemy(attack, victim, victim_sprite, reaction)
+When an obstacle is reached, this event is called instead of
+\ref lua_api_state_on_position_changed "state:on_position_changed()".
+- \c movement (\ref lua_api_movement "movement"): The movement of the entity.
 
-\subsection lua_api_state_on_jumper_activated state:on_jumper_activated(jumper)
+\subsection lua_api_state_on_attacked_enemy state:on_attacked_enemy(enemy, enemy_sprite, attack, consequence)
+
+Called when the entity has just attacked an enemy during this state,
+even if the attack was not successful.
+- \c enemy (\ref lua_api_enemy "enemy"): The attacked enemy.
+- \c enemy_sprite (\ref lua_api_sprite "sprite"): Sprite of the enemy that
+  received the attack, or \c nil if the attack does not come from a
+  pixel-precise collision test.
+- \c attack (string): How the enemy was attacked.
+  See \ref lua_api_enemy_set_attack_consequence "enemy:set_attack_consequence()"
+  for the possible values.
+- \c consequence (number, string or function): How the enemy reacted to the
+  attack.
+  See \ref lua_api_enemy_set_attack_consequence "enemy:set_attack_consequence()"
+  for the possible values.
 
 \subsection lua_api_state_on_key_pressed state:on_key_pressed(key, modifiers)
 
@@ -481,7 +618,7 @@ Called when the user presses a keyboard key during this state.
 - \c key (string): Name of the raw key that was pressed.
 - \c modifiers (table): A table whose keys indicate what modifiers were
   down during the event. Possible table keys are \c "shift", \c "control" and
-  \c "alt". Table values don't matter.
+  \c "alt". Table values are `true.
 - Return value (boolean): Indicates whether the event was handled. If you
   return \c true, the event won't be propagated to other objects.
   If you return \c false or nothing, the event will continue its propagation
@@ -499,7 +636,7 @@ Called when the user releases a keyboard key during this state.
 - \c key (string): Name of the raw key that was released.
 - \c modifiers (table): A table whose keys indicate what modifiers were
   down during the event. Possible table keys are \c "shift", \c "control" and
-  \c "alt". Table values don't matter.
+  \c "alt". Table values are `true.
 - Return value (boolean): Indicates whether the event was handled. If you
   return \c true, the event won't be propagated to other objects.
   If you return \c false or nothing, the event will continue its propagation
