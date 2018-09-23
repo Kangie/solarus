@@ -323,19 +323,35 @@ The default value is \c true.
     state.
   - \c nil: Clears any previous setting and restores the default value.
 
-state:get/set_can_use_sword()
+\subsection lua_api_state_get_can_use_sword state:get_can_use_sword()
 
-state:get/set_can_use_shield()
+\subsection lua_api_state_set_can_use_sword state:set_can_use_sword(can_use_sword)
 
-state:get/set_can_use_item()
+\subsection lua_api_state_get_can_use_shield state:get_can_use_shield()
 
-state:get/set_can_pick_treasure()
+\subsection lua_api_state_set_can_use_shield state:set_can_use_shield(can_use_shield)
 
-state:get/set_can_take_stairs()
+\subsection lua_api_state_get_can_use_item state:get_can_use_item()
 
-state:get/set_can_take_jumper()
+\subsection lua_api_state_set_can_use_item state:set_can_use_item(can_use_item)
 
-state:get/set_previous_carried_object_behavior()  -- throw, destroy, keep
+\subsection lua_api_state_get_can_pick_treasure state:get_can_pick_treasure()
+
+\subsection lua_api_state_set_can_pick_treasure state:get_can_pick_treasure(can_pick_treasure)
+
+\subsection lua_api_state_get_can_take_stairs state:get_can_take_stairs()
+
+\subsection lua_api_state_set_can_take_stairs state:set_can_take_stairs(can_take_stairs)
+
+\subsection lua_api_state_get_can_take_jumper state:get_can_take_jumper()
+
+\subsection lua_api_state_set_can_take_jumper state:set_can_take_jumper(can_take_jumper)
+
+\subsection lua_api_get_previous_carried_object_behavior state:get_previous_carried_object_behavior()
+
+TODO  -- throw, destroy, keep
+
+\subsection lua_api_set_previous_carried_object_behavior state:set_previous_carried_object_behavior(behavior)
 
 \section lua_api_state_events Events of a state
 
