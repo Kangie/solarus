@@ -178,12 +178,12 @@ Returns whether the player controls the direction of entity's sprites during
 this state.
 - Return value (boolean): \c true if the player controls the sprites direction.
 
-\subsection lua_api_state_set_can_control_direction state:set_can_control_direction([can_control_direction])
+\subsection lua_api_state_set_can_control_direction state:set_can_control_direction(can_control_direction)
 
 Sets whether the player controls the direction of entity's sprites during
 this state.
 
-The initial value is \c true. If you set this to \c false, then the entity's
+The default value is \c true. If you set this to \c false, then the entity's
 sprites no longer automatically take the direction pressed by the player.
 - \c can_control_direction (boolean): \c true to let the player control the
   sprites direction.
@@ -195,19 +195,18 @@ Returns whether the player controls the movement of the entity during
 this state.
 - Return value (boolean): \c true if the player controls the movement.
 
-\subsection lua_api_state_set_can_control_movement state:set_can_control_movement([can_control_movement])
+\subsection lua_api_state_set_can_control_movement state:set_can_control_movement(can_control_movement)
 
 Sets whether the player controls the movement of the entity during
 this state.
 
-The initial value is \c true.
+The default value is \c true.
 If this setting is \c true, a movement is automatically created on the entity
 and this movement reacts to the player's input.
 If you set this to \c false, then the entity has no automatic movement during
 this state.
 - \c can_control_movement (boolean): \c true to let the player control the
   movement.
-  No value means \c true.
 
 \subsection lua_api_state_is_touching_ground state:is_touching_ground()
 
@@ -215,11 +214,11 @@ Returns whether the entity is touching the ground during this state.
 - Return value (boolean): \c true if the entity is touching ground during
   this state.
 
-\subsection lua_api_state_set_touching_ground state:set_touching_ground([touching_ground])
+\subsection lua_api_state_set_touching_ground state:set_touching_ground(touching_ground)
 
 Sets whether the entity is touching ground during this state.
 
-The initial value is \c true.
+The default value is \c true.
 You should typically set this to \c false when the entity is jumping of flying.
 
 If you can set it to \c false, then the entity won't be affected by any
@@ -230,7 +229,7 @@ by \ref lua_api_teletransporter "teletransporters",
 won't fall to a lower layer when the ground is empty,
 and the position won't be saved as solid ground coordinates to come back to
 if falling into bad ground.
-- \c touching_ground (boolean, optional): \c true to set that the entity is
+- \c touching_ground (boolean): \c true to set that the entity is
   touching ground.
 
 \subsection lua_api_state_is_affected_by_ground state:is_affected_by_ground(ground)
@@ -241,7 +240,7 @@ Returns whether the given kind of ground affects the entity during this state.
 - Return value (boolean): \c true if this ground affects the entity during
   this state.
 
-\subsection lua_api_state_set_affected_by_ground state:set_affected_by_ground(ground, [affected])
+\subsection lua_api_state_set_affected_by_ground state:set_affected_by_ground(ground, affected)
 
 Sets whether a kind of ground affects the entity during this state.
 
@@ -249,9 +248,8 @@ This setting only has an effect when
 \ref lua_api_state_is_touching_ground "state:is_touching_ground()" is \c true.
 - \c ground (string): A kind of ground.
   See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
-- \c affected (boolean, optional): \c true to make this ground affect the
+- \c affected (boolean): \c true to make this ground affect the
   entity during this state.
-  No value means \c true.
 
 \subsection lua_api_state_get_can_traverse_ground state:get_can_traverse_ground(ground)
 
@@ -325,33 +323,113 @@ The default value is \c true.
 
 \subsection lua_api_state_get_can_use_sword state:get_can_use_sword()
 
+Returns whether the entity can swing the sword during this state.
+- Return value (boolean): \c true if the entity can use the sword.
+
 \subsection lua_api_state_set_can_use_sword state:set_can_use_sword(can_use_sword)
+
+Sets whether the entity can swing the sword during this state.
+
+The default value is \c true.
+- \c can_use_sword (boolean): \c true to allow to use the sword.
 
 \subsection lua_api_state_get_can_use_shield state:get_can_use_shield()
 
+Returns whether the entity can stop attacks with the shield during this state.
+- Return value (boolean): \c true if the entity can stop attacks with the
+  shield.
+
 \subsection lua_api_state_set_can_use_shield state:set_can_use_shield(can_use_shield)
+
+Sets whether the entity can stop attacks with the shield during this state.
+
+The default value is \c true.
+- \c can_use_shield (boolean): \c true if the entity can stop attacks with the
+  shield.
 
 \subsection lua_api_state_get_can_use_item state:get_can_use_item()
 
+Returns whether an \ref lua_api_item "equipment item" can be used
+during this state.
+- Return value (boolean): \c true if the player can use equipment items
+  during this state.
+
 \subsection lua_api_state_set_can_use_item state:set_can_use_item(can_use_item)
+
+Sets whether an \ref lua_api_item "equipment item" can be used
+during this state.
+
+The default value is \c true.
+- \c can_use_item (boolean): \c true to allow the player to use equipment items
+  during this state.
 
 \subsection lua_api_state_get_can_pick_treasure state:get_can_pick_treasure()
 
-\subsection lua_api_state_set_can_pick_treasure state:get_can_pick_treasure(can_pick_treasure)
+Returns whether \ref lua_api_pickable "pickable treasures" can be picked
+during this state.
+- Return value (boolean): \c true if pickable treasures can be picked
+during this state.
+
+\subsection lua_api_state_set_can_pick_treasure state:set_can_pick_treasure(can_pick_treasure)
+
+Sets whether \ref lua_api_pickable "pickable treasures" can be picked
+during this state.
+
+The default value is \c true.
+- \c can_pick_treasure (boolean): \c true to allow the entity to pick treasures
+during this state.
 
 \subsection lua_api_state_get_can_take_stairs state:get_can_take_stairs()
 
+Returns whether the entity can take \ref lua_api_stairs "stairs"
+during this state.
+- Return value (boolean): \c true if the entity can take stairs
+during this state.
+
 \subsection lua_api_state_set_can_take_stairs state:set_can_take_stairs(can_take_stairs)
+
+Sets whether the entity can take \ref lua_api_stairs "stairs"
+during this state.
+
+The default value is \c true.
+- \c can_take_stairs (boolean): \c true to allow the entity to take stairs
+during this state.
 
 \subsection lua_api_state_get_can_take_jumper state:get_can_take_jumper()
 
+Returns whether the entity can activate \ref lua_api_jumper "jumpers"
+during this state.
+- Return value (boolean): \c true if the entity can take jumpers
+during this state.
+
 \subsection lua_api_state_set_can_take_jumper state:set_can_take_jumper(can_take_jumper)
+
+Sets whether the entity can take \ref lua_api_jumper "jumpers"
+during this state.
+
+The default value is \c true.
+- \c can_take_jumper (boolean): \c true to allow the entity to take jumpers
+during this state.
 
 \subsection lua_api_get_previous_carried_object_behavior state:get_previous_carried_object_behavior()
 
-TODO  -- throw, destroy, keep
+Returns what happens during this state to an object
+that was \ref lua_api_carried_object "carried"
+the previous state.
+- Return value (string): One of:
+  - \c "throw" (default): The carried object is automatically thrown.
+  - \c "remove": The carried object is silently destroyed.
+  - \c "keep": The carried object continues to be carried.
 
 \subsection lua_api_set_previous_carried_object_behavior state:set_previous_carried_object_behavior(behavior)
+
+Sets what happens during this state to an object
+that was \ref lua_api_carried_object "carried"
+the previous state.
+- \c previous_carried_object_behavior (string): One of:
+  - \c "throw" (default): The carried object is automatically thrown.
+  - \c "remove": The carried object is silently destroyed.
+  - \c "keep": The carried object continues to be carried.
 
 \section lua_api_state_events Events of a state
 
@@ -359,46 +437,236 @@ Events are callback methods automatically called by the engine if you define
 them.
 In the case of states, they are only called on an active state.
 
-TODO
+\subsection lua_api_state_on_started state:on_started(previous_state_name, [previous_state])
 
-state:on_started(previous_state_name, [previous_state])
+\subsection lua_api_state_on_finished state:on_finished(next_state_name, [next_state])
 
-state:on_finished(next_state_name, [next_state])
+\subsection lua_api_state_on_update state:on_update()
 
-state:on_update()
+\subsection lua_api_state_on_pre_draw state:on_pre_draw(camera)
 
-state:on_pre_draw(camera)
+\subsection lua_api_state_on_post_draw state:on_post_draw(camera)
 
-state:on_post_draw(camera)
+\subsection lua_api_state_on_state:on_suspended(suspended)
 
-state:on_suspended(suspended)
+\subsection lua_api_state_on_state:on_map_changed()
 
-state:on_map_changed()
+\subsection lua_api_state_on_state:on_map_finished()
 
-state:on_map_finished()
+\subsection lua_api_state_on_state:on_map_started()
 
-state:on_map_started()
+\subsection lua_api_state_on_state:on_map_opening_transition_finished()
 
-state:on_map_opening_transition_finished()
+\subsection lua_api_state_on_state:on_position_changed()
 
-state:on_position_changed()
+\subsection lua_api_state_on_state:on_layer_changed()
 
-state:on_layer_changed()
+\subsection lua_api_state_on_state:on_ground_changed()
 
-state:on_ground_changed()
+\subsection lua_api_state_on_state:on_movement_changed()
 
-state:on_movement_changed()
+\subsection lua_api_state_on_state:on_movement_finished()
 
-state:on_movement_finished()
+\subsection lua_api_state_on_state:on_obstacle_reached()
 
-state:on_obstacle_reached()
+\subsection lua_api_state_on_state:on_walking_speed_changed()
 
-state:on_walking_speed_changed()
+\subsection lua_api_state_on_state:on_attacked_enemy(attack, victim, victim_sprite, reaction)
 
-state:on_attacked_enemy(attack, victim, victim_sprite, reaction)
+\subsection lua_api_state_on_state:on_jumper_activated(jumper)
 
-state:on_jumper_activated(jumper)
+\subsection lua_api_state_on_key_pressed state:on_key_pressed(key, modifiers)
 
-state:on_command/key/joypad/mouse/finger_*()
+Called when the user presses a keyboard key during this state.
+- \c key (string): Name of the raw key that was pressed.
+- \c modifiers (table): A table whose keys indicate what modifiers were
+  down during the event. Possible table keys are \c "shift", \c "control" and
+  \c "alt". Table values don't matter.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+  If you return \c false or nothing, the event will continue its propagation
+  to the \ref lua_api_game_overview_commands "commands".
+
+\remark This event indicates the raw keyboard key pressed. If you want the
+corresponding character instead (if any), see
+\ref lua_api_state_on_character_pressed "state:on_character_pressed()".
+If you want the corresponding higher-level game command (if any), see
+\ref lua_api_state_on_command_pressed "state:on_command_pressed()".
+
+\subsection lua_api_state_on_key_released state:on_key_released(key, modifiers)
+
+Called when the user releases a keyboard key during this state.
+- \c key (string): Name of the raw key that was released.
+- \c modifiers (table): A table whose keys indicate what modifiers were
+  down during the event. Possible table keys are \c "shift", \c "control" and
+  \c "alt". Table values don't matter.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+  If you return \c false or nothing, the event will continue its propagation
+  to the \ref lua_api_game_overview_commands "commands".
+
+\remark This event indicates the raw keyboard key pressed. If you want the
+corresponding character instead (if any), see
+\ref lua_api_state_on_character_pressed "state:on_character_pressed()".
+If you want the corresponding higher-level game command (if any), see
+\ref lua_api_state_on_command_pressed "state:on_command_pressed()".
+
+\subsection lua_api_state_on_character_pressed state:on_character_pressed(character)
+
+Called when the user enters text
+during this state.
+- \c character (string): A utf-8 string representing the character that was
+  pressed.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+  If you return \c false or nothing, the event will continue its propagation
+  to the \ref lua_api_game_overview_commands "commands".
+
+\remark When a character key is pressed, two events are called:
+\ref lua_api_state_on_key_pressed "state:on_key_pressed()"
+(indicating the raw key)
+and \ref lua_api_state_on_character_pressed "state:on_character_pressed()"
+(indicating the utf-8 character).
+If your script needs to input text from the user,
+\ref lua_api_state_on_character_pressed "state:on_character_pressed()"
+is what you want because it
+considers the keyboard's layout and gives you international utf-8
+strings.
+
+\subsection lua_api_state_on_joypad_button_pressed state:on_joypad_button_pressed(button)
+
+Called when the user presses a joypad button during this state.
+- \c button (number): Index of the button that was pressed.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_joypad_button_released state:on_joypad_button_released(button)
+
+Called when the user releases a joypad button during this state.
+- \c button (number): Index of the button that was released.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_joypad_axis_moved state:on_joypad_axis_moved(axis, state)
+
+Called when the user moves a joypad axis during this state.
+- \c axis (number): Index of the axis that was moved. Usually, \c 0 is an
+  horizontal axis and \c 1 is a vertical axis.
+- \c state (number): The new state of the axis that was moved. \c -1 means
+  left or up, \c 0 means centered and \c 1 means right or down.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_joypad_hat_moved state:on_joypad_hat_moved(hat, direction8)
+
+Called when the user moves a joypad hat during this state.
+- \c hat (number): Index of the hat that was moved.
+- \c direction8 (number): The new direction of the hat. \c -1 means that the
+  hat is centered. \c 0 to \c 7 indicates that the hat is in one of the eight
+  main directions.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_command_pressed state:on_command_pressed(command)
+
+Called when the player presses a \ref lua_api_game_overview_commands
+"game command"
+(a keyboard key or a joypad action mapped to a built-in game behavior)
+during this state.
+You can use this event to override the normal built-in behavior of the game
+command.
+- \c command (string): Name of the built-in game command that was pressed.
+  Possible commands are
+  \c "action", \c "attack", \c "pause", \c "item_1", \c "item_2",
+  \c "right", \c "up", \c "left" and \c "down".
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects
+  (you are overriding the built-in behavior of pressing this game command).
+
+\remark This event is not triggered if you already handled its underlying
+  low-level keyboard or joypad event.
+
+\subsection lua_api_state_on_command_released state:on_command_released(command)
+
+Called when the player released a \ref lua_api_game_overview_commands
+"game command"
+(a keyboard key or a joypad action mapped to a built-in game behavior).
+during this state.
+You can use this event to override the normal built-in behavior of the game
+command.
+- \c command (string): Name of the built-in game command that was released.
+  Possible commands are
+  \c "action", \c "attack", \c "pause", \c "item_1", \c "item_2",
+  \c "right", \c "up", \c "left" and \c "down".
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects
+  (you are overriding the built-in behavior of releasing this game command).
+
+\remark This event is not triggered if you already handled its underlying
+  low-level keyboard or joypad event.
+
+\subsection lua_api_state_on_mouse_pressed state:on_mouse_pressed(button, x, y)
+
+Called when the user presses a mouse button during this state.
+- \c button (string): Name of the mouse button that was pressed.
+  Possible values are \c "left", \c "middle", \c "right", \c "x1" and \c "x2".
+- \c x (integer): The x position of the mouse in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c y (integer): The y position of the mouse in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_mouse_released state:on_mouse_released(button, x, y)
+
+Called when the user releases a mouse button during this state.
+- \c button (string): Name of the mouse button that was released.
+  Possible values are \c "left", \c "middle", \c "right", \c "x1" and \c "x2".
+- \c x (integer): The x position of the mouse in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c y (integer): The y position of the mouse in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_finger_pressed state:on_finger_pressed(finger, x, y, pressure)
+
+Called when the user presses a finger during this state.
+- \c finger (integer): ID of the finger that was pressed.
+- \c x (integer): The x position of the finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c y (integer): The y position of the finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c pressure (number): The pressure of the finger, normalized between 0 and 1.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_finger_released state:on_finger_released(finger, x, y, pressure)
+
+Called when the user releases a finger during this state.
+- \c finger (integer): ID of the finger that was pressed.
+- \c x (integer): The x position of the finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c y (integer): The y position of the finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c pressure (number): The pressure of the finger, normalized between 0 and 1.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
+
+\subsection lua_api_state_on_finger_moved state:on_finger_moved(finger, x, y, dx, dy, pressure)
+
+Called when the user moves a finger during this state.
+- \c finger (integer): ID of the finger that was pressed.
+- \c x (integer): The x position of the finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c y (integer): The y position of the finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c dx (integer): The horizontal distance moved by finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c dy (integer): The vertical distance moved by finger in
+  \ref lua_api_video_get_quest_size "quest size" coordinates.
+- \c pressure (number): The pressure of the finger, normalized between 0 and 1.
+- Return value (boolean): Indicates whether the event was handled. If you
+  return \c true, the event won't be propagated to other objects.
 
 */

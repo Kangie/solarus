@@ -638,7 +638,7 @@ actions like attacking, swimming or running.
 The initial value is \c 0 unless specified otherwise.
 - \c ability_name (string): Name of the ability to get.
   Valid ability names are:
-  - \c "sword": Using the sword when pressing the action command.
+  - \c "sword": Using the sword when pressing the attack command.
     Determines the default sword sprite.
   - \c "sword_knowledge": Ability to make the super spin-attack.
   - \c "tunic": Resistance level that reduces the damage received by the hero.
@@ -1260,7 +1260,7 @@ Called when the user moves a finger while the game is running.
   \ref lua_api_video_get_quest_size "quest size" coordinates.
 - \c dx (integer): The horizontal distance moved by finger in
   \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c dy (integer):The vertical distance moved by finger in
+- \c dy (integer): The vertical distance moved by finger in
   \ref lua_api_video_get_quest_size "quest size" coordinates.
 - \c pressure (number): The pressure of the finger, normalized between 0 and 1.
 - Return value (boolean): Indicates whether the event was handled. If you

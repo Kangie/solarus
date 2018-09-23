@@ -389,7 +389,7 @@ Called when the user moves a finger while the menu is running.
   \ref lua_api_video_get_quest_size "quest size" coordinates.
 - \c dx (integer): The horizontal distance moved by finger in
   \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c dy (integer):The vertical distance moved by finger in
+- \c dy (integer): The vertical distance moved by finger in
   \ref lua_api_video_get_quest_size "quest size" coordinates.
 - \c pressure (number): The pressure of the finger, normalized between 0 and 1.
 - Return value (boolean): Indicates whether the event was handled. If you
