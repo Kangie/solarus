@@ -447,33 +447,33 @@ In the case of states, they are only called on an active state.
 
 \subsection lua_api_state_on_post_draw state:on_post_draw(camera)
 
-\subsection lua_api_state_on_state:on_suspended(suspended)
+\subsection lua_api_state_on_suspended state:on_suspended(suspended)
 
-\subsection lua_api_state_on_state:on_map_changed()
+\subsection lua_api_state_on_map_changed state:on_map_changed()
 
-\subsection lua_api_state_on_state:on_map_finished()
+\subsection lua_api_state_on_map_finished state:on_map_finished()
 
-\subsection lua_api_state_on_state:on_map_started()
+\subsection lua_api_state_on_map_started state:on_map_started()
 
-\subsection lua_api_state_on_state:on_map_opening_transition_finished()
+\subsection lua_api_state_on_map_opening_transition_finished state:on_map_opening_transition_finished()
 
-\subsection lua_api_state_on_state:on_position_changed()
+\subsection lua_api_state_on_position_changed state:on_position_changed()
 
-\subsection lua_api_state_on_state:on_layer_changed()
+\subsection lua_api_state_on_layer_changed state:on_layer_changed()
 
-\subsection lua_api_state_on_state:on_ground_changed()
+\subsection lua_api_state_on_ground_changed state:on_ground_changed()
 
-\subsection lua_api_state_on_state:on_movement_changed()
+\subsection lua_api_state_on_movement_changed state:on_movement_changed()
 
-\subsection lua_api_state_on_state:on_movement_finished()
+\subsection lua_api_state_on_movement_finished state:on_movement_finished()
 
-\subsection lua_api_state_on_state:on_obstacle_reached()
+\subsection lua_api_state_on_obstacle_reached state:on_obstacle_reached()
 
-\subsection lua_api_state_on_state:on_walking_speed_changed()
+\subsection lua_api_state_on_walking_speed_changed state:on_walking_speed_changed()
 
-\subsection lua_api_state_on_state:on_attacked_enemy(attack, victim, victim_sprite, reaction)
+\subsection lua_api_state_on_attacked_enemy state:on_attacked_enemy(attack, victim, victim_sprite, reaction)
 
-\subsection lua_api_state_on_state:on_jumper_activated(jumper)
+\subsection lua_api_state_on_jumper_activated state:on_jumper_activated(jumper)
 
 \subsection lua_api_state_on_key_pressed state:on_key_pressed(key, modifiers)
 
