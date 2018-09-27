@@ -165,8 +165,8 @@ or draw on \ref lua_api_camera "camera:get_surface()".
 - \c draw_override (function or nil): The draw function, or \c nil to
   restore the built-in drawing.
   Your function will receive the following parameters:
-  - \c entity (entity): The entity to draw.
-  - \c camera (\ref lua_api_camera "camera"): Camera where this entity is drawn.
+  - \c state (state): The custom state of the entity to draw.
+  - \c camera (\ref lua_api_camera "camera"): Camera where the entity is drawn.
 
 \remark Even when you set a draw override, events
   \ref lua_api_state_on_pre_draw "state:on_pre_draw()" and
@@ -440,7 +440,7 @@ the previous state.
 Sets what happens during this state to an object
 that was \ref lua_api_carried_object "carried"
 the previous state.
-- \c previous_carried_object_behavior (string): One of:
+- \c behavior (string): One of:
   - \c "throw" (default): The carried object is automatically thrown.
   - \c "remove": The carried object is silently destroyed.
   - \c "keep": The carried object continues to be carried.
