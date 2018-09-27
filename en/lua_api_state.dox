@@ -210,13 +210,13 @@ this state.
 
 \subsection lua_api_state_is_touching_ground state:is_touching_ground()
 
-Returns whether the entity is touching the ground during this state.
+Returns whether the entity is in contact with the ground during this state.
 - Return value (boolean): \c true if the entity is touching ground during
   this state.
 
 \subsection lua_api_state_set_touching_ground state:set_touching_ground(touching_ground)
 
-Sets whether the entity is touching ground during this state.
+Sets whether the entity is in contact with ground during this state.
 
 The default value is \c true.
 You should typically set this to \c false when the entity is jumping of flying.
@@ -230,7 +230,7 @@ won't fall to a lower layer when the ground is empty,
 and the position won't be saved as solid ground coordinates to come back to
 if falling into bad ground.
 - \c touching_ground (boolean): \c true to set that the entity is
-  touching ground.
+  in contact with ground.
 
 \subsection lua_api_state_is_affected_by_ground state:is_affected_by_ground(ground)
 
