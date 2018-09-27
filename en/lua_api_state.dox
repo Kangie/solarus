@@ -140,7 +140,7 @@ Returns whether the entity is visible during this state.
 \subsection lua_api_state_set_visible state:set_visible([visible])
 
 Returns whether the entity should be visible during this state.
-- \c visible (boolean): \c true to make the entity visible during this state,
+- \c visible (boolean, optional): \c true to make the entity visible during this state,
   \c false to hide it.
   No value means \c true.
 
