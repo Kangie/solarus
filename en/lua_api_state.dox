@@ -379,36 +379,36 @@ The default value is \c true.
 - \c can_pick_treasure (boolean): \c true to allow the entity to pick treasures
 during this state.
 
-\subsection lua_api_state_get_can_take_stairs state:get_can_take_stairs()
+\subsection lua_api_state_get_can_use_stairs state:get_can_use_stairs()
 
 Returns whether the entity can take \ref lua_api_stairs "stairs"
 during this state.
 - Return value (boolean): \c true if the entity can take stairs
 during this state.
 
-\subsection lua_api_state_set_can_take_stairs state:set_can_take_stairs(can_take_stairs)
+\subsection lua_api_state_set_can_use_stairs state:set_can_use_stairs(can_use_stairs)
 
 Sets whether the entity can take \ref lua_api_stairs "stairs"
 during this state.
 
 The default value is \c true.
-- \c can_take_stairs (boolean): \c true to allow the entity to take stairs
+- \c can_use_stairs (boolean): \c true to allow the entity to take stairs
 during this state.
 
-\subsection lua_api_state_get_can_take_jumper state:get_can_take_jumper()
+\subsection lua_api_state_get_can_use_jumper state:get_can_use_jumper()
 
 Returns whether the entity can activate \ref lua_api_jumper "jumpers"
 during this state.
 - Return value (boolean): \c true if the entity can take jumpers
 during this state.
 
-\subsection lua_api_state_set_can_take_jumper state:set_can_take_jumper(can_take_jumper)
+\subsection lua_api_state_set_can_use_jumper state:set_can_take_jumper(can_use_jumper)
 
 Sets whether the entity can take \ref lua_api_jumper "jumpers"
 during this state.
 
 The default value is \c true.
-- \c can_take_jumper (boolean): \c true to allow the entity to take jumpers
+- \c can_use_jumper (boolean): \c true to allow the entity to take jumpers
 during this state.
 
 \subsection lua_api_state_get_jumper_delay state:get_jumper_delay()
