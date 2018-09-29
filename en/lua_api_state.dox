@@ -363,6 +363,43 @@ The default value is \c true.
 - \c can_use_item (boolean): \c true to allow the player to use equipment items
   during this state.
 
+\subsection lua_api_state_get_can_push state:get_can_push()
+
+Returns whether the entity can try to push the obstacles it is facing.
+- Return value (boolean): \c true if pushing is allowed in this state.
+
+\subsection lua_api_state_set_can_push state:set_can_push(can_push)
+
+Sets whether the entity can start pushing the obstacles it is facing.
+
+If \c true, the entity will go to state \c "pushing" when it reaches
+an obstacle and continues to move toward this obstacle for a configurable
+\ref lua_api_state_get_pushing_delay "delay".
+This does not mean that the obstacle being pushed will actually move
+(\ref lua_api_block "blocks" can move when being pushed, but other entities
+usually cannot).
+
+The default value is \c true.
+- \c can_push (boolean): \c true to allow to push in this state.
+
+\subsection lua_api_state_get_pushing_delay state:get_pushing_delay()
+
+Returns the delay before pushing when moving towards an obstacle during this
+state.
+- Return value (number): The pushing delay in milliseconds.
+
+\subsection lua_api_state_set_pushing_delay state:set_pushing_delay(pushing_delay)
+
+Sets the delay before pushing when moving towards an obstacle during this
+state.
+
+This only has an effect if
+\ref lua_api_state_get_can_push "state:get_can_push()" is \c true.
+
+The default value is \c 1000 ms.
+- \c pushing_delay (number): The pushing delay in milliseconds
+  (\c 0 for no delay).
+
 \subsection lua_api_state_get_can_pick_treasure state:get_can_pick_treasure()
 
 Returns whether \ref lua_api_pickable "pickable treasures" can be picked
@@ -402,7 +439,7 @@ during this state.
 - Return value (boolean): \c true if the entity can take jumpers
 during this state.
 
-\subsection lua_api_state_set_can_use_jumper state:set_can_take_jumper(can_use_jumper)
+\subsection lua_api_state_set_can_use_jumper state:set_can_use_jumper(can_use_jumper)
 
 Sets whether the entity can take \ref lua_api_jumper "jumpers"
 during this state.
@@ -420,6 +457,9 @@ Returns the delay before jumping when taking a jumper during this state.
 \subsection lua_api_state_set_jumper_delay state:set_jumper_delay(jumper_delay)
 
 Sets the delay before jumping when taking a jumper during this state.
+
+This only has an effect if
+\ref lua_api_state_get_can_use_jumper "state:get_can_use_jumper()" is \c true.
 
 The default value is \c 200 ms.
 - \c jumper_delay (number): The jump delay in milliseconds
