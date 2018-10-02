@@ -620,12 +620,12 @@ Starts a \ref lua_api_state "custom state" on the hero.
 Custom states allow advanced customization of the hero's behavior.
 After you call this method, the hero state string as returned by
 \ref lua_api_hero_get_state "hero:get_state()" is \c "custom".
-Use \ref lua_api_hero_get_custom_state "hero:get_custom_state()"
+Use \ref lua_api_hero_get_state_object "hero:get_state_object()"
 to get the actual custom state object.
 
-\subsection lua_api_hero_get_custom_state hero:get_custom_state()
+\subsection lua_api_hero_get_state_object hero:get_state_object()
 
-Returns the current custom state of the hero, if any.
+Returns the current custom state object of the hero, if any.
 - Return value (\ref lua_api_state "state") : The custom state,
   or \c nil if the current state is not a custom one.
 
