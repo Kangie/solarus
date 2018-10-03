@@ -582,8 +582,10 @@ and possibly its sprite.
 
 \subsection lua_api_hero_get_state hero:get_state()
 
-Returns the name of the current built-in state of the hero.
-- Return value (\c string): The current state. Can be one of:
+Returns the name of the current state of the hero,
+and possibly the corresponding
+\ref lua_api_state "custom state" object if any.
+- Return value 1 (\c string): The current state. Can be one of:
   \c "back to solid ground",
   \c "boomerang",
   \c "bow",
@@ -612,6 +614,8 @@ Returns the name of the current built-in state of the hero.
   \c "victory"
   or
   \c "custom".
+- Return value 2 (\ref lua_api_state "state" or no value): The custom state
+  object, in case the state name is \c "custom".
 
 \subsection lua_api_hero_start_state hero:start_state(state)
 

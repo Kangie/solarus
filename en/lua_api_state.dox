@@ -47,7 +47,7 @@ After this operation, the current state string of the hero
 is \c "custom", and no longer a usual built-in state like
 \c "free", \c "frozen", \c "swimming", etc.
 You can then use
-\ref lua_api_hero_get_custom_state "hero:get_custom_state()" to
+\ref lua_api_hero_get_state_object "hero:get_state_object()" to
 retrieve the actual custom state object that you created.
 
 When your state finishes, because you or the engine started another state
