@@ -468,7 +468,7 @@ The default value is \c 200 ms.
 - \c jumper_delay (number): The jump delay in milliseconds
   (\c 0 for no delay).
 
-\subsection lua_api_get_previous_carried_object_behavior state:get_previous_carried_object_behavior()
+\subsection lua_api_get_carried_object_reaction state:get_carried_object_action()
 
 Returns what happens during this state to an object
 that was \ref lua_api_carried_object "carried"
@@ -478,12 +478,12 @@ the previous state.
   - \c "remove": The carried object is silently destroyed.
   - \c "keep": The carried object continues to be carried.
 
-\subsection lua_api_set_previous_carried_object_behavior state:set_previous_carried_object_behavior(behavior)
+\subsection lua_api_set_carried_object_action state:set_carried_object_action(action)
 
 Sets what happens during this state to an object
 that was \ref lua_api_carried_object "carried"
 the previous state.
-- \c behavior (string): One of:
+- \c action (string): One of:
   - \c "throw" (default): The carried object is automatically thrown.
   - \c "remove": The carried object is silently destroyed.
   - \c "keep": The carried object continues to be carried.
