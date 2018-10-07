@@ -243,7 +243,7 @@ during this state.
 - Return value (boolean): \c true if the ground can be traversed during this
   state.
 
-\subsection lua_api_state_set_can_traverse_ground state:get_san_traverse_ground(ground, traversable)
+\subsection lua_api_state_set_can_traverse_ground state:set_can_traverse_ground(ground, traversable)
 
 Sets whether the entity can traverse the given kind of ground
 during this state.
