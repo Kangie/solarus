@@ -208,49 +208,6 @@ this state.
 - \c can_control_movement (boolean): \c true to let the player control the
   movement.
 
-\subsection lua_api_state_is_touching_ground state:is_touching_ground()
-
-Returns whether the entity is in contact with the ground during this state.
-- Return value (boolean): \c true if the entity is touching ground during
-  this state.
-
-\subsection lua_api_state_set_touching_ground state:set_touching_ground(touching_ground)
-
-Sets whether the entity is in contact with ground during this state.
-
-The default value is \c true.
-You should typically set this to \c false when the entity is jumping of flying.
-
-If you can set it to \c false, then the entity won't be affected by any
-\ref lua_api_map_get_ground "ground",
-by \ref lua_api_teletransporter "teletransporters",
-\ref lua_api_stream "streams" or
-\ref lua_api_switch "switches",
-won't fall to a lower layer when the ground is empty,
-and the position won't be saved as solid ground coordinates to come back to
-if falling into bad ground.
-- \c touching_ground (boolean): \c true to set that the entity is
-  in contact with ground.
-
-\subsection lua_api_state_is_affected_by_ground state:is_affected_by_ground(ground)
-
-Returns whether the given kind of ground affects the entity during this state.
-- \c ground (string): A kind of ground.
-  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
-- Return value (boolean): \c true if this ground affects the entity during
-  this state.
-
-\subsection lua_api_state_set_affected_by_ground state:set_affected_by_ground(ground, affected)
-
-Sets whether a kind of ground affects the entity during this state.
-
-This setting only has an effect when
-\ref lua_api_state_is_touching_ground "state:is_touching_ground()" is \c true.
-- \c ground (string): A kind of ground.
-  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
-- \c affected (boolean): \c true to make this ground affect the
-  entity during this state.
-
 \subsection lua_api_state_get_can_traverse_ground state:get_can_traverse_ground(ground)
 
 Returns whether the entity can traverse the given kind of ground
@@ -298,6 +255,49 @@ while \ref lua_api_door "doors" cannot unless they are open.
     of the specified type.
   - \c nil: Clears any previous setting for this entity type and therefore
     restores the default value.
+
+\subsection lua_api_state_is_touching_ground state:is_touching_ground()
+
+Returns whether the entity is in contact with the ground during this state.
+- Return value (boolean): \c true if the entity is touching ground during
+  this state.
+
+\subsection lua_api_state_set_touching_ground state:set_touching_ground(touching_ground)
+
+Sets whether the entity is in contact with ground during this state.
+
+The default value is \c true.
+You should typically set this to \c false when the entity is jumping of flying.
+
+If you can set it to \c false, then the entity won't be affected by any
+\ref lua_api_map_get_ground "ground",
+by \ref lua_api_teletransporter "teletransporters",
+\ref lua_api_stream "streams" or
+\ref lua_api_switch "switches",
+won't fall to a lower layer when the ground is empty,
+and the position won't be saved as solid ground coordinates to come back to
+if falling into bad ground.
+- \c touching_ground (boolean): \c true to set that the entity is
+  in contact with ground.
+
+\subsection lua_api_state_is_affected_by_ground state:is_affected_by_ground(ground)
+
+Returns whether the given kind of ground affects the entity during this state.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- Return value (boolean): \c true if this ground affects the entity during
+  this state.
+
+\subsection lua_api_state_set_affected_by_ground state:set_affected_by_ground(ground, affected)
+
+Sets whether a kind of ground affects the entity during this state.
+
+This setting only has an effect when
+\ref lua_api_state_is_touching_ground "state:is_touching_ground()" is \c true.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- \c affected (boolean): \c true to make this ground affect the
+  entity during this state.
 
 \subsection lua_api_state_get_can_be_hurt state:get_can_be_hurt()
 
