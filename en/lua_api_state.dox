@@ -208,28 +208,6 @@ this state.
 - \c can_control_movement (boolean): \c true to let the player control the
   movement.
 
-\subsection lua_api_state_get_can_traverse_ground state:get_can_traverse_ground(ground)
-
-Returns whether the entity can traverse the given kind of ground
-during this state.
-- \c ground (string): A kind of ground.
-  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
-- Return value (boolean): \c true if the ground can be traversed during this
-  state.
-
-\subsection lua_api_state_set_can_traverse_ground state:get_san_traverse_ground(ground, traversable)
-
-Sets whether the entity can traverse the given kind of ground
-during this state.
-
-By default, this depends on the the ground: for example,
-the \c "grass" ground can be traversed by default
-while the \c "low wall" ground cannot.
-- \c ground (string): A kind of ground.
-  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
-- \c traversable (boolean): Whether the entity can
-  traverse this kind of ground during this state.
-
 \subsection lua_api_custom_state_set_can_traverse state:set_can_traverse([entity_type], traversable)
 
 Sets whether the entity can traverse other entities in this state.
@@ -255,6 +233,28 @@ while \ref lua_api_door "doors" cannot unless they are open.
     of the specified type.
   - \c nil: Clears any previous setting for this entity type and therefore
     restores the default value.
+
+\subsection lua_api_state_get_can_traverse_ground state:get_can_traverse_ground(ground)
+
+Returns whether the entity can traverse the given kind of ground
+during this state.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- Return value (boolean): \c true if the ground can be traversed during this
+  state.
+
+\subsection lua_api_state_set_can_traverse_ground state:get_san_traverse_ground(ground, traversable)
+
+Sets whether the entity can traverse the given kind of ground
+during this state.
+
+By default, this depends on the the ground: for example,
+the \c "grass" ground can be traversed by default
+while the \c "low wall" ground cannot.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- \c traversable (boolean): Whether the entity can
+  traverse this kind of ground during this state.
 
 \subsection lua_api_state_is_touching_ground state:is_touching_ground()
 
