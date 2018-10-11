@@ -561,14 +561,6 @@ Called when a map starts (when the player enters it) during this state.
 
 Called when the map stops (when the player leaves it) during this state.
 
-\subsection lua_api_state_on_map_changed state:on_map_changed(map)
-
-Called when the player has just entered a map during this state.
-
-The new map is already started at this point,
-and the \ref lua_api_hero "hero" is on this new map.
-- \c map (\ref lua_api_map "map"): The new active map.
-
 \subsection lua_api_state_on_map_opening_transition_finished state:on_map_opening_transition_finished(map, destination)
 
 When a map begins during this state,
