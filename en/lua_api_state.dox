@@ -592,6 +592,15 @@ or when because another entity changes it.
   \c nil means empty, that is, there is no ground at this point on the
   current layer.
 
+\subsection lua_api_state_on_obstacle_reached state:on_obstacle_reached()
+
+Called when the \ref lua_api_movement "movement"
+of the entity was stopped because of an obstacle during this state.
+
+When an obstacle is reached, this event is called instead of
+\ref lua_api_state_on_position_changed "state:on_position_changed()".
+- \c movement (\ref lua_api_movement "movement"): The movement of the entity.
+
 \subsection lua_api_state_on_movement_started state:on_movement_started(movement)
 
 Called when a
@@ -612,15 +621,6 @@ Called when some characteristics of the entity's
 Called when the
 \ref lua_api_movement "movement"
 of the entity controlled by this state is finished (if there is an end).
-
-\subsection lua_api_state_on_obstacle_reached state:on_obstacle_reached()
-
-Called when the \ref lua_api_movement "movement"
-of the entity was stopped because of an obstacle during this state.
-
-When an obstacle is reached, this event is called instead of
-\ref lua_api_state_on_position_changed "state:on_position_changed()".
-- \c movement (\ref lua_api_movement "movement"): The movement of the entity.
 
 \subsection lua_api_state_on_attacked_enemy state:on_attacked_enemy(enemy, enemy_sprite, attack, consequence)
 
