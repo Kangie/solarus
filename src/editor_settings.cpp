@@ -44,6 +44,8 @@ const QString EditorSettings::font_size = "text_editor/font_size";
 const QString EditorSettings::tab_length = "text_editor/tab_length";
 const QString EditorSettings::replace_tab_by_spaces =
   "text_editor/replace_tab_by_spaces";
+const QString EditorSettings::external_text_editor =
+    "text_editor/external_text_editor";
 
 // Map editor keys.
 const QString EditorSettings::map_main_background =
@@ -117,6 +119,7 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::font_size, 10 },
   { EditorSettings::tab_length, 2 },
   { EditorSettings::replace_tab_by_spaces, true },
+  { EditorSettings::external_text_editor, ""},
 
   // Map editor.
   { EditorSettings::map_main_background, "#888888" },
