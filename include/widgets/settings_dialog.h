@@ -67,6 +67,10 @@ public slots:
   void change_tab_length();
   void update_replace_tab_by_spaces();
   void change_replace_tab_by_spaces();
+  void update_external_editor_enabled();
+  void change_external_editor_enabled();
+  void update_external_editor_cmd();
+  void change_external_editor_cmd();
 
   // Map editor.
   void update_map_main_background();

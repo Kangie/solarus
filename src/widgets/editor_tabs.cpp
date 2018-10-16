@@ -34,6 +34,7 @@
 #include <QSet>
 #include <QUndoGroup>
 #include <QUndoStack>
+#include <QProcess>
 
 namespace SolarusEditor {
 
@@ -192,6 +193,18 @@ void EditorTabs::open_text_editor(
   if (!quest.is_in_root_path(path)) {
     // Not a file of this quest.
     return;
+  }
+
+  EditorSettings settings;
+
+  if(settings.get_value_bool(EditorSettings::external_text_editor_enabled)) {
+      //Should open the external editor instead
+      QString project_path = quest.get_root_path();
+      QString cmd_str = settings.get_value_string(EditorSettings::external_text_editor_cmd);
+      cmd_str.replace("%f",path).replace("%p",project_path);
+      if(QProcess::startDetached(cmd_str)) {
+          return;
+      }
   }
 
   // Find the existing tab if any.
