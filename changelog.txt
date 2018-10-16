@@ -42,7 +42,8 @@ ________________________________________
 * Fix error message when opening a read-only quest (#264).
 * Fix memory not released when closing an editor (#306).
 * Initial quest: add some shaders (#320).
-
+* Text editor: allow to set an external editor to be used instead of the
+built-in one (#398)
 _______________________________________
 
 Solarus Quest Editor 1.5.3 (2017-04-01)
