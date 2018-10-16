@@ -50,6 +50,8 @@ public:
   static const QString font_size;
   static const QString tab_length;
   static const QString replace_tab_by_spaces;
+  static const QString external_text_editor_enabled;
+  static const QString external_text_editor_cmd;
 
   // Map editor keys.
   static const QString map_main_background;
