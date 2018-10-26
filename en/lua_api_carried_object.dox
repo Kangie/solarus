@@ -50,6 +50,11 @@ See \ref lua_api_entity_methods to know these methods.
 
 The following methods are specific to carried objects.
 
+\subsection lua_api_carried_object_get_carrier carried_object:get_carrier()
+
+Returns the \ref lua_api_entity "entity" that carried this object.
+- Return value (\ref lua_api_entity "entity"): The carrier entity.
+
 \subsection lua_api_carried_object_get_damage_on_enemies carried_object:get_damage_on_enemies()
 
 Returns the number of life points that an \ref lua_api_enemy "enemy"
@@ -88,6 +93,21 @@ See \ref lua_api_entity_events to know these events.
 
 \section lua_api_carried_object_events Events of the type carried object
 
-None.
+The following events are specific to carried objects.
+
+\subsection lua_api_carried_object_on_lifted carried_object:on_lifted()
+
+Called when this object has finished being lifted and is now
+actually carried.
+
+\subsection lua_api_carried_object_on_thrown carried_object:on_thrown()
+
+Called when this object starts being thrown.
+
+\subsection lua_api_carried_object_on_fallen carried_object:on_fallen()
+
+Called when this object falls to the ground after being thrown.
+
+It will be destroyed right after this, unless it can regenerate.
 
 */
