@@ -104,10 +104,8 @@ actually carried.
 
 Called when this object starts being thrown.
 
-\subsection lua_api_carried_object_on_fallen carried_object:on_fallen()
+\subsection lua_api_carried_object_on_breaking carried_object:on_breaking()
 
-Called when this object falls to the ground after being thrown.
-
-It will be destroyed right after this, unless it can regenerate.
+Called when this object falls on the ground and starts breaking.
 
 */
