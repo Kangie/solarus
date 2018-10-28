@@ -1075,11 +1075,10 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.music_field->set_quest(quest);
   ui.music_field->get_selector().add_special_value("none", tr("<No music>"), 0);
   ui.music_field->get_selector().add_special_value("same", tr("<Same as before>"), 1);
-  ui.tileset_view->set_read_only(true);
   ui.map_view->set_map(map);
   ui.map_view->set_view_settings(get_view_settings());
   ui.map_view->set_common_actions(&get_common_actions());
-
+  ui.tileset_view->set_read_only(true);
   ui.tileset_view->set_view_settings(tileset_view_settings);
 
   ui.size_field->config("x", 0, 99999, 8);
@@ -1098,93 +1097,93 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   load_settings();
 
   // Make connections.
-  connect(&get_database(), SIGNAL(element_description_changed(ResourceType, QString, QString)),
-          this, SLOT(update_description_to_gui()));
-  connect(ui.description_field, SIGNAL(editingFinished()),
-          this, SLOT(set_description_from_gui()));
+  connect(&get_database(), &QuestDatabase::element_description_changed,
+          this, &MapEditor::update_description_to_gui);
+  connect(ui.description_field, &QLineEdit::editingFinished,
+          this, &MapEditor::set_description_from_gui);
 
-  connect(ui.size_field, SIGNAL(editing_finished()),
-          this, SLOT(change_size_requested()));
-  connect(map, SIGNAL(size_changed(QSize)),
-          this, SLOT(update_size_field()));
+  connect(ui.size_field, &PairSpinBox::editing_finished,
+          this, &MapEditor::change_size_requested);
+  connect(map, &MapModel::size_changed,
+          this, &MapEditor::update_size_field);
 
-  connect(ui.min_layer_field, SIGNAL(editingFinished()),
-          this, SLOT(change_min_layer_requested()));
-  connect(ui.max_layer_field, SIGNAL(editingFinished()),
-          this, SLOT(change_max_layer_requested()));
-  connect(map, SIGNAL(layer_range_changed(int, int)),
-          this, SLOT(layer_range_changed()));
+  connect(ui.min_layer_field, &QSpinBox::editingFinished,
+          this, &MapEditor::change_min_layer_requested);
+  connect(ui.max_layer_field, &QSpinBox::editingFinished,
+          this, &MapEditor::change_max_layer_requested);
+  connect(map, &MapModel::layer_range_changed,
+          this, &MapEditor::layer_range_changed);
 
-  connect(ui.world_check_box, SIGNAL(stateChanged(int)),
-          this, SLOT(world_check_box_changed()));
-  connect(ui.world_field, SIGNAL(editingFinished()),
-          this, SLOT(change_world_requested()));
-  connect(map, SIGNAL(world_changed(QString)),
-          this, SLOT(update_world_field()));
+  connect(ui.world_check_box, &QCheckBox::stateChanged,
+          this, &MapEditor::world_check_box_changed);
+  connect(ui.world_field, &QLineEdit::editingFinished,
+          this, &MapEditor::change_world_requested);
+  connect(map, &MapModel::world_changed,
+          this, &MapEditor::update_world_field);
 
-  connect(ui.floor_check_box, SIGNAL(stateChanged(int)),
-          this, SLOT(floor_check_box_changed()));
-  connect(ui.floor_field, SIGNAL(editingFinished()),
-          this, SLOT(change_floor_requested()));
-  connect(map, SIGNAL(floor_changed(int)),
-          this, SLOT(update_floor_field()));
+  connect(ui.floor_check_box, &QCheckBox::stateChanged,
+          this, &MapEditor::floor_check_box_changed);
+  connect(ui.floor_field, &QSpinBox::editingFinished,
+          this, &MapEditor::change_floor_requested);
+  connect(map, &MapModel::floor_changed,
+          this, &MapEditor::update_floor_field);
 
-  connect(ui.location_field, SIGNAL(editing_finished()),
-          this, SLOT(change_location_requested()));
-  connect(map, SIGNAL(location_changed(QPoint)),
-          this, SLOT(update_location_field()));
+  connect(ui.location_field, &PairSpinBox::editing_finished,
+          this, &MapEditor::change_location_requested);
+  connect(map, &MapModel::location_changed,
+          this, &MapEditor::update_location_field);
 
-  connect(ui.tileset_field, SIGNAL(activated(QString)),
-          this, SLOT(tileset_selector_activated()));
-  connect(map, SIGNAL(tileset_id_changed(QString)),
-          this, SLOT(tileset_id_changed(QString)));
-  connect(ui.tileset_edit_button, SIGNAL(clicked()),
-          this, SLOT(open_tileset_requested()));
+  connect(ui.tileset_field, QOverload<const QString&>::of(&ResourceSelector::activated),
+          this, &MapEditor::tileset_selector_activated);
+  connect(map, &MapModel::tileset_id_changed,
+          this, &MapEditor::tileset_id_changed);
+  connect(ui.tileset_edit_button, &QToolButton::clicked,
+          this, &MapEditor::open_tileset_requested);
 
-  connect(ui.music_field, SIGNAL(activated(QString)),
-          this, SLOT(music_selector_activated()));
-  connect(map, SIGNAL(music_id_changed(QString)),
-          this, SLOT(update_music_field()));
+  connect(ui.music_field, &MusicChooser::activated,
+          this, &MapEditor::music_selector_activated);
+  connect(map, &MapModel::music_id_changed,
+          this, &MapEditor::update_music_field);
 
-  connect(ui.current_border_sets_selector, SIGNAL(activated(QString)),
-          this, SLOT(border_set_selector_activated()));
+  connect(ui.current_border_sets_selector, QOverload<const QString&>::of(&BorderSetSelector::activated),
+          this, &MapEditor::border_set_selector_activated);
 
-  connect(ui.open_script_button, SIGNAL(clicked()),
-          this, SLOT(open_script_requested()));
+  connect(ui.open_script_button, &QToolButton::clicked,
+          this, &MapEditor::open_script_requested);
 
-  connect(ui.map_view, SIGNAL(edit_entity_requested(EntityIndex, EntityModelPtr&)),
-          this, SLOT(edit_entity_requested(EntityIndex, EntityModelPtr&)));
-  connect(ui.map_view, SIGNAL(move_entities_requested(EntityIndexes, QPoint, bool)),
-          this, SLOT(move_entities_requested(EntityIndexes, QPoint, bool)));
-  connect(ui.map_view, SIGNAL(resize_entities_requested(QMap<EntityIndex, QRect>, bool)),
-          this, SLOT(resize_entities_requested(QMap<EntityIndex, QRect>, bool)));
-  connect(ui.map_view, SIGNAL(convert_tiles_requested(EntityIndexes)),
-          this, SLOT(convert_tiles_requested(EntityIndexes)));
-  connect(ui.map_view, SIGNAL(change_tiles_pattern_requested(EntityIndexes)),
-          this, SLOT(change_tiles_pattern_requested(EntityIndexes)));
-  connect(ui.map_view, SIGNAL(set_entities_direction_requested(EntityIndexes, int)),
-          this, SLOT(set_entities_direction_requested(EntityIndexes, int)));
-  connect(ui.map_view, SIGNAL(set_entities_layer_requested(EntityIndexes, int)),
-          this, SLOT(set_entities_layer_requested(EntityIndexes, int)));
-  connect(ui.map_view, SIGNAL(increase_entities_layer_requested(EntityIndexes)),
-          this, SLOT(increase_entities_layer_requested(EntityIndexes)));
-  connect(ui.map_view, SIGNAL(decrease_entities_layer_requested(EntityIndexes)),
-          this, SLOT(decrease_entities_layer_requested(EntityIndexes)));
-  connect(ui.map_view, SIGNAL(bring_entities_to_front_requested(EntityIndexes)),
-          this, SLOT(bring_entities_to_front_requested(EntityIndexes)));
-  connect(ui.map_view, SIGNAL(bring_entities_to_back_requested(EntityIndexes)),
-          this, SLOT(bring_entities_to_back_requested(EntityIndexes)));
-  connect(ui.map_view, SIGNAL(add_entities_requested(AddableEntities&, bool)),
-          this, SLOT(add_entities_requested(AddableEntities&, bool)));
-  connect(ui.map_view, SIGNAL(remove_entities_requested(EntityIndexes)),
-          this, SLOT(remove_entities_requested(EntityIndexes)));
-  connect(ui.map_view, SIGNAL(stopped_state()),
-          this, SLOT(uncheck_entity_creation_buttons()));
-  connect(ui.map_view, SIGNAL(undo_requested()),
-          this, SLOT(undo()));
+  connect(ui.map_view, &MapView::edit_entity_requested,
+          this, &MapEditor::edit_entity_requested);
+  connect(ui.map_view, &MapView::move_entities_requested,
+          this, &MapEditor::move_entities_requested);
+  connect(ui.map_view, &MapView::resize_entities_requested,
+          this, &MapEditor::resize_entities_requested);
+  connect(ui.map_view, &MapView::convert_tiles_requested,
+          this, &MapEditor::convert_tiles_requested);
+  connect(ui.map_view, &MapView::change_tiles_pattern_requested,
+          this, &MapEditor::change_tiles_pattern_requested);
+  connect(ui.map_view, &MapView::set_entities_direction_requested,
+          this, &MapEditor::set_entities_direction_requested);
+  connect(ui.map_view, &MapView::set_entities_layer_requested,
+          this, &MapEditor::set_entities_layer_requested);
+  connect(ui.map_view, &MapView::increase_entities_layer_requested,
+          this, &MapEditor::increase_entities_layer_requested);
+  connect(ui.map_view, &MapView::decrease_entities_layer_requested,
+          this, &MapEditor::decrease_entities_layer_requested);
+  connect(ui.map_view, &MapView::bring_entities_to_front_requested,
+          this, &MapEditor::bring_entities_to_front_requested);
+  connect(ui.map_view, &MapView::bring_entities_to_back_requested,
+          this, &MapEditor::bring_entities_to_back_requested);
+  connect(ui.map_view, &MapView::add_entities_requested,
+          this, &MapEditor::add_entities_requested);
+  connect(ui.map_view, &MapView::remove_entities_requested,
+          this, &MapEditor::remove_entities_requested);
+  connect(ui.map_view, &MapView::stopped_state,
+          this, &MapEditor::uncheck_entity_creation_buttons);
+  connect(ui.map_view, &MapView::undo_requested,
+          this, &MapEditor::undo);
 
-  connect(ui.map_view->get_scene(), SIGNAL(selectionChanged()),
-          this, SLOT(map_selection_changed()));
+  connect(ui.map_view->get_scene(), &MapScene::selectionChanged,
+          this, &MapEditor::map_selection_changed);
 }
 
 /**
