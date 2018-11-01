@@ -269,7 +269,7 @@ Sets whether the entity is in contact with ground during this state.
 The default value is \c true.
 You should typically set this to \c false when the entity is jumping of flying.
 
-If you can set it to \c false, then the entity won't be affected by any
+If you set it to \c false, then the entity won't be affected by any
 \ref lua_api_map_get_ground "ground",
 by \ref lua_api_teletransporter "teletransporters",
 \ref lua_api_stream "streams" or

@@ -47,19 +47,19 @@ The following methods are specific to dynamic tiles.
 Returns the id of the tile pattern of this dynamic tile.
 - Return value (string): The tile pattern id in the tileset.
 
-\subsection lua_api_dynamic_tile_get_modified_ground dynamic_tile:get_modified_ground()
-
 \subsection lua_api_dynamic_tile_get_tileset dynamic_tile:get_tileset()
 
 Returns the id of the tileset of this dynamic tile.
-- Return value (string or nil): The tileset id or nil if no tileset is set for
-  the dynamic tile (map's tileset is used).
+- Return value (string or nil): The tileset id, or \c nil if no tileset is set
+  for the dynamic tile (in this case, the tileset of the map is used).
 
 \subsection lua_api_dynamic_tile_set_tileset dynamic_tile:set_tileset(tileset_id)
 
 Sets the tileset of this dynamic tile.
-- \c tileset_id (string on nil): The tileset id or \c nil to clear the tileset
-  for the dynamic tile (map's tileset is used).
+- \c tileset_id (string or nil): The tileset id, or \c nil to clear the tileset
+  for the dynamic tile (in this case, the tileset of the map is used).
+
+\subsection lua_api_dynamic_tile_get_modified_ground dynamic_tile:get_modified_ground()
 
 Returns the ground defined by this dynamic tile on the map.
 
@@ -84,6 +84,3 @@ See \ref lua_api_entity_events to know these events.
 None.
 
 */
-
-
-
