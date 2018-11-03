@@ -1805,7 +1805,7 @@ on the map.
 - Return value (\ref lua_api_custom_entity "custom entity"): The
   custom entity created.
 
-\section lua_api_map_events Events of a map
+\section lua_api_map_events Events of the type map
 
 Events are callback methods automatically called by the engine if you define
 them.
