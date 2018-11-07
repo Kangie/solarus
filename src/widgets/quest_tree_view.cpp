@@ -986,7 +986,6 @@ void QuestTreeView::open_action_triggered() {
     return;
   }
 
-  const Quest& quest = model->get_quest();
   emit open_file_requested(model->get_quest(), path);
 }
 
