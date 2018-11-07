@@ -599,6 +599,10 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
           tr("Explore folder"),
           this
     );
+    connect(explore_action, &QAction::triggered,
+            this, [path]() {
+      QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    });
     menu.addAction(explore_action);
     return;
   }
@@ -983,11 +987,6 @@ void QuestTreeView::open_action_triggered() {
   }
 
   const Quest& quest = model->get_quest();
-  if (quest.is_dir(path)) {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-    return;
-  }
-
   emit open_file_requested(model->get_quest(), path);
 }
 
