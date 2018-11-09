@@ -33,7 +33,6 @@ BorderSetSelector::BorderSetSelector(QWidget* parent) :
   quest(nullptr),
   tileset_id() {
 
-  setIconSize(QSize(32, 32));
 }
 
 /**
@@ -101,6 +100,7 @@ void BorderSetSelector::build() {
     if (!border_set_ids.isEmpty()) {
       set_selected_border_set_id(border_set_ids.first());
     }
+    setIconSize(QSize(24, 24));
   }
   catch (const EditorException& ex) {
     // The tileset file could not be opened: the tileset is probably
