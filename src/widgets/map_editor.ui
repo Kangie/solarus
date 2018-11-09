@@ -342,8 +342,12 @@
            <number>0</number>
           </property>
           <widget class="QWidget" name="patterns_tab">
+           <attribute name="icon">
+            <iconset resource="../../resources/images.qrc">
+             <normaloff>:/images/entity_tile.png</normaloff>:/images/entity_tile.png</iconset>
+           </attribute>
            <attribute name="title">
-            <string>Tilesets</string>
+            <string>Patterns</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout">
             <property name="leftMargin">
@@ -371,6 +375,10 @@
            </layout>
           </widget>
           <widget class="QWidget" name="border_sets_tab">
+           <attribute name="icon">
+            <iconset resource="../../resources/images.qrc">
+             <normaloff>:/images/border_kind_7.png</normaloff>:/images/border_kind_7.png</iconset>
+           </attribute>
            <attribute name="title">
             <string>Border generator</string>
            </attribute>
@@ -529,21 +537,21 @@
                  </item>
                 </layout>
                </item>
-               <item>
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
               </layout>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
