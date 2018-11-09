@@ -1070,17 +1070,18 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.splitter->setSizes({ side_width, width() - side_width });
   ui.map_side_splitter->setStretchFactor(0, 0);  // Don't expand the map properties view
   ui.map_side_splitter->setStretchFactor(1, 1);  // but only the tileset view.
-  ui.tileset_field->set_resource_type(ResourceType::TILESET);
-  ui.tileset_field->set_quest(quest);
   ui.music_field->set_quest(quest);
   ui.music_field->get_selector().add_special_value("none", tr("<No music>"), 0);
   ui.music_field->get_selector().add_special_value("same", tr("<Same as before>"), 1);
+  ui.tileset_field->set_resource_type(ResourceType::TILESET);
+  ui.tileset_field->set_quest(quest);
+  ui.border_set_tileset_field->set_resource_type(ResourceType::TILESET);
+  ui.border_set_tileset_field->set_quest(quest);
   ui.map_view->set_map(map);
   ui.map_view->set_view_settings(get_view_settings());
   ui.map_view->set_common_actions(&get_common_actions());
   ui.tileset_view->set_read_only(true);
   ui.tileset_view->set_view_settings(tileset_view_settings);
-
   ui.size_field->config("x", 0, 99999, 8);
   ui.size_field->set_tooltips(
     tr("Width of the map in pixels"),
@@ -1145,7 +1146,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(map, &MapModel::music_id_changed,
           this, &MapEditor::update_music_field);
 
-  connect(ui.current_border_sets_selector, QOverload<const QString&>::of(&BorderSetSelector::activated),
+  connect(ui.border_set_field, QOverload<const QString&>::of(&BorderSetSelector::activated),
           this, &MapEditor::border_set_selector_activated);
 
   connect(ui.open_script_button, &QToolButton::clicked,
@@ -1814,17 +1815,17 @@ void MapEditor::update_tileset_view() {
 void MapEditor::update_border_set_view() {
 
   const QString& tileset_id = map->get_tileset_id();
-  if (ui.current_border_sets_selector->get_tileset_id() == tileset_id) {
+  if (ui.border_set_field->get_tileset_id() == tileset_id) {
     // No change.
     return;
   }
-  ui.current_border_sets_selector->set_tileset_id(get_quest(), tileset_id);
-  ui.current_border_sets_selector->build();
+  ui.border_set_field->set_tileset_id(get_quest(), tileset_id);
+  ui.border_set_field->build();
 
-  ui.current_border_sets_selector->set_selected_border_set_id(map->get_current_border_set_id());
+  ui.border_set_field->set_selected_border_set_id(map->get_current_border_set_id());
 
-  if (ui.current_border_sets_selector->get_selected_border_set_id() != map->get_current_border_set_id()) {
-    map->set_current_border_set_id(ui.current_border_sets_selector->get_selected_border_set_id());
+  if (ui.border_set_field->get_selected_border_set_id() != map->get_current_border_set_id()) {
+    map->set_current_border_set_id(ui.border_set_field->get_selected_border_set_id());
   }
 }
 
@@ -1834,7 +1835,7 @@ void MapEditor::update_border_set_view() {
 void MapEditor::border_set_selector_activated() {
 
   const QString& old_border_set_id = map->get_current_border_set_id();
-  const QString& new_border_set_id = ui.current_border_sets_selector->get_selected_border_set_id();
+  const QString& new_border_set_id = ui.border_set_field->get_selected_border_set_id();
   if (new_border_set_id == old_border_set_id) {
     // No change.
     return;

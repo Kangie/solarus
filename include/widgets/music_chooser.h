@@ -29,7 +29,7 @@ class Quest;
 /**
  * @brief A music selector with a play/stop button.
  */
-class MusicChooser: public QWidget{
+class MusicChooser: public QWidget {
   Q_OBJECT
 
 public:
