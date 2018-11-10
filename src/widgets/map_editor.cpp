@@ -1149,7 +1149,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, [this]() {
       open_tileset_requested(ui.tileset_field->get_selected_id());
   });
-  connect(ui.patterns_tileset_field, QOverload<const QString&>::of(&ResourceSelector::activated),
+  connect(ui.patterns_tileset_field, QOverload<const QString&>::of(&ResourceSelector::currentIndexChanged),
           this, &MapEditor::update_tileset_view);
   connect(ui.patterns_tileset_edit_button, &QToolButton::clicked,
           this, [this]() {
@@ -1898,20 +1898,47 @@ void MapEditor::map_selection_changed() {
   can_cut_changed(!empty_selection);
   can_copy_changed(!empty_selection);
 
-  // Nofify the tileset view of selected tile patterns.
-  TilesetModel* tileset = ui.tileset_view->get_model();  // TODO show appropriate tileset
-  if (tileset != nullptr) {
-    const EntityIndexes& entity_indexes = ui.map_view->get_selected_entities();
-    MapModel& map = get_map();
-    QList<int> pattern_indexes;
-    for (const EntityIndex& entity_index : entity_indexes) {
-      QString pattern_id = map.get_entity_field(entity_index, "pattern").toString();
-      if (!pattern_id.isEmpty()) {
-        pattern_indexes << tileset->id_to_index(pattern_id);
-      }
-    }
-    tileset->set_selected_indexes(pattern_indexes);
+  // Update the tileset view with the selected tile patterns.
+  const EntityIndexes& entity_indexes = ui.map_view->get_selected_entities();
+  if (entity_indexes.isEmpty()) {
+    return;
   }
+
+  // See if all selected tiles have the same tileset.
+  MapModel& map = get_map();
+  QString optional_tileset_id = map.get_entity_field(entity_indexes.first(), "tileset").toString();
+  for (const EntityIndex& entity_index : entity_indexes) {
+    if (!map.has_entity_field(entity_index, "tileset")) {
+      continue;
+    }
+    if (map.get_entity_field(entity_index, "tileset").toString() != optional_tileset_id) {
+      // Use the tileset of the map if the selection has multiple tilesets.
+      optional_tileset_id = "";
+    }
+  }
+
+  ui.patterns_tileset_field->set_selected_id(optional_tileset_id);
+
+  QString tileset_id = !optional_tileset_id.isEmpty() ? optional_tileset_id : map.get_tileset_id();
+  TilesetModel* tileset = get_quest().get_tileset(tileset_id);
+  if (tileset == nullptr) {
+    return;
+  }
+
+  QList<int> pattern_indexes;
+  for (const EntityIndex& entity_index : entity_indexes) {
+    if (!map.has_entity_field(entity_index, "tileset")) {
+      continue;
+    }
+    QString pattern_id = map.get_entity_field(entity_index, "pattern").toString();
+    if (pattern_id.isEmpty()) {
+      continue;
+    }
+    if (map.get_entity_field(entity_index, "tileset").toString() == optional_tileset_id) {
+      pattern_indexes << tileset->id_to_index(pattern_id);
+    }
+  }
+  tileset->set_selected_indexes(pattern_indexes);
 }
 
 /**
