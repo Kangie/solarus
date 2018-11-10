@@ -1199,6 +1199,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::add_entities_requested);
   connect(ui.map_view, &MapView::remove_entities_requested,
           this, &MapEditor::remove_entities_requested);
+  connect(ui.map_view, &MapView::generate_borders_requested,
+          this, &MapEditor::generate_borders_requested);
   connect(ui.map_view, &MapView::stopped_state,
           this, &MapEditor::uncheck_entity_creation_buttons);
   connect(ui.map_view, &MapView::undo_requested,

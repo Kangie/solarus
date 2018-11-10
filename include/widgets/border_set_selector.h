@@ -32,7 +32,7 @@ class BorderSetSelector : public QComboBox {
 
 public:
 
-  BorderSetSelector(QWidget* parent);
+  explicit BorderSetSelector(QWidget* parent = nullptr);
 
   const QString& get_tileset_id() const;
   void set_tileset_id(Quest& quest, const QString& tileset_id);
@@ -40,11 +40,9 @@ public:
   QString get_selected_border_set_id() const;
   void set_selected_border_set_id(const QString& border_set_id);
 
-public slots:
+private:
 
   void build();
-
-private:
 
   QPointer<Quest> quest;     /**< The quest or nullptr if it is not set yet. */
   QString tileset_id;        /**< Id of the tileset from where to show border sets, or an empty string. */

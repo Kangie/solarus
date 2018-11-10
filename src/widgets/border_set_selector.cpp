@@ -52,6 +52,11 @@ void BorderSetSelector::set_tileset_id(Quest& quest, const QString& tileset_id) 
 
   this->quest = &quest;
   this->tileset_id = tileset_id;
+  QString old_border_set_id = get_selected_border_set_id();
+  build();
+  if (!old_border_set_id.isEmpty()) {
+    set_selected_border_set_id(old_border_set_id);
+  }
 }
 
 /**
@@ -66,6 +71,7 @@ QString BorderSetSelector::get_selected_border_set_id() const {
 /**
  * @brief Selects the specified border set.
  * @return Id of the border set to make selected.
+ * Nothing happens if such a border set does not exist.
  */
 void BorderSetSelector::set_selected_border_set_id(const QString& border_set_id) {
 
