@@ -59,6 +59,14 @@ EditorTabs::EditorTabs(QWidget* parent):
 }
 
 /**
+ * @brief Destructor.
+ */
+EditorTabs::~EditorTabs() {
+  disconnect(tabBar(), &ClosableTabBar::currentChanged,
+             nullptr, nullptr);
+}
+
+/**
  * @brief Returns the undo/redo group of all open files.
  * @return The undo/redo group of all open files.
  */

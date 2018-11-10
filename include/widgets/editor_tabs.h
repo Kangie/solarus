@@ -40,7 +40,8 @@ class EditorTabs : public QTabWidget {
 
 public:
 
-  EditorTabs(QWidget* parent = nullptr);
+  explicit EditorTabs(QWidget* parent = nullptr);
+  ~EditorTabs() override;
 
   QUndoGroup& get_undo_group();
 
