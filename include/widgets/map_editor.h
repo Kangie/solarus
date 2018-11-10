@@ -77,10 +77,11 @@ private slots:
   void update_tileset_field();
   void tileset_id_changed(const QString& tileset_id);
   void tileset_selector_activated();
-  void open_tileset_requested();
+  void open_tileset_requested(const QString& tileset_id);
   void update_music_field();
   void music_selector_activated();
   void update_tileset_view();
+  void border_set_tileset_changed();
   void tileset_selection_changed();
   void map_selection_changed();
   void uncheck_entity_creation_buttons();

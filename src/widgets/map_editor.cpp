@@ -1082,6 +1082,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.patterns_tileset_field->set_selected_id("");
   ui.border_set_tileset_field->set_resource_type(ResourceType::TILESET);
   ui.border_set_tileset_field->set_quest(quest);
+  ui.border_set_tileset_field->add_special_value("", tr("(Tileset of the map)"), 0);
+  ui.border_set_tileset_field->set_selected_id("");
   ui.map_view->set_map(map);
   ui.map_view->set_view_settings(get_view_settings());
   ui.map_view->set_common_actions(&get_common_actions());
@@ -1143,8 +1145,20 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::tileset_selector_activated);
   connect(map, &MapModel::tileset_id_changed,
           this, &MapEditor::tileset_id_changed);
+  connect(ui.tileset_edit_button, &QToolButton::clicked,
+          this, [this]() {
+      open_tileset_requested(ui.tileset_field->get_selected_id());
+  });
   connect(ui.patterns_tileset_edit_button, &QToolButton::clicked,
-          this, &MapEditor::open_tileset_requested);
+          this, [this]() {
+      open_tileset_requested(ui.patterns_tileset_field->get_selected_id());
+  });
+  connect(ui.border_set_tileset_field, QOverload<const QString&>::of(&ResourceSelector::activated),
+          this, &MapEditor::border_set_tileset_changed);
+  connect(ui.border_set_tileset_edit_button, &QToolButton::clicked,
+          this, [this]() {
+      open_tileset_requested(ui.border_set_tileset_field->get_selected_id());
+  });
 
   connect(ui.music_field, &MusicChooser::activated,
           this, &MapEditor::music_selector_activated);
@@ -1418,6 +1432,7 @@ void MapEditor::update() {
   update_location_field();
   update_tileset_field();
   update_music_field();
+  border_set_tileset_changed();
   tileset_id_changed(map->get_tileset_id());
 }
 
@@ -1771,13 +1786,14 @@ void MapEditor::tileset_selector_activated() {
 }
 
 /**
- * @brief Slot called when the user wants to open the selected tileset.
+ * @brief Slot called when the user wants to open the given tileset.
+ * @param Id of the tileset to open (empty means the one of the map).
  */
-void MapEditor::open_tileset_requested() {
+void MapEditor::open_tileset_requested(const QString& tileset_id) {
 
-  // TODO open the selected tileset in the patterns view
+  QString id = !tileset_id.isEmpty() ? tileset_id : map->get_tileset_id();
   emit open_file_requested(
-        get_quest(), get_quest().get_tileset_data_file_path(map->get_tileset_id()));
+        get_quest(), get_quest().get_tileset_data_file_path(id));
 }
 
 /**
@@ -1825,15 +1841,26 @@ void MapEditor::tileset_id_changed(const QString& tileset_id) {
 
   Q_UNUSED(tileset_id);
 
-  // Show the correct tileset in the combobox.
+  // Show the correct tileset in the various comboboxes and views.
   update_tileset_field();
-
-  // Notify the tileset view.
   update_tileset_view();
+  border_set_tileset_changed();
 
   // Watch the pattern selection of the tileset view to correctly add new tiles.
   connect(ui.tileset_view, &TilesetView::selection_changed_by_user,
           this, &MapEditor::tileset_selection_changed);
+}
+
+/**
+ * @brief Called when the user changes the selected tileset for border sets.
+ */
+void MapEditor::border_set_tileset_changed() {
+
+  QString tileset_id = ui.border_set_tileset_field->get_selected_id();
+  if (tileset_id.isEmpty()) {
+    tileset_id = get_map().get_tileset_id();
+  }
+  ui.border_set_field->set_tileset_id(get_quest(), tileset_id);
 }
 
 /**
