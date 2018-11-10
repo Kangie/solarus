@@ -67,7 +67,7 @@ public:
     virtual void mouse_released(const QMouseEvent& event);
     virtual void mouse_moved(const QMouseEvent& event);
     virtual void context_menu_requested(const QPoint& where);
-    virtual void tileset_selection_changed();
+    virtual void tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes);
 
   private:
 
@@ -105,7 +105,7 @@ public:
   void start_state_moving_entities(const QPoint& initial_point);
   void start_state_resizing_entities();
   void start_state_adding_entities(EntityModels&& entities, bool use_layer_under_mouse);
-  void start_adding_entities_from_tileset_selection();
+  void start_adding_entities_from_tileset(const QString& tileset_id, const QList<int>& indexes);
 
   QMenu* create_context_menu();
 
@@ -124,7 +124,7 @@ public slots:
   void update_traversables_visibility();
   void update_obstacles_visibility();
   void update_entity_type_visibility(EntityType type);
-  void tileset_selection_changed();
+  void tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes);
   void tileset_id_changed(const QString& tileset_id);
   void notify_tileset_changed();
   void cancel_state_requested();

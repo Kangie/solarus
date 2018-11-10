@@ -25,6 +25,7 @@
 #include "widgets/pan_tool.h"
 #include "widgets/zoom_tool.h"
 #include "point.h"
+#include "quest.h"
 #include "rectangle.h"
 #include "tileset_model.h"
 #include "view_settings.h"
@@ -58,7 +59,7 @@ public:
   void mouse_moved(const QMouseEvent& event) override;
   void mouse_released(const QMouseEvent& event) override;
   void context_menu_requested(const QPoint& where) override;
-  void tileset_selection_changed() override;
+  void tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) override;
 
 private:
   QPoint mouse_pressed_point;               /**< Point where the mouse was pressed, in view coordinates. */
@@ -178,7 +179,7 @@ public:
   void stop() override;
   void mouse_pressed(const QMouseEvent& event) override;
   void mouse_moved(const QMouseEvent& event) override;
-  void tileset_selection_changed() override;
+  void tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) override;
 
 private:
   QPoint get_entities_center() const;
@@ -444,17 +445,23 @@ void MapView::start_state_adding_entities(EntityModels&& entities, bool guess_la
 }
 
 /**
- * @brief Moves to the state of adding new entities, with new tiles
- * corresponding to the selected patterns of the tileset.
+ * @brief Moves to the state of adding new entities, adding the specified tiles.
+ * @param tileset_id Id of the tileset to use (empty means the one of the map).
+ * @param indexes Indexes of the selected patterns.
  */
-void MapView::start_adding_entities_from_tileset_selection() {
+void MapView::start_adding_entities_from_tileset(const QString& tileset_id, const QList<int>& indexes) {
+
+  if (indexes.isEmpty()) {
+    return;
+  }
 
   MapModel* map = get_map();
   if (map == nullptr) {
     return;
   }
 
-  TilesetModel* tileset = map->get_tileset_model();
+  QString id = !tileset_id.isEmpty() ? tileset_id : map->get_tileset_id();
+  TilesetModel* tileset = map->get_quest().get_tileset(id);
   if (tileset == nullptr) {
     return;
   }
@@ -462,14 +469,10 @@ void MapView::start_adding_entities_from_tileset_selection() {
   // Create a tile from each selected pattern.
   // Arrange the relative position of tiles as in the tileset.
   EntityModels tiles;
-  const QList<int>& pattern_indexes = tileset->get_selected_indexes();
-  if (pattern_indexes.isEmpty()) {
-    return;
-  }
 
   bool has_common_preferred_layer = true;
-  int common_preferred_layer = tileset->get_pattern_default_layer(pattern_indexes.first());
-  for (int pattern_index : pattern_indexes) {
+  int common_preferred_layer = tileset->get_pattern_default_layer(indexes.first());
+  for (int pattern_index : indexes) {
     QString pattern_id = tileset->index_to_id(pattern_index);
     if (pattern_id.isEmpty()) {
       continue;
@@ -483,6 +486,10 @@ void MapView::start_adding_entities_from_tileset_selection() {
     tile->set_xy(pattern_frame.topLeft());
     int preferred_layer = tileset->get_pattern_default_layer(pattern_index);
     tile->set_layer(preferred_layer);
+    if (!tileset_id.isEmpty()) {
+      // Not the default tileset of the map.
+      tile->set_field("tileset", tileset_id);
+    }
     tiles.emplace_back(std::move(tile));
 
     // Also check if they all have the same preferred layer.
@@ -1132,14 +1139,17 @@ void MapView::update_entity_type_visibility(EntityType type) {
  * by the user.
  *
  * Tiles with these new patterns are added if possible.
+ *
+ * @param tileset_id Id of the tileset to use (empty means the one of the map).
+ * @param indexes Indexes of the selected patterns.
  */
-void MapView::tileset_selection_changed() {
+void MapView::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
 
   if (state == nullptr) {
     return;
   }
 
-  state->tileset_selection_changed();
+  state->tileset_selection_changed(tileset_id, indexes);
 }
 
 /**
@@ -1688,7 +1698,6 @@ void MapView::State::cancel() {
  * @param event The event to handle.
  */
 void MapView::State::mouse_pressed(const QMouseEvent& event) {
-
   Q_UNUSED(event);
 }
 
@@ -1700,7 +1709,6 @@ void MapView::State::mouse_pressed(const QMouseEvent& event) {
  * @param event The event to handle.
  */
 void MapView::State::mouse_released(const QMouseEvent& event) {
-
   Q_UNUSED(event);
 }
 
@@ -1712,7 +1720,6 @@ void MapView::State::mouse_released(const QMouseEvent& event) {
  * @param event The event to handle.
  */
 void MapView::State::mouse_moved(const QMouseEvent& event) {
-
   Q_UNUSED(event);
 }
 
@@ -1725,7 +1732,6 @@ void MapView::State::mouse_moved(const QMouseEvent& event) {
  * @param where Where to show the context menu, in global coordinates.
  */
 void MapView::State::context_menu_requested(const QPoint& where) {
-
   Q_UNUSED(where);
 }
 
@@ -1733,9 +1739,13 @@ void MapView::State::context_menu_requested(const QPoint& where) {
  * @brief Called when the user changes the selection in the tileset.
  *
  * States may start or stop adding entities.
+ *
+ * @param tileset_id Id of the tileset to use (empty means the one of the map).
+ * @param indexes Indexes of the selected patterns.
  */
-void MapView::State::tileset_selection_changed() {
-
+void MapView::State::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
+  Q_UNUSED(tileset_id);
+  Q_UNUSED(indexes);
 }
 
 /**
@@ -1903,18 +1913,10 @@ void DoingNothingState::context_menu_requested(const QPoint& where) {
 /**
  * @copydoc MapView::State::tileset_selection_changed
  */
-void DoingNothingState::tileset_selection_changed() {
+void DoingNothingState::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
 
-  TilesetModel* tileset = get_map().get_tileset_model();
-  if (tileset == nullptr) {
-    return;
-  }
-  if (tileset->is_selection_empty()) {
-    return;
-  }
-
-  // The user just selected some patterns in the tileset: create corresponding tiles.
-  get_view().start_adding_entities_from_tileset_selection();
+  // Create corresponding tiles.
+  get_view().start_adding_entities_from_tileset(tileset_id, indexes);
 }
 
 /**
@@ -2929,20 +2931,16 @@ void AddingEntitiesState::mouse_moved(const QMouseEvent& event) {
 /**
  * @copydoc MapView::State::tileset_selection_changed
  */
-void AddingEntitiesState::tileset_selection_changed() {
+void AddingEntitiesState::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
 
-  TilesetModel* tileset = get_map().get_tileset_model();
-  if (tileset == nullptr) {
-    return;
-  }
-  if (tileset->is_selection_empty()) {
+  if (indexes.isEmpty()) {
     // Stop adding the tiles that were selected.
     get_view().start_state_doing_nothing();
     return;
   }
 
   // The user just selected some patterns in the tileset: create corresponding tiles.
-  get_view().start_adding_entities_from_tileset_selection();
+  get_view().start_adding_entities_from_tileset(tileset_id, indexes);
 }
 
 /**

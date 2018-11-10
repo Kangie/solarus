@@ -1149,6 +1149,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, [this]() {
       open_tileset_requested(ui.tileset_field->get_selected_id());
   });
+  connect(ui.patterns_tileset_field, QOverload<const QString&>::of(&ResourceSelector::activated),
+          this, &MapEditor::update_tileset_view);
   connect(ui.patterns_tileset_edit_button, &QToolButton::clicked,
           this, [this]() {
       open_tileset_requested(ui.patterns_tileset_field->get_selected_id());
@@ -1831,8 +1833,14 @@ void MapEditor::music_selector_activated() {
  */
 void MapEditor::update_tileset_view() {
 
-  TilesetModel* tileset = map->get_tileset_model();
-  ui.tileset_view->set_model(tileset);
+  QString tileset_id = ui.patterns_tileset_field->get_selected_id();
+  if (tileset_id.isEmpty()) {
+    tileset_id = get_map().get_tileset_id();
+  }
+  TilesetModel* tileset = get_quest().get_tileset(tileset_id);
+  if (tileset != nullptr) {
+    ui.tileset_view->set_model(tileset);
+  }
 }
 
 /**
@@ -1854,7 +1862,7 @@ void MapEditor::tileset_id_changed(const QString& tileset_id) {
 }
 
 /**
- * @brief Called when the user changes the selected tileset for border sets.
+ * @brief Called when the user selects a tileset in the border sets view.
  */
 void MapEditor::border_set_tileset_changed() {
 
@@ -1871,7 +1879,13 @@ void MapEditor::border_set_tileset_changed() {
 void MapEditor::tileset_selection_changed() {
 
   uncheck_entity_creation_buttons();
-  ui.map_view->tileset_selection_changed();
+  QString optional_tileset_id = ui.patterns_tileset_field->get_selected_id();
+  QString tileset_id = !optional_tileset_id.isEmpty() ? optional_tileset_id : get_map().get_tileset_id();
+  TilesetModel* tileset = get_quest().get_tileset(tileset_id);
+  if (tileset == nullptr) {
+    return;
+  }
+  ui.map_view->tileset_selection_changed(optional_tileset_id, tileset->get_selected_indexes());
 }
 
 /**
@@ -1885,7 +1899,7 @@ void MapEditor::map_selection_changed() {
   can_copy_changed(!empty_selection);
 
   // Nofify the tileset view of selected tile patterns.
-  TilesetModel* tileset = ui.tileset_view->get_model();
+  TilesetModel* tileset = ui.tileset_view->get_model();  // TODO show appropriate tileset
   if (tileset != nullptr) {
     const EntityIndexes& entity_indexes = ui.map_view->get_selected_entities();
     MapModel& map = get_map();
