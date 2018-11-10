@@ -170,5 +170,6 @@
         <file>images/icon_image_tileset.png</file>
         <file>images/icon_camera.png</file>
         <file>images/icon_shader_code.png</file>
+        <file>images/border_set.png</file>
     </qresource>
 </RCC>

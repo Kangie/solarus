@@ -1075,6 +1075,10 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.music_field->get_selector().add_special_value("same", tr("<Same as before>"), 1);
   ui.tileset_field->set_resource_type(ResourceType::TILESET);
   ui.tileset_field->set_quest(quest);
+  ui.patterns_tileset_field->set_resource_type(ResourceType::TILESET);
+  ui.patterns_tileset_field->set_quest(quest);
+  ui.patterns_tileset_field->add_special_value("", tr("(Tileset of the map)"), 0);
+  ui.patterns_tileset_field->set_selected_id("");
   ui.border_set_tileset_field->set_resource_type(ResourceType::TILESET);
   ui.border_set_tileset_field->set_quest(quest);
   ui.map_view->set_map(map);
@@ -1138,7 +1142,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::tileset_selector_activated);
   connect(map, &MapModel::tileset_id_changed,
           this, &MapEditor::tileset_id_changed);
-  connect(ui.tileset_edit_button, &QToolButton::clicked,
+  connect(ui.patterns_tileset_edit_button, &QToolButton::clicked,
           this, &MapEditor::open_tileset_requested);
 
   connect(ui.music_field, &MusicChooser::activated,
@@ -1768,6 +1772,7 @@ void MapEditor::tileset_selector_activated() {
  */
 void MapEditor::open_tileset_requested() {
 
+  // TODO open the selected tileset in the patterns view
   emit open_file_requested(
         get_quest(), get_quest().get_tileset_data_file_path(map->get_tileset_id()));
 }
