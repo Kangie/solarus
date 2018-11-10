@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "auto_tiler.h"
+#include "quest.h"
 #include "tileset_model.h"
 #include <iostream>
 #include <iomanip>
@@ -24,15 +25,19 @@ namespace SolarusEditor {
 /**
  * @brief Creates an autotiler.
  * @param map The map.
+ * @param tileset_id Id of the tileset to use (empty means the one of the map).
+ * @param border_set_id Border set to use in this tileset.
  * @param entity_indexes Indexes of entities where to create a border.
  */
 AutoTiler::AutoTiler(
     MapModel& map,
-    const EntityIndexes& entity_indexes,
-    const QString& border_set_id) :
+    const QString& tileset_id,
+    const QString& border_set_id,
+    const EntityIndexes& entity_indexes) :
   map(map),
-  entity_indexes(entity_indexes),
-  border_set_id(border_set_id) {
+  tileset_id(tileset_id),
+  border_set_id(border_set_id),
+  entity_indexes(entity_indexes) {
 
   for (const EntityIndex& index : entity_indexes) {
     entity_rectangles.append(map.get_entity_bounding_box(index));
@@ -563,6 +568,9 @@ void AutoTiler::make_tile(BorderKind which_border, int grid_index, int num_cells
   tile->set_xy(xy);
   tile->set_size(size);
   tile->set_layer(layer);
+  if (!tileset_id.isEmpty()) {
+    tile->set_field("tileset", tileset_id);
+  }
 
   tiles.emplace_back(std::move(tile));
 }
@@ -573,7 +581,9 @@ void AutoTiler::make_tile(BorderKind which_border, int grid_index, int num_cells
  */
 const TilesetModel& AutoTiler::get_tileset() const {
 
-  return *map.get_tileset_model();
+  QString tileset_id = !this->tileset_id.isEmpty() ?
+        this->tileset_id : map.get_tileset_id();
+  return *map.get_quest().get_tileset(tileset_id);
 }
 
 /**

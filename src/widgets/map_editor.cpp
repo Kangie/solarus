@@ -23,6 +23,7 @@
 #include "widgets/pattern_picker_dialog.h"
 #include "widgets/tileset_scene.h"
 #include "audio.h"
+#include "auto_tiler.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "file_tools.h"
@@ -1057,8 +1058,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   QAction* open_script_action = new QAction(this);
   open_script_action->setShortcut(tr("F4"));
   open_script_action->setShortcutContext(Qt::WindowShortcut);
-  connect(open_script_action, SIGNAL(triggered(bool)),
-          this, SLOT(open_script_requested()));
+  connect(open_script_action, &QAction::triggered,
+          this, &MapEditor::open_script_requested);
   addAction(open_script_action);
 
   // Open the file.
@@ -1150,8 +1151,10 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(map, &MapModel::music_id_changed,
           this, &MapEditor::update_music_field);
 
-  connect(ui.border_set_field, QOverload<const QString&>::of(&BorderSetSelector::activated),
-          this, &MapEditor::border_set_selector_activated);
+  connect(ui.generate_borders_button, &QPushButton::clicked,
+          this, [this]() {
+    generate_borders_requested(ui.map_view->get_selected_entities());
+  });
 
   connect(ui.open_script_button, &QToolButton::clicked,
           this, &MapEditor::open_script_requested);
@@ -1274,10 +1277,10 @@ void MapEditor::build_status_bar() {
   status_bar = new QStatusBar();
   ui.entity_creation_layout->addWidget(status_bar);
 
-  connect(ui.map_view, SIGNAL(mouse_map_coordinates_changed(QPoint)),
-          this, SLOT(update_status_bar()));
-  connect(ui.map_view, SIGNAL(mouse_left()),
-          this, SLOT(update_status_bar()));
+  connect(ui.map_view, &MapView::mouse_map_coordinates_changed,
+          this, &MapEditor::update_status_bar);
+  connect(ui.map_view, &MapView::mouse_left,
+          this, &MapEditor::update_status_bar);
 }
 
 /**
@@ -1815,41 +1818,6 @@ void MapEditor::update_tileset_view() {
 }
 
 /**
- * @brief Updates the content of the border set panel.
- */
-void MapEditor::update_border_set_view() {
-
-  const QString& tileset_id = map->get_tileset_id();
-  if (ui.border_set_field->get_tileset_id() == tileset_id) {
-    // No change.
-    return;
-  }
-  ui.border_set_field->set_tileset_id(get_quest(), tileset_id);
-  ui.border_set_field->build();
-
-  ui.border_set_field->set_selected_border_set_id(map->get_current_border_set_id());
-
-  if (ui.border_set_field->get_selected_border_set_id() != map->get_current_border_set_id()) {
-    map->set_current_border_set_id(ui.border_set_field->get_selected_border_set_id());
-  }
-}
-
-/**
- * @brief Slot called when the user changes the current border set selected.
- */
-void MapEditor::border_set_selector_activated() {
-
-  const QString& old_border_set_id = map->get_current_border_set_id();
-  const QString& new_border_set_id = ui.border_set_field->get_selected_border_set_id();
-  if (new_border_set_id == old_border_set_id) {
-    // No change.
-    return;
-  }
-
-  map->set_current_border_set_id(new_border_set_id);
-}
-
-/**
  * @brief Slot called when another tileset is set on the map.
  * @param tileset_id The new tileset id.
  */
@@ -1863,12 +1831,9 @@ void MapEditor::tileset_id_changed(const QString& tileset_id) {
   // Notify the tileset view.
   update_tileset_view();
 
-  // Notify the border sets view.
-  update_border_set_view();
-
   // Watch the pattern selection of the tileset view to correctly add new tiles.
-  connect(ui.tileset_view, SIGNAL(selection_changed_by_user()),
-          this, SLOT(tileset_selection_changed()));
+  connect(ui.tileset_view, &TilesetView::selection_changed_by_user,
+          this, &MapEditor::tileset_selection_changed);
 }
 
 /**
@@ -2328,6 +2293,30 @@ void MapEditor::remove_entities_requested(const EntityIndexes& indexes) {
   }
 
   try_command(new RemoveEntitiesCommand(*this, indexes));
+}
+
+/**
+ * @brief Slot called when the user wants to generate borders around entities.
+ * @param indexes Indexes of entities where to create borders.
+ */
+void MapEditor::generate_borders_requested(const EntityIndexes& indexes) {
+
+  if (indexes.empty()) {
+    return;
+  }
+
+  QString tileset_id = ui.border_set_tileset_field->get_selected_id();
+  QString border_set_id = ui.border_set_field->get_selected_border_set_id();
+
+  if (tileset_id.isEmpty()) {
+    tileset_id = get_map().get_tileset_id();
+  }
+  if (border_set_id.isEmpty()) {
+    return;
+  }
+
+  AutoTiler auto_tiler(get_map(), tileset_id, border_set_id, indexes);
+  try_command(new AddEntitiesCommand(*this, auto_tiler.generate_border_tiles(), false));
 }
 
 /**

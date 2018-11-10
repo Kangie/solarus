@@ -74,8 +74,6 @@ public:
   void notify_tileset_changed();
   QString get_music_id() const;
   void set_music_id(const QString& music_id);
-  QString get_current_border_set_id();
-  void set_current_border_set_id(const QString& current_border_set_id);
 
   // Entities.
   int get_num_entities() const;
@@ -183,8 +181,6 @@ private:
       tileset;                    /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
-  QString current_border_set_id;  /**< Border set currently selected by the user. */
-
 };
 
 /**

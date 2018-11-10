@@ -208,41 +208,41 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_website);
 
   // Connect children.
-  connect(ui.quest_tree_view, SIGNAL(open_file_requested(Quest&, QString)),
-          ui.tab_widget, SLOT(open_file_requested(Quest&, QString)));
-  connect(ui.quest_tree_view, SIGNAL(rename_file_requested(Quest&, QString)),
-          this, SLOT(rename_file_requested(Quest&, QString)));
-  connect(ui.quest_tree_view, SIGNAL(selected_path_changed(QString)),
-          this, SLOT(selected_path_changed(QString)));
+  connect(ui.quest_tree_view, &QuestTreeView::open_file_requested,
+          ui.tab_widget, &EditorTabs::open_file_requested);
+  connect(ui.quest_tree_view, &QuestTreeView::rename_file_requested,
+          this, &MainWindow::rename_file_requested);
+  connect(ui.quest_tree_view, &QuestTreeView::selected_path_changed,
+          this, &MainWindow::selected_path_changed);
 
-  connect(ui.tab_widget, SIGNAL(currentChanged(int)),
-          this, SLOT(current_editor_changed(int)));
-  connect(ui.tab_widget, SIGNAL(can_cut_changed(bool)),
-          ui.action_cut, SLOT(setEnabled(bool)));
-  connect(ui.tab_widget, SIGNAL(can_copy_changed(bool)),
-          ui.action_copy, SLOT(setEnabled(bool)));
-  connect(ui.tab_widget, SIGNAL(can_paste_changed(bool)),
-          ui.action_paste, SLOT(setEnabled(bool)));
-  connect(ui.tab_widget, SIGNAL(refactoring_requested(Refactoring)),
-          this, SLOT(refactoring_requested(Refactoring)));
+  connect(ui.tab_widget, &EditorTabs::currentChanged,
+          this, &MainWindow::current_editor_changed);
+  connect(ui.tab_widget, &EditorTabs::can_cut_changed,
+          ui.action_cut, &QAction::setEnabled);
+  connect(ui.tab_widget, &EditorTabs::can_copy_changed,
+          ui.action_copy, &QAction::setEnabled);
+  connect(ui.tab_widget, &EditorTabs::can_paste_changed,
+          ui.action_paste, &QAction::setEnabled);
+  connect(ui.tab_widget, &EditorTabs::refactoring_requested,
+          this, &MainWindow::refactoring_requested);
   connect(ui.tab_widget, &EditorTabs::clear_console,
           ui.console_widget, &SolarusGui::Console::clear);
   connect(ui.tab_widget, &EditorTabs::log_message_to_console,
           this, &MainWindow::log_message_to_console);
 
-  connect(grid_size, SIGNAL(value_changed(int,int)),
-          this, SLOT(change_grid_size()));
+  connect(grid_size, &PairSpinBox::value_changed,
+          this, &MainWindow::change_grid_size);
 
-  connect(&quest_runner, SIGNAL(running()),
-          this, SLOT(quest_running()));
-  connect(&quest_runner, SIGNAL(finished()),
-          this, SLOT(quest_finished()));
+  connect(&quest_runner, &SolarusGui::QuestRunner::running,
+          this, &MainWindow::quest_running);
+  connect(&quest_runner, &SolarusGui::QuestRunner::finished,
+          this, &MainWindow::quest_finished);
 
-  connect(&quest, SIGNAL(current_music_changed(QString)),
-          this, SLOT(current_music_changed(QString)));
+  connect(&quest, &Quest::current_music_changed,
+          this, &MainWindow::current_music_changed);
 
-  connect(&settings_dialog, SIGNAL(settings_changed()),
-          this, SLOT(reload_settings()));
+  connect(&settings_dialog, &SettingsDialog::settings_changed,
+          this, &MainWindow::reload_settings);
 
   // No editor initially.
   current_editor_changed(-1);
@@ -564,10 +564,10 @@ void MainWindow::close_quest() {
   ui.tab_widget->close_without_confirmation();
 
   if (quest.exists()) {
-    disconnect(&quest, SIGNAL(file_renamed(QString, QString)),
-               ui.tab_widget, SLOT(file_renamed(QString, QString)));
-    disconnect(&quest, SIGNAL(file_deleted(QString)),
-               ui.tab_widget, SLOT(file_deleted(QString)));
+    disconnect(&quest, &Quest::file_renamed,
+               ui.tab_widget, &EditorTabs::file_renamed);
+    disconnect(&quest, &Quest::file_deleted,
+               ui.tab_widget, &EditorTabs::file_deleted);
   }
 
   quest.set_root_path("");
@@ -608,10 +608,10 @@ bool MainWindow::open_quest(const QString& quest_path) {
       }
     }
 
-    connect(&quest, SIGNAL(file_renamed(QString, QString)),
-            ui.tab_widget, SLOT(file_renamed(QString, QString)));
-    connect(&quest, SIGNAL(file_deleted(QString)),
-            ui.tab_widget, SLOT(file_deleted(QString)));
+    connect(&quest, &Quest::file_renamed,
+            ui.tab_widget, &EditorTabs::file_renamed);
+    connect(&quest, &Quest::file_deleted,
+            ui.tab_widget, &EditorTabs::file_deleted);
 
     ui.action_import->setEnabled(true);
     ui.action_run_quest->setEnabled(true);
@@ -882,8 +882,8 @@ void MainWindow::on_action_import_triggered() {
   // If the user wants to rename something from the dialog's quest tree,
   // we need to handle it from here in order to check open files
   // and perform refactoring if necessary.
-  connect(&import_dialog, SIGNAL(destination_quest_rename_file_requested(Quest&, QString)),
-          this, SLOT(rename_file_requested(Quest&, QString)));
+  connect(&import_dialog, &ImportDialog::destination_quest_rename_file_requested,
+          this, &MainWindow::rename_file_requested);
 
   import_dialog.exec();
 }
@@ -1285,34 +1285,34 @@ void MainWindow::current_editor_changed(int index) {
 
   if (has_editor) {
 
-    connect(&view_settings, SIGNAL(zoom_changed(double)),
-            this, SLOT(update_zoom()));
+    connect(&view_settings, &ViewSettings::zoom_changed,
+            this, &MainWindow::update_zoom);
     update_zoom();
 
-    connect(&view_settings, SIGNAL(grid_visibility_changed(bool)),
-            this, SLOT(update_grid_visibility()));
+    connect(&view_settings, &ViewSettings::grid_visibility_changed,
+            this, &MainWindow::update_grid_visibility);
     update_grid_visibility();
-    connect(&view_settings, SIGNAL(grid_size_changed(QSize)),
-            this, SLOT(update_grid_size()));
+    connect(&view_settings, &ViewSettings::grid_size_changed,
+            this, &MainWindow::update_grid_size);
     update_grid_size();
 
-    connect(&view_settings, SIGNAL(layer_range_changed(int, int)),
-            this, SLOT(update_layer_range()));
-    connect(&view_settings, SIGNAL(layer_visibility_changed(int, bool)),
-            this, SLOT(update_layer_visibility(int)));
-    connect(&view_settings, SIGNAL(layer_locking_changed(int, bool)),
-            this, SLOT(update_layer_locking(int)));
+    connect(&view_settings, &ViewSettings::layer_range_changed,
+            this, &MainWindow::update_layer_range);
+    connect(&view_settings, &ViewSettings::layer_visibility_changed,
+            this, &MainWindow::update_layer_visibility);
+    connect(&view_settings, &ViewSettings::layer_locking_changed,
+            this, &MainWindow::update_layer_locking);
     update_layers_visibility();
     update_layers_locking();
 
-    connect(&view_settings, SIGNAL(traversables_visibility_changed(bool)),
-            this, SLOT(update_traversables_visibility()));
+    connect(&view_settings, &ViewSettings::traversables_visibility_changed,
+            this, &MainWindow::update_traversables_visibility);
     update_traversables_visibility();
-    connect(&view_settings, SIGNAL(obstacles_visibility_changed(bool)),
-            this, SLOT(update_obstacles_visibility()));
+    connect(&view_settings, &ViewSettings::obstacles_visibility_changed,
+            this, &MainWindow::update_obstacles_visibility);
     update_obstacles_visibility();
-    connect(&view_settings, SIGNAL(entity_type_visibility_changed(EntityType, bool)),
-            this, SLOT(update_entity_type_visibility(EntityType)));
+    connect(&view_settings, &ViewSettings::entity_type_visibility_changed,
+            this, &MainWindow::update_entity_type_visibility);
     update_entity_types_visibility();
 
     editor->set_common_actions(common_actions);

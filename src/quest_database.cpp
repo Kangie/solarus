@@ -88,8 +88,8 @@ QuestDatabase::QuestDatabase(Quest& quest):
     { ResourceType::SHADER,   tr("New shader...")                     },
   };
 
-  connect(&quest, SIGNAL(root_path_changed(const QString&)),
-          this, SLOT(reload()));
+  connect(&quest, &Quest::root_path_changed,
+          this, &QuestDatabase::reload);
   reload();
 }
 

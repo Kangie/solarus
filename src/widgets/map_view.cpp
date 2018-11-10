@@ -24,7 +24,6 @@
 #include "widgets/mouse_coordinates_tracking_tool.h"
 #include "widgets/pan_tool.h"
 #include "widgets/zoom_tool.h"
-#include "auto_tiler.h"
 #include "point.h"
 #include "rectangle.h"
 #include "tileset_model.h"
@@ -276,8 +275,8 @@ void MapView::set_map(MapModel* map) {
     new MouseCoordinatesTrackingTool(this);
 
     // Connect signals.
-    connect(map, SIGNAL(tileset_id_changed(QString)),
-            this, SLOT(tileset_id_changed(QString)));
+    connect(map, &MapModel::tileset_id_changed,
+            this, &MapView::tileset_id_changed);
     tileset_id_changed(map->get_tileset_id());
 
     // Start the state mechanism.
@@ -312,31 +311,31 @@ void MapView::set_view_settings(ViewSettings& view_settings) {
 
   this->view_settings = &view_settings;
 
-  connect(this->view_settings, SIGNAL(zoom_changed(double)),
-          this, SLOT(update_zoom()));
+  connect(this->view_settings, &ViewSettings::zoom_changed,
+          this, &MapView::update_zoom);
   update_zoom();
 
-  connect(this->view_settings, SIGNAL(grid_visibility_changed(bool)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_size_changed(QSize)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_style_changed(GridStyle)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_color_changed(QColor)),
-          this, SLOT(update_grid_visibility()));
+  connect(this->view_settings, &ViewSettings::grid_visibility_changed,
+          this, &MapView::update_grid_visibility);
+  connect(this->view_settings, &ViewSettings::grid_size_changed,
+          this, &MapView::update_grid_visibility);
+  connect(this->view_settings, &ViewSettings::grid_style_changed,
+          this, &MapView::update_grid_visibility);
+  connect(this->view_settings, &ViewSettings::grid_color_changed,
+          this, &MapView::update_grid_visibility);
   update_grid_visibility();
 
-  connect(this->view_settings, SIGNAL(layer_visibility_changed(int, bool)),
-          this, SLOT(update_layer_visibility(int)));
-  connect(this->view_settings, SIGNAL(layer_locking_changed(int, bool)),
-          this, SLOT(update_layer_locking(int)));
+  connect(this->view_settings, &ViewSettings::layer_visibility_changed,
+          this, &MapView::update_layer_visibility);
+  connect(this->view_settings, &ViewSettings::layer_locking_changed,
+          this, &MapView::update_layer_locking);
 
-  connect(this->view_settings, SIGNAL(traversables_visibility_changed(bool)),
-          this, SLOT(update_traversables_visibility()));
-  connect(this->view_settings, SIGNAL(obstacles_visibility_changed(bool)),
-          this, SLOT(update_obstacles_visibility()));
-  connect(this->view_settings, SIGNAL(entity_type_visibility_changed(EntityType, bool)),
-          this, SLOT(update_entity_type_visibility(EntityType)));
+  connect(this->view_settings, &ViewSettings::traversables_visibility_changed,
+          this, &MapView::update_traversables_visibility);
+  connect(this->view_settings, &ViewSettings::obstacles_visibility_changed,
+          this, &MapView::update_obstacles_visibility);
+  connect(this->view_settings, &ViewSettings::entity_type_visibility_changed,
+          this, &MapView::update_entity_type_visibility);
 
   horizontalScrollBar()->setValue(0);
   verticalScrollBar()->setValue(0);
@@ -522,23 +521,22 @@ void MapView::build_context_menu_actions() {
         tr("Edit"), this);
   edit_action->setShortcut(Qt::Key_Return);
   edit_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(edit_action, SIGNAL(triggered()),
-          this, SLOT(edit_selected_entity()));
+  connect(edit_action, &QAction::triggered,
+          this, &MapView::edit_selected_entity);
   addAction(edit_action);
 
   resize_action = new QAction(
         tr("Resize"), this);
   resize_action->setShortcut(tr("R"));
   resize_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(resize_action, &QAction::triggered, [this]() {
-    start_state_resizing_entities();
-  });
+  connect(resize_action, &QAction::triggered,
+          this, &MapView::start_state_resizing_entities);
   addAction(resize_action);
 
   convert_tiles_action = new QAction(
         tr("Convert to dynamic tile"), this);
-  connect(convert_tiles_action, SIGNAL(triggered()),
-          this, SLOT(convert_selected_tiles()));
+  connect(convert_tiles_action, &QAction::triggered,
+          this, &MapView::convert_selected_tiles);
   addAction(convert_tiles_action);
 
   change_pattern_action = new QAction(
@@ -550,16 +548,17 @@ void MapView::build_context_menu_actions() {
 
   change_pattern_all_action = new QAction(
         tr("Change pattern of similar tiles..."), this);
-  connect(change_pattern_all_action, SIGNAL(triggered()),
-          this, SLOT(change_pattern_of_similar_tiles()));
+  connect(change_pattern_all_action, &QAction::triggered,
+          this, &MapView::change_pattern_of_similar_tiles);
   addAction(change_pattern_action);
 
   add_border_action = new QAction(
-        tr("Add border tiles"), this);
+        tr("Generate borders around selection"), this);
   add_border_action->setShortcut(tr("Ctrl+B"));
   add_border_action->setShortcutContext(Qt::WindowShortcut);
-  connect(add_border_action, SIGNAL(triggered()),
-          this, SLOT(add_border_to_selection()));
+  connect(add_border_action, &QAction::triggered, [this]() {
+    emit generate_borders_requested(get_selected_entities());
+  });
   addAction(add_border_action);
 
   up_one_layer_action = new QAction(
@@ -602,15 +601,15 @@ void MapView::build_context_menu_actions() {
         QIcon(":/images/icon_delete.png"), tr("Delete"), this);
   remove_action->setShortcut(QKeySequence::Delete);
   remove_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(remove_action, SIGNAL(triggered()),
-          this, SLOT(remove_selected_entities()));
+  connect(remove_action, &QAction::triggered,
+          this, &MapView::remove_selected_entities);
   addAction(remove_action);
 
   cancel_action = new QAction(tr("Cancel"), this);
   cancel_action->setShortcut(Qt::Key_Escape);
   cancel_action->setShortcutContext(Qt::WindowShortcut);
-  connect(cancel_action, SIGNAL(triggered()),
-          this, SLOT(cancel_state_requested()));
+  connect(cancel_action, &QAction::triggered,
+          this, &MapView::cancel_state_requested);
   addAction(cancel_action);
 
   build_context_menu_layer_actions();
@@ -1550,21 +1549,6 @@ void MapView::change_pattern_of_similar_tiles() {
   }
 
   emit change_tiles_pattern_requested(similar_tiles);
-}
-
-/**
- * @brief Creates border tiles arounds the selected entities.
- */
-void MapView::add_border_to_selection() {
-
-  const QString& border_set_id = get_map()->get_current_border_set_id();
-  if (border_set_id.isEmpty()) {
-    return;
-  }
-
-  AutoTiler auto_tiler(*get_map(), get_selected_entities(), border_set_id);
-  AddableEntities addable_tiles = auto_tiler.generate_border_tiles();
-  emit add_entities_requested(addable_tiles, false);
 }
 
 /**

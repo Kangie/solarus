@@ -97,6 +97,7 @@ public:
 
   // Information about entities.
   EntityIndex get_entity_index_under_cursor() const;
+  bool are_entities_resizable(const EntityIndexes& indexes) const;
 
   // State of the view.
   void start_state_doing_nothing();
@@ -106,10 +107,35 @@ public:
   void start_state_adding_entities(EntityModels&& entities, bool use_layer_under_mouse);
   void start_adding_entities_from_tileset_selection();
 
-  bool are_entities_resizable(const EntityIndexes& indexes) const;
+  QMenu* create_context_menu();
+
+public slots:
 
   // Actions.
-  QMenu* create_context_menu();
+  void cut();
+  void copy();
+  void paste();
+  void update_zoom();
+  void zoom_in();
+  void zoom_out();
+  void update_grid_visibility();
+  void update_layer_visibility(int layer);
+  void update_layer_locking(int layer);
+  void update_traversables_visibility();
+  void update_obstacles_visibility();
+  void update_entity_type_visibility(EntityType type);
+  void tileset_selection_changed();
+  void tileset_id_changed(const QString& tileset_id);
+  void notify_tileset_changed();
+  void cancel_state_requested();
+  void undo_last_command();
+  void edit_selected_entity();
+  void move_selected_entities(const QPoint& translation, bool allow_merge_to_previous);
+  void resize_entities(const QMap<EntityIndex, QRect>& boxes, bool allow_merge_to_previous);
+  void convert_selected_tiles();
+  void change_pattern_of_similar_tiles();
+  void remove_selected_entities();
+  void mouse_coordinates_changed(const QPoint& xy);
 
 signals:
 
@@ -149,35 +175,8 @@ signals:
       AddableEntities& entities,
       bool replace_selection);
   void remove_entities_requested(const EntityIndexes& indexes);
-
-public slots:
-
-  void cut();
-  void copy();
-  void paste();
-  void update_zoom();
-  void zoom_in();
-  void zoom_out();
-  void mouse_coordinates_changed(const QPoint& xy);
-  void update_grid_visibility();
-  void update_layer_visibility(int layer);
-  void update_layer_locking(int layer);
-  void update_traversables_visibility();
-  void update_obstacles_visibility();
-  void update_entity_type_visibility(EntityType type);
-  void tileset_selection_changed();
-  void tileset_id_changed(const QString& tileset_id);
-  void notify_tileset_changed();
-
-  void cancel_state_requested();
-  void undo_last_command();
-  void edit_selected_entity();
-  void move_selected_entities(const QPoint& translation, bool allow_merge_to_previous);
-  void resize_entities(const QMap<EntityIndex, QRect>& boxes, bool allow_merge_to_previous);
-  void convert_selected_tiles();
-  void change_pattern_of_similar_tiles();
-  void add_border_to_selection();
-  void remove_selected_entities();
+  void generate_borders_requested(
+      const EntityIndexes& indexes);
 
 protected:
 

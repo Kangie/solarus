@@ -41,8 +41,7 @@ MapModel::MapModel(
   quest(quest),
   map_id(map_id),
   tileset(nullptr),
-  entities(),
-  current_border_set_id() {
+  entities() {
 
   // Load the map data file.
   QString path = quest.get_map_data_file_path(map_id);
@@ -64,7 +63,6 @@ MapModel::MapModel(
       entities[layer].emplace_back(EntityModel::create(*this, index));
     }
   }
-
 }
 
 /**
@@ -435,22 +433,6 @@ void MapModel::set_music_id(const QString& music_id) {
   }
   map.set_music_id(std_music_id);
   emit music_id_changed(music_id);
-}
-
-/**
- * @brief Returns the border set id currently selected by the user.
- * @return The current border set id or an empty string.
- */
-QString MapModel::get_current_border_set_id() {
-  return current_border_set_id;
-}
-
-/**
- * @brief Sets the current border set id.
- * @param current_border_set_id The current border set id or an empty string.
- */
-void MapModel::set_current_border_set_id(const QString& current_border_set_id) {
-  this->current_border_set_id = current_border_set_id;
 }
 
 /**

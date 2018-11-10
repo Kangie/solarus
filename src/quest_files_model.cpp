@@ -39,22 +39,22 @@ QuestFilesModel::QuestFilesModel(Quest& quest):
 
   // Watch changes in resources.
   const QuestDatabase& database = quest.get_database();
-  connect(&database, SIGNAL(element_added(ResourceType, QString, QString)),
-          this, SLOT(resource_element_added(ResourceType, QString, QString)));
-  connect(&database, SIGNAL(element_removed(ResourceType, QString)),
-          this, SLOT(resource_element_removed(ResourceType, QString)));
-  connect(&database, SIGNAL(element_renamed(ResourceType, QString, QString)),
-          this, SLOT(resource_element_renamed(ResourceType, QString, QString)));
-  connect(&database, SIGNAL(element_description_changed(ResourceType, QString, QString)),
-          this, SLOT(resource_element_description_changed(ResourceType, QString, QString)));
+  connect(&database, &QuestDatabase::element_added,
+          this, &QuestFilesModel::resource_element_added);
+  connect(&database, &QuestDatabase::element_removed,
+          this, &QuestFilesModel::resource_element_removed);
+  connect(&database, &QuestDatabase::element_renamed,
+          this, &QuestFilesModel::resource_element_renamed);
+  connect(&database, &QuestDatabase::element_description_changed,
+          this, &QuestFilesModel::resource_element_description_changed);
 
   // This model adds extra items for files missing on the filesystem.
   // To ensure we have an extra item if and only if the file is missing,
   // we need to watch files creations and destructions.
-  connect(source_model, SIGNAL(rowsInserted(QModelIndex, int, int)),
-          SLOT(source_model_rows_inserted(QModelIndex, int, int)));
-  connect(source_model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)),
-          SLOT(source_model_rows_about_to_be_removed(QModelIndex, int, int)));
+  connect(source_model, &QFileSystemModel::rowsInserted,
+          this, &QuestFilesModel::source_model_rows_inserted);
+  connect(source_model, &QFileSystemModel::rowsAboutToBeRemoved,
+          this, &QuestFilesModel::source_model_rows_about_to_be_removed);
 }
 
 /**

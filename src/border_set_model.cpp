@@ -34,16 +34,16 @@ BorderSetModel::BorderSetModel(TilesetModel& tileset, QObject* parent) :
     border_set_indexes << BorderSetIndex(border_set_id);
   }
 
-  connect(&tileset, SIGNAL(border_set_created(QString)),
-          this, SLOT(border_set_created(QString)));
-  connect(&tileset, SIGNAL(border_set_deleted(QString)),
-          this, SLOT(border_set_deleted(QString)));
-  connect(&tileset, SIGNAL(border_set_id_changed(QString, QString)),
-          this, SLOT(border_set_id_changed(QString, QString)));
-  connect(&tileset, SIGNAL(border_set_pattern_changed(QString, BorderKind, QString)),
-          this, SLOT(border_set_pattern_changed(QString, BorderKind, QString)));
-  connect(&tileset, SIGNAL(pattern_id_changed(int, QString, int, QString)),
-          this, SLOT(pattern_id_changed(int, QString, int, QString)));
+  connect(&tileset, &TilesetModel::border_set_created,
+          this, &BorderSetModel::border_set_created);
+  connect(&tileset, &TilesetModel::border_set_deleted,
+          this, &BorderSetModel::border_set_deleted);
+  connect(&tileset, &TilesetModel::border_set_id_changed,
+          this, &BorderSetModel::border_set_id_changed);
+  connect(&tileset, &TilesetModel::border_set_pattern_changed,
+          this, &BorderSetModel::border_set_pattern_changed);
+  connect(&tileset, &TilesetModel::pattern_id_changed,
+          this, &BorderSetModel::pattern_id_changed);
 }
 
 /**

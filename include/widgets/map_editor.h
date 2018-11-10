@@ -82,8 +82,6 @@ private slots:
   void music_selector_activated();
   void update_tileset_view();
   void tileset_selection_changed();
-  void update_border_set_view();
-  void border_set_selector_activated();
   void map_selection_changed();
   void uncheck_entity_creation_buttons();
   void update_status_bar();
@@ -107,6 +105,7 @@ private slots:
   void bring_entities_to_back_requested(const EntityIndexes& indexes);
   void add_entities_requested(AddableEntities& entities, bool replace_selection);
   void remove_entities_requested(const EntityIndexes& indexes);
+  void generate_borders_requested(const EntityIndexes& indexes);
 
 private:
 

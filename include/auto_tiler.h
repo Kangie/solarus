@@ -35,7 +35,10 @@ class AutoTiler {
 
 public:
 
-  AutoTiler(MapModel& map, const EntityIndexes& entity_indexes, const QString& border_set_id);
+  AutoTiler(MapModel& map,
+            const QString& tileset_id,
+            const QString& border_set_id,
+            const EntityIndexes& entity_indexes);
 
   AddableEntities generate_border_tiles();
 
@@ -70,8 +73,9 @@ private:
   void compute_tiles_outer();
 
   MapModel& map;                       /**< The map that will be modified. */
+  const QString tileset_id;            /**< Id of the tileset to use (empty means the one of the map). */
+  const QString border_set_id;         /**< Border patterns to generate and how. */
   EntityIndexes entity_indexes;        /**< Entities where to create a border. */
-  QString border_set_id;               /**< Border patterns to generate and how. */
   QList<QRect> entity_rectangles;      /**< Rectangles of entities where to create a border. */
   QRect bounding_box;                  /**< Rectangle containing the entities plus 8 pixels of margin. */
   QSize grid_size;                     /**< Number of cells in the 8x8 grid in X and Y. */
