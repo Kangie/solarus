@@ -731,7 +731,7 @@ bool Quest::is_potential_resource_element(
     break;
 
   case ResourceType::FONT:
-    extensions << ".png" << ".ttf" << ".ttc" << ".fon";
+    extensions << ".png" << ".ttf" << ".otf" << ".ttc" << ".fon";
     break;
 
   case ResourceType::LANGUAGE:
