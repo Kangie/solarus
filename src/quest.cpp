@@ -2044,8 +2044,7 @@ bool Quest::delete_dir_recursive_if_exists(const QString& path) {
  * @brief Deletes a resource element from the filesystem and from the resource
  * list.
  *
- * It is okay if some of its files (or all its files) are already removed from
- * the filesystem.
+ * It is okay its file is already removed from the filesystem.
  * It is okay too if the element is already gone from the resource list.
  * However, it is not okay if both all files are removed and the element is
  * gone from the resource list.
@@ -2057,18 +2056,16 @@ bool Quest::delete_dir_recursive_if_exists(const QString& path) {
 void Quest::delete_resource_element(
     ResourceType resource_type, const QString& element_id) {
 
-  // Delete files from the filesystem.
+  // Delete the file from the filesystem.
   bool found_in_filesystem = false;
-  const QStringList& paths = get_resource_element_paths(resource_type, element_id);
-  for (const QString& path : paths) {
-    if (is_dir(path)) {
-      found_in_filesystem = true;
-      delete_dir_recursive(path);
-    }
-    else if (exists(path)) {
-      found_in_filesystem = true;
-      delete_file(path);
-    }
+  const QString& path = get_resource_element_path(resource_type, element_id);
+  if (is_dir(path)) {
+    found_in_filesystem = true;
+    delete_dir_recursive(path);
+  }
+  else if (exists(path)) {
+    found_in_filesystem = true;
+    delete_file(path);
   }
 
   // Also remove it from the resource list.
