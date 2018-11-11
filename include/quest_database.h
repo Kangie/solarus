@@ -89,11 +89,10 @@ signals:
   void file_license_changed(
       const QString& path, const QString& license);
 
-private slots:
-
-  void reload();
-
 private:
+
+  void load();
+  void check_deleted_file_info();
 
   Quest& quest;                                  /**< The quest. */
   Solarus::QuestDatabase database;               /**< The wrapped data. */
@@ -114,7 +113,6 @@ private:
   QMap<ResourceType, QString>
       resource_type_create_friendly_names;       /**< Human-readable name for actions of creating
                                                   * resource elements. */
-
 };
 
 }

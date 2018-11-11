@@ -18,7 +18,9 @@
 #include "quest.h"
 #include "quest_database.h"
 #include <QFile>
+#include <QFutureWatcher>
 #include <QTextStream>
+#include <QtConcurrent/QtConcurrent>
 
 namespace SolarusEditor {
 
@@ -89,22 +91,22 @@ QuestDatabase::QuestDatabase(Quest& quest):
   };
 
   connect(&quest, &Quest::root_path_changed,
-          this, &QuestDatabase::reload);
-  reload();
+          this, &QuestDatabase::load);
+  load();
 }
 
 /**
  * @brief Reads project_db.dat and rebuilds the model.
  */
-void QuestDatabase::reload() {
+void QuestDatabase::load() {
 
   database.clear();
 
-  // TODO don't try this if the quest format is obsolete
   if (quest.exists()) {
     database.import_from_file(quest.get_resource_list_path().toLocal8Bit().toStdString());
-    // TODO throw an exception in case of error
   }
+
+  check_deleted_file_info();
 }
 
 /**
@@ -388,6 +390,42 @@ void QuestDatabase::set_file_license(const QString& path, const QString& license
   database.set_file_info(path.toStdString(), info);
 
   emit file_license_changed(path, license);
+}
+
+/**
+ * @brief Check in a separate thread if we have metadata for files that no longer exist.
+ */
+void QuestDatabase::check_deleted_file_info() {
+
+  QFutureWatcher<QStringList>* watcher = new QFutureWatcher<QStringList>(this);
+  watcher->setFuture(QtConcurrent::run([this]() {
+    QStringList deleted_files;
+    std::map<std::string, Solarus::QuestDatabase::FileInfo> files = database.get_all_file_info();
+    for (const auto& kvp : files) {
+      QString path_from_data = QString::fromStdString(kvp.first);
+      QString path = quest.get_data_path() + "/" + path_from_data;
+      ResourceType resource_type;
+      QString element_id;
+      if (!quest.exists(path) &&
+          !quest.is_resource_element(path, resource_type, element_id)) {
+        deleted_files << path_from_data;
+      }
+    }
+    return deleted_files;
+  }));
+
+  connect(watcher, &QFutureWatcher<QStringList>::finished,
+          this, [this, watcher]() {
+    QStringList deleted_files = watcher->result();
+    if (deleted_files.isEmpty()) {
+      return;
+    }
+    for (QString deleted_file : deleted_files) {
+      database.clear_file_info(deleted_file.toStdString());
+    }
+    save();
+    watcher->deleteLater();
+  });
 }
 
 }
