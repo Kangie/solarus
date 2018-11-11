@@ -9,8 +9,10 @@ ________________________________________
 * Quest tree: allow to set the author and license information of files.
 * Quest tree: automatically select the currently open file (#336).
 * Quest tree: allow to open folders with the system explorer (#316).
+* Quest tree: allow to select multiple files.
+* Quest tree: allow to delete multiple files at once (#354).
 * Allow to view PNG files (#335).
-* Map editor, tileset editor: to generate borders automatically (autotiles).
+* Map/tileset editor: allow to generate borders automatically (autotiles).
 * Map editor: add support of custom properties for entities by Maxs (#327).
 * Map editor: allow to use multiple tilesets in the same map.
 * Map editor: allow to change the pattern of existing tiles (#280).

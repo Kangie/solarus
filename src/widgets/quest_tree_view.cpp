@@ -312,42 +312,42 @@ void QuestTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
  */
 void QuestTreeView::contextMenuEvent(QContextMenuEvent* event) {
 
-  QPoint position = event->pos();
-  QModelIndex index = indexAt(position);
-  if (!index.isValid()) {
-    return;
-  }
-
   Quest& quest = model->get_quest();
   if (!quest.is_valid()) {
     return;
   }
 
-  QString path = model->get_file_path(index);
+  QStringList paths = get_selected_paths();
+  if (paths.isEmpty()) {
+    return;
+  }
   QMenu* menu = new QMenu(this);
 
-  build_context_menu_play(*menu, path);
-  build_context_menu_open(*menu, path);
-  build_context_menu_new(*menu, path);
-  build_context_menu_rename(*menu, path);
-  build_context_menu_delete(*menu, path);
+  build_context_menu_play(*menu, paths);
+  build_context_menu_open(*menu, paths);
+  build_context_menu_new(*menu, paths);
+  build_context_menu_rename(*menu, paths);
+  build_context_menu_delete(*menu, paths);
 
   if (menu->isEmpty()) {
     delete menu;
   }
   else {
-    // Deselect other items as for now, the context menu only support a single item.
-    set_selected_path(path);
-    menu->popup(viewport()->mapToGlobal(position) + QPoint(1, 1));
+    menu->popup(viewport()->mapToGlobal(event->pos()) + QPoint(1, 1));
   }
 }
 
 /**
  * @brief Builds the "New" part of a context menu for a file.
  * @param menu The context menu being created.
- * @param path Path whose context menu is requested.
+ * @param paths Paths whose context menu is requested.
  */
-void QuestTreeView::build_context_menu_new(QMenu& menu, const QString& path) {
+void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths) {
+
+  if (paths.size() != 1) {
+    return;
+  }
+  QString path = paths.first();
 
   if (is_read_only()) {
     return;
@@ -448,9 +448,14 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QString& path) {
 /**
  * @brief Builds the "Play" part of a context menu for a file.
  * @param menu The context menu being created.
- * @param path Path whose context menu is requested.
+ * @param paths Paths whose context menu is requested.
  */
-void QuestTreeView::build_context_menu_play(QMenu& menu, const QString& path) {
+void QuestTreeView::build_context_menu_play(QMenu& menu, const QStringList& paths) {
+
+  if (paths.size() != 1) {
+    return;
+  }
+  QString path = paths.first();
 
   if (!is_opening_files_allowed()) {
     return;
@@ -494,9 +499,14 @@ void QuestTreeView::build_context_menu_play(QMenu& menu, const QString& path) {
 /**
  * @brief Builds the "Open" part of a context menu for a file.
  * @param menu The context menu being created.
- * @param path Path whose context menu is requested.
+ * @param paths Paths whose context menu is requested.
  */
-void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
+void QuestTreeView::build_context_menu_open(QMenu& menu, const QStringList& paths) {
+
+  if (paths.size() != 1) {
+    return;
+  }
+  QString path = paths.first();
 
   if (!is_opening_files_allowed()) {
     return;
@@ -612,9 +622,14 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QString& path) {
 /**
  * @brief Builds the "Rename" part of a context menu for a file.
  * @param menu The context menu being created.
- * @param path Path whose context menu is requested.
+ * @param paths Paths whose context menu is requested.
  */
-void QuestTreeView::build_context_menu_rename(QMenu& menu, const QString& path) {
+void QuestTreeView::build_context_menu_rename(QMenu& menu, const QStringList& paths) {
+
+  if (paths.size() != 1) {
+    return;
+  }
+  QString path = paths.first();
 
   if (is_read_only()) {
     return;
@@ -652,11 +667,15 @@ void QuestTreeView::build_context_menu_rename(QMenu& menu, const QString& path) 
 /**
  * @brief Builds the "Delete" part of a context menu for a file.
  * @param menu The context menu being created.
- * @param path Path whose context menu is requested.
+ * @param paths Paths whose context menu is requested.
  */
-void QuestTreeView::build_context_menu_delete(QMenu& menu, const QString& path) {
+void QuestTreeView::build_context_menu_delete(QMenu& menu, const QStringList& paths) {
 
   if (is_read_only()) {
+    return;
+  }
+
+  if (!can_delete_paths(paths)) {
     return;
   }
 
@@ -664,20 +683,6 @@ void QuestTreeView::build_context_menu_delete(QMenu& menu, const QString& path) 
     menu.addSeparator();
   }
 
-  Quest& quest = model->get_quest();
-
-  if (path == quest.get_data_path()) {
-    // We don't want to delete the data directory.
-    return;
-  }
-
-  ResourceType resource_type;
-  if (quest.is_resource_path(path, resource_type)) {
-    // Don't delete resource directories.
-    return;
-  }
-
-  // All other paths can have a "Delete" menu item.
   menu.addAction(delete_action);
 }
 
@@ -1119,8 +1124,42 @@ void QuestTreeView::change_description_action_triggered() {
 }
 
 /**
- * @brief Slot called when the user wants to delete the selected file or
- * directory.
+ * @brief Returns whether the given files can be deleted.
+ * @param paths The paths to test.
+ * @return @c true if deleting these files is allowed.
+ */
+bool QuestTreeView::can_delete_paths(const QStringList& paths) {
+
+  if (is_read_only()) {
+    return false;
+  }
+
+  const Quest& quest = model->get_quest();
+  for (QString path : paths) {
+    if (path == quest.get_data_path()) {
+      // We don't want to delete the data directory.
+      return false;
+    }
+
+    ResourceType resource_type;
+    if (quest.is_resource_path(path, resource_type)) {
+      // Don't delete resource directories.
+      return false;
+    }
+
+    if (QFileInfo(path).isDir() && !QDir(path).isEmpty()) {
+      // Don't delete non-empty directories.
+      // This is not supported yet because they may contain resources.
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * @brief Slot called when the user wants to delete the selected files or
+ * directories.
  *
  * Confirmation will be asked to the user.
  */
@@ -1130,86 +1169,42 @@ void QuestTreeView::delete_action_triggered() {
     return;
   }
 
-  const QString& path = get_selected_path();
-  if (path.isEmpty()) {
+  QStringList paths = get_selected_paths();
+  if (!can_delete_paths(paths)) {
     return;
   }
 
-  Quest& quest = model->get_quest();
-  if (path == quest.get_data_path()) {
-    // We don't want to delete the data directory.
-    return;
-  }
-  ResourceType resource_type;
-  if (quest.is_resource_path(path, resource_type)) {
-    // Don't delete resource directories.
+  QString question = paths.size() == 1 ?
+        tr("Do you really want to delete '%1'?").arg(paths.first()) :
+        tr("Do you really want to delete these %1 items?").arg(paths.size());
+  QMessageBox::StandardButton answer = QMessageBox::question(
+        this, tr("Delete confirmation"), question,
+        QMessageBox::Yes | QMessageBox::No);
+  if (answer != QMessageBox::Yes) {
     return;
   }
 
   try {
-    // See if we want to delete
-    // - a resource element,
-    // - a directory,
-    // - a file.
-
-    QString path_from_data = path.right(path.length() - quest.get_data_path().length() - 1);
-    QString element_id;
-    if (quest.is_resource_element(path, resource_type, element_id)) {
-      // This is a resource element.
-
-      QuestDatabase& database = quest.get_database();
-      const QString& resource_friendly_name_for_id =
-          database.get_friendly_name_for_id(resource_type);
-      QMessageBox::StandardButton answer = QMessageBox::question(
-            this,
-            tr("Delete confirmation"),
-            tr("Do you really want to delete %1 '%2'?").
-            arg(resource_friendly_name_for_id).arg(element_id),
-            QMessageBox::Yes | QMessageBox::No);
-
-      if (answer != QMessageBox::Yes) {
-        return;
-      }
-
-      quest.delete_resource_element(resource_type, element_id);
-    }
-
-    else {
-      // This is a regular file or directory.
-      if (QFileInfo(path).isDir()) {
-        QDir dir(path);
-        bool empty_dir = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries).count() == 0;
-        if (!empty_dir) {
-          // TODO we could remove directories recursively,
-          // but we have to take care of resources they contain.
-          GuiTools::warning_dialog(tr("Folder is not empty"));
-        }
-        else {
-          // Empty directory.
-          QMessageBox::StandardButton answer = QMessageBox::question(
-                this,
-                tr("Delete confirmation"),
-                tr("Do you really want to delete folder '%1'?").arg(path_from_data),
-                QMessageBox::Yes | QMessageBox::No);
-
-          if (answer != QMessageBox::Yes) {
-            return;
-          }
-          quest.delete_dir(path);
-        }
+    Quest& quest = model->get_quest();
+    for (QString path : paths) {
+      ResourceType resource_type;
+      QString element_id;
+      if (quest.is_resource_element(path, resource_type, element_id)) {
+        // This is a resource element: remove it from the project database file.
+        // This will also delete the file from disk,
+        // or the full folder if it was a language.
+        quest.delete_resource_element(resource_type, element_id);
       }
       else {
-        // Not a directory and not a resource.
-        QMessageBox::StandardButton answer = QMessageBox::question(
-              this,
-              tr("Delete confirmation"),
-              tr("Do you really want to delete file '%1'?").arg(path_from_data),
-              QMessageBox::Yes | QMessageBox::No);
-
-        if (answer != QMessageBox::Yes) {
-          return;
+        // This is a regular file or directory.
+        if (QFileInfo(path).isDir()) {
+          if (QDir(path).isEmpty()) {
+            quest.delete_dir(path);
+          }
+        } else {
+          // Not a directory and not a resource.
+          quest.delete_file(path);
         }
-        quest.delete_file(path);
       }
     }
   }

@@ -49,6 +49,7 @@ public:
   QStringList get_selected_paths() const;
   void set_selected_paths(const QStringList& paths);
   void expand_to_path(const QString& path);
+  bool can_delete_paths(const QStringList& paths);
 
 signals:
 
@@ -79,11 +80,11 @@ protected:
 
 private:
 
-  void build_context_menu_new(QMenu& menu, const QString& path);
-  void build_context_menu_play(QMenu& menu, const QString& path);
-  void build_context_menu_open(QMenu& menu, const QString& path);
-  void build_context_menu_rename(QMenu& menu, const QString& path);
-  void build_context_menu_delete(QMenu& menu, const QString& path);
+  void build_context_menu_new(QMenu& menu, const QStringList& paths);
+  void build_context_menu_play(QMenu& menu, const QStringList& paths);
+  void build_context_menu_open(QMenu& menu, const QStringList& paths);
+  void build_context_menu_rename(QMenu& menu, const QStringList& paths);
+  void build_context_menu_delete(QMenu& menu, const QStringList& paths);
 
   QuestFilesModel* model;         /**< The underlying model. */
   QAction* play_action;           /**< Action of playing or stopping the selected file. */

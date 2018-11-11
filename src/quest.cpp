@@ -2045,9 +2045,7 @@ bool Quest::delete_dir_recursive_if_exists(const QString& path) {
  * list.
  *
  * It is okay its file is already removed from the filesystem.
- * It is okay too if the element is already gone from the resource list.
- * However, it is not okay if both all files are removed and the element is
- * gone from the resource list.
+ * or already gone from the resource list.
  *
  * @param resource_type A type of resource.
  * @param id Id of the element to remove.
@@ -2057,28 +2055,18 @@ void Quest::delete_resource_element(
     ResourceType resource_type, const QString& element_id) {
 
   // Delete the file from the filesystem.
-  bool found_in_filesystem = false;
   const QString& path = get_resource_element_path(resource_type, element_id);
   if (is_dir(path)) {
-    found_in_filesystem = true;
     delete_dir_recursive(path);
   }
   else if (exists(path)) {
-    found_in_filesystem = true;
     delete_file(path);
   }
 
   // Also remove it from the resource list.
-  bool found_in_resource_list = false;
   if (database.exists(resource_type, element_id)) {
-    found_in_resource_list = true;
     database.remove(resource_type, element_id);
     database.save();
-  }
-
-  if (!found_in_filesystem && !found_in_resource_list) {
-    // Nothing was done. This must be an error.
-    throw EditorException(tr("No such resource: '%1'").arg(element_id));
   }
 }
 
