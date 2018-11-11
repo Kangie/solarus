@@ -66,6 +66,7 @@ Quest::Quest(const QString& root_path):
   root_path(),
   properties(*this),
   database(*this) {
+
   set_root_path(root_path);
 }
 
