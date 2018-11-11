@@ -1844,7 +1844,17 @@ void Quest::rename_file(const QString& old_path, const QString& new_path) {
   if (!QFile(old_path).rename(new_path)) {
     throw EditorException(tr("Cannot rename file '%1'").arg(old_path));
   }
+
   emit file_renamed(old_path, new_path);
+
+  // Update metadata after the new file is known to others.
+  QString old_path_from_data = get_path_relative_to_data_path(old_path);
+  QString new_path_from_data = get_path_relative_to_data_path(new_path);
+  database.set_file_author(new_path_from_data, database.get_file_author(old_path_from_data));
+  database.set_file_license(new_path_from_data, database.get_file_license(old_path_from_data));
+  database.set_file_author(old_path_from_data, "");
+  database.set_file_license(old_path_from_data, "");
+  database.save();
 }
 
 /**
@@ -1955,7 +1965,14 @@ void Quest::delete_file(const QString& path) {
   if (!QFile(path).remove()) {
     throw EditorException(tr("Cannot delete file '%1'").arg(path));
   }
+
   emit file_deleted(path);
+
+  // Remove metadata.
+  QString path_from_data = get_path_relative_to_data_path(path);
+  database.set_file_author(path_from_data, "");
+  database.set_file_license(path_from_data, "");
+  database.save();
 }
 
 /**
