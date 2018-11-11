@@ -438,7 +438,26 @@ game command.
 If the player is not allowed to perform the attack now
 (because he does not have the sword
 \ref lua_api_game_get_ability "ability"
-or because the hero is currently busy in another state), then nothing happens.
+or because the hero is currently busy in another state that does not allow
+to use the sword), then nothing happens.
+
+\subsection lua_api_hero_start_attack_loading hero:start_attack_loading([spin_attack_delay])
+
+Makes the hero start loading his sword.
+
+This function does the same as what happens when the player keeps pressing
+the \c "attack" game \ref lua_api_game_overview_commands "command"
+after using the sword.
+
+If the player is not allowed to perform this attack now
+(because he does not have the sword
+\ref lua_api_game_get_ability "ability"
+or because the hero is currently busy in another state that does not allow
+to use the sword), then nothing happens.
+- \c spin_attack_delay (number, optional): Delay in milliseconds
+  before the sword is loaded, allowing a spin attack then (default \c 1000).
+  A value of \c 0 allows the spin attack immediately.
+  The special value \c -1 means infinite: then, no spin attack will be possible.
 
 \subsection lua_api_hero_start_item hero:start_item(item)
 
