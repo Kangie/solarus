@@ -676,15 +676,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SolarusEditor::ResourceSelector</class>
-   <extends>QComboBox</extends>
-   <header>include/widgets/resource_selector.h</header>
-  </customwidget>
-  <customwidget>
    <class>SolarusEditor::PairSpinBox</class>
    <extends>QWidget</extends>
    <header>widgets/pair_spin_box.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SolarusEditor::ResourceSelector</class>
+   <extends>QComboBox</extends>
+   <header>include/widgets/resource_selector.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::SpriteTreeView</class>
@@ -704,7 +704,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources/images.qrc"/>
   <include location="../../resources/images.qrc"/>
  </resources>
  <connections/>

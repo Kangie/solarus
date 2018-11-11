@@ -32,7 +32,7 @@ PairSpinBox::PairSpinBox(QWidget *parent) :
   layout->addWidget(&first_spin_box);
   layout->addWidget(&separator_label);
   layout->addWidget(&second_spin_box);
-  layout->addSpacerItem(new QSpacerItem(0, 22, QSizePolicy::Expanding));
+  layout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
 
   connect(&first_spin_box, SIGNAL(valueChanged(int)),
           this, SLOT(on_first_value_changed()));
