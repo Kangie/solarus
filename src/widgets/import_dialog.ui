@@ -141,26 +141,12 @@
     </layout>
    </item>
    <item>
-    <widget class="QPushButton" name="import_button">
-     <property name="text">
-      <string>Import files</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../../resources/images.qrc">
-       <normaloff>:/images/icon_next.png</normaloff>:/images/icon_next.png</iconset>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

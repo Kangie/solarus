@@ -49,6 +49,9 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
   ui.destination_quest_tree_view->set_opening_files_allowed(false);
 
   ui.missing_files_count_label->clear();
+  QPushButton* importButton = ui.button_box->button(QDialogButtonBox::Apply);
+  importButton->setText("Import files...");
+  importButton->setIcon(QIcon(":/images/icon_next"));
 
   connect(ui.source_quest_browse_button, SIGNAL(clicked(bool)),
           this, SLOT(browse_source_quest()));
@@ -60,7 +63,7 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
           this, SIGNAL(destination_quest_rename_file_requested(Quest&, QString)));
   connect(ui.find_missing_button, SIGNAL(clicked(bool)),
           this, SLOT(find_missing_button_triggered()));
-  connect(ui.import_button, SIGNAL(clicked(bool)),
+  connect(ui.button_box->button(QDialogButtonBox::Apply), SIGNAL(clicked(bool)),
           this, SLOT(import_button_triggered()));
 
   EditorSettings settings;
@@ -235,7 +238,7 @@ void ImportDialog::find_source_paths_not_in_destination_quest(
  */
 void ImportDialog::update_import_button() {
 
-  ui.import_button->setEnabled(ui.source_quest_tree_view->selectionModel()->hasSelection());
+  ui.button_box->button(QDialogButtonBox::Apply)->setEnabled(ui.source_quest_tree_view->selectionModel()->hasSelection());
 }
 
 /**
