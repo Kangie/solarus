@@ -358,7 +358,7 @@ QVariant QuestFilesModel::headerData(int section, Qt::Orientation orientation, i
       return tr("File");
 
     case DESCRIPTION_COLUMN:
-      return tr("Resource description");
+      return tr("Description");
 
     case TYPE_COLUMN:
       return tr("Type");

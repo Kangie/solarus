@@ -107,7 +107,7 @@ void QuestTreeView::set_quest(Quest& quest) {
 
     sortByColumn(0, Qt::AscendingOrder);
     setColumnWidth(QuestFilesModel::FILE_COLUMN, 200);
-    setColumnWidth(QuestFilesModel::DESCRIPTION_COLUMN, 200);
+    setColumnWidth(QuestFilesModel::DESCRIPTION_COLUMN, 100);
 
     connect(&quest, SIGNAL(file_renamed(QString, QString)),
             this, SLOT(file_renamed(QString, QString)));
