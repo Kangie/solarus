@@ -50,7 +50,7 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
 
   ui.missing_files_count_label->clear();
   QPushButton* importButton = ui.button_box->button(QDialogButtonBox::Apply);
-  importButton->setText("Import files...");
+  importButton->setText(tr("Import files..."));
   importButton->setIcon(QIcon(":/images/icon_next"));
 
   connect(ui.source_quest_browse_button, SIGNAL(clicked(bool)),
