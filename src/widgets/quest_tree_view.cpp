@@ -1147,7 +1147,7 @@ bool QuestTreeView::can_delete_paths(const QStringList& paths) {
       return false;
     }
 
-    if (QFileInfo(path).isDir() && !QDir(path).isEmpty()) {
+    if (QFileInfo(path).isDir() && QDir(path).entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).count()) {
       // Don't delete non-empty directories.
       // This is not supported yet because they may contain resources.
       return false;
@@ -1198,7 +1198,7 @@ void QuestTreeView::delete_action_triggered() {
       else {
         // This is a regular file or directory.
         if (QFileInfo(path).isDir()) {
-          if (QDir(path).isEmpty()) {
+          if (QDir(path).entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).count() == 0) {
             quest.delete_dir(path);
           }
         } else {
