@@ -399,21 +399,25 @@ The default value is \c true.
 - \c can_use_shield (boolean): \c true if the entity can stop attacks with the
   shield.
 
-\subsection lua_api_state_get_can_use_item state:get_can_use_item()
+\subsection lua_api_state_get_can_use_item state:get_can_use_item([item_id])
 
 Returns whether an \ref lua_api_item "equipment item" can be used
 during this state.
-- Return value (boolean): \c true if the player can use equipment items
+- \c item_id (string, optional): Name of the item to test,
+  or \c nil to mean items in general.
+- Return value (boolean): \c true if the player can use an equipment item
   during this state.
 
-\subsection lua_api_state_set_can_use_item state:set_can_use_item(can_use_item)
+\subsection lua_api_state_set_can_use_item state:set_can_use_item([item_id], can_use_item)
 
 Sets whether an \ref lua_api_item "equipment item" can be used
 during this state.
 
 The default value is \c true.
-- \c can_use_item (boolean): \c true to allow the player to use equipment items
-  during this state.
+- \c item_id (string, optional): Name of the item to allow or disallow,
+  or \c nil to mean items in general.
+- \c can_use_item (boolean): \c true to allow the player to use an equipment
+  item during this state.
 
 \subsection lua_api_state_get_can_push state:get_can_push()
 
