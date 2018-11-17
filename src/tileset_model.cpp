@@ -719,7 +719,7 @@ bool TilesetModel::is_valid_pattern_id(const QString& pattern_id) {
 bool TilesetModel::is_pattern_multi_frame(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  return tileset.get_pattern(pattern_id).is_multi_frame();
+  return tileset.get_pattern(pattern_id)->is_multi_frame();
 }
 
 /**
@@ -745,7 +745,7 @@ bool TilesetModel::are_patterns_multi_frame(const QList<int>& indexes) const {
 int TilesetModel::get_pattern_num_frames(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  return tileset.get_pattern(pattern_id).get_num_frames();
+  return tileset.get_pattern(pattern_id)->get_num_frames();
 }
 
 /**
@@ -793,7 +793,7 @@ void TilesetModel::set_pattern_num_frames(int index, int num_frames) {
   }
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
 
   Solarus::Rectangle first = pattern.get_frame();
   std::vector<Solarus::Rectangle> frames(num_frames, first);
@@ -821,7 +821,7 @@ void TilesetModel::set_pattern_num_frames(int index, int num_frames) {
 QRect TilesetModel::get_pattern_frame(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  const Solarus::Rectangle& frame = tileset.get_pattern(pattern_id).get_frame();
+  const Solarus::Rectangle& frame = tileset.get_pattern(pattern_id)->get_frame();
   return Rectangle::to_qrect(frame);
 }
 
@@ -835,7 +835,7 @@ QList<QRect> TilesetModel::get_pattern_frames(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
   const std::vector<Solarus::Rectangle>& frames =
-      tileset.get_pattern(pattern_id).get_frames();
+      tileset.get_pattern(pattern_id)->get_frames();
 
   QList<QRect> result;
   for (const Solarus::Rectangle& frame : frames) {
@@ -887,7 +887,7 @@ void TilesetModel::set_pattern_position(int index, const QPoint& position) {
   }
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  std::vector<Solarus::Rectangle> frames = tileset.get_pattern(pattern_id).get_frames();
+  std::vector<Solarus::Rectangle> frames = tileset.get_pattern(pattern_id)->get_frames();
 
   int old_x = frames[0].get_x();
   int old_y = frames[0].get_y();
@@ -897,7 +897,7 @@ void TilesetModel::set_pattern_position(int index, const QPoint& position) {
     frame.set_xy(position.x() + dx, position.y() + dy);
   }
 
-  tileset.get_pattern(pattern_id).set_frames(frames);
+  tileset.get_pattern(pattern_id)->set_frames(frames);
 
   // The icon has changed.
   patterns[index].set_image_dirty();
@@ -917,7 +917,7 @@ void TilesetModel::set_pattern_position(int index, const QPoint& position) {
 Ground TilesetModel::get_pattern_ground(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  return tileset.get_pattern(pattern_id).get_ground();
+  return tileset.get_pattern(pattern_id)->get_ground();
 }
 
 /**
@@ -955,7 +955,7 @@ bool TilesetModel::is_common_pattern_ground(const QList<int>& indexes, Ground& g
  */
 void TilesetModel::set_pattern_ground(int index, Ground ground) {
 
-  Solarus::TilePatternData& pattern = tileset.get_pattern(index_to_id(index).toStdString());
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(index_to_id(index).toStdString());
   if (ground == pattern.get_ground()) {
     return;
   }
@@ -971,7 +971,7 @@ void TilesetModel::set_pattern_ground(int index, Ground ground) {
 int TilesetModel::get_pattern_default_layer(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  return tileset.get_pattern(pattern_id).get_default_layer();
+  return tileset.get_pattern(pattern_id)->get_default_layer();
 }
 
 /**
@@ -1009,7 +1009,7 @@ bool TilesetModel::is_common_pattern_default_layer(const QList<int>& indexes, in
  */
 void TilesetModel::set_pattern_default_layer(int index, int default_layer) {
 
-  Solarus::TilePatternData& pattern = tileset.get_pattern(index_to_id(index).toStdString());
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(index_to_id(index).toStdString());
   if (default_layer == pattern.get_default_layer()) {
     return;
   }
@@ -1025,7 +1025,7 @@ void TilesetModel::set_pattern_default_layer(int index, int default_layer) {
 PatternRepeatMode TilesetModel::get_pattern_repeat_mode(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  return tileset.get_pattern(pattern_id).get_repeat_mode();
+  return tileset.get_pattern(pattern_id)->get_repeat_mode();
 }
 
 /**
@@ -1065,7 +1065,7 @@ bool TilesetModel::is_common_pattern_repeat_mode(
  */
 void TilesetModel::set_pattern_repeat_mode(int index, PatternRepeatMode repeat_mode) {
 
-  Solarus::TilePatternData& pattern = tileset.get_pattern(index_to_id(index).toStdString());
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(index_to_id(index).toStdString());
   if (repeat_mode == pattern.get_repeat_mode()) {
     return;
   }
@@ -1081,7 +1081,7 @@ void TilesetModel::set_pattern_repeat_mode(int index, PatternRepeatMode repeat_m
 PatternScrolling TilesetModel::get_pattern_scrolling(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  const Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  const Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
 
   return pattern.get_scrolling();
 }
@@ -1128,7 +1128,7 @@ void TilesetModel::set_pattern_scrolling(int index, PatternScrolling scrolling) 
   }
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
 
   pattern.set_scrolling(scrolling);
 
@@ -1144,7 +1144,7 @@ void TilesetModel::set_pattern_scrolling(int index, PatternScrolling scrolling) 
 PatternSeparation TilesetModel::get_pattern_separation(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  const Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  const Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
 
   const std::vector<Solarus::Rectangle>& frames = pattern.get_frames();
   if (frames.size() == 1) {
@@ -1197,7 +1197,7 @@ bool TilesetModel::is_common_pattern_separation(const QList<int>& indexes, Patte
 void TilesetModel::set_pattern_separation(int index, PatternSeparation separation) {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
 
   if (!pattern.is_multi_frame()) {
     // Nothing to do.
@@ -1236,7 +1236,7 @@ void TilesetModel::set_pattern_separation(int index, PatternSeparation separatio
 int TilesetModel::get_pattern_frame_delay(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  const Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  const Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
   return pattern.get_frame_delay();
 }
 
@@ -1294,7 +1294,7 @@ void TilesetModel::set_pattern_frame_delay(int index, int frame_delay) {
   }
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
 
   pattern.set_frame_delay(frame_delay);
 
@@ -1309,7 +1309,7 @@ void TilesetModel::set_pattern_frame_delay(int index, int frame_delay) {
 bool TilesetModel::is_pattern_mirror_loop(int index) const {
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  const Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  const Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
   return pattern.is_mirror_loop();
 }
 
@@ -1362,7 +1362,7 @@ void TilesetModel::set_pattern_mirror_loop(int index, bool mirror_loop) {
   }
 
   const std::string& pattern_id = index_to_id(index).toStdString();
-  Solarus::TilePatternData& pattern = tileset.get_pattern(pattern_id);
+  Solarus::TilePatternData& pattern = *tileset.get_pattern(pattern_id);
 
   pattern.set_mirror_loop(mirror_loop);
 
