@@ -327,10 +327,14 @@ Sets whether the entity can be hurt during this state.
 The default value is \c true.
 - \c can_be_hurt (boolean or function): Whether the entity controlled
   by this state can be hurt.
-  If you pass a function, it will be called whenever an attack occurs
-  and it should return a boolean value.
-  Your function will be called with one parameter: the attacker entity,
-  or \c nil if the source of the attack is not an entity.
+  You can pass a function if you want to decide this depending on the current
+  attack. In this case, your function will have the following parameters
+  and return value:
+  - \c state (state): The current state itself,
+  - \c attacker (\ref lua_api_entity "entity" or nil): the attacker entity,
+    or \c nil if the attack does not come from an entity.
+  - Return value (boolean): \c true to allow your entity to get hurt by this
+    attacker.
 
 \subsection lua_api_state_get_can_use_sword state:get_can_use_sword()
 
