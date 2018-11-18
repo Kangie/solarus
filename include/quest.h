@@ -170,6 +170,7 @@ public:
   bool delete_dir_if_exists(const QString& path);
   void delete_dir_recursive(const QString& path);
   bool delete_dir_recursive_if_exists(const QString& path);
+  void delete_recursive(const QString& path, QuestDatabase& database);
   void delete_resource_element(ResourceType resource_type,
                                const QString& element_id);
 

@@ -1146,12 +1146,6 @@ bool QuestTreeView::can_delete_paths(const QStringList& paths) {
       // Don't delete resource directories.
       return false;
     }
-
-    if (QFileInfo(path).isDir() && QDir(path).entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).count()) {
-      // Don't delete non-empty directories.
-      // This is not supported yet because they may contain resources.
-      return false;
-    }
   }
 
   return true;
@@ -1198,9 +1192,7 @@ void QuestTreeView::delete_action_triggered() {
       else {
         // This is a regular file or directory.
         if (QFileInfo(path).isDir()) {
-          if (QDir(path).entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).count() == 0) {
-            quest.delete_dir(path);
-          }
+          quest.delete_dir_recursive(path);
         } else {
           // Not a directory and not a resource.
           quest.delete_file(path);

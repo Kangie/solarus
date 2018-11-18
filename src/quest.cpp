@@ -1971,8 +1971,7 @@ void Quest::delete_file(const QString& path) {
 
   // Remove metadata.
   QString path_from_data = get_path_relative_to_data_path(path);
-  database.set_file_author(path_from_data, "");
-  database.set_file_license(path_from_data, "");
+  database.clear_file_metadata(path_from_data);
   database.save();
 }
 
@@ -2028,16 +2027,17 @@ bool Quest::delete_dir_if_exists(const QString& path) {
 
 /**
  * @brief Attempts to delete a directory of this quest and all its content.
+ *
+ * Also removes resources and metadata under this directory.
+ *
  * @param path Path of the directory to delete. It must be a directory.
  * @throws EditorException In case of error.
  */
 void Quest::delete_dir_recursive(const QString& path) {
 
   check_is_dir(path);
-
-  if (!QDir(path).removeRecursively()) {
-    throw EditorException(tr("Cannot delete folder '%1'").arg(path));
-  }
+  delete_recursive(path, database);
+  database.save();
 }
 
 /**
@@ -2056,6 +2056,54 @@ bool Quest::delete_dir_recursive_if_exists(const QString& path) {
 
   delete_dir_recursive(path);
   return true;
+}
+
+/**
+ * @brief Deletes a file or a directory with its content including.
+ *
+ * Also removes resources and metadata under this directory.
+ *
+ * Does nothing if the file or directory does not exist.
+ *
+ * @param path The file or directory to delete.
+ * @param database Quest database where metadata will be modified.
+ * @throws EditorException if the deletion failed.
+ */
+void Quest::delete_recursive(const QString& path, QuestDatabase& database) {
+
+  QFileInfo info(path);
+  if (!info.exists()) {
+    return;
+  }
+
+  // Remove metadata and resource declaration if any.
+  database.clear_file_metadata(get_path_relative_to_data_path(path));
+  ResourceType resource_type;
+  QString element_id;
+  if (is_resource_element(path, resource_type, element_id)) {
+    database.remove(resource_type, element_id);
+  }
+
+  if (!info.isDir()) {
+    // Not a directory.
+    if (!QFile::remove(path)) {
+      throw EditorException(tr("Failed to delete file '%1'").arg(path));
+    }
+  }
+  else {
+    // Directory.
+    QDir dir(path);
+    const QStringList& file_names = dir.entryList(
+          QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+    for (const QString& file_name : file_names) {
+      QString child_path = path + '/' + file_name;
+      delete_recursive(child_path, database);
+    }
+
+    if (!QDir().rmdir(path)) {
+      throw EditorException(tr("Failed to delete folder '%1'").arg(path));
+    }
+  }
 }
 
 /**

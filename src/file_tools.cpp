@@ -162,14 +162,12 @@ void copy_recursive(const QString& src, const QString& dst) {
 }
 
 /**
- * @brief Utility function to delete a file or a directory with its content.
+ * @brief Deletes a file or a directory with its content.
  *
  * Does nothing if the file or directory does not exist.
  *
  * @param path The file or directory to delete.
  * @throws EditorException if the deletion failed.
- * In this case, it the path to delete was a directory, this function still
- * tries to delete as much files as possible in the directory.
  */
 void delete_recursive(const QString& path) {
 
@@ -186,7 +184,15 @@ void delete_recursive(const QString& path) {
   }
   else {
     // Directory.
-    if (!QDir(path).removeRecursively()) {
+    QDir dir(path);
+    const QStringList& file_names = dir.entryList(
+          QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+    for (const QString& file_name : file_names) {
+      QString child_path = path + '/' + file_name;
+      delete_recursive(child_path);
+    }
+
+    if (!QDir().rmdir(path)) {
       throw EditorException(QApplication::tr("Failed to delete folder '%1'").arg(path));
     }
   }

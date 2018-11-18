@@ -72,6 +72,7 @@ public:
   void set_file_author(const QString& path, const QString& author);
   QString get_file_license(const QString& path) const;
   void set_file_license(const QString& path, const QString& license);
+  void clear_file_metadata(const QString& path);
 
 signals:
 

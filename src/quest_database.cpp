@@ -393,6 +393,16 @@ void QuestDatabase::set_file_license(const QString& path, const QString& license
 }
 
 /**
+ * @brief Removes the author and license info of a file.
+ * @param path Path to a file or directory relative to the quest data directory.
+ */
+void QuestDatabase::clear_file_metadata(const QString& path) {
+
+  set_file_author(path, "");
+  set_file_license(path, "");
+}
+
+/**
  * @brief Check in a separate thread if we have metadata for files that no longer exist.
  */
 void QuestDatabase::check_deleted_file_info() {
