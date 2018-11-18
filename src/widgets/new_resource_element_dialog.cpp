@@ -168,11 +168,6 @@ void NewResourceElementDialog::done(int result) {
       GuiTools::error_dialog("Invalid resource id");
       return;
     }
-
-    if (get_element_description().isEmpty()) {
-      GuiTools::error_dialog("Empty resource description");
-      return;
-    }
   }
 
   QDialog::done(result);
