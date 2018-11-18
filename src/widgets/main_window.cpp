@@ -1836,7 +1836,8 @@ void MainWindow::rename_file_requested(Quest& quest, const QString& path) {
     else {
       // Rename a regular file or directory.
       bool ok = false;
-      QString file_name = QFileInfo(path).fileName();
+      QFileInfo info(path);
+      QString file_name = info.fileName();
       QString new_file_name = QInputDialog::getText(
             this,
             tr("Rename file"),
@@ -1849,7 +1850,11 @@ void MainWindow::rename_file_requested(Quest& quest, const QString& path) {
 
         Quest::check_valid_file_name(file_name);
         QString new_path = QFileInfo(path).path() + '/' + new_file_name;
-        quest.rename_file(path, new_path);
+        if (!info.isDir()) {
+          quest.rename_file(path, new_path);
+        } else {
+          quest.rename_file(path, new_path);  // TODO rename_dir
+        }
       }
     }
   }

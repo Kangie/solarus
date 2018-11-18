@@ -1832,7 +1832,7 @@ void Quest::create_resource_element(ResourceType resource_type,
 }
 
 /**
- * @brief Attempts to rename a file or directory of this quest.
+ * @brief Attempts to rename a file of this quest.
  * @param old_path Path of the file to rename. It must exist.
  * @param new_path The new path. It must not exist.
  * @throws EditorException In case of error.
@@ -1853,8 +1853,7 @@ void Quest::rename_file(const QString& old_path, const QString& new_path) {
   QString new_path_from_data = get_path_relative_to_data_path(new_path);
   database.set_file_author(new_path_from_data, database.get_file_author(old_path_from_data));
   database.set_file_license(new_path_from_data, database.get_file_license(old_path_from_data));
-  database.set_file_author(old_path_from_data, "");
-  database.set_file_license(old_path_from_data, "");
+  database.clear_file_metadata(old_path_from_data);
   database.save();
 }
 
