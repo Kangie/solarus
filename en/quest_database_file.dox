@@ -57,7 +57,7 @@ Inside the braces, the properties of the resource are specified.
 Properties are declared with the syntax <tt>key = value</tt> and
 separated with commas. It is allowed to have an extra comma after
 the last property. String values are enclosed within double quotes.
-Each resource element must have the following two properties:
+The following properties are recognized on resources:
 - \c id (string): Id of the element. It should not contain spaces.
   The id determines the data file(s) of this element.
   The id is always a file name without extension:
@@ -89,8 +89,8 @@ Each resource element must have the following two properties:
   - For a shader: the id is the
     \ref quest_shader_data_file "shader data file" without its extension,
     relative to the \c shaders directory.
-- \c description (string): A human-readable name that describes this element.
-  It may contain spaces. The engine does not uses this description,
+- \c description (string, optional): A human-readable name that describes this
+  element. It may contain spaces. The engine does not uses this description,
   but the quest editor may use it to show to users something more
   user-friendly than the id.
 
