@@ -50,6 +50,16 @@ Creates a text surface with the specified properties.
     \ref lua_api_language "language".
   - Return value (text surface): The text surface created.
 
+\subsection lua_api_text_surface_get_predicted_size get_predicted_size(font_id,font_size,text)
+
+Returns a prediction of the size of the text surface created with those parameters.
+
+- \c font_id (string) : Name of the font file
+- \c font_size (number) : font_size to use
+- \c text (string) : text to predict surface size for.
+- Return value 1 (number) : predicted width
+- Return value 2 (number) : predicted height
+
 \section lua_api_text_surface_inherited_methods Methods inherited from drawable
 
 Text surfaces are particular \ref lua_api_drawable "drawable" objects.
