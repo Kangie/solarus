@@ -1853,7 +1853,7 @@ void MainWindow::rename_file_requested(Quest& quest, const QString& path) {
         if (!info.isDir()) {
           quest.rename_file(path, new_path);
         } else {
-          quest.rename_file(path, new_path);  // TODO rename_dir
+          quest.rename_dir(path, new_path);
         }
       }
     }

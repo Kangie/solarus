@@ -35,6 +35,11 @@ class QuestDatabase : public QObject {
 
 public:
 
+  struct FileInfo {
+    QString author;
+    QString license;
+  };
+
   explicit QuestDatabase(Quest& quest);
 
   void save() const;
@@ -68,6 +73,9 @@ public:
   QString get_directory_friendly_name(ResourceType resource_type) const;
   QString get_create_friendly_name(ResourceType resource_type) const;
 
+  QMap<QString, FileInfo> get_all_file_info() const;
+  FileInfo get_file_info(const QString& path) const;
+  void set_file_info(const QString& path, const FileInfo& info);
   QString get_file_author(const QString& path) const;
   void set_file_author(const QString& path, const QString& author);
   QString get_file_license(const QString& path) const;

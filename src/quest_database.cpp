@@ -329,6 +329,60 @@ QString QuestDatabase::get_create_friendly_name(ResourceType resource_type) cons
 }
 
 /**
+ * @brief Returns the file information of all files.
+ * @return The file information of all files.
+ */
+QMap<QString, QuestDatabase::FileInfo> QuestDatabase::get_all_file_info() const {
+
+  const std::map<std::string, Solarus::QuestDatabase::FileInfo>& all_file_info = database.get_all_file_info();
+  QMap<QString, QuestDatabase::FileInfo> result;
+  for (const auto& kvp : all_file_info) {
+    QString path = QString::fromStdString(kvp.first);
+    const Solarus::QuestDatabase::FileInfo& solarus_info = kvp.second;
+    QuestDatabase::FileInfo info;
+    info.author = QString::fromStdString(solarus_info.author);
+    info.license = QString::fromStdString(solarus_info.license);
+    result.insert(path, info);
+  }
+  return result;
+}
+
+/**
+ * @brief Returns the file information of the given path.
+ * @param path The path to get.
+ * @return The file information.
+ */
+QuestDatabase::FileInfo QuestDatabase::get_file_info(const QString& path) const {
+
+  FileInfo info;
+  const Solarus::QuestDatabase::FileInfo& solarus_info = database.get_file_info(path.toStdString());
+  info.author = QString::fromStdString(solarus_info.author);
+  info.license = QString::fromStdString(solarus_info.license);
+  return info;
+}
+
+/**
+ * @brief Sets the file information of the given path.
+ * @param path The path to set.
+ * @param info The new information.
+ */
+void QuestDatabase::set_file_info(const QString& path, const FileInfo& info) {
+
+  if (get_file_author(path) == info.author &&
+      get_file_license(path) == info.license) {
+    return;
+  }
+
+  Solarus::QuestDatabase::FileInfo solarus_info = database.get_file_info(path.toStdString());
+  solarus_info.author = info.author.toStdString();
+  solarus_info.license = info.license.toStdString();
+  database.set_file_info(path.toStdString(), solarus_info);
+
+  emit file_author_changed(path, info.author);
+  emit file_license_changed(path, info.license);
+}
+
+/**
  * @brief Returns the author of a file.
  * @param path Path to a file or directory relative to the quest data directory.
  * @return The author or an empty string.

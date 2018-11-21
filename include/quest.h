@@ -162,6 +162,7 @@ public:
                                const QString& element_id, const QString& description);
   void rename_file(const QString& old_path, const QString& new_path);
   bool rename_file_if_exists(const QString& old_path, const QString& new_path);
+  void rename_dir(const QString& old_path, const QString& new_path);
   void rename_resource_element(ResourceType resource_type,
                                const QString& old_id, const QString& new_id);
   void delete_file(const QString& path);

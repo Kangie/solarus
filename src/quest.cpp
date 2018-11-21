@@ -1840,6 +1840,7 @@ void Quest::create_resource_element(ResourceType resource_type,
 void Quest::rename_file(const QString& old_path, const QString& new_path) {
 
   check_exists(old_path);
+  check_not_is_dir(old_path);
   check_not_exists(new_path);
 
   if (!QFile(old_path).rename(new_path)) {
@@ -1858,7 +1859,7 @@ void Quest::rename_file(const QString& old_path, const QString& new_path) {
 }
 
 /**
- * @brief Attempts to rename a file or directory of this quest if it exists.
+ * @brief Attempts to rename a file of this quest if it exists.
  * @param old_path Path of the file to rename. If it no longer exists, then
  * the new file must exist.
  * @param new_path The new path. If it already exists, then the old file must
@@ -1879,6 +1880,70 @@ bool Quest::rename_file_if_exists(const QString& old_path, const QString& new_pa
   check_not_exists(new_path);
   rename_file(old_path, new_path);
   return true;
+}
+
+/**
+ * @brief Attempts to rename a directory of this quest.
+ *
+ * Recursively updates resource declarations and metadata of files
+ * under this directory.
+ *
+ * @param old_path Path of the file to rename. It must exist.
+ * @param new_path The new path. It must not exist.
+ * @throws EditorException In case of error.
+ */
+void Quest::rename_dir(const QString& old_path, const QString& new_path) {
+
+  check_exists(old_path);
+  check_is_dir(old_path);
+  check_not_exists(new_path);
+
+  if (!QFile(old_path).rename(new_path)) {
+    throw EditorException(tr("Cannot rename file '%1'").arg(old_path));
+  }
+
+  // Check if resources are declared under the directory.
+  ResourceType old_resource_type;
+  ResourceType new_resource_type;
+  if (is_in_resource_path(old_path, old_resource_type) &&
+      is_in_resource_path(new_path, new_resource_type) &&
+      new_resource_type == old_resource_type) {
+    QStringList elements = database.get_elements(old_resource_type);
+    QString resource_path = get_resource_path(old_resource_type);
+    QString old_relative_path = old_path;
+    old_relative_path.remove(0, resource_path.size() + 1);
+    QString new_relative_path = new_path;
+    new_relative_path.remove(0, resource_path.size() + 1);
+    for (QString old_element_id : elements) {
+      if (old_element_id.startsWith(old_relative_path + "/")) {
+        QString end = old_element_id;
+        end.remove(0, old_relative_path.size() + 1);
+        QString new_element_id = new_relative_path + "/" + end;
+        database.remove(old_resource_type, new_element_id);  // To overwrite any previous description.
+        database.rename(old_resource_type, old_element_id, new_element_id);
+      }
+    }
+  }
+
+  // Check if we have file metadata under the directory.
+  QString old_path_from_data = get_path_relative_to_data_path(old_path);
+  QString new_path_from_data = get_path_relative_to_data_path(new_path);
+  QMap<QString, QuestDatabase::FileInfo> all_file_info = database.get_all_file_info();
+  for (auto it = all_file_info.begin(); it != all_file_info.end(); ++it) {
+    const QString& old_file_path_from_data = it.key();
+    const QuestDatabase::FileInfo& info = it.value();
+    if (old_file_path_from_data.startsWith(old_path_from_data + "/")) {
+      QString end = old_file_path_from_data;
+      end.remove(0, old_path_from_data.size() + 1);
+      QString new_file_path_from_data = new_path_from_data + "/" + end;
+      database.clear_file_metadata(old_file_path_from_data);
+      database.set_file_info(new_file_path_from_data, info);
+    }
+  }
+
+  database.save();
+
+  emit file_renamed(old_path, new_path);
 }
 
 /**
@@ -1922,8 +1987,9 @@ void Quest::rename_resource_element(
     QString new_path = new_paths.at(i);
 
     // Take care of not changing the extension for musics and fonts.
-    QString extension = QFileInfo(old_path).suffix();
+    QFileInfo old_path_info(old_path);
     QFileInfo new_path_info(new_path);
+    QString extension = old_path_info.suffix();
     if (new_path_info.suffix() != extension) {
       // For example when renaming music 'temple' to 'dungeon':
       // the old path was /some/quest/data/musics/temple.it
@@ -1935,7 +2001,11 @@ void Quest::rename_resource_element(
 
     if (exists(old_path)) {
       renamed_on_filesystem = true;
-      rename_file(old_path, new_path);
+      if (!old_path_info.isDir()) {
+        rename_file(old_path, new_path);
+      } else {
+        rename_dir(old_path, new_path);
+      }
     }
   }
 
