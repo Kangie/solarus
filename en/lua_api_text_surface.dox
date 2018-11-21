@@ -52,7 +52,7 @@ Creates a text surface with the specified properties.
 
 \subsection lua_api_text_surface_get_predicted_size get_predicted_size(font_id,font_size,text)
 
-Returns a prediction of the size of the text surface created with those parameters. This is
+Predict the size of a text_surface while economising its costly creation. This is
 useful when spliting text into lines or to insert icon and images in text.
 
 - \c font_id (string) : Name of the font file to use, relative to the
