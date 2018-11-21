@@ -52,11 +52,23 @@ Creates a text surface with the specified properties.
 
 \subsection lua_api_text_surface_get_predicted_size get_predicted_size(font_id,font_size,text)
 
-Returns a prediction of the size of the text surface created with those parameters.
+Returns a prediction of the size of the text surface created with those parameters. This is
+useful when spliting text into lines or to insert icon and images in text.
 
-- \c font_id (string) : Name of the font file
-- \c font_size (number) : font_size to use
-- \c text (string) : text to predict surface size for.
+- \c font_id (string) : Name of the font file to use, relative to the
+    \c fonts directory and without extension.
+    It must be a declared in the resource list of the
+    \ref quest_database_file "quest database".
+    The following extensions are
+    auto-detected in this order:
+    \c <tt>.png</tt>,
+    \c <tt>.ttf</tt>,
+    \c <tt>.otf</tt>,
+    \c <tt>.ttc</tt>
+    and
+    \c <tt>.fon</tt>.
+- \c font_size (number) : Font_size to use. No effect on bitmap fonts.
+- \c text (string) : text to predict surface size for. Must be valid UTF-8.
 - Return value 1 (number) : predicted width
 - Return value 2 (number) : predicted height
 
