@@ -866,7 +866,7 @@ game command.
   \c "action", \c "attack", \c "pause", \c "item_1", \c "item_2",
   \c "right", \c "up", \c "left" and \c "down".
 
-\section lua_api_game_events Events of a game
+\section lua_api_game_events Events of the type game
 
 Events are callback methods automatically called by the engine if you define
 them.
