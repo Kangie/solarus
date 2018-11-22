@@ -55,22 +55,24 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
   importButton->setText(tr("Import files"));
   importButton->setIcon(QIcon(":/images/icon_next"));
 
-  connect(ui.source_quest_browse_button, SIGNAL(clicked(bool)),
-          this, SLOT(browse_source_quest()));
-  connect(&source_quest, SIGNAL(root_path_changed(QString)),
-          this, SLOT(source_quest_root_path_changed()));
-  connect(ui.source_quest_tree_view, SIGNAL(selected_path_changed(QString)),
-          this, SLOT(source_quest_selected_path_changed()));
-  connect(ui.destination_quest_tree_view, SIGNAL(rename_file_requested(Quest&, QString)),
-          this, SIGNAL(destination_quest_rename_file_requested(Quest&, QString)));
-  connect(ui.find_missing_button, SIGNAL(clicked(bool)),
-          this, SLOT(find_missing_button_triggered()));
-  connect(ui.button_box->button(QDialogButtonBox::Apply), SIGNAL(clicked(bool)),
-          this, SLOT(import_button_triggered()));
+  connect(ui.source_quest_browse_button, &QToolButton::clicked,
+          this, &ImportDialog::browse_source_quest);
+  connect(&source_quest, &Quest::root_path_changed,
+          this, &ImportDialog::source_quest_root_path_changed);
+  connect(ui.source_quest_tree_view, &QuestTreeView::selected_path_changed,
+          this, &ImportDialog::source_quest_selected_path_changed);
+  connect(ui.destination_quest_tree_view, &QuestTreeView::rename_file_requested,
+          this, &ImportDialog::destination_quest_rename_file_requested);
+  connect(ui.find_missing_button, &QPushButton::clicked,
+          this, &ImportDialog::find_missing_button_triggered);
+  connect(ui.button_box->button(QDialogButtonBox::Apply), &QPushButton::clicked,
+          this, &ImportDialog::import_button_triggered);
 
   EditorSettings settings;
   QString last_source_quest_path = settings.get_value_string(EditorSettings::import_last_source_quest);
-  source_quest.set_root_path(last_source_quest_path);
+  if (last_source_quest_path != destination_quest.get_root_path()) {
+    source_quest.set_root_path(last_source_quest_path);
+  }
   if (!source_quest.exists()) {
     browse_source_quest();
   }
@@ -505,8 +507,17 @@ void ImportDialog::import_path_meta_information(
   const QuestDatabase& source_database = source_quest.get_database();
   QString destination_relative_path = destination_quest.get_path_relative_to_data_path(destination_path);
   QuestDatabase& destination_database = destination_quest.get_database();
-  destination_database.set_file_info(destination_relative_path,
-                                       source_database.get_file_info(source_relative_path));}
+  QuestDatabase::FileInfo source_info = source_database.get_file_info(source_relative_path);
+  while (source_info.is_empty()) {
+    // Try parent directories.
+    if (!source_relative_path.contains('/')) {
+      break;
+    }
+    source_relative_path = source_relative_path.section('/', 0, -2);
+    source_info = source_database.get_file_info(source_relative_path);
+  }
+  destination_database.set_file_info(destination_relative_path, source_info);
+}
 
 /**
  * @brief Asks the user what to do when a destination path already exists.

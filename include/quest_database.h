@@ -36,6 +36,11 @@ class QuestDatabase : public QObject {
 public:
 
   struct FileInfo {
+
+    bool is_empty() const {
+      return author.isEmpty() && license.isEmpty();
+    }
+
     QString author;
     QString license;
   };
