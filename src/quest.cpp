@@ -1853,7 +1853,7 @@ void Quest::rename_file(const QString& old_path, const QString& new_path) {
   QString old_path_from_data = get_path_relative_to_data_path(old_path);
   QString new_path_from_data = get_path_relative_to_data_path(new_path);
   database.set_file_info(new_path_from_data, database.get_file_info(old_path_from_data));
-  database.clear_file_metadata(old_path_from_data);
+  database.clear_file_info(old_path_from_data);
   database.save();
 }
 
@@ -1906,7 +1906,7 @@ void Quest::rename_dir(const QString& old_path, const QString& new_path) {
   QString old_path_from_data = get_path_relative_to_data_path(old_path);
   QString new_path_from_data = get_path_relative_to_data_path(new_path);
   database.set_file_info(new_path_from_data, database.get_file_info(old_path_from_data));
-  database.clear_file_metadata(old_path_from_data);
+  database.clear_file_info(old_path_from_data);
   database.save();
 
   // Check if resources are declared under the directory.
@@ -1941,7 +1941,7 @@ void Quest::rename_dir(const QString& old_path, const QString& new_path) {
       QString end = old_file_path_from_data;
       end.remove(0, old_path_from_data.size() + 1);
       QString new_file_path_from_data = new_path_from_data + "/" + end;
-      database.clear_file_metadata(old_file_path_from_data);
+      database.clear_file_info(old_file_path_from_data);
       database.set_file_info(new_file_path_from_data, info);
     }
   }
@@ -2043,7 +2043,7 @@ void Quest::delete_file(const QString& path) {
 
   // Remove metadata.
   QString path_from_data = get_path_relative_to_data_path(path);
-  database.clear_file_metadata(path_from_data);
+  database.clear_file_info(path_from_data);
   database.save();
 }
 
@@ -2109,14 +2109,6 @@ void Quest::delete_dir_recursive(const QString& path) {
 
   check_is_dir(path);
 
-  // Remove metadata and resource declaration if any.
-  database.clear_file_metadata(get_path_relative_to_data_path(path));
-  ResourceType resource_type;
-  QString element_id;
-  if (is_resource_element(path, resource_type, element_id)) {
-    database.remove(resource_type, element_id);
-  }
-
   QFileInfo info(path);
   if (!info.isDir()) {
     // Not a directory.
@@ -2128,6 +2120,35 @@ void Quest::delete_dir_recursive(const QString& path) {
     // Directory.
     if (!QDir(path).removeRecursively()) {
       throw EditorException(tr("Failed to delete folder '%1'").arg(path));
+    }
+  }
+
+  // Update metadata of the directory itself.
+  QString path_from_data = get_path_relative_to_data_path(path);
+  database.clear_file_info(path_from_data);
+
+  // Check if resources are declared under the directory.
+  ResourceType resource_type;
+  if (is_in_resource_path(path, resource_type)) {
+    QStringList elements = database.get_elements(resource_type);
+    QString resource_path = get_resource_path(resource_type);
+    QString relative_path = path;
+    relative_path.remove(0, resource_path.size() + 1);
+    for (QString element_id : elements) {
+      if (element_id.startsWith(relative_path + "/")) {
+        QString end = element_id;
+        end.remove(0, relative_path.size() + 1);
+        database.remove(resource_type, element_id);  // To overwrite any previous description.
+      }
+    }
+  }
+
+  // Check if we have file metadata under the directory.
+  QMap<QString, QuestDatabase::FileInfo> all_file_info = database.get_all_file_info();
+  for (auto it = all_file_info.begin(); it != all_file_info.end(); ++it) {
+    const QString& file_path_from_data = it.key();
+    if (file_path_from_data.startsWith(path_from_data + "/")) {
+      database.clear_file_info(file_path_from_data);
     }
   }
   database.save();

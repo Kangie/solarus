@@ -383,6 +383,16 @@ void QuestDatabase::set_file_info(const QString& path, const FileInfo& info) {
 }
 
 /**
+ * @brief Removes the author and license info of a file.
+ * @param path Path to a file or directory relative to the quest data directory.
+ */
+void QuestDatabase::clear_file_info(const QString& path) {
+
+  set_file_author(path, "");
+  set_file_license(path, "");
+}
+
+/**
  * @brief Returns the author of a file.
  * @param path Path to a file or directory relative to the quest data directory.
  * @return The author or an empty string.
@@ -444,16 +454,6 @@ void QuestDatabase::set_file_license(const QString& path, const QString& license
   database.set_file_info(path.toStdString(), info);
 
   emit file_license_changed(path, license);
-}
-
-/**
- * @brief Removes the author and license info of a file.
- * @param path Path to a file or directory relative to the quest data directory.
- */
-void QuestDatabase::clear_file_metadata(const QString& path) {
-
-  set_file_author(path, "");
-  set_file_license(path, "");
 }
 
 /**
