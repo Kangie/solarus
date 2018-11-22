@@ -56,10 +56,16 @@ private slots:
 
 private:
 
-  void import_path(const QString& source_path);
-  void import_file(const QFileInfo& source_info);
-  void import_dir(const QFileInfo& source_info);
+  bool import_path(const QString& source_path, bool multiple);
+  bool import_file(const QFileInfo& source_info, bool multiple);
+  bool import_dir(const QFileInfo& source_info, bool multiple);
   void import_path_meta_information(const QString& source_path, const QString& destination_path);
+  static int prompt_overwrite_confirmation(
+      const QString& title,
+      const QString& message,
+      const QString& remember_choice_text,
+      bool allow_rename,
+      bool& remember_choice);
   QString source_to_destination_path(const QString& source_path);
   void find_source_paths_not_in_destination_quest(
       const QString& source_path,
@@ -70,8 +76,8 @@ private:
 
   Quest source_quest;
   Quest& destination_quest;
-  QMessageBox::StandardButton last_confirm_overwrite_file;
-  QMessageBox::StandardButton last_confirm_overwrite_directory;
+  int memorized_overwrite_file_choice;
+  int memorized_overwrite_dir_choice;
   QStringList paths_to_select;
 };
 

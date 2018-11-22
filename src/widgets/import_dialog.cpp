@@ -19,6 +19,7 @@
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "file_tools.h"
+#include <QCheckBox>
 #include <QFileDialog>
 #include <QTimer>
 
@@ -35,7 +36,8 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
   ui(),
   source_quest(),
   destination_quest(destination_quest),
-  last_confirm_overwrite_file(QMessageBox::No) {
+  memorized_overwrite_file_choice(QMessageBox::Cancel),
+  memorized_overwrite_dir_choice(QMessageBox::Cancel) {
 
   ui.setupUi(this);
 
@@ -246,14 +248,19 @@ void ImportDialog::update_import_button() {
  */
 void ImportDialog::import_button_triggered() {
 
-  last_confirm_overwrite_file = QMessageBox::No;
+  memorized_overwrite_file_choice = QMessageBox::Cancel;
+  memorized_overwrite_dir_choice = QMessageBox::Cancel;
   paths_to_select.clear();
   ui.missing_files_count_label->clear();
 
   try {
     const QStringList& source_paths = ui.source_quest_tree_view->get_selected_paths();
+    bool multiple = source_paths.size() > 1;
     for (const QString& source_path : source_paths) {
-      import_path(source_path);
+      if (!import_path(source_path, multiple)) {
+        // Cancelled.
+        break;
+      }
     }
   }
   catch (const EditorException& ex) {
@@ -268,8 +275,10 @@ void ImportDialog::import_button_triggered() {
 /**
  * @brief Imports the given file or directory into the destination quest.
  * @param source_path Path or the file or directory to import.
+ * @param multiple Whether this is part of a multiple import operation.
+ * @return @c false if the user cancelled the operation.
  */
-void ImportDialog::import_path(const QString& source_path) {
+bool ImportDialog::import_path(const QString& source_path, bool multiple) {
 
   QFileInfo source_info(source_path);
   if (source_info.isSymLink()) {
@@ -277,18 +286,18 @@ void ImportDialog::import_path(const QString& source_path) {
   }
 
   if (source_info.isDir()) {
-    import_dir(source_info);
+    return import_dir(source_info, multiple);
   }
-  else {
-    import_file(source_info);
-  }
+  return import_file(source_info, multiple);
 }
 
 /**
  * @brief Imports the given file into the destination quest.
  * @param source_file File to import.
+ * @param multiple Whether this is part of a multiple import operation.
+ * @return @c false if the user cancelled the operation.
  */
-void ImportDialog::import_file(const QFileInfo& source_info) {
+bool ImportDialog::import_file(const QFileInfo& source_info, bool multiple) {
 
   const QString& source_path = source_info.filePath();
   if (!source_info.exists()) {
@@ -314,26 +323,46 @@ void ImportDialog::import_file(const QFileInfo& source_info) {
       throw EditorException(tr("Destination path already exists and is a folder: '%1'").arg(destination_path));
     }
 
-    if (last_confirm_overwrite_file == QMessageBox::NoToAll) {
-      return;
-    }
-
-    if (last_confirm_overwrite_file != QMessageBox::YesToAll) {
-      last_confirm_overwrite_file = QMessageBox::question(
-            this,
-            tr("Destination file already exists"),
+    int overwrite_choice = QMessageBox::Cancel;
+    if (memorized_overwrite_file_choice != QMessageBox::Cancel) {
+      overwrite_choice = memorized_overwrite_file_choice;
+    } else {
+      bool remember = false;
+      overwrite_choice = prompt_overwrite_confirmation(
+            tr("Destination already exists"),
             tr("The destination file '%1' already exists.\nDo you want to overwrite it?").arg(destination_path),
-            QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll | QMessageBox::Cancel
-      );
-
-      if (last_confirm_overwrite_file != QMessageBox::Yes &&
-          last_confirm_overwrite_file != QMessageBox::YesToAll) {
-        return;
+            multiple ? tr("Apply this choice for remaining files") : QString(),
+            true,
+            remember);
+      if (remember) {
+        memorized_overwrite_file_choice = overwrite_choice;
       }
     }
 
-    if (!QFile::remove(destination_path)) {
-      throw EditorException(tr("Failed to remove existing file '%1'").arg(destination_path));
+    switch (overwrite_choice) {
+
+    case QMessageBox::Cancel:
+      // Cancel.
+      return false;
+
+    case QMessageBox::Ignore:
+      // Skip.
+      return true;
+
+    case QMessageBox::No:
+      // Rename.
+      destination_path = destination_quest.get_available_path(destination_path);
+      destination_info = QFileInfo(destination_path);
+      break;
+
+    case QMessageBox::Yes:
+      // Overwrite.
+      if (!QFile::remove(destination_path)) {
+        throw EditorException(tr("Failed to remove existing file '%1'").arg(destination_path));
+      }
+
+    default:
+      break;
     }
   }
 
@@ -353,18 +382,26 @@ void ImportDialog::import_file(const QFileInfo& source_info) {
   QString element_id;
   if (source_quest.is_resource_element(source_path, resource_type, element_id)) {
     const QString& description = source_quest.get_database().get_description(resource_type, element_id);
-    QuestDatabase& destination_database = destination_quest.get_database();
-    destination_database.add(resource_type, element_id, description);
+    ResourceType destination_resource_type;
+    QString destination_element_id;
+    if (destination_quest.is_potential_resource_element(destination_path, destination_resource_type, destination_element_id) &&
+        destination_resource_type == resource_type) {
+      QuestDatabase& destination_database = destination_quest.get_database();
+      destination_database.add(destination_resource_type, destination_element_id, description);
+    }
   }
 
   paths_to_select << destination_path;
+  return true;
 }
 
 /**
  * @brief Imports the given directory into the destination quest.
  * @param source_dir The directory to import.
+ * @param multiple Whether this is part of a multiple import operation.
+ * @return @c false if the user cancelled the operation.
  */
-void ImportDialog::import_dir(const QFileInfo& source_info) {
+bool ImportDialog::import_dir(const QFileInfo& source_info, bool multiple) {
 
   const QString& source_path = source_info.filePath();
   if (!source_info.exists()) {
@@ -388,22 +425,34 @@ void ImportDialog::import_dir(const QFileInfo& source_info) {
 
     ui.destination_quest_tree_view->expand_to_path(destination_path);
 
-    if (last_confirm_overwrite_directory == QMessageBox::NoToAll) {
-      return;
+    int overwrite_choice = QMessageBox::Cancel;
+    if (memorized_overwrite_dir_choice != QMessageBox::Cancel) {
+      overwrite_choice = memorized_overwrite_dir_choice;
+    } else {
+      bool remember = false;
+      overwrite_choice = prompt_overwrite_confirmation(
+            tr("Destination already exists"),
+            tr("The destination directory '%1' already exists.\nDo you want to overwrite its content?").arg(destination_path),
+            multiple ? tr("Apply this choice for remaining directories") : QString(),
+            false,  // No renaming for directories.
+            remember);
+      if (remember) {
+        memorized_overwrite_dir_choice = overwrite_choice;
+      }
     }
 
-    if (last_confirm_overwrite_directory != QMessageBox::YesToAll) {
-      last_confirm_overwrite_directory = QMessageBox::question(
-            this,
-            tr("Destination folder already exists"),
-            tr("The destination folder '%1' already exists.\nDo you want to merge it with the contents from the source folder?").arg(destination_path),
-            QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll | QMessageBox::Cancel
-      );
+    switch (overwrite_choice) {
 
-      if (last_confirm_overwrite_directory != QMessageBox::Yes &&
-          last_confirm_overwrite_directory != QMessageBox::YesToAll) {
-        return;
-      }
+    case QMessageBox::Cancel:
+      // Cancel.
+      return false;
+
+    case QMessageBox::Ignore:
+      // Skip.
+      return true;
+
+    default:
+      break;
     }
   }
 
@@ -414,22 +463,18 @@ void ImportDialog::import_dir(const QFileInfo& source_info) {
   FileTools::create_directories(destination_path);
 
   // Copy children.
-  const QStringList& source_children_file_names = QDir(source_path).entryList();
+  const QStringList& source_children_file_names = QDir(source_path).entryList(
+        QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
   for (const QString& source_child_file_name : source_children_file_names) {
-    if (source_child_file_name == "." ||
-        source_child_file_name == ".." ) {
-      continue;
-    }
     QString source_child_path = QString("%1/%2").arg(source_path, source_child_file_name);
-    if (!QFileInfo(source_child_path).exists()) {
-      // Path in the tree but not on the filesystem:
-      // maybe a declared resource that is missing.
-      continue;
+    if (!import_path(source_child_path, true)) {
+      // Cancelled.
+      return false;
     }
-    import_path(source_child_path);
   }
 
   paths_to_select << destination_path;
+  return true;
 }
 
 /**
@@ -444,10 +489,49 @@ void ImportDialog::import_path_meta_information(
   const QuestDatabase& source_database = source_quest.get_database();
   QString destination_relative_path = destination_quest.get_path_relative_to_data_path(destination_path);
   QuestDatabase& destination_database = destination_quest.get_database();
-  destination_database.set_file_author(destination_relative_path,
-                                       source_database.get_file_author(source_relative_path));
-  destination_database.set_file_license(destination_relative_path,
-                                        source_database.get_file_license(destination_relative_path));
+  destination_database.set_file_info(destination_relative_path,
+                                       source_database.get_file_info(source_relative_path));}
+
+/**
+ * @brief Asks the user what to do when a destination path already exists.
+ * @param title Title of the message box to create.
+ * @param message The question to show.
+ * @param remember_choice_text Text for the "Remember my choice" checkbox.
+ * An empty string means no checkbox.
+ * @param allow_rename Whether to include a "Rename" button.
+ * @param[out] remember_choice
+ * @return A button: Cancel, Ignore (skip), No (rename) or Yes (overwrite).
+ */
+int ImportDialog::prompt_overwrite_confirmation(
+    const QString& title,
+    const QString& message,
+    const QString& remember_choice_text,
+    bool allow_rename,
+    bool& remember_choice) {
+
+  QMessageBox dialog;
+  dialog.setIcon(QMessageBox::Warning);
+  dialog.setWindowTitle(title);
+  dialog.setText(message);
+  dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::Ignore | QMessageBox::Cancel);
+  if (allow_rename) {
+    dialog.setStandardButtons(dialog.standardButtons() | QMessageBox::No);
+    dialog.button(QMessageBox::No)->setText("Rename");
+    dialog.button(QMessageBox::No)->setIcon(QIcon());
+  }
+  dialog.button(QMessageBox::Yes)->setText("Overwrite");
+  dialog.button(QMessageBox::Yes)->setIcon(QIcon());
+  dialog.button(QMessageBox::Ignore)->setText("Skip");
+  QCheckBox* rememberCheckBox = nullptr;
+  if (!remember_choice_text.isEmpty()) {
+    rememberCheckBox = new QCheckBox(remember_choice_text, nullptr);
+    dialog.setCheckBox(rememberCheckBox);
+  }
+  int answer = dialog.exec();
+  if (rememberCheckBox != nullptr) {
+    remember_choice = rememberCheckBox->isChecked();
+  }
+  return answer;
 }
 
 /**

@@ -88,6 +88,7 @@ public:
   QString get_tileset_entities_image_path(const QString& tileset_id) const;
   QString get_shader_data_file_path(const QString& shader_id) const;
   QString get_shader_code_file_path(const QString& code_file) const;
+  QString get_available_path(const QString& path) const;
 
   // Check path properties.
   static bool is_valid_file_name(const QString& file_name);

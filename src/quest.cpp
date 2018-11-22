@@ -622,6 +622,57 @@ QString Quest::get_shader_code_file_path(const QString& glsl_file) const {
 }
 
 /**
+ * @brief Appends a number suffix to a path until obtaining a non-existing path.
+ * @param path Path to check.
+ * @return The path possibly modified with a suffix.
+ */
+QString Quest::get_available_path(const QString& path) const {
+
+  if (!QFile(path).exists()) {
+    // Already available.
+    return path;
+  }
+
+  // Remove the extension.
+
+  QString path_without_extension = path;
+  QString extension;
+  if (path.contains('.')) {
+    extension = path.section('.', -1, -1);
+    path_without_extension = path.section('.', 0, -2);
+  }
+
+  QString path_prefix;
+  int counter = 1;
+  QStringList words = path.split('_');
+  if (words.size() == 1) {
+    path_prefix = path_without_extension;
+  } else {
+    bool is_int = false;
+    counter = words.last().toInt(&is_int);
+    if (!is_int) {
+      counter = 1;
+      path_prefix = path_without_extension;
+    } else {
+      words.removeLast();
+      path_prefix = words.join("_");
+    }
+  }
+
+  QString candidate;
+  do {
+    ++counter;
+    if (!extension.isEmpty()) {
+      candidate = QString("%1_%2.%3").arg(path_prefix).arg(counter).arg(extension);
+    } else {
+      candidate = QString("%1_%2").arg(path_prefix).arg(counter);
+    }
+  } while (QFile(candidate).exists());
+
+  return candidate;
+}
+
+/**
  * @brief Returns whether a path is the quest properties file quest.dat.
  * @param path The path to test.
  * @return @c true if this is the quest properties file.
