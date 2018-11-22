@@ -146,8 +146,9 @@ void ImportDialog::source_quest_root_path_changed() {
  */
 void ImportDialog::source_quest_selected_path_changed() {
 
-  update_find_missing_button();
   update_import_button();
+  update_find_missing_button();
+  ui.missing_files_count_label->clear();
 }
 
 /**
