@@ -801,7 +801,7 @@ class DeleteBorderSetsCommand : public TilesetEditorCommand {
 public:
 
   DeleteBorderSetsCommand(TilesetEditor& editor, const QStringList& border_set_ids) :
-    TilesetEditorCommand(editor, TilesetEditor::tr("Delete border set")) {
+    TilesetEditorCommand(editor, TilesetEditor::tr("Delete contour")) {
 
     for (const QString& border_set_id : border_set_ids) {
       BorderSet border_set;
@@ -850,7 +850,7 @@ public:
       TilesetEditor& editor,
       const QString& border_set_id,
       const QStringList& pattern_ids) :
-    TilesetEditorCommand(editor, TilesetEditor::tr("Create border set")),
+    TilesetEditorCommand(editor, TilesetEditor::tr("Create contour")),
     border_set_id(border_set_id),
     pattern_ids(pattern_ids) {
   }
@@ -878,7 +878,7 @@ class DeleteBorderSetPatternsCommand : public TilesetEditorCommand {
 public:
 
   DeleteBorderSetPatternsCommand(TilesetEditor& editor, const QList<QPair<QString, BorderKind>>& patterns) :
-    TilesetEditorCommand(editor, TilesetEditor::tr("Delete border set pattern")),
+    TilesetEditorCommand(editor, TilesetEditor::tr("Delete contour pattern")),
     patterns_deleted(patterns) {
 
     for (const QPair<QString, BorderKind>& pattern : patterns_deleted) {

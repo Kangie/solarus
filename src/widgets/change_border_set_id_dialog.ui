@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="border_set_id_label">
      <property name="text">
-      <string>New border set id:</string>
+      <string>New contour id:</string>
      </property>
     </widget>
    </item>

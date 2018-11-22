@@ -59,7 +59,7 @@ TilesetView::TilesetView(QWidget* parent) :
 
   create_border_set_action = new QAction(
       QIcon(":/images/border_kind_5.png"),
-      tr("Create border set..."),
+      tr("Create contour..."),
       this
   );
   create_border_set_action->setShortcut(tr("Ctrl+B"));

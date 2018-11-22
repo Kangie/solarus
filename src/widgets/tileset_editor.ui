@@ -416,7 +416,7 @@
           </widget>
           <widget class="QWidget" name="border_sets_view">
            <attribute name="title">
-            <string>Borders</string>
+            <string>Contours</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <property name="leftMargin">
@@ -456,7 +456,7 @@
                    </size>
                   </property>
                   <property name="toolTip">
-                   <string>Create border set</string>
+                   <string>Create contour</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -563,7 +563,7 @@
             <item>
              <widget class="QGroupBox" name="border_set_properties_group_box">
               <property name="title">
-               <string>Border set properties</string>
+               <string>Contour properties</string>
               </property>
               <layout class="QFormLayout" name="formLayout_3">
                <item row="0" column="0">
@@ -718,7 +718,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources/images.qrc"/>
   <include location="../../resources/images.qrc"/>
  </resources>
  <connections/>

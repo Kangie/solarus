@@ -65,7 +65,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>446</width>
+             <width>454</width>
              <height>514</height>
             </rect>
            </property>
@@ -426,13 +426,13 @@
              <normaloff>:/images/border_set.png</normaloff>:/images/border_set.png</iconset>
            </attribute>
            <attribute name="title">
-            <string>Border generator</string>
+            <string>Contour generator</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QGroupBox" name="groupBox">
               <property name="title">
-               <string>Generate borders around the selection</string>
+               <string>Generate contour tiles around the selection</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
@@ -481,7 +481,7 @@
                  <item row="1" column="0">
                   <widget class="QLabel" name="label">
                    <property name="text">
-                    <string>Border set</string>
+                    <string>Contour</string>
                    </property>
                   </widget>
                  </item>
@@ -531,10 +531,10 @@
                  <item>
                   <widget class="QPushButton" name="generate_borders_button">
                    <property name="toolTip">
-                    <string>Generate border tiles around the selection (Ctrl+B)</string>
+                    <string>Generate contour tiles around the selection (Ctrl+B)</string>
                    </property>
                    <property name="text">
-                    <string>Generate borders</string>
+                    <string>Generate tiles</string>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -582,6 +582,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>SolarusEditor::TilesetView</class>
+   <extends>QGraphicsView</extends>
+   <header>widgets/tileset_view.h</header>
+  </customwidget>
+  <customwidget>
    <class>SolarusEditor::PairSpinBox</class>
    <extends>QWidget</extends>
    <header>widgets/pair_spin_box.h</header>
@@ -591,11 +596,6 @@
    <class>SolarusEditor::ResourceSelector</class>
    <extends>QComboBox</extends>
    <header>include/widgets/resource_selector.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SolarusEditor::TilesetView</class>
-   <extends>QGraphicsView</extends>
-   <header>widgets/tileset_view.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::MapView</class>

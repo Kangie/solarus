@@ -750,13 +750,21 @@ Make sure that Solarus Quest Editor is properly installed.</source>
     </message>
     <message>
         <location filename="../src/widgets/change_border_set_id_dialog.ui" line="20"/>
+        <source>New contour id:</source>
+        <translation>Nouvel id du contour :</translation>
+    </message>
+    <message>
         <source>New border set id:</source>
-        <translation>Id du nouveau border set :</translation>
+        <translation type="vanished">Id du nouveau border set :</translation>
+    </message>
+    <message>
+        <source>New id for border set &apos;%1&apos;:</source>
+        <translation type="vanished">Nouvel id pour le border set &apos;%1&apos;</translation>
     </message>
     <message>
         <location filename="../src/widgets/change_border_set_id_dialog.cpp" line="35"/>
-        <source>New id for border set &apos;%1&apos;:</source>
-        <translation>Nouvel id pour le border set &apos;%1&apos;</translation>
+        <source>New id for contour &apos;%1&apos;:</source>
+        <translation>Nouveau id du contour &apos;%1&apos; :</translation>
     </message>
 </context>
 <context>
@@ -2871,28 +2879,56 @@ Please save it or close it before renaming.</source>
     </message>
     <message>
         <location filename="../src/widgets/map_editor.ui" line="429"/>
-        <source>Border generator</source>
-        <translation>Générateur de bordures</translation>
+        <source>Contour generator</source>
+        <translation>Générateur de contours</translation>
     </message>
     <message>
         <location filename="../src/widgets/map_editor.ui" line="435"/>
-        <source>Generate borders around the selection</source>
-        <translation>Générer des bordures autour de la sélection</translation>
+        <source>Generate contour tiles around the selection</source>
+        <translation>Générer des tiles de contour autour de la sélection</translation>
     </message>
     <message>
         <location filename="../src/widgets/map_editor.ui" line="484"/>
-        <source>Border set</source>
-        <translation>Border set</translation>
+        <source>Contour</source>
+        <translation>Contour</translation>
     </message>
     <message>
         <location filename="../src/widgets/map_editor.ui" line="534"/>
-        <source>Generate border tiles around the selection (Ctrl+B)</source>
-        <translation>Générer des tiles de bordures autour de la sélection (Ctrl+B)</translation>
+        <source>Generate contour tiles around the selection (Ctrl+B)</source>
+        <translation>Générer des tiles de contour autour de la sélection (Ctrl+B)</translation>
     </message>
     <message>
         <location filename="../src/widgets/map_editor.ui" line="537"/>
+        <source>Generate tiles</source>
+        <translation>Générer les tiles</translation>
+    </message>
+    <message>
+        <source>Countour</source>
+        <translation type="vanished">Contour</translation>
+    </message>
+    <message>
+        <source>Generate contour tiles</source>
+        <translation type="vanished">Générer les tiles de contour</translation>
+    </message>
+    <message>
+        <source>Border generator</source>
+        <translation type="vanished">Générateur de bordures</translation>
+    </message>
+    <message>
+        <source>Generate borders around the selection</source>
+        <translation type="vanished">Générer des bordures autour de la sélection</translation>
+    </message>
+    <message>
+        <source>Border set</source>
+        <translation type="vanished">Border set</translation>
+    </message>
+    <message>
+        <source>Generate border tiles around the selection (Ctrl+B)</source>
+        <translation type="vanished">Générer des tiles de bordures autour de la sélection (Ctrl+B)</translation>
+    </message>
+    <message>
         <source>Generate borders</source>
-        <translation>Générer des bordures</translation>
+        <translation type="vanished">Générer des bordures</translation>
     </message>
     <message>
         <source>Tiles</source>
@@ -6572,19 +6608,35 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
     </message>
     <message>
         <location filename="../src/widgets/tileset_editor.ui" line="419"/>
-        <source>Borders</source>
-        <translation>Bordures</translation>
+        <source>Contours</source>
+        <translation>Contours</translation>
+    </message>
+    <message>
+        <source>Countours</source>
+        <translation type="vanished">Contours</translation>
     </message>
     <message>
         <location filename="../src/widgets/tileset_editor.ui" line="459"/>
         <location filename="../src/widgets/tileset_editor.cpp" line="853"/>
-        <source>Create border set</source>
-        <translation>Créer un border set</translation>
+        <source>Create contour</source>
+        <translation>Nouveau contour</translation>
     </message>
     <message>
         <location filename="../src/widgets/tileset_editor.ui" line="566"/>
+        <source>Contour properties</source>
+        <translation>Propriétés du contour</translation>
+    </message>
+    <message>
+        <source>Borders</source>
+        <translation type="vanished">Bordures</translation>
+    </message>
+    <message>
+        <source>Create border set</source>
+        <translation type="vanished">Créer un border set</translation>
+    </message>
+    <message>
         <source>Border set properties</source>
-        <translation>Propriétés du border set</translation>
+        <translation type="vanished">Propriétés du border set</translation>
     </message>
     <message>
         <location filename="../src/widgets/tileset_editor.ui" line="572"/>
@@ -6664,6 +6716,16 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Nouveau motif</translation>
     </message>
     <message>
+        <location filename="../src/widgets/tileset_editor.cpp" line="804"/>
+        <source>Delete contour</source>
+        <translation>Supprimer un contour</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_editor.cpp" line="881"/>
+        <source>Delete contour pattern</source>
+        <translation>Supprimer un motif de contour</translation>
+    </message>
+    <message>
         <location filename="../src/widgets/tileset_editor.ui" line="529"/>
         <location filename="../src/widgets/tileset_editor.cpp" line="609"/>
         <source>Delete</source>
@@ -6714,14 +6776,12 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Motifs du border set</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="804"/>
         <source>Delete border set</source>
-        <translation>Supprimer le border set</translation>
+        <translation type="vanished">Supprimer le border set</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="881"/>
         <source>Delete border set pattern</source>
-        <translation>Supprimer un motif de border set</translation>
+        <translation type="vanished">Supprimer un motif de border set</translation>
     </message>
     <message>
         <location filename="../src/widgets/tileset_editor.cpp" line="1382"/>
@@ -6794,6 +6854,54 @@ Voulez-vous recharger l&apos;image ?</translation>
         <translation>Index de motif non valide : %1</translation>
     </message>
     <message>
+        <source>Countour already exists: &apos;%1&apos;</source>
+        <translation type="vanished">Le contour existe déjà : &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/tileset_model.cpp" line="1731"/>
+        <source>Contour already exists: &apos;%1&apos;</source>
+        <translation>Le contour existe déjà : &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/tileset_model.cpp" line="1735"/>
+        <location filename="../src/tileset_model.cpp" line="1786"/>
+        <source>Invalid contour id: &apos;%1&apos;</source>
+        <translation>Id de contour invalide : &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/tileset_model.cpp" line="1741"/>
+        <source>Failed to create contour &apos;%1&apos;</source>
+        <translation>Impossible de créer le contour &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/tileset_model.cpp" line="1758"/>
+        <location filename="../src/tileset_model.cpp" line="1782"/>
+        <location filename="../src/tileset_model.cpp" line="1813"/>
+        <location filename="../src/tileset_model.cpp" line="1834"/>
+        <location filename="../src/tileset_model.cpp" line="1858"/>
+        <location filename="../src/tileset_model.cpp" line="1873"/>
+        <location filename="../src/tileset_model.cpp" line="1901"/>
+        <location filename="../src/tileset_model.cpp" line="1922"/>
+        <location filename="../src/tileset_model.cpp" line="1940"/>
+        <source>No such contour: &apos;%1&apos;</source>
+        <translation>Contour inexistant : &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/tileset_model.cpp" line="1764"/>
+        <source>Failed to delete contour &apos;%1&apos;</source>
+        <translation>Impossible de supprimer le contour &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/tileset_model.cpp" line="1790"/>
+        <source>Contour id already in use: &apos;%1&apos;</source>
+        <translation>Id de contour déjà utilisé : &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/tileset_model.cpp" line="1796"/>
+        <source>Failed to rename contour &apos;%1&apos;</source>
+        <translation>Impossible de renommer le contour &apos;%1&apos;</translation>
+    </message>
+    <message>
         <location filename="../src/tileset_model.cpp" line="432"/>
         <location filename="../src/tileset_model.cpp" line="633"/>
         <source>Invalid tile pattern id: &apos;%1&apos;</source>
@@ -6815,48 +6923,32 @@ Voulez-vous recharger l&apos;image ?</translation>
         <translation type="vanished">Impossible de diviser le motif en 3 images : la taille de chaque image doit être un multiple de 8 pixels</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1731"/>
         <source>Border set already exists: &apos;%1&apos;</source>
-        <translation>Le border set existe déjà : &apos;%1&apos;</translation>
+        <translation type="vanished">Le border set existe déjà : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1735"/>
-        <location filename="../src/tileset_model.cpp" line="1786"/>
         <source>Invalid border set id: &apos;%1&apos;</source>
-        <translation>Id de border set non valide : &apos;%1&apos;</translation>
+        <translation type="vanished">Id de border set non valide : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1741"/>
         <source>Failed to create border set &apos;%1&apos;</source>
-        <translation>Impossible de créer le border set &apos;%1&apos;</translation>
+        <translation type="vanished">Impossible de créer le border set &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1758"/>
-        <location filename="../src/tileset_model.cpp" line="1782"/>
-        <location filename="../src/tileset_model.cpp" line="1813"/>
-        <location filename="../src/tileset_model.cpp" line="1834"/>
-        <location filename="../src/tileset_model.cpp" line="1858"/>
-        <location filename="../src/tileset_model.cpp" line="1873"/>
-        <location filename="../src/tileset_model.cpp" line="1901"/>
-        <location filename="../src/tileset_model.cpp" line="1922"/>
-        <location filename="../src/tileset_model.cpp" line="1940"/>
         <source>No such border set: &apos;%1&apos;</source>
-        <translation>Border set introuvable : &apos;%1&apos;</translation>
+        <translation type="vanished">Border set introuvable : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1764"/>
         <source>Failed to delete border set &apos;%1&apos;</source>
-        <translation>Impossible de supprimer le border set &apos;%1&apos;</translation>
+        <translation type="vanished">Impossible de supprimer le border set &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1790"/>
         <source>Border set id already in use: &apos;%1&apos;</source>
-        <translation>Id de border set déjà utilisé : &apos;%1&apos;</translation>
+        <translation type="vanished">Id de border set déjà utilisé : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1796"/>
         <source>Failed to rename border set &apos;%1&apos;</source>
-        <translation>Impossible de renommer le border set &apos;%1&apos;</translation>
+        <translation type="vanished">Impossible de renommer le border set &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -6894,9 +6986,13 @@ Voulez-vous recharger l&apos;image ?</translation>
         <translation type="vanished">R</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="62"/>
         <source>Create border set...</source>
-        <translation>Créer un border set...</translation>
+        <translation type="vanished">Créer un border set...</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_view.cpp" line="62"/>
+        <source>Create contour...</source>
+        <translation>Nouveau contour...</translation>
     </message>
     <message>
         <location filename="../src/widgets/tileset_view.cpp" line="65"/>

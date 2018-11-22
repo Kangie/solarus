@@ -1728,17 +1728,17 @@ bool TilesetModel::border_set_exists(const QString& border_set_id) const {
 void TilesetModel::create_border_set(const QString& border_set_id) {
 
   if (border_set_exists(border_set_id)) {
-    throw EditorException(tr("Border set already exists: '%1'").arg(border_set_id));
+    throw EditorException(tr("Contour already exists: '%1'").arg(border_set_id));
   }
 
   if (!is_valid_border_set_id(border_set_id)) {
-      throw EditorException(tr("Invalid border set id: '%1'").arg(border_set_id));
+      throw EditorException(tr("Invalid contour id: '%1'").arg(border_set_id));
   }
 
   bool success = tileset.add_border_set(border_set_id.toStdString(), Solarus::BorderSet());
 
   if (!success) {
-    throw EditorException(tr("Failed to create border set '%1'").arg(border_set_id));
+    throw EditorException(tr("Failed to create contour '%1'").arg(border_set_id));
   }
 
   emit border_set_created(border_set_id);
@@ -1755,13 +1755,13 @@ void TilesetModel::create_border_set(const QString& border_set_id) {
 void TilesetModel::delete_border_set(const QString& border_set_id) {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   bool success = tileset.remove_border_set(border_set_id.toStdString());
 
   if (!success) {
-    throw EditorException(tr("Failed to delete border set '%1'").arg(border_set_id));
+    throw EditorException(tr("Failed to delete contour '%1'").arg(border_set_id));
   }
 
   emit border_set_deleted(border_set_id);
@@ -1779,21 +1779,21 @@ void TilesetModel::delete_border_set(const QString& border_set_id) {
 void TilesetModel::set_border_set_id(const QString& old_id, const QString& new_id) {
 
   if (!border_set_exists(old_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(old_id));
+    throw EditorException(tr("No such contour: '%1'").arg(old_id));
   }
 
   if (!is_valid_border_set_id(new_id)) {
-      throw EditorException(tr("Invalid border set id: '%1'").arg(new_id));
+      throw EditorException(tr("Invalid contour id: '%1'").arg(new_id));
   }
 
   if (border_set_exists(new_id)) {
-    throw EditorException(tr("Border set id already in use: '%1'").arg(new_id));
+    throw EditorException(tr("Contour id already in use: '%1'").arg(new_id));
   }
 
   bool success = tileset.set_border_set_id(old_id.toStdString(), new_id.toStdString());
 
   if (!success) {
-    throw EditorException(tr("Failed to rename border set '%1'").arg(old_id));
+    throw EditorException(tr("Failed to rename contour '%1'").arg(old_id));
   }
 
   emit border_set_id_changed(old_id, new_id);
@@ -1810,7 +1810,7 @@ void TilesetModel::set_border_set_id(const QString& old_id, const QString& new_i
 QString TilesetModel::get_border_set_pattern(const QString& border_set_id, BorderKind border_kind) const {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   const Solarus::BorderSet& border_set = tileset.get_border_set(border_set_id.toStdString());
@@ -1831,7 +1831,7 @@ QString TilesetModel::get_border_set_pattern(const QString& border_set_id, Borde
 void TilesetModel::set_border_set_pattern(const QString& border_set_id, BorderKind border_kind, const QString& pattern_id) {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   if (pattern_id == get_border_set_pattern(border_set_id, border_kind)) {
@@ -1855,7 +1855,7 @@ void TilesetModel::set_border_set_pattern(const QString& border_set_id, BorderKi
 bool TilesetModel::has_border_set_pattern(const QString& border_set_id, BorderKind border_kind) const {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   return tileset.get_border_set(border_set_id.toStdString()).has_pattern(border_kind);
@@ -1870,7 +1870,7 @@ bool TilesetModel::has_border_set_pattern(const QString& border_set_id, BorderKi
 QStringList TilesetModel::get_border_set_patterns(const QString& border_set_id) const {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   const Solarus::BorderSet& border_set = tileset.get_border_set(border_set_id.toStdString());
@@ -1898,7 +1898,7 @@ void TilesetModel::set_border_set_patterns(
 ) {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   for (int i = 0; i < 12; ++i) {
@@ -1911,7 +1911,7 @@ void TilesetModel::set_border_set_patterns(
 }
 
 /**
- * @brief Returns whether a border set generates tiles inside or outside the countours.
+ * @brief Returns whether a border set generates tiles inside or outside the selection.
  * @param border_set_id A border set id.
  * @return @c true if this is an inner border set.
  * @throws EditorException in case of error.
@@ -1919,14 +1919,14 @@ void TilesetModel::set_border_set_patterns(
 bool TilesetModel::is_border_set_inner(const QString& border_set_id) const {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   return tileset.get_border_set(border_set_id.toStdString()).is_inner();
 }
 
 /**
- * @brief Sets whether a border set generates tiles inside or outside the countours.
+ * @brief Sets whether a border set generates tiles inside or outside the selection.
  *
  * Emits border_set_inner_changed() if there is a change.
  *
@@ -1937,7 +1937,7 @@ bool TilesetModel::is_border_set_inner(const QString& border_set_id) const {
 void TilesetModel::set_border_set_inner(const QString& border_set_id, bool inner) {
 
   if (!border_set_exists(border_set_id)) {
-    throw EditorException(tr("No such border set: '%1'").arg(border_set_id));
+    throw EditorException(tr("No such contour: '%1'").arg(border_set_id));
   }
 
   if (inner == is_border_set_inner(border_set_id)) {

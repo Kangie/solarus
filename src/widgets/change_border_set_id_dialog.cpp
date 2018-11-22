@@ -32,7 +32,7 @@ ChangeBorderSetIdDialog::ChangeBorderSetIdDialog(
 
   ui.setupUi(this);
 
-  ui.border_set_id_label->setText(tr("New id for border set '%1':").arg(initial_border_set_id));
+  ui.border_set_id_label->setText(tr("New id for contour '%1':").arg(initial_border_set_id));
   set_border_set_id(initial_border_set_id);
   ui.border_set_id_field->selectAll();
 }
@@ -64,12 +64,12 @@ void ChangeBorderSetIdDialog::done(int result) {
   if (result == QDialog::Accepted) {
 
     if (get_border_set_id().isEmpty()) {
-      GuiTools::error_dialog("Empty border set id");
+      GuiTools::error_dialog("Empty contour id");
       return;
     }
 
     if (!TilesetModel::is_valid_border_set_id(get_border_set_id())) {
-      GuiTools::error_dialog("Invalid border set id");
+      GuiTools::error_dialog("Invalid contour id");
       return;
     }
   }
