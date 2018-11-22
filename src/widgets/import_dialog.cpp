@@ -52,7 +52,7 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
 
   ui.missing_files_count_label->clear();
   QPushButton* importButton = ui.button_box->button(QDialogButtonBox::Apply);
-  importButton->setText(tr("Import files..."));
+  importButton->setText(tr("Import files"));
   importButton->setIcon(QIcon(":/images/icon_next"));
 
   connect(ui.source_quest_browse_button, SIGNAL(clicked(bool)),
@@ -256,6 +256,21 @@ void ImportDialog::import_button_triggered() {
 
   try {
     const QStringList& source_paths = ui.source_quest_tree_view->get_selected_paths();
+    if (source_paths.isEmpty()) {
+      return;
+    }
+
+    // Show a warning if a lot of files are about to be imported.
+    if (source_paths.size() > 5 && QMessageBox::warning(
+          nullptr,
+          tr("Import confirmation"),
+          tr("%1 items will be imported to your quest.").arg(source_paths.size()),
+          QMessageBox::Ok | QMessageBox::Cancel,
+          QMessageBox::Ok
+          ) == QMessageBox::Cancel) {
+      return;
+    }
+
     bool multiple = source_paths.size() > 1;
     for (const QString& source_path : source_paths) {
       if (!import_path(source_path, multiple)) {
