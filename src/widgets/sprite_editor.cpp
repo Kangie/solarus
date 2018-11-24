@@ -773,7 +773,7 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.sprite_previewer->set_model(model.get());
   ui.tileset_field->set_resource_type(ResourceType::TILESET);
   ui.tileset_field->set_quest(quest);
-  ui.tileset_field->set_selected_id(model->get_sprite_id());
+  ui.tileset_field->set_selected_id(model->get_tileset_id());
 
   ui.size_field->config("x", 1, 99999, 8);
   ui.size_field->set_tooltips(
