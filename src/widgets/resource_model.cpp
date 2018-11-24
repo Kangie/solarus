@@ -189,7 +189,12 @@ void ResourceModel::remove_element(const QString& element_id) {
  */
 QStandardItem* ResourceModel::create_element_item(const QString& element_id) {
 
-  QString description = get_database().get_description(resource_type, element_id);
+  QString description = get_database().get_description(
+      resource_type, element_id);
+
+  if (description.isEmpty()) {
+    description = element_id;
+  }
 
   QStandardItem* item = new QStandardItem(description);
 
