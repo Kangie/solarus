@@ -257,9 +257,7 @@ QString QuestDatabase::get_description(
 bool QuestDatabase::set_description(
     ResourceType type, const QString& id, const QString& description) {
 
-  if (description.isEmpty() ||
-      description.contains("\"") ||
-      description.contains("\'") ||
+  if (description.contains("\"") ||
       description.contains("\n") ||
       description.contains("\r") ||
       description.contains("\\")

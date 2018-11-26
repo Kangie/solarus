@@ -192,16 +192,12 @@ QStandardItem* ResourceModel::create_element_item(const QString& element_id) {
   QString description = get_database().get_description(
       resource_type, element_id);
 
-  QStandardItem* item;
-  if (!description.isEmpty()) {
-    item = new QStandardItem(description);
-  } else {
-    item = new QStandardItem(element_id);
-    QFont font = item->font();
-    font.setItalic(true);
-    item->setFont(font);
+  QString text = description;
+  if (text.isEmpty()) {
+    // No description available: fallback to the last part of the element id.
+    text = element_id.section('/', -1, -1);
   }
-
+  QStandardItem* item = new QStandardItem(text);
   item->setData(element_id, Qt::UserRole);
   items.insert(element_id, item);
   return item;
