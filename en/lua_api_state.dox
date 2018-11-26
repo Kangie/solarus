@@ -419,6 +419,41 @@ The default value is \c true.
 - \c can_use_item (boolean): \c true to allow the player to use an equipment
   item during this state.
 
+\subsection lua_api_state_get_can_interact state:get_can_interact()
+
+Returns whether the entity can interact with the entities it is facing.
+- Return value (boolean): \c true if interactions are allowed in this state.
+
+\subsection lua_api_state_set_can_interact state:set_can_interact(can_interact)
+
+Sets whether the entity can interact with the entities it is facing.
+
+If \c true, when the action game command is pressed while facing an entity
+that reacts to interactions
+(like an \ref lua_api_npc "NPC"),
+then an interaction will occur.
+
+The default value is \c true.
+- \c can_interact (boolean): \c true to allow to interact in this state.
+
+\subsection lua_api_state_get_can_grab state:get_can_grab()
+
+Returns whether the entity can grab the obstacles it is facing.
+- Return value (boolean): \c true if grab is allowed in this state.
+
+\subsection lua_api_state_set_can_grab state:set_can_grab(can_grab)
+
+Sets whether the entity can start grabbing the obstacles it is facing.
+
+If \c true, the entity will go to state \c "grabbing" when the action command
+is pressed while facing an obstacle.
+
+The default value is \c true.
+- \c can_grab (boolean): \c true to allow to grab in this state.
+
+\remark Ability \ref lua_api_game_get_ability "grab" is necessary so that
+  the hero can grab obstacles.
+
 \subsection lua_api_state_get_can_push state:get_can_push()
 
 Returns whether the entity can try to push the obstacles it is facing.
@@ -438,7 +473,7 @@ usually cannot).
 The default value is \c true.
 - \c can_push (boolean): \c true to allow to push in this state.
 
-\remark Ability \ref lua_api_game_get_ability "pushing" is necessary so that
+\remark Ability \ref lua_api_game_get_ability "push" is necessary so that
   the hero can push.
 
 \subsection lua_api_state_get_pushing_delay state:get_pushing_delay()

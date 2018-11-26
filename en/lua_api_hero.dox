@@ -479,6 +479,16 @@ If the player is not allowed to use the item now
 or because the hero is currently busy in another state), then nothing happens.
 - \c item (\ref lua_api_item "item"): The equipment item to start using.
 
+\subsection lua_api_hero_start_grabbing hero:start_grabbing()
+
+Makes the hero grab the obstacle he is facing.
+
+This function does the same as what happens when the player presses
+the \c "action" game \ref lua_api_game_overview_commands "command"
+while facing an obstacle.
+You can use it to start the grabbing state from your script instead of from a
+game command.
+
 \subsection lua_api_hero_start_treasure hero:start_treasure(treasure_name, [treasure_variant, [treasure_savegame_variable, [callback]]])
 
 Gives a treasure to the player. The hero will brandish the treasure as follows.
