@@ -189,9 +189,18 @@ void ResourceModel::remove_element(const QString& element_id) {
  */
 QStandardItem* ResourceModel::create_element_item(const QString& element_id) {
 
-  QString description = get_database().get_description(resource_type, element_id);
+  QString description = get_database().get_description(
+      resource_type, element_id);
 
-  QStandardItem* item = new QStandardItem(description);
+  QStandardItem* item;
+  if (!description.isEmpty()) {
+    item = new QStandardItem(description);
+  } else {
+    item = new QStandardItem(element_id);
+    QFont font = item->font();
+    font.setItalic(true);
+    item->setFont(font);
+  }
 
   item->setData(element_id, Qt::UserRole);
   items.insert(element_id, item);
