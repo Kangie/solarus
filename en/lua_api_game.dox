@@ -647,8 +647,8 @@ The initial value is \c 0 unless specified otherwise.
   - \c "shield": Protection against enemies.
     Allows to avoid some attacks.
     Determines the default shield sprite.
-  - \c "lift": Ability to lift heavy
-    \ref lua_api_destructible "destructible objects".
+  - \c "lift": Ability to
+    \ref lua_api_entity_get_weight "lift other entities".
   - \c "swim": Ability to swim in deep water.
   - \c "jump_over_water": Automatically jumping when arriving into
     water without the \c "swim" ability.
