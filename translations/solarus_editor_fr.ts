@@ -807,6 +807,29 @@ Make sure that Solarus Quest Editor is properly installed.</source>
     </message>
 </context>
 <context>
+    <name>SolarusEditor::ChangeFileInfoDialog</name>
+    <message>
+        <location filename="../src/widgets/change_file_info_dialog.ui" line="14"/>
+        <source>File information</source>
+        <translation>Informations de fichier</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/change_file_info_dialog.ui" line="20"/>
+        <source>Set file information</source>
+        <translation>Changer les informations du fichier</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/change_file_info_dialog.ui" line="29"/>
+        <source>Author:</source>
+        <translation>Auteur :</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/change_file_info_dialog.ui" line="42"/>
+        <source>License:</source>
+        <translation>Licence :</translation>
+    </message>
+</context>
+<context>
     <name>SolarusEditor::ChangePatternIdDialog</name>
     <message>
         <location filename="../src/widgets/change_pattern_id_dialog.ui" line="24"/>
@@ -4865,55 +4888,55 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
 <context>
     <name>SolarusEditor::QuestTreeView</name>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="432"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="433"/>
         <source>New folder...</source>
         <translation>Nouveau dossier...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="440"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="441"/>
         <source>New script...</source>
         <translation>Nouveau script...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="62"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="522"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="63"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="523"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="56"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="481"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="489"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="57"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="482"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="490"/>
         <source>Play</source>
         <translation>Jouer</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="543"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="544"/>
         <source>Open Script</source>
         <translation>Ouvrir le Script</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="554"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="555"/>
         <source>Open Dialogs</source>
         <translation>Ouvrir les Dialogues</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="560"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="561"/>
         <source>Open Strings</source>
         <translation>Ouvrir les Textes</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="69"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="70"/>
         <source>Rename...</source>
         <translation>Renommer...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="660"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="659"/>
         <source>Change description...</source>
         <translation>Changer la description...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="77"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="78"/>
         <source>Delete...</source>
         <translation>Supprimer...</translation>
     </message>
@@ -4922,58 +4945,63 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation type="vanished">Entrée</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="70"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="71"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="392"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="393"/>
         <source>Add to quest as %1...</source>
         <translation>Ajouter à la quête en tant que %1...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="417"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="418"/>
         <source>New GLSL file...</source>
         <translation>Nouveau fichier GLSL...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="477"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="478"/>
         <source>Stop</source>
         <translation>Arrêter</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="603"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="604"/>
         <source>Open Properties</source>
         <translation>Ouvrir les propriétés</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="609"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="610"/>
         <source>Explore folder</source>
         <translation>Explorer le dossier</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="791"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="669"/>
+        <source>Author and license...</source>
+        <translation>Auteur et licence...</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="800"/>
         <source>New folder</source>
         <translation>Nouveau dossier</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="792"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="801"/>
         <source>Folder name:</source>
         <translation>Nom du dossier :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="834"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="843"/>
         <source>New Lua script</source>
         <translation>Nouveau script Lua</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="835"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="886"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="844"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="895"/>
         <source>File name:</source>
         <translation>Nom de fichier :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="885"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="894"/>
         <source>New GLSL file</source>
         <translation>Nouveau fichier GLSL</translation>
     </message>
@@ -4994,27 +5022,37 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation type="vanished">Nouveau nom pour le fichier &apos;%1&apos; :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1106"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1115"/>
         <source>Change description</source>
         <translation>Changer la description</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1107"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1116"/>
         <source>New description for %1 &apos;%2&apos;:</source>
         <translation>Nouvelle description pour %1 &apos;%2&apos; :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1172"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1153"/>
+        <source>File information for &apos;%1&apos;</source>
+        <translation>Informations du fichier &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1155"/>
+        <source>File information for %1 selected items</source>
+        <translation>Informations des %1 éléments sélectionnés</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1236"/>
         <source>Do you really want to delete &apos;%1&apos;?</source>
         <translation>Voulez-vous vraiment supprimer &apos;%1&apos; ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1173"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1237"/>
         <source>Do you really want to delete these %1 items?</source>
         <translation>Voulez-vous vraiment supprimer ces %1 éléments ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1175"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1239"/>
         <source>Delete confirmation</source>
         <translation>Confirmer la suppression</translation>
     </message>
@@ -5605,72 +5643,72 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Image source de l&apos;animation</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="428"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="434"/>
         <source>Tileset of the animation</source>
         <translation>Tileset de l&apos;animation</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="435"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="441"/>
         <source>Refresh image</source>
         <translation>Rafraîchir l&apos;image</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="438"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="444"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="455"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="461"/>
         <source>Change</source>
         <translation>Changer</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="493"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="486"/>
         <source>Delay in milliseconds between two frames of the animation</source>
         <translation>Délais en millisecondes entre deux frames de l&apos;animation</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="496"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="489"/>
         <source> ms</source>
         <translation> ms</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="512"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="505"/>
         <source>Frame delay</source>
         <translation>Délais entre les frames</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="519"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="512"/>
         <source>Loop on frame</source>
         <translation>Boucler sur la frame</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="529"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="522"/>
         <source>Index of the frame where you want the animation to come back when the last frame finishes</source>
         <translation>Index de le frame sur laquelle l&apos;animation doit revenir après la dernière frame</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="545"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="538"/>
         <source>Default animation</source>
         <translation>Animation par défaut</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="552"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="545"/>
         <source>Default animation of the sprite</source>
         <translation>Animation par défaut du sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="555"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="548"/>
         <source>Set as default</source>
         <translation>Définir par défaut</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="664"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="657"/>
         <source>Direction preview</source>
         <translation>Prévisualisation de la direction</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="565"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="558"/>
         <source>Direction properties</source>
         <translation>Propriétés de la direction</translation>
     </message>
@@ -5685,7 +5723,7 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Déplacer vers le bas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="574"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="567"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
@@ -5704,17 +5742,17 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Coordonnée en Y du coin haut-gauche de la zone contenant les frames dans l&apos;image</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="581"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="574"/>
         <source>Origin</source>
         <translation>Origine</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="588"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="581"/>
         <source>Number of frames</source>
         <translation>Nombre de frames</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="595"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="588"/>
         <source>Number of columns</source>
         <translation>Nombre de colonnes</translation>
     </message>
@@ -5729,17 +5767,17 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Coordonnée en Y du point d&apos;origine du sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="602"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="595"/>
         <source>Number of frames of this direction</source>
         <translation>Nombre de frames de la direction</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="615"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="608"/>
         <source>Number of columns of the grid containing the frames of this direction in the image</source>
         <translation>Nombre de colonnes de la grille contenant les frames de cette direction dans l&apos;image</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="628"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="621"/>
         <source>Size</source>
         <translation>Taille</translation>
     </message>
