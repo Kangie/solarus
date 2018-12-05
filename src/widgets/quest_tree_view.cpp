@@ -55,34 +55,34 @@ QuestTreeView::QuestTreeView(QWidget* parent) :
 
   play_action = new QAction(tr("Play"), this);
   play_action->setShortcutContext(Qt::WidgetShortcut);
-  connect(play_action, SIGNAL(triggered()),
-          this, SLOT(play_action_triggered()));
+  connect(play_action, &QAction::triggered,
+          this, &QuestTreeView::play_action_triggered);
   addAction(play_action);
 
   open_action = new QAction(tr("Open"), this);
   open_action->setShortcutContext(Qt::WidgetShortcut);
-  connect(open_action, SIGNAL(triggered()),
-          this, SLOT(open_action_triggered()));
+  connect(open_action, &QAction::triggered,
+          this, &QuestTreeView::open_action_triggered);
   addAction(open_action);
 
   rename_action = new QAction(
         QIcon(":/images/icon_rename.png"), tr("Rename..."), this);
   rename_action->setShortcut(tr("F2"));
   rename_action->setShortcutContext(Qt::WidgetShortcut);
-  connect(rename_action, SIGNAL(triggered()),
-          this, SLOT(rename_action_triggered()));
+  connect(rename_action, &QAction::triggered,
+          this, &QuestTreeView::rename_action_triggered);
   addAction(rename_action);
 
   delete_action = new QAction(
         QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
-  connect(delete_action, SIGNAL(triggered()),
-          this, SLOT(delete_action_triggered()));
+  connect(delete_action, &QAction::triggered,
+          this, &QuestTreeView::delete_action_triggered);
   addAction(delete_action);
 
-  connect(this, SIGNAL(activated(QModelIndex)),
-          this, SLOT(default_action_triggered()));
+  connect(this, &QuestTreeView::activated,
+          this, &QuestTreeView::default_action_triggered);
 }
 
 /**
