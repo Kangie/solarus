@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "widgets/change_file_info_dialog.h"
 #include "widgets/gui_tools.h"
 #include "widgets/new_resource_element_dialog.h"
 #include "widgets/quest_tree_view.h"
@@ -626,10 +627,9 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QStringList& path
  */
 void QuestTreeView::build_context_menu_rename(QMenu& menu, const QStringList& paths) {
 
-  if (paths.size() != 1) {
+  if (paths.isEmpty()) {
     return;
   }
-  QString path = paths.first();
 
   if (is_read_only()) {
     return;
@@ -640,26 +640,35 @@ void QuestTreeView::build_context_menu_rename(QMenu& menu, const QStringList& pa
   }
 
   Quest& quest = model->get_quest();
-  if (path == quest.get_data_path()) {
-    // We don't want to rename the data directory.
-    return;
-  }
 
+  // Rename + Change description.
+  const QString& path = paths.first();
   ResourceType resource_type;
   QString element_id;
-  if (quest.is_resource_path(path, resource_type)) {
-    // Nothing good can come from renaming built-in resource directories.
-    return;
+  if (paths.size() == 1 &&
+      !quest.is_resource_path(path, resource_type) &&
+      path != quest.get_data_path()) {
+
+    // We don't want to rename the data directory.
+    // or the built-in resource directories.
+    // All other paths can have a "Rename" menu item.
+    menu.addAction(rename_action);
+
+    if (quest.is_resource_element(path, resource_type, element_id)) {
+      // Resource element: additionally, allow to change the description.
+      QAction* action = new QAction(tr("Change description..."), this);
+      connect(action, &QAction::triggered,
+              this, &QuestTreeView::change_description_action_triggered);
+      menu.addAction(action);
+    }
   }
 
-  // All other paths can have a "Rename" menu item.
-  menu.addAction(rename_action);
-
-  if (quest.is_resource_element(path, resource_type, element_id)) {
-    // Resource element: additionally, allow to change the description.
-    QAction* action = new QAction(tr("Change description..."), this);
-    connect(action, SIGNAL(triggered()),
-            this, SLOT(change_description_action_triggered()));
+  // Allow to change metadata.
+  if (paths.size() > 1 ||
+      path != quest.get_data_path()) {
+    QAction* action = new QAction(tr("Author and license..."), this);
+    connect(action, &QAction::triggered,
+            this, &QuestTreeView::change_file_info_action_triggered);
     menu.addAction(action);
   }
 }
@@ -1111,15 +1120,70 @@ void QuestTreeView::change_description_action_triggered() {
 
   if (ok) {
     try {
-      if (new_description.isEmpty()) {
-        throw EditorException("Empty description");
-      }
       database.set_description(resource_type, element_id, new_description);
       database.save();
     }
     catch (const EditorException& ex) {
       ex.show_dialog();
     }
+  }
+}
+
+/**
+ * @brief Slot called when the user wants to change metadata of selected files.
+ *
+ * The new info will be prompted to the user.
+ */
+void QuestTreeView::change_file_info_action_triggered() {
+
+  if (is_read_only()) {
+    return;
+  }
+
+  const QStringList& paths = get_selected_paths();
+  if (paths.isEmpty()) {
+    return;
+  }
+
+  Quest& quest = model->get_quest();
+  QuestDatabase& database = quest.get_database();
+
+  ChangeFileInfoDialog dialog(parentWidget());
+  if (paths.size() == 1) {
+    dialog.set_message(tr("File information for '%1'").arg(paths.first()));
+  } else {
+    dialog.set_message(tr("File information for %1 selected items").arg(paths.count()));
+  }
+
+  for (const QString& path : paths) {
+    QString path_from_data = quest.get_path_relative_to_data_path(path);
+    QuestDatabase::FileInfo file_info = database.get_file_info(path_from_data);
+    if (!file_info.is_empty()) {
+      // Suggest the first existing value initially,
+      // even in case of multiple selection.
+      dialog.set_file_info(file_info);
+      break;
+    }
+  }
+  int result = dialog.exec();
+
+  if (result != QDialog::Accepted) {
+    return;
+  }
+
+  QuestDatabase::FileInfo file_info = dialog.get_file_info();
+  try {
+    for (const QString& path : paths) {
+      if (path == quest.get_data_path()) {
+        continue;
+      }
+      QString path_from_data = quest.get_path_relative_to_data_path(path);
+      database.set_file_info(path_from_data, file_info);
+    }
+    database.save();
+  }
+  catch (const EditorException& ex) {
+    ex.show_dialog();
   }
 }
 

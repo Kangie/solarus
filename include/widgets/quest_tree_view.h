@@ -71,6 +71,7 @@ public slots:
   void rename_action_triggered();
   void file_renamed(const QString& old_path, const QString& new_path);
   void change_description_action_triggered();
+  void change_file_info_action_triggered();
   void delete_action_triggered();
 
 protected:

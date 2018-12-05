@@ -120,6 +120,7 @@ set(solarus_quest_editor_SOURCES
   include/widgets/border_set_tree_view.h
   include/widgets/change_border_set_id_dialog.h
   include/widgets/change_dialog_id_dialog.h
+  include/widgets/change_file_info_dialog.h
   include/widgets/change_pattern_id_dialog.h
   include/widgets/change_resource_id_dialog.h
   include/widgets/change_source_image_dialog.h
@@ -251,6 +252,7 @@ set(solarus_quest_editor_SOURCES
   src/widgets/border_set_tree_view.cpp
   src/widgets/change_border_set_id_dialog.cpp
   src/widgets/change_dialog_id_dialog.cpp
+  src/widgets/change_file_info_dialog.cpp
   src/widgets/change_pattern_id_dialog.cpp
   src/widgets/change_resource_id_dialog.cpp
   src/widgets/change_source_image_dialog.cpp
@@ -358,6 +360,7 @@ endif()
 set(solarus_quest_editor_FORMS
   src/widgets/change_border_set_id_dialog.ui
   src/widgets/change_dialog_id_dialog.ui
+  src/widgets/change_file_info_dialog.ui
   src/widgets/change_pattern_id_dialog.ui
   src/widgets/change_resource_id_dialog.ui
   src/widgets/change_source_image_dialog.ui
