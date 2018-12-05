@@ -161,6 +161,19 @@ Sets the opacity of this drawable.
 All drawables are initially opaque.
 - \c opacity (integer): The opacity: \c 0 (transparent) to \c 255 (opaque).
 
+\subsection lua_api_drawable_get_color_modulation drawable:get_color_modulation()
+
+Returns the color multiplier of this drawable.
+- Return value (table): The color as an array of RGBA values
+
+\subsection lua_api_drawable_set_color_modulation drawable:set_color_modulation(color)
+
+Sets the color modulator of this drawable, default is plain white {255,255,255,255}.
+When the drawable is draw, all the pixels are multiplied by this color (white as no effect).
+Alpha channel and drawable opacity are multiplied together.
+
+- \c color (table): The color multiplier, as an array of RGBA values.
+
 \subsection lua_api_drawable_fade_in drawable:fade_in([delay], [callback])
 
 Starts a fade-in effect on this object.
