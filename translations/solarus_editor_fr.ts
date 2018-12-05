@@ -445,7 +445,7 @@
     </message>
     <message>
         <location filename="../src/file_tools.cpp" line="113"/>
-        <location filename="../src/widgets/import_dialog.cpp" line="334"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="342"/>
         <source>Source file cannot be read: &apos;%1&apos;</source>
         <translation>Fichier source non accessible en lecture : &apos;%1&apos;</translation>
     </message>
@@ -676,32 +676,32 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>Sommet sud-est (concave)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="322"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="330"/>
         <source>Source file does not exist: &apos;%1&apos;</source>
         <translation>Le fichier source n&apos;existe pas: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="326"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="334"/>
         <source>Source path is a folder: &apos;%1&apos;</source>
         <translation>Le chemin source est un dossier : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="426"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="434"/>
         <source>Source folder does not exist: &apos;%1&apos;</source>
         <translation>Le dossier source n&apos;existe pas : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="430"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="438"/>
         <source>Source path is not a folder: &apos;%1&apos;</source>
         <translation>Le chemin source n&apos;est pas un dossier : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="434"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="442"/>
         <source>Source folder cannot be read: &apos;%1&apos;</source>
         <translation>Dossier source non accessible en lecture : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="330"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="338"/>
         <source>Source file is a symbolic link: &apos;%1&apos;</source>
         <translation>Le fichier source est un lien symbolique : &apos;%1&apos;</translation>
     </message>
@@ -2203,34 +2203,44 @@ manquant trouvé</translation>
         <translation>%1 candidats trouvés</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="268"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="250"/>
+        <source>Import 1 item</source>
+        <translation>Importer 1 élément</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/import_dialog.cpp" line="253"/>
+        <source>Import %1 items</source>
+        <translation>Importer %1 éléments</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/import_dialog.cpp" line="276"/>
         <source>Import confirmation</source>
         <translation>Confirmation d&apos;import</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="269"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="277"/>
         <source>%1 items will be imported to your quest.</source>
         <translation>%1 éléments seront importés dans votre quête.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="303"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="311"/>
         <source>Cannot import symbolic link &apos;%1&apos;</source>
         <translation>Impossible d&apos;importer le lien symbolique &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="341"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="349"/>
         <source>Destination path already exists and is a folder: &apos;%1&apos;</source>
         <translation>La destination existe déjà et est un dossier : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="453"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="461"/>
         <source>The destination directory &apos;%1&apos; already exists.
 Do you want to overwrite its content?</source>
         <translation>Le dossier destination &apos;%1&apos; existe déjà.
 Voulez-vous écraser son contenu ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="454"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="462"/>
         <source>Apply this choice for remaining directories</source>
         <translation>Appliquer ce choix pour les dossiers restants</translation>
     </message>
@@ -2254,35 +2264,35 @@ Voulez-vous le fusionner avec le contenu du dossier source ?</translation>
         <translation>Aucune quête source n&apos;a été trouvée dans le dossier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="350"/>
-        <location filename="../src/widgets/import_dialog.cpp" line="452"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="358"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="460"/>
         <source>Destination already exists</source>
         <translation>La destination existe déjà</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="351"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="359"/>
         <source>The destination file &apos;%1&apos; already exists.
 Do you want to overwrite it?</source>
         <translation>Le fichier destination &apos;%1&apos; existe déjà.
 Voulez-vous l&apos;écraser ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="352"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="360"/>
         <source>Apply this choice for remaining files</source>
         <translation>Appliquer ce choix pour les fichiers restants</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="379"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="387"/>
         <source>Failed to remove existing file &apos;%1&apos;</source>
         <translation>Impossible de supprimer le fichier existant &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="395"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="403"/>
         <source>Failed to copy file &apos;%1&apos; to &apos;%2&apos;</source>
         <translation>Impossible de copier le fichier &apos;%1&apos; vers &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="441"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="449"/>
         <source>Destination path already exists and is not a directory: &apos;%1&apos;</source>
         <translation>La destination existe déjà est n&apos;est pas un dossier : &apos;%1&apos;</translation>
     </message>

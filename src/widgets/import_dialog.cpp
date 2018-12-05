@@ -243,7 +243,15 @@ void ImportDialog::find_source_paths_not_in_destination_quest(
  */
 void ImportDialog::update_import_button() {
 
-  ui.button_box->button(QDialogButtonBox::Apply)->setEnabled(ui.source_quest_tree_view->selectionModel()->hasSelection());
+  QPushButton* import_button = ui.button_box->button(QDialogButtonBox::Apply);
+  int count = ui.source_quest_tree_view->selectionModel()->selectedRows().count();
+
+  import_button->setEnabled(count > 0);
+  import_button->setText(tr("Import 1 item"));
+  if (count <= 1) {
+  } else {
+    import_button->setText(tr("Import %1 items").arg(count));
+  }
 }
 
 /**
