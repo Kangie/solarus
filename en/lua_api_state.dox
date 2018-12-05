@@ -316,13 +316,26 @@ The default value is \c true.
 Returns whether the entity can be hurt during this state.
 - Return value (boolean): \c true if the entity can be hurt during this state.
 
+\remark If you passed a function to
+  \ref lua_api_state_set_can_be_hurt "state:set_can_be_hurt()",
+  then your function will be evaluated with a \c nil parameter.
+
 \subsection lua_api_state_set_can_be_hurt state:set_can_be_hurt(can_be_hurt)
 
 Sets whether the entity can be hurt during this state.
 
 The default value is \c true.
-- \c can_be_hurt (boolean): Whether the entity controlled
+- \c can_be_hurt (boolean or function): Whether the entity controlled
   by this state can be hurt.
+  You can pass a function if you want to decide this depending at the last
+  moment, for example depending on the attacker.
+  In this case, your function should accept the following parameters
+  and return value:
+  - \c state (state): The current state itself.
+  - \c attacker (\ref lua_api_entity "entity" or nil): the attacker entity,
+    or \c nil if the attack does not come from an entity.
+  - Return value (boolean): \c true to allow your entity to get hurt by this
+    attacker.
 
 \subsection lua_api_state_get_can_use_sword state:get_can_use_sword()
 
@@ -335,6 +348,42 @@ Sets whether the entity can swing the sword during this state.
 
 The default value is \c true.
 - \c can_use_sword (boolean): \c true to allow to use the sword.
+
+\subsection lua_api_state_get_can_cut state:get_can_cut()
+
+Returns whether the entity can cut another
+\ref lua_api_entity "entity"
+with the sword during this state.
+- Return value (boolean): \c true if the entity can cut a destructible
+  entity during this state.
+
+\remark If you passed a function to
+  \ref lua_api_state_set_can_cut "state:set_can_cut()",
+  then your function will be evaluated with a \c nil parameter.
+
+\subsection lua_api_state_set_can_cut state:set_can_cut(can_cut)
+
+Sets whether the entity can cut another
+\ref lua_api_entity "entity"
+with the sword during this state.
+
+When the sword sprite overlaps a destructible object that
+\ref lua_api_destructible_get_can_be_cut "destructible:get_can_be_cut()"
+can be cut, this setting decides if the destructible will actually be cut.
+
+The default value is \c true.
+- \c can_cut (boolean or function): Whether the sword can
+  cut another entity during this state.
+  You can pass a function if you want to decide this at the last moment,
+  for example depending on the exact position of the entity about to be cut.
+  In this case, your function should support the following parameters
+  and return value:
+  - \c state (state): The current state itself.
+  - \c entity (\ref lua_api_entity "entity" or nil):
+    the entity that would be cut,
+    or \c nil if there is no entity about to be cut.
+  - Return value (boolean): \c true to allow to cut the
+    entity with the sword.
 
 \subsection lua_api_state_get_can_use_shield state:get_can_use_shield()
 
@@ -350,21 +399,25 @@ The default value is \c true.
 - \c can_use_shield (boolean): \c true if the entity can stop attacks with the
   shield.
 
-\subsection lua_api_state_get_can_use_item state:get_can_use_item()
+\subsection lua_api_state_get_can_use_item state:get_can_use_item([item_id])
 
 Returns whether an \ref lua_api_item "equipment item" can be used
 during this state.
-- Return value (boolean): \c true if the player can use equipment items
+- \c item_id (string, optional): Name of the item to test,
+  or \c nil to mean items in general.
+- Return value (boolean): \c true if the player can use an equipment item
   during this state.
 
-\subsection lua_api_state_set_can_use_item state:set_can_use_item(can_use_item)
+\subsection lua_api_state_set_can_use_item state:set_can_use_item([item_id], can_use_item)
 
 Sets whether an \ref lua_api_item "equipment item" can be used
 during this state.
 
 The default value is \c true.
-- \c can_use_item (boolean): \c true to allow the player to use equipment items
-  during this state.
+- \c item_id (string, optional): Name of the item to allow or disallow,
+  or \c nil to mean items in general.
+- \c can_use_item (boolean): \c true to allow the player to use an equipment
+  item during this state.
 
 \subsection lua_api_state_get_can_push state:get_can_push()
 

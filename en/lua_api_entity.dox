@@ -215,10 +215,8 @@ can be enabled again later.
 Returns the size of the bounding box of this entity.
 
 The
-\ref lua_api_entity_get_bounding_box "bounding box"
+\ref lua_api_entity_get_bounding_box "bounding box" is a rectangle that
 determines the position of the entity on the map.
-It is a rectangle whose width and height are multiples
-of 8 pixels.
 The bounding box is used to detect whether the entity overlaps obstacles or
 other entities.
 - Return value 1 (number): Width of the entity in pixels.
@@ -438,10 +436,8 @@ on the
 \ref lua_api_map "map".
 
 The
-\ref lua_api_entity_get_bounding_box "bounding box"
+\ref lua_api_entity_get_bounding_box "bounding box" is a rectangle that
 determines the position of the entity on the map.
-It is a rectangle whose width and height are multiples
-of 8 pixels.
 The bounding box is used to detect whether the entity overlaps obstacles or
 other entities.
 - Return value 1 (number): X coordinate of the upper left corner of the
