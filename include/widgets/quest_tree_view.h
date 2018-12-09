@@ -87,14 +87,15 @@ private:
   void build_context_menu_rename(QMenu& menu, const QStringList& paths);
   void build_context_menu_delete(QMenu& menu, const QStringList& paths);
 
-  QuestFilesModel* model;         /**< The underlying model. */
-  QAction* play_action;           /**< Action of playing or stopping the selected file. */
-  QAction* open_action;           /**< Action of opening the selected file. */
-  QAction* rename_action;         /**< Action of renaming the selected file. */
-  QAction* delete_action;         /**< Action of deleting the selected file. */
+  QuestFilesModel* model;              /**< The underlying model. */
+  QAction* play_action;                /**< Action of playing or stopping the selected file. */
+  QAction* open_action;                /**< Action of opening the selected file. */
+  QAction* rename_action;              /**< Action of renaming the selected file. */
+  QAction* delete_action;              /**< Action of deleting the selected file. */
+  QAction* change_file_info_action;    /**< Action of changing metadata of selected files. */
 
-  bool read_only;                 /**< Whether the view forbids editing the tree. */
-  bool opening_files_allowed;     /**< Whether the user can open files from this tree. */
+  bool read_only;                      /**< Whether the view forbids editing the tree. */
+  bool opening_files_allowed;          /**< Whether the user can open files from this tree. */
 
 };
 

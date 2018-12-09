@@ -4898,40 +4898,40 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
 <context>
     <name>SolarusEditor::QuestTreeView</name>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="433"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="440"/>
         <source>New folder...</source>
         <translation>Nouveau dossier...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="441"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="448"/>
         <source>New script...</source>
         <translation>Nouveau script...</translation>
     </message>
     <message>
         <location filename="../src/widgets/quest_tree_view.cpp" line="63"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="523"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="530"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
         <location filename="../src/widgets/quest_tree_view.cpp" line="57"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="482"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="490"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="489"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="497"/>
         <source>Play</source>
         <translation>Jouer</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="544"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="551"/>
         <source>Open Script</source>
         <translation>Ouvrir le Script</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="555"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="562"/>
         <source>Open Dialogs</source>
         <translation>Ouvrir les Dialogues</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="561"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="568"/>
         <source>Open Strings</source>
         <translation>Ouvrir les Textes</translation>
     </message>
@@ -4941,7 +4941,7 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Renommer...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="659"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="666"/>
         <source>Change description...</source>
         <translation>Changer la description...</translation>
     </message>
@@ -4960,58 +4960,63 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="393"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="86"/>
+        <source>F6</source>
+        <translation>F6</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="400"/>
         <source>Add to quest as %1...</source>
         <translation>Ajouter à la quête en tant que %1...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="418"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="425"/>
         <source>New GLSL file...</source>
         <translation>Nouveau fichier GLSL...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="478"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="485"/>
         <source>Stop</source>
         <translation>Arrêter</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="604"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="611"/>
         <source>Open Properties</source>
         <translation>Ouvrir les propriétés</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="610"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="617"/>
         <source>Explore folder</source>
         <translation>Explorer le dossier</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="669"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="85"/>
         <source>Author and license...</source>
         <translation>Auteur et licence...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="800"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="804"/>
         <source>New folder</source>
         <translation>Nouveau dossier</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="801"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="805"/>
         <source>Folder name:</source>
         <translation>Nom du dossier :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="843"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="847"/>
         <source>New Lua script</source>
         <translation>Nouveau script Lua</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="844"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="895"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="848"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="899"/>
         <source>File name:</source>
         <translation>Nom de fichier :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="894"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="898"/>
         <source>New GLSL file</source>
         <translation>Nouveau fichier GLSL</translation>
     </message>
@@ -5032,37 +5037,37 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation type="vanished">Nouveau nom pour le fichier &apos;%1&apos; :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1115"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1119"/>
         <source>Change description</source>
         <translation>Changer la description</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1116"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1120"/>
         <source>New description for %1 &apos;%2&apos;:</source>
         <translation>Nouvelle description pour %1 &apos;%2&apos; :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1153"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1157"/>
         <source>File information for &apos;%1&apos;</source>
         <translation>Informations du fichier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1155"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1159"/>
         <source>File information for %1 selected items</source>
         <translation>Informations des %1 éléments sélectionnés</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1236"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1240"/>
         <source>Do you really want to delete &apos;%1&apos;?</source>
         <translation>Voulez-vous vraiment supprimer &apos;%1&apos; ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1237"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1241"/>
         <source>Do you really want to delete these %1 items?</source>
         <translation>Voulez-vous vraiment supprimer ces %1 éléments ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1239"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1243"/>
         <source>Delete confirmation</source>
         <translation>Confirmer la suppression</translation>
     </message>
@@ -5524,42 +5529,42 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Le shader &apos;%1&apos; a été modifé. Enregistrer les changements ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="422"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="426"/>
         <source>Invalid description</source>
         <translation>Description invalide</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="640"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="647"/>
         <source>New GLSL file</source>
         <translation>Nouveau fichier GLSL</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="641"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="648"/>
         <source>File name:</source>
         <translation>Nom de fichier :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="681"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="688"/>
         <source>Open a GLSL file</source>
         <translation>Ouvrir un fichier GLSL</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="683"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="690"/>
         <source>GLSL shader file (*.glsl)</source>
         <translation>Fichier de shader GLSL (*.glsl)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="689"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="696"/>
         <source>Shader GLSL files must be in the shaders directory</source>
         <translation>Les fichiers de shader GLSL doivent être dans le dossier shaders</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="823"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="830"/>
         <source>Open a PNG picture</source>
         <translation>Ouvrir une image PNG</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="825"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="832"/>
         <source>PNG file (*.png)</source>
         <translation>Fichier PNG (*.png)</translation>
     </message>

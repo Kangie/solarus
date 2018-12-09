@@ -82,6 +82,13 @@ QuestTreeView::QuestTreeView(QWidget* parent) :
           this, &QuestTreeView::delete_action_triggered);
   addAction(delete_action);
 
+  change_file_info_action = new QAction(tr("Author and license..."), this);
+  change_file_info_action->setShortcut(tr("F6"));
+  change_file_info_action->setShortcutContext(Qt::WidgetShortcut);
+  connect(change_file_info_action, &QAction::triggered,
+          this, &QuestTreeView::change_file_info_action_triggered);
+  addAction(change_file_info_action);
+
   connect(this, &QuestTreeView::activated,
           this, &QuestTreeView::default_action_triggered);
 }
@@ -666,10 +673,7 @@ void QuestTreeView::build_context_menu_rename(QMenu& menu, const QStringList& pa
   // Allow to change metadata.
   if (paths.size() > 1 ||
       path != quest.get_data_path()) {
-    QAction* action = new QAction(tr("Author and license..."), this);
-    connect(action, &QAction::triggered,
-            this, &QuestTreeView::change_file_info_action_triggered);
-    menu.addAction(action);
+    menu.addAction(change_file_info_action);
   }
 }
 
