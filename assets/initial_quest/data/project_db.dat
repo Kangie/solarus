@@ -208,7 +208,7 @@ enemy{ id = "slime_green", description = "Green Slime" }
 language{ id = "en", description = "English" }
 
 font{ id = "8_bit", description = "8 bit" }
-font{ id = "pixolde", description = "Pixolde" }
+font{ id = "enter_command", description = "Enter Command" }
 
 shader{ id = "6xbrz", description = "6xBRZ" }
 shader{ id = "default", description = "default" }
@@ -217,7 +217,7 @@ shader{ id = "hq2x", description = "hq2x" }
 shader{ id = "sepia", description = "sepia" }
 
 file{ path = "fonts/8_bit.png", author = "usr_share, Christopho", license = "Public domain" }
-file{ path = "fonts/pixolde.ttf", author = "Jeti", license = "CC BY 4.0" }
+file{ path = "fonts/enter_command.ttf", author = "Jeti", license = "CC BY 4.0" }
 file{ path = "shaders/6xbrz.dat", author = "Christopho", license = "GPL v3" }
 file{ path = "shaders/6xbrz.frag.glsl", author = "Hyllian", license = "GPL v3" }
 file{ path = "shaders/6xbrz.vert.glsl", author = "Hyllian", license = "GPL v3" }
