@@ -201,16 +201,20 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.shader_previewer->set_model(shader.get());
 
   QString vertex_file = shader->get_vertex_file();
-  QString vertex_file_path = vertex_file.isEmpty() ?
-        QString() : quest.get_shader_code_file_path(vertex_file);
+  QString vertex_file_path = quest.get_shader_code_file_path(vertex_file);
+  if (!quest.exists(vertex_file_path) || !quest.is_shader_code_file(vertex_file_path)) {
+    vertex_file_path = QString();
+  }
   vertex_editor = new TextEditor(
         quest, vertex_file_path, this);
   ui.vertex_editor_layout->addWidget(vertex_editor);
   ui.vertex_editor_layout->removeItem(ui.vertex_editor_placeholder);
 
   QString fragment_file = shader->get_fragment_file();
-  QString fragment_file_path = fragment_file.isEmpty() ?
-        QString() : quest.get_shader_code_file_path(fragment_file);
+  QString fragment_file_path = quest.get_shader_code_file_path(fragment_file);
+  if (!quest.exists(fragment_file_path) || !quest.is_shader_code_file(fragment_file_path)) {
+    fragment_file_path = QString();
+  }
   fragment_editor = new TextEditor(
         quest, fragment_file_path, this);
   ui.fragment_editor_layout->addWidget(fragment_editor);
@@ -537,20 +541,23 @@ void ShaderEditor::update_source_editor_tab(WhichGlslEditor which) {
     break;
   }
 
-  file_name_field->setText(file_name);
-  const bool has_file = !file_name.isEmpty();
-  check_box->setChecked(has_file);
-  if (has_file) {
+  QString path = get_quest().get_shader_code_file_path(file_name);
+  if (!file_name.isEmpty() &&
+      quest.exists(path) &&
+      quest.is_shader_code_file(path)) {
+    file_name_field->setText(file_name);
     stacked_widget->setCurrentIndex(1);  // Normal page.
-    QString path = get_quest().get_shader_code_file_path(file_name);
     get_glsl_editor(which)->set_file_path(path);
     glsl_editor->setEnabled(true);
     save_button->setEnabled(true);
+    check_box->setChecked(true);
   }
   else {
+    file_name_field->setText(QString());
     stacked_widget->setCurrentIndex(0);  // Empty page.
     glsl_editor->setEnabled(false);
     save_button->setEnabled(false);
+    check_box->setChecked(false);
   }
 }
 

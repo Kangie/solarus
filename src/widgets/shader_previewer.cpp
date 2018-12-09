@@ -717,10 +717,13 @@ void ShaderPreviewer::compile_program() {
     emit shader_error(s);
     should_recompile = false;
   };
-  if (!model->get_vertex_file().isEmpty()) {
-    if (!program.addShaderFromSourceFile(
-          QOpenGLShader::Vertex,
-         model->get_quest().get_shader_code_file_path(model->get_vertex_file()))) {
+  QString vertex_file_path = model->get_quest().get_shader_code_file_path(model->get_vertex_file());
+  if (!model->get_quest().exists(vertex_file_path) ||
+      !model->get_quest().is_shader_code_file(vertex_file_path)) {
+    vertex_file_path = QString();
+  }
+  if (!vertex_file_path.isEmpty()) {
+    if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, vertex_file_path)) {
       return fail("Failed to compile vertex shader:\n" + program.log());
     }
   } else {
@@ -731,10 +734,13 @@ void ShaderPreviewer::compile_program() {
     }
   }
   //check_warnings();
-  if (!model->get_fragment_file().isEmpty()) {
-    if (!program.addShaderFromSourceFile(
-         QOpenGLShader::Fragment,
-         model->get_quest().get_shader_code_file_path(model->get_fragment_file()))) {
+  QString fragment_file_path = model->get_quest().get_shader_code_file_path(model->get_fragment_file());
+  if (!model->get_quest().exists(fragment_file_path) ||
+      !model->get_quest().is_shader_code_file(fragment_file_path)) {
+    fragment_file_path = QString();
+  }
+  if (!fragment_file_path.isEmpty()) {
+    if (!program.addShaderFromSourceFile(QOpenGLShader::Fragment, fragment_file_path)) {
       return fail("Failed to compile fragment shader:\n" + program.log());
     }
   } else {

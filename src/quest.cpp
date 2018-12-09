@@ -1256,7 +1256,7 @@ void Quest::check_not_exists(const QString& path) const {
 /**
  * @brief Returns whether a path exists and is a directory of this quest.
  * @param path The path to test.
- * @return @c true if this path exists and is in the quest.
+ * @return @c true if this path exists and is a directory.
  */
 bool Quest::is_dir(const QString& path) const {
 
