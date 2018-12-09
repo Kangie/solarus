@@ -8,6 +8,7 @@ ________________________________________
 * Quest tree: show all language files, map files and tileset files.
 * Quest tree: allow to set the author and license information of files.
 * Quest tree: automatically select the currently open file (#336).
+* Quest tree: allow to update sprites when renaming a .png file (#420).
 * Quest tree: allow to open folders with the system explorer (#316).
 * Quest tree: allow to select multiple files.
 * Quest tree: allow to delete multiple files and directories (#354).

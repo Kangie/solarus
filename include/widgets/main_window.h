@@ -163,6 +163,12 @@ private:
       const QString& custom_entity_id_before,
       const QString& custom_entity_id_after
   );
+  void refactor_image_file(const QString& image_path_before, const QString& image_path_after);
+  bool update_image_in_sprite(
+      const QString& sprite_id,
+      const QString& image_before,
+      const QString& image_after
+  );
 
   Ui::MainWindow ui;              /**< The main window widgets. */
   Quest quest;                    /**< The current quest open if any. */

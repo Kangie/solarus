@@ -21,6 +21,7 @@
 #include "widgets/external_script_dialog.h"
 #include "widgets/gui_tools.h"
 #include "widgets/import_dialog.h"
+#include "widgets/input_dialog_with_check_box.h"
 #include "widgets/main_window.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
@@ -1800,36 +1801,38 @@ void MainWindow::rename_file_requested(Quest& quest, const QString& path) {
 
       ChangeResourceIdDialog dialog(quest, resource_type, element_id);
       int result = dialog.exec();
-      if (result == QDialog::Accepted) {
-        const QString& new_element_id = dialog.get_element_id();
-        if (new_element_id != element_id) {
-          if (!dialog.get_update_references()) {
-            // Regular renaming.
-            quest.rename_resource_element(resource_type, element_id, new_element_id);
-          }
-          else {
-            // Refactoring.
-            if (resource_type == ResourceType::MAP) {
-              // Update teletransporters leading to this map.
-              refactor_map_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::TILESET) {
-              // Update maps using this tileset.
-              refactor_tileset_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::MUSIC) {
-              // Update maps using this music.
-              refactor_music_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::ENEMY) {
-              // Update maps using this enemy model.
-              refactor_enemy_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::ENTITY) {
-              // Update maps using this custom entity model.
-              refactor_custom_entity_id(element_id, new_element_id);
-            }
-          }
+      if (result != QDialog::Accepted) {
+        return;
+      }
+      const QString& new_element_id = dialog.get_element_id();
+      if (new_element_id == element_id) {
+        return;
+      }
+      if (!dialog.get_update_references()) {
+        // Regular renaming.
+        quest.rename_resource_element(resource_type, element_id, new_element_id);
+      }
+      else {
+        // Refactoring.
+        if (resource_type == ResourceType::MAP) {
+          // Update teletransporters leading to this map.
+          refactor_map_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::TILESET) {
+          // Update maps using this tileset.
+          refactor_tileset_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::MUSIC) {
+          // Update maps using this music.
+          refactor_music_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::ENEMY) {
+          // Update maps using this enemy model.
+          refactor_enemy_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::ENTITY) {
+          // Update maps using this custom entity model.
+          refactor_custom_entity_id(element_id, new_element_id);
         }
       }
     }
@@ -1838,22 +1841,52 @@ void MainWindow::rename_file_requested(Quest& quest, const QString& path) {
       bool ok = false;
       QFileInfo info(path);
       QString file_name = info.fileName();
-      QString new_file_name = QInputDialog::getText(
-            this,
-            tr("Rename file"),
-            tr("New name for file '%1':").arg(file_name),
-            QLineEdit::Normal,
-            file_name,
-            &ok);
 
-      if (ok && new_file_name != file_name) {
-
-        Quest::check_valid_file_name(file_name);
-        QString new_path = QFileInfo(path).path() + '/' + new_file_name;
-        if (!info.isDir()) {
+      if (quest.is_image(path) && path.startsWith(quest.get_resource_path(ResourceType::SPRITE))) {
+        // Rename a PNG file in the sprites directory.
+        QString path_from_sprites = quest.get_path_relative_to_sprites_path(path);
+        InputDialogWithCheckBox dialog(
+              tr("Rename file"),
+              tr("New name for file '%1':").arg(file_name),
+              tr("Update references in existing sprites"),
+              path_from_sprites,
+              this
+        );
+        int result = dialog.exec();
+        if (result != QDialog::Accepted) {
+          return;
+        }
+        const QString& new_path_from_sprites = dialog.get_value();
+        if (new_path_from_sprites == path_from_sprites) {
+          return;
+        }
+        Quest::check_valid_file_name(new_path_from_sprites);
+        QString new_path = quest.get_sprite_image_path(new_path_from_sprites);
+        if (!dialog.is_checked()) {
+          // Regular renaming.
           quest.rename_file(path, new_path);
         } else {
-          quest.rename_dir(path, new_path);
+          // Refactoring.
+          refactor_image_file(path, new_path);
+        }
+      } else {
+        QString new_file_name = QInputDialog::getText(
+              this,
+              tr("Rename file"),
+              tr("New name for file '%1':").arg(file_name),
+              QLineEdit::Normal,
+              file_name,
+              &ok);
+
+        if (ok && new_file_name != file_name) {
+
+          Quest::check_valid_file_name(file_name);
+          QString new_path = QFileInfo(path).path() + '/' + new_file_name;
+          if (!info.isDir()) {
+            quest.rename_file(path, new_path);
+          } else {
+            quest.rename_dir(path, new_path);
+          }
         }
       }
     }
@@ -1967,6 +2000,9 @@ bool MainWindow::update_destination_map_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  destination_map = \"?%1\"?,\n").arg(
         QRegularExpression::escape(map_id_before));
@@ -2020,6 +2056,9 @@ bool MainWindow::update_tileset_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  tileset = \"?%1\"?,\n").arg(
         QRegularExpression::escape(tileset_id_before));
@@ -2073,6 +2112,9 @@ bool MainWindow::update_music_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  music = \"?%1\"?,\n").arg(
         QRegularExpression::escape(music_id_before));
@@ -2126,6 +2168,9 @@ bool MainWindow::update_enemy_breed_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  breed = \"?%1\"?,\n").arg(
         QRegularExpression::escape(enemy_id_before));
@@ -2179,11 +2224,80 @@ bool MainWindow::update_custom_entity_model_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  model = \"?%1\"?,\n").arg(
         QRegularExpression::escape(entity_id_before));
 
   QString replacement = QString("\n  model = \"%1\",\n").arg(entity_id_after);
+
+  return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
+}
+
+/**
+ * @brief Renames a PNG file and updates sprites referencing it.
+ * @param image_path_before Path of the PNG file to rename.
+ * @param image_path_after New path to set.
+ */
+void MainWindow::refactor_image_file(
+    const QString& image_path_before,
+    const QString& image_path_after) {
+
+  if (image_path_after == image_path_before) {
+    return;
+  }
+
+  Refactoring refactoring([this, image_path_before, image_path_after]() {
+
+    QString relative_image_path_before = quest.get_path_relative_to_sprites_path(image_path_before);
+    QString relative_image_path_after = quest.get_path_relative_to_sprites_path(image_path_after);
+
+    if (relative_image_path_before.isEmpty() ||
+        relative_image_path_after.isEmpty()) {
+      return QStringList();
+    }
+
+    // Do the renaming.
+    quest.rename_file(image_path_before, image_path_after);
+
+    // Update source images in all sprites.
+    QStringList modified_paths;
+    const QStringList& sprite_ids = quest.get_database().get_elements(ResourceType::SPRITE);
+    for (const QString& sprite_id : sprite_ids) {
+      if (update_image_in_sprite(sprite_id, relative_image_path_before, relative_image_path_after)) {
+        modified_paths << quest.get_sprite_path(sprite_id);
+      }
+    }
+    return modified_paths;
+  });
+
+  refactoring_requested(refactoring);
+}
+
+/**
+ * @brief Updates existing sprites after a PNG file was moved.
+ * @param sprite_id Id of the sprite to update.
+ * @param image_before Path of the PNG file that was renamed, relative to the sprites directory.
+ * @param image_after New path after renaming, relative to the sprites directory.
+ * @return @c true if there was a change.
+ * @throws EditorException In case of error.
+ */
+bool MainWindow::update_image_in_sprite(
+    const QString& sprite_id,
+    const QString& image_before,
+    const QString& image_after
+) {
+  QString path = get_quest().get_sprite_path(sprite_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
+
+  QString pattern = QString("\n  src_image = \"%1\",\n").arg(
+        QRegularExpression::escape(image_before));
+
+  QString replacement = QString("\n  src_image = \"%1\",\n").arg(image_after);
 
   return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
 }

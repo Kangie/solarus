@@ -546,6 +546,22 @@ QString Quest::get_sprite_image_path(const QString& src_image) const {
 }
 
 /**
+ * @brief Returns a path relative to the sprites directory from an absolute path.
+ * @param path The absolute path to convert.
+ * @return The path relative to the sprites directory, or an empty string
+ * if it is not in the sprites directory.
+ */
+QString Quest::get_path_relative_to_sprites_path(const QString& path) {
+
+  const QString& sprites_path = get_resource_path(ResourceType::SPRITE);
+  if (!path.startsWith(sprites_path)) {
+    return QString();
+  }
+
+  return path.right(path.size() - sprites_path.size() - 1);
+}
+
+/**
  * @brief Returns the path to a dialogs file.
  * @param language_id Id of a language.
  * @return The path to the dialogs file of this language.
