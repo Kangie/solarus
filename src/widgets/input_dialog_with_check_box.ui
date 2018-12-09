@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SolarusEditor::ChangePatternIdDialog</class>
- <widget class="QDialog" name="SolarusEditor::ChangePatternIdDialog">
+ <class>SolarusEditor::InputDialogWithCheckBox</class>
+ <widget class="QDialog" name="SolarusEditor::InputDialogWithCheckBox">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,28 +10,25 @@
     <height>133</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Rename tile pattern</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <layout class="QVBoxLayout" name="vertical_layout_2">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="vertical_layout">
        <item>
-        <widget class="QLabel" name="pattern_id_label">
+        <widget class="QLabel" name="value_label">
          <property name="text">
-          <string>New pattern id:</string>
+          <string>New value:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="pattern_id_field"/>
+        <widget class="QLineEdit" name="value_field"/>
        </item>
        <item>
-        <widget class="QCheckBox" name="update_references_checkbox">
+        <widget class="QCheckBox" name="check_box">
          <property name="text">
-          <string>Update references in existing maps</string>
+          <string/>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -59,7 +56,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>SolarusEditor::ChangePatternIdDialog</receiver>
+   <receiver>SolarusEditor::InputDialogWithCheckBox</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -75,7 +72,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>SolarusEditor::ChangePatternIdDialog</receiver>
+   <receiver>SolarusEditor::InputDialogWithCheckBox</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

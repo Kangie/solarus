@@ -14,36 +14,43 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SOLARUSEDITOR_CHANGE_PATTERN_ID_DIALOG_H
-#define SOLARUSEDITOR_CHANGE_PATTERN_ID_DIALOG_H
+#ifndef SOLARUSEDITOR_INPUT_DIALOG_WITH_CHECK_BOX_H
+#define SOLARUSEDITOR_INPUT_DIALOG_WITH_CHECK_BOX_H
 
-#include "ui_change_pattern_id_dialog.h"
 #include <QDialog>
 
 namespace SolarusEditor {
 
+namespace Ui {
+class InputDialogWithCheckBox;
+}
+
 /**
- * @brief A dialog to rename a pattern in the tileset editor.
+ * @brief A dialog to choose a text value with an additional checkbox.
  *
  * This dialog is similar to a standard QInputDialog with a line edit,
- * but has an additional checkbox to let the user choose if she wants
- * to update references in existing maps.
+ * but has an additional checkbox to let the user choose for example
+ * if she wants to update references in existing files.
  */
-class ChangePatternIdDialog : public QDialog {
+class InputDialogWithCheckBox : public QDialog {
   Q_OBJECT
 
 public:
 
-  ChangePatternIdDialog(
-      const QString& initial_pattern_id,
+  InputDialogWithCheckBox(
+      const QString& title,
+      const QString& message,
+      const QString& check_box_text,
+      const QString& initial_value,
       QWidget* parent = nullptr
   );
+  ~InputDialogWithCheckBox();
 
-  QString get_pattern_id() const;
-  void set_pattern_id(const QString& pattern_id);
+  QString get_value() const;
+  void set_value(const QString& value);
 
-  bool get_update_references() const;
-  void set_update_references(bool update_references);
+  bool is_checked() const;
+  void set_checked(bool checked);
 
 public slots:
 
@@ -51,7 +58,7 @@ public slots:
 
 private:
 
-  Ui::ChangePatternIdDialog ui;   /**< The widgets. */
+  Ui::InputDialogWithCheckBox* ui;   /**< The widgets. */
 
 };
 

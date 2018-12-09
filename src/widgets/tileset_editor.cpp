@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/change_border_set_id_dialog.h"
-#include "widgets/change_pattern_id_dialog.h"
 #include "widgets/gui_tools.h"
+#include "widgets/input_dialog_with_check_box.h"
 #include "widgets/tileset_editor.h"
 #include "widgets/tileset_scene.h"
 #include "editor_exception.h"
@@ -1305,27 +1305,37 @@ void TilesetEditor::change_selected_pattern_id_requested() {
   }
 
   QString old_id = model->index_to_id(old_index);
-  ChangePatternIdDialog dialog(old_id, this);
+  InputDialogWithCheckBox dialog(
+        tr("Rename tile pattern"),
+        tr("New pattern id:"),
+        tr("Update references in existing maps"),
+        old_id,
+        this);
   int result = dialog.exec();
 
   if (result != QDialog::Accepted) {
     return;
   }
 
-  QString new_id = dialog.get_pattern_id();
+  QString new_id = dialog.get_value();
   if (new_id == old_id) {
     // No change.
     return;
   }
 
-  if (!dialog.get_update_references()) {
+  if (!TilesetModel::is_valid_pattern_id(new_id)) {
+    GuiTools::error_dialog("Invalid tile pattern id");
+    return;
+  }
+
+  if (!dialog.is_checked()) {
     // The change is only in the tileset file.
     try_command(new SetPatternIdCommand(*this, old_index, new_id));
   }
   else {
     // Also update references in existing maps
     // (not as an undoable command).
-    Refactoring refactoring([=]() {
+    Refactoring refactoring([this, old_index, old_id, new_id]() {
 
       // Do the change in the tileset.
       model->set_pattern_id(old_index, new_id);

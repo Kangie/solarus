@@ -121,7 +121,6 @@ set(solarus_quest_editor_SOURCES
   include/widgets/change_border_set_id_dialog.h
   include/widgets/change_dialog_id_dialog.h
   include/widgets/change_file_info_dialog.h
-  include/widgets/change_pattern_id_dialog.h
   include/widgets/change_resource_id_dialog.h
   include/widgets/change_source_image_dialog.h
   include/widgets/change_string_key_dialog.h
@@ -146,6 +145,7 @@ set(solarus_quest_editor_SOURCES
   include/widgets/image_editor.h
   include/widgets/image_view.h
   include/widgets/import_dialog.h
+  include/widgets/input_dialog_with_check_box.h
   include/widgets/lua_syntax_highlighter.h
   include/widgets/map_editor.h
   include/widgets/map_view.h
@@ -253,7 +253,6 @@ set(solarus_quest_editor_SOURCES
   src/widgets/change_border_set_id_dialog.cpp
   src/widgets/change_dialog_id_dialog.cpp
   src/widgets/change_file_info_dialog.cpp
-  src/widgets/change_pattern_id_dialog.cpp
   src/widgets/change_resource_id_dialog.cpp
   src/widgets/change_source_image_dialog.cpp
   src/widgets/change_string_key_dialog.cpp
@@ -274,6 +273,7 @@ set(solarus_quest_editor_SOURCES
   src/widgets/image_editor.cpp
   src/widgets/image_view.cpp
   src/widgets/import_dialog.cpp
+  src/widgets/input_dialog_with_check_box.cpp
   src/widgets/lua_syntax_highlighter.cpp
   src/widgets/main_window.cpp
   src/widgets/map_editor.cpp
@@ -361,7 +361,6 @@ set(solarus_quest_editor_FORMS
   src/widgets/change_border_set_id_dialog.ui
   src/widgets/change_dialog_id_dialog.ui
   src/widgets/change_file_info_dialog.ui
-  src/widgets/change_pattern_id_dialog.ui
   src/widgets/change_resource_id_dialog.ui
   src/widgets/change_source_image_dialog.ui
   src/widgets/change_string_key_dialog.ui
@@ -370,6 +369,7 @@ set(solarus_quest_editor_FORMS
   src/widgets/external_script_dialog.ui
   src/widgets/find_text_dialog.ui
   src/widgets/import_dialog.ui
+  src/widgets/input_dialog_with_check_box.ui
   src/widgets/main_window.ui
   src/widgets/map_editor.ui
   src/widgets/new_entity_user_property_dialog.ui
