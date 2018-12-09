@@ -265,10 +265,22 @@ void ImportDialog::import_button_triggered() {
   ui.missing_files_count_label->clear();
 
   try {
-    const QStringList& source_paths = ui.source_quest_tree_view->get_selected_paths();
+    QStringList source_paths = ui.source_quest_tree_view->get_selected_paths();
     if (source_paths.isEmpty()) {
       return;
     }
+
+    // When a folder is selected, remove its children from the list
+    // because they are already imported recursively.
+    QSet<QString> source_path_set = source_paths.toSet();
+    for (const QString& source_path : source_paths) {
+      QString parent = QFileInfo(source_path).dir().path();
+      if (source_path_set.contains(parent)) {
+        source_path_set.remove(source_path);
+      }
+    }
+    source_paths = source_path_set.toList();
+    std::sort(source_paths.begin(), source_paths.end());
 
     // Show a warning if a lot of files are about to be imported.
     if (source_paths.size() > 5 && QMessageBox::warning(
