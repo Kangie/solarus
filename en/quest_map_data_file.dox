@@ -317,8 +317,6 @@ Additional properties:
 - \c height (number): Height of the tile in pixels.
   It must be a multiple of the height of the pattern.
   The pattern will be repeated vertically to fit this height.
-- \c enabled_at_start (boolean): \c true to make the dynamic tile initially
-  enabled, \c false to make it initially disabled.
 
 Example of dynamic tile:
 \verbatim
@@ -330,7 +328,6 @@ dynamic_tile{
   height = 8,
   name = "bridge",
   pattern = "bridge_path",
-  enabled_at_start = false,
 }
 \endverbatim
 
