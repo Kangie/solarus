@@ -2062,10 +2062,9 @@ bool MainWindow::update_tileset_in_map(
 
   QString pattern = QString("\n  tileset = \"?%1\"?,\n").arg(
         QRegularExpression::escape(tileset_id_before));
-
   QString replacement = QString("\n  tileset = \"%1\",\n").arg(tileset_id_after);
-
-  return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
+  const bool replace_all = false;  // Don't replace it in tile entities.
+  return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement, replace_all);
 }
 
 /**

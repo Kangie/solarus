@@ -22,6 +22,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QTextStream>
 
 #include <QDebug>
@@ -219,13 +220,16 @@ void create_directories(const QString& path) {
  * @param path Path of the file to modify.
  * @param regexp The pattern to replace.
  * @param replacement The string to put instead of the pattern.
+ * @param replace_all @c true to replace all occurences, @c false to only
+ * replace the first one.
  * @return @c true if there was a change.
  * @throws EditorException In case of error.
  */
 bool replace_in_file(
     const QString& path,
     const QRegularExpression& regex,
-    const QString& replacement
+    const QString& replacement,
+    bool replace_all
 ) {
   QFile file(path);
 
@@ -238,7 +242,14 @@ bool replace_in_file(
   file.close();
 
   QString old_content = content;
-  content.replace(regex, replacement);
+  if (replace_all) {
+    content.replace(regex, replacement);
+  } else {
+    QRegularExpressionMatch match = regex.match(content);
+    if (match.hasMatch()) {
+      content.replace(match.capturedStart(), match.capturedLength(), replacement);
+    }
+  }
 
   if (content == old_content) {
     // No change.

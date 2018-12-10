@@ -37,7 +37,8 @@ void create_directories(const QString& path);
 bool replace_in_file(
     const QString& path,
     const QRegularExpression& regex,
-    const QString& replacement
+    const QString& replacement,
+    bool replace_all = true
 );
 
 void initialize_assets();
