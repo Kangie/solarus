@@ -1308,7 +1308,7 @@ void TilesetEditor::change_selected_pattern_id_requested() {
   InputDialogWithCheckBox dialog(
         tr("Rename tile pattern"),
         tr("New pattern id:"),
-        tr("Update references in existing maps"),
+        tr("Update existing maps using this pattern"),
         old_id,
         this);
   int result = dialog.exec();

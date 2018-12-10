@@ -1848,7 +1848,7 @@ void MainWindow::rename_file_requested(Quest& quest, const QString& path) {
         InputDialogWithCheckBox dialog(
               tr("Rename file"),
               tr("New name for file '%1':").arg(file_name),
-              tr("Update references in existing sprites"),
+              tr("Update existing sprites using this image"),
               path_from_sprites,
               this
         );
