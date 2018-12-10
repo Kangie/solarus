@@ -1364,7 +1364,7 @@ QStringList TilesetEditor::change_pattern_id_in_maps(
   QStringList modified_paths;
   const QStringList& map_ids = get_database().get_elements(ResourceType::MAP);
   for (const QString& map_id : map_ids) {
-    if (change_pattern_id_in_map(map_id, old_pattern_id, new_pattern_id)) {
+    if (change_pattern_id_in_map(map_id, model->get_tileset_id(), old_pattern_id, new_pattern_id)) {
       modified_paths << get_quest().get_map_data_file_path(map_id);
     }
   }
@@ -1374,44 +1374,62 @@ QStringList TilesetEditor::change_pattern_id_in_maps(
 /**
  * @brief Replaces a pattern id by a new value in a map if it uses this tileset.
  * @param map_id Id of the map to update.
+ * @param tileset_id Id of the tileset of the pattern being changed.
  * @param old_pattern_id The pattern id to change.
  * @param new_pattern_id The new value.
  * @return @c true if there was a change.
  * @throws EditorException In case of error.
  */
 bool TilesetEditor::change_pattern_id_in_map(
-    const QString& map_id, const QString& old_pattern_id, const QString& new_pattern_id) {
+    const QString& map_id,
+    const QString& tileset_id,
+    const QString& old_pattern_id,
+    const QString& new_pattern_id) {
 
-  // We don't load the entire map with all its entities for performance.
-  // Instead, we just find and replace the appropriate text in the map
-  // data file.
-
-  QFile file(get_quest().get_map_data_file_path(map_id));
-
+  // Load the map.
+  QString file_name = get_quest().get_map_data_file_path(map_id);
+  QFile file(file_name);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    throw EditorException(tr("Cannot open map file '%1'").arg(file.fileName()));
+    throw EditorException(tr("Cannot open map file '%1'").arg(file_name));
   }
   QTextStream in(&file);
   in.setCodec("UTF-8");
-  QString content = in.readAll();
+  QString old_content = in.readAll();
   file.close();
-
-  QString tileset_line = "\n  tileset = \"" + model->get_tileset_id() + "\",\n";
-  if (!content.contains(tileset_line)) {
-    // This map uses another tileset: nothing to do.
-    return false;
+  Solarus::MapData map;
+  if (!map.import_from_buffer(old_content.toStdString(), file_name.toStdString())) {
+    throw EditorException(tr("Invalid map file: '%1'").arg(file_name));
   }
 
-  QRegularExpression regex("\n  pattern = \"?" + QRegularExpression::escape(old_pattern_id) + "\"?,\n");
-  QString replacement("\n  pattern = \"" + new_pattern_id + "\",\n");
-  QString old_content = content;
-  content.replace(regex, replacement);
+  // Change the pattern id.
+  for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {
+    for (int i = 0; i < map.get_num_entities(layer); ++i) {
+      Solarus::EntityData& entity = map.get_entity({ layer, i });
+      if (entity.get_type() == EntityType::TILE ||
+          entity.get_type() == EntityType::DYNAMIC_TILE) {
+        std::string tile_pattern_id = entity.get_specific_property("pattern").string_value;
+        std::string tile_tileset_id = entity.get_specific_property("tileset").string_value;
+        if (tile_tileset_id.empty()) {
+          tile_tileset_id = map.get_tileset_id();
+        }
+        if (tile_tileset_id == tileset_id.toStdString() &&
+            tile_pattern_id == old_pattern_id.toStdString()) {
+          entity.set_string("pattern", new_pattern_id.toStdString());
+        }
+      }
+    }
+  }
 
+  // Save the map.
+  std::string buffer;
+  if (!map.export_to_buffer(buffer)) {
+    throw EditorException(tr("Failed to export map after changing pattern id: '%1'").arg(file_name));
+  }
+  QString content = QString::fromStdString(buffer);
   if (content == old_content) {
     // No change.
     return false;
   }
-
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
     throw EditorException(tr("Cannot open map file '%1' for writing").arg(file.fileName()));
   }

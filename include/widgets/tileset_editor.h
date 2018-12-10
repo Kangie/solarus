@@ -102,7 +102,10 @@ private:
   QStringList change_pattern_id_in_maps(
       const QString& old_pattern_id, const QString& new_pattern_id);
   bool change_pattern_id_in_map(
-      const QString& map_id, const QString& old_pattern_id, const QString& new_pattern_id);
+      const QString& map_id,
+      const QString& tileset_id,
+      const QString& old_pattern_id,
+      const QString& new_pattern_id);
   void load_settings();
 
 private:
