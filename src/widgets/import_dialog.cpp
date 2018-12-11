@@ -563,12 +563,12 @@ int ImportDialog::prompt_overwrite_confirmation(
   dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::Ignore | QMessageBox::Cancel);
   if (allow_rename) {
     dialog.setStandardButtons(dialog.standardButtons() | QMessageBox::No);
-    dialog.button(QMessageBox::No)->setText("Rename");
+    dialog.button(QMessageBox::No)->setText(tr("Rename"));
     dialog.button(QMessageBox::No)->setIcon(QIcon());
   }
-  dialog.button(QMessageBox::Yes)->setText("Overwrite");
+  dialog.button(QMessageBox::Yes)->setText(tr("Overwrite"));
   dialog.button(QMessageBox::Yes)->setIcon(QIcon());
-  dialog.button(QMessageBox::Ignore)->setText("Skip");
+  dialog.button(QMessageBox::Ignore)->setText(tr("Skip"));
   QCheckBox* rememberCheckBox = nullptr;
   if (!remember_choice_text.isEmpty()) {
     rememberCheckBox = new QCheckBox(remember_choice_text, nullptr);

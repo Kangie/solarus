@@ -435,7 +435,7 @@
         <translation>Vertical</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="102"/>
+        <location filename="../src/file_tools.cpp" line="103"/>
         <source>Source and destination are the same: &apos;%1&apos;</source>
         <translation>Source et destination identiques : &apos;%1&apos;</translation>
     </message>
@@ -444,13 +444,13 @@
         <translation type="vanished">Fichier ou dossier introuvable : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="113"/>
+        <location filename="../src/file_tools.cpp" line="114"/>
         <location filename="../src/widgets/import_dialog.cpp" line="354"/>
         <source>Source file cannot be read: &apos;%1&apos;</source>
         <translation>Fichier source non accessible en lecture : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="117"/>
+        <location filename="../src/file_tools.cpp" line="118"/>
         <source>Destination already exists: &apos;%1&apos;</source>
         <translation>La destination existe déjà : &apos;%1&apos;</translation>
     </message>
@@ -463,48 +463,48 @@
         <translation type="vanished">Impossible de copier le dossier &apos;%1&apos; vers l&apos;un de ses sous-dossiers : &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="109"/>
+        <location filename="../src/file_tools.cpp" line="110"/>
         <source>No such file or folder: &apos;%1&apos;</source>
         <translation>Fichier ou dossier introuvable : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="126"/>
+        <location filename="../src/file_tools.cpp" line="127"/>
         <source>No such folder: &apos;%1&apos;</source>
         <translation>Dossier introuvable : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="133"/>
+        <location filename="../src/file_tools.cpp" line="134"/>
         <source>Cannot copy folder &apos;%1&apos; to one of its own subfolders: &apos;%2&apos;</source>
         <translation>Impossible de copier le dossier &apos;%1&apos; vers l&apos;un de ses sous-dossiers : &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="137"/>
-        <location filename="../src/file_tools.cpp" line="213"/>
+        <location filename="../src/file_tools.cpp" line="138"/>
+        <location filename="../src/file_tools.cpp" line="214"/>
         <source>Cannot create folder &apos;%1&apos;</source>
         <translation>Impossible de créer le dossier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="182"/>
+        <location filename="../src/file_tools.cpp" line="183"/>
         <source>Failed to delete file &apos;%1&apos;</source>
         <translation>Impossible de supprimer le fichier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="196"/>
+        <location filename="../src/file_tools.cpp" line="197"/>
         <source>Failed to delete folder &apos;%1&apos;</source>
         <translation>Impossible de supprimer le dossier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="233"/>
+        <location filename="../src/file_tools.cpp" line="237"/>
         <source>Cannot open file &apos;%1&apos;</source>
         <translation>Impossible d&apos;ouvrir le fichier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="249"/>
+        <location filename="../src/file_tools.cpp" line="260"/>
         <source>Cannot open file &apos;%1&apos; for writing</source>
         <translation>Impossible d&apos;ouvrir le fichier &apos;%1&apos; en écriture</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="151"/>
+        <location filename="../src/file_tools.cpp" line="152"/>
         <source>Cannot copy file &apos;%1&apos; to &apos;%2&apos;</source>
         <translation>Impossible de copier le fichier &apos;%1&apos; vers &apos;%2&apos;</translation>
     </message>
@@ -2243,6 +2243,21 @@ Voulez-vous écraser son contenu ?</translation>
         <location filename="../src/widgets/import_dialog.cpp" line="474"/>
         <source>Apply this choice for remaining directories</source>
         <translation>Appliquer ce choix pour les dossiers restants</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/import_dialog.cpp" line="566"/>
+        <source>Rename</source>
+        <translation>Renommer</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/import_dialog.cpp" line="569"/>
+        <source>Overwrite</source>
+        <translation>Écraser</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/import_dialog.cpp" line="571"/>
+        <source>Skip</source>
+        <translation>Passer</translation>
     </message>
     <message>
         <source>Destination folder already exists</source>
@@ -6871,37 +6886,47 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation type="vanished">Supprimer un motif de border set</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1392"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1393"/>
         <source>Cannot open map file &apos;%1&apos;</source>
         <translation>Impossible d&apos;ouvrir le fichier de map &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1416"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1401"/>
+        <source>Invalid map file: &apos;%1&apos;</source>
+        <translation>Fichier de map invalide : &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1426"/>
+        <source>Failed to export map after changing pattern id: &apos;%1&apos;</source>
+        <translation>Impossible d&apos;exporter la map après le changement d&apos;id de motif</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1434"/>
         <source>Cannot open map file &apos;%1&apos; for writing</source>
         <translation>Impossible d&apos;ouvrir le fichier de map &apos;%1&apos; en écriture</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1829"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1847"/>
         <source>Do you really want to delete pattern &apos;%1&apos;?</source>
         <translation>Voulez-vous vraiment supprimer le motif &apos;%1&apos; ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1833"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1851"/>
         <source>Do you really want to delete these %1 patterns?</source>
         <translation>Voulez-vous vraiment supprimer ces %1 motifs ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1839"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1857"/>
         <source>Delete confirmation</source>
         <translation>Confirmer la suppression</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1876"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1894"/>
         <source>Border set name</source>
         <translation>Nom du border set</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1877"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1895"/>
         <source>Border set name:</source>
         <translation>Nom du border set :</translation>
     </message>
