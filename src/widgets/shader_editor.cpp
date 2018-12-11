@@ -233,10 +233,10 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::update_scaling_factor_field);
   connect(ui.scaling_factor_check_box, &QCheckBox::clicked,
           this, &ShaderEditor::scaling_factor_check_box_changed);
-  connect(ui.scaling_factor_field, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+  connect(ui.scaling_factor_field, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
           this, &ShaderEditor::scaling_factor_field_changed);
 
-  connect(ui.preview_mode_selector, QOverload<int>::of(&QComboBox::currentIndexChanged),
+  connect(ui.preview_mode_selector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           [this]() {
     ui.shader_previewer->set_preview_mode(ui.preview_mode_selector->get_selected_value());
   });
@@ -247,15 +247,15 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::browse_preview_picture);
   connect(ui.preview_map_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
-  connect(ui.preview_map_field, QOverload<int>::of(&ResourceSelector::currentIndexChanged),
+  connect(ui.preview_map_field, static_cast<void (QComboBox::*)(int)>(&ResourceSelector::currentIndexChanged),
           this, &ShaderEditor::update_preview_image);
   connect(ui.preview_sprite_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
-  connect(ui.preview_sprite_field, QOverload<int>::of(&QComboBox::currentIndexChanged),
+  connect(ui.preview_sprite_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &ShaderEditor::preview_selected_sprite_changed);
-  connect(ui.preview_sprite_animation_field, QOverload<int>::of(&QComboBox::currentIndexChanged),
+  connect(ui.preview_sprite_animation_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &ShaderEditor::preview_sprite_animation_changed);
-  connect(ui.preview_sprite_direction_field, QOverload<int>::of(&QSpinBox::valueChanged),
+  connect(ui.preview_sprite_direction_field, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &ShaderEditor::update_preview_image);
 
   connect(ui.vertex_file_check_box, &QCheckBox::clicked, [this]() {

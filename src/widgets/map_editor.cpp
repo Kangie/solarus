@@ -1141,7 +1141,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(map, &MapModel::location_changed,
           this, &MapEditor::update_location_field);
 
-  connect(ui.tileset_field, QOverload<const QString&>::of(&ResourceSelector::activated),
+  connect(ui.tileset_field, static_cast<void (ResourceSelector::*)(const QString&)>(&ResourceSelector::activated),
           this, &MapEditor::tileset_selector_activated);
   connect(map, &MapModel::tileset_id_changed,
           this, &MapEditor::tileset_id_changed);
@@ -1149,13 +1149,13 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, [this]() {
       open_tileset_requested(ui.tileset_field->get_selected_id());
   });
-  connect(ui.patterns_tileset_field, QOverload<const QString&>::of(&ResourceSelector::currentIndexChanged),
+  connect(ui.patterns_tileset_field, static_cast<void (ResourceSelector::*)(const QString&)>(&ResourceSelector::currentIndexChanged),
           this, &MapEditor::update_tileset_view);
   connect(ui.patterns_tileset_edit_button, &QToolButton::clicked,
           this, [this]() {
       open_tileset_requested(ui.patterns_tileset_field->get_selected_id());
   });
-  connect(ui.border_set_tileset_field, QOverload<const QString&>::of(&ResourceSelector::activated),
+  connect(ui.border_set_tileset_field, static_cast<void (ResourceSelector::*)(const QString&)>(&ResourceSelector::activated),
           this, &MapEditor::border_set_tileset_changed);
   connect(ui.border_set_tileset_edit_button, &QToolButton::clicked,
           this, [this]() {

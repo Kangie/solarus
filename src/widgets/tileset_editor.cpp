@@ -981,40 +981,40 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   connect(ui.tileset_view, &TilesetView::change_selected_patterns_position_requested,
           this, &TilesetEditor::change_selected_patterns_position_requested);
 
-  connect(ui.ground_field, QOverload<int>::of(&EnumSelector<Ground>::activated),
+  connect(ui.ground_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
           this, &TilesetEditor::ground_selector_activated);
   connect(ui.tileset_view, &TilesetView::change_selected_patterns_ground_requested,
           this, &TilesetEditor::change_selected_patterns_ground_requested);
   connect(model, &TilesetModel::pattern_ground_changed,
           this, &TilesetEditor::update_ground_field);
 
-  connect(ui.default_layer_field, QOverload<int>::of(&QSpinBox::valueChanged),
+  connect(ui.default_layer_field,static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &TilesetEditor::change_selected_patterns_default_layer_requested);
   connect(ui.tileset_view, &TilesetView::change_selected_patterns_default_layer_requested,
           this, &TilesetEditor::change_selected_patterns_default_layer_requested);
   connect(model, &TilesetModel::pattern_default_layer_changed,
           this, &TilesetEditor::update_default_layer_field);
 
-  connect(ui.repeat_mode_field, QOverload<int>::of(&EnumSelector<PatternRepeatMode>::activated),
+  connect(ui.repeat_mode_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
           this, &TilesetEditor::repeat_mode_selector_activated);
   connect(ui.tileset_view, &TilesetView::change_selected_patterns_repeat_mode_requested,
           this, &TilesetEditor::change_selected_patterns_repeat_mode_requested);
   connect(model, &TilesetModel::pattern_repeat_mode_changed,
           this, &TilesetEditor::update_repeat_mode_field);
 
-  connect(ui.scrolling_field, QOverload<int>::of(&EnumSelector<PatternScrolling>::activated),
+  connect(ui.scrolling_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
           this, &TilesetEditor::scrolling_selector_activated);
   connect(ui.tileset_view, &TilesetView::change_selected_patterns_scrolling_requested,
           this, &TilesetEditor::change_selected_patterns_scrolling_requested);
   connect(model, &TilesetModel::pattern_scrolling_changed,
           this, &TilesetEditor::update_scrolling_field);
 
-  connect(ui.num_frames_field, QOverload<int>::of(&QSpinBox::valueChanged),
+  connect(ui.num_frames_field, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &TilesetEditor::change_selected_patterns_num_frames_requested);
   connect(model, &TilesetModel::pattern_num_frames_changed,
           this, &TilesetEditor::update_num_frames_field);
 
-  connect(ui.frame_delay_field, QOverload<int>::of(&QSpinBox::valueChanged),
+  connect(ui.frame_delay_field, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &TilesetEditor::change_selected_patterns_frame_delay_requested);
   connect(model, &TilesetModel::pattern_frame_delay_changed,
           this, &TilesetEditor::update_frame_delay_field);
@@ -1024,7 +1024,7 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   connect(model, &TilesetModel::pattern_mirror_loop_changed,
           this, &TilesetEditor::update_mirror_loop_field);
 
-  connect(ui.animation_separation_field, QOverload<int>::of(&EnumSelector<PatternSeparation>::activated),
+  connect(ui.animation_separation_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
           this, &TilesetEditor::animation_separation_selector_activated);
   connect(model, &TilesetModel::pattern_separation_changed,
           this, &TilesetEditor::update_animation_separation_field);
@@ -1062,7 +1062,7 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
           this, &TilesetEditor::change_selected_border_set_id_requested);
   connect(model, &TilesetModel::border_set_id_changed,
           this, &TilesetEditor::update_border_set_id_field);
-  connect(ui.border_set_inner_field, QOverload<int>::of(&QComboBox::activated),
+  connect(ui.border_set_inner_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
           this, &TilesetEditor::border_set_inner_selector_activated);
   connect(model, &TilesetModel::border_set_inner_changed,
           this, &TilesetEditor::update_border_set_inner_field);
