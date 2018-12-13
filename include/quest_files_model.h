@@ -54,7 +54,7 @@ public:
   static constexpr int LICENSE_COLUMN = 4;       /**< Column index of the license info in the model. */
   static constexpr int NUM_COLUMNS = 5;          /**< Number of columns of the model. */
 
-  explicit QuestFilesModel(Quest& quest);
+  explicit QuestFilesModel(Quest& quest, QObject* parent = nullptr);
 
   Quest& get_quest();
   QModelIndex get_quest_root_index() const;

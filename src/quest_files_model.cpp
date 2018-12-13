@@ -25,10 +25,11 @@ namespace SolarusEditor {
 
 /**
  * @brief Creates a quest files model.
- * @param parent Path of the quest to represent.
+ * @param quest The quest to represent.
+ * @param parent parent object or nullptr.
  */
-QuestFilesModel::QuestFilesModel(Quest& quest):
-  QSortFilterProxyModel(nullptr),
+QuestFilesModel::QuestFilesModel(Quest& quest, QObject* parent):
+  QSortFilterProxyModel(parent),
   quest(quest),
   source_model(new QFileSystemModel) {
 

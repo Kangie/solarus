@@ -105,7 +105,7 @@ void QuestTreeView::set_quest(Quest& quest) {
 
   if (quest.exists()) {
     // Create a new model.
-    model = new QuestFilesModel(quest);
+    model = new QuestFilesModel(quest, this);
     setModel(model);
     setRootIndex(model->get_quest_root_index());
 
