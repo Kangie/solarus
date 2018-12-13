@@ -10,7 +10,9 @@ function converter.convert(quest_path, map_id, default_font_id)
   local input_file_name = quest_path .. "/data/maps/" .. map_id .. ".dat"
   local input_file, error_message = io.open(input_file_name, "r")
   if input_file == nil then
-    error("Cannot open old map file for reading: " .. error_message)
+    io.write("Cannot open old map file for reading: ", error_message, "\n")
+    io.flush()
+    return
   end
 
   local text = input_file:read("*a")  -- Read the whole file.
