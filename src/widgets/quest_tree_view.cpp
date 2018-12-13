@@ -117,8 +117,8 @@ void QuestTreeView::set_quest(Quest& quest) {
     setColumnWidth(QuestFilesModel::FILE_COLUMN, 200);
     setColumnWidth(QuestFilesModel::DESCRIPTION_COLUMN, 100);
 
-    connect(&quest, SIGNAL(file_renamed(QString, QString)),
-            this, SLOT(file_renamed(QString, QString)));
+    connect(&quest, &Quest::file_renamed,
+            this, &QuestTreeView::file_renamed);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged,
             [this](const QItemSelection&, const QItemSelection&) {
       emit selected_path_changed(get_selected_path());
