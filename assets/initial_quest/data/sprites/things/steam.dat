@@ -1,6 +1,6 @@
 animation{
   name = "steam",
-  src_image = "citizens/witch.png",
+  src_image = "npc/witch.png",
   frame_delay = 250,
   frame_to_loop_on = 0,
   directions = {

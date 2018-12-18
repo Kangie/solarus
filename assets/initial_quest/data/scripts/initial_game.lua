@@ -12,10 +12,13 @@ local initial_game = {}
 -- Sets initial values to a new savegame file.
 function initial_game:initialize_new_savegame(game)
 
+  -- You can modify this function to set the initial life and equipment
+  -- and the starting location.
   game:set_starting_location("first_map", nil)  -- Starting location.
 
   game:set_max_life(12)
   game:set_life(game:get_max_life())
+  game:set_max_money(100)
   game:set_ability("lift", 1)
   game:set_ability("sword", 1)
 end
