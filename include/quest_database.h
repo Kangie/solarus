@@ -18,6 +18,7 @@
 #define SOLARUSEDITOR_QUEST_DATABASE_H
 
 #include <solarus/core/QuestDatabase.h>
+#include <QFutureWatcher>
 #include <QMap>
 #include <QObject>
 
@@ -46,6 +47,7 @@ public:
   };
 
   explicit QuestDatabase(Quest& quest);
+  ~QuestDatabase();
 
   void save() const;
 
@@ -127,6 +129,8 @@ private:
   QMap<ResourceType, QString>
       resource_type_create_friendly_names;       /**< Human-readable name for actions of creating
                                                   * resource elements. */
+  QFutureWatcher<QStringList> file_info_watcher; /**< Task that checks the existence of file we
+                                                  * have metadata for. */
 };
 
 }

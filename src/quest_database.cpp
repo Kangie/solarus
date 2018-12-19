@@ -18,7 +18,6 @@
 #include "quest.h"
 #include "quest_database.h"
 #include <QFile>
-#include <QFutureWatcher>
 #include <QTextStream>
 #include <QtConcurrent/QtConcurrent>
 
@@ -93,6 +92,13 @@ QuestDatabase::QuestDatabase(Quest& quest):
   connect(&quest, &Quest::root_path_changed,
           this, &QuestDatabase::load);
   load();
+}
+
+/**
+ * @brief Destructor.
+ */
+QuestDatabase::~QuestDatabase() {
+  file_info_watcher.waitForFinished();
 }
 
 /**
@@ -459,8 +465,7 @@ void QuestDatabase::set_file_license(const QString& path, const QString& license
  */
 void QuestDatabase::check_deleted_file_info() {
 
-  QFutureWatcher<QStringList>* watcher = new QFutureWatcher<QStringList>(this);
-  watcher->setFuture(QtConcurrent::run([this]() {
+  file_info_watcher.setFuture(QtConcurrent::run([this]() {
     QStringList deleted_files;
     std::map<std::string, Solarus::QuestDatabase::FileInfo> files = database.get_all_file_info();
     for (const auto& kvp : files) {
@@ -476,9 +481,9 @@ void QuestDatabase::check_deleted_file_info() {
     return deleted_files;
   }));
 
-  connect(watcher, &QFutureWatcher<QStringList>::finished,
-          this, [this, watcher]() {
-    QStringList deleted_files = watcher->result();
+  connect(&file_info_watcher, &QFutureWatcher<QStringList>::finished,
+          this, [this]() {
+    QStringList deleted_files = file_info_watcher.result();
     if (deleted_files.isEmpty()) {
       return;
     }
@@ -486,7 +491,6 @@ void QuestDatabase::check_deleted_file_info() {
       database.clear_file_info(deleted_file.toStdString());
     }
     save();
-    watcher->deleteLater();
   });
 }
 
