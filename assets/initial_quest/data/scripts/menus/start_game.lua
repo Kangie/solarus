@@ -5,7 +5,7 @@ local start_game_menu = {}
 
 function start_game_menu:on_started()
   local game = game_manager:create("save1.dat")
-  sol.main:start_savegame(game)
+  game:start()
 end
 
 return start_game_menu
