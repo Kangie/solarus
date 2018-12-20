@@ -136,19 +136,10 @@ http://creativecommons.org/licenses/by-sa/4.0/
 
 - A few data files are in public domain.
 
-All data files of these assets come from the official
+Most data files of these assets come from the official
 Solarus Free Resource Pack:
 https://github.com/solarus-games/solarus-free-resource-pack
 
-Main contributors:
-- Christopho
-- Diarandor <diarandor at gmail dot com>:
-  - Source URL for images: http://diarandor.deviantart.com/
-  - Source URL for sounds and music: https://soundcloud.com/diarandor/
-- Eduardo Dueñas <duenase@hotmail.com>
-- Bertram
-
-The more detailed license information of the Solarus Free Resource Pack
-can be found here:
-https://github.com/solarus-games/solarus-free-resource-pack/blob/master/license.txt
+More detailed information about the authors and license of every file
+is displayed when you open this project with Solarus Quest Editor.
 
