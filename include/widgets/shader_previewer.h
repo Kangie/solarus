@@ -99,6 +99,8 @@ private:
   void update_zoom();
   QSize get_letter_box(const QSize& qsize, const QSize& basesize) const;
 
+  QString sanitizeShaderCode(const QString& code) const;
+
   bool should_recompile = true;
   QImage preview_image;
   QPointer<ViewSettings>
