@@ -126,6 +126,7 @@ private:
 
   QTimer fps_timer;                             /**< timer to update output periodically */
 
+  QString glsl_version;
 #ifdef SOLARUSEDITOR_DEBUG_GL
   QOpenGLDebugLogger gl_logger;                 /**< Logger to track opengl error in debug mode*/
 private slots:

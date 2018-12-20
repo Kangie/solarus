@@ -120,13 +120,38 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
 {
 
   QSurfaceFormat format;
-  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  format.setProfile(QSurfaceFormat::CoreProfile);
 #ifdef SOLARUSEDITOR_DEBUG_GL
   format.setMajorVersion(3);
   format.setMinorVersion(2);
   format.setOption(QSurfaceFormat::DebugContext);
 #endif
   setFormat(format);
+  format = context()->format();
+
+  auto make_number = [&](int major,int minor) -> QString {
+    switch(major*10+minor){
+      case 20:
+        return "110";
+      case 21:
+        return "120";
+      case 30:
+        return "130";
+      case 31:
+        return "140";
+      case 32:
+        return "150";
+      default:
+      if(major*10+minor >= 33) {
+        QString::number(major*100+minor*10);
+      } else {
+        return "110";
+      }
+    }
+  };
+
+  glsl_version = QString("#version %1\n").arg(make_number(format.majorVersion(),format.minorVersion()));
+
   // Setup cursors
   grab_cursor.setShape(Qt::ClosedHandCursor);
   hover_cursor.setShape(Qt::OpenHandCursor);
