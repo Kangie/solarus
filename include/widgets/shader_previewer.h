@@ -99,6 +99,8 @@ private:
   void update_zoom();
   QSize get_letter_box(const QSize& qsize, const QSize& basesize) const;
 
+  QString sanitizeShaderCode(const QString& code) const;
+
   bool should_recompile = true;
   QImage preview_image;
   QPointer<ViewSettings>
@@ -126,6 +128,7 @@ private:
 
   QTimer fps_timer;                             /**< timer to update output periodically */
 
+  QString glsl_version;
 #ifdef SOLARUSEDITOR_DEBUG_GL
   QOpenGLDebugLogger gl_logger;                 /**< Logger to track opengl error in debug mode*/
 private slots:

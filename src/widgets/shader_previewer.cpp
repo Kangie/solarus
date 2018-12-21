@@ -120,13 +120,14 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
 {
 
   QSurfaceFormat format;
-  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  format.setProfile(QSurfaceFormat::CoreProfile);
 #ifdef SOLARUSEDITOR_DEBUG_GL
   format.setMajorVersion(3);
   format.setMinorVersion(2);
   format.setOption(QSurfaceFormat::DebugContext);
 #endif
   setFormat(format);
+
   // Setup cursors
   grab_cursor.setShape(Qt::ClosedHandCursor);
   hover_cursor.setShape(Qt::OpenHandCursor);
@@ -311,6 +312,19 @@ QSize ShaderPreviewer::get_letter_box(const QSize& qsize, const QSize& basesize)
     return QSize(basesize.width(), basesize.width() / qratio);
   } else {
     return QSize(basesize.height() * qratio, basesize.height());
+  }
+}
+
+/**
+ * @brief ShaderPreviewer::sanitizeShaderCode
+ * @param code
+ * @return
+ */
+QString ShaderPreviewer::sanitizeShaderCode(const QString& code) const {
+  if(code.contains("#version")) {
+    return code;
+  } else {
+    return glsl_version + code;
   }
 }
 
@@ -611,6 +625,30 @@ void ShaderPreviewer::initializeGL() {
   gl_logger.startLogging(QOpenGLDebugLogger::SynchronousLogging);
   connect(&gl_logger,&QOpenGLDebugLogger::messageLogged, this, &ShaderPreviewer::on_gl_log);
 #endif
+  QSurfaceFormat format = context()->format();
+
+  auto make_number = [&](int major,int minor) -> QString {
+    switch(major*10+minor){
+      case 20:
+        return "110";
+      case 21:
+        return "120";
+      case 30:
+        return "130";
+      case 31:
+        return "140";
+      case 32:
+        return "150";
+      default:
+      if(major*10+minor >= 33) {
+        return QString::number(major*100+minor*10);
+      } else {
+        return "110";
+      }
+    }
+  };
+
+  glsl_version = QString("#version %1\n").arg(make_number(format.majorVersion(),format.minorVersion()));
 
   // Setup quad
   QOpenGLFunctions* gl = context()->functions();
@@ -618,7 +656,6 @@ void ShaderPreviewer::initializeGL() {
   gl->glClearColor(0.3f,0.3f,0.3f,1);
   gl->glDisable(GL_DEPTH_TEST);
   gl->glDisable(GL_CULL_FACE);
-  qDebug() << "GLSL VERSION : " << (char*) context()->functions()->glGetString(GL_SHADING_LANGUAGE_VERSION);
   vertex_buffer = new QOpenGLBuffer();
   if (!vertex_buffer->create()) {
     qWarning() << "Failed to create glbuffer!"; // TODO fail gracefully
@@ -627,7 +664,6 @@ void ShaderPreviewer::initializeGL() {
   array.add_quad(Solarus::Rectangle(0, 0, 1, 1),
                  Solarus::Rectangle(0, 1, 1, -1),
                  Solarus::Color::white);
-  qDebug() << "Vertex count" << array.vertex_count();
   vertex_buffer->bind();
   vertex_buffer->allocate(array.data(), array.vertex_count() * sizeof(Solarus::Vertex));
   vertex_buffer->release();
@@ -649,11 +685,11 @@ void ShaderPreviewer::initializeGL() {
   // Create swipe shader
   swipe_program.addShaderFromSourceCode(
         QOpenGLShader::Vertex,
-        SWIPE_VERTEX_SHADER);
+        sanitizeShaderCode(SWIPE_VERTEX_SHADER));
 
   swipe_program.addShaderFromSourceCode(
         QOpenGLShader::Fragment,
-        SWIPE_FRAGMENT_SHADER);
+        sanitizeShaderCode(SWIPE_FRAGMENT_SHADER));
   if (!swipe_program.link()) {
     emit shader_error("Failed to link swipe shader program:\n" + swipe_program.log());
   }
@@ -717,39 +753,51 @@ void ShaderPreviewer::compile_program() {
     emit shader_error(s);
     should_recompile = false;
   };
+
+  auto readFile = [](const QString& path) -> QString {
+        QFile file(path);
+        file.open(QIODevice::ReadOnly);
+
+        QTextStream s1(&file);
+        return s1.readAll();
+  };
+
+  QString vertex_source;
+  QString fragment_source;
+
   QString vertex_file_path = model->get_quest().get_shader_code_file_path(model->get_vertex_file());
   if (!model->get_quest().exists(vertex_file_path) ||
       !model->get_quest().is_shader_code_file(vertex_file_path)) {
     vertex_file_path = QString();
   }
   if (!vertex_file_path.isEmpty()) {
-    if (!program.addShaderFromSourceFile(QOpenGLShader::Vertex, vertex_file_path)) {
-      return fail("Failed to compile vertex shader:\n" + program.log());
-    }
+    vertex_source = readFile(vertex_file_path);
   } else {
-    if (!program.addShaderFromSourceCode(
-          QOpenGLShader::Vertex,
-          Solarus::DefaultShaders::get_default_vertex_source().c_str())) {
-      return fail("Failed to compile default vertex shader:\n" + program.log());
-    }
+    vertex_source = QString::fromStdString(Solarus::DefaultShaders::get_default_vertex_source());
   }
-  //check_warnings();
+
   QString fragment_file_path = model->get_quest().get_shader_code_file_path(model->get_fragment_file());
   if (!model->get_quest().exists(fragment_file_path) ||
       !model->get_quest().is_shader_code_file(fragment_file_path)) {
     fragment_file_path = QString();
   }
   if (!fragment_file_path.isEmpty()) {
-    if (!program.addShaderFromSourceFile(QOpenGLShader::Fragment, fragment_file_path)) {
-      return fail("Failed to compile fragment shader:\n" + program.log());
-    }
+    fragment_source = readFile(fragment_file_path);
   } else {
-    if (!program.addShaderFromSourceCode(
-          QOpenGLShader::Fragment,
-          Solarus::DefaultShaders::get_default_fragment_source().c_str())) {
-      return fail("Failed to compile default fragment shader:\n" + program.log());
-    }
+    fragment_source = QString::fromStdString(Solarus::DefaultShaders::get_default_fragment_source());
   }
+
+  if (!program.addShaderFromSourceCode(
+        QOpenGLShader::Vertex,
+        sanitizeShaderCode(vertex_source))) {
+    return fail("Failed to compile vertex shader:\n" + program.log());
+  }
+  if (!program.addShaderFromSourceCode(
+        QOpenGLShader::Fragment,
+        sanitizeShaderCode(fragment_source))) {
+    return fail("Failed to compile fragment shader:\n" + program.log());
+  }
+
   if (!program.link()) {
     return fail("Failed to link shader program:\n" + program.log());
   } else {
