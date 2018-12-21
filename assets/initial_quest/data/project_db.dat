@@ -83,11 +83,9 @@ sprite{ id = "enemies/soldier_sword", description = "Soldier Sword" }
 sprite{ id = "enemies/wings_evil", description = "Wings evil" }
 sprite{ id = "entities/arrow", description = "Arrow" }
 sprite{ id = "entities/bomb", description = "Bomb" }
-sprite{ id = "entities/boomerang1", description = "Boomerang 1" }
 sprite{ id = "entities/crystal", description = "Crystal" }
 sprite{ id = "entities/crystal_block", description = "Crystal block" }
 sprite{ id = "entities/explosion", description = "Explosion" }
-sprite{ id = "entities/hookshot", description = "Hookshot" }
 sprite{ id = "entities/items", description = "Items" }
 sprite{ id = "entities/rupee_icon", description = "Money icon" }
 sprite{ id = "entities/shadow", description = "Shadow" }
@@ -619,24 +617,17 @@ file{ path = "sprites/entities", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/arrow.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/arrow.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/bomb.dat", author = "Bertram, hyptosis", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/boomerang1.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal_block.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark0.png", author = "Bertram", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark1.png", author = "Bertram", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark2.png", author = "Bertram", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark3.png", author = "Bertram", license = "CC BY-SA 4.0" }
+file{ path = "sprites/entities/crystal_block.png", author = "Alex Gleason, Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/explosion.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/explosion.png", author = "Bertram, hyptosis", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/fountain v1.1.ase", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/hookshot.dat", author = "Christopho", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/hookshot.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/items.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/rupee_icon.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/shadow.dat", author = "Zane Kukta", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/shadow.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/star.dat", author = "Christopho", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/zoria.png", author = "DragonDePlatino, Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/ground_effects", license = "CC BY-SA 4.0" }
 file{ path = "sprites/ground_effects/fall_on_hole.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/ground_effects/fall_on_hole_effect.png", author = "Diarandor", license = "CC BY-SA 4.0" }
