@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,18 @@
 namespace SolarusEditor {
 
 namespace {
-  const QList<TilePatternRepeatMode> names = QList<TilePatternRepeatMode>()
-    << TilePatternRepeatMode::ALL
-    << TilePatternRepeatMode::HORIZONTAL
-    << TilePatternRepeatMode::VERTICAL
-    << TilePatternRepeatMode::NONE;
+  const QList<PatternRepeatMode> names = QList<PatternRepeatMode>()
+    << PatternRepeatMode::ALL
+    << PatternRepeatMode::HORIZONTAL
+    << PatternRepeatMode::VERTICAL
+    << PatternRepeatMode::NONE;
 }
 
 /**
  * @brief Returns all values.
  * @return The existing values.
  */
-QList<TilePatternRepeatMode> EnumTraits<TilePatternRepeatMode>::get_values() {
+QList<PatternRepeatMode> EnumTraits<PatternRepeatMode>::get_values() {
   return names;
 }
 
@@ -40,22 +40,22 @@ QList<TilePatternRepeatMode> EnumTraits<TilePatternRepeatMode>::get_values() {
  * @param value A value.
  * @return The human-readable name of this value in the current language.
  */
-QString EnumTraits<TilePatternRepeatMode>::get_friendly_name(TilePatternRepeatMode value) {
+QString EnumTraits<PatternRepeatMode>::get_friendly_name(PatternRepeatMode value) {
 
   // Use a switch to ensure we don't forget a value,
   // and also to translate names dynamically.
   switch (value) {
 
-  case TilePatternRepeatMode::ALL:
+  case PatternRepeatMode::ALL:
     return QApplication::tr("In both directions");
 
-  case TilePatternRepeatMode::HORIZONTAL:
+  case PatternRepeatMode::HORIZONTAL:
     return QApplication::tr("Horizontally");
 
-  case TilePatternRepeatMode::VERTICAL:
+  case PatternRepeatMode::VERTICAL:
     return QApplication::tr("Vertically");
 
-  case TilePatternRepeatMode::NONE:
+  case PatternRepeatMode::NONE:
     return QApplication::tr("Non repeatable");
 
   }
@@ -68,7 +68,7 @@ QString EnumTraits<TilePatternRepeatMode>::get_friendly_name(TilePatternRepeatMo
  * @param value A value.
  * @return The corresponding icon.
  */
-QIcon EnumTraits<TilePatternRepeatMode>::get_icon(TilePatternRepeatMode value) {
+QIcon EnumTraits<PatternRepeatMode>::get_icon(PatternRepeatMode value) {
   return QIcon(":/images/icon_resize_" + get_lua_name(value) + ".png");
 }
 
@@ -77,7 +77,7 @@ QIcon EnumTraits<TilePatternRepeatMode>::get_icon(TilePatternRepeatMode value) {
  * @param value A ground value.
  * @return The corresponding Lua name.
  */
-QString EnumTraits<TilePatternRepeatMode>::get_lua_name(TilePatternRepeatMode value) {
+QString EnumTraits<PatternRepeatMode>::get_lua_name(PatternRepeatMode value) {
   return QString::fromStdString(Solarus::enum_to_name(value));
 }
 
@@ -86,9 +86,9 @@ QString EnumTraits<TilePatternRepeatMode>::get_lua_name(TilePatternRepeatMode va
  * @param name A name.
  * @return The corresponding value.
  */
-TilePatternRepeatMode EnumTraits<TilePatternRepeatMode>::get_by_lua_name(
+PatternRepeatMode EnumTraits<PatternRepeatMode>::get_by_lua_name(
     const QString& name) {
-  return Solarus::name_to_enum<TilePatternRepeatMode>(name.toStdString());
+  return Solarus::name_to_enum<PatternRepeatMode>(name.toStdString());
 }
 
 }

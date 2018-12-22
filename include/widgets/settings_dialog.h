@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,6 @@ public slots:
   void change_save_files();
   void update_no_audio();
   void change_no_audio();
-  void update_video_acceleration();
-  void change_video_acceleration();
   void update_quest_size();
   void change_quest_size();
 
@@ -69,6 +67,10 @@ public slots:
   void change_tab_length();
   void update_replace_tab_by_spaces();
   void change_replace_tab_by_spaces();
+  void update_external_editor_enabled();
+  void change_external_editor_enabled();
+  void update_external_editor_cmd();
+  void change_external_editor_cmd();
 
   // Map editor.
   void update_map_main_background();

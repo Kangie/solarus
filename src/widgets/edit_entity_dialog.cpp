@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,12 @@
  */
 #include "entities/destination.h"
 #include "widgets/edit_entity_dialog.h"
+#include "widgets/gui_tools.h"
+#include "widgets/new_entity_user_property_dialog.h"
 #include "map_model.h"
+#include "quest.h"
+#include "tileset_model.h"
+#include <QInputDialog>
 
 namespace SolarusEditor {
 
@@ -32,15 +37,19 @@ const QString destination_map_field_name = "destination_map";
 const QString destruction_sound_field_name = "destruction_sound";
 const QString font_field_name = "font";
 const QString ground_field_name = "ground";
+const QString max_moves_field_name = "max_moves";
 const QString maximum_moves_field_name = "maximum_moves";
 const QString model_field_name = "model";
 const QString opening_method_field_name = "opening_method";
 const QString opening_condition_field_name = "opening_condition";
 const QString opening_condition_consumed_field_name = "opening_condition_consumed";
+const QString pattern_field_name = "pattern";
 const QString savegame_variable_field_name = "savegame_variable";
 const QString sound_field_name = "sound";
 const QString sprite_field_name = "sprite";
 const QString starting_location_mode_field_name = "starting_location_mode";
+const QString tiled_field_name = "tiled";
+const QString tileset_field_name = "tileset";
 const QString transition_field_name = "transition";
 const QString treasure_name_field_name = "treasure_name";
 const QString treasure_variant_field_name = "treasure_variant";
@@ -105,7 +114,7 @@ EntityModel& EditEntityDialog::get_entity_before() const {
  */
 EntityModelPtr EditEntityDialog::get_entity_after() {
 
-  entity_after = std::move(EntityModel::clone(get_map(), entity_before.get_index()));
+  entity_after = EntityModel::clone(get_map(), entity_before.get_index());
   apply();
   return std::move(entity_after);
 }
@@ -151,7 +160,7 @@ void EditEntityDialog::height_changed(int height) {
  */
 void EditEntityDialog::direction_changed() {
 
-  entity_after = std::move(EntityModel::clone(get_map(), entity_before.get_index()));
+  entity_after = EntityModel::clone(get_map(), entity_before.get_index());
   apply_direction();
 
   resize_mode = entity_after->get_resize_mode();
@@ -162,6 +171,157 @@ void EditEntityDialog::direction_changed() {
   }
 
   entity_after.reset();
+}
+
+/**
+ * @brief Slot called when the user wants add a new user property.
+ */
+void EditEntityDialog::add_user_property_requested() {
+
+  QTreeWidgetItem* selected = ui.user_properties_table->currentItem();
+  QString selected_key =
+      selected != nullptr ? selected->data(0, 0).toString() : "";
+  QString selected_value =
+      selected != nullptr ? selected->data(1, 0).toString() : "";
+
+  NewEntityUserPropertyDialog dialog(selected_key, selected_value, this);
+
+  int result = dialog.exec();
+  if (result != QDialog::Accepted) {
+    return;
+  }
+
+  QPair<QString, QString> property = dialog.get_property();
+
+  if (user_property_exists(property.first)) {
+    GuiTools::error_dialog(
+      tr("The property '%1' already exists").arg(property.first));
+    return;
+  }
+
+  QTreeWidgetItem* item = new QTreeWidgetItem();
+  item->setData(0, Qt::DisplayRole, property.first);
+  item->setData(1, Qt::DisplayRole, property.second);
+  ui.user_properties_table->addTopLevelItem(item);
+
+  ui.user_properties_table->setCurrentItem(item);
+}
+
+/**
+ * @brief Slot called when the user wants change a user property key.
+ */
+void EditEntityDialog::change_user_property_key_requested() {
+
+  QTreeWidgetItem* selected = ui.user_properties_table->currentItem();
+  if (selected == nullptr) {
+    return;
+  }
+
+  QString old_key =selected->data(0, 0).toString();
+  bool ok;
+  QString new_key = QInputDialog::getText(
+        this, tr("Change user property key"),
+        tr("Change the key of the property '%1':").arg(old_key),
+        QLineEdit::Normal, old_key, &ok);
+
+  if (!ok || new_key == old_key) {
+    return;
+  }
+
+  if (new_key.isEmpty()) {
+    GuiTools::error_dialog(tr("The property key cannot be empty"));
+    return;
+  }
+
+  if (user_property_exists(new_key)) {
+    GuiTools::error_dialog(
+      tr("The property '%1' already exists").arg(new_key));
+    return;
+  }
+
+  if (!entity_before.is_valid_user_property_key(new_key)) {
+    GuiTools::error_dialog(
+      tr("The key '%1' is invalid").arg(new_key));
+    return;
+  }
+
+  selected->setData(0, 0, new_key);
+}
+
+/**
+ * @brief Slot called when the user wants delete a user property.
+ */
+void EditEntityDialog::delete_user_property_requested() {
+
+  QTreeWidgetItem* item = ui.user_properties_table->currentItem();
+  if (item != nullptr) {
+    delete item;
+    update_user_property_buttons();
+  }
+}
+
+/**
+ * @brief Slot called when the user wants move up a user property.
+ */
+void EditEntityDialog::move_up_user_property_requested() {
+
+  int index = ui.user_properties_table->currentIndex().row();
+  if (index <= 0) {
+    return;
+  }
+
+  QTreeWidgetItem* item = ui.user_properties_table->takeTopLevelItem(index);
+  ui.user_properties_table->insertTopLevelItem(index - 1, item);
+
+  ui.user_properties_table->setCurrentItem(item);
+}
+
+/**
+ * @brief Slot called when the user wants move down a user property.
+ */
+void EditEntityDialog::move_down_user_property_requested() {
+
+  int index = ui.user_properties_table->currentIndex().row();
+  int count = ui.user_properties_table->topLevelItemCount();
+  if (index >= count - 1) {
+    return;
+  }
+
+  QTreeWidgetItem* item = ui.user_properties_table->takeTopLevelItem(index);
+  ui.user_properties_table->insertTopLevelItem(index + 1, item);
+
+  ui.user_properties_table->setCurrentItem(item);
+}
+
+/**
+ * @brief Slot called when the user double click on the user property table.
+ */
+void EditEntityDialog::user_property_double_clicked(
+    QTreeWidgetItem* item, int column) {
+
+  Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+  if (column == 1) {
+    flags |= Qt::ItemIsEditable;
+  }
+
+  item->setFlags(flags);
+}
+
+/**
+ * @brief Slot called when the selected user property changes.
+ */
+void EditEntityDialog::update_user_property_buttons() {
+
+  QTreeWidgetItem* item = ui.user_properties_table->currentItem();
+  int index = ui.user_properties_table->currentIndex().row();
+  int count = ui.user_properties_table->topLevelItemCount();
+  bool exists = item != nullptr;
+
+  ui.change_property_key_button->setEnabled(exists);
+  ui.delete_property_button->setEnabled(exists);
+
+  ui.move_property_up_button->setEnabled(exists && index > 0);
+  ui.move_property_down_button->setEnabled(exists && index < count - 1);
 }
 
 /**
@@ -214,24 +374,30 @@ void EditEntityDialog::initialize() {
   initialize_destination();
   initialize_destination_map();
   initialize_direction();
+  initialize_enabled_at_start();
   initialize_font();
   initialize_ground();
   initialize_layer();
-  initialize_maximum_moves();
+  initialize_max_moves();
   initialize_model();
   initialize_name();
   initialize_opening_method();
+  initialize_origin();
+  initialize_pattern();
   initialize_savegame_variable();
   initialize_size();
   initialize_sound();
   initialize_sprite();
+  initialize_tiled();
   initialize_starting_location_mode();
   initialize_subtype();
+  initialize_tileset();
   initialize_transition();
   initialize_treasure();
   initialize_type();
   initialize_weight();
   initialize_xy();
+  initialize_user_properties();
 
   adjustSize();
 }
@@ -251,56 +417,62 @@ void EditEntityDialog::apply() {
   apply_destination();
   apply_destination_map();
   apply_direction();
+  apply_enabled_at_start();
   apply_font();
   apply_ground();
   apply_layer();
-  apply_maximum_moves();
+  apply_max_moves();
   apply_model();
   apply_name();
   apply_opening_method();
+  apply_origin();
+  apply_pattern();  // Before applying the size.
   apply_savegame_variable();
   apply_size();
   apply_sound();
   apply_sprite();
+  apply_tiled();
   apply_starting_location_mode();
   apply_subtype();
+  apply_tileset();
   apply_transition();
   apply_treasure();
   apply_type();
   apply_weight();
   apply_xy();
+  apply_user_properties();
 }
 
 /**
- * @brief Sets up the behavior of a field with a checkbox or a label depending
+ * @brief Sets up the behavior of a field with a check box or a label depending
  * on whether it is optional.
  * @param field_name The field to initialize.
- * @param label_layout Parent layout of the checkbox and label to handle
+ * @param label_layout Parent layout of the check box and label to handle
  * (one of them is removed). If nullptr, nothing is removed.
  * @param label A label to be used when the field is mandatory.
  * Can be nullptr.
- * @param checkbox A checkbox to be used instead of the label when the field
+ * @param check_box A check box to be used instead of the label when the field
  * is optional. Can be nullptr.
- * @param field The field widget to disable when the checkbox is disabled.
+ * @param field The field widget to disable when the check box is disabled.
  * Can be nullptr.
  */
 void EditEntityDialog::initialize_possibly_optional_field(const QString& field_name,
                                                           QLayout* label_layout,
                                                           QWidget* label,
-                                                          QCheckBox* checkbox,
+                                                          QCheckBox* check_box,
                                                           QWidget* field) {
 
   if (!entity_before.is_field_optional(field_name)) {
-    // Mandatory field: remove the checkbox if any, keep the label.
-    if (label_layout != nullptr && checkbox != nullptr) {
-      checkbox->setChecked(true);  // Make it check even if hidden to simplify apply_xxx() functions.
-      checkbox->hide();
-      label_layout->removeWidget(checkbox);
+    // Mandatory field: remove the check_box if any, keep the label.
+    if (label_layout != nullptr && check_box != nullptr) {
+      check_box->setChecked(true);  // Make it check even if hidden to simplify apply_xxx() functions.
+      check_box->hide();
+      label_layout->removeWidget(check_box);
     }
     return;
   }
 
-  // Optional field: remove the label if any, keep the checkbox.
+  // Optional field: remove the label if any, keep the check box.
   if (label_layout != nullptr && label != nullptr) {
     label->hide();
     label_layout->removeWidget(label);
@@ -314,27 +486,31 @@ void EditEntityDialog::initialize_possibly_optional_field(const QString& field_n
     }
   }
   else {
-    if (checkbox != nullptr) {
-      checkbox->setChecked(true);
+    if (check_box != nullptr) {
+      check_box->setChecked(true);
     }
   }
-  if (checkbox != nullptr && field != nullptr) {
-    connect(checkbox, SIGNAL(toggled(bool)),
+  if (check_box != nullptr && field != nullptr) {
+    connect(check_box, SIGNAL(toggled(bool)),
             field, SLOT(setEnabled(bool)));
   }
 }
 
 /**
  * @brief Removes a row of the form layout.
- * @param label Label of the row.
- * @param field Field of the row.
+ * @param label Label of the row or nullptr if there is no label to remove.
+ * @param field Field of the row or nullptr if there is no field to remove.
  */
 void EditEntityDialog::remove_field(QWidget* label, QWidget* field) {
 
-  label->hide();
-  ui.form_layout->removeWidget(label);
-  field->hide();
-  ui.form_layout->removeWidget(field);
+  if (label != nullptr) {
+    label->hide();
+    ui.form_layout->removeWidget(label);
+  }
+  if (field != nullptr) {
+    field->hide();
+    ui.form_layout->removeWidget(field);
+  }
 }
 
 /**
@@ -343,13 +519,12 @@ void EditEntityDialog::remove_field(QWidget* label, QWidget* field) {
 void EditEntityDialog::initialize_simple_booleans() {
 
   simple_boolean_fields <<
-    SimpleBooleanField("enabled_at_start", tr("Initial state"), tr("Enabled at start")) <<
     SimpleBooleanField("default", tr("Default"), tr("Set as the default destination")) <<
     SimpleBooleanField("can_be_cut", tr("Cutting the object"), tr("Can be cut"), ui.damage_on_enemies_layout) <<
     SimpleBooleanField("can_explode", tr("Exploding"), tr("Can explode"), ui.damage_on_enemies_layout) <<
     SimpleBooleanField("can_regenerate", tr("Regeneration"), tr("Can regenerate"), ui.damage_on_enemies_layout) <<
-    SimpleBooleanField("pushable", tr("Interactions"), tr("Can be pushed")) <<
-    SimpleBooleanField("pullable", "", tr("Can be pulled")) <<
+    SimpleBooleanField("pushable", tr("Interactions"), tr("Can be pushed"), ui.max_moves_layout) <<
+    SimpleBooleanField("pullable", "", tr("Can be pulled"), ui.max_moves_layout) <<
     SimpleBooleanField("needs_block", tr("Activation"), tr("Requires a block to be activated")) <<
     SimpleBooleanField("inactivate_when_leaving", tr("Leaving the switch"), tr("Deactivate when leaving")) <<
     SimpleBooleanField("stops_hero", tr("Hero"), tr("Obstacle for the hero")) <<
@@ -364,23 +539,23 @@ void EditEntityDialog::initialize_simple_booleans() {
   for (SimpleBooleanField& field : simple_boolean_fields) {
     if (entity_before.has_field(field.field_name)) {
       QLabel* label = new QLabel(field.label_text, this);
-      QCheckBox* checkbox = new QCheckBox(field.checkbox_text, this);
-      checkbox->setChecked(entity_before.get_field(field.field_name).toBool());
-      field.checkbox = checkbox;
+      QCheckBox* check_box = new QCheckBox(field.check_box_text, this);
+      check_box->setChecked(entity_before.get_field(field.field_name).toBool());
+      field.check_box = check_box;
+      int row = 0;
+      QFormLayout::ItemRole role;
       if (field.before_widget != nullptr) {
-        int row = 0;
-        QFormLayout::ItemRole role;
         ui.form_layout->getWidgetPosition(field.before_widget, &row, &role);
-        if (row != -1) {
-          ui.form_layout->insertRow(row, label, checkbox);
-        }
-        else {
-          // Widget not found.
-          ui.form_layout->addRow(label, checkbox);
-        }
       }
       else {
-        ui.form_layout->addRow(label, checkbox);
+        ui.form_layout->getLayoutPosition(ui.custom_properties_layout, &row, &role);
+      }
+      if (row != -1) {
+        ui.form_layout->insertRow(row, label, check_box);
+      }
+      else {
+        // Widget not found.
+        ui.form_layout->addRow(label, check_box);
       }
     }
   }
@@ -391,9 +566,9 @@ void EditEntityDialog::initialize_simple_booleans() {
  */
 void EditEntityDialog::apply_simple_booleans() {
 
-  Q_FOREACH (const SimpleBooleanField& field, simple_boolean_fields) {
-    if (entity_before.has_field(field.field_name) && field.checkbox != nullptr) {
-      entity_after->set_field(field.field_name, field.checkbox->isChecked());
+  for (const SimpleBooleanField& field : simple_boolean_fields) {
+    if (entity_before.has_field(field.field_name) && field.check_box != nullptr) {
+      entity_after->set_field(field.field_name, field.check_box->isChecked());
     }
   }
 }
@@ -442,7 +617,7 @@ void EditEntityDialog::initialize_simple_integers() {
  */
 void EditEntityDialog::apply_simple_integers() {
 
-  Q_FOREACH (const SimpleIntegerField& field, simple_integer_fields) {
+  for (const SimpleIntegerField& field : simple_integer_fields) {
     if (entity_before.has_field(field.field_name) && field.spinbox != nullptr) {
       entity_after->set_field(field.field_name, field.spinbox->value());
     }
@@ -474,14 +649,14 @@ void EditEntityDialog::initialize_simple_strings() {
       left_widget = new QLabel(field.label_text, this);
     }
     else {
-      field.checkbox = new QCheckBox(field.label_text, this);
+      field.check_box = new QCheckBox(field.label_text, this);
       initialize_possibly_optional_field(
             field.field_name,
             nullptr,
             nullptr,
-            field.checkbox,
+            field.check_box,
             line_edit);
-      left_widget = field.checkbox;
+      left_widget = field.check_box;
     }
 
     if (field.before_widget != nullptr) {
@@ -507,10 +682,10 @@ void EditEntityDialog::initialize_simple_strings() {
  */
 void EditEntityDialog::apply_simple_strings() {
 
-  Q_FOREACH (const SimpleStringField& field, simple_string_fields) {
+  for (const SimpleStringField& field : simple_string_fields) {
     if (entity_before.has_field(field.field_name) && field.line_edit != nullptr) {
       QString value;
-      if (field.checkbox == nullptr || field.checkbox->isChecked()) {
+      if (field.check_box == nullptr || field.check_box->isChecked()) {
         value = field.line_edit->text();
       }
       entity_after->set_field(field.field_name, value);
@@ -632,7 +807,7 @@ void EditEntityDialog::apply_breed() {
 void EditEntityDialog::initialize_damage_on_enemies() {
 
   if (!entity_before.has_field(damage_on_enemies_field_name)) {
-    remove_field(ui.damage_on_enemies_checkbox, ui.damage_on_enemies_layout);
+    remove_field(ui.damage_on_enemies_check_box, ui.damage_on_enemies_layout);
     return;
   }
 
@@ -643,9 +818,9 @@ void EditEntityDialog::initialize_damage_on_enemies() {
     ui.damage_on_enemies_layout->setEnabled(false);
   }
   else {
-    ui.damage_on_enemies_checkbox->setChecked(true);
+    ui.damage_on_enemies_check_box->setChecked(true);
   }
-  connect(ui.damage_on_enemies_checkbox, SIGNAL(toggled(bool)),
+  connect(ui.damage_on_enemies_check_box, SIGNAL(toggled(bool)),
           ui.damage_on_enemies_layout, SLOT(setEnabled(bool)));
 }
 
@@ -655,7 +830,7 @@ void EditEntityDialog::initialize_damage_on_enemies() {
 void EditEntityDialog::apply_damage_on_enemies() {
 
   if (entity_after->has_field(damage_on_enemies_field_name)) {
-    entity_after->set_field(damage_on_enemies_field_name, ui.damage_on_enemies_checkbox->isChecked() ?
+    entity_after->set_field(damage_on_enemies_field_name, ui.damage_on_enemies_check_box->isChecked() ?
                               ui.damage_on_enemies_field->value() : 0);
   }
 }
@@ -788,6 +963,27 @@ void EditEntityDialog::apply_direction() {
 }
 
 /**
+ * @brief Initializes the enabled at start field.
+ */
+void EditEntityDialog::initialize_enabled_at_start() {
+
+  if (!entity_before.is_dynamic()) {
+    remove_field(ui.enabled_at_start_label, ui.enabled_at_start_field);
+    return;
+  }
+
+  ui.enabled_at_start_field->setChecked(entity_before.is_enabled_at_start());
+}
+
+/**
+ * @brief Updates the entity from the enabled at start field.
+ */
+void EditEntityDialog::apply_enabled_at_start() {
+
+  entity_after->set_enabled_at_start(ui.enabled_at_start_field->isChecked());
+}
+
+/**
  * @brief Initializes the font field.
  */
 void EditEntityDialog::initialize_font() {
@@ -820,7 +1016,7 @@ void EditEntityDialog::apply_font() {
 void EditEntityDialog::initialize_ground() {
 
   if (!entity_before.has_field(ground_field_name)) {
-    remove_field(ui.ground_checkbox, ui.ground_field);
+    remove_field(ui.ground_check_box, ui.ground_field);
     return;
   }
 
@@ -828,7 +1024,7 @@ void EditEntityDialog::initialize_ground() {
         ground_field_name,
         nullptr,
         nullptr,
-        ui.ground_checkbox,
+        ui.ground_check_box,
         ui.ground_field);
 
   QString ground_name = entity_before.get_field(ground_field_name).toString();
@@ -841,7 +1037,7 @@ void EditEntityDialog::initialize_ground() {
 void EditEntityDialog::apply_ground() {
 
   if (entity_after->has_field(ground_field_name)) {
-    Ground ground = ui.ground_checkbox->isChecked() ? ui.ground_field->get_selected_value() : Ground::WALL;
+    Ground ground = ui.ground_check_box->isChecked() ? ui.ground_field->get_selected_value() : Ground::WALL;
     entity_after->set_field(ground_field_name, GroundTraits::get_lua_name(ground));
   }
 }
@@ -867,32 +1063,51 @@ void EditEntityDialog::apply_layer() {
 /**
  * @brief Initializes the maximum moves field.
  */
-void EditEntityDialog::initialize_maximum_moves() {
+void EditEntityDialog::initialize_max_moves() {
 
-  if (!entity_before.has_field(maximum_moves_field_name)) {
-    remove_field(ui.maximum_moves_label, ui.maximum_moves_field);
+  if (!entity_before.has_field(max_moves_field_name) &&
+      !entity_before.has_field(maximum_moves_field_name)) {
+    remove_field(nullptr, ui.max_moves_layout);
     return;
   }
 
-  ui.maximum_moves_field->addItem(tr("Cannot move"), 0);
-  ui.maximum_moves_field->addItem(tr("1 move only"), 1);
-  ui.maximum_moves_field->addItem(tr("Unlimited"), 2);
+  int max_moves = entity_before.get_field(max_moves_field_name).toInt();
+  int maximum_moves = entity_before.get_field(maximum_moves_field_name).toInt();
 
-  int value = entity_before.get_field(maximum_moves_field_name).toInt();
-  int index = ui.maximum_moves_field->findData(value);
-  if (index != -1) {
-    ui.maximum_moves_field->setCurrentIndex(index);
+  if (max_moves == -1 && maximum_moves != -1) {
+    // The legacy maximum_moves value was set.
+    if (maximum_moves == 2) {
+      max_moves = -1;  // Unlimited.
+    }
+    else {
+      max_moves = maximum_moves;
+    }
   }
+
+  if (max_moves == -1) {
+    ui.max_moves_check_box->setChecked(false);
+    ui.max_moves_field->setEnabled(false);
+  }
+  else {
+    ui.max_moves_check_box->setChecked(true);
+    ui.max_moves_field->setEnabled(true);
+    ui.max_moves_field->setValue(max_moves);
+  }
+
+  connect(ui.max_moves_check_box, SIGNAL(toggled(bool)),
+          ui.max_moves_field, SLOT(setEnabled(bool)));
 }
 
 /**
  * @brief Updates the entity from the maximum moves field.
  */
-void EditEntityDialog::apply_maximum_moves() {
+void EditEntityDialog::apply_max_moves() {
 
-  if (entity_after->has_field(maximum_moves_field_name)) {
-    int value = ui.maximum_moves_field->currentData().toInt();
-    entity_after->set_field(maximum_moves_field_name, value);
+  if (entity_after->has_field(max_moves_field_name) ||
+      entity_after->has_field(maximum_moves_field_name)) {
+    entity_after->set_field(max_moves_field_name, ui.max_moves_check_box->isChecked() ?
+                              ui.max_moves_field->value() : -1);
+    entity_after->set_field(maximum_moves_field_name, -1);  // Make sure maximum_moves is always unset.
   }
 }
 
@@ -902,7 +1117,7 @@ void EditEntityDialog::apply_maximum_moves() {
 void EditEntityDialog::initialize_model() {
 
   if (!entity_before.has_field(model_field_name)) {
-    remove_field(ui.model_checkbox, ui.model_field);
+    remove_field(ui.model_check_box, ui.model_field);
     return;
   }
 
@@ -910,7 +1125,7 @@ void EditEntityDialog::initialize_model() {
         model_field_name,
         nullptr,
         nullptr,
-        ui.model_checkbox,
+        ui.model_check_box,
         ui.model_field);
   ui.model_field->set_quest(get_quest());
   ui.model_field->set_resource_type(ResourceType::ENTITY);
@@ -924,7 +1139,7 @@ void EditEntityDialog::initialize_model() {
 void EditEntityDialog::apply_model() {
 
   if (entity_after->has_field(model_field_name)) {
-    entity_after->set_field(model_field_name, ui.model_checkbox->isChecked() ?
+    entity_after->set_field(model_field_name, ui.model_check_box->isChecked() ?
                               ui.model_field->get_selected_id() : "");
   }
 }
@@ -935,7 +1150,7 @@ void EditEntityDialog::apply_model() {
 void EditEntityDialog::initialize_name() {
 
   if (entity_before.get_type() != EntityType::DESTINATION) {
-    ui.name_update_teletransporters_checkbox->setVisible(false);
+    ui.name_update_teletransporters_check_box->setVisible(false);
   }
 
   if (!entity_before.is_dynamic()) {
@@ -955,7 +1170,7 @@ void EditEntityDialog::apply_name() {
   entity_after->set_name(ui.name_field->text());
 
   if (entity_after->get_type() == EntityType::DESTINATION) {
-    const bool update_teletransporters = ui.name_update_teletransporters_checkbox->isChecked();
+    const bool update_teletransporters = ui.name_update_teletransporters_check_box->isChecked();
     static_cast<Destination&>(entity_before).set_update_teletransporters(update_teletransporters);
   }
 }
@@ -1076,30 +1291,30 @@ void EditEntityDialog::initialize_opening_method() {
   // Prepare the savegame variable fields.
   if (radio == ui.opening_method_savegame_variable_radio) {
     ui.opening_condition_savegame_variable_field->setText(opening_condition);
-    ui.opening_condition_savegame_variable_consumed_checkbox->setChecked(opening_condition_consumed);
+    ui.opening_condition_savegame_variable_consumed_check_box->setChecked(opening_condition_consumed);
   }
   else {
     ui.opening_condition_savegame_variable_field->setEnabled(false);
-    ui.opening_condition_savegame_variable_consumed_checkbox->setEnabled(false);
+    ui.opening_condition_savegame_variable_consumed_check_box->setEnabled(false);
   }
   connect(ui.opening_method_savegame_variable_radio, SIGNAL(toggled(bool)),
           ui.opening_condition_savegame_variable_field, SLOT(setEnabled(bool)));
   connect(ui.opening_method_savegame_variable_radio, SIGNAL(toggled(bool)),
-          ui.opening_condition_savegame_variable_consumed_checkbox, SLOT(setEnabled(bool)));
+          ui.opening_condition_savegame_variable_consumed_check_box, SLOT(setEnabled(bool)));
 
   // Prepare the item fields.
   if (radio == ui.opening_method_item_radio) {
     ui.opening_condition_item_field->set_selected_id(opening_condition);
-    ui.opening_condition_item_consumed_checkbox->setChecked(opening_condition_consumed);
+    ui.opening_condition_item_consumed_check_box->setChecked(opening_condition_consumed);
   }
   else {
     ui.opening_condition_item_field->setEnabled(false);
-    ui.opening_condition_item_consumed_checkbox->setEnabled(false);
+    ui.opening_condition_item_consumed_check_box->setEnabled(false);
   }
   connect(ui.opening_method_item_radio, SIGNAL(toggled(bool)),
           ui.opening_condition_item_field, SLOT(setEnabled(bool)));
   connect(ui.opening_method_item_radio, SIGNAL(toggled(bool)),
-          ui.opening_condition_item_consumed_checkbox, SLOT(setEnabled(bool)));
+          ui.opening_condition_item_consumed_check_box, SLOT(setEnabled(bool)));
 }
 
 /**
@@ -1118,12 +1333,70 @@ void EditEntityDialog::apply_opening_method() {
 
   if (ui.opening_method_savegame_variable_radio->isChecked()) {
     entity_after->set_field(opening_condition_field_name, ui.opening_condition_savegame_variable_field->text());
-    entity_after->set_field(opening_condition_consumed_field_name, ui.opening_condition_savegame_variable_consumed_checkbox->isChecked());
+    entity_after->set_field(opening_condition_consumed_field_name, ui.opening_condition_savegame_variable_consumed_check_box->isChecked());
   }
   else if (ui.opening_method_item_radio->isChecked()) {
     entity_after->set_field(opening_condition_field_name, ui.opening_condition_item_field->get_selected_id());
-    entity_after->set_field(opening_condition_consumed_field_name, ui.opening_condition_item_consumed_checkbox->isChecked());
+    entity_after->set_field(opening_condition_consumed_field_name, ui.opening_condition_item_consumed_check_box->isChecked());
   }
+}
+
+/**
+ * @brief Initializes the origin fields.
+ */
+void EditEntityDialog::initialize_origin() {
+
+  if (!entity_before.has_origin_fields()) {
+    remove_field(ui.origin_label, ui.origin_field);
+    return;
+  }
+
+  // Initialize spinboxes.
+  ui.origin_field->config("x", -999999, 999999);
+
+  // Show the current value in the spinboxes.
+  ui.origin_field->set_point(entity_before.get_origin());
+}
+
+/**
+ * @brief Updates the entity from the origin fields.
+ */
+void EditEntityDialog::apply_origin() {
+
+  if (entity_after->has_origin_fields()) {
+    QPoint origin = ui.origin_field->get_point();
+    QPoint old_top_left = entity_after->get_top_left();
+    entity_after->set_origin(origin);
+    entity_after->set_top_left(old_top_left);
+  }
+}
+
+/**
+ * @brief Initializes the pattern field.
+ */
+void EditEntityDialog::initialize_pattern() {
+
+  if (!entity_before.has_field(pattern_field_name)) {
+    remove_field(ui.pattern_label, ui.pattern_field);
+    return;
+  }
+
+  // Show the initial value.
+  QString value = entity_before.get_field(pattern_field_name).toString();
+  ui.pattern_field->set_pattern_id(value);
+}
+
+/**
+ * @brief Updates the entity from the pattern field.
+ */
+void EditEntityDialog::apply_pattern() {
+
+  if (!entity_before.has_field(pattern_field_name)) {
+    return;
+  }
+
+  QString value = ui.pattern_field->get_pattern_id();
+  entity_after->set_field(pattern_field_name, value);
 }
 
 /**
@@ -1132,26 +1405,26 @@ void EditEntityDialog::apply_opening_method() {
 void EditEntityDialog::initialize_savegame_variable() {
 
   if (!entity_before.has_field(savegame_variable_field_name)) {
-    remove_field(ui.savegame_variable_checkbox, ui.savegame_variable_layout);
+    remove_field(ui.savegame_variable_check_box, ui.savegame_variable_layout);
     return;
   }
 
-  // Specific checkbox text for some types of entities.
-  const QMap<EntityType, QString> checkbox_texts = {
+  // Specific check box text for some types of entities.
+  const QMap<EntityType, QString> check_box_texts = {
     { EntityType::ENEMY, tr("Save the enemy state") },
     { EntityType::DOOR, tr("Save the door state") }
   };
-  QString checkbox_text = checkbox_texts.value(entity_before.get_type());
-  if (!checkbox_text.isEmpty()) {
-    ui.savegame_variable_checkbox->setText(checkbox_text);
+  QString check_box_text = check_box_texts.value(entity_before.get_type());
+  if (!check_box_text.isEmpty()) {
+    ui.savegame_variable_check_box->setText(check_box_text);
   }
 
-  // Connect the checkbox to the field.
+  // Connect the check box to the field.
   initialize_possibly_optional_field(
         savegame_variable_field_name,
         nullptr,
         nullptr,
-        ui.savegame_variable_checkbox,
+        ui.savegame_variable_check_box,
         ui.savegame_variable_layout);
 
   // Only accept valid identifiers as savegame variable names.
@@ -1168,7 +1441,7 @@ void EditEntityDialog::initialize_savegame_variable() {
 void EditEntityDialog::apply_savegame_variable() {
 
   if (entity_before.has_field(savegame_variable_field_name)) {
-    QString value = ui.savegame_variable_checkbox->isChecked() ?
+    QString value = ui.savegame_variable_check_box->isChecked() ?
           ui.savegame_variable_field->text() : "";
     entity_after->set_field(savegame_variable_field_name, value);
   }
@@ -1214,17 +1487,9 @@ void EditEntityDialog::apply_size() {
   if (entity_after->has_size_fields()) {
     QSize size = ui.size_field->get_size();
 
-    // Rounding the size.
-    float base_width = entity_before.get_base_size().width();
-    float base_height = entity_before.get_base_size().height();
-
-    size.setWidth(qRound(size.width() / base_width) * base_width);
-    size.setHeight(qRound(size.height() / base_height) * base_height);
-
-    // If the size is invalid, refuse the change.
-    if (entity_after->is_size_valid(size)) {
-      entity_after->set_size(size);
-    }
+    // Round the size.
+    size = entity_after->get_closest_valid_size(size);
+    entity_after->set_size(size);
   }
 }
 
@@ -1238,11 +1503,11 @@ void EditEntityDialog::initialize_sound() {
     field_name = sound_field_name;
   }
   else if (entity_before.has_field(destruction_sound_field_name)) {
-    ui.sound_checkbox->setText(tr("Play a sound when destroyed"));
+    ui.sound_check_box->setText(tr("Play a sound when destroyed"));
     field_name = destruction_sound_field_name;
   }
   else {
-    remove_field(ui.sound_checkbox, ui.sound_field);
+    remove_field(ui.sound_check_box, ui.sound_field);
     return;
   }
 
@@ -1251,7 +1516,7 @@ void EditEntityDialog::initialize_sound() {
         field_name,
         nullptr,
         nullptr,
-        ui.sound_checkbox,
+        ui.sound_check_box,
         ui.sound_field);
   QString sound = entity_before.get_field(field_name).toString();
   ui.sound_field->set_selected_id(sound);
@@ -1273,7 +1538,7 @@ void EditEntityDialog::apply_sound() {
     return;
   }
 
-  entity_after->set_field(field_name, ui.sound_checkbox->isChecked() ?
+  entity_after->set_field(field_name, ui.sound_check_box->isChecked() ?
                             ui.sound_field->get_selected_id() : "");
 }
 
@@ -1283,21 +1548,26 @@ void EditEntityDialog::apply_sound() {
 void EditEntityDialog::initialize_sprite() {
 
   if (!entity_before.has_field(sprite_field_name)) {
-    remove_field(ui.sprite_label_checkbox, ui.sprite_field);
+    remove_field(ui.sprite_label_check_box, ui.sprite_field);
     return;
   }
 
+  ui.sprite_label_check_box->layout()->setAlignment(ui.sprite_label, Qt::AlignTop);
+  ui.sprite_label_check_box->layout()->setAlignment(ui.sprite_check_box, Qt::AlignTop);
   initialize_possibly_optional_field(
         sprite_field_name,
-        ui.sprite_label_checkbox->layout(),
+        ui.sprite_label_check_box->layout(),
         ui.sprite_label,
-        ui.sprite_checkbox,
+        ui.sprite_check_box,
         ui.sprite_field);
   ui.sprite_field->set_resource_type(ResourceType::SPRITE);
   ui.sprite_field->set_quest(get_quest());
   ui.sprite_field->set_tileset_id(get_map().get_tileset_id());
   QString sprite = entity_before.get_field(sprite_field_name).toString();
   ui.sprite_field->set_selected_id(sprite);
+
+  connect(ui.sprite_check_box, &QCheckBox::clicked,
+          ui.tiled_field, &QCheckBox::setEnabled);
 }
 
 /**
@@ -1306,7 +1576,7 @@ void EditEntityDialog::initialize_sprite() {
 void EditEntityDialog::apply_sprite() {
 
   if (entity_after->has_field(sprite_field_name)) {
-    entity_after->set_field(sprite_field_name, ui.sprite_checkbox->isChecked() ?
+    entity_after->set_field(sprite_field_name, ui.sprite_check_box->isChecked() ?
                               ui.sprite_field->get_selected_id() : "");
   }
 }
@@ -1371,6 +1641,106 @@ void EditEntityDialog::apply_subtype() {
 }
 
 /**
+ * @brief Initializes the tiled field.
+ */
+void EditEntityDialog::initialize_tiled() {
+
+  if (!entity_before.has_field(tiled_field_name)) {
+    remove_field(nullptr, ui.tiled_field);
+    return;
+  }
+
+  if (!ui.sprite_check_box->isChecked()) {
+    ui.tiled_field->setEnabled(false);
+  }
+  else {
+    ui.tiled_field->setEnabled(true);
+  }
+  ui.tiled_field->setChecked(entity_before.get_field(tiled_field_name).toBool());
+}
+
+/**
+ * @brief Updates the entity from the tiled field.
+ */
+void EditEntityDialog::apply_tiled() {
+
+  if (entity_after->has_field(tiled_field_name)) {
+    entity_after->set_field(tiled_field_name, ui.tiled_field->isChecked());
+  }
+}
+
+/**
+ * @brief Initializes the tileset field.
+ */
+void EditEntityDialog::initialize_tileset() {
+
+  if (!entity_before.has_field(tileset_field_name)) {
+    remove_field(ui.tileset_label, ui.tileset_layout);
+    return;
+  }
+
+  ui.tileset_field->set_quest(get_quest());
+  ui.tileset_field->set_resource_type(ResourceType::TILESET);
+
+  QString tileset_id = entity_before.get_field(tileset_field_name).toString();
+  if (tileset_id.isEmpty()) {
+    ui.tileset_from_map_radio->setChecked(true);
+    ui.tileset_field->setEnabled(false);
+  }
+  else {
+    ui.tileset_other_radio->setChecked(true);
+    ui.tileset_field->set_selected_id(tileset_id);
+  }
+
+  connect(ui.tileset_from_map_radio, &QRadioButton::clicked, [this]() {
+    ui.tileset_field->setEnabled(false);
+    update_pattern_chooser_tileset();
+  });
+  connect(ui.tileset_other_radio, &QRadioButton::clicked, [this]() {
+    ui.tileset_field->setEnabled(true);
+    update_pattern_chooser_tileset();
+  });
+
+  connect(ui.tileset_field, &QComboBox::currentTextChanged,
+          this, &EditEntityDialog::update_pattern_chooser_tileset);
+
+  update_pattern_chooser_tileset();
+}
+
+/**
+ * @brief Updates the entity from the tileset field.
+ */
+void EditEntityDialog::apply_tileset() {
+
+  if (entity_before.has_field(tileset_field_name)) {
+    QString tileset_id;
+    if (ui.tileset_other_radio->isChecked()) {
+      tileset_id = ui.tileset_field->get_selected_id();
+    }
+    entity_after->set_field(tileset_field_name, tileset_id);
+  }
+}
+
+/**
+ * @brief Sets the tileset of the pattern chooser.
+ */
+void EditEntityDialog::update_pattern_chooser_tileset() {
+
+  QString tileset_id;
+  if (ui.tileset_other_radio->isChecked()) {
+    tileset_id = ui.tileset_field->get_selected_id();
+    if (!tileset_id.isEmpty()) {
+      TilesetModel* tileset = get_quest().get_tileset(tileset_id);
+      ui.pattern_field->set_tileset(tileset);
+      return;
+    }
+  }
+
+  // Use the tileset of the map otherwise.
+  ui.pattern_field->set_tileset(get_map().get_tileset_model());
+}
+
+/**
  * @brief Initializes the transition field.
  */
 void EditEntityDialog::initialize_transition() {
@@ -1425,11 +1795,11 @@ void EditEntityDialog::initialize_treasure() {
   }
   else {
     ui.treasure_savegame_variable_field->setText(treasure_savegame_variable);
-    ui.save_treasure_checkbox->setChecked(true);
+    ui.save_treasure_check_box->setChecked(true);
   }
-  connect(ui.save_treasure_checkbox, SIGNAL(toggled(bool)),
+  connect(ui.save_treasure_check_box, SIGNAL(toggled(bool)),
           ui.treasure_savegame_variable_label, SLOT(setEnabled(bool)));
-  connect(ui.save_treasure_checkbox, SIGNAL(toggled(bool)),
+  connect(ui.save_treasure_check_box, SIGNAL(toggled(bool)),
           ui.treasure_savegame_variable_field, SLOT(setEnabled(bool)));
 }
 
@@ -1446,7 +1816,7 @@ void EditEntityDialog::apply_treasure() {
 
   entity_after->set_field(treasure_name_field_name, ui.treasure_name_field->get_selected_id());
   entity_after->set_field(treasure_variant_field_name, ui.treasure_variant_field->value());
-  entity_after->set_field(treasure_savegame_variable_field_name, ui.save_treasure_checkbox->isChecked() ?
+  entity_after->set_field(treasure_savegame_variable_field_name, ui.save_treasure_check_box->isChecked() ?
                             ui.treasure_savegame_variable_field->text() : "");
 }
 
@@ -1473,22 +1843,22 @@ void EditEntityDialog::apply_type() {
 void EditEntityDialog::initialize_weight() {
 
   if (!entity_before.has_field(weight_field_name)) {
-    remove_field(ui.weight_checkbox, ui.weight_layout);
+    remove_field(ui.weight_check_box, ui.weight_layout);
     return;
   }
 
   int weight = entity_before.get_field(weight_field_name).toInt();
   if (weight == -1) {
     ui.weight_layout->setEnabled(false);
-    ui.weight_checkbox->setChecked(false);
+    ui.weight_check_box->setChecked(false);
   }
   else {
     ui.weight_layout->setEnabled(true);
-    ui.weight_checkbox->setChecked(true);
+    ui.weight_check_box->setChecked(true);
     ui.weight_field->setValue(weight);
   }
 
-  connect(ui.weight_checkbox, SIGNAL(toggled(bool)),
+  connect(ui.weight_check_box, SIGNAL(toggled(bool)),
           ui.weight_layout, SLOT(setEnabled(bool)));
 }
 
@@ -1498,7 +1868,7 @@ void EditEntityDialog::initialize_weight() {
 void EditEntityDialog::apply_weight() {
 
   if (entity_after->has_field(weight_field_name)) {
-    entity_after->set_field(weight_field_name, ui.weight_checkbox->isChecked() ?
+    entity_after->set_field(weight_field_name, ui.weight_check_box->isChecked() ?
                               ui.weight_field->value() : -1);
   }
 }
@@ -1517,7 +1887,63 @@ void EditEntityDialog::initialize_xy() {
  */
 void EditEntityDialog::apply_xy() {
 
-  entity_after->set_xy(ui.xy_field->get_point());
+  // The origin might have changed as well.
+  entity_after->set_top_left(ui.xy_field->get_point() - entity_before.get_origin());
+}
+
+/**
+ * @brief Initializes the user properties table.
+ */
+void EditEntityDialog::initialize_user_properties() {
+
+  connect(ui.add_property_button, SIGNAL(clicked(bool)),
+          this, SLOT(add_user_property_requested()));
+  connect(ui.change_property_key_button, SIGNAL(clicked(bool)),
+          this, SLOT(change_user_property_key_requested()));
+  connect(ui.delete_property_button, SIGNAL(clicked(bool)),
+          this, SLOT(delete_user_property_requested()));
+  connect(ui.move_property_up_button, SIGNAL(clicked(bool)),
+          this, SLOT(move_up_user_property_requested()));
+  connect(ui.move_property_down_button, SIGNAL(clicked(bool)),
+          this, SLOT(move_down_user_property_requested()));
+
+  connect(ui.user_properties_table,
+          SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+          this, SLOT(user_property_double_clicked(QTreeWidgetItem*, int)));
+
+  connect(ui.user_properties_table->selectionModel(),
+          SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+          this, SLOT(update_user_property_buttons()));
+
+  int count = entity_before.get_user_property_count();
+  for (int i = 0; i < count; i++) {
+    QPair<QString, QString> property = entity_before.get_user_property(i);
+    QTreeWidgetItem* item = new QTreeWidgetItem();
+    item->setData(0, Qt::DisplayRole, property.first);
+    item->setData(1, Qt::DisplayRole, property.second);
+    ui.user_properties_table->addTopLevelItem(item);
+  }
+}
+
+/**
+ * @brief Updates the entity from the user properties table.
+ */
+void EditEntityDialog::apply_user_properties() {
+
+  int entity_count = entity_after->get_user_property_count();
+  for (int i = 0; i < entity_count; ++i) {
+    entity_after->remove_user_property(0);
+  }
+
+  int table_count = ui.user_properties_table->topLevelItemCount();
+  for (int i = 0; i < table_count; ++i) {
+    QTreeWidgetItem* item = ui.user_properties_table->topLevelItem(i);
+    QPair<QString, QString> property = qMakePair(
+      item->data(0, Qt::DisplayRole).toString(),
+      item->data(1, Qt::DisplayRole).toString()
+    );
+    entity_after->add_user_property(property);
+  }
 }
 
 /**
@@ -1532,6 +1958,24 @@ void EditEntityDialog::update_size_constraints() {
   ui.size_field->set_second_enabled(
     resize_mode != ResizeMode::NONE &&
     resize_mode != ResizeMode::HORIZONTAL_ONLY);
+}
+
+/**
+ * @brief Check if an user property with a given key exists.
+ * @param key The key of the user property.
+ * @return true if the user property exists, false otherwise.
+ */
+bool EditEntityDialog::user_property_exists(const QString &key) const {
+
+  int count = ui.user_properties_table->topLevelItemCount();
+  for (int i = 0; i < count; i++) {
+    QTreeWidgetItem* item = ui.user_properties_table->topLevelItem(i);
+    if (item->data(0, Qt::DisplayRole).toString() == key) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 }

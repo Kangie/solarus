@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ StringsModel::StringsModel(
 
   // Load the strings data file.
   QString path = quest.get_strings_path(language_id);
-  if (!resources.import_from_file(path.toStdString())) {
+  if (!resources.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open strings data file '%1'").arg(path));
   }
 
@@ -79,7 +79,7 @@ void StringsModel::save() const {
 
   QString path = quest.get_strings_path(language_id);
 
-  if (!resources.export_to_file(path.toStdString())) {
+  if (!resources.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save strings data file '%1'").arg(path));
   }
 }
@@ -432,7 +432,8 @@ void StringsModel::create_string(const QString& key, const QString& value) {
 bool StringsModel::can_duplicate_strings(
   const QString& prefix, const QString& new_prefix, QString& key) {
 
-  Q_FOREACH (QString prefixed_key, get_keys(prefix)) {
+  const QStringList& keys = get_keys(prefix);
+  for (QString prefixed_key : keys) {
 
     prefixed_key.replace(QRegExp(QString("^") + prefix), new_prefix);
     if (string_exists(prefixed_key)) {
@@ -459,7 +460,8 @@ void StringsModel::duplicate_strings(
   }
 
   // Duplicate strings.
-  Q_FOREACH (QString key, get_keys(prefix)) {
+  const QStringList& keys = get_keys(prefix);
+  for (QString key : keys) {
     QString value = get_string(key);
     key.replace(QRegExp(QString("^") + prefix), new_prefix);
     create_string(key, value);
@@ -575,7 +577,8 @@ QString StringsModel::set_string_key(const QString& key, const QString& new_key)
 bool StringsModel::can_set_string_key_prefix(
     const QString& old_prefix, const QString& new_prefix, QString& key) {
 
-  Q_FOREACH (QString prefixed_key, get_keys(old_prefix)) {
+  const QStringList& keys = get_keys(old_prefix);
+  for (QString prefixed_key : keys) {
 
     prefixed_key.replace(QRegExp(QString("^") + old_prefix), new_prefix);
     if (string_exists(prefixed_key)) {
@@ -604,7 +607,8 @@ QList<QPair<QString, QString>> StringsModel::set_string_key_prefix(
 
   // change the string keys.
   QList<QPair<QString, QString>> list;
-  Q_FOREACH (const QString& old_key, get_keys(old_prefix)) {
+  const QStringList& old_keys = get_keys(old_prefix);
+  for (const QString& old_key : old_keys) {
 
     QString new_key = old_key;
     new_key.replace(QRegExp(QString("^") + old_prefix), new_prefix);
@@ -678,8 +682,9 @@ void StringsModel::delete_string(const QString& key) {
 QList<QPair<QString, QString>> StringsModel::delete_prefix(const QString& prefix) {
 
   QList<QPair<QString, QString>> list;
-  Q_FOREACH (const QString& key, get_keys(prefix)) {
-    list.push_back(QPair<QString, QString>(key, get_string(key)));
+  const QStringList& keys = get_keys(prefix);
+  for (const QString& key : keys) {
+    list.push_back(qMakePair(key, get_string(key)));
     delete_string(key);
   }
   return list;
@@ -781,7 +786,7 @@ void StringsModel::reload_translation() {
 
   QString path = quest.get_strings_path(translation_id);
   translation_resources.clear();
-  if (!translation_resources.import_from_file(path.toStdString())) {
+  if (!translation_resources.import_from_file(path.toLocal8Bit().toStdString())) {
     translation_id = "";
     throw EditorException(tr("Cannot open strings data file '%1'").arg(path));
   }
@@ -840,7 +845,8 @@ bool StringsModel::has_missing_translation(const QString& key) const {
     return true;
   }
 
-  Q_FOREACH (const QString& sub_key, get_translated_keys(key + ".")) {
+  const QStringList& sub_keys = get_translated_keys(key + ".");
+  for (const QString& sub_key : sub_keys) {
     if (!string_exists(sub_key)) {
       return true;
     }

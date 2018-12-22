@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #ifndef SOLARUSEDITOR_RESOURCE_MODEL_H
 #define SOLARUSEDITOR_RESOURCE_MODEL_H
 
-#include <solarus/ResourceType.h>
+#include <solarus/core/ResourceType.h>
 #include <QMap>
 #include <QStandardItemModel>
 
@@ -26,7 +26,7 @@ namespace SolarusEditor {
 using ResourceType = Solarus::ResourceType;
 
 class Quest;
-class QuestResources;
+class QuestDatabase;
 
 /**
  * @brief A tree model with resources elements of a type.
@@ -39,7 +39,7 @@ public:
   ResourceModel(const Quest& quest, ResourceType resource_type, QObject* parent = nullptr);
 
   const Quest& get_quest() const;
-  const QuestResources& get_resources() const;
+  const QuestDatabase& get_database() const;
   QString get_tileset_id() const;
   void set_tileset_id(const QString& tileset_id);
 

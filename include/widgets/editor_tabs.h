@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 #ifndef SOLARUSEDITOR_EDITOR_TABS_H
 #define SOLARUSEDITOR_EDITOR_TABS_H
 
-#include "quest_resources.h"
+#include "quest_database.h"
 #include <QMap>
 #include <QPointer>
 #include <QTabWidget>
+#include <memory>
 
 template<typename T> class QSet;
 class QUndoGroup;
@@ -39,7 +40,8 @@ class EditorTabs : public QTabWidget {
 
 public:
 
-  EditorTabs(QWidget* parent = nullptr);
+  explicit EditorTabs(QWidget* parent = nullptr);
+  ~EditorTabs() override;
 
   QUndoGroup& get_undo_group();
 
@@ -51,6 +53,10 @@ public:
   void open_tileset_editor(
       Quest& quest, const QString& path);
   void open_sprite_editor(
+      Quest& quest, const QString& path);
+  void open_shader_editor(
+      Quest& quest, const QString& path);
+  void open_image_editor(
       Quest& quest, const QString& path);
   void open_text_editor(
       Quest& quest, const QString& path);
@@ -70,6 +76,7 @@ public:
   bool has_unsaved_files_other_than(const QSet<QString>& ignored_paths);
   QStringList get_unsaved_files();
   void close_without_confirmation();
+  void save_open_files_list();
 
   void reload_settings();
 
@@ -79,6 +86,8 @@ signals:
   void can_copy_changed(bool can_copy);
   void can_paste_changed(bool can_paste);
   void refactoring_requested(const Refactoring& refactoring);
+  void clear_console();
+  void log_message_to_console(const QString& log_level, const QString& message);
 
 public slots:
 
@@ -94,25 +103,22 @@ public slots:
 protected:
 
   void keyPressEvent(QKeyEvent* event) override;
-  void tabInserted(int index) override;
-  void tabRemoved(int index) override;
 
 private slots:
 
   void current_editor_changed(int index);
-  void update_recent_files_list();
   void current_editor_modification_state_changed(bool clean);
   void modification_state_changed(int index, bool clean);
 
 private:
 
-  void add_editor(Editor* editor);
-  void insert_editor(Editor* editor, int index);
+  void add_editor(std::unique_ptr<Editor> editor);
+  void insert_editor(std::unique_ptr<Editor> editor, int index);
   void remove_editor(int index);
 
-  QMap<QString, Editor*> editors;      /**< All editors currently open,
-                                        * indexed by their file path. */
-  QUndoGroup* undo_group;              /**< Undo/redo stacks of open files. */
+  std::map<QString, std::unique_ptr<Editor>> editors;      /**< All editors currently open,
+                                                            * indexed by their file path. */
+  QUndoGroup* undo_group;                                  /**< Undo/redo stacks of open files. */
 };
 
 }

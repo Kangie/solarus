@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +37,21 @@ public:
   static const QString restore_last_files;
   static const QString save_files_before_running;
   static const QString no_audio;
-  static const QString video_acceleration;
   static const QString quest_size;
 
   // Console keys.
   static const QString console_history;
+
+  // Import dialog keys.
+  static const QString import_last_source_quest;
 
   // Text editor keys.
   static const QString font_family;
   static const QString font_size;
   static const QString tab_length;
   static const QString replace_tab_by_spaces;
+  static const QString external_text_editor_enabled;
+  static const QString external_text_editor_cmd;
 
   // Map editor keys.
   static const QString map_main_background;
@@ -79,6 +83,14 @@ public:
   static const QString tileset_grid_size;
   static const QString tileset_grid_style;
   static const QString tileset_grid_color;
+
+  // Shader editor keys.
+  static const QString shader_preview_type;
+  static const QString shader_preview_picture_file;
+  static const QString shader_preview_map_id;
+  static const QString shader_preview_sprite_id;
+  static const QString shader_preview_sprite_animation;
+  static const QString shader_preview_sprite_direction;
 
   EditorSettings();
 

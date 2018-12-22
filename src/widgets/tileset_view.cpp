@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,17 @@
 #include "widgets/tileset_view.h"
 #include "widgets/zoom_tool.h"
 #include "ground_traits.h"
-#include "pattern_animation_traits.h"
 #include "pattern_separation_traits.h"
+#include "point.h"
 #include "rectangle.h"
 #include "tileset_model.h"
 #include "view_settings.h"
 #include <QAction>
 #include <QApplication>
+#include <QDrag>
 #include <QGraphicsItem>
 #include <QMenu>
+#include <QMimeData>
 #include <QMouseEvent>
 #include <QScrollBar>
 
@@ -42,44 +44,61 @@ namespace SolarusEditor {
 TilesetView::TilesetView(QWidget* parent) :
   QGraphicsView(parent),
   scene(nullptr),
+  create_border_set_action(nullptr),
   change_pattern_id_action(nullptr),
   delete_patterns_action(nullptr),
   last_integer_pattern_id(0),
   state(State::NORMAL),
-  current_area_item(nullptr),
   view_settings(nullptr),
   zoom(1.0),
-  read_only(false) {
+  read_only(false),
+  multi_selection_enabled(true) {
 
+  setAcceptDrops(true);
   setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+  create_border_set_action = new QAction(
+      QIcon(":/images/border_kind_5.png"),
+      tr("Create contour..."),
+      this
+  );
+  create_border_set_action->setShortcut(tr("Ctrl+B"));
+  create_border_set_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  connect(create_border_set_action, &QAction::triggered,
+          this, [this]() {
+    QStringList pattern_ids = get_model()->get_selected_ids();
+    pattern_ids.sort();
+    emit create_border_set_requested(pattern_ids);
+  });
+  addAction(create_border_set_action);
 
   change_pattern_id_action = new QAction(
       QIcon(":/images/icon_edit.png"), tr("Change id..."), this);
   change_pattern_id_action->setShortcut(tr("F2"));
   change_pattern_id_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(change_pattern_id_action, SIGNAL(triggered()),
-          this, SIGNAL(change_selected_pattern_id_requested()));
+  connect(change_pattern_id_action, &QAction::triggered,
+          this, &TilesetView::change_selected_pattern_id_requested);
   addAction(change_pattern_id_action);
 
   delete_patterns_action = new QAction(
       QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
   delete_patterns_action->setShortcut(QKeySequence::Delete);
   delete_patterns_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(delete_patterns_action, SIGNAL(triggered()),
-          this, SIGNAL(delete_selected_patterns_requested()));
+  connect(delete_patterns_action, &QAction::triggered,
+          this, &TilesetView::delete_selected_patterns_requested);
   addAction(delete_patterns_action);
 
-  set_repeat_mode_actions = EnumMenus<TilePatternRepeatMode>::create_actions(
+  set_repeat_mode_actions = EnumMenus<PatternRepeatMode>::create_actions(
         *this,
         EnumMenuCheckableOption::CHECKABLE_EXCLUSIVE,
-        [this](TilePatternRepeatMode repeat_mode) {
+        [this](PatternRepeatMode repeat_mode) {
     emit change_selected_patterns_repeat_mode_requested(repeat_mode);
   });
   // TODO add shortcut support to EnumMenus
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::ALL)]->setShortcut(tr("A"));
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::HORIZONTAL)]->setShortcut(tr("H"));
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::VERTICAL)]->setShortcut(tr("V"));
-  set_repeat_mode_actions[static_cast<int>(TilePatternRepeatMode::NONE)]->setShortcut(tr("N"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::ALL)]->setShortcut(tr("A"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::HORIZONTAL)]->setShortcut(tr("H"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::VERTICAL)]->setShortcut(tr("V"));
+  set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::NONE)]->setShortcut(tr("N"));
   for (QAction* action : set_repeat_mode_actions) {
     action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   }
@@ -100,7 +119,6 @@ TilesetModel* TilesetView::get_model() {
 /**
  * @brief Sets the tileset to represent in this view.
  * @param model The tileset model, or nullptr to remove any model.
- * This class does not take ownership on the model.
  */
 void TilesetView::set_model(TilesetModel* model) {
 
@@ -109,6 +127,8 @@ void TilesetView::set_model(TilesetModel* model) {
   double zoom = 2.0;  // Initial zoom: x2.
 
   if (this->model != nullptr) {
+    disconnect(this->model, nullptr,
+               this, nullptr);
     this->model = nullptr;
     this->scene = nullptr;
     horizontal_scrollbar_value = horizontalScrollBar()->value();
@@ -145,7 +165,22 @@ void TilesetView::set_model(TilesetModel* model) {
     // Install panning and zooming helpers.
     new PanTool(this);
     new ZoomTool(this);
+
+    connect(model, &TilesetModel::modelReset,
+            this, &TilesetView::notify_tileset_changed);
+    connect(model, &TilesetModel::tileset_image_file_reloaded,
+            this, static_cast<void (TilesetView::*)()>(&TilesetView::update));
   }
+}
+
+/**
+ * @brief Called when the tileset model has changed.
+ */
+void TilesetView::notify_tileset_changed() {
+
+  clear_current_areas();
+  initially_selected_items.clear();
+  start_state_normal();
 }
 
 /**
@@ -200,6 +235,22 @@ bool TilesetView::is_read_only() const {
  */
 void TilesetView::set_read_only(bool read_only) {
   this->read_only = read_only;
+}
+
+/**
+ * @brief Returns whether multiple selection is allowed.
+ * @return @c true if the user can select multiple patterns.
+ */
+bool TilesetView::is_multi_selection_enabled() const {
+  return multi_selection_enabled;
+}
+
+/**
+ * @brief Sets whether multiple selection is allowed.
+ * @return param multi_selection_enabled @c true to allow multiple selection.
+ */
+void TilesetView::set_multi_selection_enabled(bool multi_selection_enabled) {
+  this->multi_selection_enabled = multi_selection_enabled;
 }
 
 /**
@@ -293,6 +344,11 @@ void TilesetView::select_all() {
     return;
   }
 
+  if (!multi_selection_enabled &&
+      model->get_num_patterns() > 1) {
+    return;
+  }
+
   scene->select_all();
 }
 
@@ -352,7 +408,7 @@ void TilesetView::mousePressEvent(QMouseEvent* event) {
     const bool control_or_shift = (event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
 
     bool keep_selected = false;
-    if (control_or_shift) {
+    if (control_or_shift && is_multi_selection_enabled()) {
       // If ctrl or shift is pressed, keep the existing selection.
       keep_selected = true;
     }
@@ -360,6 +416,7 @@ void TilesetView::mousePressEvent(QMouseEvent* event) {
       // When clicking an already selected item, keep the existing selection too.
       keep_selected = true;
     }
+
     if (!keep_selected) {
       scene->clearSelection();
     }
@@ -367,15 +424,35 @@ void TilesetView::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {
       if (item != nullptr &&
           item->isSelected() &&
-          model->get_selection_count() == 1 &&
+          !model->is_selection_empty() &&
+          !control_or_shift &&
           !is_read_only()) {
         // Clicking on an already selected item: allow to move it.
-        start_state_moving_pattern(event->pos());
+        start_state_moving_patterns(event->pos());
       }
       else {
-        // Otherwise initialize a selection rectangle.
-        initially_selected_items = scene->selectedItems();
-        start_state_drawing_rectangle(event->pos());
+        if (is_multi_selection_enabled()) {
+          // Don't select the item yet, initialize a selection rectangle.
+          initially_selected_items = scene->selectedItems();
+          start_state_drawing_rectangle(event->pos());
+        }
+        else {
+          // No multiple selection is allowed: don't draw a selection rectangle,
+          // directly consider this as a click.
+          if (item != nullptr) {
+            // An item was clicked.
+            if (control_or_shift) {
+              // Toggle the selected state of the item.
+
+              item->setSelected(!item->isSelected());
+              emit selection_changed_by_user();
+            } else {
+              // Select the clicked item.
+              item->setSelected(true);
+              emit selection_changed_by_user();
+            }
+          }
+        }
       }
     }
     else {
@@ -402,11 +479,11 @@ void TilesetView::mouseReleaseEvent(QMouseEvent* event) {
   if (state == State::DRAWING_RECTANGLE) {
     // If the rectangle is empty, consider it was a click and not a drag.
     // In this case we simply select the clicked item.
-    do_selection = current_area_item->rect().isEmpty();
+    do_selection = current_area_items.first()->rect().isEmpty();
     end_state_drawing_rectangle();
   }
-  else if (state == State::MOVING_PATTERN) {
-    end_state_moving_pattern();
+  else if (state == State::MOVING_PATTERNS) {
+    end_state_moving_patterns();
   }
 
   if (do_selection) {
@@ -478,9 +555,6 @@ void TilesetView::mouseDoubleClickEvent(QMouseEvent* event) {
 
 /**
  * @brief Receives a mouse move event.
- *
- * Reimplemented to scroll the view when the middle mouse button is pressed.
- *
  * @param event The event to handle.
  */
 void TilesetView::mouseMoveEvent(QMouseEvent* event) {
@@ -497,29 +571,8 @@ void TilesetView::mouseMoveEvent(QMouseEvent* event) {
 
     if (dragging_current_point != dragging_previous_point) {
 
-      // The area has changed: recalculate the rectangle.
-      QRect new_pattern_area = Rectangle::from_two_points(dragging_start_point, dragging_current_point);
-      set_current_area(new_pattern_area);
+      update_current_areas(dragging_start_point, dragging_current_point);
       emit selection_changed_by_user();
-    }
-  }
-  else if (state == State::MOVING_PATTERN) {
-
-    int index = model->get_selected_index();
-    if (index == -1) {
-      // Tile was deselected: cancel the movement.
-      end_state_moving_pattern();
-    }
-    else {
-      dragging_current_point = mapToScene(event->pos()).toPoint() / 8 * 8;
-
-      QRect new_pattern_area = current_area_item->rect().toRect();
-      QRect old_pattern_area = model->get_pattern_frame(index);
-      new_pattern_area.moveTopLeft(QPoint(
-            old_pattern_area.x() + dragging_current_point.x() - dragging_start_point.x(),
-            old_pattern_area.y() + dragging_current_point.y() - dragging_start_point.y()));
-
-      set_current_area(new_pattern_area);
     }
   }
 
@@ -586,14 +639,17 @@ void TilesetView::show_context_menu(const QPoint& where) {
   // Repeat mode.
   QMenu* repeat_mode_menu = new QMenu(tr("Repeatable"), this);
   build_context_menu_repeat_mode(*repeat_mode_menu, selected_indexes);
-  menu->addSeparator();
   menu->addMenu(repeat_mode_menu);
 
   // Animation.
-  QMenu* animation_menu = new QMenu(tr("Animation"), this);
-  build_context_menu_animation(*animation_menu, selected_indexes);
-  menu->addSeparator();
-  menu->addMenu(animation_menu);
+  QMenu* scrolling_menu = new QMenu(tr("Scrolling"), this);
+  build_context_menu_scrolling(*scrolling_menu, selected_indexes);
+  menu->addMenu(scrolling_menu);
+
+  // Border set.
+  if (selected_indexes.size() <= 12) {
+    menu->addAction(create_border_set_action);
+  }
 
   // Change pattern id.
   menu->addSeparator();
@@ -688,7 +744,7 @@ void TilesetView::build_context_menu_repeat_mode(
   }
 
   // See if the repeat mode is common.
-  TilePatternRepeatMode repeat_mode = TilePatternRepeatMode::ALL;
+  PatternRepeatMode repeat_mode = PatternRepeatMode::ALL;
   bool common = model->is_common_pattern_repeat_mode(indexes, repeat_mode);
 
   menu.addActions(set_repeat_mode_actions);
@@ -701,59 +757,33 @@ void TilesetView::build_context_menu_repeat_mode(
 }
 
 /**
- * @brief Builds the animation part of a context menu for patterns.
+ * @brief Builds the scrolling property part of a context menu for patterns.
  * @param menu The menu to fill.
  * @param indexes Patterns to build a context menu for.
  */
-void TilesetView::build_context_menu_animation(
+void TilesetView::build_context_menu_scrolling(
     QMenu& menu, const QList<int>& indexes) {
 
   if (indexes.empty()) {
     return;
   }
 
-  // See if the animation and the separation are common.
-  PatternAnimation animation;
-  PatternSeparation separation;
-  bool common_animation = model->is_common_pattern_animation(indexes, animation);
-  bool common_separation = model->is_common_pattern_separation(indexes, separation);
-  bool enable_separation = common_animation &&
-      PatternAnimationTraits::is_multi_frame(animation);
+  // See if the scrolling is common.
+  PatternScrolling scrolling;
+  bool common = model->is_common_pattern_scrolling(indexes, scrolling);
 
   // Add actions to the menu.
-  QList<QAction*> animation_actions = EnumMenus<PatternAnimation>::create_actions(
+  QList<QAction*> scrolling_actions = EnumMenus<PatternScrolling>::create_actions(
         menu,
         EnumMenuCheckableOption::CHECKABLE_EXCLUSIVE,
-        [this](PatternAnimation animation) {
-    emit change_selected_patterns_animation_requested(animation);
-  });
-  menu.addSeparator();
-  QList<QAction*> separation_actions = EnumMenus<PatternSeparation>::create_actions(
-        menu,
-        EnumMenuCheckableOption::CHECKABLE_EXCLUSIVE,
-        [this](PatternSeparation separation) {
-    emit change_selected_patterns_separation_requested(separation);
+        [this](PatternScrolling animation) {
+    emit change_selected_patterns_scrolling_requested(animation);
   });
 
-  if (common_animation) {
-    int animation_index = static_cast<int>(animation);
-    QAction* checked_action = animation_actions[animation_index];
+  if (common) {
+    int scrolling_index = static_cast<int>(scrolling);
+    QAction* checked_action = scrolling_actions[scrolling_index];
     checked_action->setChecked(true);
-  }
-
-  if (enable_separation) {
-    if (common_separation) {
-      int separation_index = static_cast<int>(separation);
-      QAction* checked_action = separation_actions[separation_index];
-      checked_action->setChecked(true);
-      // Add a checkmark (there is none when there is already an icon).
-      checked_action->setText("\u2714 " + checked_action->text());
-    }
-  }
-  else {
-    for (QAction* action : separation_actions) {
-      action->setEnabled(false);
-    }
   }
 }
 
@@ -777,9 +807,10 @@ void TilesetView::start_state_drawing_rectangle(const QPoint& initial_point) {
   this->dragging_start_point = mapToScene(initial_point).toPoint() / 8 * 8;
   this->dragging_current_point = this->dragging_start_point;
 
-  current_area_item = new QGraphicsRectItem();
-  current_area_item->setPen(QPen(Qt::yellow));
-  scene->addItem(current_area_item);
+  QGraphicsRectItem *item = new QGraphicsRectItem();
+  item->setPen(QPen(Qt::yellow));
+  scene->addItem(item);
+  current_area_items.push_front(item);
 }
 
 /**
@@ -787,10 +818,10 @@ void TilesetView::start_state_drawing_rectangle(const QPoint& initial_point) {
  */
 void TilesetView::end_state_drawing_rectangle() {
 
-  QRect rectangle = current_area_item->rect().toRect();
+  QRect rectangle = current_area_items.first()->rect().toRect();
   if (!rectangle.isEmpty() &&
       sceneRect().contains(rectangle) &&
-      get_items_intersecting_current_area().isEmpty() &&
+      get_items_intersecting_current_areas().isEmpty() &&
       model->is_selection_empty() &&
       !is_read_only()) {
 
@@ -809,8 +840,8 @@ void TilesetView::end_state_drawing_rectangle() {
 
     // Put most actions in a submenu to make the context menu smaller.
     QMenu sub_menu(tr("New pattern (more options)"));
-    int i = 0;
-    Q_FOREACH (QAction* action, menu.actions()) {
+    const QList<QAction*> actions = menu.actions();
+    for (QAction* action : actions) {
       Ground ground = static_cast<Ground>(action->data().toInt());
       if (ground == Ground::TRAVERSABLE ||
           ground == Ground::WALL) {
@@ -820,7 +851,6 @@ void TilesetView::end_state_drawing_rectangle() {
         menu.removeAction(action);
         sub_menu.addAction(action);
       }
-      ++i;
     }
     menu.addMenu(&sub_menu);
 
@@ -829,11 +859,8 @@ void TilesetView::end_state_drawing_rectangle() {
     menu.exec(cursor().pos() + QPoint(1, 1));
   }
 
-  scene->removeItem(current_area_item);
-  delete current_area_item;
-  current_area_item = nullptr;
+  clear_current_areas();
   initially_selected_items.clear();
-
   start_state_normal();
 }
 
@@ -842,71 +869,189 @@ void TilesetView::end_state_drawing_rectangle() {
  * @param initial_point Where the user starts dragging the pattern,
  * in view coordinates.
  */
-void TilesetView::start_state_moving_pattern(const QPoint& initial_point) {
+void TilesetView::start_state_moving_patterns(const QPoint& initial_point) {
 
-  int index = model->get_selected_index();
-  if (index == -1) {
+  if (model->is_selection_empty()) {
     return;
   }
 
-  state = State::MOVING_PATTERN;
-  dragging_start_point = mapToScene(initial_point).toPoint()/ 8 * 8;
+  state = State::MOVING_PATTERNS;
+  dragging_start_point = Point::floor_8(mapToScene(initial_point));
   dragging_current_point = dragging_start_point;
-  const QRect& box = model->get_pattern_frames_bounding_box(index);
-  current_area_item = new QGraphicsRectItem(box);
-  current_area_item->setPen(QPen(Qt::yellow));
-  scene->addItem(current_area_item);
+
+  const QList<int>& selected_indexes = model->get_selected_indexes();
+  for (int index : selected_indexes) {
+    const QRect& box = model->get_pattern_frames_bounding_box(index);
+    QGraphicsRectItem *item = new QGraphicsRectItem(box);
+    item->setPen(QPen(Qt::yellow));
+    scene->addItem(item);
+    current_area_items.append(item);
+  }
+
+  const QRect& pattern_frame = model->get_pattern_frame(selected_indexes.first());
+  const QPoint& hot_spot = initial_point - mapFromScene(pattern_frame.topLeft());
+  QPixmap drag_pixmap = model->get_pattern_image(selected_indexes.first());
+
+  if (view_settings != nullptr) {
+    double zoom = view_settings->get_zoom();
+    drag_pixmap = drag_pixmap.scaled(pattern_frame.size() * zoom);
+  }
+
+  // TODO make a pixmap of all selected patterns.
+  QDrag* drag = new QDrag(this);
+  drag->setPixmap(drag_pixmap);
+  drag->setHotSpot(hot_spot);
+
+  QStringList pattern_ids;
+  for (int index : selected_indexes) {
+    pattern_ids << model->index_to_id(index);
+  }
+  std::sort(pattern_ids.begin(), pattern_ids.end());
+  QString text_data = pattern_ids.join("\n");
+
+  QMimeData* data = new QMimeData();
+  data->setText(text_data);
+
+  drag->setMimeData(data);
+  drag->exec(Qt::MoveAction | Qt::CopyAction);
+
+  clear_current_areas();
+  start_state_normal();
 }
 
 /**
  * @brief Finishes moving a pattern.
  */
-void TilesetView::end_state_moving_pattern() {
+void TilesetView::end_state_moving_patterns() {
 
-  QRect box = current_area_item->rect().toRect();
+  QPoint delta = dragging_current_point - dragging_start_point;
+  QRect box = get_selection_bounding_box();
+  box.translate(delta);
   if (!box.isEmpty() &&
       sceneRect().contains(box) &&
-      get_items_intersecting_current_area().isEmpty() &&
-      model->get_selection_count() == 1 &&
+      get_items_intersecting_current_areas().isEmpty() &&
+      !model->is_selection_empty() &&
       !is_read_only() &&
       dragging_current_point != dragging_start_point) {
 
-    // Context menu to move the pattern.
+    // Context menu to move the patterns.
     QMenu menu;
     QAction* move_pattern_action = new QAction(tr("Move here"), this);
-    connect(move_pattern_action, &QAction::triggered, [this, box] {
-      emit change_selected_pattern_position_requested(box.topLeft());
+    connect(move_pattern_action, &QAction::triggered, [this, delta] {
+      emit change_selected_patterns_position_requested(delta);
     });
     menu.addAction(move_pattern_action);
+    QAction* duplicate_pattern_action = new QAction(
+      QIcon(":/images/icon_copy.png"), tr("Duplicate here"), this);
+    duplicate_pattern_action->setEnabled(
+      get_items_intersecting_current_areas(false).isEmpty());
+    connect(duplicate_pattern_action, &QAction::triggered, [this, delta] {
+      emit duplicate_selected_patterns_requested(delta);
+    });
+    menu.addAction(duplicate_pattern_action);
     menu.addSeparator();
     menu.addAction(tr("Cancel"));
     menu.exec(cursor().pos() + QPoint(1, 1));
   }
 
-  scene->removeItem(current_area_item);
-  delete current_area_item;
-  current_area_item = nullptr;
-
+  clear_current_areas();
   start_state_normal();
 }
 
-/**
- * @brief Changes the position of the rectangle the user is drawing or moving.
- *
- * If the specified area is the same as before, nothing is done.
- *
- * @param new_area new position of the rectangle.
- */
-void TilesetView::set_current_area(const QRect& area) {
+void TilesetView::dragEnterEvent(QDragEnterEvent* event) {
 
-  if (current_area_item->rect().toRect() == area) {
-    // No change.
+  if (state != State::MOVING_PATTERNS) {
     return;
   }
 
-  current_area_item->setRect(area);
+  if (event->mimeData()->hasFormat("text/plain")) {
+    event->acceptProposedAction();
+  }
+}
+
+void TilesetView::dragMoveEvent(QDragMoveEvent* event) {
+
+  if (state != State::MOVING_PATTERNS) {
+    return;
+  }
+
+  dragging_current_point = Point::floor_8(mapToScene(event->pos()));
+  QPoint delta = dragging_current_point - dragging_start_point;
+
+  clear_current_areas();
+
+  bool valid_move = true;
+  const QList<int>& selected_indexes = model->get_selected_indexes();
+  for (int index : selected_indexes) {
+
+    QRect area = model->get_pattern_frames_bounding_box(index);
+    area.translate(delta);
+    QGraphicsRectItem* item = new QGraphicsRectItem(area);
+
+    // Check overlapping existing patterns.
+    QList<QGraphicsItem*> items = scene->items(
+      area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect);
+
+    if (!area.isEmpty() &&
+        sceneRect().contains(area) &&
+        items.isEmpty() &&
+        !is_read_only()) {
+      item->setPen(QPen(Qt::yellow));
+    } else {
+      item->setPen(QPen(Qt::red));
+      item->setZValue(1);
+      valid_move = false;
+    }
+
+    // Let the drag cursor show if the move is legal.
+    event->setAccepted(valid_move);
+
+    scene->addItem(item);
+    current_area_items.append(item);
+  }
+}
+
+void TilesetView::dragLeaveEvent(QDragLeaveEvent* event) {
+
+  Q_UNUSED(event);
+}
+
+void TilesetView::dropEvent(QDropEvent* event) {
+
+  if (state != State::MOVING_PATTERNS) {
+    return;
+  }
+
+  if (event->dropAction() == Qt::CopyAction) {
+    event->acceptProposedAction();
+  }
+  else if (event->dropAction() == Qt::MoveAction) {
+    event->acceptProposedAction();
+  }
+  end_state_moving_patterns();
+}
+
+/**
+ * @brief Updates the position of the rectangle(s) the user is drawing or moving.
+ *
+ * In state DRAWING_RECTANGLE, if the specified area is the same as before,
+ * nothing is done.
+ *
+ * @param start_point The starting point of drawing or moving.
+ * @param current_point The current point of drawing or moving.
+ */
+void TilesetView::update_current_areas(
+  const QPoint& start_point, const QPoint& current_point) {
 
   if (state == State::DRAWING_RECTANGLE) {
+
+    QRect area = Rectangle::from_two_points(start_point, current_point);
+    if (current_area_items.first()->rect().toRect() == area) {
+      // No change.
+      return;
+    }
+    current_area_items.first()->setRect(area);
+
     // Select items strictly in the rectangle.
     scene->clearSelection();
     QPainterPath path;
@@ -915,45 +1060,65 @@ void TilesetView::set_current_area(const QRect& area) {
     scene->setSelectionArea(path, Qt::ContainsItemBoundingRect);
 
     // Re-select items that were already selected if Ctrl or Shift was pressed.
-    Q_FOREACH (QGraphicsItem* item, initially_selected_items) {
+    for (QGraphicsItem* item : initially_selected_items) {
       item->setSelected(true);
-    }
-  }
-
-  if (state == State::MOVING_PATTERN) {
-    // Check overlapping existing patterns.
-    if (!area.isEmpty() &&
-        sceneRect().contains(area) &&
-        get_items_intersecting_current_area().isEmpty() &&
-        model->get_selection_count() == 1 &&
-        !is_read_only()) {
-      current_area_item->setPen(QPen(Qt::yellow));
-    } else {
-      current_area_item->setPen(QPen(Qt::red));
     }
   }
 }
 
 /**
- * @brief Returns all items that intersect the rectangle drawn by the user
+ * @brief Clears rectangle(s) the user is drawing or moving.
+ */
+void TilesetView::clear_current_areas() {
+
+  for (QGraphicsRectItem* item : current_area_items) {
+    scene->removeItem(item);
+    delete item;
+  }
+  current_area_items.clear();
+}
+
+/**
+ * @brief Returns all items that intersect the rectangles drawn by the user
  * except selected items.
+ * @param ignore_selected @c true if the selection should be ignored.
  * @return The items that intersect the drawn rectangle.
  */
-QList<QGraphicsItem*> TilesetView::get_items_intersecting_current_area() const {
+QList<QGraphicsItem*> TilesetView::get_items_intersecting_current_areas(
+    bool ignore_selected) const {
 
-  QRect area = current_area_item->rect().toRect();
-  area = QRect(
-      area.topLeft() + QPoint(1, 1),
-      area.size() - QSize(2, 2));
-  QList<QGraphicsItem*> items = scene->items(area, Qt::IntersectsItemBoundingRect);
-  items.removeAll(current_area_item);  // Ignore the drawn rectangle itself.
+  QList<QGraphicsItem*> items;
+
+  for (QGraphicsRectItem* item : current_area_items) {
+    QRect area = item->rect().toRect().adjusted(1, 1, -1, -1);
+    items.append(scene->items(area, Qt::IntersectsItemBoundingRect));
+    items.removeAll(item); // Ignore the drawn rectangle itself.
+  }
 
   // Ignore selected items.
-  Q_FOREACH (QGraphicsItem* item, scene->selectedItems()) {
-    items.removeAll(item);
+  if (ignore_selected) {
+    const QList<QGraphicsItem*> selected_items = scene->selectedItems();
+    for (QGraphicsItem* item : selected_items) {
+      items.removeAll(item);
+    }
   }
 
   return items;
+}
+
+/**
+ * @brief Returns the bounding box corresponding to all selected tile patterns.
+ * @return The bounding box of all the selected tile patterns.
+ */
+QRect TilesetView::get_selection_bounding_box() const {
+
+  QRect bounding_box;
+  const QList<int> selected_indexes = model->get_selected_indexes();
+  for (int index : selected_indexes) {
+    bounding_box = bounding_box.united(
+      model->get_pattern_frames_bounding_box(index));
+  }
+  return bounding_box;
 }
 
 }

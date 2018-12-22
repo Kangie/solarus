@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class SpriteTreeView : public QTreeView {
 
 public:
 
-  SpriteTreeView(QWidget* parent = nullptr);
+  explicit SpriteTreeView(QWidget* parent = nullptr);
 
   void set_model(SpriteModel* sprite);
 
@@ -43,6 +43,8 @@ signals:
   void create_direction_requested();
   void rename_animation_requested();
   void duplicate_requested();
+  void move_up_requested();
+  void move_down_requested();
   void delete_requested();
 
 protected:
@@ -56,6 +58,8 @@ private:
   QAction* create_direction_action;   /**< Action of adding new direction. */
   QAction* rename_animation_action;   /**< Action of renaming animation. */
   QAction* duplicate_action;          /**< Action of duplicating. */
+  QAction* move_up_action;            /**< Action of moving up. */
+  QAction* move_down_action;          /**< Action of moving down. */
   QAction* delete_action;             /**< Action of deleting. */
 
 };

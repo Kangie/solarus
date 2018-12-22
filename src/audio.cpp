@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
  */
 #include "audio.h"
 #include "quest.h"
-#include <solarus/lowlevel/QuestFiles.h>
-#include <solarus/lowlevel/Music.h>
-#include <solarus/lowlevel/Sound.h>
-#include <solarus/Arguments.h>
+#include <solarus/audio/Music.h>
+#include <solarus/audio/Sound.h>
+#include <solarus/core/Arguments.h>
+#include <solarus/core/QuestFiles.h>
 #include <QApplication>
 #include <QDebug>
 #include <QTimer>

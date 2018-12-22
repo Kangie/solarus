@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>118</height>
+    <height>126</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
    <item>
     <widget class="QCheckBox" name="prefix_mode_field">
      <property name="text">
-      <string>Change the key of all string with this key as prefix</string>
+      <string>Change the key of all strings with this key as prefix</string>
      </property>
     </widget>
    </item>

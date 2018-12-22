@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ namespace SolarusEditor {
 CustomEntity::CustomEntity(MapModel& map, const EntityIndex& index) :
   EntityModel(map, index, EntityType::CUSTOM) {
 
-  set_origin(QPoint(8, 13));
   set_base_size(QSize(8, 8));
   set_resizable(true);
 
@@ -38,6 +37,20 @@ CustomEntity::CustomEntity(MapModel& map, const EntityIndex& index) :
   info.between_border_color = QColor(184, 96, 96);
   info.pixmap = QPixmap(":/images/entity_custom_resizable.png");
   set_draw_shape_info(info);
+}
+
+/**
+ * @copydoc EntityModel::notify_field_changed
+ */
+void CustomEntity::notify_field_changed(const QString& key, const QVariant& value) {
+
+  EntityModel::notify_field_changed(key, value);
+
+  if (key == "tiled") {
+    DrawSpriteInfo sprite_info = get_draw_sprite_info();
+    sprite_info.tiled = value.toBool();
+    set_draw_sprite_info(sprite_info);
+  }
 }
 
 }

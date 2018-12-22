@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ public:
 
   QString get_pattern_id() const;
   void set_pattern_id(const QString& pattern_id);
+
+  const TilesetModel* get_tileset() const;
 
   void draw(QPainter& painter) const override;
   void notify_tileset_changed(const QString& tileset_id) override;

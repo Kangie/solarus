@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "widgets/editor.h"
 #include "ui_sprite_editor.h"
 #include <QMenu>
+#include <memory>
 
 namespace SolarusEditor {
 
@@ -34,7 +35,6 @@ class SpriteEditor : public Editor {
 public:
 
   SpriteEditor(Quest& quest, const QString& path, QWidget* parent = nullptr);
-  ~SpriteEditor();
 
   SpriteModel& get_model();
 
@@ -55,9 +55,12 @@ public slots:
   void create_animation_requested();
   void rename_animation_requested();
   void create_direction_requested();
-  void add_direction_requested(const QRect& frame);
+  void add_direction_requested(
+    const QRect& frame, int num_frames, int num_columns);
   void duplicate_requested();
   void duplicate_selected_direction_requested(const QPoint &position);
+  void move_up_requested();
+  void move_down_requested();
   void delete_requested();
   void delete_direction_requested();
 
@@ -85,6 +88,8 @@ public slots:
   void change_direction_num_frames_requested();
   void update_direction_num_columns_field();
   void change_direction_num_columns_requested();
+  void change_direction_num_frames_columns_requested(
+    int num_frames, int num_columns);
 
 private:
 
@@ -94,7 +99,8 @@ private:
 
   Ui::SpriteEditor ui;          /**< The sprite editor widgets. */
   QString sprite_id;            /**< Id of the sprite being edited. */
-  SpriteModel* model;           /**< Sprite model being edited. */
+  std::unique_ptr<SpriteModel>
+      model;                    /**< Sprite model being edited. */
   Quest& quest;                 /**< The quest. */
   QMenu create_context_menu;    /**< The create context menu. */
   QAction* create_animation;    /**< The create animation action. */

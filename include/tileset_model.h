@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 #define SOLARUSEDITOR_TILESET_MODEL_H
 
 #include "natural_comparator.h"
-#include "pattern_animation.h"
 #include "pattern_separation.h"
 #include <solarus/entities/TilesetData.h>
 #include <QAbstractItemModel>
+#include <QFileSystemWatcher>
 #include <QImage>
 #include <QItemSelectionModel>
 #include <QList>
@@ -33,7 +33,9 @@ namespace SolarusEditor {
 class Quest;
 
 using Ground = Solarus::Ground;
-using TilePatternRepeatMode = Solarus::TilePatternRepeatMode;
+using PatternScrolling = Solarus::PatternScrolling;
+using PatternRepeatMode = Solarus::PatternRepeatMode;
+using BorderKind = Solarus::BorderKind;
 
 /**
  * @brief Model that wraps a tileset.
@@ -55,8 +57,12 @@ public:
   TilesetModel(
       Quest& quest, const QString& tileset_id, QObject* parent = nullptr);
 
+  const Quest& get_quest() const;
   Quest& get_quest();
   QString get_tileset_id() const;
+  void load();
+  bool get_auto_refresh_data_file();
+  void set_auto_refresh_data_file(bool auto_refresh_data_file);
 
   // Tileset data.
   QColor get_background_color() const;
@@ -66,8 +72,11 @@ public:
   virtual int rowCount(const QModelIndex& parent) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
 
+  // Patterns.
   int get_num_patterns() const;
   bool pattern_exists(int index) const;
+  bool pattern_exists(const QString& pattern_id) const;
+  QString get_unique_pattern_id(const QString& pattern_id) const;
   int id_to_index(const QString& pattern_id) const;
   QString index_to_id(int index) const;
   int create_pattern(const QString& pattern_id, const QRect& frame);
@@ -77,7 +86,10 @@ public:
   static bool is_valid_pattern_id(const QString& pattern_id);
 
   bool is_pattern_multi_frame(int index) const;
+  bool are_patterns_multi_frame(const QList<int>& indexes) const;
   int get_pattern_num_frames(int index) const;
+  bool is_common_pattern_num_frames(const QList<int>& indexes, int& num_frames) const;
+  void set_pattern_num_frames(int index, int num_frames);
   QRect get_pattern_frame(int index) const;
   QList<QRect> get_pattern_frames(int index) const;
   QRect get_pattern_frames_bounding_box(int index) const;
@@ -88,15 +100,21 @@ public:
   int get_pattern_default_layer(int index) const;
   bool is_common_pattern_default_layer(const QList<int>& indexes, int& default_layer) const;
   void set_pattern_default_layer(int index, int default_layer);
-  TilePatternRepeatMode get_pattern_repeat_mode(int index) const;
-  bool is_common_pattern_repeat_mode(const QList<int>& indexes, TilePatternRepeatMode& repeat_mode) const;
-  void set_pattern_repeat_mode(int index, TilePatternRepeatMode repeat_mode);
-  PatternAnimation get_pattern_animation(int index) const;
-  bool is_common_pattern_animation(const QList<int>& indexes, PatternAnimation& animation) const;
-  void set_pattern_animation(int index, PatternAnimation animation);
+  PatternRepeatMode get_pattern_repeat_mode(int index) const;
+  bool is_common_pattern_repeat_mode(const QList<int>& indexes, PatternRepeatMode& repeat_mode) const;
+  void set_pattern_repeat_mode(int index, PatternRepeatMode repeat_mode);
+  PatternScrolling get_pattern_scrolling(int index) const;
+  bool is_common_pattern_scrolling(const QList<int>& indexes, PatternScrolling& scrolling) const;
+  void set_pattern_scrolling(int index, PatternScrolling animation);
   PatternSeparation get_pattern_separation(int index) const;
   bool is_common_pattern_separation(const QList<int>& indexes, PatternSeparation& separation) const;
   void set_pattern_separation(int index, PatternSeparation separation);
+  int get_pattern_frame_delay(int index) const;
+  bool is_common_pattern_frame_delay(const QList<int>& indexes, int& frame_delay) const;
+  void set_pattern_frame_delay(int index, int frame_delay);
+  bool is_pattern_mirror_loop(int index) const;
+  bool is_common_pattern_mirror_loop(const QList<int>& indexes, bool& mirror_loop) const;
+  void set_pattern_mirror_loop(int index, bool mirror_loop);
 
   QPixmap get_pattern_image(int index) const;
   QPixmap get_pattern_image_all_frames(int index) const;
@@ -109,7 +127,9 @@ public:
   bool is_selection_empty() const;
   int get_selection_count() const;
   int get_selected_index() const;
+  QString get_selected_id() const;
   QList<int> get_selected_indexes() const;
+  QStringList get_selected_ids() const;
   void set_selected_index(int index);
   void set_selected_indexes(const QList<int>& indexes);
   void add_to_selected(int index);
@@ -119,10 +139,28 @@ public:
   void select_all();
   void clear_selection();
 
+  // Border sets.
+  int get_num_border_sets() const;
+  QStringList get_border_set_ids() const;
+  bool border_set_exists(const QString& border_set_id) const;
+  void create_border_set(const QString& border_set_id);
+  void delete_border_set(const QString& border_set_id);
+  void set_border_set_id(const QString& old_id, const QString& new_id);
+  QString get_border_set_pattern(const QString& border_set_id, BorderKind border_kind) const;
+  void set_border_set_pattern(const QString& border_set_id, BorderKind border_kind, const QString& pattern_id);
+  bool has_border_set_pattern(const QString& border_set_id, BorderKind border_kind) const;
+  QStringList get_border_set_patterns(const QString& border_set_id) const;
+  void set_border_set_patterns(const QString& border_set_id, const QStringList& patterns);
+  bool is_border_set_inner(const QString& border_set_id) const;
+  void set_border_set_inner(const QString& border_set_id, bool inner);
+  static bool is_valid_border_set_id(const QString& border_set_id);
+
+  QPixmap get_border_set_image(const QString& border_set_id) const;
+  QPixmap get_border_set_icon(const QString& border_set_id) const;
+
 signals:
 
   void background_color_changed(const QColor& background_color);
-  void image_changed();
 
   void pattern_created(int new_index, const QString& new_id);
   void pattern_deleted(int old_index, const QString& old_id);
@@ -131,9 +169,25 @@ signals:
   void pattern_position_changed(int index, const QPoint& position);
   void pattern_ground_changed(int index, Ground ground);
   void pattern_default_layer_changed(int index, int default_layer);
-  void pattern_repeat_mode_changed(int index, TilePatternRepeatMode repeat_mode);
-  void pattern_animation_changed(int index, PatternAnimation animation);
+  void pattern_repeat_mode_changed(int index, PatternRepeatMode repeat_mode);
+  void pattern_scrolling_changed(int index, PatternScrolling animation);
   void pattern_separation_changed(int index, PatternSeparation separation);
+  void pattern_num_frames_changed(int index, int num_frames);
+  void pattern_frame_delay_changed(int index, int frame_delay);
+  void pattern_mirror_loop_changed(int index, bool mirror_loop);
+
+  void border_set_created(const QString& border_set_id);
+  void border_set_deleted(const QString& border_set_id);
+  void border_set_id_changed(const QString& old_id, const QString& new_id);
+  void border_set_pattern_changed(
+      const QString& border_set_id,
+      BorderKind border_kind,
+      const QString& pattern_id
+  );
+  void border_set_inner_changed(const QString& border_set_id, bool inner);
+
+  void tileset_image_file_reloaded();
+  void tileset_data_file_changed();
 
 public slots:
 
@@ -176,12 +230,21 @@ private:
     mutable QPixmap icon;         /**< 32x32 icon of the pattern. */
   };
 
+  void tileset_data_file_changing();
+  void tileset_image_file_changing();
   void build_index_map();
 
   Quest& quest;                   /**< The quest the tileset belongs to. */
   const QString tileset_id;       /**< Id of the tileset. */
   Solarus::TilesetData tileset;   /**< Tileset data wrapped by this model. */
   QImage patterns_image;          /**< PNG image of all tile patterns. */
+
+  QFileSystemWatcher
+      data_file_watcher;          /**< Detects changes of the tileset data file on disk. */
+  QFileSystemWatcher
+      image_file_watcher;         /**< Detects changes of the tileset PNG file on disk. */
+  bool auto_refresh_data_file;    /**< Whether to automatically reload the
+                                   * tileset data file when it has changed on the disk. */
 
   std::map<QString, int, NaturalComparator>
       ids_to_indexes;             /**< Index in the list of each pattern.

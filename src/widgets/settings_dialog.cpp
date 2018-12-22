@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +63,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_save_files()));
   connect(ui.no_audio_field, SIGNAL(toggled(bool)),
           this, SLOT(change_no_audio()));
-  connect(ui.video_acceleration_field, SIGNAL(toggled(bool)),
-          this, SLOT(change_video_acceleration()));
   connect(ui.quest_size_check_box, SIGNAL(toggled(bool)),
           this, SLOT(change_quest_size()));
   connect(ui.quest_size_field, SIGNAL(value_changed(int,int)),
@@ -79,6 +77,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_tab_length()));
   connect(ui.replace_tab_by_spaces, SIGNAL(toggled(bool)),
           this, SLOT(change_replace_tab_by_spaces()));
+  connect(ui.editor_group_box,SIGNAL(toggled(bool)),
+          this,SLOT(change_external_editor_enabled()));
+  connect(ui.editor_cmd_field,SIGNAL(textChanged(QString)),
+          this, SLOT(change_external_editor_cmd()));
 
   // Map editor.
   connect(ui.map_main_background_field, SIGNAL(color_changed(QColor)),
@@ -97,6 +99,11 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_map_tileset_background()));
   connect(ui.map_tileset_zoom_field, SIGNAL(currentIndexChanged(int)),
           this, SLOT(change_map_tileset_zoom()));
+  connect(ui.editor_browse_button,&QPushButton::pressed,[&]{
+     QString path = QFileDialog::getOpenFileName(this,tr("Select external editor"));
+     ui.editor_cmd_field->setText(path);
+     emit ui.editor_cmd_field->textChanged(path);
+  });
 
   // Sprite editor.
   connect(ui.sprite_main_background_field, SIGNAL(color_changed(QColor)),
@@ -184,7 +191,8 @@ void SettingsDialog::restore_default() {
  */
 void SettingsDialog::apply() {
 
-  Q_FOREACH (const QString& key, edited_settings.keys()) {
+  const QStringList& keys = edited_settings.keys();
+  for (const QString& key : keys) {
     settings.set_value(key, edited_settings[key]);
   }
   reset();
@@ -201,7 +209,6 @@ void SettingsDialog::update() {
   update_restore_last_files();
   update_save_files();
   update_no_audio();
-  update_video_acceleration();
   update_quest_size();
 
   // Text editor.
@@ -209,6 +216,8 @@ void SettingsDialog::update() {
   update_font_size();
   update_tab_length();
   update_replace_tab_by_spaces();
+  update_external_editor_enabled();
+  update_external_editor_cmd();
 
   // Map editor.
   update_map_main_background();
@@ -249,7 +258,8 @@ void SettingsDialog::update_buttons() {
 
   // Check if values are changed.
   bool changed = false;
-  Q_FOREACH (const QString& key, edited_settings.keys()) {
+  const QStringList& keys = edited_settings.keys();
+  for (const QString& key : keys) {
 
     QVariant value = edited_settings[key];
     if (value != settings.get_value(key)) {
@@ -376,25 +386,6 @@ void SettingsDialog::change_no_audio() {
 }
 
 /**
- * @brief Updates the video acceleration field.
- */
-void SettingsDialog::update_video_acceleration() {
-
-  ui.video_acceleration_field->setChecked(
-    settings.get_value_bool(EditorSettings::video_acceleration));
-}
-
-/**
- * @brief Slot called when the user changes the video acceleration.
- */
-void SettingsDialog::change_video_acceleration() {
-
-  edited_settings[EditorSettings::video_acceleration] =
-    ui.video_acceleration_field->isChecked();
-  update_buttons();
-}
-
-/**
  * @brief Updates the quest size field.
  */
 void SettingsDialog::update_quest_size() {
@@ -498,6 +489,38 @@ void SettingsDialog::change_replace_tab_by_spaces() {
 
   edited_settings[EditorSettings::replace_tab_by_spaces] =
     ui.replace_tab_by_spaces->isChecked();
+}
+
+/**
+ * @brief Updates the external editor checkbox
+ */
+void SettingsDialog::update_external_editor_enabled() {
+  ui.editor_group_box->setChecked(
+              settings.get_value_bool(EditorSettings::external_text_editor_enabled));
+}
+
+/**
+ * @brief Slot called when the user enable/disable external text editor
+ */
+void SettingsDialog::change_external_editor_enabled() {
+  edited_settings[EditorSettings::external_text_editor_enabled] =
+          ui.editor_group_box->isChecked();
+}
+
+/**
+ * @brief Updates the external editor command text field
+ */
+void SettingsDialog::update_external_editor_cmd() {
+    ui.editor_cmd_field->setText(
+                settings.get_value_string(EditorSettings::external_text_editor_cmd));
+}
+
+/**
+ * @brief Slot called when user changes the external editor command
+ */
+void SettingsDialog::change_external_editor_cmd() {
+    edited_settings[EditorSettings::external_text_editor_cmd] =
+            ui.editor_cmd_field->text();
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "widgets/editor.h"
 #include "editor_exception.h"
 #include "quest.h"
-#include <solarus/SolarusFatal.h>
+#include <solarus/core/SolarusFatal.h>
 #include <QApplication>
 #include <QMessageBox>
 #include <QUndoStack>
@@ -50,7 +50,7 @@ public:
    * @param undo_stack The undo stack.
    * @param wrapped_command The undo command to wrap.
    */
-  UndoCommandSkipFirst(std::unique_ptr<QUndoCommand> wrapped_command):
+  explicit UndoCommandSkipFirst(std::unique_ptr<QUndoCommand> wrapped_command):
     QUndoCommand(wrapped_command->text()),
     wrapped_command(std::move(wrapped_command)),
     first_time(true) {
@@ -151,6 +151,7 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
   title(get_file_name()),
   undo_stack(new QUndoStack(this)),
   common_actions(),
+  save_supported(true),
   select_all_supported(false),
   find_supported(false),
   zoom_supported(false),
@@ -160,6 +161,7 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
   traversables_visibility_supported(false),
   obstacles_visibility_supported(false),
   entity_type_visibility_supported(false),
+  export_to_image_supported(false),
   view_settings() {
 
   setFocusPolicy(Qt::StrongFocus);
@@ -168,8 +170,18 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
   set_close_confirm_message(
         tr("File '%1' has been modified. Save changes?").arg(get_file_name()));
 
-  connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
-          this, SLOT(application_state_changed(Qt::ApplicationState)));
+  connect(qApp, &QGuiApplication::applicationStateChanged,
+          this, &Editor::application_state_changed);
+}
+
+/**
+ * @brief Destructor.
+ */
+Editor::~Editor() {
+
+  // Make sure QUndoStack will not send signals from its destructor.
+  disconnect(undo_stack, SIGNAL(cleanChanged(bool)),
+             nullptr, nullptr);
 }
 
 /**
@@ -192,22 +204,18 @@ Quest& Editor::get_quest() {
 }
 
 /**
- * @brief Returns the list of resources of the quest.
- * @return The quest resources.
+ * @brief Returns the resource and files database of the quest.
+ * @return The quest database.
  */
-const QuestResources& Editor::get_resources() const {
-  return quest.get_resources();
+const QuestDatabase& Editor::get_database() const {
+  return quest.get_database();
 }
 
 /**
- * @brief Returns the list of resources of the quest.
- *
- * Non-const version.
- *
- * @return The quest resources.
+ * @overload Non-const version.
  */
-QuestResources& Editor::get_resources() {
-  return quest.get_resources();
+QuestDatabase& Editor::get_database() {
+  return quest.get_database();
 }
 
 /**
@@ -216,6 +224,37 @@ QuestResources& Editor::get_resources() {
  */
 QString Editor::get_file_path() const {
   return file_path;
+}
+
+/**
+ * @brief Sets the file to be displayed in the editor.
+ * @param file_path Path of the file to set.
+ */
+void Editor::set_file_path(const QString& file_path) {
+
+  if (file_path == this->file_path) {
+    return;
+  }
+
+  bool title_is_file_name = (get_title() == get_file_name());
+
+  this->file_path = file_path;
+  if (title_is_file_name) {
+    // Upddate the title as well unless it was customized.
+    set_title(get_file_name());
+  }
+
+  path_changed();
+}
+
+/**
+ * @brief Called when the path to be displayed in the editor has changed.
+ *
+ * Editors that supports changing the file should reimplement this
+ * method and load the new file that was set.
+ * The default implementation does nothing.
+ */
+void Editor::path_changed() {
 }
 
 /**
@@ -395,6 +434,8 @@ void Editor::undo() {
  *
  * @throws EditorException In case of failure.
  */
+void Editor::save() {
+}
 
 /**
  * @brief Returns whether the user made changes that are not saved yet.
@@ -513,6 +554,55 @@ void Editor::paste() {
 }
 
 /**
+ * @brief Returns whether this editor supports exporting to an image.
+ * @return @c true if exporting to an image is supported.
+ */
+bool Editor::is_export_to_image_supported() const {
+  return export_to_image_supported;
+}
+
+/**
+ * @brief Sets whether this editor supports exporting to an image.
+ *
+ * If your editor supports exporting to an image, you are responsible to
+ * reimplement export_to_image().
+ *
+ * @param export_supported @c true to support exporting.
+ */
+void Editor::set_export_to_image_supported(bool export_to_image_supported) {
+  this->export_to_image_supported = export_to_image_supported;
+}
+
+/**
+ * @brief Exports the current editor to some image.
+ *
+ * The default implementation does nothing.
+ * Subclasses that support exporting to an image should reimplement this function.
+ */
+void Editor::export_to_image() {
+}
+
+/**
+ * @brief Returns whether this editor supports saving the file.
+ * @return @c true if saving is supported.
+ */
+bool Editor::is_save_supported() const {
+  return save_supported;
+}
+
+/**
+ * @brief Sets whether this editor supports saving the file.
+ *
+ * If your editor supports save operations, you are responsible to
+ * reimplement save().
+ *
+ * @param save_supported @c true to support saving.
+ */
+void Editor::set_save_supported(bool save_supported) {
+  this->save_supported = save_supported;
+}
+
+/**
  * @brief Returns whether this editor supports selecting all.
  * @return @c true if selecting all is supported.
  */
@@ -523,13 +613,31 @@ bool Editor::is_select_all_supported() const {
 /**
  * @brief Sets whether this editor supports selecting all.
  *
- * If your editor supports find operations, you are responsible to
+ * If your editor supports select all operations, you are responsible to
  * reimplement select_all().
  *
  * @param select_all_supported @c true to support selecting all.
  */
 void Editor::set_select_all_supported(bool select_all_supported) {
   this->select_all_supported = select_all_supported;
+}
+
+/**
+ * @brief Performs a select all operation.
+ *
+ * The default implementation does nothing.
+ * Subclasses that support select all should reimplement this function.
+ */
+void Editor::select_all() {
+}
+
+/**
+ * @brief Performs an unselect all operation.
+ *
+ * The default implementation does nothing.
+ * Subclasses that support unselect all should reimplement this function.
+ */
+void Editor::unselect_all() {
 }
 
 /**
@@ -550,24 +658,6 @@ bool Editor::is_find_supported() const {
  */
 void Editor::set_find_supported(bool find_supported) {
   this->find_supported = find_supported;
-}
-
-/**
- * @brief Performs a select all operation.
- *
- * The default implementation does nothing.
- * Subclasses that support select all should reimplement this function.
- */
-void Editor::select_all() {
-}
-
-/**
- * @brief Performs an unselect all operation.
- *
- * The default implementation does nothing.
- * Subclasses that support unselect all should reimplement this function.
- */
-void Editor::unselect_all() {
 }
 
 /**

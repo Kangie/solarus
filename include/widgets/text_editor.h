@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@ public:
   QString create_title() const;
   QIcon create_icon() const;
 
+  void load();
   void save() override;
+  void path_changed() override;
   bool can_cut() const override;
   void cut() override;
   bool can_copy() const override;
@@ -50,7 +52,8 @@ public:
 
 private slots:
 
-  void find_text_requested(const QString& text);
+  int find_text_requested(const QString& text);
+  void replace_text_requested(const QString& text_search, const QString& text_replace);
   void open_map_requested();
 
 private:

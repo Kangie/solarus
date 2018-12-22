@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ private slots:
       const QItemSelection& selected, const QItemSelection& deselected);
   void set_selection_from_scene();
   void update_pattern_position(int index);
-  void update_pattern_animation(int index);
   void pattern_created(int new_index, const QString& new_id);
   void pattern_deleted(int old_index, const QString& old_id);
   void pattern_id_changed(int old_index, const QString& old_id,
@@ -66,10 +65,10 @@ private:
 
   void build();
 
-  TilesetModel& model;            /**< The tileset represented. */
+  TilesetModel& model;      /**< The tileset represented. */
   QList<PatternItem*>
-      pattern_items;              /**< Each pattern item in the scene,
-                                   * ordered as in the model. */
+      pattern_items;        /**< Each pattern item in the scene,
+                             * ordered as in the model. */
 
 };
 

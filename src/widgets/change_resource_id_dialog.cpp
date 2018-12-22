@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ ChangeResourceIdDialog::ChangeResourceIdDialog(
 
   ui.setupUi(this);
 
-  QuestResources& resources = quest.get_resources();
+  QuestDatabase& database = quest.get_database();
   const QString& resource_friendly_type_name_for_id =
-      resources.get_friendly_name_for_id(resource_type);
+      database.get_friendly_name_for_id(resource_type);
 
   ui.resource_id_label->setText(
         tr("New id for %1 '%2':").arg(resource_friendly_type_name_for_id, old_id));

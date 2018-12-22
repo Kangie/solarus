@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ namespace SolarusEditor {
 
 class MapModel;
 class Quest;
-class QuestResources;
+class QuestDatabase;
 class TilesetModel;
 
 using SubtypeList = QList<QPair<QString, QString>>;
@@ -46,6 +46,8 @@ class EntityModel {
 
 public:
 
+  virtual ~EntityModel() = default;
+
   static EntityModelPtr create(
       MapModel& map, EntityType type);
   static EntityModelPtr create(
@@ -54,15 +56,15 @@ public:
       MapModel& map, const EntityIndex& index);
   static EntityModelPtr clone(
       MapModel& map, const EntityIndex& index);
-
-  virtual ~EntityModel() = default;
+  EntityModelPtr clone() const;
 
   const MapModel& get_map() const;
   MapModel& get_map();
-  QString get_tileset_id() const;
-  const TilesetModel* get_tileset() const;
+  QString get_map_tileset_id() const;
+  const TilesetModel* get_map_tileset() const;
+  TilesetModel* get_map_tileset();
   const Quest& get_quest() const;
-  const QuestResources& get_resources() const;
+  const QuestDatabase& get_database() const;
 
   // Index on the map.
   EntityIndex get_index() const;
@@ -95,6 +97,7 @@ public:
   void set_bottom_right(const QPoint& bottom_right);
   QPoint get_center() const;
   void set_center(const QPoint& center);
+  bool has_origin_fields() const;
   QPoint get_origin() const;
   void set_origin(const QPoint& origin);
   bool has_size_fields() const;
@@ -113,6 +116,8 @@ public:
   int get_num_directions() const;
   int get_direction() const;
   void set_direction(int direction);
+  bool is_enabled_at_start() const;
+  void set_enabled_at_start(bool enabled_at_start);
   bool has_subtype_field() const;
   SubtypeList get_existing_subtypes() const;
   QString get_subtype() const;
@@ -122,6 +127,12 @@ public:
   bool is_field_unset(const QString& key) const;
   QVariant get_field(const QString& key) const;
   void set_field(const QString& key, const QVariant& value);
+  int get_user_property_count() const;
+  QPair<QString, QString> get_user_property(int index) const;
+  bool set_user_property(int index, const QPair<QString, QString>& property);
+  bool add_user_property(const QPair<QString, QString>& property);
+  bool remove_user_property(int index);
+  static bool is_valid_user_property_key(const QString &key);
   bool is_traversable() const;
   QString to_string() const;
 
@@ -131,6 +142,7 @@ public:
   QSize get_base_size() const;
   bool is_size_valid() const;
   virtual bool is_size_valid(const QSize& size) const;
+  QSize get_closest_valid_size(const QSize& size) const;
   virtual QSize get_valid_size() const;
 
   // Displaying in the editor.

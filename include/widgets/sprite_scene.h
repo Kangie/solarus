@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ private slots:
       const QItemSelection& selected, const QItemSelection& deselected);
   void set_selection_from_scene();
   void update_direction_position(const Index& index, const QPoint& pos);
+  void update_direction_rect(const Index& index);
 
 private:
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,11 @@ namespace SolarusEditor {
 
 /**
  * @brief Creates a quest files model.
- * @param parent Path of the quest to represent.
+ * @param quest The quest to represent.
+ * @param parent parent object or nullptr.
  */
-QuestFilesModel::QuestFilesModel(Quest& quest):
-  QSortFilterProxyModel(nullptr),
+QuestFilesModel::QuestFilesModel(Quest& quest, QObject* parent):
+  QSortFilterProxyModel(parent),
   quest(quest),
   source_model(new QFileSystemModel) {
 
@@ -38,22 +39,23 @@ QuestFilesModel::QuestFilesModel(Quest& quest):
   setSourceModel(source_model);
 
   // Watch changes in resources.
-  connect(&quest.get_resources(), SIGNAL(element_added(ResourceType, QString, QString)),
-          this, SLOT(resource_element_added(ResourceType, QString, QString)));
-  connect(&quest.get_resources(), SIGNAL(element_removed(ResourceType, QString)),
-          this, SLOT(resource_element_removed(ResourceType, QString)));
-  connect(&quest.get_resources(), SIGNAL(element_renamed(ResourceType, QString, QString)),
-          this, SLOT(resource_element_renamed(ResourceType, QString, QString)));
-  connect(&quest.get_resources(), SIGNAL(element_description_changed(ResourceType, QString, QString)),
-          this, SLOT(resource_element_description_changed(ResourceType, QString, QString)));
+  const QuestDatabase& database = quest.get_database();
+  connect(&database, &QuestDatabase::element_added,
+          this, &QuestFilesModel::resource_element_added);
+  connect(&database, &QuestDatabase::element_removed,
+          this, &QuestFilesModel::resource_element_removed);
+  connect(&database, &QuestDatabase::element_renamed,
+          this, &QuestFilesModel::resource_element_renamed);
+  connect(&database, &QuestDatabase::element_description_changed,
+          this, &QuestFilesModel::resource_element_description_changed);
 
   // This model adds extra items for files missing on the filesystem.
   // To ensure we have an extra item if and only if the file is missing,
   // we need to watch files creations and destructions.
-  connect(source_model, SIGNAL(rowsInserted(QModelIndex, int, int)),
-          SLOT(source_model_rows_inserted(QModelIndex, int, int)));
-  connect(source_model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)),
-          SLOT(source_model_rows_about_to_be_removed(QModelIndex, int, int)));
+  connect(source_model, &QFileSystemModel::rowsInserted,
+          this, &QuestFilesModel::source_model_rows_inserted);
+  connect(source_model, &QFileSystemModel::rowsAboutToBeRemoved,
+          this, &QuestFilesModel::source_model_rows_about_to_be_removed);
 }
 
 /**
@@ -81,9 +83,11 @@ QModelIndex QuestFilesModel::get_quest_root_index() const {
  * @param parent Parent index.
  * @return The number of columns
  */
-int QuestFilesModel::columnCount(const QModelIndex& /* parent */) const {
+int QuestFilesModel::columnCount(const QModelIndex& parent) const {
 
-  // File, Description, Type.
+  Q_UNUSED(parent);
+
+  // File, Description, Type, Author, License.
   return NUM_COLUMNS;
 }
 
@@ -110,7 +114,7 @@ int QuestFilesModel::rowCount(const QModelIndex& parent) const {
  * @brief Returns the index of an item.
  *
  * Reimplemented from QSortFilterProxyModel to create custom indexes
- * for items that are not in the source modelk
+ * for items that are not in the source model.
  * Such items represent files expected by the quest, shown in the model but
  * that are missing on the filesystem.
  *
@@ -128,11 +132,19 @@ QModelIndex QuestFilesModel::index(int row, int column, const QModelIndex& paren
 
   QModelIndex index_mapped_from_source = QSortFilterProxyModel::index(row, column, parent);
   if (index_mapped_from_source.isValid()) {
+    // Regular index that exists in the source model.
     return index_mapped_from_source;
   }
 
-  // Item does not exist in the source model: this is an extra item of
-  // QuestFilesModel. Determine its file path.
+  // Item does not exist in the source model: this is an extra row or column.
+
+  QModelIndex index_mapped_from_source_column_0 = QSortFilterProxyModel::index(row, 0, parent);
+  if (index_mapped_from_source_column_0.isValid()) {
+    // This is an extra column.
+    return createIndex(row, column, index_mapped_from_source_column_0.internalPointer());
+  }
+
+  // This is an extra row. Determine its file path.
   int num_existing = QSortFilterProxyModel::rowCount(parent);
   int index_in_extra = row - num_existing;
   ExtraPaths* extra_paths = get_extra_paths(parent);
@@ -164,12 +176,19 @@ QModelIndex QuestFilesModel::parent(const QModelIndex& index) const {
 
   QString path;
   if (is_extra_path(index, path)) {
-    // Index that does not exist in the source model.
+    // The row does not exist in the source model.
     QDir parent_dir(path);
     if (!parent_dir.cdUp()) {
       return QModelIndex();
     }
     return get_file_index(parent_dir.path());
+  }
+
+  if (index.column() >= sourceModel()->columnCount()) {
+    // The column does not exist in the source model,
+    // but its parent is the same as the one of column 0.
+    QModelIndex index_column_0 = createIndex(index.row(), 0, index.internalPointer());
+    return QSortFilterProxyModel::parent(index_column_0);
   }
 
   // Regular QSortFilterProxyModel index.
@@ -195,7 +214,7 @@ QModelIndex QuestFilesModel::sibling(int row, int column, const QModelIndex& idx
 }
 
 /**
- * @brief Returns whether an item has any children.
+ * @brief Returns whether an item has children.
  * @param parent The item to test.
  * @return @c true if this item has children.
  */
@@ -203,17 +222,9 @@ bool QuestFilesModel::hasChildren(const QModelIndex& parent) const {
 
   QString file_path = get_file_path(parent);
   ResourceType resource_type;
-  QString element_id;
-
-  if (quest.is_resource_element(file_path, resource_type, element_id)) {
-    // A resource element is always a leaf, even languages
-    // that are actually directories on the filesystem.
-    return false;
-  }
 
   if (QSortFilterProxyModel::hasChildren(parent))  {
     // This is a non-empty directory.
-    // TODO return false if the files are actually all ignored by the model.
     return true;
   }
 
@@ -248,7 +259,8 @@ bool QuestFilesModel::hasChildren(const QModelIndex& parent) const {
 QModelIndex QuestFilesModel::mapToSource(const QModelIndex& proxy_index) const {
 
   QString path;
-  if (is_extra_path(proxy_index, path)) {
+  if (is_extra_path(proxy_index, path) ||
+      proxy_index.column() >= sourceModel()->columnCount()) {
     // This item does not exist in the source model
     // (it was added by us).
     return QModelIndex();
@@ -271,7 +283,7 @@ QItemSelection QuestFilesModel::mapSelectionToSource(const QItemSelection& proxy
   QItemSelection source_selection;
 
   const QModelIndexList& indexes = proxy_selection.indexes();
-  Q_FOREACH (const QModelIndex& index, indexes) {
+  for (const QModelIndex& index : indexes) {
     const QModelIndex& source_index = mapToSource(index);
     if (!index.isValid()) {
       // Selected item that does not exist in the source model.
@@ -301,8 +313,10 @@ Qt::ItemFlags QuestFilesModel::flags(const QModelIndex& index) const {
 
     if (quest.is_resource_element(file_path, resource_type, element_id)) {
       // Resource elements never has children,
-      // even languages that are actually directories on the filesystem.
-      flags |= Qt::ItemNeverHasChildren;
+      // except languages that are actually directories on the filesystem.
+      if (resource_type != ResourceType::LANGUAGE) {
+        flags |= Qt::ItemNeverHasChildren;
+      }
     }
     return flags;
 
@@ -310,6 +324,14 @@ Qt::ItemFlags QuestFilesModel::flags(const QModelIndex& index) const {
 
     if (quest.is_resource_element(file_path, resource_type, element_id)) {
       // The description column of a resource element can be modified.
+      return flags | Qt::ItemIsEditable;
+    }
+    return flags;
+
+  case AUTHOR_COLUMN:
+  case LICENSE_COLUMN:
+    // The author and license are always editable (except on root).
+    if (!quest.is_data_path(file_path)) {
       return flags | Qt::ItemIsEditable;
     }
     return flags;
@@ -334,13 +356,19 @@ QVariant QuestFilesModel::headerData(int section, Qt::Orientation orientation, i
     switch (section) {
 
     case FILE_COLUMN:
-      return tr("Resource");
+      return tr("File");
 
     case DESCRIPTION_COLUMN:
       return tr("Description");
 
     case TYPE_COLUMN:
       return tr("Type");
+
+    case AUTHOR_COLUMN:
+      return tr("Author");
+
+    case LICENSE_COLUMN:
+      return tr("License");
     }
     return QVariant();
   }
@@ -357,11 +385,12 @@ QVariant QuestFilesModel::headerData(int section, Qt::Orientation orientation, i
  */
 QVariant QuestFilesModel::data(const QModelIndex& index, int role) const {
 
-  const QuestResources& resources = quest.get_resources();
+  const QuestDatabase& database = quest.get_database();
   ResourceType resource_type;
   QString element_id;
 
   QString path = get_file_path(index);
+  QString quest_relative_path = quest.get_path_relative_to_data_path(path);
   QString file_name = QFileInfo(path).fileName();
 
   switch (role) {
@@ -372,56 +401,28 @@ QVariant QuestFilesModel::data(const QModelIndex& index, int role) const {
     switch (index.column()) {
 
     case FILE_COLUMN:  // File name.
-      if (is_quest_data_index(index)) {
-        // Data directory: show the quest name instead of "data".
-        return quest.get_name();
-      }
-
-      if (quest.is_resource_element(path, resource_type, element_id)) {
-        // A resource element: show its id (remove the extension).
-        return QFileInfo(path).completeBaseName();
-      }
-      return file_name;
+      return get_quest_file_displayed_name(index);
 
     case DESCRIPTION_COLUMN:  // Resource element description.
 
       if (!quest.is_resource_element(path, resource_type, element_id)) {
         return QVariant();
       }
-      return resources.get_description(resource_type, element_id);
+      return database.get_description(resource_type, element_id);
 
     case TYPE_COLUMN:  // Type.
-      if (is_quest_data_index(index)) {
-        // Quest data directory (top-level item).
-        return tr("Quest");
-      }
+      return get_quest_file_displayed_type(index);
 
-      if (path == quest.get_main_script_path()) {
-        // main.lua
-        return tr("Main Lua script");
-      }
+    case AUTHOR_COLUMN:
+      return database.get_file_author(quest_relative_path);
 
-      if (quest.is_resource_path(path, resource_type)) {
-        // A resource element folder.
-        return resources.get_directory_friendly_name(resource_type);
-      }
-
-      if (quest.is_resource_element(path, resource_type, element_id)) {
-        // A declared resource element.
-        return resources.get_friendly_name(resource_type);
-      }
-
-      if (quest.is_script(path)) {
-        // An arbitrary Lua script.
-        return tr("Lua script");
-      }
-
-      // Not a file managed by Solarus.
-      return QVariant();
+    case LICENSE_COLUMN:
+      return database.get_file_license(quest_relative_path);
     }
+    return QVariant();
 
   case Qt::EditRole:
-    // Editable file name.
+    // Editable file name or other field.
     switch (index.column()) {
 
     case FILE_COLUMN:  // File name.
@@ -429,11 +430,19 @@ QVariant QuestFilesModel::data(const QModelIndex& index, int role) const {
 
     case DESCRIPTION_COLUMN:
       // The resource element description can be edited.
-      if (!quest.is_resource_element(path, resource_type, element_id)) {
-        return QVariant();
+      if (quest.is_resource_element(path, resource_type, element_id)) {
+        return database.get_description(resource_type, element_id);
       }
-      return resources.get_description(resource_type, element_id);
+      return QVariant();
+
+    case AUTHOR_COLUMN:
+      return database.get_file_author(quest_relative_path);
+
+    case LICENSE_COLUMN:
+      return database.get_file_license(quest_relative_path);
+
     }
+    return QVariant();
 
   case Qt::DecorationRole:
     // Icon.
@@ -474,33 +483,161 @@ QVariant QuestFilesModel::data(const QModelIndex& index, int role) const {
 bool QuestFilesModel::setData(
     const QModelIndex& index, const QVariant& value, int role) {
 
-  if (index.column() != DESCRIPTION_COLUMN) {
-    // Only the description column is editable.
-    return false;
-  }
-
   if (role != Qt::EditRole) {
     return false;
   }
 
   QString file_path = get_file_path(index);
-  ResourceType resource_type;
-  QString element_id;
-  if (!quest.is_resource_element(file_path, resource_type, element_id)) {
+  QString quest_relative_path = quest.get_path_relative_to_data_path(file_path);
+  if (quest_relative_path.isEmpty()) {
     return false;
   }
+  QuestDatabase& database = quest.get_database();
 
   try {
-    quest.get_resources().set_description(resource_type, element_id, value.toString());
-    quest.get_resources().save();
-    emit dataChanged(index, index);
-    return true;
+
+    switch (index.column()) {
+
+    case DESCRIPTION_COLUMN:
+    {
+      ResourceType resource_type;
+      QString element_id;
+      if (!quest.is_resource_element(file_path, resource_type, element_id)) {
+        return false;
+      }
+
+      database.set_description(resource_type, element_id, value.toString());
+      database.save();
+      emit dataChanged(index, index);
+      return true;
+    }
+
+    case AUTHOR_COLUMN:
+      database.set_file_author(quest_relative_path, value.toString());
+      database.save();
+      emit dataChanged(index, index);
+      return true;
+
+    case LICENSE_COLUMN:
+      database.set_file_license(quest_relative_path, value.toString());
+      database.save();
+      emit dataChanged(index, index);
+      return true;
+    }
+
   }
   catch (const EditorException& ex) {
     ex.print_message();
     return false;
   }
+
+  return false;
 }
+
+/**
+ * @brief Returns the file name to be displayed for the specified quest file.
+ * @param index Index of a file item in the model.
+ * @return The corresponding file name to display.
+ */
+QString QuestFilesModel::get_quest_file_displayed_name(const QModelIndex& index) const {
+
+  QString path = get_file_path(index);
+  ResourceType resource_type;
+  QString element_id;
+
+  if (is_quest_data_index(index)) {
+    // Data directory: show the quest name instead of "data".
+    return quest.get_name();
+  }
+
+  if (quest.is_resource_element(path, resource_type, element_id)) {
+    // A resource element: show its id (remove the extension).
+    return QFileInfo(path).completeBaseName();
+  }
+
+  // Actual file name by default.
+  QString file_name = QFileInfo(path).fileName();
+  return file_name;
+}
+
+  /**
+   * @brief Returns an appropriate type string for the specified quest file.
+   * @param index Index of a file item in the model.
+   * @return An appropriate friendly type name for this file.
+   */
+  QString QuestFilesModel::get_quest_file_displayed_type(const QModelIndex& index) const {
+
+    QString path = get_file_path(index);
+    ResourceType resource_type;
+    QString element_id;
+    const QuestDatabase& database = quest.get_database();
+
+    if (is_quest_data_index(index)) {
+      // Quest data directory (top-level item).
+      return tr("Quest");
+    }
+
+    if (path == quest.get_main_script_path()) {
+      // main.lua
+      return tr("Main Lua script");
+    }
+
+    if (quest.is_resource_path(path, resource_type)) {
+      // A resource element folder.
+      return database.get_directory_friendly_name(resource_type);
+    }
+
+    if (quest.is_resource_element(path, resource_type, element_id)) {
+      // A declared resource element.
+      return database.get_friendly_name(resource_type);
+    }
+
+    if (quest.is_dialogs_file(path, element_id)) {
+      return tr("Dialogs file");
+    }
+
+    if (quest.is_strings_file(path, element_id)) {
+      return tr("Strings file");
+    }
+
+    if (quest.is_script(path)) {
+      // A Lua script.
+
+      if (quest.is_map_script(path, element_id)) {
+        // A map Lua script.
+        return tr("Map script");
+      }
+
+      return tr("Script");
+    }
+
+    if (quest.is_shader_code_file(path)) {
+      return tr("GLSL shader code");
+    }
+
+    if (quest.is_image(path)) {
+      // A PNG image.
+
+      if (quest.is_tileset_tiles_file(path, element_id)) {
+        // A tileset tiles PNG image.
+        return tr("Tileset tiles image");
+      }
+      else if (quest.is_tileset_entities_file(path, element_id)) {
+        // A tileset entities PNG image.
+        return tr("Tileset sprites image");
+      }
+
+      return tr("Image");
+    }
+
+    if (quest.is_data_file(path)) {
+      // A .dat file.
+      return tr("Data file");
+    }
+
+    // Not a file managed by Solarus.
+    return QString();
+  }
 
 /**
  * @brief Returns an appropriate icon for the specified quest file.
@@ -522,7 +659,7 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
   // Resource element (possibly a directory for languages).
   else if (quest.is_resource_element(file_path, resource_type, element_id)) {
 
-    QString resource_type_name = quest.get_resources().get_lua_name(resource_type);
+    QString resource_type_name = quest.get_database().get_lua_name(resource_type);
     if (quest.exists(quest.get_resource_element_path(resource_type, element_id))) {
       // Resource declared and present on the filesystem.
       icon_file_name = "icon_resource_" + resource_type_name + ".png";
@@ -533,11 +670,21 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
     }
   }
 
+  // Dialogs file (under a language resource element).
+  else if (quest.is_dialogs_file(file_path, element_id)) {
+    icon_file_name = "icon_dialogs.png";
+  }
+
+  // Strings file (under a language resource element).
+  else if (quest.is_strings_file(file_path, element_id)) {
+    icon_file_name = "icon_strings.png";
+  }
+
   // Directory icon.
   else if (quest.is_dir(file_path)) {
 
     if (quest.is_resource_path(file_path, resource_type)) {
-      QString resource_type_name = quest.get_resources().get_lua_name(resource_type);
+      QString resource_type_name = quest.get_database().get_lua_name(resource_type);
       icon_file_name = "icon_folder_open_" + resource_type_name + ".png";
     }
     else {
@@ -547,7 +694,35 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
 
   // Lua script icon.
   else if (quest.is_script(file_path)) {
-    icon_file_name = "icon_script.png";
+
+    if (quest.is_map_script(file_path, element_id)) {
+      // A map script.
+      icon_file_name = "icon_script_map.png";
+    }
+    else {
+      // Another script.
+      icon_file_name = "icon_script.png";
+    }
+  }
+
+  // Shader code icon.
+  else if (quest.is_shader_code_file(file_path)) {
+    icon_file_name = "icon_shader_code.png";
+  }
+
+  // Image icon.
+  else if (quest.is_image(file_path)) {
+
+    if (quest.is_tileset_tiles_file(file_path, element_id) ||
+        quest.is_tileset_entities_file(file_path, element_id)) {
+      icon_file_name = "icon_image_tileset.png";
+    }
+    else if (quest.is_language_image_file(file_path, element_id)) {
+      icon_file_name = "icon_image_language.png";
+    }
+    else {
+      icon_file_name = "icon_image.png";
+    }
   }
 
   // Generic icon for a file not known by the quest.
@@ -578,7 +753,7 @@ QString QuestFilesModel::get_quest_file_tooltip(const QModelIndex& index) const 
   if (quest.is_potential_resource_element(path, resource_type, element_id)) {
 
     QString file_name = QFileInfo(path).fileName();
-    if (quest.get_resources().exists(resource_type, element_id)) {
+    if (quest.get_database().exists(resource_type, element_id)) {
       // Declared in the resource list.
       if (quest.exists(quest.get_resource_element_path(resource_type, element_id))) {
         // Declared in the resource list and existing on the filesystem.
@@ -590,12 +765,18 @@ QString QuestFilesModel::get_quest_file_tooltip(const QModelIndex& index) const 
       }
     }
     else {
-      // Found on the filesystem but not declared in the resource list.
-      return tr("%1 (not in the quest)").arg(file_name);
+      if (quest.is_in_resource_element(path, resource_type, element_id)) {
+        // Actually already under the tree of a resource element.
+        return QString();
+      }
+      else {
+        // Found on the filesystem but not declared in the resource list.
+        return tr("%1 (not in the quest)").arg(file_name);
+      }
     }
   }
 
-  return "";
+  return QString();
 }
 
 /**
@@ -653,17 +834,13 @@ bool QuestFilesModel::filterAcceptsRow(int source_row, const QModelIndex& source
     return true;
   }
 
-  const QString lua_extension = ".lua";
-  if (file_name.endsWith(lua_extension)) {
-    // Keep all .lua scripts except map scripts.
-    QString file_path_dat = file_path.replace(file_path.lastIndexOf(lua_extension), lua_extension.size(), ".dat");
-    ResourceType resource_type;
-    QString element_id;
-    if (quest.is_resource_element(file_path_dat, resource_type, element_id) &&
-        resource_type == ResourceType::MAP) {
-      return false;
-    }
+  // Keep all .lua scripts including map scripts.
+  if (quest.is_script(file_path)) {
+    return true;
+  }
 
+  // Keep shader code files.
+  if (quest.is_shader_code_file(file_path)) {
     return true;
   }
 
@@ -672,6 +849,28 @@ bool QuestFilesModel::filterAcceptsRow(int source_row, const QModelIndex& source
   ResourceType resource_type;
   QString element_id;
   if (quest.is_potential_resource_element(file_path, resource_type, element_id)) {
+    return true;
+  }
+
+  // Keep .dat files.
+  if (quest.is_data_file(file_path)) {
+
+    // Except quest.dat and project_db.dat.
+    if (quest.is_properties_path(file_path)) {
+      // Quest properties file quest.dat.
+      return false;
+    }
+
+    if (quest.is_resource_list_path(file_path)) {
+      // Quest resource list project_db.dat.
+      return false;
+    }
+
+    return true;
+  }
+
+  // Keep .png files, including tileset ones.
+  if (file_name.endsWith(".png", Qt::CaseInsensitive)) {
     return true;
   }
 
@@ -763,10 +962,9 @@ QString QuestFilesModel::get_file_path(const QModelIndex& index) const {
   }
 
   // The item is a file that exists on the filesystem.
-  QModelIndex source_index = mapToSource(index);
-  QModelIndex file_source_index = source_model->index(
-        source_index.row(), FILE_COLUMN, source_index.parent());
-  return source_model->filePath(file_source_index);
+  QModelIndex file_index = this->index(index.row(), FILE_COLUMN, index.parent());
+  QModelIndex source_index = mapToSource(file_index);
+  return source_model->filePath(source_index);
 }
 
 /**
@@ -889,8 +1087,8 @@ void QuestFilesModel::compute_extra_paths(const QModelIndex& parent) const {
 
   // Get all declared elements of this resource type that are directly in
   // the directory.
-  QStringList element_ids = quest.get_resources().get_elements(resource_type);
-  Q_FOREACH (const QString& element_id, element_ids) {
+  const QStringList& element_ids = quest.get_database().get_elements(resource_type);
+  for (const QString& element_id : element_ids) {
     QString current_path = quest.get_resource_element_path(resource_type, element_id);
     if (!current_path.startsWith(parent_path)) {
       // The current element is not under our directory.
@@ -999,7 +1197,7 @@ void QuestFilesModel::resource_element_renamed(
 
   resource_element_removed(resource_type, old_id);
   resource_element_added(resource_type, new_id,
-                         quest.get_resources().get_description(resource_type, new_id));
+                         quest.get_database().get_description(resource_type, new_id));
 }
 
 /**
@@ -1162,7 +1360,7 @@ void QuestFilesModel::remove_extra_path(const QModelIndex& parent, const QString
 
   beginRemoveRows(parent, row, row);
 
-  Q_FOREACH (QString* path_internal_ptr, extra_paths->paths.at(index_in_extra)) {
+  for (QString* path_internal_ptr : extra_paths->paths.at(index_in_extra)) {
     all_extra_paths.remove(path_internal_ptr);
   }
 
@@ -1197,7 +1395,7 @@ void QuestFilesModel::ExtraPaths::rebuild_index_cache() {
 
   path_indexes.clear();
   int i = 0;
-  Q_FOREACH (const ExtraPathColumnPtrs& columns, paths) {
+  for (const ExtraPathColumnPtrs& columns : paths) {
     const QString& current_path = *columns[0];
     path_indexes.insert(current_path, i);
     ++i;

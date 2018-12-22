@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ private slots:
   void on_action_save_all_triggered();
   void on_action_close_triggered();
   void on_action_close_all_triggered();
+  void on_action_import_triggered();
   void on_action_open_quest_properties_triggered();
   void on_action_exit_triggered();
   void on_action_cut_triggered();
@@ -80,6 +81,7 @@ private slots:
   void on_action_show_layer_2_triggered();
   void on_action_show_traversables_triggered();
   void on_action_show_obstacles_triggered();
+  void on_action_export_to_image_triggered();
   void on_action_settings_triggered();
   void on_action_website_triggered();
   void on_action_doc_triggered();
@@ -92,6 +94,8 @@ private slots:
   void update_grid_visibility();
   void update_grid_size();
   void update_layer_range();
+  void update_layer_locking(int layer);
+  void update_layers_locking();
   void update_layer_visibility(int layer);
   void update_layers_visibility();
   void update_traversables_visibility();
@@ -123,9 +127,11 @@ private:
   void update_recent_quests_menu();
   QMenu* create_zoom_menu();
   void update_show_layers_menu();
+  void update_lock_layers_menu();
   QMenu* create_show_entities_menu();
   bool is_console_visible() const;
   void set_console_visible(bool console_visible);
+  void log_message_to_console(const QString& log_level, const QString& message);
 
   void refactor_map_id(const QString& map_id_before, const QString& map_id_after);
   bool update_destination_map_in_map(
@@ -157,6 +163,12 @@ private:
       const QString& custom_entity_id_before,
       const QString& custom_entity_id_after
   );
+  void refactor_image_file(const QString& image_path_before, const QString& image_path_after);
+  bool update_image_in_sprite(
+      const QString& sprite_id,
+      const QString& image_before,
+      const QString& image_after
+  );
 
   Ui::MainWindow ui;              /**< The main window widgets. */
   Quest quest;                    /**< The current quest open if any. */
@@ -180,6 +192,11 @@ private:
                                    * plus two special actions "Show all" and "Hide all".
                                    * The key is the layer as a string or
                                    * "action_show_all" or "action_hide_all". */
+  QMenu* lock_layers_menu;        /**< The menu with the lock status of all layers. */
+  QMap<int, QAction*>
+      lock_layers_subactions;     /**< Actions in the lock layer menu.
+                                   * There is one action for each layer.
+                                   * The key is the layer. */
 
   QMenu* show_entities_menu;      /**< The menu with the visibility of all entity types. */
   QToolButton*

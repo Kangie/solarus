@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 #include "entities/tile.h"
 #include "ground_traits.h"
 #include "map_model.h"
+#include "quest.h"
 #include "tileset_model.h"
 #include <QPainter>
 
@@ -57,6 +58,7 @@ EntityModelPtr Tile::create_from_dynamic_tile(MapModel& map, const EntityIndex& 
 
   EntityModelPtr tile = EntityModel::create(map, EntityType::TILE);
   tile->set_field("pattern", map.get_entity_field(dynamic_tile_index, "pattern"));
+  tile->set_field("tileset", map.get_entity_field(dynamic_tile_index, "tileset"));
   tile->set_xy(map.get_entity_xy(dynamic_tile_index));
   tile->set_size(map.get_entity_size(dynamic_tile_index));
   return tile;
@@ -80,13 +82,27 @@ void Tile::set_pattern_id(const QString& pattern_id) {
 }
 
 /**
+ * @brief Returns the tileset used by this tile.
+ * @return The tileset.
+ */
+const TilesetModel* Tile::get_tileset() const {
+
+  QString tileset_id = get_field("tileset").toString();
+  if (tileset_id.isEmpty()) {
+    return get_map().get_tileset_model();
+  }
+
+  return get_quest().get_tileset(tileset_id);
+}
+
+/**
  * @copydoc EntityModel::notify_field_changed
  */
 void Tile::notify_field_changed(const QString& key, const QVariant& value) {
 
   EntityModel::notify_field_changed(key, value);
 
-  if (key == "pattern") {
+  if (key == "pattern" || key == "tileset") {
     update_pattern();
   }
 }
@@ -137,16 +153,16 @@ ResizeMode Tile::get_pattern_resize_mode() const {
 
   switch (tileset->get_pattern_repeat_mode(pattern_index)) {
 
-  case TilePatternRepeatMode::ALL:
+  case PatternRepeatMode::ALL:
     return ResizeMode::MULTI_DIMENSION_ALL;
 
-  case TilePatternRepeatMode::HORIZONTAL:
+  case PatternRepeatMode::HORIZONTAL:
     return ResizeMode::HORIZONTAL_ONLY;
 
-  case TilePatternRepeatMode::VERTICAL:
+  case PatternRepeatMode::VERTICAL:
     return ResizeMode::VERTICAL_ONLY;
 
-  case TilePatternRepeatMode::NONE:
+  case PatternRepeatMode::NONE:
     return ResizeMode::NONE;
 
   }

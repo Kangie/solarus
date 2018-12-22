@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class PlainTextEdit : public QPlainTextEdit {
 
 public:
 
-  inline PlainTextEdit(QWidget* parent = nullptr) :
+  explicit PlainTextEdit(QWidget* parent = nullptr) :
     QPlainTextEdit(parent),
     changed(false),
     show_margin(false) {
@@ -49,7 +49,7 @@ public:
     connect(this, SIGNAL(textChanged()), this, SLOT(handle_text_changed()));
   }
 
-  inline void set_show_margin(bool show_margin, int margin = 0) {
+  void set_show_margin(bool show_margin, int margin = 0) {
 
     this->show_margin = show_margin && margin > 0;
     this->margin = margin;
@@ -58,38 +58,47 @@ public:
 
 signals:
 
+  void focus_in();
+  void focus_out();
   void editing_finished();
 
 protected:
 
-    inline virtual void focusOutEvent(QFocusEvent* event) override {
-      if (changed) {
-        emit editing_finished();
-        changed = false;
-      }
-      QPlainTextEdit::focusOutEvent(event);
+  void focusInEvent(QFocusEvent* event) override {
+    Q_UNUSED(event);
+    QPlainTextEdit::focusInEvent(event);
+    emit focus_in();
+  }
+
+  void focusOutEvent(QFocusEvent* event) override {
+    if (changed) {
+      emit editing_finished();
+      changed = false;
+    }
+    emit focus_out();
+    QPlainTextEdit::focusOutEvent(event);
+  }
+
+  void paintEvent(QPaintEvent* event) override {
+
+    if (show_margin) {
+      const QRect rect = event->rect();
+      const QFont font = currentCharFormat().font();
+      int x = std::round(QFontMetrics(font).maxWidth() * margin)
+            + contentOffset().x()
+            + document()->documentMargin();
+
+      QPainter p(viewport());
+      p.setPen(QPen(isEnabled() ? "blue" : "gray"));
+      p.drawLine(x, rect.top(), x, rect.bottom());
     }
 
-    inline virtual void paintEvent(QPaintEvent* event) override {
-
-      if (show_margin) {
-        const QRect rect = event->rect();
-        const QFont font = currentCharFormat().font();
-        int x = std::round(QFontMetrics(font).maxWidth() * margin)
-              + contentOffset().x()
-              + document()->documentMargin();
-
-        QPainter p(viewport());
-        p.setPen(QPen(isEnabled() ? "blue" : "gray"));
-        p.drawLine(x, rect.top(), x, rect.bottom());
-      }
-
-      QPlainTextEdit::paintEvent(event);
-    }
+    QPlainTextEdit::paintEvent(event);
+  }
 
 private slots:
 
-  inline void handle_text_changed() {
+  void handle_text_changed() {
     changed = true;
   }
 

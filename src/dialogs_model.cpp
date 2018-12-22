@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ DialogsModel::DialogsModel(
 
   // Load the strings data file.
   QString path = quest.get_dialogs_path(language_id);
-  if (!resources.import_from_file(path.toStdString())) {
+  if (!resources.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open dialogs data file '%1'").arg(path));
   }
 
@@ -80,7 +80,7 @@ void DialogsModel::save() const {
 
   QString path = quest.get_dialogs_path(language_id);
 
-  if (!resources.export_to_file(path.toStdString())) {
+  if (!resources.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save dialogs data file '%1'").arg(path));
   }
 }
@@ -452,7 +452,8 @@ void DialogsModel::create_dialog(
 
   DialogData data;
   data.set_text(text.toStdString());
-  Q_FOREACH (QString key, properties.keys()) {
+  const QStringList& keys = properties.keys();
+  for (QString key : keys) {
     data.set_property(key.toStdString(), properties.value(key).toStdString());
   }
   create_dialog(id, data);
@@ -468,7 +469,8 @@ void DialogsModel::create_dialog(
 bool DialogsModel::can_duplicate_dialogs(
   const QString& prefix, const QString& new_prefix, QString& id) {
 
-  Q_FOREACH (QString prefixed_id, get_ids(prefix)) {
+  const QStringList& ids = get_ids(prefix);
+  for (QString prefixed_id : ids) {
 
     prefixed_id.replace(QRegExp(QString("^") + prefix), new_prefix);
     if (dialog_exists(prefixed_id)) {
@@ -495,7 +497,8 @@ void DialogsModel::duplicate_dialogs(
   }
 
   // Duplicate dialogs.
-  Q_FOREACH (QString id, get_ids(prefix)) {
+  const QStringList& ids = get_ids(prefix);
+  for (QString id : ids) {
     const auto& data = get_dialog_data(id);
     id.replace(QRegExp(QString("^") + prefix), new_prefix);
     create_dialog(id, data);
@@ -640,7 +643,8 @@ QString DialogsModel::set_dialog_id(const QString& id, const QString& new_id) {
 bool DialogsModel::can_set_dialog_id_prefix(
     const QString& old_prefix, const QString& new_prefix, QString& id) {
 
-  Q_FOREACH (QString prefixed_id, get_ids(old_prefix)) {
+  const QStringList& ids = get_ids(old_prefix);
+  for (QString prefixed_id : ids) {
 
     prefixed_id.replace(QRegExp(QString("^") + old_prefix), new_prefix);
     if (dialog_exists(prefixed_id)) {
@@ -669,7 +673,8 @@ QList<QPair<QString, QString>> DialogsModel::set_dialog_id_prefix(
 
   // change the dialog ids.
   QList<QPair<QString, QString>> list;
-  Q_FOREACH (QString old_id, get_ids(old_prefix)) {
+  const QStringList& old_ids = get_ids(old_prefix);
+  for (QString old_id : old_ids) {
 
     QString new_id = old_id;
     new_id.replace(QRegExp(QString("^") + old_prefix), new_prefix);
@@ -766,7 +771,8 @@ QList<QPair<QString, DialogData>> DialogsModel::delete_prefix(
     const QString& prefix) {
 
   QList<QPair<QString, DialogData>> list;
-  Q_FOREACH (QString key, get_ids(prefix)) {
+  const QStringList& keys = get_ids(prefix);
+  for (QString key : keys) {
     list.push_back(QPair<QString, DialogData>(key, get_dialog_data(key)));
     delete_dialog(key);
   }
@@ -974,7 +980,8 @@ bool DialogsModel::has_missing_translation(const QString& id) const {
     return true;
   }
 
-  Q_FOREACH (QString sub_id, get_translated_ids(id + ".")) {
+  const QStringList& sub_ids = get_translated_ids(id + ".");
+  for (QString sub_id : sub_ids) {
     if (!dialog_exists(sub_id)) {
       return true;
     }

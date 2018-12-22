@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,16 @@ private slots:
   void height_changed(int height);
   void direction_changed();
 
+  void add_user_property_requested();
+  void change_user_property_key_requested();
+  void delete_user_property_requested();
+  void move_up_user_property_requested();
+  void move_down_user_property_requested();
+
+  void user_property_double_clicked(QTreeWidgetItem* item, int column);
+
+  void update_user_property_buttons();
+
 private:
 
   void initialize();
@@ -67,20 +77,26 @@ private:
   void apply_destination_map();
   void initialize_direction();
   void apply_direction();
+  void initialize_enabled_at_start();
+  void apply_enabled_at_start();
   void initialize_font();
   void apply_font();
   void initialize_ground();
   void apply_ground();
   void initialize_layer();
   void apply_layer();
-  void initialize_maximum_moves();
-  void apply_maximum_moves();
+  void initialize_max_moves();
+  void apply_max_moves();
   void initialize_model();
   void apply_model();
   void initialize_name();
   void apply_name();
   void initialize_opening_method();
   void apply_opening_method();
+  void initialize_origin();
+  void apply_origin();
+  void initialize_pattern();
+  void apply_pattern();
   void initialize_savegame_variable();
   void apply_savegame_variable();
   void initialize_size();
@@ -93,6 +109,11 @@ private:
   void apply_starting_location_mode();
   void initialize_subtype();
   void apply_subtype();
+  void initialize_tiled();
+  void apply_tiled();
+  void initialize_tileset();
+  void apply_tileset();
+  void update_pattern_chooser_tileset();
   void initialize_transition();
   void apply_transition();
   void initialize_treasure();
@@ -103,11 +124,13 @@ private:
   void apply_weight();
   void initialize_xy();
   void apply_xy();
+  void initialize_user_properties();
+  void apply_user_properties();
 
   void initialize_possibly_optional_field(const QString& field_name,
                                           QLayout* label_layout,
                                           QWidget* label,
-                                          QCheckBox* checkbox,
+                                          QCheckBox* check_box,
                                           QWidget* field);
   void remove_field(QWidget* label, QWidget* field);
 
@@ -122,13 +145,15 @@ private:
 
   void update_size_constraints();
 
+  bool user_property_exists(const QString &key) const;
+
   Ui::EditEntityDialog ui;             /**< The widgets. */
   EntityModel& entity_before;          /**< The entity to edit (remains unchanged). */
   EntityModelPtr entity_after;         /**< A copy of the entity with the modified data. */
   ResizeMode resize_mode;              /**< The current resize mode. */
 
   /**
-   * @brief Info about basic boolean fields represented by a checkbox.
+   * @brief Info about basic boolean fields represented by a check box.
    *
    * This is used for fields that do not need special code.
    */
@@ -137,19 +162,19 @@ private:
     SimpleBooleanField(
         const QString& field_name,
         const QString& label_text,
-        const QString& checkbox_text,
+        const QString& check_box_text,
         QWidget* before_widget = nullptr) :
       field_name(field_name),
       label_text(label_text),
-      checkbox_text(checkbox_text),
-      checkbox(nullptr),
+      check_box_text(check_box_text),
+      check_box(nullptr),
       before_widget(before_widget) {
     }
 
     QString field_name;
     QString label_text;
-    QString checkbox_text;
-    const QCheckBox* checkbox;
+    QString check_box_text;
+    const QCheckBox* check_box;
     QWidget* before_widget;
   };
 
@@ -196,7 +221,7 @@ private:
         QWidget* before_widget = nullptr) :
       field_name(field_name),
       label_text(label_text),
-      checkbox(nullptr),
+      check_box(nullptr),
       line_edit(nullptr),
       validator(validator),
       before_widget(before_widget) {
@@ -204,7 +229,7 @@ private:
 
     QString field_name;
     QString label_text;
-    QCheckBox* checkbox;
+    QCheckBox* check_box;
     const QLineEdit* line_edit;
     QValidator* validator;
     QWidget* before_widget;

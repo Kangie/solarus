@@ -44,4 +44,3 @@ function converter.convert(quest_path, fonts)
 end
 
 return converter
-

@@ -1,37 +1,63 @@
--- This is the main Lua script of your project.
--- You will probably make a title screen and then start a game.
+-- Main Lua script of the quest.
 -- See the Lua API! http://www.solarus-games.org/doc/latest
 
 require("scripts/features")
-local game_manager = require("scripts/game_manager")
-local solarus_logo = require("scripts/menus/solarus_logo")
+require("scripts/multi_events")
+
+-- Edit scripts/menus/initial_menus_config.lua to add or change menus before starting a game.
+local initial_menus_config = require("scripts/menus/initial_menus_config")
+local initial_menus = {}
 
 -- This function is called when Solarus starts.
 function sol.main:on_started()
 
-  -- Setting a language is useful to display text and dialogs.
-  sol.language.set_language("en")
+  sol.main.load_settings()
+  math.randomseed(os.time())
 
-  -- Show the Solarus logo initially.
-  sol.menu.start(self, solarus_logo)
-
-  -- Start the game when the Solarus logo menu is finished.
-  function solarus_logo:on_finished()
-    local game = game_manager:create("save1.dat")
-    sol.main:start_savegame(game)
+  -- Show the initial menus.
+  if #initial_menus_config == 0 then
+    return
   end
 
+  for _, menu_script in ipairs(initial_menus_config) do
+    initial_menus[#initial_menus + 1] = require(menu_script)
+  end
+
+  local on_top = false  -- To keep the debug menu on top.
+  sol.menu.start(sol.main, initial_menus[1], on_top)
+  for i, menu in ipairs(initial_menus) do
+    function menu:on_finished()
+      if sol.main.get_game() ~= nil then
+        -- A game is already running (probably quick start with a debug key).
+        return
+      end
+      local next_menu = initial_menus[i + 1]
+      if next_menu ~= nil then
+        sol.menu.start(sol.main, next_menu)
+      end
+    end
+  end
+
+  local game_meta = sol.main.get_metatable("game")
+  game_meta:register_event("on_started", function(game)
+    -- Skip initial menus when a game starts.
+    for _, menu in ipairs(initial_menus) do
+      sol.menu.stop(menu)
+    end
+  end)
+end
+
+-- Event called when the program stops.
+function sol.main:on_finished()
+
+  sol.main.save_settings()
 end
 
 -- Event called when the player pressed a keyboard key.
 function sol.main:on_key_pressed(key, modifiers)
 
   local handled = false
-  if key == "f5" then
-    -- F5: change the video mode.
-    sol.video.switch_mode()
-    handled = true
-  elseif key == "f11" or
+  if key == "f11" or
     (key == "return" and (modifiers.alt or modifiers.control)) then
     -- F11 or Ctrl + return or Alt + Return: switch fullscreen.
     sol.video.set_fullscreen(not sol.video.is_fullscreen())
@@ -40,21 +66,11 @@ function sol.main:on_key_pressed(key, modifiers)
     -- Alt + F4: stop the program.
     sol.main.exit()
     handled = true
-  elseif key == "escape" and sol.main.game == nil then
-    -- Escape in title screens: stop the program.
+  elseif key == "escape" and sol.main.get_game() == nil then
+    -- Escape in pre-game menus: stop the program.
     sol.main.exit()
     handled = true
   end
 
   return handled
-end
-
--- Starts a game.
-function sol.main:start_savegame(game)
-
-  -- Skip initial menus if any.
-  sol.menu.stop(solarus_logo)
-
-  sol.main.game = game
-  game:start()
 end

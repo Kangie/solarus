@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 #include "widgets/main_window.h"
 #include "editor_settings.h"
 #include "version.h"
-#include <solarus/lowlevel/Debug.h>
-#include <solarus/Arguments.h>
-#include <solarus/MainLoop.h>
+#include <solarus/core/Arguments.h>
+#include <solarus/core/Debug.h>
+#include <solarus/core/MainLoop.h>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QLibraryInfo>
@@ -103,7 +103,7 @@ int run_editor_gui(int argc, char* argv[]) {
     if (window.get_quest().is_valid()) {
 
       // Open the tabs.
-      Q_FOREACH (const QString& file_path, file_paths) {
+      for (const QString& file_path : file_paths) {
         window.open_file(window.get_quest(), file_path);
       }
       if (!active_file_path.isEmpty()) {

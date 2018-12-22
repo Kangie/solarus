@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "natural_comparator.h"
 
-#include <solarus/SpriteData.h>
+#include <solarus/graphics/SpriteData.h>
 #include <QAbstractItemModel>
 #include <QImage>
 #include <QItemSelectionModel>
@@ -122,6 +122,7 @@ public:
   void delete_animation(const Index& index);
   void set_animation_name(const Index& index, const QString& new_name);
 
+  QStringList get_animation_names() const;
   Solarus::SpriteAnimationData get_animation_data(const Index& index) const;
   QString get_animation_source_image(const Index& index) const;
   bool is_animation_image_is_tileset(const Index& index) const;
@@ -135,7 +136,9 @@ public:
 
   // Direction.
   bool direction_exists(const Index& index) const;
-  int add_direction(const Index& index, const QRect &frame);
+  int add_direction(
+    const Index& index, const QRect &frame,
+    int num_frames = 1, int num_columns = 1);
   int insert_direction(
       const Index& index, const Solarus::SpriteAnimationDirectionData &data);
   void delete_direction(const Index& index);
@@ -152,6 +155,7 @@ public:
   void set_direction_size(const Index& index, const QSize& size);
   QPoint get_direction_origin(const Index& index) const;
   void set_direction_origin(const Index& index, const QPoint& origin);
+  static QPoint get_direction_default_origin(const QSize& frame_size);
   bool is_direction_multi_frame(const Index& index) const;
   int get_direction_num_frames(const Index& index) const;
   void set_direction_num_frames(const Index& index, int num_frames);
@@ -243,7 +247,16 @@ private:
     }
 
     /**
+     * @brief Returns the name of this animation.
+     * @return The animation name.
+     */
+    QString get_animation_name() const {
+      return index->animation_name;
+    }
+
+    /**
      * @brief Changes the name of this animation.
+     * @param animation_name The animation name.
      */
     void set_animation_name(const QString& animation_name) {
       index->animation_name = animation_name;

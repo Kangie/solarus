@@ -16,22 +16,29 @@ We give below the author or each image used in the editor.
 - Icons by Yusuke Kamiyamane:
 http://p.yusukekamiyamane.com/
 
+resources/images/entity_custom_entity.png
+resources/images/entity_tile.png
 resources/images/icon_add.png
+resources/images/icon_camera.png
 resources/images/icon_copy.png
 resources/images/icon_cross.png
 resources/images/icon_cross_small.png
 resources/images/icon_cut.png
 resources/images/icon_delete.png
 resources/images/icon_edit.png
+resources/images/icon_error.png
 resources/images/icon_folder_closed.png
 resources/images/icon_folder_open.png
 resources/images/icon_folder_open_music.png
 resources/images/icon_file.png
 resources/images/icon_first.png
 resources/images/icon_glasses.png
+resources/images/icon_image.png
+resources/images/icon_inside.png
 resources/images/icon_last.png
 resources/images/icon_next.png
 resources/images/icon_open.png
+resources/images/icon_outside.png
 resources/images/icon_paste.png
 resources/images/icon_pause.png
 resources/images/icon_previous.png
@@ -45,6 +52,7 @@ resources/images/icon_resource_font.png
 resources/images/icon_resource_item.png
 resources/images/icon_resource_map.png
 resources/images/icon_resource_music.png
+resources/images/icon_resource_shader.png
 resources/images/icon_resource_sound.png
 resources/images/icon_resource_sprite.png
 resources/images/icon_resource_tileset.png
@@ -64,9 +72,12 @@ resources/images/icon_strings.png
 resources/images/icon_dialog.png
 resources/images/icon_dialogs.png
 resources/images/icon_property.png
+resources/images/icon_up.png
+resources/images/icon_down.png
 
 - Icons by Christopho, adapated from Yusuke Kamiyamane's icons:
 
+resources/images/entity_tile_missing.png
 resources/images/icon_dialog_missing.png
 resources/images/icon_dialogs_missing.png
 resources/images/icon_file_unkown.png
@@ -77,9 +88,12 @@ resources/images/icon_folder_open_item.png
 resources/images/icon_folder_open_language.png
 resources/images/icon_folder_open_map.png
 resources/images/icon_folder_open_missing.png
+resources/images/icon_folder_open_shader.png
 resources/images/icon_folder_open_sound.png
 resources/images/icon_folder_open_sprite.png
 resources/images/icon_folder_open_tileset.png
+resources/images/icon_image_language.png
+resources/images/icon_image_tileset.png
 resources/images/icon_layer_0.png
 resources/images/icon_layer_1.png
 resources/images/icon_layer_2.png
@@ -95,9 +109,11 @@ resources/images/icon_resource_language.png
 resources/images/icon_resource_language_missing.png
 resources/images/icon_resource_map_missing.png
 resources/images/icon_resource_music_missing.png
+resources/images/icon_resource_shader_missing.png
 resources/images/icon_resource_sound_missing.png
 resources/images/icon_resource_sprite_missing.png
 resources/images/icon_resource_tileset_missing.png
+resources/images/icon_script_map.png
 resources/images/icon_stop_music.png
 resources/images/icon_string_missing.png
 resources/images/icon_strings_missing.png
@@ -120,19 +136,10 @@ http://creativecommons.org/licenses/by-sa/4.0/
 
 - A few data files are in public domain.
 
-All data files of these assets come from the official
+Most data files of these assets come from the official
 Solarus Free Resource Pack:
 https://github.com/solarus-games/solarus-free-resource-pack
 
-Main contributors:
-- Christopho
-- Diarandor <diarandor at gmail dot com>:
-  - Source URL for images: http://diarandor.deviantart.com/
-  - Source URL for sounds and music: https://soundcloud.com/diarandor/
-- Eduardo Dueñas <duenase@hotmail.com>
-- Bertram
-
-The more detailed license information of the Solarus Free Resource Pack
-can be found here:
-https://github.com/solarus-games/solarus-free-resource-pack/blob/master/license.txt
+More detailed information about the authors and license of every file
+is displayed when you open this project with Solarus Quest Editor.
 

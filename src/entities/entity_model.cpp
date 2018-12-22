@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,9 @@
 #include "map_model.h"
 #include "point.h"
 #include "quest.h"
-#include "quest_resources.h"
+#include "quest_database.h"
 #include "sprite_model.h"
+#include "tileset_model.h"
 #include <QDebug>
 #include <QPainter>
 
@@ -154,11 +155,25 @@ EntityModelPtr EntityModel::create(
 EntityModelPtr EntityModel::clone(
     MapModel& map, const EntityIndex& index) {
 
-  const Solarus::EntityData& existing_data = map.get_internal_entity(index);
-  EntityModelPtr clone = create(map, EntityIndex(), existing_data.get_type());
+  return map.get_entity(index).clone();
+}
+
+/**
+ * @brief Clones this entity.
+ *
+ * The created clone is not on the map.
+ *
+ * @param entity The entity to clone.
+ * @return The created entity.
+ */
+EntityModelPtr EntityModel::clone() const {
+
+  Q_ASSERT(map != nullptr);
+  const Solarus::EntityData& existing_data = get_entity();
+  EntityModelPtr clone = create(*map, EntityIndex(), existing_data.get_type());
   clone->set_entity(existing_data);
   clone->index = EntityIndex();
-  clone->name = map.get_entity_name(index);
+  clone->name = get_name();
   return clone;
 }
 
@@ -300,9 +315,16 @@ EntityModelPtr EntityModel::create(
     );
   }
 
+  if (entity->has_origin_fields()) {
+    entity->set_origin(QPoint(
+        entity->get_field("origin_x").toInt(),
+        entity->get_field("origin_y").toInt())
+    );
+  }
+
   // Notify the entity of its properties.
   // Do this after its constructor because of the virtual call.
-  for (const auto& kvp : entity->get_entity().get_fields()) {
+  for (const auto& kvp : entity->get_entity().get_specific_properties()) {
     QString key = QString::fromStdString(kvp.first);
     QVariant value = entity->get_field(key);
     entity->notify_field_changed(key, value);
@@ -430,7 +452,7 @@ void EntityModel::set_entity(const EntityData& entity) {
     set_size(QSize(entity.get_integer("width"), entity.get_integer("height")));
   }
 
-  for (const auto& kvp : entity.get_fields()) {
+  for (const auto& kvp : entity.get_specific_properties()) {
     QString key = QString::fromStdString(kvp.first);
     QVariant value = get_field(key);
     notify_field_changed(key, value);
@@ -441,7 +463,7 @@ void EntityModel::set_entity(const EntityData& entity) {
  * @brief Returns the id of the tileset of the map.
  * @return The tileset id or an empty string if no tileset is set.
  */
-QString EntityModel::get_tileset_id() const {
+QString EntityModel::get_map_tileset_id() const {
   return get_map().get_tileset_id();
 }
 
@@ -449,8 +471,17 @@ QString EntityModel::get_tileset_id() const {
  * @brief Returns the tileset of the map.
  * @return The tileset or nullptr if no tileset is set.
  */
-const TilesetModel* EntityModel::get_tileset() const {
-  return get_map().get_tileset_model();
+const TilesetModel* EntityModel::get_map_tileset() const {
+  return get_map().get_tileset_model().data();
+}
+
+/**
+ * @overload
+ *
+ * Non-const version.
+ */
+TilesetModel* EntityModel::get_map_tileset() {
+  return get_map().get_tileset_model().data();
 }
 
 /**
@@ -462,11 +493,11 @@ const Quest& EntityModel::get_quest() const {
 }
 
 /**
- * @brief Returns the quest resources.
- * @return The resources.
+ * @brief Returns the quest database.
+ * @return The database.
  */
-const QuestResources& EntityModel::get_resources() const {
-  return get_quest().get_resources();
+const QuestDatabase& EntityModel::get_database() const {
+  return get_quest().get_database();
 }
 
 /**
@@ -572,7 +603,7 @@ void EntityModel::ensure_name_unique() {
     else {
       words.removeLast();
       name = "";
-      Q_FOREACH (const QString& word, words) {
+      for (const QString& word : words) {
         name = name + word + "_";
       }
     }
@@ -703,6 +734,14 @@ void EntityModel::set_center(const QPoint& center) {
 }
 
 /**
+ * @brief Returns whether fields origin_x and origin_y exist for this entity.
+ * @return @c true if this entity has origin fields.
+ */
+bool EntityModel::has_origin_fields() const {
+  return has_field("origin_x") && has_field("origin_y");
+}
+
+/**
  * @brief Returns the origin point of this entity.
  * @return The origin point.
  */
@@ -722,6 +761,10 @@ QPoint EntityModel::get_origin() const {
  */
 void EntityModel::set_origin(const QPoint& origin) {
   this->origin = origin;
+  if (has_origin_fields()) {
+    set_field("origin_x", origin.x());
+    set_field("origin_y", origin.y());
+  }
 }
 
 /**
@@ -781,7 +824,7 @@ void EntityModel::set_size(const QSize& size) {
   // Set the size specific to the editor.
   this->size = size;
 
-  // If there is size field in the map file, change it as well.
+  // If there is a size field in the map file, change it as well.
   if (has_field("width") && has_field("height")) {
     set_field("width", size.width());
     set_field("height", size.height());
@@ -948,6 +991,22 @@ void EntityModel::set_direction(int direction) {
 }
 
 /**
+ * @brief Returns whether this entity is initially enabled.
+ * @return @c true if this entity is initially enabled.
+ */
+bool EntityModel::is_enabled_at_start() const {
+  return get_entity().is_enabled_at_start();
+}
+
+/**
+ * @brief Sets whether this entity should be initially enabled.
+ * @param enabled_at_start @c true to make this entity initially enabled.
+ */
+void EntityModel::set_enabled_at_start(bool enabled_at_start) {
+  get_entity().set_enabled_at_start(enabled_at_start);
+}
+
+/**
  * @brief Returns whether this entity has a "subtype" field.
  * @return @c true if a subtype property exists.
  */
@@ -1012,7 +1071,7 @@ void EntityModel::set_subtype(const QString& subtype) {
  */
 bool EntityModel::has_field(const QString& key) const {
 
-  return get_entity().has_field(key.toStdString());
+  return get_entity().has_specific_property(key.toStdString());
 }
 
 /**
@@ -1022,7 +1081,7 @@ bool EntityModel::has_field(const QString& key) const {
  */
 bool EntityModel::is_field_optional(const QString& key) const {
 
-  return get_entity().is_field_optional(key.toStdString());
+  return get_entity().is_specific_property_optional(key.toStdString());
 }
 
 /**
@@ -1033,7 +1092,7 @@ bool EntityModel::is_field_optional(const QString& key) const {
  */
 bool EntityModel::is_field_unset(const QString& key) const {
 
-  return get_entity().is_field_unset(key.toStdString());
+  return get_entity().is_specific_property_unset(key.toStdString());
 }
 
 /**
@@ -1088,6 +1147,122 @@ void EntityModel::set_field(const QString& key, const QVariant& value) {
   }
 
   notify_field_changed(key, value);
+}
+
+/**
+ * @brief Returns the number of user-defined properties of this entity.
+ * @return The number of user-defined properties.
+ */
+int EntityModel::get_user_property_count() const {
+
+  return get_entity().get_user_property_count();
+}
+
+/**
+ * @brief Returns a user-defined property of this entity.
+ * @param index An index between @c 0 and <tt>get_user_property_count() - 1</tt>.
+ * @return The corresponding user-defined property or an empty property.
+ */
+QPair<QString, QString> EntityModel::get_user_property(int index) const {
+
+  const Solarus::EntityData& entity = get_entity();
+  if (index < 0 || index >= get_user_property_count()) {
+    return QPair<QString, QString>();
+  }
+
+  const Solarus::EntityData::UserProperty& property = entity.get_user_property(index);
+  return qMakePair(
+      QString::fromStdString(property.first),
+      QString::fromStdString(property.second)
+  );
+}
+
+/**
+ * @brief Sets a user-defined property of this entity.
+ *
+ * The key should be valid and not already in use.
+ *
+ * @param index An index between @c 0 and <tt>get_user_property_count() - 1</tt>.
+ * @param property The new property to set.
+ * @return @c true in case of success.
+ */
+bool EntityModel::set_user_property(int index, const QPair<QString, QString>& property) {
+
+  Solarus::EntityData& entity = get_entity();
+  if (index < 0 || index >= get_user_property_count()) {
+    return false;
+  }
+
+  Solarus::EntityData::UserProperty solarus_property = std::make_pair(
+      property.first.toStdString(),
+      property.second.toStdString()
+  );
+  if (!Solarus::EntityData::is_user_property_key_valid(solarus_property.first)) {
+    // Invalid key.
+    return false;
+  }
+  int existing_index = entity.get_user_property_index(solarus_property.first);
+  if (existing_index != -1 && existing_index != index) {
+    // Another property already exists with this key.
+    return false;
+  }
+
+  entity.set_user_property(index, solarus_property);
+  return true;
+}
+
+/**
+ * @brief Creates a new user-defined property for this entity.
+ * @param property The new property to set.
+ * @return @c true in case of success.
+ */
+bool EntityModel::add_user_property(const QPair<QString, QString>& property) {
+
+  Solarus::EntityData& entity = get_entity();
+
+  Solarus::EntityData::UserProperty solarus_property = std::make_pair(
+      property.first.toStdString(),
+      property.second.toStdString()
+  );
+
+  if (!Solarus::EntityData::is_user_property_key_valid(solarus_property.first)) {
+    // Invalid key.
+    return false;
+  }
+
+  if (entity.has_user_property(solarus_property.first)) {
+    // Another property already exists with this key.
+    return false;
+  }
+
+  entity.add_user_property(solarus_property);
+  return true;
+}
+
+/**
+ * @brief Removes a user-defined property of this entity.
+ * @param index An index between @c 0 and <tt>get_user_property_count() - 1</tt>.
+ * @return @c true in case of success.
+ */
+bool EntityModel::remove_user_property(int index) {
+
+  Solarus::EntityData& entity = get_entity();
+  if (index < 0 || index >= get_user_property_count()) {
+    return false;
+  }
+
+  entity.remove_user_property(index);
+  return true;
+}
+
+/**
+ * @brief Checks if a key is a valid one for user properties.
+ * @param key The key to check.
+ * @return true if the key is valid, false otherwise.
+ */
+bool EntityModel::is_valid_user_property_key(const QString &key)
+{
+  return Solarus::EntityData::is_user_property_key_valid(key.toStdString());
 }
 
 /**
@@ -1258,6 +1433,75 @@ bool EntityModel::is_size_valid(const QSize& size) const {
   }
 
   return true;
+}
+
+/**
+ * @brief Rounds legal size the closest to the given size.
+ *
+ * This takes into account the resizing mode.
+ *
+ * @param size The size to check.
+ * @return @c the rounded size.
+ */
+QSize EntityModel::get_closest_valid_size(const QSize& size) const {
+
+  QSize valid_size = get_base_size();
+  bool extend_width = false;
+  bool extend_height = false;
+
+  switch (resize_mode) {
+
+  case ResizeMode::NONE:
+    break;
+
+  case ResizeMode::HORIZONTAL_ONLY:
+    extend_width = true;
+    break;
+
+  case ResizeMode::VERTICAL_ONLY:
+    extend_height = true;
+    break;
+
+  case ResizeMode::SQUARE:
+  {
+    int min = qMin(size.width(), size.height());
+    valid_size = QSize(min, min);
+    break;
+  }
+
+  case ResizeMode::MULTI_DIMENSION_ONE:
+  case ResizeMode::MULTI_DIMENSION_ALL:
+    extend_width = true;
+    extend_height = true;
+    break;
+
+  case ResizeMode::SINGLE_DIMENSION:
+    if (size.width() > size.height()) {
+      extend_width = true;
+    }
+    else {
+      extend_height = true;
+    }
+    break;
+  }
+
+  if (extend_width) {
+    float base_width = get_base_size().width();
+    valid_size.setWidth(qMax(base_width,
+        qRound(size.width() / base_width) * base_width));
+  }
+  if (extend_height) {
+    float base_height = get_base_size().height();
+    valid_size.setHeight(qMax(base_height,
+        qRound(size.height() / base_height) * base_height));
+  }
+
+  if (!is_size_valid(valid_size)) {
+    // Safety check.
+    return get_valid_size();
+  }
+
+  return valid_size;
 }
 
 /**
@@ -1464,7 +1708,7 @@ bool EntityModel::draw_as_sprite(
     return false;
   }
 
-  if (!get_resources().exists(ResourceType::SPRITE, sprite_id)) {
+  if (!get_database().exists(ResourceType::SPRITE, sprite_id)) {
     // The sprite is not declared in the quest.
     return false;
   }
@@ -1478,7 +1722,7 @@ bool EntityModel::draw_as_sprite(
     if (sprite_model == nullptr ||
         sprite_model->get_sprite_id() != sprite_id) {
       sprite_model = std::unique_ptr<SpriteModel>(new SpriteModel(quest, sprite_id));
-      sprite_model->set_tileset_id(get_tileset_id());
+      sprite_model->set_tileset_id(get_map_tileset_id());
     }
 
     SpriteModel::Index index(animation, 0);

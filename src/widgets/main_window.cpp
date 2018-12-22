@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #include "widgets/enum_menus.h"
 #include "widgets/external_script_dialog.h"
 #include "widgets/gui_tools.h"
+#include "widgets/import_dialog.h"
+#include "widgets/input_dialog_with_check_box.h"
 #include "widgets/main_window.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
@@ -62,6 +64,8 @@ MainWindow::MainWindow(QWidget* parent) :
   show_layers_button(nullptr),
   show_layers_action(nullptr),
   show_layers_subactions(),
+  lock_layers_menu(nullptr),
+  lock_layers_subactions(),
   show_entities_menu(nullptr),
   show_entities_button(nullptr),
   show_entities_subactions(),
@@ -77,7 +81,7 @@ MainWindow::MainWindow(QWidget* parent) :
   // Icon.
   QStringList icon_sizes = { "16", "32", "48", "256" };
   QIcon icon;
-  Q_FOREACH (const QString& size, icon_sizes) {
+  for (const QString& size : icon_sizes) {
     icon.addPixmap(":/images/icon_quest_editor_" + size + ".png");
   }
   setWindowIcon(icon);
@@ -96,6 +100,7 @@ MainWindow::MainWindow(QWidget* parent) :
   recent_quests_menu = new QMenu(tr("Recent quests"));
   update_recent_quests_menu();
   ui.menu_quest->insertMenu(ui.menu_quest->actions()[3], recent_quests_menu);
+  ui.action_import->setEnabled(false);
 
   QUndoGroup& undo_group = ui.tab_widget->get_undo_group();
   QAction* undo_action = undo_group.createUndoAction(this);
@@ -138,8 +143,10 @@ MainWindow::MainWindow(QWidget* parent) :
   show_layers_button->setMenu(show_layers_menu);
   show_layers_button->setPopupMode(QToolButton::InstantPopup);
   show_layers_action = ui.tool_bar->insertWidget(ui.action_show_traversables, show_layers_button);
+  lock_layers_menu = new QMenu(tr("Lock/unlock layers"));
   ui.tool_bar->insertSeparator(ui.action_show_traversables);
   ui.menu_view->insertMenu(ui.action_show_traversables, show_layers_menu);
+  ui.menu_view->insertMenu(ui.action_show_traversables, lock_layers_menu);
   ui.menu_view->insertSeparator(ui.action_show_traversables);
 
   show_entities_button = new QToolButton();
@@ -148,7 +155,7 @@ MainWindow::MainWindow(QWidget* parent) :
   show_entities_menu = create_show_entities_menu();
   show_entities_button->setMenu(show_entities_menu);
   show_entities_button->setPopupMode(QToolButton::InstantPopup);
-  ui.tool_bar->addWidget(show_entities_button);
+  ui.tool_bar->insertWidget(ui.action_export_to_image, show_entities_button);
   ui.menu_view->addMenu(show_entities_menu);
 
   common_actions["cut"] = ui.action_cut;
@@ -178,6 +185,7 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_exit);
   addAction(ui.action_close);
   addAction(ui.action_save);
+  addAction(ui.action_import);
   addAction(ui.action_cut);
   addAction(ui.action_copy);
   addAction(ui.action_paste);
@@ -195,42 +203,47 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_show_layer_0);
   addAction(ui.action_show_layer_1);
   addAction(ui.action_show_layer_2);
+  addAction(ui.action_export_to_image);
   addAction(ui.action_settings);
   addAction(ui.action_doc);
   addAction(ui.action_website);
 
   // Connect children.
-  connect(ui.quest_tree_view, SIGNAL(open_file_requested(Quest&, QString)),
-          ui.tab_widget, SLOT(open_file_requested(Quest&, QString)));
-  connect(ui.quest_tree_view, SIGNAL(rename_file_requested(Quest&, QString)),
-          this, SLOT(rename_file_requested(Quest&, QString)));
-  connect(ui.quest_tree_view, SIGNAL(selected_path_changed(QString)),
-          this, SLOT(selected_path_changed(QString)));
+  connect(ui.quest_tree_view, &QuestTreeView::open_file_requested,
+          ui.tab_widget, &EditorTabs::open_file_requested);
+  connect(ui.quest_tree_view, &QuestTreeView::rename_file_requested,
+          this, &MainWindow::rename_file_requested);
+  connect(ui.quest_tree_view, &QuestTreeView::selected_path_changed,
+          this, &MainWindow::selected_path_changed);
 
-  connect(ui.tab_widget, SIGNAL(currentChanged(int)),
-          this, SLOT(current_editor_changed(int)));
-  connect(ui.tab_widget, SIGNAL(can_cut_changed(bool)),
-          ui.action_cut, SLOT(setEnabled(bool)));
-  connect(ui.tab_widget, SIGNAL(can_copy_changed(bool)),
-          ui.action_copy, SLOT(setEnabled(bool)));
-  connect(ui.tab_widget, SIGNAL(can_paste_changed(bool)),
-          ui.action_paste, SLOT(setEnabled(bool)));
-  connect(ui.tab_widget, SIGNAL(refactoring_requested(Refactoring)),
-          this, SLOT(refactoring_requested(Refactoring)));
+  connect(ui.tab_widget, &EditorTabs::currentChanged,
+          this, &MainWindow::current_editor_changed);
+  connect(ui.tab_widget, &EditorTabs::can_cut_changed,
+          ui.action_cut, &QAction::setEnabled);
+  connect(ui.tab_widget, &EditorTabs::can_copy_changed,
+          ui.action_copy, &QAction::setEnabled);
+  connect(ui.tab_widget, &EditorTabs::can_paste_changed,
+          ui.action_paste, &QAction::setEnabled);
+  connect(ui.tab_widget, &EditorTabs::refactoring_requested,
+          this, &MainWindow::refactoring_requested);
+  connect(ui.tab_widget, &EditorTabs::clear_console,
+          ui.console_widget, &SolarusGui::Console::clear);
+  connect(ui.tab_widget, &EditorTabs::log_message_to_console,
+          this, &MainWindow::log_message_to_console);
 
-  connect(grid_size, SIGNAL(value_changed(int,int)),
-          this, SLOT(change_grid_size()));
+  connect(grid_size, &PairSpinBox::value_changed,
+          this, &MainWindow::change_grid_size);
 
-  connect(&quest_runner, SIGNAL(running()),
-          this, SLOT(quest_running()));
-  connect(&quest_runner, SIGNAL(finished()),
-          this, SLOT(quest_finished()));
+  connect(&quest_runner, &SolarusGui::QuestRunner::running,
+          this, &MainWindow::quest_running);
+  connect(&quest_runner, &SolarusGui::QuestRunner::finished,
+          this, &MainWindow::quest_finished);
 
-  connect(&quest, SIGNAL(current_music_changed(QString)),
-          this, SLOT(current_music_changed(QString)));
+  connect(&quest, &Quest::current_music_changed,
+          this, &MainWindow::current_music_changed);
 
-  connect(&settings_dialog, SIGNAL(settings_changed()),
-          this, SLOT(reload_settings()));
+  connect(&settings_dialog, &SettingsDialog::settings_changed,
+          this, &MainWindow::reload_settings);
 
   // No editor initially.
   current_editor_changed(-1);
@@ -273,7 +286,7 @@ void MainWindow::update_recent_quests_menu() {
 
   // Get the recent quest list.
   EditorSettings settings;
-  QStringList last_quests = settings.get_value_string_list(EditorSettings::last_quests);
+  const QStringList& last_quests = settings.get_value_string_list(EditorSettings::last_quests);
 
   // Clear previous actions.
   recent_quests_menu->clear();
@@ -282,7 +295,7 @@ void MainWindow::update_recent_quests_menu() {
   recent_quests_menu->setEnabled(!last_quests.isEmpty());
 
   // Create new actions.
-  Q_FOREACH (const QString& quest_path, last_quests) {
+  for (const QString& quest_path : last_quests) {
 
     QAction* action = new QAction(quest_path, recent_quests_menu);
     connect(action, &QAction::triggered, [this, quest_path]() {
@@ -339,8 +352,8 @@ void MainWindow::update_show_layers_menu() {
   }
 
   // Clear previous actions.
-  const QList<QAction*> actions = show_layers_menu->actions();
-  Q_FOREACH (QAction* action, actions) {
+  const QList<QAction*>& actions = show_layers_menu->actions();
+  for (QAction* action : actions) {
     delete action;
   }
   show_layers_menu->clear();
@@ -381,9 +394,10 @@ void MainWindow::update_show_layers_menu() {
         QString file_name = QString(":/images/icon_layer_%1.png").arg(i);
         action->setIcon(QIcon(file_name));
       }
-      if (i >= 0 && i <= 9) {
-        // Layers 0 to 9 have a shortcut.
-        action->setShortcut(QString::number(i));
+      // Layers -4 to 5 have a shortcut.
+      if (i >= -4 && i <= 5) {
+        const int digit = (i >= 0) ? i : (10 + i);
+        action->setShortcut(QString::number(digit));
         addAction(action);
       }
       action->setCheckable(true);
@@ -401,6 +415,53 @@ void MainWindow::update_show_layers_menu() {
 }
 
 /**
+ * @brief Updates the lock layers menu to match the current range of layers.
+ */
+void MainWindow::update_lock_layers_menu() {
+
+  if (lock_layers_menu == nullptr) {
+    return;
+  }
+
+  // Clear previous actions.
+  const QList<QAction*>& actions = lock_layers_menu->actions();
+  for (QAction* action : actions) {
+    delete action;
+  }
+  lock_layers_menu->clear();
+
+  // TODO add an "Unlock all layers" action.
+
+  // Add an action for each layer.
+  Editor* editor = get_current_editor();
+  if (editor != nullptr) {
+    int min_layer = 0;
+    int max_layer = 0;
+    editor->get_layers_supported(min_layer, max_layer);
+    for (int i = min_layer; i <= max_layer; ++i) {
+      QAction* action = new QAction(tr("Lock layer %1").arg(i), this);
+      // TODO add an icon.
+      if (i >= -4 && i <= 5) {
+        const int digit = (i >= 0) ? i : (10 + i);
+        // Layers -4 to 5 have a shortcut.
+        action->setShortcut(tr("Ctrl+%1").arg(QString::number(digit)));
+        addAction(action);
+      }
+      action->setCheckable(true);
+      action->setChecked(false);
+      lock_layers_menu->addAction(action);
+      connect(action, &QAction::triggered, [this, action, i]() {
+        Editor* editor = get_current_editor();
+        if (editor != nullptr) {
+          const bool locked = action->isChecked();
+          editor->get_view_settings().set_layer_locked(i, locked);
+        }
+      });
+    }
+  }
+}
+
+/**
  * @brief Creates a menu with actions to show or hide each entity type.
  * @return The created menu. It has no parent initially.
  */
@@ -409,7 +470,7 @@ QMenu* MainWindow::create_show_entities_menu() {
   QMenu* menu = new QMenu(tr("Show/hide entity types"));
 
   // Add show entity types actions to the menu.
-  QList<QAction*> entity_actions = EnumMenus<EntityType>::create_actions(
+  const QList<QAction*>& entity_actions = EnumMenus<EntityType>::create_actions(
         *menu,
         EnumMenuCheckableOption::CHECKABLE,
         [this](EntityType type) {
@@ -421,7 +482,7 @@ QMenu* MainWindow::create_show_entities_menu() {
     }
   });
 
-  Q_FOREACH (QAction* action, entity_actions) {
+  for (QAction* action : entity_actions) {
     EntityType type = static_cast<EntityType>(action->data().toInt());
     if (!EntityTraits::can_be_stored_in_map_file(type)) {
       // Only show the ones that can exist in map files.
@@ -504,14 +565,15 @@ void MainWindow::close_quest() {
   ui.tab_widget->close_without_confirmation();
 
   if (quest.exists()) {
-    disconnect(&quest, SIGNAL(file_renamed(QString, QString)),
-               ui.tab_widget, SLOT(file_renamed(QString, QString)));
-    disconnect(&quest, SIGNAL(file_deleted(QString)),
-               ui.tab_widget, SLOT(file_deleted(QString)));
+    disconnect(&quest, &Quest::file_renamed,
+               ui.tab_widget, &EditorTabs::file_renamed);
+    disconnect(&quest, &Quest::file_deleted,
+               ui.tab_widget, &EditorTabs::file_deleted);
   }
 
   quest.set_root_path("");
   update_title();
+  ui.action_import->setEnabled(false);
   ui.action_run_quest->setEnabled(false);
   ui.quest_tree_view->set_quest(quest);
 
@@ -541,15 +603,18 @@ bool MainWindow::open_quest(const QString& quest_path) {
     quest.check_version();
 
     // Make sure all resource directories exist.
-    Q_FOREACH (ResourceType resource_type, Solarus::EnumInfo<ResourceType>::enums()) {
-      quest.create_dir_if_not_exists(quest.get_resource_path(resource_type));
+    for (ResourceType resource_type : Solarus::EnumInfo<ResourceType>::enums()) {
+      if (QFileInfo(quest.get_data_path()).isWritable()) {
+        quest.create_dir_if_not_exists(quest.get_resource_path(resource_type));
+      }
     }
 
-    connect(&quest, SIGNAL(file_renamed(QString, QString)),
-            ui.tab_widget, SLOT(file_renamed(QString, QString)));
-    connect(&quest, SIGNAL(file_deleted(QString)),
-            ui.tab_widget, SLOT(file_deleted(QString)));
+    connect(&quest, &Quest::file_renamed,
+            ui.tab_widget, &EditorTabs::file_renamed);
+    connect(&quest, &Quest::file_deleted,
+            ui.tab_widget, &EditorTabs::file_deleted);
 
+    ui.action_import->setEnabled(true);
     ui.action_run_quest->setEnabled(true);
 
     add_quest_to_recent_list();
@@ -578,6 +643,7 @@ bool MainWindow::open_quest(const QString& quest_path) {
         quest.set_root_path("");
         quest.set_root_path(quest_path);
         quest.check_version();
+        ui.action_import->setEnabled(true);
         ui.action_run_quest->setEnabled(true);
         success = true;
       }
@@ -802,6 +868,28 @@ void MainWindow::on_action_close_all_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Import" action.
+ */
+void MainWindow::on_action_import_triggered() {
+
+  Quest& quest = get_quest();
+  if (!quest.exists()) {
+    // No valid quest is currently open.
+    return;
+  }
+
+  ImportDialog import_dialog(quest);
+
+  // If the user wants to rename something from the dialog's quest tree,
+  // we need to handle it from here in order to check open files
+  // and perform refactoring if necessary.
+  connect(&import_dialog, &ImportDialog::destination_quest_rename_file_requested,
+          this, &MainWindow::rename_file_requested);
+
+  import_dialog.exec();
+}
+
+/**
  * @brief Slot called when the user triggers the "Quest properties" action.
  */
 void MainWindow::on_action_open_quest_properties_triggered() {
@@ -815,6 +903,7 @@ void MainWindow::on_action_open_quest_properties_triggered() {
 void MainWindow::on_action_exit_triggered() {
 
   if (confirm_before_closing()) {
+    ui.tab_widget->save_open_files_list();
     QApplication::exit(0);
   }
 }
@@ -1008,6 +1097,17 @@ void MainWindow::set_console_visible(bool console_visible) {
 }
 
 /**
+ * @brief Adds a message to the console and shows it.
+ * @param log_level Log level of the message.
+ * @param message The message to log.
+ */
+void MainWindow::log_message_to_console(const QString& log_level, const QString& message) {
+
+  set_console_visible(true);
+  ui.console_widget->add_message(log_level, message);
+}
+
+/**
  * @brief Slot called when the user changes the grid size.
  */
 void MainWindow::change_grid_size() {
@@ -1086,6 +1186,16 @@ void MainWindow::on_action_show_obstacles_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Export to image" action.
+ */
+void MainWindow::on_action_export_to_image_triggered() {
+
+  Editor* editor = get_current_editor();
+  if (editor != nullptr && editor->is_export_to_image_supported()) {
+    editor->export_to_image();
+  }
+}
+/**
  * @brief Slot called when the user triggers the "Settings" action.
  */
 void MainWindow::on_action_settings_triggered() {
@@ -1131,6 +1241,12 @@ void MainWindow::current_editor_changed(int index) {
   ui.action_save->setEnabled(has_editor);
   ui.action_save_all->setEnabled(has_editor);
 
+  const bool export_to_image_supported = has_editor && editor->is_export_to_image_supported();
+  ui.action_export_to_image->setEnabled(export_to_image_supported);
+
+  const bool save_supported = has_editor && editor->is_save_supported();
+  ui.action_save->setEnabled(save_supported);
+
   const bool select_all_supported = has_editor && editor->is_select_all_supported();
   ui.action_select_all->setEnabled(select_all_supported);
 
@@ -1170,34 +1286,39 @@ void MainWindow::current_editor_changed(int index) {
 
   if (has_editor) {
 
-    connect(&view_settings, SIGNAL(zoom_changed(double)),
-            this, SLOT(update_zoom()));
+    connect(&view_settings, &ViewSettings::zoom_changed,
+            this, &MainWindow::update_zoom);
     update_zoom();
 
-    connect(&view_settings, SIGNAL(grid_visibility_changed(bool)),
-            this, SLOT(update_grid_visibility()));
+    connect(&view_settings, &ViewSettings::grid_visibility_changed,
+            this, &MainWindow::update_grid_visibility);
     update_grid_visibility();
-    connect(&view_settings, SIGNAL(grid_size_changed(QSize)),
-            this, SLOT(update_grid_size()));
+    connect(&view_settings, &ViewSettings::grid_size_changed,
+            this, &MainWindow::update_grid_size);
     update_grid_size();
 
-    connect(&view_settings, SIGNAL(layer_range_changed(int, int)),
-            this, SLOT(update_layer_range()));
-    connect(&view_settings, SIGNAL(layer_visibility_changed(int, bool)),
-            this, SLOT(update_layer_visibility(int)));
+    connect(&view_settings, &ViewSettings::layer_range_changed,
+            this, &MainWindow::update_layer_range);
+    connect(&view_settings, &ViewSettings::layer_visibility_changed,
+            this, &MainWindow::update_layer_visibility);
+    connect(&view_settings, &ViewSettings::layer_locking_changed,
+            this, &MainWindow::update_layer_locking);
     update_layers_visibility();
+    update_layers_locking();
 
-    connect(&view_settings, SIGNAL(traversables_visibility_changed(bool)),
-            this, SLOT(update_traversables_visibility()));
+    connect(&view_settings, &ViewSettings::traversables_visibility_changed,
+            this, &MainWindow::update_traversables_visibility);
     update_traversables_visibility();
-    connect(&view_settings, SIGNAL(obstacles_visibility_changed(bool)),
-            this, SLOT(update_obstacles_visibility()));
+    connect(&view_settings, &ViewSettings::obstacles_visibility_changed,
+            this, &MainWindow::update_obstacles_visibility);
     update_obstacles_visibility();
-    connect(&view_settings, SIGNAL(entity_type_visibility_changed(EntityType, bool)),
-            this, SLOT(update_entity_type_visibility(EntityType)));
+    connect(&view_settings, &ViewSettings::entity_type_visibility_changed,
+            this, &MainWindow::update_entity_type_visibility);
     update_entity_types_visibility();
 
     editor->set_common_actions(common_actions);
+
+    ui.quest_tree_view->set_selected_path(editor->get_file_path());
   }
 }
 
@@ -1272,6 +1393,59 @@ void MainWindow::update_layer_range() {
   show_layers_action->setVisible(min_layer < 0 || max_layer >= 3);
   show_layers_menu->setEnabled(min_layer < 0 || max_layer >= 3);
   update_show_layers_menu();
+  update_lock_layers_menu();
+}
+
+/**
+ * @brief Slot called when a layer of the current editor was just locked or unlocked.
+ * @param layer The layer whose locking state has just changed.
+ */
+void MainWindow::update_layer_locking(int layer) {
+
+  const Editor* editor = get_current_editor();
+  if (editor == nullptr) {
+    return;
+  }
+  const ViewSettings& view_settings = editor->get_view_settings();
+  const bool locked = view_settings.is_layer_locked(layer);
+
+  int min_layer = 0;
+  int max_layer = 0;
+  editor->get_layers_supported(min_layer, max_layer);
+
+  // Update the show layer menu.
+  const int index = layer - min_layer;
+  QAction* action = lock_layers_menu->actions().value(index);
+  if (action == nullptr) {
+    qCritical() << "Missing lock layer action for layer " << layer << ": " << index;
+    return;
+  }
+  action->setChecked(locked);
+}
+
+/**
+ * @brief Slot called when the locking state of all layers should be updated to the GUI.
+ */
+void MainWindow::update_layers_locking() {
+
+  Editor* editor = get_current_editor();
+  if (editor == nullptr) {
+    return;
+  }
+
+  int min_layer = 0;
+  int max_layer = 0;
+  editor->get_layers_supported(min_layer, max_layer);
+
+  const ViewSettings& view_settings = editor->get_view_settings();
+
+  const QList<QAction*>& actions = lock_layers_menu->actions();
+  for (int i = min_layer; i <= max_layer; ++i) {
+    QAction* action = actions.value(i - min_layer);
+    if (action != nullptr) {
+      action->setChecked(view_settings.is_layer_locked(i));
+    }
+  }
 }
 
 /**
@@ -1333,7 +1507,7 @@ void MainWindow::update_layers_visibility() {
   int max_layer = 0;
   editor->get_layers_supported(min_layer, max_layer);
 
-  ViewSettings& view_settings = editor->get_view_settings();
+  const ViewSettings& view_settings = editor->get_view_settings();
   ui.action_show_layer_0->setChecked(view_settings.is_layer_visible(0));
   ui.action_show_layer_1->setChecked(max_layer >= 1 && view_settings.is_layer_visible(1));
   ui.action_show_layer_2->setChecked(max_layer >= 2 && view_settings.is_layer_visible(2));
@@ -1342,7 +1516,7 @@ void MainWindow::update_layers_visibility() {
   for (int i = min_layer; i <= max_layer; ++i) {
     QAction* action = actions.value(i - min_layer);
     if (action != nullptr) {
-      action->setVisible(view_settings.is_layer_visible(i));
+      action->setChecked(view_settings.is_layer_visible(i));
     }
   }
 }
@@ -1415,7 +1589,7 @@ void MainWindow::update_entity_types_visibility() {
   }
 
   ViewSettings& view_settings = editor->get_view_settings();
-  Q_FOREACH (QAction* action, show_entities_subactions) {
+  for (QAction* action : show_entities_subactions) {
     if (action == nullptr) {
       qCritical() << tr("Missing show entity type action");
       return;
@@ -1551,6 +1725,7 @@ void MainWindow::open_file(Quest& quest, const QString& path) {
 void MainWindow::closeEvent(QCloseEvent* event) {
 
   if (confirm_before_closing()) {
+    ui.tab_widget->save_open_files_list();
     event->accept();
   }
   else {
@@ -1626,56 +1801,93 @@ void MainWindow::rename_file_requested(Quest& quest, const QString& path) {
 
       ChangeResourceIdDialog dialog(quest, resource_type, element_id);
       int result = dialog.exec();
-      if (result == QDialog::Accepted) {
-        const QString& new_element_id = dialog.get_element_id();
-        if (new_element_id != element_id) {
-          if (!dialog.get_update_references()) {
-            // Regular renaming.
-            quest.rename_resource_element(resource_type, element_id, new_element_id);
-          }
-          else {
-            // Refactoring.
-            if (resource_type == ResourceType::MAP) {
-              // Update teletransporters leading to this map.
-              refactor_map_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::TILESET) {
-              // Update maps using this tileset.
-              refactor_tileset_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::MUSIC) {
-              // Update maps using this music.
-              refactor_music_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::ENEMY) {
-              // Update maps using this enemy model.
-              refactor_enemy_id(element_id, new_element_id);
-            }
-            else if (resource_type == ResourceType::ENTITY) {
-              // Update maps using this custom entity model.
-              refactor_custom_entity_id(element_id, new_element_id);
-            }
-          }
+      if (result != QDialog::Accepted) {
+        return;
+      }
+      const QString& new_element_id = dialog.get_element_id();
+      if (new_element_id == element_id) {
+        return;
+      }
+      if (!dialog.get_update_references()) {
+        // Regular renaming.
+        quest.rename_resource_element(resource_type, element_id, new_element_id);
+      }
+      else {
+        // Refactoring.
+        if (resource_type == ResourceType::MAP) {
+          // Update teletransporters leading to this map.
+          refactor_map_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::TILESET) {
+          // Update maps using this tileset.
+          refactor_tileset_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::MUSIC) {
+          // Update maps using this music.
+          refactor_music_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::ENEMY) {
+          // Update maps using this enemy model.
+          refactor_enemy_id(element_id, new_element_id);
+        }
+        else if (resource_type == ResourceType::ENTITY) {
+          // Update maps using this custom entity model.
+          refactor_custom_entity_id(element_id, new_element_id);
         }
       }
     }
     else {
       // Rename a regular file or directory.
       bool ok = false;
-      QString file_name = QFileInfo(path).fileName();
-      QString new_file_name = QInputDialog::getText(
-            this,
-            tr("Rename file"),
-            tr("New name for file '%1':").arg(file_name),
-            QLineEdit::Normal,
-            file_name,
-            &ok);
+      QFileInfo info(path);
+      QString file_name = info.fileName();
 
-      if (ok && new_file_name != file_name) {
+      if (quest.is_image(path) && path.startsWith(quest.get_resource_path(ResourceType::SPRITE))) {
+        // Rename a PNG file in the sprites directory.
+        QString path_from_sprites = quest.get_path_relative_to_sprites_path(path);
+        InputDialogWithCheckBox dialog(
+              tr("Rename file"),
+              tr("New name for file '%1':").arg(file_name),
+              tr("Update existing sprites using this image"),
+              path_from_sprites,
+              this
+        );
+        int result = dialog.exec();
+        if (result != QDialog::Accepted) {
+          return;
+        }
+        const QString& new_path_from_sprites = dialog.get_value();
+        if (new_path_from_sprites == path_from_sprites) {
+          return;
+        }
+        Quest::check_valid_file_name(new_path_from_sprites);
+        QString new_path = quest.get_sprite_image_path(new_path_from_sprites);
+        if (!dialog.is_checked()) {
+          // Regular renaming.
+          quest.rename_file(path, new_path);
+        } else {
+          // Refactoring.
+          refactor_image_file(path, new_path);
+        }
+      } else {
+        QString new_file_name = QInputDialog::getText(
+              this,
+              tr("Rename file"),
+              tr("New name for file '%1':").arg(file_name),
+              QLineEdit::Normal,
+              file_name,
+              &ok);
 
-        Quest::check_valid_file_name(file_name);
-        QString new_path = QFileInfo(path).path() + '/' + new_file_name;
-        quest.rename_file(path, new_path);
+        if (ok && new_file_name != file_name) {
+
+          Quest::check_valid_file_name(file_name);
+          QString new_path = QFileInfo(path).path() + '/' + new_file_name;
+          if (!info.isDir()) {
+            quest.rename_file(path, new_path);
+          } else {
+            quest.rename_dir(path, new_path);
+          }
+        }
       }
     }
   }
@@ -1758,7 +1970,8 @@ void MainWindow::refactor_map_id(const QString& map_id_before, const QString& ma
 
     // Update teletransporters in all maps.
     QStringList modified_paths;
-    Q_FOREACH (const QString& map_id, quest.get_resources().get_elements(ResourceType::MAP)) {
+    const QStringList& map_ids = quest.get_database().get_elements(ResourceType::MAP);
+    for (const QString& map_id : map_ids) {
       if (update_destination_map_in_map(map_id, map_id_before, map_id_after)) {
         modified_paths << quest.get_map_data_file_path(map_id);
       }
@@ -1787,6 +2000,9 @@ bool MainWindow::update_destination_map_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  destination_map = \"?%1\"?,\n").arg(
         QRegularExpression::escape(map_id_before));
@@ -1810,7 +2026,8 @@ void MainWindow::refactor_tileset_id(const QString& tileset_id_before, const QSt
 
     // Update all maps.
     QStringList modified_paths;
-    Q_FOREACH (const QString& map_id, quest.get_resources().get_elements(ResourceType::MAP)) {
+    const QStringList& map_ids = quest.get_database().get_elements(ResourceType::MAP);
+    for (const QString& map_id : map_ids) {
       if (update_tileset_in_map(map_id, tileset_id_before, tileset_id_after)) {
         modified_paths << quest.get_map_data_file_path(map_id);
       }
@@ -1839,13 +2056,15 @@ bool MainWindow::update_tileset_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  tileset = \"?%1\"?,\n").arg(
         QRegularExpression::escape(tileset_id_before));
-
   QString replacement = QString("\n  tileset = \"%1\",\n").arg(tileset_id_after);
-
-  return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
+  const bool replace_all = false;  // Don't replace it in tile entities.
+  return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement, replace_all);
 }
 
 /**
@@ -1862,7 +2081,8 @@ void MainWindow::refactor_music_id(const QString& music_id_before, const QString
 
     // Update all maps.
     QStringList modified_paths;
-    Q_FOREACH (const QString& map_id, quest.get_resources().get_elements(ResourceType::MAP)) {
+    const QStringList& map_ids = quest.get_database().get_elements(ResourceType::MAP);
+    for (const QString& map_id : map_ids) {
       if (update_music_in_map(map_id, music_id_before, music_id_after)) {
         modified_paths << quest.get_map_data_file_path(map_id);
       }
@@ -1891,6 +2111,9 @@ bool MainWindow::update_music_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  music = \"?%1\"?,\n").arg(
         QRegularExpression::escape(music_id_before));
@@ -1914,7 +2137,8 @@ void MainWindow::refactor_enemy_id(const QString& enemy_id_before, const QString
 
     // Update enemies in all maps.
     QStringList modified_paths;
-    Q_FOREACH (const QString& map_id, quest.get_resources().get_elements(ResourceType::MAP)) {
+    const QStringList& map_ids = quest.get_database().get_elements(ResourceType::MAP);
+    for (const QString& map_id : map_ids) {
       if (update_enemy_breed_in_map(map_id, enemy_id_before, enemy_id_after)) {
         modified_paths << quest.get_map_data_file_path(map_id);
       }
@@ -1943,6 +2167,9 @@ bool MainWindow::update_enemy_breed_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  breed = \"?%1\"?,\n").arg(
         QRegularExpression::escape(enemy_id_before));
@@ -1966,7 +2193,8 @@ void MainWindow::refactor_custom_entity_id(const QString& entity_id_before, cons
 
     // Update enemies in all maps.
     QStringList modified_paths;
-    Q_FOREACH (const QString& map_id, quest.get_resources().get_elements(ResourceType::MAP)) {
+    const QStringList& map_ids = quest.get_database().get_elements(ResourceType::MAP);
+    for (const QString& map_id : map_ids) {
       if (update_custom_entity_model_in_map(map_id, entity_id_before, entity_id_after)) {
         modified_paths << quest.get_map_data_file_path(map_id);
       }
@@ -1995,11 +2223,80 @@ bool MainWindow::update_custom_entity_model_in_map(
   // data file.
 
   QString path = get_quest().get_map_data_file_path(map_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
 
   QString pattern = QString("\n  model = \"?%1\"?,\n").arg(
         QRegularExpression::escape(entity_id_before));
 
   QString replacement = QString("\n  model = \"%1\",\n").arg(entity_id_after);
+
+  return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
+}
+
+/**
+ * @brief Renames a PNG file and updates sprites referencing it.
+ * @param image_path_before Path of the PNG file to rename.
+ * @param image_path_after New path to set.
+ */
+void MainWindow::refactor_image_file(
+    const QString& image_path_before,
+    const QString& image_path_after) {
+
+  if (image_path_after == image_path_before) {
+    return;
+  }
+
+  Refactoring refactoring([this, image_path_before, image_path_after]() {
+
+    QString relative_image_path_before = quest.get_path_relative_to_sprites_path(image_path_before);
+    QString relative_image_path_after = quest.get_path_relative_to_sprites_path(image_path_after);
+
+    if (relative_image_path_before.isEmpty() ||
+        relative_image_path_after.isEmpty()) {
+      return QStringList();
+    }
+
+    // Do the renaming.
+    quest.rename_file(image_path_before, image_path_after);
+
+    // Update source images in all sprites.
+    QStringList modified_paths;
+    const QStringList& sprite_ids = quest.get_database().get_elements(ResourceType::SPRITE);
+    for (const QString& sprite_id : sprite_ids) {
+      if (update_image_in_sprite(sprite_id, relative_image_path_before, relative_image_path_after)) {
+        modified_paths << quest.get_sprite_path(sprite_id);
+      }
+    }
+    return modified_paths;
+  });
+
+  refactoring_requested(refactoring);
+}
+
+/**
+ * @brief Updates existing sprites after a PNG file was moved.
+ * @param sprite_id Id of the sprite to update.
+ * @param image_before Path of the PNG file that was renamed, relative to the sprites directory.
+ * @param image_after New path after renaming, relative to the sprites directory.
+ * @return @c true if there was a change.
+ * @throws EditorException In case of error.
+ */
+bool MainWindow::update_image_in_sprite(
+    const QString& sprite_id,
+    const QString& image_before,
+    const QString& image_after
+) {
+  QString path = get_quest().get_sprite_path(sprite_id);
+  if (!QFile(path).exists()) {
+    return false;
+  }
+
+  QString pattern = QString("\n  src_image = \"%1\",\n").arg(
+        QRegularExpression::escape(image_before));
+
+  QString replacement = QString("\n  src_image = \"%1\",\n").arg(image_after);
 
   return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
 }

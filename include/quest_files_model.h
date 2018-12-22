@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #ifndef SOLARUSEDITOR_QUEST_FILES_MODEL_H
 #define SOLARUSEDITOR_QUEST_FILES_MODEL_H
 
-#include "quest_resources.h"
+#include "quest_database.h"
 #include <QSet>
 #include <QSortFilterProxyModel>
 #include <array>
@@ -50,9 +50,11 @@ public:
   static constexpr int FILE_COLUMN = 0;          /**< Column index of the file in the model. */
   static constexpr int DESCRIPTION_COLUMN = 1;   /**< Column index of the resource description in the model. */
   static constexpr int TYPE_COLUMN = 2;          /**< Column index of the type info in the model. */
-  static constexpr int NUM_COLUMNS = 3;          /**< Number of columns of the model. */
+  static constexpr int AUTHOR_COLUMN = 3;        /**< Column index of the author info in the model. */
+  static constexpr int LICENSE_COLUMN = 4;       /**< Column index of the license info in the model. */
+  static constexpr int NUM_COLUMNS = 5;          /**< Number of columns of the model. */
 
-  explicit QuestFilesModel(Quest& quest);
+  explicit QuestFilesModel(Quest& quest, QObject* parent = nullptr);
 
   Quest& get_quest();
   QModelIndex get_quest_root_index() const;
@@ -61,9 +63,8 @@ public:
 
   // The proxy changes the underlying filesystem model a lot:
   // rows and columns are added and removed.
-  // We have to reimplement a lot of functions, in particular because
-  // adding extra rows breaks an assumption of QSortFilterProxyModel:
-  // the fact that a valid proxy index can always be mapped to a valid
+  // We have to reimplement a lot of functions, because
+  // a valid proxy index can not always be mapped to a valid
   // source index.
   int columnCount(const QModelIndex& parent = QModelIndex()) const override;
   int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -75,21 +76,21 @@ public:
   QItemSelection mapSelectionToSource(const QItemSelection& proxy_selection) const override;
 
   // Data.
-  virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
-  virtual QVariant headerData(
+  Qt::ItemFlags flags(const QModelIndex& index) const override;
+  QVariant headerData(
       int section, Qt::Orientation orientation, int role = Qt::DisplayRole
-      ) const override;
-  virtual QVariant data(
+  ) const override;
+  QVariant data(
       const QModelIndex& index, int role = Qt::DisplayRole
-      ) const override;
-  virtual bool setData(
+  ) const override;
+  bool setData(
       const QModelIndex& index, const QVariant& value, int role = Qt::EditRole
-      ) override;
+  ) override;
 
 protected:
 
-  virtual bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
-  virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
+  bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+  bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
 
 private slots:
 
@@ -130,6 +131,8 @@ private:
     void rebuild_index_cache();
   };
 
+  QString get_quest_file_displayed_name(const QModelIndex& index) const;
+  QString get_quest_file_displayed_type(const QModelIndex& index) const;
   QIcon get_quest_file_icon(const QModelIndex& index) const;
   QString get_quest_file_tooltip(const QModelIndex& index) const;
   bool is_quest_data_index(const QModelIndex& index) const;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ SpriteModel::SpriteModel(
   // Load the sprite data file.
   QString path = quest.get_sprite_path(sprite_id);
 
-  if (!sprite.import_from_file(path.toStdString())) {
+  if (!sprite.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open sprite '%1'").arg(path));
   }
 
@@ -67,7 +67,7 @@ SpriteModel::SpriteModel(
 
   // Use the first tileset of the quest.
   QStringList tilesets =
-      quest.get_resources().get_elements(ResourceType::TILESET);
+      quest.get_database().get_elements(ResourceType::TILESET);
   if (tilesets.size() > 0) {
     tileset_id = tilesets[0];
   }
@@ -199,7 +199,7 @@ void SpriteModel::save() const {
 
   QString path = quest.get_sprite_path(sprite_id);
 
-  if (!sprite.export_to_file(path.toStdString())) {
+  if (!sprite.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save sprite '%1'").arg(path));
   }
 }
@@ -659,6 +659,20 @@ void SpriteModel::set_animation_name(const Index& index, const QString& new_name
 }
 
 /**
+ * @brief Returns the name of all animations of this sprite.
+ * @return The animation names.
+ */
+QStringList SpriteModel::get_animation_names() const {
+
+  QStringList animation_names;
+  for (const AnimationModel& animation : animations) {
+    animation_names << animation.get_animation_name();
+  }
+
+  return animation_names;
+}
+
+/**
  * @brief Returns an animation data.
  * @param index An animation index.
  * @return The animation data.
@@ -846,10 +860,13 @@ bool SpriteModel::direction_exists(const Index& index) const {
  * @brief Adds a direction in an animation of this sprite.
  * @param index Index of the animation to add the direction.
  * @param frame The first frame of the direction to create.
+ * @param num_frames The number of frames of the direction to create.
+ * @param num_columns The number of columns of the direction to create.
  * @return Index of the created direction.
  * @throws EditorException in case of error.
  */
-int SpriteModel::add_direction(const Index& index, const QRect& frame) {
+int SpriteModel::add_direction(
+  const Index& index, const QRect& frame, int num_frames, int num_columns) {
 
   // Make some checks first.
   if (!animation_exists(index)) {
@@ -859,13 +876,17 @@ int SpriteModel::add_direction(const Index& index, const QRect& frame) {
 
   // Save and clear the selection.
   Index selection = get_selected_index();
-  clear_selection();
+  selection_model.reset();
 
   // Add the direction to the sprite file.
   SpriteAnimationData& animation_data = get_animation(index);
   SpriteAnimationDirectionData direction(
         Point::to_solarus_point(frame.topLeft()),
         Size::to_solarus_size(frame.size()));
+  direction.set_num_frames(num_frames);
+  direction.set_num_columns(num_columns);
+  QPoint origin = get_direction_default_origin(frame.size());
+  direction.set_origin(Point::to_solarus_point(origin));
 
   animation_data.add_direction(direction);
 
@@ -910,7 +931,7 @@ int SpriteModel::insert_direction(
 
   // Save and clear the selection.
   Index selection = get_selected_index();
-  clear_selection();
+  selection_model.reset();
 
   // Insert the direction to the sprite file.
   SpriteAnimationData& animation_data = get_animation(index);
@@ -977,7 +998,7 @@ void SpriteModel::delete_direction(const Index &index) {
       selection.direction_nb--;
     }
   }
-  clear_selection();
+  selection_model.reset();
 
   // Delete the direction in the sprite file.
   get_animation(index).remove_direction(index.direction_nb);
@@ -1104,7 +1125,8 @@ QRect SpriteModel::get_direction_all_frames_rect(const Index& index) const {
   }
 
   QRect rect = get_direction_first_frame_rect(index);
-  Q_FOREACH (const QRect& frame, get_direction_frames(index)) {
+  const QList<QRect>& frames = get_direction_frames(index);
+  for (const QRect& frame : frames) {
     rect.setBottom(qMax(frame.bottom(), rect.bottom()));
     rect.setRight(qMax(frame.right(), rect.right()));
   }
@@ -1243,6 +1265,16 @@ void SpriteModel::set_direction_origin(
 
   direction.set_origin(Point::to_solarus_point(origin));
   emit direction_origin_changed(index, origin);
+}
+
+/**
+ * @brief Returns a default origin value for the given frame size.
+ * @param frame_size A frame size.
+ * @return @c A hopefully appropriate origin guess.
+ */
+QPoint SpriteModel::get_direction_default_origin(const QSize& frame_size) {
+
+  return QPoint(frame_size.width() / 2, frame_size.height() - 3);
 }
 
 /**
@@ -1655,7 +1687,7 @@ void SpriteModel::set_direction_image_dirty(const Index& index) {
  * @param index An animation index.
  * @return Reference of the animation.
  */
-const Solarus::SpriteAnimationData &SpriteModel::get_animation(
+const Solarus::SpriteAnimationData& SpriteModel::get_animation(
     const Index& index) const {
 
   return sprite.get_animation(index.animation_name.toStdString());
@@ -1671,7 +1703,7 @@ const Solarus::SpriteAnimationData &SpriteModel::get_animation(
  * @param index An animation index.
  * @return Reference of the animation.
  */
-Solarus::SpriteAnimationData &SpriteModel::get_animation(const Index& index) {
+Solarus::SpriteAnimationData& SpriteModel::get_animation(const Index& index) {
 
   return sprite.get_animation(index.animation_name.toStdString());
 }
@@ -1684,7 +1716,7 @@ Solarus::SpriteAnimationData &SpriteModel::get_animation(const Index& index) {
  * @param index A direction index.
  * @return Reference of the direction.
  */
-const Solarus::SpriteAnimationDirectionData &SpriteModel::get_direction(
+const Solarus::SpriteAnimationDirectionData& SpriteModel::get_direction(
     const Index& index) const {
 
   return get_animation(index).get_direction(index.direction_nb);
@@ -1700,7 +1732,7 @@ const Solarus::SpriteAnimationDirectionData &SpriteModel::get_direction(
  * @param index A direction index.
  * @return Reference of the direction.
  */
-Solarus::SpriteAnimationDirectionData &SpriteModel::get_direction(
+Solarus::SpriteAnimationDirectionData& SpriteModel::get_direction(
     const Index& index) {
 
   return get_animation(index).get_direction(index.direction_nb);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ public:
 
   virtual void undo() override {
 
-    Q_FOREACH (const auto& pair, edited_ids) {
+    for (const auto& pair : edited_ids) {
       get_model().set_dialog_id(pair.second, pair.first);
     }
     if (!edited_ids.isEmpty()) {
@@ -237,7 +237,7 @@ public:
 
   virtual void undo() override {
 
-    Q_FOREACH (const auto& pair, removed_dialogs) {
+    for (const auto& pair : removed_dialogs) {
       get_model().create_dialog(pair.first, pair.second);
     }
     if (!removed_dialogs.isEmpty()) {
@@ -459,9 +459,9 @@ DialogsEditor::DialogsEditor(
 
   // Editor properties.
   set_title(tr("Dialogs %1").arg(language_id));
-  set_icon(QIcon(":/images/icon_resource_language.png"));
+  set_icon(QIcon(":/images/icon_dialogs.png"));
   set_close_confirm_message(
-        tr("Dialogs '%1' has been modified. Save changes?").arg(language_id));
+        tr("Dialogs '%1' have been modified. Save changes?").arg(language_id));
 
   // Prepare the gui.
   ui.dialogs_tree_view->set_model(model);
@@ -476,7 +476,7 @@ DialogsEditor::DialogsEditor(
   update();
 
   // Make connections.
-  connect(&get_resources(),
+  connect(&get_database(),
           SIGNAL(element_description_changed(ResourceType, const QString&, const QString&)),
           this, SLOT(update_description_to_gui()));
   connect(ui.description_field, SIGNAL(editingFinished()),
@@ -515,6 +515,12 @@ DialogsEditor::DialogsEditor(
           this, SLOT(update_dialog_text_field()));
   connect(ui.dialog_text_field, SIGNAL(editing_finished()),
           this, SLOT(change_dialog_text_requested()));
+  connect(ui.dialog_text_field, SIGNAL(cursorPositionChanged()),
+          this, SLOT(update_dialog_cursor_position_label()));
+  connect(ui.dialog_text_field, SIGNAL(focus_in()),
+          this, SLOT(update_dialog_cursor_position_label()));
+  connect(ui.dialog_text_field, SIGNAL(focus_out()),
+          this, SLOT(update_dialog_cursor_position_label()));
 
   connect(ui.create_property_button, SIGNAL(clicked()),
           this, SLOT(create_dialog_property_requested()));
@@ -592,6 +598,7 @@ void DialogsEditor::update() {
   update_language_id_field();
   update_description_to_gui();
   update_selection();
+  update_dialog_cursor_position_label();
 }
 
 /**
@@ -607,7 +614,7 @@ void DialogsEditor::update_language_id_field() {
  */
 void DialogsEditor::update_description_to_gui() {
 
-  QString description = get_resources().get_description(
+  QString description = get_database().get_description(
         ResourceType::LANGUAGE, language_id);
   if (ui.description_field->text() != description) {
     ui.description_field->setText(description);
@@ -623,7 +630,7 @@ void DialogsEditor::update_description_to_gui() {
 void DialogsEditor::set_description_from_gui() {
 
   QString description = ui.description_field->text();
-  if (description == get_resources().get_description(
+  if (description == get_database().get_description(
         ResourceType::LANGUAGE, language_id)) {
     return;
   }
@@ -636,9 +643,9 @@ void DialogsEditor::set_description_from_gui() {
 
   const bool was_blocked = blockSignals(true);
   try {
-    get_resources().set_description(
+    get_database().set_description(
           ResourceType::LANGUAGE, language_id, description);
-    get_resources().save();
+    get_database().save();
   }
   catch (const EditorException& ex) {
     ex.print_message();
@@ -805,6 +812,7 @@ void DialogsEditor::update_dialog_view() {
   update_dialog_text_field();
   update_translation_text_field();
   update_properties_buttons();
+  update_dialog_cursor_position_label();
 }
 
 /**
@@ -874,6 +882,20 @@ void DialogsEditor::update_translation_text_field() {
     ui.translation_text_field->setPlainText("");
     ui.translation_text_field->setEnabled(false);
   }
+}
+
+/**
+ * @brief Updates the line and column display of the dialog text field.
+ */
+void DialogsEditor::update_dialog_cursor_position_label() {
+
+  if (!ui.dialog_text_field->hasFocus()) {
+    ui.dialog_cursor_position_label->setVisible(false);
+    return;
+  }
+  QTextCursor cursor = ui.dialog_text_field->textCursor();
+  ui.dialog_cursor_position_label->setText(QString("%1,%2").arg(cursor.blockNumber() + 1).arg(cursor.columnNumber()));
+  ui.dialog_cursor_position_label->setVisible(true);
 }
 
 /**

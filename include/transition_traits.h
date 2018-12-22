@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #define SOLARUSEDITOR_TRANSITION_TRAITS_H
 
 #include "enum_traits.h"
-#include <solarus/Transition.h>
+#include <solarus/graphics/Transition.h>
 
 namespace SolarusEditor {
 

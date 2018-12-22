@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,10 @@ const QString EditorSettings::last_file = "last_file";
 const QString EditorSettings::restore_last_files = "restore_last_files";
 const QString EditorSettings::save_files_before_running = "save_files_before_running";
 const QString EditorSettings::no_audio = "no_audio";
-const QString EditorSettings::video_acceleration = "video_acceleration";
 const QString EditorSettings::quest_size = "quest_size";
+
+// Import dialog keys.
+const QString EditorSettings::import_last_source_quest = "import_last_source_quest";
 
 // Console keys.
 const QString EditorSettings::console_history = "console_history";
@@ -42,6 +44,10 @@ const QString EditorSettings::font_size = "text_editor/font_size";
 const QString EditorSettings::tab_length = "text_editor/tab_length";
 const QString EditorSettings::replace_tab_by_spaces =
   "text_editor/replace_tab_by_spaces";
+const QString EditorSettings::external_text_editor_enabled =
+  "text_editor/external_text_editor_enabled";
+const QString EditorSettings::external_text_editor_cmd =
+  "text_editor/external_text_editor_cmd";
 
 // Map editor keys.
 const QString EditorSettings::map_main_background =
@@ -84,6 +90,14 @@ const QString EditorSettings::tileset_grid_size = "tileset_editor/grid_size";
 const QString EditorSettings::tileset_grid_style = "tileset_editor/grid_style";
 const QString EditorSettings::tileset_grid_color = "tileset_editor/grid_color";
 
+// Shader editor keys.
+const QString EditorSettings::shader_preview_type = "shader_editor/preview_type";
+const QString EditorSettings::shader_preview_picture_file = "shader_editor/preview_picture_file";
+const QString EditorSettings::shader_preview_map_id = "shader_editor/preview_map_id";
+const QString EditorSettings::shader_preview_sprite_id = "shader_editor/preview_sprite_id";
+const QString EditorSettings::shader_preview_sprite_animation = "shader_editor/preview_sprite_animation";
+const QString EditorSettings::shader_preview_sprite_direction = "shader_editor/preview_sprite_direction";
+
 QMap<QString, QVariant> EditorSettings::default_values = {
 
   // General.
@@ -94,8 +108,10 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::restore_last_files, true },
   { EditorSettings::save_files_before_running, "ask" },
   { EditorSettings::no_audio, false },
-  { EditorSettings::video_acceleration, true },
   { EditorSettings::quest_size, QSize() },
+
+  // Import dialog.
+  { EditorSettings::import_last_source_quest, "" },
 
   // Console.
   { EditorSettings::console_history, QStringList() },
@@ -105,6 +121,8 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::font_size, 10 },
   { EditorSettings::tab_length, 2 },
   { EditorSettings::replace_tab_by_spaces, true },
+  { EditorSettings::external_text_editor_enabled, false},
+  { EditorSettings::external_text_editor_cmd, ""},
 
   // Map editor.
   { EditorSettings::map_main_background, "#888888" },
@@ -135,7 +153,15 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::tileset_grid_show_at_opening, false },
   { EditorSettings::tileset_grid_size, QSize(16, 16) },
   { EditorSettings::tileset_grid_style, static_cast<int>(GridStyle::DASHED) },
-  { EditorSettings::tileset_grid_color, "#000000" }
+  { EditorSettings::tileset_grid_color, "#000000" },
+
+  // Shader editor.
+  { EditorSettings::shader_preview_type, "picture" },
+  { EditorSettings::shader_preview_picture_file, "" },
+  { EditorSettings::shader_preview_map_id, "" },
+  { EditorSettings::shader_preview_sprite_id, "" },
+  { EditorSettings::shader_preview_sprite_animation, "" },
+  { EditorSettings::shader_preview_sprite_direction, 0 },
 };
 
 /**
@@ -347,7 +373,8 @@ void EditorSettings::set_value_color(const QString& key, const QColor& value) {
  */
 void EditorSettings::restore_default() {
 
-  Q_FOREACH (const QString& key, default_values.keys()) {
+  const QStringList& keys = default_values.keys();
+  for (const QString& key : keys) {
     settings.setValue(key, default_values[key]);
   }
 }

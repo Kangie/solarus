@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@
 #include <QList>
 #include <QPlainTextEdit>
 #include <QScrollBar>
+#include <QAction>
 #include <QTextStream>
+#include <QUndoStack>
 
 namespace SolarusEditor {
 
@@ -52,17 +54,16 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   text_widget = new TextEditorWidget(file_path, *this);
   layout->addWidget(text_widget);
 
-  // Open map shorcut.
-  if (quest.is_map_script(file_path, map_id)) {
-    QAction* open_map_action = new QAction(this);
-    open_map_action->setShortcut(tr("F4"));
-    open_map_action->setShortcutContext(Qt::WindowShortcut);
-    connect(open_map_action, SIGNAL(triggered(bool)),
-            this, SLOT(open_map_requested()));
-    addAction(open_map_action);
-  } else {
+  // Open map shortcut.
+  QAction* open_map_action = new QAction(this);
+  open_map_action->setShortcut(tr("F4"));
+  open_map_action->setShortcutContext(Qt::WindowShortcut);
+  addAction(open_map_action);
+  if (!quest.is_map_script(file_path, map_id)) {
     map_id.clear();
   }
+  connect(open_map_action, SIGNAL(triggered(bool)),
+          this, SLOT(open_map_requested()));
 
   connect(text_widget, SIGNAL(copyAvailable(bool)),
           this, SIGNAL(can_cut_changed(bool)));
@@ -79,7 +80,17 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   text_widget->document()->setModified(false);
 
   // Open the file.
+  load();
+}
+
+/**
+ * @brief Loads the content of the current file in the text editor.
+ */
+void TextEditor::load() {
+
+  const QString& file_path = get_file_path();
   if (file_path.isEmpty()) {
+    text_widget->clear();
     return;
   }
 
@@ -90,65 +101,25 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   QTextStream out(&file);
   out.setCodec("UTF-8");
   text_widget->setPlainText(out.readAll());
+  get_undo_stack().setClean();
 }
 
 /**
- * @brief Chooses an appropriate title for this editor.
- * @return A title.
+ * @copydoc Editor::path_changed
  */
-QString TextEditor::create_title() const {
-
-  QString path = get_file_path();
-  QString language_id;
-
-  if (get_quest().is_dialogs_file(path, language_id)) {
-    return get_file_name() + " (" + language_id + ')';
-  }
-
-  if (get_quest().is_strings_file(path, language_id)) {
-    return get_file_name() + " (" + language_id + ')';
-  }
-
-  return Editor::get_title();
-}
-
-/**
- * @brief Chooses an appropriate icon for this editor.
- * @return An icon.
- */
-QIcon TextEditor::create_icon() const {
-
-  QString path = get_file_path();
-  ResourceType resource_type;
-  QString element_id;
-  if (get_quest().is_resource_element(path, resource_type, element_id)) {
-    QString resource_lua_name = get_quest().get_resources().get_lua_name(resource_type);
-    return QIcon(":/images/icon_resource_" + resource_lua_name + ".png");
-  }
-
-  if (get_quest().is_map_script(path, element_id)) {
-    return QIcon(":/images/icon_resource_map.png");
-  }
-
-  if (get_quest().is_dialogs_file(path, element_id)) {
-    return QIcon(":/images/icon_resource_language.png");
-  }
-
-  if (get_quest().is_dialogs_file(path, element_id)) {
-    return QIcon(":/images/icon_resource_language.png");
-  }
-
-  if (get_quest().is_script(path)) {
-    // A Lua script.
-    return QIcon(":/images/icon_script.png");
-  }
-  return QIcon(":/images/icon_file.png");
+void TextEditor::path_changed() {
+  load();
 }
 
 /**
  * @copydoc Editor::save
  */
 void TextEditor::save() {
+
+  if (get_file_path().isEmpty()) {
+    // Empty editor.
+    return;
+  }
 
   QFile file(get_file_path());
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -232,6 +203,9 @@ void TextEditor::find() {
   connect(dialog, SIGNAL(find_text_requested(QString)),
           this, SLOT(find_text_requested(QString)));
 
+  connect(dialog, SIGNAL(replace_text_requested(QString, QString)),
+          this, SLOT(replace_text_requested(QString, QString)));
+
   dialog->show();
   dialog->raise();  // Put the dialog on top.
   dialog->activateWindow();
@@ -257,8 +231,9 @@ void TextEditor::reload_settings() {
 /**
  * @brief Slot called when the user searches an occurence of some text.
  * @param text The text to find.
+ * @return integer: 1 if text found, 0 else
  */
-void TextEditor::find_text_requested(const QString& text) {
+int TextEditor::find_text_requested(const QString& text) {
 
   if (!text_widget->find(text)) {
     // Text not found: search back from the beginning.
@@ -272,6 +247,26 @@ void TextEditor::find_text_requested(const QString& text) {
       text_widget->horizontalScrollBar()->setValue(scroll_x);
       text_widget->verticalScrollBar()->setValue(scroll_y);
     }
+    else {
+        return 1;
+    }
+  }
+  else {
+      return 1;
+  }
+  return 0;
+}
+
+/**
+ * @brief Slot called when the user searches an occurence of some text and want to replace it.
+ * @param text_search, text_replace The text to search and the text to replace.
+ */
+void TextEditor::replace_text_requested(const QString& text_search, const QString& text_replace) {
+
+  if (text_widget->textCursor().selectedText() == text_search) {
+      text_widget->textCursor().removeSelectedText();
+      text_widget->textCursor().insertText(text_replace);
+      find_text_requested(text_search);
   }
 }
 
@@ -284,6 +279,59 @@ void TextEditor::open_map_requested() {
     emit open_file_requested(
       get_quest(), get_quest().get_map_data_file_path(map_id));
   }
+}
+/**
+ * @brief Chooses an appropriate title for this editor.
+ * @return A title.
+ */
+QString TextEditor::create_title() const {
+
+  QString path = get_file_path();
+  QString language_id;
+
+  if (get_quest().is_dialogs_file(path, language_id)) {
+    return get_file_name() + " (" + language_id + ')';
+  }
+
+  if (get_quest().is_strings_file(path, language_id)) {
+    return get_file_name() + " (" + language_id + ')';
+  }
+
+  return Editor::get_title();
+}
+
+/**
+ * @brief Chooses an appropriate icon for this editor.
+ * @return An icon.
+ */
+QIcon TextEditor::create_icon() const {
+
+  QString path = get_file_path();
+  ResourceType resource_type;
+  QString element_id;
+
+  if (get_quest().is_resource_element(path, resource_type, element_id)) {
+    // A resource element that is a Lua file (enemy, custom entity or item).
+    QString resource_lua_name = get_database().get_lua_name(resource_type);
+    return QIcon(":/images/icon_resource_" + resource_lua_name + ".png");
+  }
+
+  if (get_quest().is_map_script(path, element_id)) {
+    // A map Lua script.
+    return QIcon(":/images/icon_script_map.png");
+  }
+
+  if (get_quest().is_script(path)) {
+    // Another Lua script.
+    return QIcon(":/images/icon_script.png");
+  }
+
+  if (get_quest().is_shader_code_file(path)) {
+    // A GLSL file.
+    return QIcon(":/images/icon_shader_code.png");
+  }
+
+  return QIcon(":/images/icon_file.png");
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,20 +40,20 @@ MapModel::MapModel(
   QObject(parent),
   quest(quest),
   map_id(map_id),
-  tileset_model(nullptr),
+  tileset(nullptr),
   entities() {
 
   // Load the map data file.
   QString path = quest.get_map_data_file_path(map_id);
 
-  if (!map.import_from_file(path.toStdString())) {
+  if (!map.import_from_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open map data file '%1'").arg(path));
   }
 
   // Create the tileset object.
   QString tileset_id = get_tileset_id();
   if (!tileset_id.isEmpty()) {
-    tileset_model = new TilesetModel(quest, tileset_id, this);
+    set_tileset(quest.get_tileset(tileset_id));
   }
 
   // Create entities.
@@ -97,7 +97,7 @@ void MapModel::save() const {
 
   QString path = quest.get_map_data_file_path(map_id);
 
-  if (!map.export_to_file(path.toStdString())) {
+  if (!map.export_to_file(path.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot save map data file '%1'").arg(path));
   }
 }
@@ -351,9 +351,35 @@ void MapModel::set_tileset_id(const QString& tileset_id) {
   }
   map.set_tileset_id(std_tileset_id);
 
-  reload_tileset();
+  if (tileset_id.isEmpty()) {
+    set_tileset(nullptr);
+  }
+  else {
+    set_tileset(quest.get_tileset(tileset_id));
+  }
+
+  notify_tileset_changed();
 
   emit tileset_id_changed(tileset_id);
+}
+
+/**
+ * @brief Sets the tileset of this map.
+ * @param tileset The new tileset.
+ */
+void MapModel::set_tileset(QPointer<TilesetModel> tileset) {
+
+  if (this->tileset != nullptr) {
+    disconnect(this->tileset, nullptr,
+               this, nullptr);
+  }
+
+  if (tileset != nullptr) {
+    connect(tileset, &TilesetModel::modelReset,
+            this, &MapModel::notify_tileset_changed);
+  }
+
+  this->tileset = tileset;
 }
 
 /**
@@ -361,18 +387,11 @@ void MapModel::set_tileset_id(const QString& tileset_id) {
  *
  * The tileset is refreshed.
  *
- * Emis tileset_reloaded().
+ * Emis tileset_changed().
  */
-void MapModel::reload_tileset() {
+void MapModel::notify_tileset_changed() {
 
   const QString& tileset_id = get_tileset_id();
-
-  if (tileset_id.isEmpty()) {
-    tileset_model = nullptr;
-  }
-  else {
-    tileset_model = new TilesetModel(quest, tileset_id, this);
-  }
 
   // Notify children.
   for (auto& kvp : entities) {
@@ -381,16 +400,14 @@ void MapModel::reload_tileset() {
       entity->notify_tileset_changed(tileset_id);
     }
   }
-
-  emit tileset_reloaded();
 }
 
 /**
  * @brief Returns the tileset of this map.
  * @return The tileset. Returns nullptr if no tileset is set.
  */
-TilesetModel* MapModel::get_tileset_model() const {
-  return tileset_model;
+QPointer<TilesetModel> MapModel::get_tileset_model() const {
+  return tileset;
 }
 
 /**
@@ -557,8 +574,28 @@ bool MapModel::is_common_type(const EntityIndexes& indexes, EntityType& type) co
   }
 
   type = get_entity_type(indexes.first());
-  Q_FOREACH (const EntityIndex& index, indexes) {
+  for (const EntityIndex& index : indexes) {
     if (get_entity_type(index) != type) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * @brief Returns whether the given entities are all tiles or dynamic tiles.
+ * @param[in] indexes Indexes of the entities to check.
+ * @return @c true if these entities are all tiles or dynamic tiles.
+ */
+bool MapModel::are_tiles(const EntityIndexes& indexes) const {
+
+  if (indexes.isEmpty()) {
+    return false;
+  }
+
+  for (const EntityIndex& index : indexes) {
+    EntityType type = get_entity_type(index);
+    if (type != EntityType::TILE && type != EntityType::DYNAMIC_TILE) {
       return false;
     }
   }
@@ -590,8 +627,8 @@ EntityIndexes MapModel::find_entities_of_type(EntityType type) const {
  */
 EntityIndex MapModel::find_default_destination_index() const {
 
-  EntityIndexes destination_indexes = find_entities_of_type(EntityType::DESTINATION);
-  Q_FOREACH (const EntityIndex& index, destination_indexes) {
+  const EntityIndexes& destination_indexes = find_entities_of_type(EntityType::DESTINATION);
+  for (const EntityIndex& index : destination_indexes) {
     if (get_entity_field(index, "default").toBool()) {
       return index;
     }
@@ -760,7 +797,7 @@ bool MapModel::is_common_layer(const EntityIndexes& indexes, int& layer) const {
   }
 
   layer = indexes.first().layer;
-  Q_FOREACH (const EntityIndex& index, indexes) {
+  for (const EntityIndex& index : indexes) {
     if (index.layer != layer) {
       return false;
     }
@@ -787,12 +824,12 @@ EntityIndexes MapModel::set_entities_layer(const EntityIndexes& indexes_before, 
 
   // Work on entities instead of indexes, because indexes change during the traversal.
   QList<EntityModel*> entities;
-  Q_FOREACH (const EntityIndex& index_before, indexes_before) {
+  for (const EntityIndex& index_before : indexes_before) {
     entities.append(&get_entity(index_before));
   }
 
   int i = 0;
-  Q_FOREACH (const EntityModel* entity, entities) {
+  for (const EntityModel* entity : entities) {
     Q_ASSERT(entity != nullptr);
     const int layer_after = layers_after[i];
     if (entity->get_layer() != layer_after) {
@@ -803,7 +840,7 @@ EntityIndexes MapModel::set_entities_layer(const EntityIndexes& indexes_before, 
 
   // Now all indexes have finished their changes.
   EntityIndexes indexes_after;
-  Q_FOREACH (const EntityModel* entity, entities) {
+  for (const EntityModel* entity : entities) {
     indexes_after.append(entity->get_index());
   }
 
@@ -825,7 +862,7 @@ void MapModel::undo_set_entities_layer(const EntityIndexes& indexes_after, const
 
   // Work on entities instead of indexes, because indexes change during the traversal.
   QList<EntityModel*> entities;
-  Q_FOREACH (const EntityIndex& index_after, indexes_after) {
+  for (const EntityIndex& index_after : indexes_after) {
     entities.append(&get_entity(index_after));
   }
 
@@ -1092,6 +1129,34 @@ void MapModel::set_entity_size(const EntityIndex& index, const QSize& size) {
 }
 
 /**
+ * @brief Returns a valid size the closest to the current size of an entity.
+ * @param index Index of the entity to check.
+ * @return @c A valid size.
+ */
+QSize MapModel::get_entity_closest_valid_size(
+    const EntityIndex& index) const {
+
+  return get_entity_closest_valid_size(index, get_entity_size(index));
+}
+
+/**
+ * @brief Returns a valid size the closest to the given size for an entity.
+ * @param index Index of the entity to check.
+ * @param size The size to check.
+ * @return @c A valid size.
+ */
+QSize MapModel::get_entity_closest_valid_size(
+    const EntityIndex& index, const QSize& size) const {
+
+  if (!entity_exists(index)) {
+    return QSize();
+  }
+
+  const EntityModel& entity = get_entity(index);
+  return entity.get_closest_valid_size(size);
+}
+
+/**
  * @brief Returns whether an entity has a legal size.
  * @param index Index of the entity to check.
  * @return @c true if its size is valid.
@@ -1261,7 +1326,7 @@ bool MapModel::is_common_direction_rules(
   bool no_direction_allowed = is_entity_no_direction_allowed(first);
   no_direction_text = get_entity_no_direction_text(first);
 
-  Q_FOREACH (const EntityIndex& index, indexes) {
+  for (const EntityIndex& index : indexes) {
     if (get_entity_num_directions(index) != num_directions ||
         is_entity_no_direction_allowed(index) != no_direction_allowed ||
         get_entity_no_direction_text(index) != no_direction_text) {
@@ -1343,12 +1408,115 @@ bool MapModel::is_common_direction(const EntityIndexes& indexes, int& direction)
   const EntityIndex& first = indexes.first();
   direction = get_entity_direction(first);
 
-  Q_FOREACH (const EntityIndex& index, indexes) {
+  for (const EntityIndex& index : indexes) {
     if (get_entity_direction(index) != direction) {
       return false;
     }
   }
   return true;
+}
+
+/**
+ * @brief Returns the number of user-defined properties of an entity.
+ * @param index Index of an entity.
+ * @return The number of user-defined properties.
+ */
+int MapModel::get_entity_user_property_count(const EntityIndex& index) const {
+
+  if (!entity_exists(index)) {
+    return 0;
+  }
+
+  return get_entity(index).get_user_property_count();
+}
+
+/**
+ * @brief Returns a user-defined property of this entity.
+ * @param index Index of an entity.
+ * @param property_index Index of a user-defined property of this entity.
+ * @return The corresponding user-defined property or an empty property.
+ */
+QPair<QString, QString> MapModel::get_entity_user_property(const EntityIndex& index, int property_index) const {
+
+  if (!entity_exists(index)) {
+    return QPair<QString, QString>();
+  }
+
+  return get_entity(index).get_user_property(property_index);
+}
+
+/**
+ * @brief Sets a user-defined property of this entity.
+ *
+ * The key should be valid and not already in use.
+ *
+ * Emits user_property_changed() if there is a change.
+ *
+ * @param property_index Index of a user-defined property of this entity.
+ * @param property The new property to set.
+ */
+void MapModel::set_entity_user_property(const EntityIndex& index, int property_index, const QPair<QString, QString>& property) {
+
+  if (!entity_exists(index)) {
+    return;
+  }
+
+  if (get_entity_user_property(index, property_index) == property) {
+    // No change.
+    return;
+  }
+
+  bool success = get_entity(index).set_user_property(property_index, property);
+  if (!success) {
+    return;
+  }
+
+  emit entity_user_property_changed(index, property_index, property);
+}
+
+/**
+ * @brief Creates a new user-defined property for this entity.
+ *
+ * The key should be valid and not already in use.
+ *
+ * Emits user_property_added() if there is a change.
+ *
+ * @param property The new property to set.
+ */
+void MapModel::add_entity_user_property(const EntityIndex& index, const QPair<QString, QString>& property) {
+
+  if (!entity_exists(index)) {
+    return;
+  }
+
+  bool success = get_entity(index).add_user_property(property);
+  if (!success) {
+    return;
+  }
+
+  int property_index = get_entity(index).get_user_property_count() - 1;
+  emit entity_user_property_added(index, property_index, property);
+}
+
+/**
+ * @brief Removes a user-defined property of this entity.
+ *
+ * Emits user_property_removed() if there is a change.
+ *
+ * @param property_index Index of a user-defined property of this entity.
+ */
+void MapModel::remove_entity_user_property(const EntityIndex& index, int property_index) {
+
+  if (!entity_exists(index)) {
+    return;
+  }
+
+  bool success = get_entity(index).remove_user_property(property_index);
+  if (!success) {
+    return;
+  }
+
+  emit entity_user_property_removed(index, property_index);
 }
 
 /**
@@ -1540,7 +1708,7 @@ AddableEntities MapModel::remove_entities(const EntityIndexes& indexes) {
   }
 
   // Each entity stores its own index, so they might get shifted.
-  Q_FOREACH (int layer, layers_with_dirty_indexes) {
+  for (int layer : layers_with_dirty_indexes) {
     rebuild_entity_indexes(layer);
   }
 

@@ -38,8 +38,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Werror -Wextra -pedantic ${CMAKE_CXX_FLAGS_DEB
 
 # Add defines for the install path and the build path to help guess the assets
 # location at runtime.
-add_definitions(-DSOLARUSEDITOR_INSTALL_PATH="${CMAKE_INSTALL_PREFIX}")
 add_definitions(-DSOLARUSEDITOR_SOURCE_PATH="${CMAKE_SOURCE_DIR}")
+add_definitions(-DSOLARUSEDITOR_BINDIR_PATH="${CMAKE_INSTALL_PREFIX}/${SOLARUS_INSTALL_BINDIR}")
+add_definitions(-DSOLARUSEDITOR_DATADIR_PATH="${CMAKE_INSTALL_PREFIX}/${SOLARUS_INSTALL_DATADIR}")
 
 # Find dependencies.
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/modules/")
@@ -76,9 +77,9 @@ include_directories(
 )
 
 include_directories(SYSTEM
-  "${SOLARUS_INCLUDE_DIR}"
-  "${SOLARUS_GUI_INCLUDE_DIR}"
-  "${MODPLUG_INCLUDE_DIR}"  # Before SDL2 because we want the sndfile.h of ModPlug.
+  "${SOLARUS_INCLUDE_DIRS}"
+  "${SOLARUS_GUI_INCLUDE_DIRS}"
+  "${MODPLUG_INCLUDE_DIRS}"  # Before SDL2 because we want the sndfile.h of ModPlug.
   "${SDL2_INCLUDE_DIR}"
   "${SDL2_TTF_INCLUDE_DIR}"
   "${SDL2_IMAGE_INCLUDE_DIR}"
@@ -115,13 +116,16 @@ set(solarus_quest_editor_SOURCES
   include/entities/teletransporter.h
   include/entities/tile.h
   include/entities/wall.h
+  include/widgets/border_set_selector.h
+  include/widgets/border_set_tree_view.h
+  include/widgets/change_border_set_id_dialog.h
   include/widgets/change_dialog_id_dialog.h
-  include/widgets/change_pattern_id_dialog.h
+  include/widgets/change_file_info_dialog.h
   include/widgets/change_resource_id_dialog.h
   include/widgets/change_source_image_dialog.h
   include/widgets/change_string_key_dialog.h
   include/widgets/closable_tab_bar.h
-  include/widgets/color_picker.h
+  include/widgets/color_chooser.h
   include/widgets/dialog_properties_table.h
   include/widgets/dialogs_editor.h
   include/widgets/dialogs_tree_view.h
@@ -138,6 +142,10 @@ set(solarus_quest_editor_SOURCES
   include/widgets/find_text_dialog.h
   include/widgets/get_animation_name_dialog.h
   include/widgets/gui_tools.h
+  include/widgets/image_editor.h
+  include/widgets/image_view.h
+  include/widgets/import_dialog.h
+  include/widgets/input_dialog_with_check_box.h
   include/widgets/lua_syntax_highlighter.h
   include/widgets/map_editor.h
   include/widgets/map_view.h
@@ -145,16 +153,21 @@ set(solarus_quest_editor_SOURCES
   include/widgets/main_window.h
   include/widgets/mouse_coordinates_tracking_tool.h
   include/widgets/music_chooser.h
+  include/widgets/new_entity_user_property_dialog.h
   include/widgets/new_resource_element_dialog.h
   include/widgets/new_string_dialog.h
   include/widgets/pair_spin_box.h
   include/widgets/pan_tool.h
+  include/widgets/pattern_chooser.h
+  include/widgets/pattern_picker_dialog.h
   include/widgets/plain_text_edit.h
   include/widgets/quest_properties_editor.h
   include/widgets/quest_tree_view.h
   include/widgets/resource_model.h
   include/widgets/resource_selector.h
   include/widgets/settings_dialog.h
+  include/widgets/shader_editor.h
+  include/widgets/shader_previewer.h
   include/widgets/sound_chooser.h
   include/widgets/sprite_editor.h
   include/widgets/sprite_tree_view.h
@@ -171,6 +184,9 @@ set(solarus_quest_editor_SOURCES
   include/widgets/tileset_view.h
   include/widgets/zoom_tool.h
   include/audio.h
+  include/auto_tiler.h
+  include/border_kind_traits.h
+  include/border_set_model.h
   include/color.h
   include/dialogs_model.h
   include/editor_exception.h
@@ -185,21 +201,23 @@ set(solarus_quest_editor_SOURCES
   include/new_quest_builder.h
   include/obsolete_editor_exception.h
   include/obsolete_quest_exception.h
-  include/pattern_animation.h
-  include/pattern_animation_traits.h
   include/pattern_repeat_mode_traits.h
+  include/pattern_scrolling_traits.h
   include/pattern_separation.h
   include/pattern_separation_traits.h
   include/point.h
   include/quest.h
+  include/quest_database.h
   include/quest_files_model.h
   include/quest_properties.h
-  include/quest_resources.h
   include/rectangle.h
   include/refactoring.h
   include/resize_mode.h
   include/size.h
   include/sprite_model.h
+  include/shader_model.h
+  include/shader_preview_mode.h
+  include/shader_preview_mode_traits.h
   include/starting_location_mode_traits.h
   include/strings_model.h
   include/tileset_model.h
@@ -230,13 +248,16 @@ set(solarus_quest_editor_SOURCES
   src/entities/teletransporter.cpp
   src/entities/tile.cpp
   src/entities/wall.cpp
+  src/widgets/border_set_selector.cpp
+  src/widgets/border_set_tree_view.cpp
+  src/widgets/change_border_set_id_dialog.cpp
   src/widgets/change_dialog_id_dialog.cpp
-  src/widgets/change_pattern_id_dialog.cpp
+  src/widgets/change_file_info_dialog.cpp
   src/widgets/change_resource_id_dialog.cpp
   src/widgets/change_source_image_dialog.cpp
   src/widgets/change_string_key_dialog.cpp
   src/widgets/closable_tab_bar.cpp
-  src/widgets/color_picker.cpp
+  src/widgets/color_chooser.cpp
   src/widgets/dialog_properties_table.cpp
   src/widgets/dialogs_editor.cpp
   src/widgets/dialogs_tree_view.cpp
@@ -249,6 +270,10 @@ set(solarus_quest_editor_SOURCES
   src/widgets/find_text_dialog.cpp
   src/widgets/get_animation_name_dialog.cpp
   src/widgets/gui_tools.cpp
+  src/widgets/image_editor.cpp
+  src/widgets/image_view.cpp
+  src/widgets/import_dialog.cpp
+  src/widgets/input_dialog_with_check_box.cpp
   src/widgets/lua_syntax_highlighter.cpp
   src/widgets/main_window.cpp
   src/widgets/map_editor.cpp
@@ -256,15 +281,20 @@ set(solarus_quest_editor_SOURCES
   src/widgets/map_scene.cpp
   src/widgets/mouse_coordinates_tracking_tool.cpp
   src/widgets/music_chooser.cpp
+  src/widgets/new_entity_user_property_dialog.cpp
   src/widgets/new_resource_element_dialog.cpp
   src/widgets/new_string_dialog.cpp
   src/widgets/pair_spin_box.cpp
   src/widgets/pan_tool.cpp
+  src/widgets/pattern_chooser.cpp
+  src/widgets/pattern_picker_dialog.cpp
   src/widgets/quest_properties_editor.cpp
   src/widgets/quest_tree_view.cpp
   src/widgets/resource_model.cpp
   src/widgets/resource_selector.cpp
   src/widgets/settings_dialog.cpp
+  src/widgets/shader_editor.cpp
+  src/widgets/shader_previewer.cpp
   src/widgets/sound_chooser.cpp
   src/widgets/sprite_editor.cpp
   src/widgets/sprite_tree_view.cpp
@@ -281,6 +311,9 @@ set(solarus_quest_editor_SOURCES
   src/widgets/tileset_view.cpp
   src/widgets/zoom_tool.cpp
   src/audio.cpp
+  src/auto_tiler.cpp
+  src/border_kind_traits.cpp
+  src/border_set_model.cpp
   src/color.cpp
   src/dialogs_model.cpp
   src/editor_exception.cpp
@@ -294,16 +327,18 @@ set(solarus_quest_editor_SOURCES
   src/new_quest_builder.cpp
   src/obsolete_editor_exception.cpp
   src/obsolete_quest_exception.cpp
-  src/pattern_animation_traits.cpp
   src/pattern_repeat_mode_traits.cpp
+  src/pattern_scrolling_traits.cpp
   src/pattern_separation_traits.cpp
   src/point.cpp
   src/quest.cpp
+  src/quest_database.cpp
   src/quest_files_model.cpp
   src/quest_properties.cpp
-  src/quest_resources.cpp
   src/rectangle.cpp
   src/refactoring.cpp
+  src/shader_model.cpp
+  src/shader_preview_mode_traits.cpp
   src/size.cpp
   src/sprite_model.cpp
   src/starting_location_mode_traits.cpp
@@ -323,8 +358,9 @@ endif()
 
 # UI files.
 set(solarus_quest_editor_FORMS
+  src/widgets/change_border_set_id_dialog.ui
   src/widgets/change_dialog_id_dialog.ui
-  src/widgets/change_pattern_id_dialog.ui
+  src/widgets/change_file_info_dialog.ui
   src/widgets/change_resource_id_dialog.ui
   src/widgets/change_source_image_dialog.ui
   src/widgets/change_string_key_dialog.ui
@@ -332,12 +368,17 @@ set(solarus_quest_editor_FORMS
   src/widgets/edit_entity_dialog.ui
   src/widgets/external_script_dialog.ui
   src/widgets/find_text_dialog.ui
+  src/widgets/import_dialog.ui
+  src/widgets/input_dialog_with_check_box.ui
   src/widgets/main_window.ui
   src/widgets/map_editor.ui
+  src/widgets/new_entity_user_property_dialog.ui
   src/widgets/new_resource_element_dialog.ui
   src/widgets/new_string_dialog.ui
+  src/widgets/pattern_picker_dialog.ui
   src/widgets/quest_properties_editor.ui
   src/widgets/settings_dialog.ui
+  src/widgets/shader_editor.ui
   src/widgets/sprite_editor.ui
   src/widgets/sprite_previewer.ui
   src/widgets/strings_editor.ui
@@ -440,6 +481,8 @@ if(UNIX AND NOT APPLE)
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/768x768/apps RENAME solarus-quest-editor.png)
   install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/sqe-icon-png-1024px.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/1024x1024/apps RENAME solarus-quest-editor.png)
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/logo/sqe-logo.png
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps RENAME solarus-quest-editor.png)
 endif(UNIX AND NOT APPLE)
 
 # FreeDesktop compatible start menu launcher

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ namespace SolarusEditor {
 
 struct AddableEntity;
 class Quest;
-class QuestResources;
 class TilesetModel;
 class ViewSettings;
 
@@ -69,10 +68,10 @@ public:
   void set_floor(int floor);
   QPoint get_location() const;
   void set_location(const QPoint& location);
-  TilesetModel* get_tileset_model() const;
+  QPointer<TilesetModel> get_tileset_model() const;
   QString get_tileset_id() const;
   void set_tileset_id(const QString& tileset_id);
-  void reload_tileset();
+  void notify_tileset_changed();
   QString get_music_id() const;
   void set_music_id(const QString& music_id);
 
@@ -85,6 +84,7 @@ public:
   EntityType get_entity_type(const EntityIndex& index) const;
   QString get_entity_type_name(const EntityIndex& index) const;
   bool is_common_type(const EntityIndexes& indexes, EntityType& type) const;
+  bool are_tiles(const EntityIndexes& indexes) const;
   EntityIndexes find_entities_of_type(EntityType type) const;
   EntityIndex find_default_destination_index() const;
   QString get_entity_name(const EntityIndex& index) const;
@@ -108,6 +108,8 @@ public:
   QPoint get_entity_origin(const EntityIndex& index) const;
   QSize get_entity_size(const EntityIndex& index) const;
   void set_entity_size(const EntityIndex& index, const QSize& size);
+  QSize get_entity_closest_valid_size(const EntityIndex& index) const;
+  QSize get_entity_closest_valid_size(const EntityIndex& index, const QSize& size) const;
   bool is_entity_size_valid(const EntityIndex& index) const;
   bool is_entity_size_valid(const EntityIndex& index, const QSize& size) const;
   QSize get_entity_valid_size(const EntityIndex& index) const;
@@ -121,6 +123,11 @@ public:
   int get_entity_direction(const EntityIndex& index) const;
   void set_entity_direction(const EntityIndex& index, int direction);
   bool is_common_direction(const EntityIndexes& indexes, int& direction) const;
+  int get_entity_user_property_count(const EntityIndex& index) const;
+  QPair<QString, QString> get_entity_user_property(const EntityIndex& index, int property_index) const;
+  void set_entity_user_property(const EntityIndex& index, int property_index, const QPair<QString, QString>& property);
+  void add_entity_user_property(const EntityIndex& index, const QPair<QString, QString>& property);
+  void remove_entity_user_property(const EntityIndex& index, int property_index);
   bool has_entity_field(const EntityIndex& index, const QString& key) const;
   QVariant get_entity_field(const EntityIndex& index, const QString& key) const;
   void set_entity_field(const EntityIndex& index, const QString& key, const QVariant& value);
@@ -141,7 +148,6 @@ signals:
   void floor_changed(int floor);
   void location_changed(const QPoint& location);
   void tileset_id_changed(const QString& tileset_id);
-  void tileset_reloaded();
   void music_id_changed(const QString& music_id);
 
   void entities_about_to_be_added(const EntityIndexes& indexes);
@@ -153,7 +159,10 @@ signals:
   void entity_name_changed(const EntityIndex& index, const QString& name);
   void entity_xy_changed(const EntityIndex& index, const QPoint& xy);
   void entity_size_changed(const EntityIndex& index, const QSize& size);
-  void entity_direction_changed(const EntityIndex& name, int direction);
+  void entity_direction_changed(const EntityIndex& index, int direction);
+  void entity_user_property_changed(const EntityIndex& index, int property_index, const QPair<QString, QString>& property);
+  void entity_user_property_added(const EntityIndex& index, int property_index, const QPair<QString, QString>& property);
+  void entity_user_property_removed(const EntityIndex& index, int property_index);
   void entity_field_changed(const EntityIndex& index, const QString& key, const QVariant& value);
 
 public slots:
@@ -162,15 +171,16 @@ public slots:
 
 private:
 
+  void set_tileset(QPointer<TilesetModel> tileset);
   void rebuild_entity_indexes(int layer);
 
   Quest& quest;                   /**< The quest the tileset belongs to. */
   const QString map_id;           /**< Id of the map. */
   Solarus::MapData map;           /**< Map data wrapped by this model. */
-  TilesetModel* tileset_model;    /**< Tileset of this map. nullptr if not set. */
+  QPointer<TilesetModel>
+      tileset;                    /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
-
 };
 
 /**

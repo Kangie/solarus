@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,11 @@ NewResourceElementDialog::NewResourceElementDialog(
     id_text = tr("Font id (filename):");
     break;
 
+  case ResourceType::SHADER:
+    title = tr("New shader");
+    id_text = tr("Shader id (filename):");
+    break;
+
   }
 
   ui.id_label->setText(id_text);
@@ -161,11 +166,6 @@ void NewResourceElementDialog::done(int result) {
 
     if (!Quest::is_valid_file_name(get_element_id())) {
       GuiTools::error_dialog("Invalid resource id");
-      return;
-    }
-
-    if (get_element_description().isEmpty()) {
-      GuiTools::error_dialog("Empty resource description");
       return;
     }
   }

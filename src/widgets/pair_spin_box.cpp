@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ PairSpinBox::PairSpinBox(QWidget *parent) :
   layout->addWidget(&first_spin_box);
   layout->addWidget(&separator_label);
   layout->addWidget(&second_spin_box);
-  layout->addSpacerItem(new QSpacerItem(0, 22, QSizePolicy::Expanding));
+  layout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
 
   connect(&first_spin_box, SIGNAL(valueChanged(int)),
           this, SLOT(on_first_value_changed()));

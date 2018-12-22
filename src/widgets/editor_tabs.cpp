@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,17 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/closable_tab_bar.h"
+#include "widgets/dialogs_editor.h"
 #include "widgets/editor_tabs.h"
 #include "widgets/gui_tools.h"
+#include "widgets/image_editor.h"
 #include "widgets/map_editor.h"
-#include "widgets/text_editor.h"
-#include "widgets/tileset_editor.h"
+#include "widgets/shader_editor.h"
 #include "widgets/sprite_editor.h"
 #include "widgets/quest_properties_editor.h"
 #include "widgets/strings_editor.h"
-#include "widgets/dialogs_editor.h"
+#include "widgets/text_editor.h"
+#include "widgets/tileset_editor.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "quest.h"
@@ -32,6 +34,7 @@
 #include <QSet>
 #include <QUndoGroup>
 #include <QUndoStack>
+#include <QProcess>
 
 namespace SolarusEditor {
 
@@ -49,12 +52,18 @@ EditorTabs::EditorTabs(QWidget* parent):
   setMovable(true);
   setFocusPolicy(Qt::StrongFocus);
 
-  connect(tab_bar, SIGNAL(tabCloseRequested(int)),
-          this, SLOT(close_file_requested(int)));
-  connect(tab_bar, SIGNAL(currentChanged(int)),
-          this, SLOT(current_editor_changed(int)));
-  connect(tab_bar, SIGNAL(tabMoved(int, int)),
-          this, SLOT(update_recent_files_list()));
+  connect(tab_bar, &ClosableTabBar::tabCloseRequested,
+          this, &EditorTabs::close_file_requested);
+  connect(tab_bar, &ClosableTabBar::currentChanged,
+          this, &EditorTabs::current_editor_changed);
+}
+
+/**
+ * @brief Destructor.
+ */
+EditorTabs::~EditorTabs() {
+  disconnect(tabBar(), &ClosableTabBar::currentChanged,
+             nullptr, nullptr);
 }
 
 /**
@@ -111,6 +120,11 @@ void EditorTabs::open_resource(
     open_text_editor(quest, quest.get_entity_script_path(id));
     break;
 
+  case ResourceType::SHADER:
+    // Open the shader file.
+    open_shader_editor(quest, quest.get_shader_data_file_path(id));
+    break;
+
   case ResourceType::MUSIC:
   case ResourceType::SOUND:
   case ResourceType::FONT:
@@ -134,7 +148,7 @@ void EditorTabs::open_quest_properties_editor(Quest& quest) {
   }
 
   try {
-    add_editor(new QuestPropertiesEditor(quest));
+    add_editor(std::unique_ptr<Editor>(new QuestPropertiesEditor(quest)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -142,14 +156,14 @@ void EditorTabs::open_quest_properties_editor(Quest& quest) {
 }
 
 /**
- * @brief Opens a file with a text editor in a new tab.
+ * @brief Opens a file with an image editor.
  *
- * The file may be a Lua script.
+ * The file should be a PNG image.
  *
  * @param quest A Solarus quest.
- * @param path Path of the Lua file to open.
+ * @param path Path of the PNG file to open.
  */
-void EditorTabs::open_text_editor(
+void EditorTabs::open_image_editor(
     Quest& quest, const QString& path) {
 
   if (!quest.is_in_root_path(path)) {
@@ -166,7 +180,7 @@ void EditorTabs::open_text_editor(
   }
 
   try {
-    add_editor(new TextEditor(quest, path));
+    add_editor(std::unique_ptr<Editor>(new ImageEditor(quest, path)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -174,7 +188,51 @@ void EditorTabs::open_text_editor(
 }
 
 /**
- * @brief Opens a file with a map editor in a new tab.
+ * @brief Opens a file with a text editor.
+ *
+ * The file may be a Lua script.
+ *
+ * @param quest A Solarus quest.
+ * @param path Path of the Lua file to open.
+ */
+void EditorTabs::open_text_editor(
+    Quest& quest, const QString& path) {
+
+  if (!quest.is_in_root_path(path)) {
+    // Not a file of this quest.
+    return;
+  }
+
+  EditorSettings settings;
+
+  if(settings.get_value_bool(EditorSettings::external_text_editor_enabled)) {
+      //Should open the external editor instead
+      QString project_path = quest.get_root_path();
+      QString cmd_str = settings.get_value_string(EditorSettings::external_text_editor_cmd);
+      cmd_str.replace("%f",path).replace("%p",project_path);
+      if(QProcess::startDetached(cmd_str)) {
+          return;
+      }
+  }
+
+  // Find the existing tab if any.
+  int index = find_editor(path);
+  if (index != -1) {
+    // Already open.
+    setCurrentIndex(index);
+    return;
+  }
+
+  try {
+    add_editor(std::unique_ptr<Editor>(new TextEditor(quest, path)));
+  }
+  catch (const EditorException& ex) {
+    ex.show_dialog();
+  }
+}
+
+/**
+ * @brief Opens a file with a map editor.
  * @param quest A Solarus quest.
  * @param path Path of the map data file to open.
  */
@@ -195,7 +253,7 @@ void EditorTabs::open_map_editor(
   }
 
   try {
-    add_editor(new MapEditor(quest, path));
+    add_editor(std::unique_ptr<Editor>(new MapEditor(quest, path)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -203,7 +261,7 @@ void EditorTabs::open_map_editor(
 }
 
 /**
- * @brief Opens a file with a tileset editor in a new tab.
+ * @brief Opens a file with a tileset editor.
  * @param quest A Solarus quest.
  * @param path Path of the tileset data file to open.
  */
@@ -224,7 +282,7 @@ void EditorTabs::open_tileset_editor(
   }
 
   try {
-    add_editor(new TilesetEditor(quest, path));
+    add_editor(std::unique_ptr<Editor>(new TilesetEditor(quest, path)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -232,7 +290,7 @@ void EditorTabs::open_tileset_editor(
 }
 
 /**
- * @brief Opens a file with a sprite editor in a new tab.
+ * @brief Opens a file with a sprite editor.
  * @param quest A Solarus quest.
  * @param path Path of the sprite data file to open.
  */
@@ -253,7 +311,7 @@ void EditorTabs::open_sprite_editor(
   }
 
   try {
-    add_editor(new SpriteEditor(quest, path));
+    add_editor(std::unique_ptr<Editor>(new SpriteEditor(quest, path)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -261,7 +319,36 @@ void EditorTabs::open_sprite_editor(
 }
 
 /**
- * @brief Opens a file with a language dialogs editor in a new tab.
+ * @brief Opens a file with a shader editor.
+ * @param quest A Solarus quest.
+ * @param path Path of the shader data file to open.
+ */
+void EditorTabs::open_shader_editor(
+    Quest& quest, const QString& path) {
+
+  if (!quest.is_in_root_path(path)) {
+    // Not a file of this quest.
+    return;
+  }
+
+  // Find the existing tab if any.
+  int index = find_editor(path);
+  if (index != -1) {
+    // Already open.
+    setCurrentIndex(index);
+    return;
+  }
+
+  try {
+    add_editor(std::unique_ptr<Editor>(new ShaderEditor(quest, path)));
+  }
+  catch (const EditorException& ex) {
+    ex.show_dialog();
+  }
+}
+
+/**
+ * @brief Opens a file with a language dialogs editor.
  * @param quest A Solarus quest.
  * @param path Path of the dialogs file to open.
  */
@@ -284,7 +371,7 @@ void EditorTabs::open_dialogs_editor(Quest& quest, const QString& language_id) {
   }
 
   try {
-    add_editor(new DialogsEditor(quest, language_id));
+    add_editor(std::unique_ptr<Editor>(new DialogsEditor(quest, language_id)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -292,7 +379,7 @@ void EditorTabs::open_dialogs_editor(Quest& quest, const QString& language_id) {
 }
 
 /**
- * @brief Opens a file with a language strings list editor in a new tab.
+ * @brief Opens a file with a language strings list editor.
  * @param quest A Solarus quest.
  * @param language_id Language id of the strings file to open.
  */
@@ -316,7 +403,7 @@ void EditorTabs::open_strings_editor(
   }
 
   try {
-    add_editor(new StringsEditor(quest, language_id));
+    add_editor(std::unique_ptr<Editor>(new StringsEditor(quest, language_id)));
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
@@ -327,8 +414,8 @@ void EditorTabs::open_strings_editor(
  * @brief Creates a new tab and shows it.
  * @param editor The editor to put in the new tab.
  */
-void EditorTabs::add_editor(Editor* editor) {
-  insert_editor(editor, count());
+void EditorTabs::add_editor(std::unique_ptr<Editor> editor) {
+  insert_editor(std::move(editor), count());
   setCurrentIndex(count() - 1);
 }
 
@@ -337,24 +424,35 @@ void EditorTabs::add_editor(Editor* editor) {
  * @param editor The editor to put in the new tab.
  * @param index Index of the tab to add.
  */
-void EditorTabs::insert_editor(Editor* editor, int index) {
+void EditorTabs::insert_editor(std::unique_ptr<Editor> editor, int index) {
 
   QUndoStack* undo_stack = &editor->get_undo_stack();
   undo_group->addStack(undo_stack);
 
   QString path = editor->get_file_path();
-  editors.insert(path, editor);
-  insertTab(index, editor, editor->get_icon(), editor->get_title());
+  insertTab(index, editor.get(), editor->get_icon(), editor->get_title());
   setTabToolTip(index, editor->get_file_path());
 
   // Show an asterisk in tab title when a file is modified.
-  connect(undo_stack, SIGNAL(cleanChanged(bool)),
-          this, SLOT(current_editor_modification_state_changed(bool)));
+  connect(undo_stack, &QUndoStack::cleanChanged,
+          this, &EditorTabs::current_editor_modification_state_changed);
 
-  connect(editor, SIGNAL(open_file_requested(Quest&, QString)),
-          this, SLOT(open_file_requested(Quest&, QString)));
-  connect(editor, SIGNAL(refactoring_requested(Refactoring)),
-          this, SIGNAL(refactoring_requested(Refactoring)));
+  connect(editor.get(), &Editor::can_cut_changed,
+          this, &EditorTabs::can_cut_changed);
+  connect(editor.get(), &Editor::can_copy_changed,
+          this, &EditorTabs::can_copy_changed);
+  connect(editor.get(), &Editor::can_paste_changed,
+          this, &EditorTabs::can_paste_changed);
+  connect(editor.get(), &Editor::clear_console,
+          this, &EditorTabs::clear_console);
+  connect(editor.get(), &Editor::log_message_to_console,
+          this, &EditorTabs::log_message_to_console);
+  connect(editor.get(), &Editor::open_file_requested,
+          this, &EditorTabs::open_file_requested);
+  connect(editor.get(), &Editor::refactoring_requested,
+          this, &EditorTabs::refactoring_requested);
+
+  editors.emplace(path, std::move(editor));
 }
 
 /**
@@ -368,8 +466,8 @@ void EditorTabs::remove_editor(int index) {
 
   undo_group->removeStack(&editor->get_undo_stack());
 
-  editors.remove(path);
   removeTab(index);
+  editors.erase(path);
 }
 
 /**
@@ -408,11 +506,12 @@ Editor* EditorTabs::get_editor() {
  */
 int EditorTabs::find_editor(const QString& path) {
 
-  Editor* editor = editors.value(path);
-  if (editor == nullptr) {
+  auto it = editors.find(path);
+  if (it == editors.end()) {
     return -1;
   }
 
+  Editor* editor = it->second.get();
   return indexOf(editor);
 }
 
@@ -423,11 +522,12 @@ int EditorTabs::find_editor(const QString& path) {
  */
 bool EditorTabs::show_editor(const QString& path) {
 
-  Editor* editor = editors.value(path);
-  if (editor == nullptr) {
-    return false;
+  auto it = editors.find(path);
+  if (it == editors.end()) {
+    return -1;
   }
 
+  Editor* editor = it->second.get();
   setCurrentWidget(editor);
   return true;
 }
@@ -502,8 +602,16 @@ void EditorTabs::open_file_requested(Quest& quest, const QString& path) {
   else if (quest.is_strings_file(canonical_path, element_id)) {
     open_strings_editor(quest, element_id);
   }
+  else if (quest.is_image(canonical_path)) {
+    // A PNG image.
+    open_image_editor(quest, canonical_path);
+  }
   else if (quest.is_script(canonical_path)) {
     // A Lua script that is not a resource element.
+    open_text_editor(quest, canonical_path);
+  }
+  else if (quest.is_shader_code_file(canonical_path)) {
+    // A GLSL file.
     open_text_editor(quest, canonical_path);
   }
   else if (quest.is_properties_path(canonical_path)) {
@@ -557,8 +665,10 @@ void EditorTabs::reload_file_requested(int index) {
   open_file_requested(quest, path);
 
   editor = get_editor(count() - 1);
-  remove_editor(count() - 1);
-  insert_editor(editor, index);
+
+  removeTab(count() - 1);
+  insertTab(index, editor, editor->get_icon(), editor->get_title());
+  setTabToolTip(index, editor->get_file_path());
 
   setCurrentIndex(active_editor_index);
 }
@@ -706,7 +816,9 @@ void EditorTabs::reload_settings() {
  * @brief Slot called when the current tab changes.
  * @param index Index of the new current tab.
  */
-void EditorTabs::current_editor_changed(int /* index */) {
+void EditorTabs::current_editor_changed(int index) {
+
+  Q_UNUSED(index);
 
   Editor* editor = get_editor();
   if (editor == nullptr) {
@@ -717,38 +829,17 @@ void EditorTabs::current_editor_changed(int /* index */) {
   }
   else {
     get_undo_group().setActiveStack(&editor->get_undo_stack());
-    connect(editor, &Editor::can_cut_changed, [this, editor](bool can_cut) {
-      if (get_editor() == editor) {
-        emit can_cut_changed(can_cut);
-      }
-    });
-    connect(editor, &Editor::can_copy_changed, [this, editor](bool can_copy) {
-      if (get_editor() == editor) {
-        emit can_copy_changed(can_copy);
-      }
-    });
-    connect(editor, &Editor::can_paste_changed, [this, editor](bool can_paste) {
-      if (get_editor() == editor) {
-        emit can_paste_changed(can_paste);
-      }
-    });
     emit can_cut_changed(editor->can_cut());
     emit can_copy_changed(editor->can_copy());
     emit can_paste_changed(editor->can_paste());
-
     editor->setFocus();
   }
-
-  // Remember the current active tab.
-  QString file_path = (editor == nullptr) ? QString() : editor->get_file_path();
-  EditorSettings settings;
-  settings.set_value(EditorSettings::last_file, file_path);
 }
 
 /**
  * @brief Saves the list of open tabs.
  */
-void EditorTabs::update_recent_files_list() {
+void EditorTabs::save_open_files_list() {
 
   EditorSettings settings;
   QStringList last_files;
@@ -759,6 +850,10 @@ void EditorTabs::update_recent_files_list() {
   }
 
   settings.set_value(EditorSettings::last_files, last_files);
+
+  Editor* editor = get_editor();
+  QString file_path = (editor == nullptr) ? QString() : editor->get_file_path();
+  settings.set_value(EditorSettings::last_file, file_path);
 }
 
 /**
@@ -820,26 +915,6 @@ void EditorTabs::keyPressEvent(QKeyEvent* event) {
   }
 
   QTabWidget::keyPressEvent(event);
-}
-
-/**
- * @brief Function called when a tab is inserted.
- * @param index Index of the inserted tab.
- */
-void EditorTabs::tabInserted(int index) {
-
-  Q_UNUSED(index);
-  update_recent_files_list();
-}
-
-/**
- * @brief Function called when a tab is removed.
- * @param index Index of the removed tab.
- */
-void EditorTabs::tabRemoved(int index) {
-
-  Q_UNUSED(index);
-  update_recent_files_list();
 }
 
 }

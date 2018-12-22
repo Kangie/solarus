@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ void QuestProperties::reload() {
   }
 
   QString file_name = quest.get_properties_path();
-  if (!properties.import_from_file(file_name.toStdString())) {
+  if (!properties.import_from_file(file_name.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot open file '%1'").arg(file_name));
   }
 }
@@ -59,7 +59,7 @@ void QuestProperties::save() const {
   }
 
   QString file_name = quest.get_properties_path();
-  if (!properties.export_to_file(file_name.toStdString())) {
+  if (!properties.export_to_file(file_name.toLocal8Bit().toStdString())) {
     throw EditorException(tr("Cannot write file '%1'").arg(file_name));
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include <solarus/Common.h>
+#include <solarus/core/Common.h>
 
 /**
  * @brief Solarus Quest Editor major version.
@@ -28,7 +28,7 @@
  *
  * Must match the Solarus library minor version.
  */
-#define SOLARUSEDITOR_MINOR_VERSION 5
+#define SOLARUSEDITOR_MINOR_VERSION 6
 
 /**
  * @brief Solarus Quest Editor patch version.
@@ -36,7 +36,7 @@
  * Patch versions are only bug fixes.
  * No need to match the Solarus library patch version.
  */
-#define SOLARUSEDITOR_PATCH_VERSION 3
+#define SOLARUSEDITOR_PATCH_VERSION 0
 
 /**
  * @brief The Solarus Quest Editor version as a string.

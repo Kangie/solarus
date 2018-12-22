@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 namespace SolarusEditor {
 
 /**
- * @brief Creates a find text dialog.
+ * @brief Creates a find and replace text dialog.
  * @param parent The parent object or nullptr.
  */
 FindTextDialog::FindTextDialog(QWidget* parent) :
@@ -34,8 +34,15 @@ FindTextDialog::FindTextDialog(QWidget* parent) :
 
   find_button->setDefault(true);
 
+  QPushButton* replace_button = new QPushButton(tr("Replace"), this);
+  ui.button_box->addButton(replace_button, QDialogButtonBox::ApplyRole);
+
   connect(find_button, &QPushButton::pressed, [this]() {
     emit find_text_requested(ui.find_field->text());
+  });
+
+  connect(replace_button, &QPushButton::pressed, [this]() {
+    emit replace_text_requested(ui.find_field->text(), ui.replace_field->text());
   });
 }
 

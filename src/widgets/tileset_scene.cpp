@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ public:
     Type = UserType + 1
   };
 
-  virtual int type() const override {
+  int type() const override {
     return Type;
   }
 
@@ -53,14 +53,14 @@ public:
 
 protected:
 
-  virtual void paint(QPainter* painter,
-                     const QStyleOptionGraphicsItem* option,
-                     QWidget* widget = nullptr) override;
+  void paint(QPainter* painter,
+             const QStyleOptionGraphicsItem* option,
+             QWidget* widget = nullptr) override;
 
 private:
 
-  TilesetModel& model;            /**< The tileset this pattern belongs to. */
-  int index;                      /**< Index of the pattern in the tileset. */
+  TilesetModel& model;      /**< The tileset this pattern belongs to. */
+  int index;                /**< Index of the pattern in the tileset. */
 
 };
 
@@ -84,10 +84,10 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
   // Watch pattern geometry changes.
   connect(&model, SIGNAL(pattern_position_changed(int, QPoint)),
           this, SLOT(update_pattern_position(int)));
-  connect(&model, SIGNAL(pattern_animation_changed(int, PatternAnimation)),
-          this, SLOT(update_pattern_animation(int)));
   connect(&model, SIGNAL(pattern_separation_changed(int, PatternSeparation)),
-          this, SLOT(update_pattern_animation(int)));
+          this, SLOT(update_pattern_position(int)));
+  connect(&model, SIGNAL(pattern_num_frames_changed(int, int)),
+          this, SLOT(update_pattern_position(int)));
 
   // Watch changes in the pattern list.
   connect(&model, SIGNAL(pattern_created(int, QString)),
@@ -96,8 +96,11 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
           this, SLOT(pattern_deleted(int, QString)));
   connect(&model, SIGNAL(pattern_id_changed(int, QString, int, QString)),
           this, SLOT(pattern_id_changed(int, QString, int, QString)));
-  connect(&model, SIGNAL(image_changed()),
-          this, SLOT(image_changed()));
+  connect(&model, &TilesetModel::tileset_image_file_reloaded,
+          this, &TilesetScene::image_changed);
+
+  connect(&model, &TilesetModel::modelReset,
+          this, &TilesetScene::build);
 }
 
 /**
@@ -175,6 +178,16 @@ void TilesetScene::build() {
     pattern_items.append(pattern_item);
   }
 
+  // Initial selection.
+  const QList<int>& selected_indexes = model.get_selected_indexes();
+  for (int index : selected_indexes) {
+    if (model.pattern_exists(index)) {
+      pattern_items[index]->setSelected(true);
+    }
+  }
+  if (!selected_indexes.isEmpty()) {
+    emit selectionChanged();
+  }
 }
 
 /**
@@ -193,7 +206,8 @@ void TilesetScene::update_selection_to_scene(
 
   // Update the scene with the change.
   bool changed = false;
-  Q_FOREACH (const QModelIndex& model_index, selected.indexes()) {
+  const QModelIndexList& selected_indexes = selected.indexes();
+  for (const QModelIndex& model_index : selected_indexes) {
     int index = model_index.row();
     if (model.pattern_exists(index)) {
       if (!pattern_items[index]->isSelected()) {
@@ -203,7 +217,8 @@ void TilesetScene::update_selection_to_scene(
     }
   }
 
-  Q_FOREACH (const QModelIndex& model_index, deselected.indexes()) {
+  const QModelIndexList& deselected_indexes = deselected.indexes();
+  for (const QModelIndex& model_index : deselected_indexes) {
     int index = model_index.row();
     if (model.pattern_exists(index)) {
       if (pattern_items[index]->isSelected()) {
@@ -228,7 +243,8 @@ void TilesetScene::set_selection_from_scene() {
 
   // Forward the change to the tileset.
   QList<int> indexes;
-  Q_FOREACH (QGraphicsItem* item, selectedItems()) {
+  const QList<QGraphicsItem*>& selected_items = selectedItems();
+  for (QGraphicsItem* item : selected_items) {
     PatternItem* pattern_item = qgraphicsitem_cast<PatternItem*>(item);
     if (pattern_item != nullptr) {
       indexes << pattern_item->get_index();
@@ -245,7 +261,7 @@ void TilesetScene::select_all() {
 
   const bool was_blocked = signalsBlocked();
   blockSignals(true);
-  Q_FOREACH (PatternItem* item, pattern_items) {
+  for (PatternItem* item : pattern_items) {
     if (item == nullptr) {
       continue;
     }
@@ -264,7 +280,7 @@ void TilesetScene::unselect_all() {
 
   const bool was_blocked = signalsBlocked();
   blockSignals(true);
-  Q_FOREACH (PatternItem* item, pattern_items) {
+  for (PatternItem* item : pattern_items) {
     if (item == nullptr) {
       continue;
     }
@@ -285,20 +301,9 @@ void TilesetScene::update_pattern_position(int index) {
   const QRect& box = model.get_pattern_frames_bounding_box(index);
   PatternItem* pattern_item = qgraphicsitem_cast<PatternItem*>(pattern_items[index]);
   if (pattern_item != nullptr) {
+    pattern_item->rebuild_pixmap();
     pattern_item->setPos(box.topLeft());
-    pattern_item->setPixmap(model.get_pattern_image_all_frames(index));
   }
-}
-
-/**
- * @brief Slot called when the animation of a pattern changes.
- * @param index Index of the pattern changed.
- */
-void TilesetScene::update_pattern_animation(int index) {
-
-  // Redraw the area containing the pattern: the selection marker may
-  // have changed.
-  const QRect& box = model.get_pattern_frames_bounding_box(index);
   update(box);
 }
 
@@ -463,9 +468,9 @@ void PatternItem::paint(QPainter* painter,
 
   // Add our selection marker.
   if (selected) {
-    QList<QRect> frames = model.get_pattern_frames(index);
+    const QList<QRect>& frames = model.get_pattern_frames(index);
 
-    Q_FOREACH (QRect frame, frames) {
+    for (QRect frame : frames) {
       frame.translate(-top_left);
       GuiTools::draw_rectangle_border(*painter, frame, Qt::blue, 1);
     }

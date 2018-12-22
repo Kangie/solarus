@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ public:
 
   virtual void undo() override {
 
-    Q_FOREACH (const auto& pair, edited_keys) {
+    for (const auto& pair : edited_keys) {
       get_model().set_string_key(pair.second, pair.first);
     }
     if (!edited_keys.isEmpty()) {
@@ -233,7 +233,7 @@ public:
 
   virtual void undo() override {
 
-    Q_FOREACH (const auto& pair, values) {
+    for (const auto& pair : values) {
       get_model().create_string(pair.first, pair.second);
     }
     if (!values.isEmpty()) {
@@ -310,9 +310,9 @@ StringsEditor::StringsEditor(
 
   // Editor properties.
   set_title(tr("Strings %1").arg(language_id));
-  set_icon(QIcon(":/images/icon_resource_language.png"));
+  set_icon(QIcon(":/images/icon_strings.png"));
   set_close_confirm_message(
-        tr("Strings '%1' has been modified. Save changes?").arg(language_id));
+        tr("Strings '%1' have been modified. Save changes?").arg(language_id));
 
   // Prepare the gui.
   ui.strings_tree_view->set_model(model);
@@ -328,7 +328,7 @@ StringsEditor::StringsEditor(
   update();
 
   // Make connections.
-  connect(&get_resources(),
+  connect(&get_database(),
           SIGNAL(element_description_changed(ResourceType, const QString&, const QString&)),
           this, SLOT(update_description_to_gui()));
   connect(ui.description_field, SIGNAL(editingFinished()),
@@ -415,7 +415,7 @@ void StringsEditor::update_language_id_field() {
  */
 void StringsEditor::update_description_to_gui() {
 
-  QString description = get_resources().get_description(
+  QString description = get_database().get_description(
         ResourceType::LANGUAGE, language_id);
   if (ui.description_field->text() != description) {
     ui.description_field->setText(description);
@@ -431,7 +431,7 @@ void StringsEditor::update_description_to_gui() {
 void StringsEditor::set_description_from_gui() {
 
   QString description = ui.description_field->text();
-  if (description == get_resources().get_description(
+  if (description == get_database().get_description(
         ResourceType::LANGUAGE, language_id)) {
     return;
   }
@@ -444,9 +444,9 @@ void StringsEditor::set_description_from_gui() {
 
   const bool was_blocked = blockSignals(true);
   try {
-    get_resources().set_description(
+    get_database().set_description(
           ResourceType::LANGUAGE, language_id, description);
-    get_resources().save();
+    get_database().save();
   }
   catch (const EditorException& ex) {
     ex.print_message();

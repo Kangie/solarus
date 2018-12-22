@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +30,12 @@ namespace SolarusEditor {
 /**
  * @brief A widget to preview animation directions of sprites.
  */
-class SpritePreviewer : public QWidget
-{
+class SpritePreviewer : public QWidget {
   Q_OBJECT
 
 public:
 
-  SpritePreviewer(QWidget* parent = 0);
+  SpritePreviewer(QWidget* parent = nullptr);
 
   void set_model(SpriteModel* model);
 

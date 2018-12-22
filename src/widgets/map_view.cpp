@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,12 @@
 #include "widgets/pan_tool.h"
 #include "widgets/zoom_tool.h"
 #include "point.h"
+#include "quest.h"
 #include "rectangle.h"
 #include "tileset_model.h"
 #include "view_settings.h"
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QClipboard>
 #include <QDebug>
@@ -51,13 +53,13 @@ namespace {
 class DoingNothingState : public MapView::State {
 
 public:
-  DoingNothingState(MapView& view);
+  explicit DoingNothingState(MapView& view);
 
   void mouse_pressed(const QMouseEvent& event) override;
   void mouse_moved(const QMouseEvent& event) override;
   void mouse_released(const QMouseEvent& event) override;
   void context_menu_requested(const QPoint& where) override;
-  void tileset_selection_changed() override;
+  void tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) override;
 
 private:
   QPoint mouse_pressed_point;               /**< Point where the mouse was pressed, in view coordinates. */
@@ -177,7 +179,7 @@ public:
   void stop() override;
   void mouse_pressed(const QMouseEvent& event) override;
   void mouse_moved(const QMouseEvent& event) override;
-  void tileset_selection_changed() override;
+  void tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) override;
 
 private:
   QPoint get_entities_center() const;
@@ -274,10 +276,9 @@ void MapView::set_map(MapModel* map) {
     new MouseCoordinatesTrackingTool(this);
 
     // Connect signals.
-    connect(map, SIGNAL(tileset_id_changed(QString)),
-            this, SLOT(tileset_id_changed(QString)));
-    connect(map, SIGNAL(tileset_reloaded()),
-            this, SLOT(tileset_reloaded()));
+    connect(map, &MapModel::tileset_id_changed,
+            this, &MapView::tileset_id_changed);
+    tileset_id_changed(map->get_tileset_id());
 
     // Start the state mechanism.
     start_state_doing_nothing();
@@ -311,29 +312,31 @@ void MapView::set_view_settings(ViewSettings& view_settings) {
 
   this->view_settings = &view_settings;
 
-  connect(this->view_settings, SIGNAL(zoom_changed(double)),
-          this, SLOT(update_zoom()));
+  connect(this->view_settings, &ViewSettings::zoom_changed,
+          this, &MapView::update_zoom);
   update_zoom();
 
-  connect(this->view_settings, SIGNAL(grid_visibility_changed(bool)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_size_changed(QSize)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_style_changed(GridStyle)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_color_changed(QColor)),
-          this, SLOT(update_grid_visibility()));
+  connect(this->view_settings, &ViewSettings::grid_visibility_changed,
+          this, &MapView::update_grid_visibility);
+  connect(this->view_settings, &ViewSettings::grid_size_changed,
+          this, &MapView::update_grid_visibility);
+  connect(this->view_settings, &ViewSettings::grid_style_changed,
+          this, &MapView::update_grid_visibility);
+  connect(this->view_settings, &ViewSettings::grid_color_changed,
+          this, &MapView::update_grid_visibility);
   update_grid_visibility();
 
-  connect(this->view_settings, SIGNAL(layer_visibility_changed(int, bool)),
-          this, SLOT(update_layer_visibility(int)));
+  connect(this->view_settings, &ViewSettings::layer_visibility_changed,
+          this, &MapView::update_layer_visibility);
+  connect(this->view_settings, &ViewSettings::layer_locking_changed,
+          this, &MapView::update_layer_locking);
 
-  connect(this->view_settings, SIGNAL(traversables_visibility_changed(bool)),
-          this, SLOT(update_traversables_visibility()));
-  connect(this->view_settings, SIGNAL(obstacles_visibility_changed(bool)),
-          this, SLOT(update_obstacles_visibility()));
-  connect(this->view_settings, SIGNAL(entity_type_visibility_changed(EntityType, bool)),
-          this, SLOT(update_entity_type_visibility(EntityType)));
+  connect(this->view_settings, &ViewSettings::traversables_visibility_changed,
+          this, &MapView::update_traversables_visibility);
+  connect(this->view_settings, &ViewSettings::obstacles_visibility_changed,
+          this, &MapView::update_obstacles_visibility);
+  connect(this->view_settings, &ViewSettings::entity_type_visibility_changed,
+          this, &MapView::update_entity_type_visibility);
 
   horizontalScrollBar()->setValue(0);
   verticalScrollBar()->setValue(0);
@@ -442,17 +445,23 @@ void MapView::start_state_adding_entities(EntityModels&& entities, bool guess_la
 }
 
 /**
- * @brief Moves to the state of adding new entities, with new tiles
- * corresponding to the selected patterns of the tileset.
+ * @brief Moves to the state of adding new entities, adding the specified tiles.
+ * @param tileset_id Id of the tileset to use (empty means the one of the map).
+ * @param indexes Indexes of the selected patterns.
  */
-void MapView::start_adding_entities_from_tileset_selection() {
+void MapView::start_adding_entities_from_tileset(const QString& tileset_id, const QList<int>& indexes) {
+
+  if (indexes.isEmpty()) {
+    return;
+  }
 
   MapModel* map = get_map();
   if (map == nullptr) {
     return;
   }
 
-  TilesetModel* tileset = map->get_tileset_model();
+  QString id = !tileset_id.isEmpty() ? tileset_id : map->get_tileset_id();
+  TilesetModel* tileset = map->get_quest().get_tileset(id);
   if (tileset == nullptr) {
     return;
   }
@@ -460,14 +469,10 @@ void MapView::start_adding_entities_from_tileset_selection() {
   // Create a tile from each selected pattern.
   // Arrange the relative position of tiles as in the tileset.
   EntityModels tiles;
-  const QList<int>& pattern_indexes = tileset->get_selected_indexes();
-  if (pattern_indexes.isEmpty()) {
-    return;
-  }
 
   bool has_common_preferred_layer = true;
-  int common_preferred_layer = tileset->get_pattern_default_layer(pattern_indexes.first());
-  Q_FOREACH (int pattern_index, pattern_indexes) {
+  int common_preferred_layer = tileset->get_pattern_default_layer(indexes.first());
+  for (int pattern_index : indexes) {
     QString pattern_id = tileset->index_to_id(pattern_index);
     if (pattern_id.isEmpty()) {
       continue;
@@ -481,6 +486,10 @@ void MapView::start_adding_entities_from_tileset_selection() {
     tile->set_xy(pattern_frame.topLeft());
     int preferred_layer = tileset->get_pattern_default_layer(pattern_index);
     tile->set_layer(preferred_layer);
+    if (!tileset_id.isEmpty()) {
+      // Not the default tileset of the map.
+      tile->set_field("tileset", tileset_id);
+    }
     tiles.emplace_back(std::move(tile));
 
     // Also check if they all have the same preferred layer.
@@ -502,7 +511,7 @@ void MapView::start_adding_entities_from_tileset_selection() {
  */
 bool MapView::are_entities_resizable(const EntityIndexes& indexes) const {
 
-  Q_FOREACH (const EntityIndex& index, indexes) {
+  for (const EntityIndex& index : indexes) {
     if (map->get_entity(index).is_resizable()) {
       return true;
     }
@@ -519,29 +528,50 @@ void MapView::build_context_menu_actions() {
         tr("Edit"), this);
   edit_action->setShortcut(Qt::Key_Return);
   edit_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(edit_action, SIGNAL(triggered()),
-          this, SLOT(edit_selected_entity()));
+  connect(edit_action, &QAction::triggered,
+          this, &MapView::edit_selected_entity);
   addAction(edit_action);
 
   resize_action = new QAction(
         tr("Resize"), this);
   resize_action->setShortcut(tr("R"));
   resize_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(resize_action, &QAction::triggered, [this]() {
-    start_state_resizing_entities();
-  });
+  connect(resize_action, &QAction::triggered,
+          this, &MapView::start_state_resizing_entities);
   addAction(resize_action);
 
   convert_tiles_action = new QAction(
         tr("Convert to dynamic tile"), this);
-  connect(convert_tiles_action, SIGNAL(triggered()),
-          this, SLOT(convert_selected_tiles()));
+  connect(convert_tiles_action, &QAction::triggered,
+          this, &MapView::convert_selected_tiles);
   addAction(convert_tiles_action);
+
+  change_pattern_action = new QAction(
+        tr("Change pattern..."), this);
+  connect(change_pattern_action, &QAction::triggered, [this]() {
+    emit change_tiles_pattern_requested(get_selected_entities());
+  });
+  addAction(change_pattern_action);
+
+  change_pattern_all_action = new QAction(
+        tr("Change pattern of similar tiles..."), this);
+  connect(change_pattern_all_action, &QAction::triggered,
+          this, &MapView::change_pattern_of_similar_tiles);
+  addAction(change_pattern_action);
+
+  add_border_action = new QAction(
+        tr("Generate borders around selection"), this);
+  add_border_action->setShortcut(tr("Ctrl+B"));
+  add_border_action->setShortcutContext(Qt::WindowShortcut);
+  connect(add_border_action, &QAction::triggered, [this]() {
+    emit generate_borders_requested(get_selected_entities());
+  });
+  addAction(add_border_action);
 
   up_one_layer_action = new QAction(
         tr("One layer up"), this);
   up_one_layer_action->setShortcut(tr("+"));
-  up_one_layer_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  up_one_layer_action->setShortcutContext(Qt::WindowShortcut);
   connect(up_one_layer_action, &QAction::triggered, [this]() {
     emit increase_entities_layer_requested(get_selected_entities());
   });
@@ -550,7 +580,7 @@ void MapView::build_context_menu_actions() {
   down_one_layer_action = new QAction(
         tr("One layer down"), this);
   down_one_layer_action->setShortcut(tr("-"));
-  down_one_layer_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  down_one_layer_action->setShortcutContext(Qt::WindowShortcut);
   connect(down_one_layer_action, &QAction::triggered, [this]() {
     emit decrease_entities_layer_requested(get_selected_entities());
   });
@@ -559,7 +589,7 @@ void MapView::build_context_menu_actions() {
   bring_to_front_action = new QAction(
         tr("Bring to front"), this);
   bring_to_front_action->setShortcut(tr("T"));
-  bring_to_front_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  bring_to_front_action->setShortcutContext(Qt::WindowShortcut);
   connect(bring_to_front_action, &QAction::triggered, [this]() {
     emit bring_entities_to_front_requested(get_selected_entities());
   });
@@ -568,7 +598,7 @@ void MapView::build_context_menu_actions() {
   bring_to_back_action = new QAction(
         tr("Bring to back"), this);
   bring_to_back_action->setShortcut(tr("B"));
-  bring_to_back_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  bring_to_back_action->setShortcutContext(Qt::WindowShortcut);
   connect(bring_to_back_action, &QAction::triggered, [this]() {
     emit bring_entities_to_back_requested(get_selected_entities());
   });
@@ -578,15 +608,15 @@ void MapView::build_context_menu_actions() {
         QIcon(":/images/icon_delete.png"), tr("Delete"), this);
   remove_action->setShortcut(QKeySequence::Delete);
   remove_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(remove_action, SIGNAL(triggered()),
-          this, SLOT(remove_selected_entities()));
+  connect(remove_action, &QAction::triggered,
+          this, &MapView::remove_selected_entities);
   addAction(remove_action);
 
   cancel_action = new QAction(tr("Cancel"), this);
   cancel_action->setShortcut(Qt::Key_Escape);
   cancel_action->setShortcutContext(Qt::WindowShortcut);
-  connect(cancel_action, SIGNAL(triggered()),
-          this, SLOT(cancel_state_requested()));
+  connect(cancel_action, &QAction::triggered,
+          this, &MapView::cancel_state_requested);
   addAction(cancel_action);
 
   build_context_menu_layer_actions();
@@ -629,8 +659,9 @@ QMenu* MapView::create_context_menu() {
   // Layout of the context menu (line breaks are separators):
   //
   // Edit, Resize, Direction
-  // Convert to dynamic/static tile(s)
+  // Change pattern, Change pattern of all, Convert to dynamic/static tile(s)
   // Cut, Copy, Paste
+  // Borders
   // Layers, One layer up, One layer down
   // Bring to front, Bring to back
   // Delete
@@ -658,6 +689,7 @@ QMenu* MapView::create_context_menu() {
     menu->addSeparator();
 
     // Convert to dynamic/static tile(s).
+    bool tile_action_added = false;
     EntityType type;
     const bool show_convert_tiles_action = map->is_common_type(indexes, type) &&
         (type == EntityType::TILE || type == EntityType::DYNAMIC_TILE);
@@ -671,6 +703,41 @@ QMenu* MapView::create_context_menu() {
       }
       convert_tiles_action->setText(text);
       menu->addAction(convert_tiles_action);
+      tile_action_added = true;
+    }
+
+    if (map->are_tiles(indexes)) {
+
+      bool same_pattern = true;
+      const QString& pattern_id = map->get_entity_field(indexes.first(), "pattern").toString();
+      for (const EntityIndex& index : indexes) {
+        if (map->get_entity_field(index, "pattern").toString() != pattern_id) {
+          same_pattern = false;
+          break;
+        }
+      }
+
+      bool same_tileset = true;
+      const QString& tileset_id = map->get_entity_field(indexes.first(), "tileset").toString();
+      for (const EntityIndex& index : indexes) {
+        if (map->get_entity_field(index, "tileset").toString() != tileset_id) {
+          same_tileset = false;
+          break;
+        }
+      }
+
+      // Change pattern.
+      if (same_tileset) {
+        menu->addAction(change_pattern_action);
+        tile_action_added = true;
+        // Change pattern of all similar tiles.
+        if (same_pattern) {
+          menu->addAction(change_pattern_all_action);
+        }
+      }
+    }
+
+    if (tile_action_added) {
       menu->addSeparator();
     }
   }
@@ -685,6 +752,10 @@ QMenu* MapView::create_context_menu() {
   }
 
   if (!is_selection_empty()) {
+
+    // Borders.
+    menu->addAction(add_border_action);
+    menu->addSeparator();
 
     // Layer.
     int common_layer = -1;
@@ -802,6 +873,32 @@ QMenu* MapView::create_direction_context_menu(const EntityIndexes& indexes) {
   return menu;
 }
 
+/**
+ * @brief Exports the current view to an image.
+ * @return The map image.
+ */
+QImage MapView::export_to_image() {
+
+  if (scene == nullptr) {
+    return QImage();
+  }
+
+  // Clear the selection first (we don't want selection markers.
+  EntityIndexes selected_indexes = get_selected_entities();
+  set_selected_entities(EntityIndexes());
+
+  // Create the image.
+  QImage image(map->get_size(), QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
+  QPainter painter(&image);
+  scene->render(&painter, image.rect(),
+                QRect(scene->get_margin_top_left(), map->get_size()));
+
+  // Restore the selection.
+  set_selected_entities(selected_indexes);
+
+  return image;
+}
 
 /**
  * @brief Copies the selected entities to the clipboard and removes them.
@@ -834,7 +931,7 @@ void MapView::copy() {
   std::sort(indexes.begin(), indexes.end());
 
   QStringList entity_strings;
-  Q_FOREACH (const EntityIndex& index, indexes) {
+  for (const EntityIndex& index : indexes) {
     Q_ASSERT(map->entity_exists(index));
     const EntityModel& entity = map->get_entity(index);
     QString entity_string = entity.to_string();
@@ -992,6 +1089,19 @@ void MapView::update_layer_visibility(int layer) {
 }
 
 /**
+ * @brief Locks or unlock a layer according to the view settings.
+ * @param layer The layer to update.
+ */
+void MapView::update_layer_locking(int layer) {
+
+  if (scene == nullptr) {
+    return;
+  }
+
+  scene->update_layer_locking(layer, *view_settings);
+}
+
+/**
  * @brief Shows or hides traversables according to the view settings.
  */
 void MapView::update_traversables_visibility() {
@@ -1029,14 +1139,17 @@ void MapView::update_entity_type_visibility(EntityType type) {
  * by the user.
  *
  * Tiles with these new patterns are added if possible.
+ *
+ * @param tileset_id Id of the tileset to use (empty means the one of the map).
+ * @param indexes Indexes of the selected patterns.
  */
-void MapView::tileset_selection_changed() {
+void MapView::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
 
   if (state == nullptr) {
     return;
   }
 
-  state->tileset_selection_changed();
+  state->tileset_selection_changed(tileset_id, indexes);
 }
 
 /**
@@ -1046,18 +1159,22 @@ void MapView::tileset_selection_changed() {
 void MapView::tileset_id_changed(const QString& tileset_id) {
 
   Q_UNUSED(tileset_id);
-  if (scene == nullptr) {
-    return;
-  }
-  scene->update();
+  disconnect(this, SLOT(notify_tileset_changed()));
 
-  start_state_doing_nothing();
+  if (map->get_tileset_model() != nullptr) {
+    // Watch changes of this tileset.
+    connect(map->get_tileset_model(), &TilesetModel::modelReset,
+            this, &MapView::notify_tileset_changed);
+  }
+
+  // TODO only if there is really a change
+  notify_tileset_changed();
 }
 
 /**
- * @brief Slot called when the tileset file is reloaded.
+ * @brief Slot called when the tileset has changed.
  */
-void MapView::tileset_reloaded() {
+void MapView::notify_tileset_changed() {
 
   if (scene == nullptr) {
     return;
@@ -1316,8 +1433,8 @@ void MapView::select_entity(const EntityIndex& index, bool selected) {
 EntityModels MapView::clone_selected_entities() const {
 
   EntityModels clones;
-  EntityIndexes indexes = get_selected_entities();
-  Q_FOREACH (const EntityIndex& index, indexes) {
+  const EntityIndexes& indexes = get_selected_entities();
+  for (const EntityIndex& index : indexes) {
     EntityModelPtr clone = EntityModel::clone(*map, index);
     clones.emplace_back(std::move(clone));
   }
@@ -1399,7 +1516,7 @@ void MapView::edit_selected_entity() {
     return;
   }
 
-  EntityModelPtr entity_after = std::move(dialog.get_entity_after());
+  EntityModelPtr entity_after = dialog.get_entity_after();
   emit edit_entity_requested(index, entity_after);
 }
 
@@ -1409,6 +1526,39 @@ void MapView::edit_selected_entity() {
 void MapView::convert_selected_tiles() {
 
   emit convert_tiles_requested(get_selected_entities());
+}
+
+/**
+ * @brief Changes the pattern of tiles having the same pattern as the selection.
+ */
+void MapView::change_pattern_of_similar_tiles() {
+
+  const EntityIndexes& indexes = get_selected_entities();
+  if (indexes.empty()) {
+    return;
+  }
+
+  const QString& pattern_id = get_map()->get_entity_field(indexes.first(), "pattern").toString();
+  const QString& tileset_id = get_map()->get_entity_field(indexes.first(), "tileset").toString();
+
+  // Find all tiles and dynamic tiles that also have this pattern.
+  const EntityIndexes& tiles = map->find_entities_of_type(EntityType::TILE);
+  EntityIndexes similar_tiles;
+  for (const EntityIndex& tile : tiles) {
+    if (get_map()->get_entity_field(tile, "pattern").toString() == pattern_id &&
+        get_map()->get_entity_field(tile, "tileset").toString() == tileset_id ) {
+      similar_tiles << tile;
+    }
+  }
+  const EntityIndexes& dynamic_tiles = map->find_entities_of_type(EntityType::DYNAMIC_TILE);
+  for (const EntityIndex& dynamic_tile : dynamic_tiles) {
+    if (get_map()->get_entity_field(dynamic_tile, "pattern").toString() == pattern_id &&
+        get_map()->get_entity_field(dynamic_tile, "tileset").toString() == tileset_id) {
+      similar_tiles << dynamic_tile;
+    }
+  }
+
+  emit change_tiles_pattern_requested(similar_tiles);
 }
 
 /**
@@ -1548,7 +1698,6 @@ void MapView::State::cancel() {
  * @param event The event to handle.
  */
 void MapView::State::mouse_pressed(const QMouseEvent& event) {
-
   Q_UNUSED(event);
 }
 
@@ -1560,7 +1709,6 @@ void MapView::State::mouse_pressed(const QMouseEvent& event) {
  * @param event The event to handle.
  */
 void MapView::State::mouse_released(const QMouseEvent& event) {
-
   Q_UNUSED(event);
 }
 
@@ -1572,7 +1720,6 @@ void MapView::State::mouse_released(const QMouseEvent& event) {
  * @param event The event to handle.
  */
 void MapView::State::mouse_moved(const QMouseEvent& event) {
-
   Q_UNUSED(event);
 }
 
@@ -1585,7 +1732,6 @@ void MapView::State::mouse_moved(const QMouseEvent& event) {
  * @param where Where to show the context menu, in global coordinates.
  */
 void MapView::State::context_menu_requested(const QPoint& where) {
-
   Q_UNUSED(where);
 }
 
@@ -1593,9 +1739,13 @@ void MapView::State::context_menu_requested(const QPoint& where) {
  * @brief Called when the user changes the selection in the tileset.
  *
  * States may start or stop adding entities.
+ *
+ * @param tileset_id Id of the tileset to use (empty means the one of the map).
+ * @param indexes Indexes of the selected patterns.
  */
-void MapView::State::tileset_selection_changed() {
-
+void MapView::State::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
+  Q_UNUSED(tileset_id);
+  Q_UNUSED(indexes);
 }
 
 /**
@@ -1659,7 +1809,15 @@ void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
         if (!item->isSelected()) {
           // Select the item.
           if (entity_item != nullptr) {
-            view.select_entity(entity_item->get_index(), true);
+            const EntityIndex& index = entity_item->get_index();
+            if (!view.get_view_settings()->is_layer_locked(index.layer)) {
+              view.select_entity(index, true);
+            }
+            else {
+              // Left click on a locked layer: trace a selection rectangle.
+              view.start_state_drawing_rectangle(event.pos());
+              return;
+            }
           }
         }
         // Allow to move selected items.
@@ -1677,7 +1835,10 @@ void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
     if (entity_item != nullptr) {
       if (!entity_item->isSelected()) {
         // Select the right-clicked item.
-        view.select_entity(entity_item->get_index(), true);
+        const EntityIndex& index = entity_item->get_index();
+        if (!view.get_view_settings()->is_layer_locked(index.layer)) {
+          view.select_entity(index, true);
+        }
       }
     }
   }
@@ -1724,7 +1885,16 @@ void DoingNothingState::mouse_released(const QMouseEvent& event) {
     QGraphicsItem* item = items_under_mouse.isEmpty() ? nullptr : items_under_mouse.first();
     const EntityItem* entity_item = qgraphicsitem_cast<const EntityItem*>(item);
     if (entity_item != nullptr) {
-      view.select_entity(entity_item->get_index(), !item->isSelected());
+      const bool was_selected = item->isSelected();
+      if (was_selected) {
+        view.select_entity(entity_item->get_index(), false);
+      }
+      else {
+        const bool layer_locked = view.get_view_settings()->is_layer_locked(entity_item->get_index().layer);
+        if (!layer_locked) {
+          view.select_entity(entity_item->get_index(), true);
+        }
+      }
     }
     clicked_with_control_or_shift = false;
   }
@@ -1743,18 +1913,10 @@ void DoingNothingState::context_menu_requested(const QPoint& where) {
 /**
  * @copydoc MapView::State::tileset_selection_changed
  */
-void DoingNothingState::tileset_selection_changed() {
+void DoingNothingState::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
 
-  TilesetModel* tileset = get_map().get_tileset_model();
-  if (tileset == nullptr) {
-    return;
-  }
-  if (tileset->is_selection_empty()) {
-    return;
-  }
-
-  // The user just selected some patterns in the tileset: create corresponding tiles.
-  get_view().start_adding_entities_from_tileset_selection();
+  // Create corresponding tiles.
+  get_view().start_adding_entities_from_tileset(tileset_id, indexes);
 }
 
 /**
@@ -1825,6 +1987,15 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
   path.addRect(QRect(area.topLeft() - QPoint(1, 1),
                      area.size() + QSize(2, 2)));
   scene.setSelectionArea(path, Qt::ContainsItemBoundingRect);
+
+  // But don't select entities on locked layers.
+  const EntityIndexes selected_indexes = scene.get_selected_entities();
+  const ViewSettings& view_settings = *view.get_view_settings();
+  for (const EntityIndex& index : selected_indexes) {
+    if (view_settings.is_layer_locked(index.layer)) {
+      view.select_entity(index, false);
+    }
+  }
 
   // Also restore the initial selection.
   for (int i = 0; i < initial_selection.size(); ++i) {
@@ -1937,7 +2108,7 @@ void ResizingEntitiesState::compute_center() {
   // Compute the total bounding box to determine its center.
   MapModel& map = get_map();
   QRect total_box = map.get_entity_bounding_box(entities.first());
-  Q_FOREACH (const EntityIndex& index, entities) {
+  for (const EntityIndex& index : entities) {
     total_box |= map.get_entity_bounding_box(index);
   }
   center = total_box.center();
@@ -1973,7 +2144,7 @@ void ResizingEntitiesState::compute_leader() {
     if (found_leader) {
       min_distance = 0;  // Don't search a leader with this resize mode.
     }
-    Q_FOREACH (const EntityIndex& index, entities) {
+    for (const EntityIndex& index : entities) {
       const EntityModel& entity = map.get_entity(index);
 
       if (entity.get_resize_mode() != wanted_resize_mode) {
@@ -2670,6 +2841,15 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
   // to compute correct indexes below.
   sort_entities();
 
+  // Clone them in case the user wants to add more entities.
+  EntityModels clones;
+  if (event.button() == Qt::RightButton) {
+    for (EntityModelPtr& entity : entities) {
+      Q_ASSERT(entity != nullptr);
+      clones.emplace_back(entity->clone());
+    }
+  }
+
   // Make entities ready to be added at their specific index.
   AddableEntities addable_entities;
   EntityIndex previous_index;
@@ -2699,10 +2879,13 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
   }
 
   // Add them.
-  view.add_entities_requested(addable_entities);
+  const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
+  const bool keep_selection = control_or_shift;
+  view.add_entities_requested(addable_entities, !keep_selection);
 
   // Decide what to do next: resize them, add new ones or do nothing.
-  if (view.are_entities_resizable(view.get_selected_entities())) {
+  if (view.are_entities_resizable(view.get_selected_entities()) &&
+      !control_or_shift) {
     // Start resizing the newly added entities
     // (until the mouse button is released).
     view.start_state_resizing_entities();
@@ -2710,7 +2893,6 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
   else {
     if (event.button() == Qt::RightButton) {
       // Entities were added with the right mouse button: add new ones again.
-      EntityModels clones = view.clone_selected_entities();
       const bool guess_layer = false;
       view.start_state_adding_entities(std::move(clones), guess_layer);
     }
@@ -2749,20 +2931,16 @@ void AddingEntitiesState::mouse_moved(const QMouseEvent& event) {
 /**
  * @copydoc MapView::State::tileset_selection_changed
  */
-void AddingEntitiesState::tileset_selection_changed() {
+void AddingEntitiesState::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
 
-  TilesetModel* tileset = get_map().get_tileset_model();
-  if (tileset == nullptr) {
-    return;
-  }
-  if (tileset->is_selection_empty()) {
+  if (indexes.isEmpty()) {
     // Stop adding the tiles that were selected.
     get_view().start_state_doing_nothing();
     return;
   }
 
   // The user just selected some patterns in the tileset: create corresponding tiles.
-  get_view().start_adding_entities_from_tileset_selection();
+  get_view().start_adding_entities_from_tileset(tileset_id, indexes);
 }
 
 /**

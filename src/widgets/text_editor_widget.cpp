@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ public:
    * @param text_editor_widget The text editor widget to forward undo/redo
    * commands to.
    */
-  UndoCommandProxy(TextEditorWidget& text_editor_widget):
+  explicit UndoCommandProxy(TextEditorWidget& text_editor_widget):
     QUndoCommand("text"),
     text_editor_widget(text_editor_widget),
     first_time(true) {
@@ -92,7 +92,7 @@ public:
    * @brief Constructor.
    * @param text_editor_widget The text editor to show line numbers of.
    */
-  LineNumberArea(TextEditorWidget& text_editor_widget) :
+  explicit LineNumberArea(TextEditorWidget& text_editor_widget) :
     QWidget(&text_editor_widget),
     text_editor_widget(text_editor_widget) {
   }

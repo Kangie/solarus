@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "editor_settings.h"
 #include "point.h"
 #include "quest.h"
-#include "quest_resources.h"
+#include "quest_database.h"
 #include "sprite_model.h"
 #include <QFileInfo>
 #include <QUndoStack>
@@ -174,7 +174,8 @@ public:
 
   DeleteAnimationCommand(SpriteEditor& editor, const SpriteModel::Index& index) :
     SpriteEditorCommand(editor, SpriteEditor::tr("Delete animation")),
-    index(index) {
+    index(index),
+    is_default(false) {
   }
 
   virtual void undo() override {
@@ -345,10 +346,12 @@ public:
 
   CreateDirectionCommand(
       SpriteEditor& editor, const SpriteModel::Index& index,
-      const QRect& frame) :
+      const QRect& frame, int num_frames, int num_columns) :
     SpriteEditorCommand(editor, SpriteEditor::tr("Add direction")),
     index(index),
-    frame(frame) {
+    frame(frame),
+    num_frames(num_frames),
+    num_columns(num_columns) {
   }
 
   virtual void undo() override {
@@ -358,7 +361,8 @@ public:
 
   virtual void redo() override {
 
-    index.direction_nb = get_model().add_direction(index, frame);
+    index.direction_nb =
+      get_model().add_direction(index, frame, num_frames, num_columns);
     get_model().set_selected_index(index);
   }
 
@@ -366,6 +370,8 @@ private:
 
   SpriteModel::Index index;
   QRect frame;
+  int num_frames;
+  int num_columns;
 };
 
 /**
@@ -402,6 +408,72 @@ private:
 
   SpriteModel::Index index;
   Solarus::SpriteAnimationDirectionData direction;
+};
+
+/**
+ * @brief Move up a direction.
+ */
+class MoveUpDirectionCommand : public SpriteEditorCommand {
+
+public:
+
+  MoveUpDirectionCommand(
+      SpriteEditor& editor, const SpriteModel::Index& index) :
+    SpriteEditorCommand(editor, SpriteEditor::tr("Move direction up")),
+    index_before(index),
+    index_after(index) {
+    index_after.direction_nb--;
+  }
+
+  virtual void undo() override {
+
+    get_model().move_direction(index_after, index_before.direction_nb);
+    get_model().set_selected_index(index_before);
+  }
+
+  virtual void redo() override {
+
+    get_model().move_direction(index_before, index_after.direction_nb);
+    get_model().set_selected_index(index_after);
+  }
+
+private:
+
+  SpriteModel::Index index_before;
+  SpriteModel::Index index_after;
+};
+
+/**
+ * @brief Move down a direction.
+ */
+class MoveDownDirectionCommand : public SpriteEditorCommand {
+
+public:
+
+  MoveDownDirectionCommand(
+      SpriteEditor& editor, const SpriteModel::Index& index) :
+    SpriteEditorCommand(editor, SpriteEditor::tr("Move direction down")),
+    index_before(index),
+    index_after(index) {
+    index_after.direction_nb++;
+  }
+
+  virtual void undo() override {
+
+    get_model().move_direction(index_after, index_before.direction_nb);
+    get_model().set_selected_index(index_before);
+  }
+
+  virtual void redo() override {
+
+    get_model().move_direction(index_before, index_after.direction_nb);
+    get_model().set_selected_index(index_after);
+  }
+
+private:
+
+  SpriteModel::Index index_before;
+  SpriteModel::Index index_after;
 };
 
 /**
@@ -548,7 +620,7 @@ public:
 
   SetDirectionNumFramesCommand(
       SpriteEditor& editor, const SpriteModel::Index& index, int num_frames) :
-    SpriteEditorCommand(editor, SpriteEditor::tr("Change direction num frames")),
+    SpriteEditorCommand(editor, SpriteEditor::tr("Change number of frames of direction")),
     index(index),
     num_frames_before(get_model().get_direction_num_frames(index)),
     num_frames_after(num_frames) {
@@ -583,7 +655,8 @@ public:
 
   SetDirectionNumColumnsCommand(
       SpriteEditor& editor, const SpriteModel::Index& index, int num_columns) :
-    SpriteEditorCommand(editor, SpriteEditor::tr("Change direction num frames")),
+    SpriteEditorCommand(
+      editor, SpriteEditor::tr("Change number of columns of direction")),
     index(index),
     num_columns_before(get_model().get_direction_num_columns(index)),
     num_columns_after(num_columns) {
@@ -604,6 +677,48 @@ public:
 private:
 
   SpriteModel::Index index;
+  int num_columns_before;
+  int num_columns_after;
+};
+
+/**
+ * @brief Change direction num frames/columns.
+ */
+class SetDirectionNumFramesColumnsCommand : public SpriteEditorCommand {
+
+public:
+
+  SetDirectionNumFramesColumnsCommand(
+      SpriteEditor& editor, const SpriteModel::Index& index,
+      int num_frames, int num_columns) :
+    SpriteEditorCommand(
+      editor, SpriteEditor::tr("Change number of frames/columns of direction")),
+    index(index),
+    num_frames_before(get_model().get_direction_num_frames(index)),
+    num_frames_after(num_frames),
+    num_columns_before(get_model().get_direction_num_columns(index)),
+    num_columns_after(num_columns) {
+  }
+
+  virtual void undo() override {
+
+    get_model().set_direction_num_frames(index, num_frames_before);
+    get_model().set_direction_num_columns(index, num_columns_before);
+    get_model().set_selected_index(index);
+  }
+
+  virtual void redo() override {
+
+    get_model().set_direction_num_frames(index, num_frames_after);
+    get_model().set_direction_num_columns(index, num_columns_after);
+    get_model().set_selected_index(index);
+  }
+
+private:
+
+  SpriteModel::Index index;
+  int num_frames_before;
+  int num_frames_after;
   int num_columns_before;
   int num_columns_after;
 };
@@ -644,7 +759,7 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   set_grid_supported(true);
 
   // Open the file.
-  model = new SpriteModel(quest, sprite_id, this);
+  model = std::unique_ptr<SpriteModel>(new SpriteModel(quest, sprite_id, this));
   get_undo_stack().setClean();
 
   // Prepare the gui.
@@ -652,13 +767,13 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   const int side_height = 550;
   ui.horizontal_splitter->setSizes({ side_width, width() - side_width });
   ui.vertical_splitter->setSizes({ side_height, height() - side_height });
-  ui.sprite_tree_view->set_model(model);
-  ui.sprite_view->set_model(model);
+  ui.sprite_tree_view->set_model(model.get());
+  ui.sprite_view->set_model(model.get());
   ui.sprite_view->set_view_settings(get_view_settings());
-  ui.sprite_previewer->set_model(model);
+  ui.sprite_previewer->set_model(model.get());
   ui.tileset_field->set_resource_type(ResourceType::TILESET);
   ui.tileset_field->set_quest(quest);
-  ui.tileset_field->set_selected_id(model->get_sprite_id());
+  ui.tileset_field->set_selected_id(model->get_tileset_id());
 
   ui.size_field->config("x", 1, 99999, 8);
   ui.size_field->set_tooltips(
@@ -690,13 +805,13 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   update();
 
   // Make connections.
-  connect(&get_resources(),
+  connect(&get_database(),
           SIGNAL(element_description_changed(ResourceType, const QString&, const QString&)),
           this, SLOT(update_description_to_gui()));
   connect(ui.description_field, SIGNAL(editingFinished()),
           this, SLOT(set_description_from_gui()));
 
-  connect(model, SIGNAL(animation_image_changed(Index,QString)),
+  connect(model.get(), SIGNAL(animation_image_changed(Index ,QString)),
           this, SLOT(update_animation_source_image_field()));
 
   connect(ui.src_image_button, SIGNAL(clicked()),
@@ -707,46 +822,46 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(ui.tileset_field, SIGNAL(activated(QString)),
           this, SLOT(tileset_selector_activated()));
 
-  connect(model, SIGNAL(default_animation_changed(QString,QString)),
+  connect(model.get(), SIGNAL(default_animation_changed(QString, QString)),
           this, SLOT(update_default_animation_field()));
   connect(ui.default_animation_value, SIGNAL(clicked()),
           this, SLOT(change_default_animation_requested()));
 
-  connect(model, SIGNAL(animation_frame_delay_changed(Index,uint32_t)),
+  connect(model.get(), SIGNAL(animation_frame_delay_changed(Index, uint32_t)),
           this, SLOT(update_animation_frame_delay_field()));
   connect(ui.frame_delay_field, SIGNAL(editingFinished()),
           this, SLOT(change_animation_frame_delay_requested()));
 
-  connect(model, SIGNAL(animation_loop_on_frame_changed(Index,int)),
+  connect(model.get(), SIGNAL(animation_loop_on_frame_changed(Index,int)),
           this, SLOT(update_animation_loop_on_frame_field()));
   connect(ui.loop_on_frame_check_box, SIGNAL(clicked()),
           this, SLOT(change_animation_loop_on_frame_requested()));
   connect(ui.loop_on_frame_field, SIGNAL(editingFinished()),
           this, SLOT(change_animation_loop_on_frame_requested()));
 
-  connect(model, SIGNAL(direction_size_changed(Index,QSize)),
+  connect(model.get(), SIGNAL(direction_size_changed(Index,QSize)),
           this, SLOT(update_direction_size_field()));
   connect(ui.size_field, SIGNAL(editing_finished()),
           this, SLOT(change_direction_size_requested()));
 
-  connect(model, SIGNAL(direction_position_changed(Index,QPoint)),
+  connect(model.get(), SIGNAL(direction_position_changed(Index ,QPoint)),
           this, SLOT(update_direction_position_field()));
   connect(ui.position_field, SIGNAL(editing_finished()),
           this, SLOT(change_direction_position_requested_from_field()));
   connect(ui.sprite_view, SIGNAL(change_selected_direction_position_requested(QPoint)),
           this, SLOT(change_direction_position_requested(QPoint)));
 
-  connect(model, SIGNAL(direction_origin_changed(Index,QPoint)),
+  connect(model.get(), SIGNAL(direction_origin_changed(Index,QPoint)),
           this, SLOT(update_direction_origin_field()));
   connect(ui.origin_field, SIGNAL(editing_finished()),
           this, SLOT(change_direction_origin_requested()));
 
-  connect(model, SIGNAL(direction_num_frames_changed(Index,int)),
+  connect(model.get(), SIGNAL(direction_num_frames_changed(Index,int)),
           this, SLOT(update_direction_num_frames_field()));
   connect(ui.num_frames_field, SIGNAL(editingFinished()),
           this, SLOT(change_direction_num_frames_requested()));
 
-  connect(model, SIGNAL(direction_num_columns_changed(Index,int)),
+  connect(model.get(), SIGNAL(direction_num_columns_changed(Index,int)),
           this, SLOT(update_direction_num_columns_field()));
   connect(ui.num_columns_field, SIGNAL(editingFinished()),
           this, SLOT(change_direction_num_columns_requested()));
@@ -758,14 +873,21 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(create_direction, SIGNAL(triggered()),
           this, SLOT(create_direction_requested()));
 
-  connect(ui.sprite_view, SIGNAL(add_direction_requested(QRect)),
-          this, SLOT(add_direction_requested(QRect)));
+  connect(ui.sprite_view, SIGNAL(add_direction_requested(QRect,int,int)),
+          this, SLOT(add_direction_requested(QRect,int,int)));
   connect(ui.sprite_view, SIGNAL(duplicate_selected_direction_requested(QPoint)),
           this, SLOT(duplicate_selected_direction_requested(QPoint)));
+  connect(ui.sprite_view,
+          SIGNAL(change_direction_num_frames_columns_requested(int,int)),
+          this, SLOT(change_direction_num_frames_columns_requested(int,int)));
   connect(ui.rename_button, SIGNAL(clicked()),
           this, SLOT(rename_animation_requested()));
   connect(ui.duplicate_button, SIGNAL(clicked()),
           this, SLOT(duplicate_requested()));
+  connect(ui.up_button, SIGNAL(clicked(bool)),
+          this, SLOT(move_up_requested()));
+  connect(ui.down_button, SIGNAL(clicked(bool)),
+          this, SLOT(move_down_requested()));
   connect(ui.delete_button, SIGNAL(clicked()), this, SLOT(delete_requested()));
   connect(ui.sprite_view, SIGNAL(delete_selected_direction_requested()),
           this, SLOT(delete_direction_requested()));
@@ -778,18 +900,16 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, SLOT(rename_animation_requested()));
   connect(ui.sprite_tree_view, SIGNAL(duplicate_requested()),
           this, SLOT(duplicate_requested()));
+  connect(ui.sprite_tree_view, SIGNAL(move_up_requested()),
+          this, SLOT(move_up_requested()));
+  connect(ui.sprite_tree_view, SIGNAL(move_down_requested()),
+          this, SLOT(move_down_requested()));
   connect(ui.sprite_tree_view, SIGNAL(delete_requested()),
           this, SLOT(delete_requested()));
 
   connect(&model->get_selection_model(),
           SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
           this, SLOT(update_selection()));
-}
-
-SpriteEditor::~SpriteEditor() {
-  if (model != nullptr) {
-    delete model;
-  }
 }
 
 /**
@@ -857,7 +977,7 @@ void SpriteEditor::update_sprite_id_field() {
  */
 void SpriteEditor::update_description_to_gui() {
 
-  QString description = get_resources().get_description(ResourceType::SPRITE, sprite_id);
+  QString description = get_database().get_description(ResourceType::SPRITE, sprite_id);
   if (ui.description_field->text() != description) {
     ui.description_field->setText(description);
   }
@@ -872,7 +992,7 @@ void SpriteEditor::update_description_to_gui() {
 void SpriteEditor::set_description_from_gui() {
 
   QString description = ui.description_field->text();
-  if (description == get_resources().get_description(ResourceType::SPRITE, sprite_id)) {
+  if (description == get_database().get_description(ResourceType::SPRITE, sprite_id)) {
     return;
   }
 
@@ -884,8 +1004,8 @@ void SpriteEditor::set_description_from_gui() {
 
   const bool was_blocked = blockSignals(true);
   try {
-    get_resources().set_description(ResourceType::SPRITE, sprite_id, description);
-    get_resources().save();
+    get_database().set_description(ResourceType::SPRITE, sprite_id, description);
+    get_database().save();
   }
   catch (const EditorException& ex) {
     ex.print_message();
@@ -985,13 +1105,14 @@ void SpriteEditor::rename_animation_requested() {
  */
 void SpriteEditor::create_direction_requested() {
 
-  add_direction_requested(QRect(0, 0, 16, 16));
+  add_direction_requested(QRect(0, 0, 16, 16), 1, 1);
 }
 
 /**
  * @brief Slot called when the user wants to add a new direction.
  */
-void SpriteEditor::add_direction_requested(const QRect& frame) {
+void SpriteEditor::add_direction_requested(
+  const QRect& frame, int num_frames, int num_columns) {
 
   SpriteModel::Index index = model->get_selected_index();
   if (!index.is_valid()) {
@@ -999,7 +1120,8 @@ void SpriteEditor::add_direction_requested(const QRect& frame) {
     return;
   }
 
-  try_command(new CreateDirectionCommand(*this, index, frame));
+  try_command(
+    new CreateDirectionCommand(*this, index, frame, num_frames, num_columns));
 }
 
 /**
@@ -1032,6 +1154,44 @@ void SpriteEditor::duplicate_selected_direction_requested(const QPoint& position
     return;
   }
   try_command(new DuplicateDirectionCommand(*this, index, position));
+}
+
+/**
+ * @brief Slot called when the user wants to move up a direction.
+ */
+void SpriteEditor::move_up_requested() {
+
+  SpriteModel::Index index = model->get_selected_index();
+  if (!index.is_direction_index()) {
+    // No direction selected.
+    return;
+  }
+
+  if (index.direction_nb <= 0) {
+    // Cannot move.
+    return;
+  }
+
+  try_command(new MoveUpDirectionCommand(*this, index));
+}
+
+/**
+ * @brief Slot called when the user wants to move down a direction.
+ */
+void SpriteEditor::move_down_requested() {
+
+  SpriteModel::Index index = model->get_selected_index();
+  if (!index.is_direction_index()) {
+    // No direction selected.
+    return;
+  }
+
+  if (index.direction_nb >= model->get_animation_num_directions(index) - 1) {
+    // Cannot move.
+    return;
+  }
+
+  try_command(new MoveDownDirectionCommand(*this, index));
 }
 
 /**
@@ -1274,10 +1434,15 @@ void SpriteEditor::update_direction_view() {
   update_direction_num_frames_field();
   update_direction_num_columns_field();
 
-  // If no directin is selected, disable the direction view.
+  // If no direction is selected, disable the direction view.
   SpriteModel::Index index = model->get_selected_index();
   bool enable = index.is_direction_index();
   ui.direction_properties_group_box->setEnabled(enable);
+
+  // Enable move up/down buttons.
+  int num_directions = model->get_animation_num_directions(index);
+  ui.up_button->setEnabled(enable && index.direction_nb > 0);
+  ui.down_button->setEnabled(enable && index.direction_nb < num_directions - 1);
 
   // expand the selected animation item
   if (enable) {
@@ -1450,6 +1615,38 @@ void SpriteEditor::change_direction_num_columns_requested() {
   }
 
   try_command(new SetDirectionNumColumnsCommand(*this, index, num_columns));
+}
+
+/**
+ * @brief Slot called when the user wants to change the num frames/columns.
+ * @param num_frames The new direction num frames.
+ * @param num_columns The new direction num columns.
+ */
+void SpriteEditor::change_direction_num_frames_columns_requested(
+  int num_frames, int num_columns) {
+
+  SpriteModel::Index index = model->get_selected_index();
+  if (!index.is_direction_index()) {
+    // No direction selected.
+    return;
+  }
+
+  int old_num_frames = model->get_direction_num_frames(index);
+  int old_num_columns = model->get_direction_num_columns(index);
+
+  if (num_frames == old_num_frames && num_columns == old_num_columns) {
+    // No change.
+    return;
+  }
+
+  if (num_frames == old_num_frames) {
+    try_command(new SetDirectionNumColumnsCommand(*this, index, num_columns));
+  } else if (num_columns == old_num_columns) {
+    try_command(new SetDirectionNumFramesCommand(*this, index, num_frames));
+  } else {
+    try_command(new SetDirectionNumFramesColumnsCommand(
+                  *this, index, num_frames, num_columns));
+  }
 }
 
 /**

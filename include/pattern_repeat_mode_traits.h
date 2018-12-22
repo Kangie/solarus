@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,23 @@
 
 namespace SolarusEditor {
 
-using TilePatternRepeatMode = Solarus::TilePatternRepeatMode;
-using TilePatternRepeatModeTraits = EnumTraits<TilePatternRepeatMode>;
+using PatternRepeatMode = Solarus::PatternRepeatMode;
+using PatternRepeatModeTraits = EnumTraits<PatternRepeatMode>;
 
 /**
  * \brief Provides useful properties of tile pattern repeat mode enum values.
  */
 template<>
-class EnumTraits<TilePatternRepeatMode> {
+class EnumTraits<PatternRepeatMode> {
 
 public:
 
-  static QList<TilePatternRepeatMode> get_values();
-  static QString get_friendly_name(TilePatternRepeatMode value);
-  static QIcon get_icon(TilePatternRepeatMode value);
+  static QList<PatternRepeatMode> get_values();
+  static QString get_friendly_name(PatternRepeatMode value);
+  static QIcon get_icon(PatternRepeatMode value);
 
-  static QString get_lua_name(TilePatternRepeatMode value);
-  static TilePatternRepeatMode get_by_lua_name(const QString& name);
+  static QString get_lua_name(PatternRepeatMode value);
+  static PatternRepeatMode get_by_lua_name(const QString& name);
 
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,13 @@
  */
 #include "editor_exception.h"
 #include "file_tools.h"
-#include <solarus/Common.h>
+#include <solarus/core/Common.h>
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QTextStream>
 
 #include <QDebug>
@@ -42,8 +43,7 @@ namespace {
  * - The directory containing the executable.
  * - The source path (macro SOLARUSEDITOR_SOURCE_PATH)
  *   (useful for developer builds).
- * - The install path (macro SOLARUSEDITOR_INSTALL_PATH)
- *   followed by "share/solarus-quest-editor/".
+ * - The install path (macro SOLARUSEDITOR_DATADIR_PATH).
  */
 void initialize_assets() {
 
@@ -54,7 +54,7 @@ void initialize_assets() {
   potential_paths << executable_path + "/assets";
 
   // Try the source path if we are not running the installed executable.
-  bool running_installed_executable = (executable_path == SOLARUSEDITOR_INSTALL_PATH "/bin");
+  bool running_installed_executable = (executable_path == SOLARUSEDITOR_BINDIR_PATH);
 #ifdef SOLARUSEDITOR_SOURCE_PATH
   if (!running_installed_executable) {
     potential_paths << SOLARUSEDITOR_SOURCE_PATH "/assets";
@@ -62,9 +62,9 @@ void initialize_assets() {
 #endif
 
   // Try the install path if we are running the installed executable.
-#ifdef SOLARUSEDITOR_INSTALL_PATH
+#ifdef SOLARUSEDITOR_DATADIR_PATH
   if (running_installed_executable) {
-    potential_paths << SOLARUSEDITOR_INSTALL_PATH "/share/solarus-quest-editor/assets";
+    potential_paths << SOLARUSEDITOR_DATADIR_PATH "/assets";
   }
 #endif
 
@@ -107,7 +107,7 @@ void copy_recursive(const QString& src, const QString& dst) {
   QFileInfo dst_info(dst);
 
   if (!src_info.exists()) {
-    throw EditorException(QApplication::tr("No such file or directory: '%1'").arg(src));
+    throw EditorException(QApplication::tr("No such file or folder: '%1'").arg(src));
   }
 
   if (!src_info.isReadable()) {
@@ -124,14 +124,14 @@ void copy_recursive(const QString& src, const QString& dst) {
     dst_dir.cdUp();
 
     if (!dst_dir.exists()) {
-      throw EditorException(QApplication::tr("No such directory: '%1'").arg(dst_dir.path()));
+      throw EditorException(QApplication::tr("No such folder: '%1'").arg(dst_dir.path()));
     }
 
     QString src_canonical_path = src_info.canonicalFilePath();
     QString dst_parent_canonical_path = dst_dir.canonicalPath();
 
     if (dst_parent_canonical_path.startsWith(src_canonical_path)) {
-      throw EditorException(QApplication::tr("Cannot copy directory '%1' to one of its own subdirectories: '%2'").arg(src, dst));
+      throw EditorException(QApplication::tr("Cannot copy folder '%1' to one of its own subfolders: '%2'").arg(src, dst));
     }
 
     if (!dst_dir.mkdir(dst_info.fileName())) {
@@ -139,9 +139,9 @@ void copy_recursive(const QString& src, const QString& dst) {
     }
 
     QDir src_dir(src);
-    QStringList file_names = src_dir.entryList(
+    const QStringList& file_names = src_dir.entryList(
           QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-    Q_FOREACH (const QString& file_name, file_names) {
+    for (const QString& file_name : file_names) {
       QString next_src = src + '/' + file_name;
       QString next_dst = dst + '/' + file_name;
       copy_recursive(next_src, next_dst);
@@ -163,14 +163,12 @@ void copy_recursive(const QString& src, const QString& dst) {
 }
 
 /**
- * @brief Utility function to delete a file or a directory with its content.
+ * @brief Deletes a file or a directory with its content.
  *
  * Does nothing if the file or directory does not exist.
  *
  * @param path The file or directory to delete.
  * @throws EditorException if the deletion failed.
- * In this case, it the path to delete was a directory, this function still
- * tries to delete as much files as possible in the directory.
  */
 void delete_recursive(const QString& path) {
 
@@ -187,9 +185,33 @@ void delete_recursive(const QString& path) {
   }
   else {
     // Directory.
-    if (!QDir(path).removeRecursively()) {
+    QDir dir(path);
+    const QStringList& file_names = dir.entryList(
+          QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+    for (const QString& file_name : file_names) {
+      QString child_path = path + '/' + file_name;
+      delete_recursive(child_path);
+    }
+
+    if (!QDir().rmdir(path)) {
       throw EditorException(QApplication::tr("Failed to delete folder '%1'").arg(path));
     }
+  }
+}
+
+/**
+ * @brief Makes sure that the specified directory exists.
+ *
+ * Creates necessary parents directories if needed.
+ *
+ * @param path A directory path.
+ * @throws EditorException In case of error.
+ */
+void create_directories(const QString& path) {
+
+  bool success = QDir().mkpath(path);
+  if (!success) {
+    throw EditorException(QApplication::tr("Cannot create folder '%1'").arg(path));
   }
 }
 
@@ -198,13 +220,16 @@ void delete_recursive(const QString& path) {
  * @param path Path of the file to modify.
  * @param regexp The pattern to replace.
  * @param replacement The string to put instead of the pattern.
+ * @param replace_all @c true to replace all occurences, @c false to only
+ * replace the first one.
  * @return @c true if there was a change.
  * @throws EditorException In case of error.
  */
 bool replace_in_file(
     const QString& path,
     const QRegularExpression& regex,
-    const QString& replacement
+    const QString& replacement,
+    bool replace_all
 ) {
   QFile file(path);
 
@@ -217,7 +242,14 @@ bool replace_in_file(
   file.close();
 
   QString old_content = content;
-  content.replace(regex, replacement);
+  if (replace_all) {
+    content.replace(regex, replacement);
+  } else {
+    QRegularExpressionMatch match = regex.match(content);
+    if (match.hasMatch()) {
+      content.replace(match.capturedStart(), match.capturedLength(), replacement);
+    }
+  }
 
   if (content == old_content) {
     // No change.

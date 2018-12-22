@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,16 +52,24 @@ SpritePreviewer::SpritePreviewer(QWidget *parent) :
   set_zoom(2.0);
   update_zoom();
 
-  connect(&timer, SIGNAL(timeout()), this, SLOT(timeout()));
+  connect(&timer, &QTimer::timeout,
+          this, &SpritePreviewer::timeout);
 
-  connect(ui.start_button, SIGNAL(clicked()), this, SLOT(start()));
-  connect(ui.stop_button, SIGNAL(clicked()), this, SLOT(stop()));
-  connect(ui.first_button, SIGNAL(clicked()), this, SLOT(first()));
-  connect(ui.previous_button, SIGNAL(clicked()), this, SLOT(previous()));
-  connect(ui.last_button, SIGNAL(clicked()), this, SLOT(last()));
-  connect(ui.next_button, SIGNAL(clicked()), this, SLOT(next()));
+  connect(ui.start_button, &QPushButton::clicked,
+          this, &SpritePreviewer::start);
+  connect(ui.stop_button, &QPushButton::clicked,
+          this, &SpritePreviewer::stop);
+  connect(ui.first_button, &QPushButton::clicked,
+          this, &SpritePreviewer::first);
+  connect(ui.previous_button, &QPushButton::clicked,
+          this, &SpritePreviewer::previous);
+  connect(ui.last_button, &QPushButton::clicked,
+          this, &SpritePreviewer::last);
+  connect(ui.next_button, &QPushButton::clicked,
+          this, &SpritePreviewer::next);
 
-  connect(ui.origin_check_box, SIGNAL(clicked()), this, SLOT(update_origin()));
+  connect(ui.origin_check_box, &QCheckBox::clicked,
+          this, &SpritePreviewer::update_origin);
 }
 
 /**
@@ -80,26 +88,26 @@ void SpritePreviewer::set_model(SpriteModel* model) {
   this->model = model;
 
   if (model != nullptr) {
-    connect(&model->get_selection_model(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            this, SLOT(update_selection()));
+    connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
+            this, &SpritePreviewer::update_selection);
     update_selection();
 
-    connect(model, SIGNAL(animation_frame_delay_changed(Index,uint32_t)),
-            this, SLOT(update_frame_delay()));
-    connect(model, SIGNAL(animation_image_changed(Index,QString)),
-            this, SLOT(update_frames()));
+    connect(model, &SpriteModel::animation_frame_delay_changed,
+            this, &SpritePreviewer::update_frame_delay);
+    connect(model, &SpriteModel::animation_image_changed,
+            this, &SpritePreviewer::update_frames);
 
-    connect(model, SIGNAL(direction_position_changed(Index,QPoint)),
-            this, SLOT(update_frames()));
-    connect(model, SIGNAL(direction_size_changed(Index,QSize)),
-            this, SLOT(update_frames()));
-    connect(model, SIGNAL(direction_num_frames_changed(Index,int)),
-            this, SLOT(update_frames()));
-    connect(model, SIGNAL(direction_num_columns_changed(Index,int)),
-            this, SLOT(update_frames()));
+    connect(model, &SpriteModel::direction_position_changed,
+            this, &SpritePreviewer::update_frames);
+    connect(model, &SpriteModel::direction_size_changed,
+            this, &SpritePreviewer::update_frames);
+    connect(model, &SpriteModel::direction_num_frames_changed,
+            this, &SpritePreviewer::update_frames);
+    connect(model, &SpriteModel::direction_num_columns_changed,
+            this, &SpritePreviewer::update_frames);
 
-    connect(model, SIGNAL(direction_origin_changed(Index,QPoint)),
-            this, SLOT(update_origin()));
+    connect(model, &SpriteModel::direction_origin_changed,
+            this, &SpritePreviewer::update_origin);
   }
 }
 

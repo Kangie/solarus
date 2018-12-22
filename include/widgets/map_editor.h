@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ public:
   void paste() override;
   void select_all() override;
   void unselect_all() override;
+  void export_to_image() override;
   void reload_settings() override;
 
 private slots:
@@ -76,12 +77,12 @@ private slots:
   void update_tileset_field();
   void tileset_id_changed(const QString& tileset_id);
   void tileset_selector_activated();
-  void refresh_tileset_requested();
-  void open_tileset_requested();
-  void update_tileset_view();
-  void tileset_selection_changed();
+  void open_tileset_requested(const QString& tileset_id);
   void update_music_field();
   void music_selector_activated();
+  void update_tileset_view();
+  void border_set_tileset_changed();
+  void tileset_selection_changed();
   void map_selection_changed();
   void uncheck_entity_creation_buttons();
   void update_status_bar();
@@ -94,6 +95,7 @@ private slots:
   void resize_entities_requested(const QMap<EntityIndex, QRect>& boxes,
                                  bool allow_merge_to_previous);
   void convert_tiles_requested(const EntityIndexes& indexes);
+  void change_tiles_pattern_requested(const EntityIndexes& indexes);
   void set_entities_direction_requested(const EntityIndexes& indexes,
                                         int direction);
   void set_entities_layer_requested(const EntityIndexes& indexes,
@@ -102,8 +104,9 @@ private slots:
   void decrease_entities_layer_requested(const EntityIndexes& indexes);
   void bring_entities_to_front_requested(const EntityIndexes& indexes);
   void bring_entities_to_back_requested(const EntityIndexes& indexes);
-  void add_entities_requested(AddableEntities& entities);
+  void add_entities_requested(AddableEntities& entities, bool replace_selection);
   void remove_entities_requested(const EntityIndexes& indexes);
+  void generate_borders_requested(const EntityIndexes& indexes);
 
 private:
 

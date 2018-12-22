@@ -1,5 +1,55 @@
 _______________________________________
 
+Solarus Quest Editor 1.6.0 (2018-12-22)
+_______________________________________
+
+* Allow to import files from other quests (#4).
+* Quest tree: show all .png and .dat files (#260).
+* Quest tree: show all language files, map files and tileset files.
+* Quest tree: allow to set the author and license information of files.
+* Quest tree: automatically select the currently open file (#336).
+* Quest tree: allow to update sprites when renaming a .png file (#420).
+* Quest tree: allow to open folders with the system explorer (#316).
+* Quest tree: allow to select multiple files.
+* Quest tree: allow to delete multiple files and directories (#354).
+* Allow to view PNG files (#335).
+* Map/tileset editor: allow to generate borders automatically (autotiles).
+* Map editor: add support of custom properties for entities by Maxs (#327).
+* Map editor: allow to use multiple tilesets in the same map.
+* Map editor: allow to change the pattern of existing tiles (#280).
+* Map editor: allow to change the pattern of all similar tiles at once (#329).
+* Map editor: allow to change the origin of custom entities.
+* Map editor: allow to initially enable or disable any entity.
+* Map editor: allow to export the view as a PNG file (#81).
+* Map editor: allow to lock layers (#94).
+* Map editor: show the layer under the cursor in the status bar (#91).
+* Map editor: add shortcuts to show/hide negative layers too.
+* Map editor: keep the selection after adding entities with ctrl or shift.
+* Map editor: add a shortcut to open the tileset by Akadream (#241).
+* Map editor: don't reload the tileset if it is already open elsewhere (#350).
+* Map editor: automatically reload the tileset when it has changed (#362, #375).
+* Tileset editor: allow to change the frame number and delay of patterns.
+* Tileset editor: allow to duplicate tile patterns (#188).
+* Tileset editor: allow to move several patterns at once (#171).
+* Sprite editor: allow to reorder directions by Maxs (#144).
+* Sprite editor: allow to change the frame number graphically by Maxs (#147).
+* Sprite editor: the default origin is now 8,13 as usual in Solarus (#307).
+* Sprite editor: fix precision issues when creating or moving directions.
+* Sprite editor: fix scrollbars reset when adding directions by Maxs (#277).
+* Dialog editor: show the line and column number.
+* Script editor: allow a replace option to the find dialog by Akadream (#3).
+* Allow to select map/tileset/sprite/etc. ids to copy-paste them (#170).
+* Lua console: provide variables game, map, entities and function tp (#268).
+* Clear the console when a quest is started (#230).
+* Fix resource declaration not updated when renaming a directory (#337).
+* Fix crash when opening quest in non-UTF8 filesystems (#373).
+* Fix error message when opening a read-only quest (#264).
+* Fix memory not released when closing an editor (#306).
+* Initial quest: add some shaders (#320).
+* Text editor: allow to set an external editor to be used instead of the
+built-in one (#398)
+_______________________________________
+
 Solarus Quest Editor 1.5.3 (2017-04-01)
 _______________________________________
 
@@ -257,8 +307,7 @@ Bug fixes
 * Fix encoding of non-ascii characters in project_db.dat with Windows.
 * Fix Ctrl+S shortcut not always working.
 * Fix entities restored to the front when undoing removing entities.
-* Fix entities restored to the front when undoing changing their layer. 
+* Fix entities restored to the front when undoing changing their layer.
 * Fix separators resizing that could allow illegal sizes.
 * Fix jumpers size reset after undoing changing their direction.
 * Fix walls being initially traversable by everything when they are created.
-

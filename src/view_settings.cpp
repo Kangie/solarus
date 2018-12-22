@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,15 @@ ViewSettings::ViewSettings(QObject* parent) :
   grid_color(Qt::black),
   min_layer(0),
   max_layer(-1),
+  locked_layers(),
   visible_layers(),
   traversables_visible(true),
   obstacles_visible(true),
   visible_entity_types() {
 
   // Default settings.
-  Q_FOREACH (EntityType entity_type, EntityTraits::get_values()) {
+  const QList<EntityType>& entity_types = EntityTraits::get_values();
+  for (EntityType entity_type : entity_types) {
     visible_entity_types.insert(entity_type);
   }
 }
@@ -221,8 +223,44 @@ void ViewSettings::set_layer_range(int min_layer, int max_layer) {
 
   emit layer_range_changed(min_layer, max_layer);
 
+  locked_layers.clear();
   visible_layers.clear();
   show_all_layers();
+}
+
+/**
+ * @brief Returns whether a layer is currently locked.
+ * @param layer The layer to test.
+ * @return @c true if this layer is locked, @c false if it is unlocked.
+ */
+bool ViewSettings::is_layer_locked(int layer) const {
+
+  return locked_layers.find(layer) != locked_layers.end();
+}
+
+/**
+ * @brief Locks or unlocks a layer.
+ *
+ * Emits layer_locking_changed() if there is a change.
+ *
+ * @param layer The layer to change.
+ * @param locked @c true to lock the layer, @c false to unlock it.
+ */
+void ViewSettings::set_layer_locked(int layer, bool locked) {
+
+  Q_ASSERT(layer >= min_layer && layer <= max_layer);
+
+  if (locked == is_layer_locked(layer)) {
+    return;
+  }
+
+  if (locked) {
+    locked_layers.insert(layer);
+  }
+  else {
+    locked_layers.erase(layer);
+  }
+  emit layer_locking_changed(layer, locked);
 }
 
 /**
@@ -375,7 +413,8 @@ void ViewSettings::set_entity_type_visible(EntityType entity_type, bool visible)
  */
 void ViewSettings::show_all_entity_types() {
 
-  Q_FOREACH (EntityType entity_type, EntityTraits::get_values()) {
+  const QList<EntityType>& entity_types = EntityTraits::get_values();
+  for (EntityType entity_type : entity_types) {
     set_entity_type_visible(entity_type, true);
   }
 }
@@ -387,7 +426,8 @@ void ViewSettings::show_all_entity_types() {
  */
 void ViewSettings::hide_all_entity_types() {
 
-  Q_FOREACH (EntityType entity_type, EntityTraits::get_values()) {
+  const QList<EntityType>& entity_types = EntityTraits::get_values();
+  for (EntityType entity_type : entity_types) {
     set_entity_type_visible(entity_type, false);
   }
 }

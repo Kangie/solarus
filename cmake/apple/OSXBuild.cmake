@@ -2,7 +2,7 @@
 # By default, you will build a binary with the maximum of compatibility that your current version can provide.
 # You may want to produce an optimized (or exotic) binary instead of a standard one.
 # To do so, overload the following options :
-# 
+#
 # SOLARUS_ARCH represent the build (multi-)architecture.
 # SOLARUS_SYSROOT represent the path to the OSX SDK.
 # SOLARUS_DEPLOYMENT represent the oldest OSX version supported.
@@ -36,11 +36,11 @@ set(CMAKE_MACOSX_RPATH ON)
 if(NOT CMAKE_EXE_LINKER_FLAGS MATCHES "-Xlinker -rpath")
   set(CMAKE_EXE_LINKER_FLAGS         "${CMAKE_EXE_LINKER_FLAGS} -Xlinker -rpath -Xlinker @loader_path/../Frameworks/" CACHE STRING "Embed frameworks search path" FORCE)
 endif()
-set_target_properties(solarus-quest-editor PROPERTIES
-  MACOSX_RPATH                       ON
-  BUILD_WITH_INSTALL_RPATH           1
-  INSTALL_NAME_DIR                   "@rpath"
-)
+#set_target_properties(solarus-quest-editor PROPERTIES
+#  MACOSX_RPATH                       ON
+#  BUILD_WITH_INSTALL_RPATH           1
+#  INSTALL_NAME_DIR                   "@rpath"
+#)
 
 # LuaJIT workaround.
 # According to LuaJIT doc, OSX needs to link with additional flags if 64bit build is requested

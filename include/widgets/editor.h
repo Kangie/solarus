@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ class QUndoStack;
 namespace SolarusEditor {
 
 class Quest;
-class QuestResources;
+class QuestDatabase;
 class Refactoring;
 
 /**
@@ -41,13 +41,15 @@ class Editor : public QWidget {
 
 public:
 
-  Editor(Quest& quest, const QString& path, QWidget* parent = nullptr);
+  Editor(Quest& quest, const QString& file_path, QWidget* parent = nullptr);
+  ~Editor();
 
   const Quest& get_quest() const;
   Quest& get_quest();
-  const QuestResources& get_resources() const;
-  QuestResources& get_resources();
+  const QuestDatabase& get_database() const;
+  QuestDatabase& get_database();
   QString get_file_path() const;
+  void set_file_path(const QString& file_path);
   QString get_file_name() const;
   QString get_file_name_without_extension() const;
   QString get_title() const;
@@ -56,9 +58,10 @@ public:
   QUndoStack& get_undo_stack();
   const QMap<QString, QAction*>& get_common_actions() const;
   void set_common_actions(const QMap<QString, QAction*>& common_actions);
-  bool has_unsaved_changes() const;
+  virtual bool has_unsaved_changes() const;
   bool confirm_before_closing();
 
+  bool is_save_supported() const;
   bool is_select_all_supported() const;
   bool is_find_supported() const;
   bool is_zoom_supported() const;
@@ -68,10 +71,12 @@ public:
   bool is_traversables_visibility_supported() const;
   bool is_obstacles_visibility_supported() const;
   bool is_entity_type_visibility_supported() const;
+  bool is_export_to_image_supported() const;
   const ViewSettings& get_view_settings() const;
   ViewSettings& get_view_settings();
 
-  virtual void save() = 0;
+  virtual void save();
+  virtual void path_changed();
   virtual bool can_cut() const;
   virtual void cut();
   virtual bool can_copy() const;
@@ -81,6 +86,7 @@ public:
   virtual void select_all();
   virtual void unselect_all();
   virtual void find();
+  virtual void export_to_image();
   virtual void reload_settings();
 
 signals:
@@ -90,6 +96,8 @@ signals:
   void can_paste_changed(bool can_paste);
   void open_file_requested(Quest& quest, const QString& path);
   void refactoring_requested(const Refactoring& refactoring);
+  void clear_console();
+  void log_message_to_console(const QString& log_level, const QString& message);
 
 public slots:
 
@@ -99,6 +107,7 @@ protected:
 
   void set_title(const QString& title);
   void set_icon(const QIcon& icon);
+  void set_save_supported(bool save_supported);
   void set_select_all_supported(bool select_all_supported);
   void set_find_supported(bool find_supported);
   void set_zoom_supported(bool zoom_supported);
@@ -107,6 +116,7 @@ protected:
   void set_traversables_visibility_supported(bool supported);
   void set_obstacles_visibility_supported(bool supported);
   void set_entity_type_visibility_supported(bool supported);
+  void set_export_to_image_supported(bool export_to_image_supported);
 
   void focusInEvent(QFocusEvent* event) override;
   virtual void editor_made_visible();
@@ -129,6 +139,7 @@ private:
   QString close_confirm_message;            /**< Message proposing to save changes when closing. */
   QUndoStack* undo_stack;                   /**< The undo/redo history of editing this file. */
   QMap<QString, QAction*> common_actions;   /**< Actions available to all editors. */
+  bool save_supported;                      /**< Whether the editor supports saving the file. */
   bool select_all_supported;                /**< Whether the editor supports selecting all. */
   bool find_supported;                      /**< Whether the editor supports finding. */
   bool zoom_supported;                      /**< Whether the editor supports zooming. */
@@ -139,6 +150,7 @@ private:
   bool traversables_visibility_supported;   /**< Whether the editor supports showing/hiding traversables. */
   bool obstacles_visibility_supported;      /**< Whether the editor supports showing/hiding obstacles. */
   bool entity_type_visibility_supported;    /**< Whether the editor supports showing/hiding entity types. */
+  bool export_to_image_supported;           /**< Whether the editor supports exporting to an image. */
   ViewSettings view_settings;               /**< What is shown and how. */
 
 };

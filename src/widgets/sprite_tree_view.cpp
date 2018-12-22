@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,14 +55,26 @@ SpriteTreeView::SpriteTreeView(QWidget* parent) :
   addAction(rename_animation_action);
 
   duplicate_action = new QAction(
-        QIcon(":/images/icon_copy.png"), tr("Duplicate..."), this);
+        QIcon(":/images/icon_copy.png"), tr("Duplicate"), this);
   duplicate_action->setShortcutContext(Qt::WidgetShortcut);
   connect(duplicate_action, SIGNAL(triggered()),
           this, SIGNAL(duplicate_requested()));
   addAction(duplicate_action);
 
+  move_up_action = new QAction(
+        QIcon(":/images/icon_up.png"), tr("Move up"), this);
+  connect(move_up_action, SIGNAL(triggered()),
+          this, SIGNAL(move_up_requested()));
+  addAction(move_up_action);
+
+  move_down_action = new QAction(
+        QIcon(":/images/icon_down.png"), tr("Move down"), this);
+  connect(move_down_action, SIGNAL(triggered()),
+          this, SIGNAL(move_down_requested()));
+  addAction(move_down_action);
+
   delete_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
+        QIcon(":/images/icon_delete.png"), tr("Delete"), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
   connect(delete_action, SIGNAL(triggered()),
@@ -89,6 +101,17 @@ void SpriteTreeView::contextMenuEvent(QContextMenuEvent *event) {
     menu->addSeparator();
     menu->addAction(rename_animation_action);
     menu->addAction(duplicate_action);
+
+    if (index.is_direction_index()) {
+      menu->addSeparator();
+      menu->addAction(move_up_action);
+      menu->addAction(move_down_action);
+
+      int num_directions = model->get_animation_num_directions(index);
+      move_up_action->setEnabled(index.direction_nb > 0);
+      move_down_action->setEnabled(index.direction_nb < num_directions - 1);
+    }
+
     menu->addSeparator();
     menu->addAction(delete_action);
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #ifndef SOLARUSEDITOR_CHANGE_RESOURCE_ID_DIALOG_H
 #define SOLARUSEDITOR_CHANGE_RESOURCE_ID_DIALOG_H
 
-#include "quest_resources.h"
+#include "quest_database.h"
 #include "ui_change_resource_id_dialog.h"
 #include <QDialog>
 
