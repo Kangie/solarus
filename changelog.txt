@@ -1,7 +1,7 @@
-________________________________________
+_______________________________________
 
-Solarus Quest Editor 1.6.0 (in progress)
-________________________________________
+Solarus Quest Editor 1.6.0 (2018-12-22)
+_______________________________________
 
 * Allow to import files from other quests (#4).
 * Quest tree: show all .png and .dat files (#260).
