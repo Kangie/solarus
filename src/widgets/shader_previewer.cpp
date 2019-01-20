@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
@@ -14,11 +15,12 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <solarus/graphics/VertexArray.h>
 #include "widgets/shader_previewer.h"
 #include "quest.h"
 #include "shader_model.h"
 #include "view_settings.h"
-#include <solarus/graphics/VertexArray.h>
+
 #define GLM_FORCE_INLINE
 #include <solarus/graphics/DefaultShaders.h>
 #include <solarus/graphics/Shader.h>
