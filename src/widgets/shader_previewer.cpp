@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
@@ -14,11 +15,12 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <solarus/graphics/VertexArray.h>
 #include "widgets/shader_previewer.h"
 #include "quest.h"
 #include "shader_model.h"
 #include "view_settings.h"
-#include <solarus/graphics/VertexArray.h>
+
 #define GLM_FORCE_INLINE
 #include <solarus/graphics/DefaultShaders.h>
 #include <solarus/graphics/Shader.h>
@@ -127,30 +129,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   format.setOption(QSurfaceFormat::DebugContext);
 #endif
   setFormat(format);
-  format = context()->format();
 
-  auto make_number = [&](int major,int minor) -> QString {
-    switch(major*10+minor){
-      case 20:
-        return "110";
-      case 21:
-        return "120";
-      case 30:
-        return "130";
-      case 31:
-        return "140";
-      case 32:
-        return "150";
-      default:
-      if(major*10+minor >= 33) {
-        QString::number(major*100+minor*10);
-      } else {
-        return "110";
-      }
-    }
-  };
-
-  glsl_version = QString("#version %1\n").arg(make_number(format.majorVersion(),format.minorVersion()));
 
   // Setup cursors
   grab_cursor.setShape(Qt::ClosedHandCursor);
@@ -636,6 +615,32 @@ void ShaderPreviewer::initializeGL() {
   gl_logger.startLogging(QOpenGLDebugLogger::SynchronousLogging);
   connect(&gl_logger,&QOpenGLDebugLogger::messageLogged, this, &ShaderPreviewer::on_gl_log);
 #endif
+
+  QSurfaceFormat format = context()->format();
+
+  auto make_number = [&](int major,int minor) -> QString {
+    switch(major*10+minor){
+      case 20:
+        return "110";
+      case 21:
+        return "120";
+      case 30:
+        return "130";
+      case 31:
+        return "140";
+      case 32:
+        return "150";
+      default:
+      if(major*10+minor >= 33) {
+        QString::number(major*100+minor*10);
+      } else {
+        return "110";
+      }
+    }
+    return "110";
+  };
+
+  glsl_version = QString("#version %1\n").arg(make_number(format.majorVersion(),format.minorVersion()));
 
   // Setup quad
   QOpenGLFunctions* gl = context()->functions();
