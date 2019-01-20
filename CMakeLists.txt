@@ -19,7 +19,7 @@ if(WIN32)
 endif()
 
 include(cmake/AddQt5Files.cmake)
-include(cmake/AddSolarusExecutable.cmake)
+include(cmake/AddEditorExecutable.cmake)
 include(cmake/AddInstallTarget.cmake)
 
 # Platform specific.
