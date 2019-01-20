@@ -48,7 +48,7 @@ sprite{ id = "destructibles/grass_green_7", description = "Grass 7 (green)" }
 sprite{ id = "destructibles/grass_square", description = "Square grass" }
 sprite{ id = "destructibles/stone_brown", description = "Stone (brown)" }
 sprite{ id = "destructibles/stone_white", description = "Stone (white)" }
-sprite{ id = "destructibles/vase_round_purple", description = "Round vase (purple)" }
+sprite{ id = "destructibles/vase", description = "Vase" }
 sprite{ id = "doors/door_big_key", description = "Door (big key)" }
 sprite{ id = "doors/door_boss_key", description = "Door (boss key)" }
 sprite{ id = "doors/door_normal", description = "Door (normal)" }
@@ -83,11 +83,9 @@ sprite{ id = "enemies/soldier_sword", description = "Soldier Sword" }
 sprite{ id = "enemies/wings_evil", description = "Wings evil" }
 sprite{ id = "entities/arrow", description = "Arrow" }
 sprite{ id = "entities/bomb", description = "Bomb" }
-sprite{ id = "entities/boomerang1", description = "Boomerang 1" }
 sprite{ id = "entities/crystal", description = "Crystal" }
 sprite{ id = "entities/crystal_block", description = "Crystal block" }
 sprite{ id = "entities/explosion", description = "Explosion" }
-sprite{ id = "entities/hookshot", description = "Hookshot" }
 sprite{ id = "entities/items", description = "Items" }
 sprite{ id = "entities/rupee_icon", description = "Money icon" }
 sprite{ id = "entities/shadow", description = "Shadow" }
@@ -557,13 +555,12 @@ file{ path = "sprites/destructibles/grass_green_5.dat", author = "Diarandor", li
 file{ path = "sprites/destructibles/grass_green_7.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/destructibles/grass_square.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/destructibles/grass_square.png", author = "Bertram", license = "CC BY-SA 4.0" }
-file{ path = "sprites/destructibles/plant_cabbage.png", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/destructibles/plant_cabbage.png", author = "Diarandor, Max Mraz", license = "CC-BY-SA 4.0" }
 file{ path = "sprites/destructibles/stone.png", author = "Bertram", license = "CC BY-SA 4.0" }
 file{ path = "sprites/destructibles/stone_brown.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/destructibles/stone_white.dat", author = "Christopho", license = "CC BY-SA 4.0" }
-file{ path = "sprites/destructibles/vase_round.png", author = "Diarandor", license = "CC BY-SA 4.0" }
-file{ path = "sprites/destructibles/vase_round_broken.png", author = "Diarandor", license = "CC BY-SA 4.0" }
-file{ path = "sprites/destructibles/vase_round_purple.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/destructibles/vase.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/destructibles/vase.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/doors", license = "CC BY-SA 4.0" }
 file{ path = "sprites/doors/door.png", license = "CC BY-SA 4.0" }
 file{ path = "sprites/doors/door_big_key.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -619,24 +616,17 @@ file{ path = "sprites/entities", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/arrow.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/arrow.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/bomb.dat", author = "Bertram, hyptosis", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/boomerang1.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal_block.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark0.png", author = "Bertram", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark1.png", author = "Bertram", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark2.png", author = "Bertram", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/dark3.png", author = "Bertram", license = "CC BY-SA 4.0" }
+file{ path = "sprites/entities/crystal_block.png", author = "Alex Gleason, Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/explosion.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/explosion.png", author = "Bertram, hyptosis", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/fountain v1.1.ase", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/hookshot.dat", author = "Christopho", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/hookshot.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/items.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/rupee_icon.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/shadow.dat", author = "Zane Kukta", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/shadow.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/star.dat", author = "Christopho", license = "CC BY-SA 4.0" }
-file{ path = "sprites/entities/zoria.png", author = "DragonDePlatino, Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/ground_effects", license = "CC BY-SA 4.0" }
 file{ path = "sprites/ground_effects/fall_on_hole.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/ground_effects/fall_on_hole_effect.png", author = "Diarandor", license = "CC BY-SA 4.0" }
@@ -833,7 +823,7 @@ file{ path = "sprites/teletransporters/teletransporter_pink.dat", author = "Diar
 file{ path = "sprites/teletransporters/teletransporter_yellow.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "tilesets/castle.dat", author = "Christopho, Zane Kukta", license = "CC BY-SA 4.0" }
 file{ path = "tilesets/castle.tiles.png", author = "Stephen Challener, Jetrel, Zane Kukta", license = "CC BY 4.0" }
-file{ path = "tilesets/house.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
-file{ path = "tilesets/house.tiles.png", author = "Diarandor", license = "CC BY-SA 4.0, CC BY 4.0" }
-file{ path = "tilesets/outside.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
-file{ path = "tilesets/outside.tiles.png", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "tilesets/house.dat", author = "Diarandor", license = "CC-BY-SA 4.0" }
+file{ path = "tilesets/house.tiles.png", author = "Diarandor", license = "CC-BY-SA 4.0" }
+file{ path = "tilesets/outside.dat", author = "Diarandor, Max Mraz", license = "CC-BY-SA 4.0" }
+file{ path = "tilesets/outside.tiles.png", author = "Diarandor, Max Mraz", license = "CC-BY-SA 4.0" }
