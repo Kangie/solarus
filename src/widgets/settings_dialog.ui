@@ -131,6 +131,13 @@
             </item>
            </layout>
           </item>
+          <item>
+           <widget class="QCheckBox" name="force_software_rendering_field">
+            <property name="text">
+             <string>Force Software Rendering</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
