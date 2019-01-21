@@ -57,6 +57,8 @@ public slots:
   void change_no_audio();
   void update_quest_size();
   void change_quest_size();
+  void update_force_software();
+  void change_force_software();
 
   // Text editor.
   void update_font_family();

@@ -31,6 +31,7 @@ const QString EditorSettings::restore_last_files = "restore_last_files";
 const QString EditorSettings::save_files_before_running = "save_files_before_running";
 const QString EditorSettings::no_audio = "no_audio";
 const QString EditorSettings::quest_size = "quest_size";
+const QString EditorSettings::force_software_rendering = "force_software_rendering";
 
 // Import dialog keys.
 const QString EditorSettings::import_last_source_quest = "import_last_source_quest";

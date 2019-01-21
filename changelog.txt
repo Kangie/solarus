@@ -5,7 +5,7 @@ ________________________________________
 
 * Dialogs editor: fix line wrapping.
 * Initial quest: remove proprietary file added by mistake.
-
+* Add Force Software Rendering option to 'Running' section (stdgregwar)
 _______________________________________
 
 Solarus Quest Editor 1.6.0 (2018-12-22)

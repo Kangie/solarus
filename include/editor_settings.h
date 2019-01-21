@@ -38,6 +38,7 @@ public:
   static const QString save_files_before_running;
   static const QString no_audio;
   static const QString quest_size;
+  static const QString force_software_rendering;
 
   // Console keys.
   static const QString console_history;
