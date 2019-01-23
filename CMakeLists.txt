@@ -20,7 +20,8 @@ endif()
 
 include(cmake/AddQt5Files.cmake)
 include(cmake/AddEditorExecutable.cmake)
-include(cmake/AddInstallTarget.cmake)
+include(cmake/AddInstallTargets.cmake)
+include(cmake/AddUninstallTargets.cmake)
 
 # Platform specific.
 
