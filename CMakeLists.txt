@@ -34,9 +34,9 @@ if(WIN32)
   endif()
 endif()
 
-# Configuration for OSX build and deployment.
+# Configuration for macOS build and deployment.
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  include(cmake/apple/OSXBuild.cmake)
+  include(cmake/macOS/macOSBuild.cmake)
 endif()
 
 # FreeDesktop compatible icons
