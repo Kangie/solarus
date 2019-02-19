@@ -1212,12 +1212,38 @@ void MainWindow::on_action_website_triggered() {
 }
 
 /**
+ * @brief Helper that offers to go online for documentation.
+ */
+static void offer_online_docs(MainWindow * parent) {
+
+  QMessageBox::StandardButton answer = QMessageBox::question(
+      parent,
+      MainWindow::tr("Local Documentation Not Found"),
+      MainWindow::tr(
+          "The local copy of Solarus Documentation could not be found. "
+          "Would you like to try going on line to find the documentaion?"),
+      QMessageBox::Ok | QMessageBox::Cancel,
+      QMessageBox::Ok
+  );
+
+  if (QMessageBox::Ok == answer) {
+    QDesktopServices::openUrl(
+          QUrl("http://www.solarus-games.org/doc/latest/index.html"));
+  }
+}
+
+/**
  * @brief Slot called when the user triggers the "Documentation" action.
  */
 void MainWindow::on_action_doc_triggered() {
 
-  QDesktopServices::openUrl(
-        QUrl("http://www.solarus-games.org/doc/latest/index.html"));
+  const QString& assets_path = FileTools::get_assets_path();
+  const QString& doc_path = assets_path + "/doc/index.html";
+  if (!assets_path.isEmpty() && QFile::exists(doc_path)) {
+    QDesktopServices::openUrl(QUrl(QString("file://") + doc_path));
+  } else {
+    offer_online_docs(this);
+  }
 }
 
 /**
