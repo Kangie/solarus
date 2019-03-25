@@ -53,6 +53,7 @@ private slots:
   void update_import_button();
   void import_button_triggered();
   void select_recently_created_paths();
+  void stop_source_music();
 
 private:
 
