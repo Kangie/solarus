@@ -68,8 +68,6 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
           this, &ImportDialog::find_missing_button_triggered);
   connect(ui.button_box->button(QDialogButtonBox::Apply), &QPushButton::clicked,
           this, &ImportDialog::import_button_triggered);
-  connect(this, &QDialog::finished,
-          this, &ImportDialog::stop_source_music);
 
   EditorSettings settings;
   QString last_source_quest_path = settings.get_value_string(EditorSettings::import_last_source_quest);
@@ -95,6 +93,17 @@ const Quest& ImportDialog::get_source_quest() const {
  */
 Quest& ImportDialog::get_destination_quest() const {
   return destination_quest;
+}
+
+/**
+ * @brief Stop audio and then close
+ */
+void ImportDialog::done(int result) {
+
+  if (Audio::is_playing_music(source_quest)) {
+    Audio::stop_music(source_quest);
+  }
+  QDialog::done(result);
 }
 
 /**
@@ -604,13 +613,6 @@ void ImportDialog::select_recently_created_paths() {
   ui.destination_quest_tree_view->set_selected_paths(paths_to_select);
   for (const QString& path : paths_to_select) {
     ui.destination_quest_tree_view->expand_to_path(path);
-  }
-}
-
-void ImportDialog::stop_source_music() {
-
-  if (Audio::is_playing_music(source_quest)) {
-    Audio::stop_music(source_quest);
   }
 }
 
