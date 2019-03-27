@@ -16,6 +16,7 @@
  */
 #include "widgets/gui_tools.h"
 #include "widgets/import_dialog.h"
+#include "audio.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "file_tools.h"
@@ -92,6 +93,17 @@ const Quest& ImportDialog::get_source_quest() const {
  */
 Quest& ImportDialog::get_destination_quest() const {
   return destination_quest;
+}
+
+/**
+ * @brief Stop audio and then close
+ */
+void ImportDialog::done(int result) {
+
+  if (Audio::is_playing_music(source_quest)) {
+    Audio::stop_music(source_quest);
+  }
+  QDialog::done(result);
 }
 
 /**

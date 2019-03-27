@@ -465,10 +465,6 @@ void QuestTreeView::build_context_menu_play(QMenu& menu, const QStringList& path
   }
   QString path = paths.first();
 
-  if (!is_opening_files_allowed()) {
-    return;
-  }
-
   const Quest& quest = model->get_quest();
 
   ResourceType resource_type;
@@ -961,10 +957,6 @@ void QuestTreeView::default_action_triggered() {
  * @brief Slot called when the user wants to play the selected file.
  */
 void QuestTreeView::play_action_triggered() {
-
-  if (!is_opening_files_allowed()) {
-    return;
-  }
 
   QString path = get_selected_path();
   if (path.isEmpty()) {
