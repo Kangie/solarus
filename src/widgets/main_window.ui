@@ -80,6 +80,7 @@
     <addaction name="action_save_all"/>
     <addaction name="action_import"/>
     <addaction name="action_open_quest_properties"/>
+    <addaction name="action_package_quest"/>
     <addaction name="separator"/>
     <addaction name="action_exit"/>
    </widget>
@@ -456,6 +457,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="action_package_quest">
+   <property name="text">
+    <string>Package Quest</string>
    </property>
   </action>
   <action name="action_export_to_image">
