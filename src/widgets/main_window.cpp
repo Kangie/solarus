@@ -23,6 +23,7 @@
 #include "widgets/import_dialog.h"
 #include "widgets/input_dialog_with_check_box.h"
 #include "widgets/main_window.h"
+#include "widgets/package_dialog.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
 #include "file_tools.h"
@@ -902,6 +903,10 @@ void MainWindow::on_action_open_quest_properties_triggered() {
  * @brief Slot called when user triggers the "Package Quest" action.
  */
 void MainWindow::on_action_package_quest_triggered() {
+
+  PackageDialog package(this);
+  package.exec();
+  return;
 
   Quest const& quest = get_quest();
   QString const& root_path = quest.get_root_path();
