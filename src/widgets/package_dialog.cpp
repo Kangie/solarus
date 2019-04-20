@@ -79,8 +79,11 @@ void PackageDialog::startProcess()
 void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
 {
     if (QProcess::CrashExit == status || 0 != code) {
+        ui->failed_error->setText(QString(process.readAllStandardError()));
+        ui->failed_code->setText(
+            QProcess::CrashExit == status
+                ? "Crashed" : QString::number(code));
         ui->stackedWidget->setCurrentWidget(ui->failed);
-        // TODO: Load error information into the desplay.
     } else if (auto_close) {
         close();
     } else {
