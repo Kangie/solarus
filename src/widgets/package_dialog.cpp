@@ -1,14 +1,91 @@
-#include "include/widgets/package_dialog.h"
+/*
+ * Copyright (C) 2014-2019 Christopho, Solarus - http://www.solarus-games.org
+ *
+ * Solarus Quest Editor is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Solarus Quest Editor is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "widgets/package_dialog.h"
+#include "quest.h"
 #include "ui_package_dialog.h"
 
-PackageDialog::PackageDialog(QWidget *parent) :
+/* In terms of implementation, this class wraps for states and handles the
+ * transitions
+ *
+ * 0. selection: Choose the package location and name.
+ *    You can cancel the operation (close) or go ahead to 1.
+ * 1. ongoing: Tells you the operation is in progress.
+ *    You can cancel the operation, it goes to 2 on success
+ * 2. complete: Just a little message and a close button.
+ *    Optionally there is an auto-close feature.
+ * 3. failed: The packaging failed, error message should be displayed.
+ *    After looking at the message close the dialog.
+ *
+ * For simplicity we use the widget pointers instead of the index to refer to
+ * them. (Except that we start at index 0: selection.)
+ */
+
+namespace SolarusEditor {
+
+PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PackageDialog)
+    ui(new Ui::PackageDialog),
+    quest(quest),
+    process(),
+    auto_close(false)
 {
     ui->setupUi(this);
+
+    connect(ui->selection_ok, &QPushButton::clicked,
+            this, &PackageDialog::startProcess);
+    connect(ui->selection_auto, &QCheckBox::stateChanged,
+            this, &PackageDialog::setAutoClose);
+    connect(&process,
+            QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, &PackageDialog::processFinished);
 }
 
 PackageDialog::~PackageDialog()
 {
     delete ui;
+}
+
+void PackageDialog::setAutoClose(int new_auto_close)
+{
+    auto_close = new_auto_close;
+}
+
+void PackageDialog::startProcess()
+{
+    QString const& root_path = quest.get_root_path();
+    QString const& data_path = quest.get_data_path();
+    QString const& name = quest.get_name();
+    QString const& solarus_file = root_path + "/" + name + ".solarus";
+
+    process.start("zip", QStringList() << "-r" << solarus_file << data_path);
+
+    ui->stackedWidget->setCurrentWidget(ui->ongoing);
+}
+
+void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
+{
+    if (QProcess::CrashExit == status || 0 != code) {
+        ui->stackedWidget->setCurrentWidget(ui->failed);
+        // TODO: Load error information into the desplay.
+    } else if (auto_close) {
+        close();
+    } else {
+        ui->stackedWidget->setCurrentWidget(ui->completed);
+    }
+}
+
 }

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Build Solarus Package</string>
   </property>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
@@ -105,6 +105,19 @@
          <string>Close</string>
         </property>
        </widget>
+       <widget class="QLabel" name="completed_msg">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>181</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Build Package Completed</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="failed">
        <widget class="QPushButton" name="failed_close">
@@ -118,6 +131,19 @@
         </property>
         <property name="text">
          <string>Close</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>141</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Build Package Failed</string>
         </property>
        </widget>
       </widget>

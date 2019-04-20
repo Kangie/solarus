@@ -904,21 +904,8 @@ void MainWindow::on_action_open_quest_properties_triggered() {
  */
 void MainWindow::on_action_package_quest_triggered() {
 
-  PackageDialog package(this);
+  PackageDialog package(quest, this);
   package.exec();
-  return;
-
-  Quest const& quest = get_quest();
-  QString const& root_path = quest.get_root_path();
-  QString const& data_path = quest.get_data_path();
-  QString const& name = quest.get_name();
-
-  QString const& solarus_file = root_path + "/" + name + ".solarus";
-
-  QProcess pack;
-  pack.start("zip", QStringList() << "-r" << solarus_file << data_path);
-
-  pack.waitForFinished();
 }
 
 /**
