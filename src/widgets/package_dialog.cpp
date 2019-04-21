@@ -18,6 +18,8 @@
 #include "quest.h"
 #include "ui_package_dialog.h"
 
+#include <QFileDialog>
+
 /* In terms of implementation, this class wraps for states and handles the
  * transitions
  *
@@ -39,8 +41,9 @@ namespace SolarusEditor {
 PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PackageDialog),
-    quest(quest),
     process(),
+    quest(quest),
+    save_path(),
     auto_close(false)
 {
     ui->setupUi(this);
@@ -49,9 +52,13 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
             this, &PackageDialog::startProcess);
     connect(ui->selection_auto, &QCheckBox::stateChanged,
             this, &PackageDialog::setAutoClose);
+    connect(ui->selection_browse, &QPushButton::clicked,
+            this, &PackageDialog::startFileSelection);
     connect(&process,
             QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &PackageDialog::processFinished);
+
+    setSavePath(quest.get_root_path() + "/" + quest.get_name() + ".solarus");
 }
 
 PackageDialog::~PackageDialog()
@@ -64,14 +71,16 @@ void PackageDialog::setAutoClose(int new_auto_close)
     auto_close = new_auto_close;
 }
 
+void PackageDialog::setSavePath(QString const& new_save_path)
+{
+    save_path = new_save_path;
+    ui->selection_file->setText(save_path);
+}
+
 void PackageDialog::startProcess()
 {
-    QString const& root_path = quest.get_root_path();
     QString const& data_path = quest.get_data_path();
-    QString const& name = quest.get_name();
-    QString const& solarus_file = root_path + "/" + name + ".solarus";
-
-    process.start("zip", QStringList() << "-r" << solarus_file << data_path);
+    process.start("zip", QStringList() << "-r" << save_path << data_path);
 
     ui->stackedWidget->setCurrentWidget(ui->ongoing);
 }
@@ -82,13 +91,20 @@ void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
         ui->failed_error->setText(QString(process.readAllStandardError()));
         ui->failed_code->setText(
             QProcess::CrashExit == status
-                ? "Crashed" : QString::number(code));
+                ? tr("Crashed") : QString::number(code));
         ui->stackedWidget->setCurrentWidget(ui->failed);
     } else if (auto_close) {
         close();
     } else {
         ui->stackedWidget->setCurrentWidget(ui->completed);
     }
+}
+
+void PackageDialog::startFileSelection()
+{
+    save_path = QFileDialog::getSaveFileName(
+        this, tr("Solarus Package Location:"), save_path,
+        tr("Solarus Packages (*.solarus)"));
 }
 
 }

@@ -19,6 +19,7 @@
 
 #include <QDialog>
 #include <QProcess>
+#include <QString>
 
 namespace Ui {
 class PackageDialog;
@@ -38,13 +39,16 @@ public:
 
 private slots:
     void setAutoClose(int new_auto_close);
+    void setSavePath(QString const& save_path);
     void startProcess();
     void processFinished(int code, QProcess::ExitStatus status);
+    void startFileSelection();
 
 private:
     ::Ui::PackageDialog *ui;
-    Quest const& quest;
     QProcess process;
+    Quest const& quest;
+    QString save_path;
     bool auto_close;
 };
 
