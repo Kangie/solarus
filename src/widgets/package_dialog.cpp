@@ -47,6 +47,7 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     auto_close(false)
 {
     ui->setupUi(this);
+    process.setReadChannel(QProcess::StandardOutput);
 
     connect(ui->selection_ok, &QPushButton::clicked,
             this, &PackageDialog::startProcess);
@@ -57,6 +58,8 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     connect(&process,
             QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &PackageDialog::processFinished);
+    connect(&process, &QProcess::readyReadStandardOutput,
+            this, &PackageDialog::handleProcessStandardOutput);
 
     setSavePath(quest.get_root_path() + "/" + quest.get_name() + ".solarus");
 }
@@ -83,6 +86,10 @@ void PackageDialog::startProcess()
     process.start("zip", QStringList() << "-r" << save_path << data_path);
 
     ui->stackedWidget->setCurrentWidget(ui->ongoing);
+
+    // We don't have a good idea of how much work there is to do.
+    ui->ongoing_progress->setRange(0, 0);
+    ui->ongoing_progress->setValue(0);
 }
 
 void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
@@ -105,6 +112,17 @@ void PackageDialog::startFileSelection()
     save_path = QFileDialog::getSaveFileName(
         this, tr("Solarus Package Location:"), save_path,
         tr("Solarus Packages (*.solarus)"));
+}
+
+void PackageDialog::handleProcessStandardOutput()
+{
+    size_t lines = 0;
+    while (process.canReadLine()) {
+        QByteArray const& line = process.readLine();
+        (void)line;
+        ++lines;
+    }
+    ui->ongoing_progress->setValue(lines + ui->ongoing_progress->value());
 }
 
 }

@@ -119,7 +119,7 @@
        </widget>
       </widget>
       <widget class="QWidget" name="ongoing">
-       <widget class="QProgressBar" name="progressBar">
+       <widget class="QProgressBar" name="ongoing_progress">
         <property name="geometry">
          <rect>
           <x>10</x>

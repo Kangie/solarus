@@ -43,6 +43,7 @@ private slots:
     void startProcess();
     void processFinished(int code, QProcess::ExitStatus status);
     void startFileSelection();
+    void handleProcessStandardOutput();
 
 private:
     ::Ui::PackageDialog *ui;
