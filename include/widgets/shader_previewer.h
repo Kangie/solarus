@@ -18,6 +18,13 @@
 #define SOLARUSEDITOR_SHADER_PREVIEWER_H
 
 #include "shader_preview_mode.h"
+
+// WORKAROUND Avoid QOpenGL headers to redefine glad symbols when including GL/glext.h on macOS
+#include "solarus/core/Common.h"
+#ifdef SOLARUS_OSX
+#  define GL_GLEXT_FUNCTION_POINTERS
+#endif
+
 #include <QFileSystemWatcher>
 #include <QMatrix4x4>
 #include <QOpenGLBuffer>
