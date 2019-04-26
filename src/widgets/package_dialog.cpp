@@ -82,8 +82,11 @@ void PackageDialog::setSavePath(QString const& new_save_path)
 
 void PackageDialog::startProcess()
 {
-    QString const& data_path = quest.get_data_path();
-    process.start("zip", QStringList() << "-r" << save_path << data_path);
+    QString const& root_path = quest.get_root_path();
+    QString relative_path = quest.get_data_path().remove(root_path + "/");
+
+    process.setWorkingDirectory(root_path);
+    process.start("zip", QStringList() << "-r" << save_path << relative_path);
 
     ui->stackedWidget->setCurrentWidget(ui->ongoing);
 
