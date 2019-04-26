@@ -112,9 +112,9 @@ void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
 
 void PackageDialog::startFileSelection()
 {
-    save_path = QFileDialog::getSaveFileName(
+    setSavePath(QFileDialog::getSaveFileName(
         this, tr("Solarus Package Location:"), save_path,
-        tr("Solarus Packages (*.solarus)"));
+        tr("Solarus Packages (*.solarus)")));
 }
 
 void PackageDialog::handleProcessStandardOutput()
