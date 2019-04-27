@@ -89,6 +89,7 @@ void PackageDialog::processStart()
     process.start("zip", QStringList() << "-r" << save_path << relative_path);
 
     ui->stackedWidget->setCurrentWidget(ui->ongoing);
+    ui->ongoing_output->setText(tr("Starting...\n"));
 }
 
 void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
