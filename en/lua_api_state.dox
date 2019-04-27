@@ -510,6 +510,57 @@ The default value is \c true.
 - \c can_pick_treasure (boolean): \c true to allow the entity to pick treasures
 during this state.
 
+\subsection lua_api_state_get_can_use_teletransporter state:get_can_use_teletransporter()
+
+Returns whether the entity can take
+\ref lua_api_teletransporter "teletransporters" during this state.
+- Return value (boolean): \c true if the entity can take teletransporter
+during this state.
+
+\subsection lua_api_state_set_can_use_teletransporter state:set_can_use_teletransporter(can_use_teletransporter)
+
+Sets whether the entity can take
+\ref lua_api_teletransporter "teletransporters"
+during this state.
+
+The default value is \c true.
+- \c can_use_teletransporter (boolean): \c true to allow the entity to take
+teletransporters during this state.
+
+\subsection lua_api_state_get_can_use_switch state:get_can_use_switch()
+
+Returns whether the entity can activate
+\ref lua_api_switch "switches" during this state.
+- Return value (boolean): \c true if the entity can activate switches
+during this state.
+
+\subsection lua_api_state_set_can_use_switch state:set_can_use_switch(can_use_switch)
+
+Sets whether the entity can activate
+\ref lua_api_switch "switches"
+during this state.
+
+The default value is \c true.
+- \c can_use_switch (boolean): \c true to allow the entity to activate
+switches during this state.
+
+\subsection lua_api_state_get_can_use_stream state:get_can_use_stream()
+
+Returns whether the entity can take
+\ref lua_api_stream "streams" during this state.
+- Return value (boolean): \c true if the entity can take stream
+during this state.
+
+\subsection lua_api_state_set_can_use_stream state:set_can_use_stream(can_use_stream)
+
+Sets whether the entity can take
+\ref lua_api_stream "streams"
+during this state.
+
+The default value is \c true.
+- \c can_use_stream (boolean): \c true to allow the entity to take
+streams during this state.
+
 \subsection lua_api_state_get_can_use_stairs state:get_can_use_stairs()
 
 Returns whether the entity can take \ref lua_api_stairs "stairs"
