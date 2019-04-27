@@ -50,7 +50,7 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     process.setReadChannel(QProcess::StandardOutput);
 
     connect(ui->selection_ok, &QPushButton::clicked,
-            this, &PackageDialog::startProcess);
+            this, &PackageDialog::processStart);
     connect(ui->selection_auto, &QCheckBox::stateChanged,
             this, &PackageDialog::setAutoClose);
     connect(ui->selection_browse, &QPushButton::clicked,
@@ -80,7 +80,7 @@ void PackageDialog::setSavePath(QString const& new_save_path)
     ui->selection_file->setText(save_path);
 }
 
-void PackageDialog::startProcess()
+void PackageDialog::processStart()
 {
     QString const& root_path = quest.get_root_path();
     QString relative_path = quest.get_data_path().remove(root_path + "/");
@@ -89,10 +89,6 @@ void PackageDialog::startProcess()
     process.start("zip", QStringList() << "-r" << save_path << relative_path);
 
     ui->stackedWidget->setCurrentWidget(ui->ongoing);
-
-    // We don't have a good idea of how much work there is to do.
-    ui->ongoing_progress->setRange(0, 0);
-    ui->ongoing_progress->setValue(0);
 }
 
 void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
@@ -119,13 +115,10 @@ void PackageDialog::startFileSelection()
 
 void PackageDialog::handleProcessStandardOutput()
 {
-    size_t lines = 0;
     while (process.canReadLine()) {
         QByteArray const& line = process.readLine();
-        (void)line;
-        ++lines;
+        ui->ongoing_output->setText(ui->ongoing_output->text() + QString(line));
     }
-    ui->ongoing_progress->setValue(lines + ui->ongoing_progress->value());
 }
 
 }

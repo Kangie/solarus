@@ -119,19 +119,6 @@
        </widget>
       </widget>
       <widget class="QWidget" name="ongoing">
-       <widget class="QProgressBar" name="ongoing_progress">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>351</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="value">
-         <number>24</number>
-        </property>
-       </widget>
        <widget class="QPushButton" name="ongoing_cancel">
         <property name="geometry">
          <rect>
@@ -144,6 +131,51 @@
         <property name="text">
          <string>Cancel</string>
         </property>
+       </widget>
+       <widget class="QLabel" name="ongoing_msg">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Building Package</string>
+        </property>
+       </widget>
+       <widget class="QFrame" name="ongoing_frame">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>39</y>
+          <width>361</width>
+          <height>201</height>
+         </rect>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QLabel" name="ongoing_output">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>341</width>
+           <height>181</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Starting ...</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="completed">
