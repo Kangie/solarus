@@ -89,13 +89,14 @@ void PackageDialog::processStart()
     process.start("zip", QStringList() << "-r" << save_path << relative_path);
 
     ui->stackedWidget->setCurrentWidget(ui->ongoing);
-    ui->ongoing_output->setText(tr("Starting...\n"));
+    ui->ongoing_output->setPlainText(tr("Starting...\n"));
 }
 
 void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
 {
     if (QProcess::CrashExit == status || 0 != code) {
-        ui->failed_error->setText(QString(process.readAllStandardError()));
+        ui->failed_output->setPlainText(
+            QString(process.readAllStandardError()));
         ui->failed_code->setText(
             QProcess::CrashExit == status
                 ? tr("Crashed") : QString::number(code));
@@ -118,7 +119,8 @@ void PackageDialog::handleProcessStandardOutput()
 {
     while (process.canReadLine()) {
         QByteArray const& line = process.readLine();
-        ui->ongoing_output->setText(ui->ongoing_output->text() + QString(line));
+        ui->ongoing_output->moveCursor(QTextCursor::End);
+        ui->ongoing_output->insertPlainText(QString(line));
     }
 }
 
