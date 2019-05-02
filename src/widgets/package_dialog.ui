@@ -29,39 +29,6 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="selection">
-       <widget class="QWidget" name="horizontalLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>9</x>
-          <y>239</y>
-          <width>361</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QCheckBox" name="selection_auto">
-           <property name="text">
-            <string>Close on Success</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="selection_cancel">
-           <property name="text">
-            <string>Cancel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="selection_ok">
-           <property name="text">
-            <string>Package</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
        <widget class="QLabel" name="selection_header">
         <property name="geometry">
          <rect>
@@ -99,6 +66,32 @@
         </property>
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QDialogButtonBox" name="selection_button_box">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>240</y>
+          <width>166</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="selection_auto">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>240</y>
+          <width>139</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Close on Success</string>
         </property>
        </widget>
       </widget>
@@ -297,14 +290,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>selection_cancel</sender>
-   <signal>clicked()</signal>
+   <sender>selection_button_box</sender>
+   <signal>rejected()</signal>
    <receiver>PackageDialog</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>217</x>
-     <y>264</y>
+     <x>293</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>

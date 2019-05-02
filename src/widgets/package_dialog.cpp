@@ -49,7 +49,7 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     ui->setupUi(this);
     process.setReadChannel(QProcess::StandardOutput);
 
-    connect(ui->selection_ok, &QPushButton::clicked,
+    connect(ui->selection_button_box, &QDialogButtonBox::accepted,
             this, &PackageDialog::processStart);
     connect(ui->selection_auto, &QCheckBox::stateChanged,
             this, &PackageDialog::setAutoClose);
