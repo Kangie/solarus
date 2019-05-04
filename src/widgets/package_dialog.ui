@@ -81,19 +81,6 @@
          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
         </property>
        </widget>
-       <widget class="QCheckBox" name="selection_auto">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>240</y>
-          <width>139</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Close on Success</string>
-        </property>
-       </widget>
       </widget>
       <widget class="QWidget" name="ongoing">
        <widget class="QPushButton" name="ongoing_cancel">

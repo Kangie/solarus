@@ -49,16 +49,13 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     ui(new Ui::PackageDialog),
     process(),
     quest(quest),
-    save_path(),
-    auto_close(false)
+    save_path()
 {
     ui->setupUi(this);
     process.setReadChannel(QProcess::StandardOutput);
 
     connect(ui->selection_button_box, &QDialogButtonBox::accepted,
             this, &PackageDialog::processStart);
-    connect(ui->selection_auto, &QCheckBox::stateChanged,
-            this, &PackageDialog::setAutoClose);
     connect(ui->selection_browse, &QPushButton::clicked,
             this, &PackageDialog::startFileSelection);
     connect(&process,
@@ -75,11 +72,6 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
 PackageDialog::~PackageDialog()
 {
     delete ui;
-}
-
-void PackageDialog::setAutoClose(int new_auto_close)
-{
-    auto_close = new_auto_close;
 }
 
 void PackageDialog::setSavePath(QString const& new_save_path)
@@ -108,8 +100,6 @@ void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
             QProcess::CrashExit == status
                 ? tr("Crashed") : QString::number(code));
         ui->stackedWidget->setCurrentWidget(ui->failed);
-    } else if (auto_close) {
-        close();
     } else {
         ui->stackedWidget->setCurrentWidget(ui->completed);
     }

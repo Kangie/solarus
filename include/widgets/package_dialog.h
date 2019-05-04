@@ -38,7 +38,6 @@ public:
     ~PackageDialog();
 
 private slots:
-    void setAutoClose(int new_auto_close);
     void setSavePath(QString const& save_path);
     void processStart();
     void processFinished(int code, QProcess::ExitStatus status);
@@ -50,7 +49,6 @@ private:
     QProcess process;
     Quest const& quest;
     QString save_path;
-    bool auto_close;
 };
 
 }
