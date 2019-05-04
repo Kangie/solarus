@@ -46,6 +46,9 @@ public:
   // Import dialog keys.
   static const QString import_last_source_quest;
 
+  // Package dialog keys.
+  static const QString package_save_path;
+
   // Text editor keys.
   static const QString font_family;
   static const QString font_size;

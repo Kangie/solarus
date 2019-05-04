@@ -39,6 +39,9 @@ const QString EditorSettings::import_last_source_quest = "import_last_source_que
 // Console keys.
 const QString EditorSettings::console_history = "console_history";
 
+// Package dialog keys.
+const QString EditorSettings::package_save_path = "package_dialog/save_path";
+
 // Text editor keys.
 const QString EditorSettings::font_family = "text_editor/font_family";
 const QString EditorSettings::font_size = "text_editor/font_size";
@@ -113,6 +116,9 @@ QMap<QString, QVariant> EditorSettings::default_values = {
 
   // Import dialog.
   { EditorSettings::import_last_source_quest, "" },
+
+  // Package dialog.
+  { EditorSettings::package_save_path, "" },
 
   // Console.
   { EditorSettings::console_history, QStringList() },

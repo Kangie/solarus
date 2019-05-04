@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/package_dialog.h"
+#include "editor_settings.h"
 #include "quest.h"
 #include "ui_package_dialog.h"
 
@@ -37,6 +38,11 @@
  */
 
 namespace SolarusEditor {
+
+static QString default_save_path(Quest const& quest)
+{
+    return quest.get_root_path() + "/" + quest.get_name() + ".solarus";
+}
 
 PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     QDialog(parent),
@@ -61,7 +67,9 @@ PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
     connect(&process, &QProcess::readyReadStandardOutput,
             this, &PackageDialog::handleProcessStandardOutput);
 
-    setSavePath(quest.get_root_path() + "/" + quest.get_name() + ".solarus");
+    QString const& saved_path = EditorSettings()
+         .get_value_string(EditorSettings::package_save_path);
+    setSavePath(saved_path.isEmpty() ? default_save_path(quest) : saved_path);
 }
 
 PackageDialog::~PackageDialog()
@@ -78,6 +86,8 @@ void PackageDialog::setSavePath(QString const& new_save_path)
 {
     save_path = new_save_path;
     ui->selection_file->setText(save_path);
+    EditorSettings().set_value(
+        EditorSettings::package_save_path, QVariant(save_path));
 }
 
 void PackageDialog::processStart()
