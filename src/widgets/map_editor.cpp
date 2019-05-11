@@ -50,6 +50,26 @@ constexpr int move_entities_command_id = 1;
 constexpr int resize_entities_command_id = 2;
 
 /**
+ * @brief Puts the map editor in bulk update mode for performance.
+ */
+class BulkMapEditorChange {
+
+public:
+  BulkMapEditorChange(MapEditor& editor):
+    editor(editor),
+    was_in_bulk(editor.get_map().has_bulk_change()) {
+    editor.get_map().set_bulk_change(true);
+  }
+  ~BulkMapEditorChange() {
+    editor.get_map().set_bulk_change(was_in_bulk);
+  }
+
+private:
+  MapEditor& editor;
+  bool was_in_bulk;
+};
+
+/**
  * @brief Parent class of all undoable commands of the map editor.
  */
 class MapEditorCommand : public QUndoCommand {
@@ -717,19 +737,23 @@ public:
   }
 
   void undo() override {
-
-    get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
   }
 
   void redo() override {
-
     QList<int> layers_after;
     for (int i = 0; i < indexes_before.size(); ++i) {
       layers_after << layer_after;
     }
-    indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
@@ -756,7 +780,10 @@ public:
 
   void undo() override {
 
-    get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
   }
@@ -768,7 +795,10 @@ public:
       int layer_after = std::min(index_before.layer + 1, get_map().get_max_layer());
       layers_after << layer_after;
     }
-    indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
@@ -794,7 +824,10 @@ public:
 
   void undo() override {
 
-    get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
   }
@@ -806,7 +839,10 @@ public:
       int layer_after = std::max(index_before.layer - 1, get_map().get_min_layer());
       layers_after << layer_after;
     }
-    indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
@@ -1893,6 +1929,11 @@ void MapEditor::tileset_selection_changed() {
  */
 void MapEditor::map_selection_changed() {
 
+  if (get_map().has_bulk_change()) {
+    // Ignore selection changes during bulk updates.
+    return;
+  }
+
   // Update whether cut/copy are available.
   bool empty_selection = ui.map_view->is_selection_empty();
   can_cut_changed(!empty_selection);
@@ -1908,7 +1949,8 @@ void MapEditor::map_selection_changed() {
   MapModel& map = get_map();
   QString optional_tileset_id = map.get_entity_field(entity_indexes.first(), "tileset").toString();
   for (const EntityIndex& entity_index : entity_indexes) {
-    if (!map.has_entity_field(entity_index, "tileset")) {
+    EntityType entity_type = map.get_entity_type(entity_index);
+    if (entity_type != EntityType::TILE && entity_type != EntityType::DYNAMIC_TILE) {
       continue;
     }
     if (map.get_entity_field(entity_index, "tileset").toString() != optional_tileset_id) {

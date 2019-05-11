@@ -136,9 +136,11 @@ public:
 
   const Solarus::EntityData& get_internal_entity(const EntityIndex& index) const;
   Solarus::EntityData& get_internal_entity(const EntityIndex& index);
-
   const EntityModel& get_entity(const EntityIndex& index) const;
   EntityModel& get_entity(const EntityIndex& index);
+
+  bool has_bulk_change() const;
+  void set_bulk_change(bool bulk_change);
 
 signals:
 
@@ -181,6 +183,7 @@ private:
       tileset;                    /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
+  bool bulk_change;               /**< Whether a bulk change is in progress. */
 };
 
 /**

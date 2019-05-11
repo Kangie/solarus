@@ -41,7 +41,8 @@ MapModel::MapModel(
   quest(quest),
   map_id(map_id),
   tileset(nullptr),
-  entities() {
+  entities(),
+  bulk_change(false) {
 
   // Load the map data file.
   QString path = quest.get_map_data_file_path(map_id);
@@ -1741,6 +1742,22 @@ void MapModel::rebuild_entity_indexes(int layer) {
     entity->index_changed(index);
     ++i;
   }
+}
+
+/**
+ * @brief Returns whether bulk change mode is active.
+ * @return @c true if bulk change mode is active.
+ */
+bool MapModel::has_bulk_change() const {
+  return bulk_change;
+}
+
+/**
+ * @brief Sets whether bulk change mode is active.
+ * @param bulk_change @c true to enable bulk mode.
+ */
+void MapModel::set_bulk_change(bool bulk_change) {
+  this->bulk_change = bulk_change;
 }
 
 }
