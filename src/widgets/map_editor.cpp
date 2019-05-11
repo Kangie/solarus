@@ -57,16 +57,16 @@ class BulkMapEditorChange {
 public:
   BulkMapEditorChange(MapEditor& editor):
     editor(editor),
-    was_in_bulk(editor.get_map().has_bulk_change()) {
-    editor.get_map().set_bulk_change(true);
+    was_bulk_mode(editor.get_map().is_bulk_mode()) {
+    editor.get_map().set_bulk_mode(true);
   }
   ~BulkMapEditorChange() {
-    editor.get_map().set_bulk_change(was_in_bulk);
+    editor.get_map().set_bulk_mode(was_bulk_mode);
   }
 
 private:
   MapEditor& editor;
-  bool was_in_bulk;
+  bool was_bulk_mode;
 };
 
 /**
@@ -1033,13 +1033,19 @@ public:
 
   void undo() override {
     // Restore entities with their old index.
-    get_map().add_entities(std::move(entities));
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().add_entities(std::move(entities));
+    }
     get_map_view().set_selected_entities(indexes);
   }
 
   void redo() override {
     // Remove entities from the map, keep them and their index in this class.
-    entities = get_map().remove_entities(indexes);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      entities = get_map().remove_entities(indexes);
+    }
   }
 
 private:
@@ -1246,6 +1252,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(ui.map_view->get_scene(), &MapScene::selectionChanged,
           this, &MapEditor::map_selection_changed);
+  connect(map, &MapModel::bulk_mode_changed,
+          this, &MapEditor::map_bulk_mode_changed);
 }
 
 /**
@@ -1929,7 +1937,7 @@ void MapEditor::tileset_selection_changed() {
  */
 void MapEditor::map_selection_changed() {
 
-  if (get_map().has_bulk_change()) {
+  if (get_map().is_bulk_mode()) {
     // Ignore selection changes during bulk updates.
     return;
   }
@@ -1941,13 +1949,10 @@ void MapEditor::map_selection_changed() {
 
   // Update the tileset view with the selected tile patterns.
   const EntityIndexes& entity_indexes = ui.map_view->get_selected_entities();
-  if (entity_indexes.isEmpty()) {
-    return;
-  }
 
   // See if all selected tiles have the same tileset.
   MapModel& map = get_map();
-  QString optional_tileset_id = map.get_entity_field(entity_indexes.first(), "tileset").toString();
+  QString optional_tileset_id = entity_indexes.isEmpty() ? QString() : map.get_entity_field(entity_indexes.first(), "tileset").toString();
   for (const EntityIndex& entity_index : entity_indexes) {
     EntityType entity_type = map.get_entity_type(entity_index);
     if (entity_type != EntityType::TILE && entity_type != EntityType::DYNAMIC_TILE) {
@@ -1981,6 +1986,18 @@ void MapEditor::map_selection_changed() {
     }
   }
   tileset->set_selected_indexes(pattern_indexes);
+}
+
+/**
+ * @brief Called when bulk mode is enabled or disabled on the map editor.
+ * @param bulk_mode Whether bulk mode is active.
+ */
+void MapEditor::map_bulk_mode_changed(bool bulk_mode) {
+
+  if (!bulk_mode) {
+    // map_selection_changed() was just unblocked: call it now in case we are not up to date.
+    map_selection_changed();
+  }
 }
 
 /**

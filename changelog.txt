@@ -4,6 +4,7 @@ Solarus Quest Editor 1.6.1 (in progress)
 ________________________________________
 
 * Map editor: fix performance of changing entities layer (#454).
+* Map editor: improve performance of deleting multiple entities.
 * Dialogs editor: fix line wrapping.
 * Initial quest: remove proprietary file added by mistake.
 * Add Force Software Rendering option to 'Running' section (stdgregwar).

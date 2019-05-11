@@ -139,8 +139,8 @@ public:
   const EntityModel& get_entity(const EntityIndex& index) const;
   EntityModel& get_entity(const EntityIndex& index);
 
-  bool has_bulk_change() const;
-  void set_bulk_change(bool bulk_change);
+  bool is_bulk_mode() const;
+  void set_bulk_mode(bool bulk_mode);
 
 signals:
 
@@ -167,6 +167,8 @@ signals:
   void entity_user_property_removed(const EntityIndex& index, int property_index);
   void entity_field_changed(const EntityIndex& index, const QString& key, const QVariant& value);
 
+  void bulk_mode_changed(bool bulk_mode);
+
 public slots:
 
   void save() const;
@@ -183,7 +185,7 @@ private:
       tileset;                    /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
-  bool bulk_change;               /**< Whether a bulk change is in progress. */
+  bool bulk_mode;                 /**< Whether a bulk change is in progress. */
 };
 
 /**
