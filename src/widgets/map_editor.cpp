@@ -739,7 +739,7 @@ public:
   void undo() override {
     {
       BulkMapEditorChange bulk(get_editor());
-      get_map().undo_set_entities_layer(indexes_after, indexes_before);
+      get_map().undo_set_entities_layer(indexes_after, indexes_before_gradual);
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
@@ -752,15 +752,16 @@ public:
     }
     {
       BulkMapEditorChange bulk(get_editor());
-      indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+      get_map().set_entities_layer(indexes_before, layers_after, indexes_before_gradual, indexes_after);
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
 
 private:
-  EntityIndexes indexes_before;  // Sorted indexes before the change.
-  EntityIndexes indexes_after;  // Indexes after the change, in the same order as before.
+  EntityIndexes indexes_before;          // Sorted indexes before the whole change.
+  EntityIndexes indexes_before_gradual;  // Indexes before each individual change, in the same order as before.
+  EntityIndexes indexes_after;           // Indexes after the whole change, in the same order as before.
   int layer_after;
 };
 
@@ -782,7 +783,7 @@ public:
 
     {
       BulkMapEditorChange bulk(get_editor());
-      get_map().undo_set_entities_layer(indexes_after, indexes_before);
+      get_map().undo_set_entities_layer(indexes_after, indexes_before_gradual);
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
@@ -797,15 +798,16 @@ public:
     }
     {
       BulkMapEditorChange bulk(get_editor());
-      indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+      get_map().set_entities_layer(indexes_before, layers_after, indexes_before_gradual, indexes_after);
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
 
 private:
-  EntityIndexes indexes_before;  // Sorted indexes before the change.
-  EntityIndexes indexes_after;  // Indexes after the change, in the same order as before.
+  EntityIndexes indexes_before;          // Sorted indexes before the whole change.
+  EntityIndexes indexes_before_gradual;  // Indexes before each individual change, in the same order as before.
+  EntityIndexes indexes_after;           // Indexes after the whole change, in the same order as before.
 };
 
 /**
@@ -826,7 +828,7 @@ public:
 
     {
       BulkMapEditorChange bulk(get_editor());
-      get_map().undo_set_entities_layer(indexes_after, indexes_before);
+      get_map().undo_set_entities_layer(indexes_after, indexes_before_gradual);
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
@@ -841,15 +843,16 @@ public:
     }
     {
       BulkMapEditorChange bulk(get_editor());
-      indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+      get_map().set_entities_layer(indexes_before, layers_after, indexes_before_gradual, indexes_after);
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
 
 private:
-  EntityIndexes indexes_before;  // Sorted indexes before the change.
-  EntityIndexes indexes_after;  // Indexes after the change, in the same order as before.
+  EntityIndexes indexes_before;          // Sorted indexes before the whole change.
+  EntityIndexes indexes_before_gradual;  // Indexes before each individual change, in the same order as before.
+  EntityIndexes indexes_after;           // Indexes after the whole change, in the same order as before.
 };
 
 /**
