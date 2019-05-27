@@ -393,7 +393,7 @@ type start to exist, typically to set up things before a game is started.
 
 You can use the metatable to add a function to all instances of a type.
 Thus, you can extend the Solarus API with your own functions.
-This also work for events (functions that the engine automatically calls
+This also works for events (functions that the engine automatically calls
 when they exist).
 For example, you can easily provide a function \c add_overlay() to all your
 maps by defining it only once in the map metatable:
