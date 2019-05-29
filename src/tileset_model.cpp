@@ -559,14 +559,18 @@ void TilesetModel::delete_pattern(int index) {
  */
 void TilesetModel::delete_patterns(const QList<int>& indexes) {
 
-  QStringList ids_to_delete;
+  // Make a sorted list of patterns with their index and id.
+  QList<QPair<int, QString>> sorted_patterns;
   for (int index : indexes) {
     QString pattern_id = index_to_id(index);
     if (pattern_id.isEmpty()) {
         throw EditorException(tr("Invalid tile pattern index: %1").arg(index));
     }
-    ids_to_delete << index_to_id(index);
+    sorted_patterns.append({ index, pattern_id });
   }
+  std::sort(sorted_patterns.begin(), sorted_patterns.end(), [](const QPair<int, QString>& pattern_1, const QPair<int, QString>& pattern_2) {
+    return pattern_1.first < pattern_2.first;
+  });
 
   // Save and clear the selection during the whole operation.
   const QModelIndexList old_selected_indexes = selection_model.selection().indexes();
@@ -576,18 +580,19 @@ void TilesetModel::delete_patterns(const QList<int>& indexes) {
   }
   clear_selection();
 
-  // Delete patterns.
-  for (const QString id : ids_to_delete) {
-    int index = id_to_index(id);
-    if (index == -1) {
-      throw EditorException(tr("No such tile pattern: %1").arg(id));
-    }
-    delete_pattern(index);
+  // Delete patterns, starting with the last one to avoid to shift any index.
+  beginResetModel();
+  for (auto it = sorted_patterns.rbegin(); it != sorted_patterns.rend(); ++it) {
+    int index = it->first;
+    QString pattern_id = it->second;
+    tileset.remove_pattern(pattern_id.toStdString());
+    patterns.removeAt(index);
   }
+  build_index_map();
+  endResetModel();
 
   // Restore the selection.
   for (QString selected_pattern_id : old_selection_ids) {
-
     int new_index = id_to_index(selected_pattern_id);
     if (new_index == -1) {
       // This one was just deleted.

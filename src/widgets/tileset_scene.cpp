@@ -76,26 +76,26 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
   build();
 
   // Synchronize the scene selection with the tileset selection model.
-  connect(&model.get_selection_model(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_selection_to_scene(QItemSelection, QItemSelection)));
-  connect(this, SIGNAL(selectionChanged()),
-          this, SLOT(set_selection_from_scene()));
+  connect(&model.get_selection_model(), &QItemSelectionModel::selectionChanged,
+          this, &TilesetScene::update_selection_to_scene);
+  connect(this, &TilesetScene::selectionChanged,
+          this, &TilesetScene::set_selection_from_scene);
 
   // Watch pattern geometry changes.
-  connect(&model, SIGNAL(pattern_position_changed(int, QPoint)),
-          this, SLOT(update_pattern_position(int)));
-  connect(&model, SIGNAL(pattern_separation_changed(int, PatternSeparation)),
-          this, SLOT(update_pattern_position(int)));
-  connect(&model, SIGNAL(pattern_num_frames_changed(int, int)),
-          this, SLOT(update_pattern_position(int)));
+  connect(&model, &TilesetModel::pattern_position_changed,
+          this, &TilesetScene::update_pattern_position);
+  connect(&model, &TilesetModel::pattern_separation_changed,
+          this, &TilesetScene::update_pattern_position);
+  connect(&model, &TilesetModel::pattern_num_frames_changed,
+          this, &TilesetScene::update_pattern_position);
 
   // Watch changes in the pattern list.
-  connect(&model, SIGNAL(pattern_created(int, QString)),
-          this, SLOT(pattern_created(int, QString)));
-  connect(&model, SIGNAL(pattern_deleted(int, QString)),
-          this, SLOT(pattern_deleted(int, QString)));
-  connect(&model, SIGNAL(pattern_id_changed(int, QString, int, QString)),
-          this, SLOT(pattern_id_changed(int, QString, int, QString)));
+  connect(&model, &TilesetModel::pattern_created,
+          this, &TilesetScene::pattern_created);
+  connect(&model, &TilesetModel::pattern_deleted,
+          this, &TilesetScene::pattern_deleted);
+  connect(&model, &TilesetModel::pattern_id_changed,
+          this, &TilesetScene::pattern_id_changed);
   connect(&model, &TilesetModel::tileset_image_file_reloaded,
           this, &TilesetScene::image_changed);
 

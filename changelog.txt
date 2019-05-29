@@ -6,6 +6,7 @@ ________________________________________
 * Map editor: improve performance of deleting multiple entities.
 * Map editor: fix performance of changing entities layer (#454).
 * Map editor: fix wrong selections after undoing changing layers.
+* Tileet editor: fix performance of removing multiple patterns (#456).
 * Dialogs editor: fix line wrapping.
 * Initial quest: remove proprietary file added by mistake.
 * Add Force Software Rendering option to 'Running' section (stdgregwar).
