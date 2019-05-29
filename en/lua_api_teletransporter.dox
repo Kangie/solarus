@@ -24,7 +24,6 @@ following kind of places.
 Teletransporters can have any size,
 but like all entities, their width and height
 must be multiples of 8 pixels.
-The minimum size if 16x16 pixels (the size of the hero).
 
 \note You can also teletransport the \ref lua_api_hero "hero" explicitly
 with \ref lua_api_hero_teleport "hero:teleport()".
