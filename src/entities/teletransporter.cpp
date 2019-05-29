@@ -28,7 +28,7 @@ Teletransporter::Teletransporter(MapModel& map, const EntityIndex& index) :
   EntityModel(map, index, EntityType::TELETRANSPORTER) {
 
   set_resizable(true);
-  set_base_size(QSize(16, 16));
+  set_base_size({ 8, 8 });
 
   DrawShapeInfo info;
   info.enabled = true;
@@ -47,6 +47,7 @@ void Teletransporter::set_initial_values() {
 
   // Initially propose to stay on the same map.
   set_field("destination_map", get_map().get_map_id());
+  set_size({ 16, 16 });
 }
 
 }
