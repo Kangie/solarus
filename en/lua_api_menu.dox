@@ -65,9 +65,9 @@ it is stopped.
     to this other menu.
     This allows to make nested menus.
     Example: a popup that shows some information above another menu.
-  - \c menu (table): The menu to activate. It can be any table. The only thing
-    that makes it special is the presence of callback functions (events) as
-    described in section \ref lua_api_menu_events.
+- \c menu (table): The menu to activate. It can be any table. The only thing
+  that makes it special is the presence of callback functions (events) as
+  described in section \ref lua_api_menu_events.
 - \c on_top (boolean, optional): Whether this menu should be drawn on top
   of other existing menus of the same context or behind them.
   If \c true, the
