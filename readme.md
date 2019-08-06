@@ -86,4 +86,4 @@ The Solarus Quest Editor supports offline documentation,
 but does not currently build or install it itself. Use `doxygen` with the
 [solarus-doc](https://gitlab.com/solarus-games/solarus-doc) repository to
 create the documentation. Everything in the `<version>/html/` directory should
-qe copied to `assets/doc/`.
+be copied to `assets/doc/`.
