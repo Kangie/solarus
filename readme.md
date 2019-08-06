@@ -1,4 +1,4 @@
-![Solarus Quest Editor logo](/images/solarus-quest-editor-github-readme-logo.png)
+![Solarus Quest Editor logo](logo.png)
 
 [![Build Status](https://travis-ci.org/solarus-games/solarus-quest-editor.svg?branch=dev)](https://travis-ci.org/solarus-games/solarus-quest-editor)
 
