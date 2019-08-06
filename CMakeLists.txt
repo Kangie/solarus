@@ -42,33 +42,33 @@ endif()
 # FreeDesktop compatible icons
 if(UNIX AND NOT APPLE)
   # Pixmap icons for sizes under 48x48 pixels
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-16x16.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-16x16.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/16x16/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-32x32.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-32x32.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-48x48.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-48x48.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-64x64.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-64x64.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-96x96.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-96x96.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/96x96/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-128x128.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-128x128.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-256x256.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-256x256.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-512x512.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-512x512.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/512x512/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-768x768.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-768x768.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/768x768/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-1024x1024.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-1024x1024.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/1024x1024/apps RENAME solarus-quest-editor.png)
   
   # Pixmap icon for desktops that don't support multiple sizes
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor-512x512.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-512x512.png
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps RENAME solarus-quest-editor.png)
 
   # Vector icons, automatically chosen for sizes above 48x48 pixels
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/icon/solarus-quest-editor.svg
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor.svg
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps)
   
 endif(UNIX AND NOT APPLE)
