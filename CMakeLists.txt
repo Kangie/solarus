@@ -62,6 +62,8 @@ if(UNIX AND NOT APPLE)
   # Vector icons, automatically chosen for sizes above 48x48 pixels
   install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor.svg
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps)
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-symbolic.svg
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/symbolic/apps)
   
 endif(UNIX AND NOT APPLE)
 
