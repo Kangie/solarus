@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/solarus-games/solarus-quest-editor.svg?branch=dev)](https://travis-ci.org/solarus-games/solarus-quest-editor)
 
 Solarus Quest Editor is a graphical user interface to create and modify quests for the
-[Solarus engine](https://github.com/solarus-games/solarus).
+[Solarus engine](https://gitlab.com/solarus-games/solarus).
 
 This software is written in C++ with Qt.
 
