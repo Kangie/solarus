@@ -122,6 +122,8 @@
     </property>
     <addaction name="action_website"/>
     <addaction name="action_doc"/>
+    <addaction name="separator"/>
+    <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="menu_tools">
     <property name="title">
@@ -468,6 +470,11 @@
    </property>
    <property name="shortcut">
     <string>F10</string>
+   </property>
+  </action>
+  <action name="action_about">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

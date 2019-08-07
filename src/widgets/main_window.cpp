@@ -207,6 +207,7 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_settings);
   addAction(ui.action_doc);
   addAction(ui.action_website);
+  addAction(ui.action_about);
 
   // Connect children.
   connect(ui.quest_tree_view, &QuestTreeView::open_file_requested,
@@ -1209,6 +1210,15 @@ void MainWindow::on_action_settings_triggered() {
 void MainWindow::on_action_website_triggered() {
 
   QDesktopServices::openUrl(QUrl("http://www.solarus-games.org/"));
+}
+
+/**
+ * @brief Slot called when the user triggers the "Website" action.
+ */
+void MainWindow::on_action_about_triggered() {
+
+  SolarusEditor::AboutDialog dialog(this);
+  dialog.exec();
 }
 
 /**
