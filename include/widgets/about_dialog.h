@@ -22,10 +22,6 @@
 
 namespace SolarusEditor {
 
-namespace Ui {
-class AboutDialog;
-}
-
 /**
  * @brief Dialog for information about the application.
  *
