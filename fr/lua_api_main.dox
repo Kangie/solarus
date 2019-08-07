@@ -389,14 +389,10 @@ Appelé lorsque l'utilisateur presse une touche du clavier.
   caractère correspondant à la place (si il y en a un), consultez
   \ref lua_api_main_on_character_pressed "sol.main:on_character_pressed()".
 
-\subsection lua_api_main_on_key_released sol.main:on_key_released(key, modifiers)
+\subsection lua_api_main_on_key_released sol.main:on_key_released(key)
 
 Appelé lorsque l'utilisateur relache une touche du clavier.
 - \c key (chaine de caractère) : Nom de la touche relachée.
-- \c modifiers (tableau) : Un tableau dont les clés indiquent quels
-  modificateurs étaient pressés durant l'événement. Les clés possible
-  du tableau sont \c "shift", \c "control" et \c "alt".
-  Les valeurs du tableau n'ont pas d'importance.
 - Valeur de retour (booléen) : Indique si l'événement à été géré. Si vous
   retournez \c true, l'événement ne se propagera pas aux autres objets
   (comme la partie).

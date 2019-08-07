@@ -1656,15 +1656,11 @@ votre map est active.
   Si vous voulez la commande de haut-niveau correspondante (si il y en a une),
   consultez \ref lua_api_map_on_command_pressed "map:on_command_pressed()".
 
-\subsection lua_api_map_on_key_released map:on_key_released(key, modifiers)
+\subsection lua_api_map_on_key_released map:on_key_released(key)
 
 Appelé lorsque l'utilisateur relache une touche du clavier pendant que
 votre map est active.
 - \c key (chaine de caractère) : Nom de la touche qui a été relachée.
-- \c modifiers (tableau) : Un tableau dont les clés indiquent quels
-  modificateurs étaient pressés durant l'événement. Les clés possible
-  du tableau sont \c "shift", \c "control" et \c "alt".
-  Les valeurs du tableau n'ont pas d'importance.
 - Valeur de retour (booléen) : Indique si l'événement à été géré. Si vous
   retournez \c true, l'événement ne se propagera pas aux autres objets.
   Si vous retournez \c false ou rien, l'événement continuera sa propagation

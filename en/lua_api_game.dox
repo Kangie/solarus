@@ -1089,13 +1089,10 @@ corresponding character instead (if any), see
 If you want the corresponding higher-level game command (if any), see
 \ref lua_api_game_on_command_pressed "game:on_command_pressed()".
 
-\subsection lua_api_game_on_key_released game:on_key_released(key, modifiers)
+\subsection lua_api_game_on_key_released game:on_key_released(key)
 
 Called when the user releases a keyboard key while your game is running.
 - \c key (string): Name of the raw key that was released.
-- \c modifiers (table): A table whose keys indicate what modifiers were
-  down during the event. Possible table keys are \c "shift", \c "control" and
-  \c "alt". Table values are \c true.
 - Return value (boolean): Indicates whether the event was handled. If you
   return \c true, the event won't be propagated to other objects.
   If you return \c false or nothing, the event will continue its propagation
