@@ -947,7 +947,10 @@ that is currently controlling this entity, if any.
 
 Returns the current movement of this map entity.
 - Return value (\ref lua_api_movement "movement"): The current movement,
-  or \c nil if the entity is not moving.
+  or \c nil if the entity has currently no movement.
+
+\note Even when the entity is not moving, it can still have a movement of
+  speed \c 0.
 
 \subsection lua_api_entity_stop_movement entity:stop_movement()
 
