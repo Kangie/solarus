@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "entities/entity_traits.h"
+#include "widgets/about_dialog.h"
 #include "widgets/change_resource_id_dialog.h"
 #include "widgets/editor.h"
 #include "widgets/enum_menus.h"
