@@ -37,11 +37,6 @@ class AboutDialog : public QDialog {
 public:
 
   explicit AboutDialog(QWidget* parent = nullptr);
-  ~AboutDialog() override;
-
-private slots:
-  void on_website_label_linkActivated(const QString &link);
-  void on_license_label_linkActivated(const QString &link);
 
 private:
 

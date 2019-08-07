@@ -46,20 +46,4 @@ AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent) {
   ui.version_label->setText(QApplication::applicationVersion());
 }
 
-/**
- * @brief Destructor for an about dialog.
- */
-AboutDialog::~AboutDialog() {
-
-}
-
-void AboutDialog::on_website_label_linkActivated(const QString &link) {
-
-  QDesktopServices::openUrl(QUrl(link));
-}
-
-void AboutDialog::on_license_label_linkActivated(const QString &link) {
-
-  QDesktopServices::openUrl(QUrl(link));
-}
 }
