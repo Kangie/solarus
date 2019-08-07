@@ -29,6 +29,12 @@ namespace SolarusEditor {
  */
 AboutDialog::AboutDialog(QWidget* parent) : QDialog(parent) {
 
+  // Remove useless flags
+  auto window_flags = windowFlags();
+  window_flags.setFlag(Qt::WindowType::WindowContextHelpButtonHint, false);
+  setWindowFlags(window_flags);
+
+  // Setup widgets
   ui.setupUi(this);
 
   // App display name
