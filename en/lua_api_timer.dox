@@ -126,10 +126,14 @@ If the delay is set to zero, the function is called immediately.
     and \ref lua_api_main "sol.main" if no game is running.
 - \c delay (number): Delay before calling the function in milliseconds.
 - \c callback (function): The function to be called when the timer finishes.
-  If this callback function returns \c true, then the timer automatically
+  - If this callback function returns \c true, then the timer automatically
   repeats itself with the same delay.
-  In this case, if the delay is shorter than the time of a cycle of the main
-  loop, the callback may be executed several times in
+  - If the callback function returns a positive integer value,
+  then the timer automatically repeats itself after this specified delay
+  in milliseconds.
+  - Otherwise, the timer does not repeats.
+  If the repeating delay is shorter than the time of a cycle of the main
+  loop, then the callback may be executed several times in
   the same cycle in order to catch up.
 - Return value (timer): The timer created.
   Most of the time, you don't need to store the returned timer.
