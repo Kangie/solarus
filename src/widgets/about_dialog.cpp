@@ -15,11 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/about_dialog.h"
-#include "widgets/gui_tools.h"
-#include "dialogs_model.h"
-
-#include <QApplication>
-#include <QDesktopServices>
 
 namespace SolarusEditor {
 
