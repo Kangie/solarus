@@ -24,6 +24,7 @@
 #include "widgets/import_dialog.h"
 #include "widgets/input_dialog_with_check_box.h"
 #include "widgets/main_window.h"
+#include "widgets/package_dialog.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
 #include "file_tools.h"
@@ -196,6 +197,7 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_save_all);
   addAction(ui.action_close_all);
   addAction(ui.action_open_quest_properties);
+  addAction(ui.action_package_quest);
   addAction(ui.action_run_quest);
   addAction(ui.action_stop_music);
   addAction(ui.action_pause_music);
@@ -897,6 +899,15 @@ void MainWindow::on_action_import_triggered() {
 void MainWindow::on_action_open_quest_properties_triggered() {
 
   ui.tab_widget->open_quest_properties_editor(quest);
+}
+
+/**
+ * @brief Slot called when user triggers the "Package Quest" action.
+ */
+void MainWindow::on_action_package_quest_triggered() {
+
+  PackageDialog package(quest, this);
+  package.exec();
 }
 
 /**

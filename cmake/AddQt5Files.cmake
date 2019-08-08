@@ -20,6 +20,7 @@ set(solarus_quest_editor_FORMS
   src/widgets/new_entity_user_property_dialog.ui
   src/widgets/new_resource_element_dialog.ui
   src/widgets/new_string_dialog.ui
+  src/widgets/package_dialog.ui
   src/widgets/pattern_picker_dialog.ui
   src/widgets/quest_properties_editor.ui
   src/widgets/settings_dialog.ui
