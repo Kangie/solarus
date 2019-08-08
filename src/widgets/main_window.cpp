@@ -103,6 +103,8 @@ MainWindow::MainWindow(QWidget* parent) :
   update_recent_quests_menu();
   ui.menu_quest->insertMenu(ui.menu_quest->actions()[3], recent_quests_menu);
   ui.action_import->setEnabled(false);
+  ui.action_package_quest->setEnabled(false);
+  ui.action_open_quest_properties->setEnabled(false);
 
   QUndoGroup& undo_group = ui.tab_widget->get_undo_group();
   QAction* undo_action = undo_group.createUndoAction(this);
@@ -578,6 +580,8 @@ void MainWindow::close_quest() {
   quest.set_root_path("");
   update_title();
   ui.action_import->setEnabled(false);
+  ui.action_package_quest->setEnabled(false);
+  ui.action_open_quest_properties->setEnabled(false);
   ui.action_run_quest->setEnabled(false);
   ui.quest_tree_view->set_quest(quest);
 
@@ -619,6 +623,8 @@ bool MainWindow::open_quest(const QString& quest_path) {
             ui.tab_widget, &EditorTabs::file_deleted);
 
     ui.action_import->setEnabled(true);
+    ui.action_package_quest->setEnabled(true);
+    ui.action_open_quest_properties->setEnabled(true);
     ui.action_run_quest->setEnabled(true);
 
     add_quest_to_recent_list();
@@ -648,6 +654,8 @@ bool MainWindow::open_quest(const QString& quest_path) {
         quest.set_root_path(quest_path);
         quest.check_version();
         ui.action_import->setEnabled(true);
+        ui.action_package_quest->setEnabled(true);
+        ui.action_open_quest_properties->setEnabled(true);
         ui.action_run_quest->setEnabled(true);
         success = true;
       }

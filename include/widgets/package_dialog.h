@@ -19,38 +19,38 @@
 
 #include <QDialog>
 #include <QProcess>
+#include <QScopedPointer>
 #include <QString>
+
+namespace SolarusEditor {
 
 namespace Ui {
 class PackageDialog;
 }
 
-namespace SolarusEditor {
-
 class Quest;
 
-class PackageDialog : public QDialog
-{
-    Q_OBJECT
+class PackageDialog : public QDialog {
+  Q_OBJECT
 
 public:
-    explicit PackageDialog(Quest const& quest, QWidget *parent = 0);
-    ~PackageDialog();
-
-private slots:
-    void setSavePath(QString const& save_path);
-    void processStart();
-    void processFinished(int code, QProcess::ExitStatus status);
-    void startFileSelection();
-    void handleProcessStandardOutput();
+  explicit PackageDialog(const Quest &quest, QWidget *parent = nullptr);
+  ~PackageDialog();
 
 private:
-    ::Ui::PackageDialog *ui;
-    QProcess process;
-    Quest const& quest;
-    QString save_path;
+  void set_save_path(QString const &save_path);
+  void process_start();
+  void process_finished(int code, QProcess::ExitStatus status);
+  void start_file_selection();
+  void handle_process_standard_output();
+
+private:
+  QScopedPointer<Ui::PackageDialog> ui;
+  QProcess process;
+  Quest const& quest;
+  QString save_path;
 };
 
 }
 
-#endif // SOLARUSEDITOR_PACKAGE_DIALOG_H
+#endif

@@ -21,7 +21,7 @@
 
 #include <QFileDialog>
 
-/* In terms of implementation, this class wraps for states and handles the
+/* In terms of implementation, this class wraps four states and handles the
  * transitions
  *
  * 0. selection: Choose the package location and name.
@@ -39,86 +39,91 @@
 
 namespace SolarusEditor {
 
-static QString default_save_path(Quest const& quest)
-{
-    return quest.get_root_path() + "/" + quest.get_name() + ".solarus";
+namespace {
+
+QString get_default_save_path(const Quest &quest) {
+  return quest.get_root_path() + "/" + quest.get_name() + ".solarus";
 }
+
+} // Anonymous namespace.
 
 PackageDialog::PackageDialog(Quest const& quest, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::PackageDialog),
-    process(),
-    quest(quest),
-    save_path()
-{
-    ui->setupUi(this);
-    process.setReadChannel(QProcess::StandardOutput);
+  QDialog(parent),
+  ui(new Ui::PackageDialog),
+  process(),
+  quest(quest),
+  save_path() {
 
-    connect(ui->selection_button_box, &QDialogButtonBox::accepted,
-            this, &PackageDialog::processStart);
-    connect(ui->selection_browse, &QPushButton::clicked,
-            this, &PackageDialog::startFileSelection);
-    connect(&process,
-            QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            this, &PackageDialog::processFinished);
-    connect(&process, &QProcess::readyReadStandardOutput,
-            this, &PackageDialog::handleProcessStandardOutput);
+  ui->setupUi(this);
+  ui->stacked_widget->setCurrentWidget(ui->selection);
+  ui->button_box->button(QDialogButtonBox::Apply)->setText(tr("Build"));
 
-    QString const& saved_path = EditorSettings()
-         .get_value_string(EditorSettings::package_save_path);
-    setSavePath(saved_path.isEmpty() ? default_save_path(quest) : saved_path);
+  process.setReadChannel(QProcess::StandardOutput);
+
+  connect(ui->button_box->button(QDialogButtonBox::Apply), &QPushButton::clicked,
+          this, &PackageDialog::process_start);
+  connect(ui->selection_browse, &QPushButton::clicked,
+          this, &PackageDialog::start_file_selection);
+  connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+          this, &PackageDialog::process_finished);
+  connect(&process, &QProcess::readyReadStandardOutput,
+          this, &PackageDialog::handle_process_standard_output);
+
+  const QString &saved_path = EditorSettings()
+      .get_value_string(EditorSettings::package_save_path);
+  set_save_path(saved_path.isEmpty() ? get_default_save_path(quest) : saved_path);
 }
 
-PackageDialog::~PackageDialog()
-{
-    delete ui;
-}
+PackageDialog::~PackageDialog() = default;
 
-void PackageDialog::setSavePath(QString const& new_save_path)
-{
-    save_path = new_save_path;
-    ui->selection_file->setText(save_path);
-    EditorSettings().set_value(
+void PackageDialog::set_save_path(const QString &new_save_path) {
+  save_path = new_save_path;
+  ui->selection_file->setText(save_path);
+  EditorSettings().set_value(
         EditorSettings::package_save_path, QVariant(save_path));
 }
 
-void PackageDialog::processStart()
-{
-    process.setWorkingDirectory(quest.get_data_path());
-    process.start("zip", QStringList() << "-r" << save_path << ".");
+void PackageDialog::process_start() {
+  ui->button_box->button(QDialogButtonBox::Apply)->setEnabled(false);
+  ui->button_box->button(QDialogButtonBox::Close)->setEnabled(false);
+  ui->stacked_widget->setCurrentWidget(ui->ongoing);
+  ui->ongoing_output->setPlainText(tr("Starting...\n"));
 
-    ui->stackedWidget->setCurrentWidget(ui->ongoing);
-    ui->ongoing_output->setPlainText(tr("Starting...\n"));
+  process.setWorkingDirectory(quest.get_data_path());
+  process.start("zip", QStringList() << "-r" << save_path << ".");
 }
 
-void PackageDialog::processFinished(int code, QProcess::ExitStatus status)
-{
-    if (QProcess::CrashExit == status || 0 != code) {
-        ui->failed_output->setPlainText(
-            QString(process.readAllStandardError()));
-        ui->failed_code->setText(
-            QProcess::CrashExit == status
-                ? tr("Crashed") : QString::number(code));
-        ui->stackedWidget->setCurrentWidget(ui->failed);
-    } else {
-        ui->stackedWidget->setCurrentWidget(ui->completed);
-    }
+void PackageDialog::process_finished(int code, QProcess::ExitStatus status) {
+
+  if (status == QProcess::CrashExit || code != 0) {
+    ui->failed_output->setPlainText(
+          QString(process.readAllStandardError()));
+    ui->failed_code->setText(
+          status == QProcess::CrashExit ?
+            tr("Crashed") : QString::number(code));
+    ui->stacked_widget->setCurrentWidget(ui->failed);
+  } else {
+    ui->stacked_widget->setCurrentWidget(ui->completed);
+  }
+  ui->button_box->button(QDialogButtonBox::Close)->setEnabled(true);
 }
 
-void PackageDialog::startFileSelection()
-{
-    setSavePath(QFileDialog::getSaveFileName(
-        this, tr("Solarus Package Location:"), save_path,
-        tr("Solarus Packages (*.solarus)")));
+void PackageDialog::start_file_selection() {
+
+  const QString& path = QFileDialog::getSaveFileName(
+        this, tr("Quest package location:"), save_path,
+        tr("Solarus Packages (*.solarus)"));
+  if (!path.isEmpty()) {
+    set_save_path(path);
+  }
 }
 
-void PackageDialog::handleProcessStandardOutput()
-{
-    while (process.canReadLine()) {
-        QByteArray const& line = process.readLine();
-        ui->ongoing_output->moveCursor(QTextCursor::End);
-        ui->ongoing_output->insertPlainText(QString(line));
-    }
+void PackageDialog::handle_process_standard_output() {
+  while (process.canReadLine()) {
+    const QByteArray &line = process.readLine();
+    ui->ongoing_output->moveCursor(QTextCursor::End);
+    ui->ongoing_output->insertPlainText(QString(line));
+  }
 }
 
 }

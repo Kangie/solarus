@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PackageDialog</class>
- <widget class="QDialog" name="PackageDialog">
+ <class>SolarusEditor::PackageDialog</class>
+ <widget class="QDialog" name="SolarusEditor::PackageDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,273 +13,169 @@
   <property name="windowTitle">
    <string>Build Solarus Package</string>
   </property>
-  <widget class="QWidget" name="gridLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>9</y>
-     <width>381</width>
-     <height>281</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QStackedWidget" name="stackedWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="selection">
-       <widget class="QLabel" name="selection_header">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>361</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Solarus Package will Save in:</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="selection_browse">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>90</y>
-          <width>89</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Browse</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="selection_file">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>50</y>
-          <width>361</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QDialogButtonBox" name="selection_button_box">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>240</y>
-          <width>166</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="ongoing">
-       <widget class="QPushButton" name="ongoing_cancel">
-        <property name="geometry">
-         <rect>
-          <x>280</x>
-          <y>250</y>
-          <width>89</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Cancel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="ongoing_msg">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>121</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Building Package</string>
-        </property>
-       </widget>
-       <widget class="QPlainTextEdit" name="ongoing_output">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>361</width>
-          <height>201</height>
-         </rect>
-        </property>
-        <property name="lineWrapMode">
-         <enum>QPlainTextEdit::NoWrap</enum>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="completed">
-       <widget class="QPushButton" name="completed_close">
-        <property name="geometry">
-         <rect>
-          <x>280</x>
-          <y>250</y>
-          <width>89</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Close</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="completed_msg">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>181</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Build Package Completed</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="failed">
-       <widget class="QPushButton" name="failed_close">
-        <property name="geometry">
-         <rect>
-          <x>280</x>
-          <y>250</y>
-          <width>89</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Close</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="failed_msg">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>141</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Build Package Failed</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="horizontalLayoutWidget_2">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>10</y>
-          <width>171</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
+   <item>
+    <widget class="QStackedWidget" name="stacked_widget">
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="selection">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="selection_header">
+         <property name="text">
+          <string>Save quest package to:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontal_layout">
          <item>
-          <widget class="QLabel" name="failed_code_msg">
-           <property name="text">
-            <string>Exit Code:</string>
+          <widget class="QLineEdit" name="selection_file">
+           <property name="readOnly">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="failed_code">
+          <widget class="QPushButton" name="selection_browse">
            <property name="text">
-            <string>?</string>
+            <string>Browse</string>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-       <widget class="QPlainTextEdit" name="failed_output">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>361</width>
-          <height>201</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>174</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
-    </item>
-   </layout>
-  </widget>
+     <widget class="QWidget" name="ongoing">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="ongoing_msg">
+         <property name="text">
+          <string>Building quest package...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="ongoing_output">
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="completed">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="completed_msg">
+         <property name="text">
+          <string>Build successful!</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="vertical_spacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="failed">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="failed_msg">
+           <property name="text">
+            <string>Build failed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="failed_code_msg">
+             <property name="text">
+              <string>Exit Code:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="failed_code">
+             <property name="text">
+              <string>?</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="failed_output">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="button_box">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>ongoing_cancel</sender>
-   <signal>clicked()</signal>
-   <receiver>PackageDialog</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>335</x>
-     <y>272</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>failed_close</sender>
-   <signal>clicked()</signal>
-   <receiver>PackageDialog</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>335</x>
-     <y>272</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>completed_close</sender>
-   <signal>clicked()</signal>
-   <receiver>PackageDialog</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>335</x>
-     <y>272</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>selection_button_box</sender>
+   <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>PackageDialog</receiver>
+   <receiver>SolarusEditor::PackageDialog</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

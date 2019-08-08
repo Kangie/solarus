@@ -3,6 +3,7 @@ ________________________________________
 Solarus Quest Editor 1.6.1 (in progress)
 ________________________________________
 
+* Allow to build a quest package (#431).
 * Map editor: allow teletransporters to have any size multiple of 8 pixels.
 * Map editor: improve performance of deleting multiple entities.
 * Map editor: fix performance of changing entities layer (#454).
