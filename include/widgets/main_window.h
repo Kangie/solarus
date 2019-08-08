@@ -85,6 +85,7 @@ private slots:
   void on_action_settings_triggered();
   void on_action_website_triggered();
   void on_action_doc_triggered();
+  void on_action_about_triggered();
 
   void current_editor_changed(int index);
   void rename_file_requested(Quest& quest, const QString& path);

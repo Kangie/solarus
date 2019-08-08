@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "entities/entity_traits.h"
+#include "widgets/about_dialog.h"
 #include "widgets/change_resource_id_dialog.h"
 #include "widgets/editor.h"
 #include "widgets/enum_menus.h"
@@ -207,6 +208,7 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_settings);
   addAction(ui.action_doc);
   addAction(ui.action_website);
+  addAction(ui.action_about);
 
   // Connect children.
   connect(ui.quest_tree_view, &QuestTreeView::open_file_requested,
@@ -1212,6 +1214,15 @@ void MainWindow::on_action_website_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Website" action.
+ */
+void MainWindow::on_action_about_triggered() {
+
+  SolarusEditor::AboutDialog dialog(this);
+  dialog.exec();
+}
+
+/**
  * @brief Helper that offers to go online for documentation.
  */
 static void offer_online_docs(MainWindow * parent) {
@@ -1724,14 +1735,7 @@ void MainWindow::reload_settings() {
  */
 void MainWindow::update_title() {
 
-  QString version = SOLARUSEDITOR_VERSION;
-  QString title = tr("Solarus Quest Editor %1").arg(version);
-  QString quest_name = quest.get_name();
-  if (!quest_name.isEmpty()) {
-    title = quest_name + " - " + title;
-  }
-
-  setWindowTitle(title);
+  setWindowTitle(quest.get_name());
 }
 
 /**
