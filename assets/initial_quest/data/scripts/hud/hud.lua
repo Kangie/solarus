@@ -195,6 +195,12 @@ local function initialize_hud_features(game)
     -- end
   end
 
+  local function hud_on_game_finished(game)
+    -- Properly disable the HUD, otherwise it still thinks it is enabled
+    -- after game over.
+    hud:set_enabled(false)
+  end
+
   -- Called periodically to change the transparency or position of icons.
   local function check_hud()
     if not hud:is_enabled() then
@@ -534,6 +540,7 @@ local function initialize_hud_features(game)
   game:register_event("on_map_changed", hud_on_map_changed)
   game:register_event("on_paused", hud_on_paused)
   game:register_event("on_unpaused", hud_on_unpaused)
+  game:register_event("on_finished", hud_on_game_finished)
   --game:register_event("on_dialog_started", hud_on_dialog_started)
   --game:register_event("on_dialog_finished", hud_on_dialog_finished)
 

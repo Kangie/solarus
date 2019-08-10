@@ -27,7 +27,6 @@ function hearts_builder:new(game, config)
 
     -- After game-over don't show gradually getting the life back.
     hearts.nb_current_hearts_displayed = game:get_life()
-    hearts.danger_sound_timer = nil
     hearts:check()
     hearts:rebuild_surface()
   end
@@ -60,30 +59,6 @@ function hearts_builder:new(game, config)
         hearts.nb_current_hearts_displayed = hearts.nb_current_hearts_displayed - 1
       else
         hearts.nb_current_hearts_displayed = hearts.nb_current_hearts_displayed + 1
-        if game:is_started()
-            and hearts.nb_current_hearts_displayed % 4 == 0 then
-          sol.audio.play_sound("heart")
-        end
-      end
-    end
-
-    -- If we are in-game, play an animation and a sound if the life is low.
-    if game:is_started() then
-      if game:get_life() <= game:get_max_life() / 4
-          and not game:is_suspended() then
-        need_rebuild = true
-        if hearts.empty_heart_sprite:get_animation() ~= "danger" then
-          hearts.empty_heart_sprite:set_animation("danger")
-        end
-        if hearts.danger_sound_timer == nil then
-          hearts.danger_sound_timer = sol.timer.start(self, 250, function()
-            hearts:repeat_danger_sound()
-          end)
-          hearts.danger_sound_timer:set_suspended_with_map(true)
-        end
-      elseif hearts.empty_heart_sprite:get_animation() ~= "normal" then
-        need_rebuild = true
-        hearts.empty_heart_sprite:set_animation("normal")
       end
     end
 
@@ -96,20 +71,6 @@ function hearts_builder:new(game, config)
     sol.timer.start(hearts, 50, function()
       hearts:check()
     end)
-  end
-
-  function hearts:repeat_danger_sound()
-
-    if game:get_life() <= game:get_max_life() / 4 then
-
-      audio_manager:play_sound("misc/low_health")
-      hearts.danger_sound_timer = sol.timer.start(hearts, 750, function()
-        hearts:repeat_danger_sound()
-      end)
-      hearts.danger_sound_timer:set_suspended_with_map(true)
-    else
-      hearts.danger_sound_timer = nil
-    end
   end
 
   function hearts:rebuild_surface()
