@@ -31,12 +31,16 @@ const QString EditorSettings::restore_last_files = "restore_last_files";
 const QString EditorSettings::save_files_before_running = "save_files_before_running";
 const QString EditorSettings::no_audio = "no_audio";
 const QString EditorSettings::quest_size = "quest_size";
+const QString EditorSettings::force_software_rendering = "force_software_rendering";
 
 // Import dialog keys.
 const QString EditorSettings::import_last_source_quest = "import_last_source_quest";
 
 // Console keys.
 const QString EditorSettings::console_history = "console_history";
+
+// Package dialog keys.
+const QString EditorSettings::package_save_path = "package_dialog/save_path";
 
 // Text editor keys.
 const QString EditorSettings::font_family = "text_editor/font_family";
@@ -112,6 +116,9 @@ QMap<QString, QVariant> EditorSettings::default_values = {
 
   // Import dialog.
   { EditorSettings::import_last_source_quest, "" },
+
+  // Package dialog.
+  { EditorSettings::package_save_path, "" },
 
   // Console.
   { EditorSettings::console_history, QStringList() },

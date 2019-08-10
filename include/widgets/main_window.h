@@ -64,6 +64,7 @@ private slots:
   void on_action_close_all_triggered();
   void on_action_import_triggered();
   void on_action_open_quest_properties_triggered();
+  void on_action_package_quest_triggered();
   void on_action_exit_triggered();
   void on_action_cut_triggered();
   void on_action_copy_triggered();
@@ -85,6 +86,7 @@ private slots:
   void on_action_settings_triggered();
   void on_action_website_triggered();
   void on_action_doc_triggered();
+  void on_action_about_triggered();
 
   void current_editor_changed(int index);
   void rename_file_requested(Quest& quest, const QString& path);

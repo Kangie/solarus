@@ -11,7 +11,7 @@
 local item = ...
 local game = item:get_game()
 
--- Event called when the game is initialized.
+-- Event called when all items have been created.
 function item:on_started()
 
   -- Initialize the properties of your item here,
@@ -19,7 +19,7 @@ function item:on_started()
   -- and whether it can be assigned.
 end
 
--- Event called when the hero is using this item.
+-- Event called when the hero starts using this item.
 function item:on_using()
 
   -- Define here what happens when using this item

@@ -1,5 +1,21 @@
 _______________________________________
 
+Solarus Quest Editor 1.6.1 (2019-08-10)
+_______________________________________
+
+* Allow to build a quest package (#431).
+* Map editor: allow teletransporters to have any size multiple of 8 pixels.
+* Map editor: improve performance of deleting multiple entities.
+* Map editor: fix performance of changing entities layer (#454).
+* Map editor: fix wrong selections after undoing changing layers.
+* Tileset editor: fix performance of removing multiple patterns (#456).
+* Sprite editor: fix persisting error message about missing source image (#451).
+* Dialogs editor: fix line wrapping.
+* Initial quest: remove proprietary file added by mistake.
+* Add Force Software Rendering option to 'Running' section (stdgregwar).
+
+_______________________________________
+
 Solarus Quest Editor 1.6.0 (2018-12-22)
 _______________________________________
 
@@ -48,6 +64,7 @@ _______________________________________
 * Initial quest: add some shaders (#320).
 * Text editor: allow to set an external editor to be used instead of the
 built-in one (#398)
+
 _______________________________________
 
 Solarus Quest Editor 1.5.3 (2017-04-01)

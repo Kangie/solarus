@@ -196,13 +196,17 @@ void SpriteScene::update_image() {
 
   missing_text->setVisible(false);
   if (image.isNull()) {
-    QString src_image = model.get_animation_source_image(animation_name);
-    if (!src_image.isEmpty()) {
-      QString path = get_quest().get_sprite_image_path(src_image);
-      path = path.right(path.length() - get_quest().get_data_path().length() - 1);
-      missing_text->setPlainText(tr("Missing source image '%1'").arg(path));
-      missing_text->setVisible(true);
+    if (model.is_animation_image_tileset(animation_name)) {
+      missing_text->setPlainText(tr("This tileset has no sprite image.\nPlease select another tileset."));
+    } else {
+      QString src_image = model.get_animation_source_image(animation_name);
+      if (!src_image.isEmpty()) {
+        QString path = get_quest().get_sprite_image_path(src_image);
+        path = path.right(path.length() - get_quest().get_data_path().length() - 1);
+        missing_text->setPlainText(tr("Missing source image '%1'").arg(path));
+      }
     }
+    missing_text->setVisible(true);
   }
 
   setSceneRect(QRectF(QPoint(0, 0), image.size()));

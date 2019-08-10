@@ -39,6 +39,10 @@ public:
   const Quest& get_source_quest() const;
   Quest& get_destination_quest() const;
 
+private slots:
+
+  virtual void done(int result) override;
+
 signals:
 
   void destination_quest_rename_file_requested(Quest& quest, const QString& path);

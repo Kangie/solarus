@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Solarus Quest Editor
+GenericName[es]=Entorno de desarrollo integrado para Solarus
+GenericName[fr]=Environnement de développement intégré pour Solarus
 GenericName=Integrated development environment for Solarus
+Comment[es]=Una interfaz gráfica para crear y modificar proyectos para el motor de videojuego Solarus.
+Comment[fr]=Une interface graphique pour créer et modifier des quêtes pour le moteur de jeu Solarus.
 Comment=A graphical user interface to create and modify quests for the Solarus engine.
 Exec=solarus-quest-editor
 Terminal=false

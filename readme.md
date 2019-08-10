@@ -1,9 +1,9 @@
-![Solarus Quest Editor logo](/images/solarus-quest-editor-github-readme-logo.png)
+![Solarus Quest Editor logo](logo.png)
 
 [![Build Status](https://travis-ci.org/solarus-games/solarus-quest-editor.svg?branch=dev)](https://travis-ci.org/solarus-games/solarus-quest-editor)
 
 Solarus Quest Editor is a graphical user interface to create and modify quests for the
-[Solarus engine](https://github.com/solarus-games/solarus).
+[Solarus engine](https://gitlab.com/solarus-games/solarus).
 
 This software is written in C++ with Qt.
 
@@ -79,3 +79,11 @@ you can explictly indicate their location instead:
 #### Run:
 
     $ ./solarus-quest-editor
+
+### Adding Documentation
+
+The Solarus Quest Editor supports offline documentation,
+but does not currently build or install it itself. Use `doxygen` with the
+[solarus-doc](https://gitlab.com/solarus-games/solarus-doc) repository to
+create the documentation. Everything in the `<version>/html/` directory should
+be copied to `assets/doc/`.

@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "entities/entity_traits.h"
+#include "widgets/about_dialog.h"
 #include "widgets/change_resource_id_dialog.h"
 #include "widgets/editor.h"
 #include "widgets/enum_menus.h"
@@ -23,6 +24,7 @@
 #include "widgets/import_dialog.h"
 #include "widgets/input_dialog_with_check_box.h"
 #include "widgets/main_window.h"
+#include "widgets/package_dialog.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
 #include "file_tools.h"
@@ -101,6 +103,8 @@ MainWindow::MainWindow(QWidget* parent) :
   update_recent_quests_menu();
   ui.menu_quest->insertMenu(ui.menu_quest->actions()[3], recent_quests_menu);
   ui.action_import->setEnabled(false);
+  ui.action_package_quest->setEnabled(false);
+  ui.action_open_quest_properties->setEnabled(false);
 
   QUndoGroup& undo_group = ui.tab_widget->get_undo_group();
   QAction* undo_action = undo_group.createUndoAction(this);
@@ -195,6 +199,7 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_save_all);
   addAction(ui.action_close_all);
   addAction(ui.action_open_quest_properties);
+  addAction(ui.action_package_quest);
   addAction(ui.action_run_quest);
   addAction(ui.action_stop_music);
   addAction(ui.action_pause_music);
@@ -207,6 +212,7 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_settings);
   addAction(ui.action_doc);
   addAction(ui.action_website);
+  addAction(ui.action_about);
 
   // Connect children.
   connect(ui.quest_tree_view, &QuestTreeView::open_file_requested,
@@ -574,6 +580,8 @@ void MainWindow::close_quest() {
   quest.set_root_path("");
   update_title();
   ui.action_import->setEnabled(false);
+  ui.action_package_quest->setEnabled(false);
+  ui.action_open_quest_properties->setEnabled(false);
   ui.action_run_quest->setEnabled(false);
   ui.quest_tree_view->set_quest(quest);
 
@@ -615,6 +623,8 @@ bool MainWindow::open_quest(const QString& quest_path) {
             ui.tab_widget, &EditorTabs::file_deleted);
 
     ui.action_import->setEnabled(true);
+    ui.action_package_quest->setEnabled(true);
+    ui.action_open_quest_properties->setEnabled(true);
     ui.action_run_quest->setEnabled(true);
 
     add_quest_to_recent_list();
@@ -644,6 +654,8 @@ bool MainWindow::open_quest(const QString& quest_path) {
         quest.set_root_path(quest_path);
         quest.check_version();
         ui.action_import->setEnabled(true);
+        ui.action_package_quest->setEnabled(true);
+        ui.action_open_quest_properties->setEnabled(true);
         ui.action_run_quest->setEnabled(true);
         success = true;
       }
@@ -895,6 +907,15 @@ void MainWindow::on_action_import_triggered() {
 void MainWindow::on_action_open_quest_properties_triggered() {
 
   ui.tab_widget->open_quest_properties_editor(quest);
+}
+
+/**
+ * @brief Slot called when user triggers the "Package Quest" action.
+ */
+void MainWindow::on_action_package_quest_triggered() {
+
+  PackageDialog package(quest, this);
+  package.exec();
 }
 
 /**
@@ -1212,12 +1233,47 @@ void MainWindow::on_action_website_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Website" action.
+ */
+void MainWindow::on_action_about_triggered() {
+
+  SolarusEditor::AboutDialog dialog(this);
+  dialog.exec();
+}
+
+/**
+ * @brief Helper that offers to go online for documentation.
+ */
+static void offer_online_docs(MainWindow * parent) {
+
+  QMessageBox::StandardButton answer = QMessageBox::question(
+      parent,
+      MainWindow::tr("Local Documentation Not Found"),
+      MainWindow::tr(
+          "The local copy of Solarus Documentation could not be found. "
+          "Would you like to try going on line to find the documentaion?"),
+      QMessageBox::Ok | QMessageBox::Cancel,
+      QMessageBox::Ok
+  );
+
+  if (QMessageBox::Ok == answer) {
+    QDesktopServices::openUrl(
+          QUrl("http://www.solarus-games.org/doc/latest/index.html"));
+  }
+}
+
+/**
  * @brief Slot called when the user triggers the "Documentation" action.
  */
 void MainWindow::on_action_doc_triggered() {
 
-  QDesktopServices::openUrl(
-        QUrl("http://www.solarus-games.org/doc/latest/index.html"));
+  const QString& assets_path = FileTools::get_assets_path();
+  const QString& doc_path = assets_path + "/doc/index.html";
+  if (!assets_path.isEmpty() && QFile::exists(doc_path)) {
+    QDesktopServices::openUrl(QUrl(QString("file://") + doc_path));
+  } else {
+    offer_online_docs(this);
+  }
 }
 
 /**
@@ -1698,14 +1754,7 @@ void MainWindow::reload_settings() {
  */
 void MainWindow::update_title() {
 
-  QString version = SOLARUSEDITOR_VERSION;
-  QString title = tr("Solarus Quest Editor %1").arg(version);
-  QString quest_name = quest.get_name();
-  if (!quest_name.isEmpty()) {
-    title = quest_name + " - " + title;
-  }
-
-  setWindowTitle(title);
+  setWindowTitle(quest.get_name());
 }
 
 /**

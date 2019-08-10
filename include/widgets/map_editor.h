@@ -84,6 +84,7 @@ private slots:
   void border_set_tileset_changed();
   void tileset_selection_changed();
   void map_selection_changed();
+  void map_bulk_mode_changed(bool bulk_mode);
   void uncheck_entity_creation_buttons();
   void update_status_bar();
 
@@ -137,7 +138,6 @@ private:
   QToolBar* entity_creation_toolbar;        /**< Toolbar allowing to add each type of entity. */
   QStatusBar* status_bar;                   /**< Status bar with information about the map view. */
   ViewSettings tileset_view_settings;       /**< What is shown and how in the tileset view. */
-
 };
 
 }

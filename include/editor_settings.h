@@ -38,12 +38,16 @@ public:
   static const QString save_files_before_running;
   static const QString no_audio;
   static const QString quest_size;
+  static const QString force_software_rendering;
 
   // Console keys.
   static const QString console_history;
 
   // Import dialog keys.
   static const QString import_last_source_quest;
+
+  // Package dialog keys.
+  static const QString package_save_path;
 
   // Text editor keys.
   static const QString font_family;

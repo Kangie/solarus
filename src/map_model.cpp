@@ -41,7 +41,8 @@ MapModel::MapModel(
   quest(quest),
   map_id(map_id),
   tileset(nullptr),
-  entities() {
+  entities(),
+  bulk_mode(false) {
 
   // Load the map data file.
   QString path = quest.get_map_data_file_path(map_id);
@@ -810,12 +811,20 @@ bool MapModel::is_common_layer(const EntityIndexes& indexes, int& layer) const {
  *
  * Emits entity_layer_changed() for each change.
  *
- * @param indexes_before Sorted indexes of the entities to change.
- * @param layers_after The new layer for each entity.
+ * @param[in] indexes_before Sorted indexes of the entities to change.
+ * @param[in] layers_after The new layer for each entity.
  * Each entity will be placed on top of other entities of that layer.
- * @return The new indexes of the entities.
+ * @param[out] The actual index of each entity right before moving it.
+ * Can be different from @c indexes_before because the already moved
+ * entities might have changed the index of subsequent ones.
+ * Necessary for @a undo_set_entities_layer().
+ * @param[out] The new indexes of the entities.
  */
-EntityIndexes MapModel::set_entities_layer(const EntityIndexes& indexes_before, const QList<int>& layers_after) {
+void MapModel::set_entities_layer(
+    const EntityIndexes& indexes_before,
+    const QList<int>& layers_after,
+    EntityIndexes& indexes_before_gradual,
+    EntityIndexes& indexes_after) {
 
   // TODO possible improvement: entities whose layer do not change should also
   // be moved to keep the relative order of the whole group.
@@ -833,18 +842,16 @@ EntityIndexes MapModel::set_entities_layer(const EntityIndexes& indexes_before, 
     Q_ASSERT(entity != nullptr);
     const int layer_after = layers_after[i];
     if (entity->get_layer() != layer_after) {
+      indexes_before_gradual.append(entity->get_index());  // Can be different from indexes_before[i].
       set_entity_layer(entity->get_index(), layer_after);
     }
     ++i;
   }
 
   // Now all indexes have finished their changes.
-  EntityIndexes indexes_after;
   for (const EntityModel* entity : entities) {
     indexes_after.append(entity->get_index());
   }
-
-  return indexes_after;
 }
 
 /**
@@ -854,11 +861,13 @@ EntityIndexes MapModel::set_entities_layer(const EntityIndexes& indexes_before, 
  * The initial stacking order is restored.
  *
  * @param indexes_after Indexes after the change, as returned by set_entities_layer().
- * @param indexes_before Indexes before the change, as passed to set_entities_layer().
+ * @param indexes_before_gradual Indexes just before each individual change, as returned by set_entities_layer().
  */
-void MapModel::undo_set_entities_layer(const EntityIndexes& indexes_after, const EntityIndexes& indexes_before) {
+void MapModel::undo_set_entities_layer(
+    const EntityIndexes& indexes_after,
+    const EntityIndexes& indexes_before_gradual) {
 
-  Q_ASSERT(indexes_after.size() == indexes_before.size());
+  Q_ASSERT(indexes_before_gradual.size() == indexes_after.size());
 
   // Work on entities instead of indexes, because indexes change during the traversal.
   QList<EntityModel*> entities;
@@ -866,16 +875,16 @@ void MapModel::undo_set_entities_layer(const EntityIndexes& indexes_after, const
     entities.append(&get_entity(index_after));
   }
 
-  for (int i = 0; i < entities.size(); ++i) {
+  for (int i = entities.size() - 1; i >= 0; --i) {
     EntityModel* entity = entities.at(i);
-    const EntityIndex& index_before = indexes_before.at(i);
-    const EntityIndex& index_after = entity->get_index();  // The entity knows its own updated index.
-    if (index_before.layer == index_after.layer) {
+    const EntityIndex& index_before_gradual = indexes_before_gradual.at(i);
+    EntityIndex index_after = entity->get_index();  // The entity knows its own updated index.
+    if (index_before_gradual.layer == index_after.layer) {
       // Nothing to do for this entity.
       continue;
     }
-    EntityIndex tmp_index = set_entity_layer(index_after, index_before.layer);
-    set_entity_order(tmp_index, index_before.order);
+    EntityIndex tmp_index = set_entity_layer(index_after, index_before_gradual.layer);
+    set_entity_order(tmp_index, index_before_gradual.order);
   }
 }
 
@@ -1741,6 +1750,31 @@ void MapModel::rebuild_entity_indexes(int layer) {
     entity->index_changed(index);
     ++i;
   }
+}
+
+/**
+ * @brief Returns whether bulk change mode is active.
+ * @return @c true if bulk change mode is active.
+ */
+bool MapModel::is_bulk_mode() const {
+  return bulk_mode;
+}
+
+/**
+ * @brief Sets whether bulk change mode is active.
+ *
+ * Emits bulk_mode_changed() if there is a change.
+ *
+ * @param bulk_mode @c true to enable bulk mode.
+ */
+void MapModel::set_bulk_mode(bool bulk_mode) {
+
+  if (bulk_mode == this->bulk_mode) {
+    return;
+  }
+
+  this->bulk_mode = bulk_mode;
+  emit bulk_mode_changed(bulk_mode);
 }
 
 }

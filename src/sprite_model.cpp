@@ -186,7 +186,9 @@ void SpriteModel::set_tileset_id(const QString& tileset_id) {
 
   for (const auto& kvp: sprite.get_animations()) {
     if (kvp.second.src_image_is_tileset()) {
-      set_animation_image_dirty(QString(kvp.first.c_str()));
+      const Index index(QString::fromStdString(kvp.first));
+      set_animation_image_dirty(index);
+      emit animation_image_changed(index, QString::fromStdString(kvp.second.get_src_image()));
     }
   }
 }
@@ -703,7 +705,7 @@ QString SpriteModel::get_animation_source_image(const Index& index) const {
  * @param index An animation index.
  * @return \c true if the animation's source image is a tileset.
  */
-bool SpriteModel::is_animation_image_is_tileset(const Index& index) const {
+bool SpriteModel::is_animation_image_tileset(const Index& index) const {
 
   if (!animation_exists(index)) {
     return false;
@@ -1380,7 +1382,7 @@ QImage SpriteModel::get_animation_image(const Index& index) const {
 
   if (animation.image.isNull()) {
     // Lazily load image.
-    if (is_animation_image_is_tileset(index)) {
+    if (is_animation_image_tileset(index)) {
       animation.image = QImage(quest.get_tileset_entities_image_path(tileset_id));
     } else {
       QString src_image = get_animation_source_image(index);

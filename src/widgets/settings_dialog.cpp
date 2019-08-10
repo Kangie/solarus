@@ -67,7 +67,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_quest_size()));
   connect(ui.quest_size_field, SIGNAL(value_changed(int,int)),
           this, SLOT(change_quest_size()));
-
+  connect(ui.force_software_rendering_field, SIGNAL(toggled(bool)),
+          this, SLOT(change_force_software()));
   // Text editor.
   connect(ui.font_family_field, SIGNAL(currentTextChanged(QString)),
           this, SLOT(change_font_family()));
@@ -210,6 +211,7 @@ void SettingsDialog::update() {
   update_save_files();
   update_no_audio();
   update_quest_size();
+  update_force_software();
 
   // Text editor.
   update_font_family();
@@ -382,6 +384,20 @@ void SettingsDialog::update_no_audio() {
 void SettingsDialog::change_no_audio() {
 
   edited_settings[EditorSettings::no_audio] = ui.no_audio_field->isChecked();
+  update_buttons();
+}
+/**
+ * @brief Updates the force software rendering fields
+ */
+void SettingsDialog::update_force_software() {
+  ui.force_software_rendering_field->setChecked(settings.get_value_bool(EditorSettings::force_software_rendering));
+}
+
+/**
+ * @brief Slot called when the user change the force software
+ */
+void SettingsDialog::change_force_software() {
+  edited_settings[EditorSettings::force_software_rendering] = ui.force_software_rendering_field->isChecked();
   update_buttons();
 }
 

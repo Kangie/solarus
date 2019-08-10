@@ -14,11 +14,18 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <solarus/graphics/VertexArray.h>
+
+// Workaround for conflicting declaration of GLsizeiptrARB on Windows.
+#ifndef GL_ARB_vertex_buffer_object
+#define GL_ARB_vertex_buffer_object 1
+#endif
+
 #include "widgets/shader_previewer.h"
 #include "quest.h"
 #include "shader_model.h"
 #include "view_settings.h"
-#include <solarus/graphics/VertexArray.h>
+
 #define GLM_FORCE_INLINE
 #include <solarus/graphics/DefaultShaders.h>
 #include <solarus/graphics/Shader.h>

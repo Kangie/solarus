@@ -50,6 +50,26 @@ constexpr int move_entities_command_id = 1;
 constexpr int resize_entities_command_id = 2;
 
 /**
+ * @brief Puts the map editor in bulk update mode for performance.
+ */
+class BulkMapEditorChange {
+
+public:
+  BulkMapEditorChange(MapEditor& editor):
+    editor(editor),
+    was_bulk_mode(editor.get_map().is_bulk_mode()) {
+    editor.get_map().set_bulk_mode(true);
+  }
+  ~BulkMapEditorChange() {
+    editor.get_map().set_bulk_mode(was_bulk_mode);
+  }
+
+private:
+  MapEditor& editor;
+  bool was_bulk_mode;
+};
+
+/**
  * @brief Parent class of all undoable commands of the map editor.
  */
 class MapEditorCommand : public QUndoCommand {
@@ -717,26 +737,31 @@ public:
   }
 
   void undo() override {
-
-    get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().undo_set_entities_layer(indexes_after, indexes_before_gradual);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
   }
 
   void redo() override {
-
     QList<int> layers_after;
     for (int i = 0; i < indexes_before.size(); ++i) {
       layers_after << layer_after;
     }
-    indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().set_entities_layer(indexes_before, layers_after, indexes_before_gradual, indexes_after);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
 
 private:
-  EntityIndexes indexes_before;  // Sorted indexes before the change.
-  EntityIndexes indexes_after;  // Indexes after the change, in the same order as before.
+  EntityIndexes indexes_before;          // Sorted indexes before the whole change.
+  EntityIndexes indexes_before_gradual;  // Indexes before each individual change, in the same order as before.
+  EntityIndexes indexes_after;           // Indexes after the whole change, in the same order as before.
   int layer_after;
 };
 
@@ -756,7 +781,10 @@ public:
 
   void undo() override {
 
-    get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().undo_set_entities_layer(indexes_after, indexes_before_gradual);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
   }
@@ -768,14 +796,18 @@ public:
       int layer_after = std::min(index_before.layer + 1, get_map().get_max_layer());
       layers_after << layer_after;
     }
-    indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().set_entities_layer(indexes_before, layers_after, indexes_before_gradual, indexes_after);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
 
 private:
-  EntityIndexes indexes_before;  // Sorted indexes before the change.
-  EntityIndexes indexes_after;  // Indexes after the change, in the same order as before.
+  EntityIndexes indexes_before;          // Sorted indexes before the whole change.
+  EntityIndexes indexes_before_gradual;  // Indexes before each individual change, in the same order as before.
+  EntityIndexes indexes_after;           // Indexes after the whole change, in the same order as before.
 };
 
 /**
@@ -794,7 +826,10 @@ public:
 
   void undo() override {
 
-    get_map().undo_set_entities_layer(indexes_after, indexes_before);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().undo_set_entities_layer(indexes_after, indexes_before_gradual);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_before);
   }
@@ -806,14 +841,18 @@ public:
       int layer_after = std::max(index_before.layer - 1, get_map().get_min_layer());
       layers_after << layer_after;
     }
-    indexes_after = get_map().set_entities_layer(indexes_before, layers_after);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().set_entities_layer(indexes_before, layers_after, indexes_before_gradual, indexes_after);
+    }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes_after);
   }
 
 private:
-  EntityIndexes indexes_before;  // Sorted indexes before the change.
-  EntityIndexes indexes_after;  // Indexes after the change, in the same order as before.
+  EntityIndexes indexes_before;          // Sorted indexes before the whole change.
+  EntityIndexes indexes_before_gradual;  // Indexes before each individual change, in the same order as before.
+  EntityIndexes indexes_after;           // Indexes after the whole change, in the same order as before.
 };
 
 /**
@@ -997,13 +1036,19 @@ public:
 
   void undo() override {
     // Restore entities with their old index.
-    get_map().add_entities(std::move(entities));
+    {
+      BulkMapEditorChange bulk(get_editor());
+      get_map().add_entities(std::move(entities));
+    }
     get_map_view().set_selected_entities(indexes);
   }
 
   void redo() override {
     // Remove entities from the map, keep them and their index in this class.
-    entities = get_map().remove_entities(indexes);
+    {
+      BulkMapEditorChange bulk(get_editor());
+      entities = get_map().remove_entities(indexes);
+    }
   }
 
 private:
@@ -1210,6 +1255,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(ui.map_view->get_scene(), &MapScene::selectionChanged,
           this, &MapEditor::map_selection_changed);
+  connect(map, &MapModel::bulk_mode_changed,
+          this, &MapEditor::map_bulk_mode_changed);
 }
 
 /**
@@ -1893,6 +1940,11 @@ void MapEditor::tileset_selection_changed() {
  */
 void MapEditor::map_selection_changed() {
 
+  if (get_map().is_bulk_mode()) {
+    // Ignore selection changes during bulk updates.
+    return;
+  }
+
   // Update whether cut/copy are available.
   bool empty_selection = ui.map_view->is_selection_empty();
   can_cut_changed(!empty_selection);
@@ -1900,15 +1952,13 @@ void MapEditor::map_selection_changed() {
 
   // Update the tileset view with the selected tile patterns.
   const EntityIndexes& entity_indexes = ui.map_view->get_selected_entities();
-  if (entity_indexes.isEmpty()) {
-    return;
-  }
 
   // See if all selected tiles have the same tileset.
   MapModel& map = get_map();
-  QString optional_tileset_id = map.get_entity_field(entity_indexes.first(), "tileset").toString();
+  QString optional_tileset_id = entity_indexes.isEmpty() ? QString() : map.get_entity_field(entity_indexes.first(), "tileset").toString();
   for (const EntityIndex& entity_index : entity_indexes) {
-    if (!map.has_entity_field(entity_index, "tileset")) {
+    EntityType entity_type = map.get_entity_type(entity_index);
+    if (entity_type != EntityType::TILE && entity_type != EntityType::DYNAMIC_TILE) {
       continue;
     }
     if (map.get_entity_field(entity_index, "tileset").toString() != optional_tileset_id) {
@@ -1939,6 +1989,18 @@ void MapEditor::map_selection_changed() {
     }
   }
   tileset->set_selected_indexes(pattern_indexes);
+}
+
+/**
+ * @brief Called when bulk mode is enabled or disabled on the map editor.
+ * @param bulk_mode Whether bulk mode is active.
+ */
+void MapEditor::map_bulk_mode_changed(bool bulk_mode) {
+
+  if (!bulk_mode) {
+    // map_selection_changed() was just unblocked: call it now in case we are not up to date.
+    map_selection_changed();
+  }
 }
 
 /**
