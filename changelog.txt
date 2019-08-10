@@ -1,7 +1,7 @@
-________________________________________
+_______________________________________
 
-Solarus Quest Editor 1.6.1 (in progress)
-________________________________________
+Solarus Quest Editor 1.6.1 (2019-08-10)
+_______________________________________
 
 * Allow to build a quest package (#431).
 * Map editor: allow teletransporters to have any size multiple of 8 pixels.
