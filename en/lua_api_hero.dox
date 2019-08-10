@@ -95,7 +95,8 @@ Teletransports the hero to a different place.
   is placed at coordinates \c (0,0).
 - \c transition_style (string, optional): \c "immediate" (no transition effect)
   \c "fade" (fade-out and fade-in effect) or \c "scrolling".
-  The default value is \c "fade".
+  No value means \ref lua_api_game_get_transition_style
+  "game:get_transition_style()", which is \c "fade" by default.
 
 \remark The transportation will occur at the next cycle of the engine's main
   loop. Therefore, your map is not unloaded immediately and your map script

@@ -488,6 +488,29 @@ restarted.
   \ref lua_api_destination_set_starting_location_mode
   "destination:set_starting_location_mode()").
 
+\subsection lua_api_game_get_transition_style game:get_transition_style()
+
+Returns the style of transition to use by default when changing maps.
+
+This transition style is used when the game starts,
+and when calling \ref lua_api_hero_teleport "hero:teleport()" without
+specifying the style of transition.
+- Return value (string): The default transition style. Can be one of:
+  - \c "immediate": No transition effect.
+  - \c "fade": Fade-out and fade-in effect (default).
+  - \c "scrolling": Scrolling between adjacent maps.
+
+\subsection lua_api_game_set_transition_style game:set_transition_style()
+
+Sets the style of transition to use by default when changing maps.
+
+This transition style is used when the game starts,
+and when calling \ref lua_api_hero_teleport "hero:teleport()" without
+specifying the style of transition.
+- Return value (string): The default transition style.
+  See \ref lua_api_game_get_transition_style "game:get_transition_style()"
+  for the possible values.
+
 \subsection lua_api_game_get_life game:get_life()
 
 Returns the current level of life of the player.
