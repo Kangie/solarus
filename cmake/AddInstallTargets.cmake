@@ -5,3 +5,6 @@ install(TARGETS solarus-quest-editor
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/assets/"
   DESTINATION "${SOLARUS_INSTALL_DATADIR}/assets"
 )
+install(FILES ${solarus_quest_editor_TRANSLATIONS_QM}
+  DESTINATION "${SOLARUS_INSTALL_DATADIR}/translations"
+)
