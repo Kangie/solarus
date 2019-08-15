@@ -59,7 +59,9 @@ function enemy:on_created()
   self:set_invincible_sprite(eye_right)
   self:set_sprite_damage(eye_right, 0)
   -- Shield collisions.
---  sprite:set_default_behavior_on_hero_shield("enemy_weak_to_shield_push")
+  if sprite.set_default_behavior_on_hero_shield then
+    sprite:set_default_behavior_on_hero_shield("enemy_weak_to_shield_push")
+  end
   function sprite:on_pushed_by_shield(shield) enemy:destroy_tongue() end
   -- Update eye sprites.
   function sprite:update_eyes()
@@ -159,7 +161,9 @@ function enemy:disappear()
   for _, s in pairs({shadow, eye_left, eye_right}) do
     s:fade_out(disappearing_delay)
   end
-  --sprite:set_can_be_pushed_by_shield(false)
+  if sprite.set_can_be_pushed_by_shield then
+    sprite:set_can_be_pushed_by_shield(false)
+  end
 end
 
 -- Appear and stop invincibility.
@@ -173,7 +177,9 @@ function enemy:appear()
   for _, s in pairs({shadow, eye_left, eye_right}) do
     s:fade_in(appearing_delay)
   end
-  --sprite:set_can_be_pushed_by_shield(true)
+  if sprite.set_can_be_pushed_by_shield then
+    sprite:set_can_be_pushed_by_shield(true)
+  end
 end
 
 -- Destroy tongue when necessary.
@@ -292,7 +298,9 @@ function enemy:tongue_attack(entity)
     end
   end
   -- Enable tongue main sprite collision with shield.
-  --tongue_sprite:set_can_be_pushed_by_shield(true)
+  if tongue_sprite.set_can_be_pushed_by_shield then
+    tongue_sprite:set_can_be_pushed_by_shield(true)
+  end
   function tongue_sprite:on_shield_collision(shield)
     enemy:on_tongue_collision_shield(shield)
   end
@@ -331,4 +339,41 @@ function enemy:on_tongue_collision_shield(shield)
     end
     return true
   end)
+end
+
+
+
+-- Attach a custom damage to the sprites of the enemy.
+function enemy:get_sprite_damage(sprite)
+  return (sprite and sprite.custom_damage) or self:get_damage()
+end
+function enemy:set_sprite_damage(sprite, damage)
+  sprite.custom_damage = damage
+end
+
+-- Warning: do not override these functions if you use the "custom shield" script.
+function enemy:on_attacking_hero(hero, enemy_sprite)
+  local enemy = self
+  local hero = enemy:get_map():get_hero()
+  -- Do nothing if enemy sprite cannot hurt hero.
+  if enemy:get_sprite_damage(enemy_sprite) == 0 then return end
+  local collision_mode = enemy:get_attacking_collision_mode()
+  if not hero:overlaps(enemy, collision_mode) then return end  
+  -- Do nothing when shield is protecting.
+  if hero.is_shield_protecting_from_enemy
+      and hero:is_shield_protecting_from_enemy(enemy, enemy_sprite) then
+    return
+  end
+  -- Check for a custom attacking collision test.
+  if enemy.custom_attacking_collision_test and
+      not enemy:custom_attacking_collision_test(enemy_sprite) then
+    return
+  end
+  -- Otherwise, hero is not protected. Use built-in behavior.
+  local damage = enemy:get_damage()
+  if enemy_sprite then
+    hero:start_hurt(enemy, enemy_sprite, damage)
+  else
+    hero:start_hurt(enemy, damage)
+  end
 end

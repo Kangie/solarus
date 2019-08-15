@@ -8,7 +8,7 @@ local slime_model = "slime_red" -- Type of the new slime.
 
 -- Event called when the enemy is initialized.
 function enemy:on_created()
-  local sprite = enemy:create_sprite("enemies/" .. enemy:get_breed())
+  local sprite = enemy:create_sprite("enemies/slime_egg_blue")
   sprite:set_animation("egg_hatching")
   self:set_pushed_back_when_hurt(false)
   enemy:set_life(1)

@@ -1,12 +1,4 @@
--- Lua script of enemy goblin.
--- This script is executed every time an enemy with this model is created.
-
--- Feel free to modify the code below.
--- You can add more events and remove the ones you don't need.
-
--- See the Solarus Lua API documentation for the full specification
--- of types, events and methods:
--- http://www.solarus-games.org/doc/latest
+-- Lua script of enemy Goblin Green.
 
 local enemy = ...
 local game = enemy:get_game()
@@ -38,7 +30,9 @@ function enemy:on_created()
   self:set_life(3)
   self:set_damage(body_damage)
   -- General shield properties.
-  self:set_default_behavior_on_hero_shield("normal_shield_push")
+  if self.set_default_behavior_on_hero_shield then
+    self:set_default_behavior_on_hero_shield("normal_shield_push")
+  end
 end
 
 -- Event called when the enemy should start or restart its movements.
@@ -68,12 +62,12 @@ end
 function enemy:get_weapon() return weapon end
 function enemy:set_weapon(weapon_name)
   -- Choose random weapon, if necessary.
-  weapon = weapon_name
   local weapon_list = {"club", "axe", "slingshot"}
   if weapon_name == "random" then
     local index = math.random(1, #weapon_list)
     weapon_name = weapon_list[index]
   end
+  weapon = weapon_name
   -- Destroy weapons and sprites.
   sprite, weapon_sprite, has_weapon, has_throwable_weapon = nil, nil, nil
   for _, sp in self:get_sprites() do self:remove_sprite(sp) end
@@ -100,7 +94,7 @@ function enemy:set_weapon(weapon_name)
     self:set_attack_consequence_sprite(weapon_sprite, "sword", "custom")
   end
   -- Club collision with shield.
-  if weapon_sprite then
+  if weapon_sprite and weapon_sprite.set_default_behavior_on_hero_shield then
     weapon_sprite:set_default_behavior_on_hero_shield("enemy_strong_to_shield_push")
   end
 end
@@ -212,14 +206,20 @@ function enemy:throw()
       self:get_sprite():set_animation("nut_break")
     end
   end
-  projectile:set_default_behavior_on_hero_shield(behavior)
+  if projectile.set_default_behavior_on_hero_shield then
+    projectile:set_default_behavior_on_hero_shield(behavior)
+  end
   -- Start throw sounds.
   if weapon_name == "axe" then
     sol.audio.play_sound(throw_axe_sound_id)
-    projectile:set_pushed_by_shield_property("sound_id", axe_hit_shield_sound_id)
+    if projectile.set_pushed_by_shield_property then
+      projectile:set_pushed_by_shield_property("sound_id", axe_hit_shield_sound_id)
+    end
   elseif weapon_name == "slingshot" then
     sol.audio.play_sound(throw_slingshot_sound_id)
-    projectile:set_pushed_by_shield_property("sound_id", slingshot_hit_shield_sound_id)
+    if projectile.set_pushed_by_shield_property then
+      projectile:set_pushed_by_shield_property("sound_id", slingshot_hit_shield_sound_id)
+    end
   end
   -- Override normal push function.
   function projectile:on_shield_collision(shield)
@@ -248,7 +248,9 @@ function enemy:throw()
     m:start(self)
     -- Disable collisions to avoid problems.
     self.on_shield_collision = nil
-    self:set_default_behavior_on_hero_shield(nil)
+    if self.set_default_behavior_on_hero_shield then
+      self:set_default_behavior_on_hero_shield(nil)
+    end
   end
 end
 
@@ -277,9 +279,46 @@ end
 
 -- Push hero if sword hits the club.
 function enemy:on_custom_attack_received(attack, sprite)
+  if not hero.push then return end
   if weapon == "club" and attack == "sword" and sprite == weapon_sprite then
     local p = weapon_sprite:get_push_hero_on_shield_properties()
     p.pushing_entity = self
     hero:push(p)
+  end
+end
+
+
+-- Attach a custom damage to the sprites of the enemy.
+function enemy:get_sprite_damage(sprite)
+  return (sprite and sprite.custom_damage) or self:get_damage()
+end
+function enemy:set_sprite_damage(sprite, damage)
+  sprite.custom_damage = damage
+end
+
+-- Warning: do not override these functions if you use the "custom shield" script.
+function enemy:on_attacking_hero(hero, enemy_sprite)
+  local enemy = self
+  local hero = enemy:get_map():get_hero()
+  -- Do nothing if enemy sprite cannot hurt hero.
+  if enemy:get_sprite_damage(enemy_sprite) == 0 then return end
+  local collision_mode = enemy:get_attacking_collision_mode()
+  if not hero:overlaps(enemy, collision_mode) then return end  
+  -- Do nothing when shield is protecting.
+  if hero.is_shield_protecting_from_enemy
+      and hero:is_shield_protecting_from_enemy(enemy, enemy_sprite) then
+    return
+  end
+  -- Check for a custom attacking collision test.
+  if enemy.custom_attacking_collision_test and
+      not enemy:custom_attacking_collision_test(enemy_sprite) then
+    return
+  end
+  -- Otherwise, hero is not protected. Use built-in behavior.
+  local damage = enemy:get_damage()
+  if enemy_sprite then
+    hero:start_hurt(enemy, enemy_sprite, damage)
+  else
+    hero:start_hurt(enemy, damage)
   end
 end

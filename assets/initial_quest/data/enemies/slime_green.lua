@@ -10,17 +10,21 @@ local jump_duration = 1000 -- Time in milliseconds.
 local max_height = 24 -- Height for the jump, in pixels.
 local jumping_speed = 60 -- Speed of the movement during the jump.
 local needs_put_egg = false -- Do not put eggs by default.
-local split_when_hurt = true -- Split in smaller slimes when hurt.
+local split_when_hurt = nil -- Split in smaller slimes when hurt. Values: true, false, nil (random).
 
 function enemy:on_created()
   self:set_life(life)
   self:set_damage(damage)
   self:set_size(16, 16)
   self:set_origin(8, 13)
-  self:set_pushed_back_when_hurt(false)
-  self:set_push_hero_on_sword(true)
+  self:set_pushed_back_when_hurt(true)
   self:set_obstacle_behavior("flying") -- Allow to traverse bad grounds (and fall on them).
-  -- Note that this function is called a second time for purple slimes, to make them purple
+  if split_when_hurt == nil then split_when_hurt = (math.random(0,1) == 1) end
+  -- Enable shield push.
+  if self.set_default_behavior_on_hero_shield then
+    self:set_default_behavior_on_hero_shield("normal_shield_push")
+  end
+  -- This function is called a second time for purple slimes, to make them purple
   -- instead of green. In that case this function applies later to the new sprite (purple one).
   local sprite = self:get_sprite()
   if not sprite then -- Condition used for purple slimes, when calling on_created twice.
@@ -42,6 +46,16 @@ function enemy:on_created()
       sol.timer.start(enemy, 200, function()
         enemy:start_going_hero()
       end)
+    end
+  end
+end
+
+-- Update sprites direction.
+function enemy:on_movement_changed(movement)
+  local dir4 = movement:get_direction4()
+  if dir4 then
+    for _, s in enemy:get_sprites() do
+      s:set_direction(dir4)
     end
   end
 end
@@ -125,6 +139,8 @@ function enemy:finish_jump()
   self:stop_movement()
   self:get_sprite():set_animation("finish_jump")
   self:set_can_attack(true) -- Allow to attack the hero again.
+  -- Finish shield protection.
+  if enemy.set_can_be_pushed_by_shield then enemy:set_can_be_pushed_by_shield(true) end
 end
 
 -- Jump.
@@ -136,6 +152,8 @@ function enemy:jump()
   sol.audio.play_sound("jump")
   self:set_invincible() -- Set invincible.
   self:set_can_attack(false) -- Do not attack hero during jump.
+  -- Shield protection.
+  if enemy.set_can_be_pushed_by_shield then enemy:set_can_be_pushed_by_shield(false) end
   -- Start shift on sprite.
   local function f(t) -- Shifting function.
     return math.floor(4 * max_height * (t / jump_duration - (t / jump_duration) ^ 2))
@@ -157,7 +175,6 @@ function enemy:jump()
   -- The angle is partially random to avoid too many enemies overlapping.
   local m = sol.movement.create("straight")
   local angle = self:get_angle(self:get_map():get_hero())
-  math.randomseed(os.time()) -- Initialize random seed.
   local d = 2*math.random() - 1 -- Random real number in [-1,1].
   angle = angle + d*math.pi/4 -- Alter jumping angle, randomly.
   m:set_speed(jumping_speed)
@@ -173,12 +190,9 @@ function enemy:jump()
   end)
 end
 
--- Add an "splash" sprite when dying.
+-- Start "break" animation when dying.
 function enemy:on_dying()
-  local slime_sprite_id = self:get_sprite():get_animation_set() -- Get sprite variant of slime.
-  local splash = self:create_sprite(slime_sprite_id)
-  splash:set_animation("pieces")
-  splash:set_xy(0,-14)
+  self:get_sprite():set_animation("break")
 end
 
 -- Check for bad ground (water, hole and lava) and also for empty ground.
@@ -255,16 +269,15 @@ function enemy:set_split_when_hurt(bool) split_when_hurt = bool end
 function enemy:get_split_when_hurt() return split_when_hurt end
 
 function enemy:on_hurt()
-  if not split_when_hurt then return
-  else
-    local x, y, layer = self:get_position()
-    local prop = {x = x, y = y, layer = layer, direction = 0, breed = "slime_green_small"}
-    local s1 = map:create_enemy(prop)
-    local s2 = map:create_enemy(prop)
-    local s3 = map:create_enemy(prop)
-    s1:jump(2 * math.pi / 12)
-    s2:jump(10 * math.pi / 12)
-    s3:jump(18 * math.pi / 12)
-    self:remove()
-  end
+  if not split_when_hurt then return end
+  -- Create green slimys.
+  local x, y, layer = self:get_position()
+  local prop = {x = x, y = y, layer = layer, direction = 0, breed = "slimy_green"}
+  local s1 = map:create_enemy(prop)
+  local s2 = map:create_enemy(prop)
+  local s3 = map:create_enemy(prop)
+  s1:jump(2 * math.pi / 12)
+  s2:jump(10 * math.pi / 12)
+  s3:jump(18 * math.pi / 12)
+  self:remove()
 end

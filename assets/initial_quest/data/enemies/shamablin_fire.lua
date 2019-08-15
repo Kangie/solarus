@@ -1,12 +1,4 @@
--- Lua script of enemy goblin_shaman_fire.
--- This script is executed every time an enemy with this model is created.
-
--- Feel free to modify the code below.
--- You can add more events and remove the ones you don't need.
-
--- See the Solarus Lua API documentation for the full specification
--- of types, events and methods:
--- http://www.solarus-games.org/doc/latest
+-- Lua script of enemy Shamablin Fire.
 
 local enemy = ...
 local game = enemy:get_game()
@@ -23,7 +15,9 @@ function enemy:on_created()
   self:set_life(life)
   self:set_damage(body_damage)
   -- General shield properties.
-  self:set_default_behavior_on_hero_shield("normal_shield_push")
+  if self.set_default_behavior_on_hero_shield then
+    self:set_default_behavior_on_hero_shield("normal_shield_push")
+  end
 end
 
 -- Event called when the enemy should start or restart its movements.
@@ -69,7 +63,9 @@ function enemy:throw_fireball_to(entity)
   fireball_sprite:set_animation("create_fireball")
   -- Set fireball custom properties.
   fireball:set_invincible()
-  fireball:set_default_behavior_on_hero_shield("burn_push")
+  if fireball.set_default_behavior_on_hero_shield then
+    fireball:set_default_behavior_on_hero_shield("burn_push")
+  end
   -- Start movement on fireball after creating animation.
   function fireball:on_restarted() -- This avoids restart problem.
     fireball_sprite:set_animation("create_fireball")

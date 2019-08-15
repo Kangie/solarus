@@ -72,14 +72,17 @@ sprite{ id = "enemies/skelfos", description = "Skelfos" }
 sprite{ id = "enemies/skullbat", description = "Skullbat" }
 sprite{ id = "enemies/slime_cyan", description = "Slime (cyan)" }
 sprite{ id = "enemies/slime_egg", description = "Slime egg" }
+sprite{ id = "enemies/slime_egg_blue", description = "Slime Egg Blue" }
 sprite{ id = "enemies/slime_green", description = "Slime (green)" }
 sprite{ id = "enemies/slime_green_small", description = "Small slime (green)" }
 sprite{ id = "enemies/slime_purple", description = "Slime (purple)" }
 sprite{ id = "enemies/slime_red", description = "Slime (red)" }
 sprite{ id = "enemies/slime_yellow", description = "Slime (yellow)" }
+sprite{ id = "enemies/slimy_green", description = "Slimy Green" }
 sprite{ id = "enemies/soldier", description = "Soldier" }
 sprite{ id = "enemies/soldier_feather", description = "Soldier Feather" }
 sprite{ id = "enemies/soldier_sword", description = "Soldier Sword" }
+sprite{ id = "enemies/spiderskull", description = "Spiderskull" }
 sprite{ id = "enemies/wings_evil", description = "Wings evil" }
 sprite{ id = "entities/arrow", description = "Arrow" }
 sprite{ id = "entities/bomb", description = "Bomb" }
@@ -283,8 +286,6 @@ item{ id = "sword", description = "Sword" }
 item{ id = "tunic", description = "Tunic (red / green / purple)" }
 
 enemy{ id = "chameleon", description = "Chameleon" }
-enemy{ id = "clucko", description = "Clucko" }
-enemy{ id = "crow", description = "Crow" }
 enemy{ id = "explosion", description = "Explosion" }
 enemy{ id = "flame", description = "Flame" }
 enemy{ id = "generic_projectile", description = "Projectile" }
@@ -301,7 +302,7 @@ enemy{ id = "slime_green_small", description = "Small Slime (green)" }
 enemy{ id = "slime_purple", description = "Slime (purple)" }
 enemy{ id = "slime_red", description = "Slime (red)" }
 enemy{ id = "slime_yellow", description = "Slime (yellow)" }
-enemy{ id = "soldier", description = "Soldier" }
+enemy{ id = "slimy_green", description = "Slimy Green" }
 
 
 language{ id = "en", description = "English" }
@@ -313,8 +314,6 @@ shader{ id = "grayscale", description = "grayscale" }
 shader{ id = "hq2x", description = "hq2x" }
 
 file{ path = "enemies/chameleon.lua", author = "Diarandor", license = "GPL v3" }
-file{ path = "enemies/clucko.lua", author = "Diarandor", license = "GPL v3" }
-file{ path = "enemies/crow.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/explosion.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/flame.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/generic_projectile.lua", author = "Diarandor", license = "GPL v3" }
@@ -331,7 +330,7 @@ file{ path = "enemies/slime_green_small.lua", author = "Diarandor", license = "G
 file{ path = "enemies/slime_purple.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_red.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_yellow.lua", author = "Diarandor", license = "GPL v3" }
-file{ path = "enemies/soldier.lua", author = "Diarandor", license = "GPL v3" }
+file{ path = "enemies/slimy_green.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "fonts/8_bit.png", author = "usr_share, Christopho", license = "Public domain" }
 file{ path = "fonts/enter_command.ttf", author = "Jeti", license = "CC BY 4.0" }
 file{ path = "items/gem.lua", author = "Christopho", license = "GPL v3" }
@@ -597,8 +596,10 @@ file{ path = "sprites/enemies/skullbat.png", author = "Diarandor", license = "CC
 file{ path = "sprites/enemies/slime_cyan.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_cyan.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_egg.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/enemies/slime_egg_blue.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/enemies/slime_egg_blue.png", author = "Diarandor", license = "CC-BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_green.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
-file{ path = "sprites/enemies/slime_green.png", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/enemies/slime_green.png", author = "Diarandor", license = "CC-BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_green_small.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_purple.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_purple.png", author = "Diarandor", license = "CC BY-SA 4.0" }
@@ -606,11 +607,15 @@ file{ path = "sprites/enemies/slime_red.dat", author = "Diarandor", license = "C
 file{ path = "sprites/enemies/slime_red.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_yellow.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/slime_yellow.png", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/enemies/slimy_green.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/enemies/slimy_green.png", author = "Diarandor", license = "CC-BY-SA 4.0" }
 file{ path = "sprites/enemies/soldier.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/soldier.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/soldier_feather.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/soldier_sword.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/soldier_sword.png", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/enemies/spiderskull.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/enemies/spiderskull.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/enemies/wings_evil.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/arrow.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
