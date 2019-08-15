@@ -3,6 +3,7 @@ _______________________________________
 Solarus Quest Editor 1.6.2 (2019-08-15)
 _______________________________________
 
+* Automatically install translation files.
 * Update French translation.
 
 _______________________________________
