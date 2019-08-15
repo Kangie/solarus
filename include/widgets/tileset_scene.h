@@ -36,6 +36,7 @@ class TilesetScene : public QGraphicsScene {
 public:
 
   TilesetScene(TilesetModel& model, QObject* parent);
+  ~TilesetScene() override;
 
   const TilesetModel& get_model() const;
   const Quest& get_quest() const;
