@@ -24,14 +24,10 @@ local sprite_names = {"shadow", "body", "legs", "arms", "head"}
 local sprites = {}
 local synchronized_sprite_names = {"shadow", "legs", "arms", "head"} -- Synchronized with body.
 local walking_behavior_list = {"go_to_hero", "wander"}
-local walking_behavior = "random" -- Change this for testing.
 local current_walking_behavior
 local arms_behavior_list = {"none", "throw_arms"}
-local arms_behavior = "random" -- Change this for testing.
 local head_behavior_list = {"none", "carry_head", "throw_head"}
-local head_behavior = "random" -- Change this for testing.
 local watch_behavior_list = {"none", "watch_hero", "crazy"}
-local watch_behavior = "random" -- Change this for testing.
 local detection_distance = 80 -- Used to detect the hero.
 local min_walking_speed, max_walking_speed, running_speed = 15, 40, 50
 local min_wander_distance, max_wander_distance = 16, 80
@@ -40,6 +36,12 @@ local throw_head_distance = 150
 local throw_arms_distance = 80
 local unattach_head_distance = 100
 local is_carrying_head
+-- Behaviors: change these for testing.
+local walking_behavior = enemy:get_property("walking_behavior") or "random"
+local arms_behavior = enemy:get_property("arms_behavior") or "random"
+local head_behavior = enemy:get_property("head_behavior") or "random"
+local watch_behavior = enemy:get_property("watch_behavior") or "random"
+
 
 -- Event called when the enemy is initialized.
 function enemy:on_created()
@@ -103,7 +105,9 @@ function enemy:on_created()
   -- Initialize the properties (life, damage, shield push, etc).
   self:set_life(life)
   self:set_damage(damage)
-  self:set_default_behavior_on_hero_shield("normal_shield_push")
+  if self.set_default_behavior_on_hero_shield then
+    self:set_default_behavior_on_hero_shield("normal_shield_push")
+  end
   -- Initialize behavior from the script custom properties. 
   walking_behavior = self:get_property("walking_behavior") or walking_behavior
   watch_behavior = self:get_property("watch_behavior") or watch_behavior
@@ -349,15 +353,18 @@ function enemy:throw_head()
                breed = "generic_projectile"})
   head:set_invincible()
   head:set_obstacle_behavior("flying")
+  head:set_damage(damage)
   local head_sprite = head:create_sprite(enemy:get_sprite():get_animation_set())
-  head:set_sprite_damage(head_sprite, 0)
+  function head:on_attacking_hero(hero, enemy_sprite)
+    return -- Do not hurt hero while falling.
+  end
   function head_sprite:on_animation_changed(anim)
     if anim ~= "carried_head" then head_sprite:set_animation("carried_head") end
   end
   head_sprite:set_animation("carried_head")
   function head:kill()
     head:stop_movement()
-    head:set_sprite_damage(head_sprite, damage)
+    head.on_attacking_hero = nil
     local shadow = head:get_sprite("shadow")
     if shadow then head:remove_sprite(shadow) end
     head_sprite.on_animation_changed = nil
@@ -393,7 +400,6 @@ function enemy:throw_head()
   local shadow = head:create_sprite("shadows/shadow_small", "shadow")
   shadow:set_animation("walking")
   head:bring_sprite_to_back(shadow)
-  head:set_sprite_damage(shadow, 0)
 end
 
 -- Throw arms.

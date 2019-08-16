@@ -104,6 +104,14 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
 }
 
 /**
+ * @brief Destructor.
+ */
+TilesetScene::~TilesetScene() {
+  disconnect(this, &TilesetScene::selectionChanged,
+             this, &TilesetScene::set_selection_from_scene);
+}
+
+/**
  * @brief Returns the tileset represented in the scene.
  * @return The tileset.
  */
