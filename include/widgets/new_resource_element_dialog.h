@@ -42,6 +42,7 @@ public:
   void set_element_id(const QString& value);
   QString get_element_description() const;
   void set_element_description(const QString& value);
+  QuestDatabase::FileInfo get_file_info() const;
 
 public slots:
 

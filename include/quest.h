@@ -161,7 +161,9 @@ public:
   void create_dir(const QString& parent_path, const QString& dir_name);
   bool create_dir_if_not_exists(const QString& parent_path, const QString& dir_name);
   void create_resource_element(ResourceType resource_type,
-                               const QString& element_id, const QString& description);
+                               const QString& element_id,
+                               const QString& description,
+                               const QuestDatabase::FileInfo& file_info = QuestDatabase::FileInfo());
   void rename_file(const QString& old_path, const QString& new_path);
   bool rename_file_if_exists(const QString& old_path, const QString& new_path);
   void rename_dir(const QString& old_path, const QString& new_path);

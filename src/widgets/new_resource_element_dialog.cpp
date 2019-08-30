@@ -152,6 +152,19 @@ void NewResourceElementDialog::set_element_description(const QString& value) {
 }
 
 /**
+ * @brief Returns resource element FileInfo entered by the user.
+ * @return A copy of the FileInfo
+ */
+QuestDatabase::FileInfo NewResourceElementDialog::get_file_info() const {
+
+  return QuestDatabase::FileInfo{
+    ui.author_line_edit->text(),
+    ui.licence_line_edit->text(),
+  };
+}
+
+
+/**
  * @brief Closes the dialog unless the user tries to set invalid data.
  * @param result Result code of the dialog.
  */
