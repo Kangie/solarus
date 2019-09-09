@@ -1822,7 +1822,9 @@ bool Quest::create_dir_if_not_exists(const QString& parent_path, const QString& 
  * @throws EditorException If an error occured.
  */
 void Quest::create_resource_element(ResourceType resource_type,
-                                    const QString& element_id, const QString& description) {
+                                    const QString& element_id,
+                                    const QString& description,
+                                    const QuestDatabase::FileInfo& file_info) {
 
   Quest::check_valid_file_name(element_id);
 
@@ -1889,6 +1891,13 @@ void Quest::create_resource_element(ResourceType resource_type,
   if (!database.exists(resource_type, element_id)) {
     done_in_resource_list = true;
     database.add(resource_type, element_id, description);
+    if (!file_info.is_empty()) {
+      for (QString const & abs_path :
+            get_resource_element_paths(resource_type, element_id)) {
+        QString const & path = get_path_relative_to_data_path(abs_path);
+        database.set_file_info(path, file_info);
+      }
+    }
     database.save();
   }
 
