@@ -12,7 +12,8 @@ Using an input handler is prefered, but you can use \c sol.input for the cases
 where more information than a single event is needed.
 
 Also note that during the game, there exists the higher-level notion of
-\ref lua_api_game_overview_commands "game commands" to ease your life.
+\ref lua_api_game_overview_commands "game commands" to ease your life which
+have their own higher-level events.
 Commands are only generated from unhandled input, so handling a piece of input
 will prevent the command from being activated.
 
@@ -129,20 +130,18 @@ Simulates releasing a keyboard key.
 There are several lua types that act as input handlers. These are
 \ref lua_api_main "sol.main",
 the running \ref lua_api_game "game",
-the active map \ref lua_api_map "map",
+the active \ref lua_api_map "map",
 the hero's current \ref lua_api_state "custom state" and
 any \ref lua_api_menu "menus" in the context of another event handler.
+When input occurs the first four (main, game, map and state) are checked in
+that order with menus in between. Menus are checked after their context unless
+their context is another menu then they are checked before. There is no strict
+ordering between menus in the same context.
 
 When an input handler is checked if it has the approprate event
 defined on it the event is called. If the handler returns true the input is
 fully handled and propogation stops. If there is no handler or the event
 returns false or nothing then the next handler is checked.
-
-Events on \c sol.main are always called first. If there is a running game it
-also checks the game, then the active map and then the state of the hero.
-After any event handler is checked any menus in its context are checked.
-Except for when the handler is itself is a menu then menus in its context are
-checked first.
 
 \remark It is only after all of these handlers are checked and none of them
 handle the low-level input that the input is convered into a
