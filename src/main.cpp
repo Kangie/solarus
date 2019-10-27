@@ -25,6 +25,7 @@
 #include <QLibraryInfo>
 #include <QStyleFactory>
 #include <QTranslator>
+#include <SDL.h>
 
 namespace SolarusEditor {
 
