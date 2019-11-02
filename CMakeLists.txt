@@ -11,7 +11,12 @@ include(cmake/AddIncludeDirectories.cmake)
 include(cmake/AddSourceFiles.cmake)
 
 # Add an icon for the executable in Windows.
-if(WIN32)
+if(MINGW)
+  set(solarus_quest_editor_SOURCES
+    ${solarus_quest_editor_SOURCES}
+    cmake/win32/resources-mingw.rc
+  )
+elseif(WIN32)
   set(solarus_quest_editor_SOURCES
     ${solarus_quest_editor_SOURCES}
     cmake/win32/resources.rc
