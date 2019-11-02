@@ -8,7 +8,7 @@ include_directories(SYSTEM
   "${SOLARUS_INCLUDE_DIRS}"
   "${SOLARUS_GUI_INCLUDE_DIRS}"
   "${MODPLUG_INCLUDE_DIRS}"  # Before SDL2 because we want the sndfile.h of ModPlug.
-  "${SDL2_INCLUDE_DIR}"
+  "${SDL2_INCLUDE_DIRS}"
   "${SDL2_TTF_INCLUDE_DIR}"
   "${SDL2_IMAGE_INCLUDE_DIR}"
   "${OPENAL_INCLUDE_DIR}"
