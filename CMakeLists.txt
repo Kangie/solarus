@@ -1,13 +1,13 @@
-# CMake 2.8.11 or above is necessary for recent Qt5 cmake helper functions.
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 
-project(solarus-quest-editor)
+project(solarus-quest-editor VERSION 1.6.2)
 
 include(cmake/AddConfigurationVars.cmake)
 include(cmake/AddCompilationFlags.cmake)
 include(cmake/AddDefines.cmake)
 include(cmake/AddDependencies.cmake)
 include(cmake/AddIncludeDirectories.cmake)
+include(cmake/AddVersionHeader.cmake)
 include(cmake/AddSourceFiles.cmake)
 
 # Add an icon for the executable in Windows.

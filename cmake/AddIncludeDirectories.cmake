@@ -1,6 +1,7 @@
 # Include directories.
 include_directories(
   "${CMAKE_BINARY_DIR}"
+  "${CMAKE_BINARY_DIR}/include"  # For version.h.
   "${CMAKE_SOURCE_DIR}/include"
 )
 
