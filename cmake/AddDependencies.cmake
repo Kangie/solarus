@@ -20,7 +20,7 @@ if(SOLARUS_USE_LUAJIT)
 else()
   find_package(Lua51 "5.1" EXACT REQUIRED)
 endif()
-find_package(Solarus "${PROJECT_VERSION}" EXACT REQUIRED)
+find_package(Solarus "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}" EXACT REQUIRED)
 find_package(SolarusGui REQUIRED)
 
 # Explicit link to libdl is needed for Lua on some systems.
