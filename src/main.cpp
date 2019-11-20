@@ -62,19 +62,26 @@ int run_editor_gui(int argc, char* argv[]) {
 
   EditorSettings::load_default_application_settings();
 
-  // Set up the translations.
+  // Get current system locale.
+  const QLocale locale = QLocale::system();
+
+  // Set up Qt translations.
   QTranslator qt_translator;
-  qt_translator.load("qt_" + QLocale::system().name(),
+  qt_translator.load(locale, "qt", "_",
                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   application.installTranslator(&qt_translator);
 
-  QTranslator translator;
-  QString filename = "solarus_editor_" + QLocale::system().name();
-  bool translation_loaded = translator.load(filename);
-  if (!translation_loaded) {
-    translator.load(filename, SOLARUSEDITOR_DATADIR_PATH "/translations");
+  // Set up application translations.
+  QTranslator app_translator;
+  for (const QString& searchPath : std::vector<QString>{
+           QApplication::applicationDirPath(),
+           QApplication::applicationDirPath() + "/translations",
+           SOLARUSEDITOR_DATADIR_PATH "/translations"}) {
+    if (app_translator.load(locale, "solarus_editor", "_", searchPath)) {
+      break;
+    }
   }
-  application.installTranslator(&translator);
+  application.installTranslator(&app_translator);
 
   MainWindow window(nullptr);
 
