@@ -465,9 +465,6 @@
    <property name="text">
     <string>Build quest package...</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+B</string>
-   </property>
   </action>
   <action name="action_export_to_image">
    <property name="icon">

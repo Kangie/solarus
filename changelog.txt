@@ -5,6 +5,7 @@ _______________________________________
 
 * Fix crash when closing tileset views (#467).
 * Fix broken enemies in the initial quest (#466).
+* Fix Ctrl-B shortcut not working for contour generation.
 * Automatically install translation files.
 * Add author and license fields when creating new resources.
 * Update French translation.
