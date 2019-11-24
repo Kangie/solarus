@@ -17,6 +17,6 @@ find_package_handle_standard_args(SOLARUS
         SOLARUS_LIBRARY)
 
 if(SOLARUS_FOUND)
-    set(SOLARUS_INCLUDE_DIRS ${SOLARUS_INCLUDE_DIR})
+    set(SOLARUS_INCLUDE_DIRS ${SOLARUS_INCLUDE_DIR} "${SOLARUS_INCLUDE_DIR}/solarus/third_party")
     set(SOLARUS_LIBRARIES ${SOLARUS_LIBRARY})
 endif()
