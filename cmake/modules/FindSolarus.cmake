@@ -2,21 +2,76 @@
 # Find the Solarus includes and library.
 # Does not look for the Solarus GUI library.
 #
-#  SOLARUS_INCLUDE_DIRS - where to find solarus headers.
-#  SOLARUS_LIBRARIES    - List of libraries when using libsolarus.
-#  SOLARUS_FOUND        - True if Solarus was found.
-find_path(SOLARUS_INCLUDE_DIR solarus/core/MainLoop.h)
+#  SOLARUS_INCLUDE_DIRS   - where to find solarus headers.
+#  SOLARUS_LIBRARIES      - List of libraries when using libsolarus.
+#  SOLARUS_VERSION_STRING -
+#    Human-readable string containing the version of Solarus.
+#
+# A custom installation path to search can be provided using
+# the SOLARUS_DIR environment or CMake variables.
 
-find_library(SOLARUS_LIBRARY solarus)
+# Try to find the Solarus include directory.
+find_path(SOLARUS_INCLUDE_DIR
+  NAMES
+    solarus/core/MainLoop.h
+  HINTS
+    ${SOLARUS_DIR}
+    $ENV{SOLARUS_DIR}
+  PATHS
+    /sw # Fink
+    /opt/local # DarwinPorts
+    /opt/csw # Blastwave
+    /opt
+  PATH_SUFFIXES
+    include
+)
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(SOLARUS
-    FOUND_VAR SOLARUS_FOUND
-    REQUIRED_VARS
-        SOLARUS_INCLUDE_DIR
-        SOLARUS_LIBRARY)
+# Try to find the Solarus library.
+find_library(SOLARUS_LIBRARY
+  NAMES
+    solarus
+  HINTS
+    ${SOLARUS_DIR}
+    $ENV{SOLARUS_DIR}
+  PATHS
+    /sw # Fink
+    /opt/local # DarwinPorts
+    /opt/csw # Blastwave
+    /opt
+  PATH_SUFFIXES
+    lib
+    lib64
+)
 
-if(SOLARUS_FOUND)
-    set(SOLARUS_INCLUDE_DIRS ${SOLARUS_INCLUDE_DIR} "${SOLARUS_INCLUDE_DIR}/solarus/third_party")
-    set(SOLARUS_LIBRARIES ${SOLARUS_LIBRARY})
+# Extract Solarus version data from config header.
+if(SOLARUS_INCLUDE_DIR AND EXISTS "${SOLARUS_INCLUDE_DIR}/solarus/core/config.h")
+  file(STRINGS "${SOLARUS_INCLUDE_DIR}/solarus/core/config.h" SOLARUS_VERSION_DATA
+    REGEX "^#define[ \t]+SOLARUS_[A-Z]+_VERSION[ \t]+[0-9]+")
+  string(REGEX REPLACE
+    ".*#define[ \t]+SOLARUS_MAJOR_VERSION[ \t]+([0-9]+).*" "\\1"
+    SOLARUS_VERSION_MAJOR "${SOLARUS_VERSION_DATA}")
+  string(REGEX REPLACE
+    ".*#define[ \t]+SOLARUS_MINOR_VERSION[ \t]+([0-9]+).*" "\\1"
+    SOLARUS_VERSION_MINOR "${SOLARUS_VERSION_DATA}")
+  string(REGEX REPLACE
+    ".*#define[ \t]+SOLARUS_PATCH_VERSION[ \t]+([0-9]+).*" "\\1"
+    SOLARUS_VERSION_PATCH "${SOLARUS_VERSION_DATA}")
+  set(SOLARUS_VERSION_STRING
+    "${SOLARUS_VERSION_MAJOR}.${SOLARUS_VERSION_MINOR}.${SOLARUS_VERSION_PATCH}")
+  unset(SOLARUS_VERSION_DATA)
+  unset(SOLARUS_VERSION_MAJOR)
+  unset(SOLARUS_VERSION_MINOR)
+  unset(SOLARUS_VERSION_PATCH)
 endif()
+
+# Check if include and library directories were found.
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Solarus
+  REQUIRED_VARS
+    SOLARUS_INCLUDE_DIR
+    SOLARUS_LIBRARY
+  VERSION_VAR
+    SOLARUS_VERSION_STRING
+)
+set(SOLARUS_INCLUDE_DIRS ${SOLARUS_INCLUDE_DIR})
+set(SOLARUS_LIBRARIES ${SOLARUS_LIBRARY})

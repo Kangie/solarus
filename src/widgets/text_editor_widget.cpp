@@ -101,7 +101,7 @@ public:
    * @brief Returns an appropriate size for this line number area.
    * @return The size hint.
    */
-  QSize sizeHint() const {
+  QSize sizeHint() const override {
     return QSize(text_editor_widget.get_line_number_area_width(), 0);
   }
 
@@ -111,7 +111,7 @@ protected:
    * @brief Draws this line number area.
    * @param event The paint event to handle.
    */
-  void paintEvent(QPaintEvent* event) {
+  void paintEvent(QPaintEvent* event) override {
     text_editor_widget.line_number_area_paint_event(event);
   }
 
