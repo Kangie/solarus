@@ -1,0 +1,17 @@
+This is Solarus, the open-source A-RPG game engine.
+
+This Windows binary package contains:
+- solarus-launcher.exe: The executable GUI of the engine. Run it and then select the
+  quest to run and the options you want.
+- solarus-run.exe: An executable file that directly runs a quest.
+  Run it with the path of your quest as argument
+  (the directory containing data/ or data.solarus or data.solarus.zip).
+  Without this argument, the current directory is used as quest path.
+- A sample quest. This is a minimalist example of game with a few example maps.
+  You can run it or edit it.
+- solarus-quest-editor.exe: An editor that helps you create your own quest.
+
+See our website www.solarus-games.org for more information, to learn how to create
+a quest or to download our games or the source code of the engine.
+
+Enjoy!
