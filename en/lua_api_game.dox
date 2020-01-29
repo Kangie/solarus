@@ -61,9 +61,8 @@ But you can also extend or override this behavior,
 because the engine notifies you first
 (see \ref lua_api_game_on_command_pressed "game:on_command_pressed()").
 Therefore, you usually don't have to worry about the underlying keyboard or
-joypad input (but if you want to, you can, and the callbacks are exactly the
-sames as in \ref
-lua_api_main "sol.main" and in \ref lua_api_menu "menus").
+joypad input (but if you want to you can as the game object is an
+\ref lua_api_input_handler_events "input handler").
 
 \subsection lua_api_game_overview_table Accessing the game like tables
 
@@ -1082,114 +1081,6 @@ Called when the current game-over sequence stops.
 
 This event is also called if you did not define a game-over sequence.
 
-\subsection lua_api_game_on_key_pressed game:on_key_pressed(key, modifiers)
-
-Called when the user presses a keyboard key while your game is running.
-- \c key (string): Name of the raw key that was pressed.
-- \c modifiers (table): A table whose keys indicate what modifiers were
-  down during the event. Possible table keys are \c "shift", \c "control" and
-  \c "alt". Table values are \c true.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-  If you return \c false or nothing, the event will continue its propagation
-  in this order: to the game \ref lua_api_menu "menus" if any,
-  to the current map (including its own menus if any),
-  and then to the game commands.
-
-If you handle the event, you should return \c true to make the event stop
-being propagated. The \ref lua_api_menu "menus"
-of your game (if any) and the current map won't be not notified in this case.
-On the contrary, if neither your game, its menus nor the current map handle
-the event, then the engine handles it with a built-in behavior.
-This built-in behavior is to check whether a game command is mapped to the
-keyboard key that was pressed. If yes, the keyboard pressed event will
-be transformed into a game command pressed event
-(see \ref lua_api_game_on_command_pressed "game:on_command_pressed()").
-
-\remark This event indicates the raw keyboard key pressed. If you want the
-corresponding character instead (if any), see
-\ref lua_api_game_on_character_pressed "game:on_character_pressed()".
-If you want the corresponding higher-level game command (if any), see
-\ref lua_api_game_on_command_pressed "game:on_command_pressed()".
-
-\subsection lua_api_game_on_key_released game:on_key_released(key)
-
-Called when the user releases a keyboard key while your game is running.
-- \c key (string): Name of the raw key that was released.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-  If you return \c false or nothing, the event will continue its propagation
-  in this order: to the game \ref lua_api_menu "menus" if any,
-  to the current map (including its own menus if any),
-  and then to the game commands.
-
-If you handle the event, you should return \c true to make the event stop
-being propagated. The \ref lua_api_menu "menus"
-of your game (if any) and the current map won't be not notified in this case.
-On the contrary, if neither your game, its menus nor the current map handle
-the event, then the engine handles it with a built-in behavior.
-This built-in behavior is to check whether a game command is mapped to the
-keyboard key that was released. If yes, the "keyboard released" event will
-be transformed into a "game command released" event
-(see \ref lua_api_game_on_command_released "game:on_command_released()").
-
-\subsection lua_api_game_on_character_pressed game:on_character_pressed(character)
-
-Called when the user enters text
-while your game is running.
-- \c character (string): A utf-8 string representing the character that was
-  entered.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-  If you return \c false or nothing, the event will continue its propagation
-  in this order: to the game \ref lua_api_menu "menus" if any
-  and then to the current map (including its own menus if any).
-
-\remark When a character key is pressed, two events are called:
-\ref lua_api_game_on_key_pressed "game:on_key_pressed()"
-(indicating the raw key)
-and \ref lua_api_game_on_character_pressed "game:on_character_pressed()"
-(indicating the utf-8 character).
-If your game needs to input text from the user,
-\ref lua_api_game_on_character_pressed "game:on_character_pressed()"
-is what you want because it
-considers the keyboard's layout and gives you international utf-8
-strings.
-
-\subsection lua_api_game_on_joypad_button_pressed game:on_joypad_button_pressed(button)
-
-Called when the user presses a joypad button while your game is running.
-- \c button (number): Index of the button that was pressed.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-
-\subsection lua_api_game_on_joypad_button_released game:on_joypad_button_released(button)
-
-Called when the user releases a joypad button while your game is running.
-- \c button (number): Index of the button that was released.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-
-\subsection lua_api_game_on_joypad_axis_moved game:on_joypad_axis_moved(axis, state)
-
-Called when the user moves a joypad axis while your game is running.
-- \c axis (number): Index of the axis that was moved. Usually, \c 0 is an
-  horizontal axis and \c 1 is a vertical axis.
-- \c state (number): The new state of the axis that was moved. \c -1 means
-  left or up, \c 0 means centered and \c 1 means right or down.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-
-\subsection lua_api_game_on_joypad_hat_moved game:on_joypad_hat_moved(hat, direction8)
-
-Called when the user moves a joypad hat while your game is running.
-- \c hat (number): Index of the hat that was moved.
-- \c direction8 (number): The new direction of the hat. \c -1 means that the
-  hat is centered. \c 0 to \c 7 indicates that the hat is in one of the eight
-  main directions.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-
 \subsection lua_api_game_on_command_pressed game:on_command_pressed(command)
 
 Called when the player presses a game command
@@ -1222,68 +1113,13 @@ You can use this event to override the normal built-in behavior of the game comm
 \remark This event is not triggered if you already handled its underlying
   low-level keyboard or joypad event.
 
-\subsection lua_api_game_on_mouse_pressed game:on_mouse_pressed(button, x, y)
+\section lua_api_game_input_handler_events Events as an Input Handler
 
-Called when the user presses a mouse button while the game is running.
-- \c button (string): Name of the mouse button that was pressed.
-  Possible values are \c "left", \c "middle", \c "right", \c "x1" and \c "x2".
-- \c x (integer): The x position of the mouse in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c y (integer): The y position of the mouse in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
+In addition to its own events a game is also an input handler and receives
+all of those events.
 
-\subsection lua_api_game_on_mouse_released game:on_mouse_released(button, x, y)
+The game is checked after \c sol.main but before the current map.
 
-Called when the user releases a mouse button while the game is running.
-- \c button (string): Name of the mouse button that was released.
-  Possible values are \c "left", \c "middle", \c "right", \c "x1" and \c "x2".
-- \c x (integer): The x position of the mouse in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c y (integer): The y position of the mouse in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-
-\subsection lua_api_game_on_finger_pressed game:on_finger_pressed(finger, x, y, pressure)
-
-Called when the user presses a finger while the game is running.
-- \c finger (integer): ID of the finger that was pressed.
-- \c x (integer): The x position of the finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c y (integer): The y position of the finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c pressure (number): The pressure of the finger, normalized between 0 and 1.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-
-\subsection lua_api_game_on_finger_released game:on_finger_released(finger, x, y, pressure)
-
-Called when the user releases a finger while the game is running.
-- \c finger (integer): ID of the finger that was pressed.
-- \c x (integer): The x position of the finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c y (integer): The y position of the finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c pressure (number): The pressure of the finger, normalized between 0 and 1.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
-
-\subsection lua_api_game_on_finger_moved game:on_finger_moved(finger, x, y, dx, dy, pressure)
-
-Called when the user moves a finger while the game is running.
-- \c finger (integer): ID of the finger that was pressed.
-- \c x (integer): The x position of the finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c y (integer): The y position of the finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c dx (integer): The horizontal distance moved by finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c dy (integer): The vertical distance moved by finger in
-  \ref lua_api_video_get_quest_size "quest size" coordinates.
-- \c pressure (number): The pressure of the finger, normalized between 0 and 1.
-- Return value (boolean): Indicates whether the event was handled. If you
-  return \c true, the event won't be propagated to other objects.
+See \ref lua_api_input_handler_events to see all of these events.
 
 */
