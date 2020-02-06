@@ -1270,7 +1270,7 @@ void MainWindow::on_action_doc_triggered() {
   const QString& assets_path = FileTools::get_assets_path();
   const QString& doc_path = assets_path + "/doc/index.html";
   if (!assets_path.isEmpty() && QFile::exists(doc_path)) {
-    QDesktopServices::openUrl(QUrl(QString("file://") + doc_path));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(doc_path));
   } else {
     offer_online_docs(this);
   }
