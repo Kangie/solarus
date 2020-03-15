@@ -925,6 +925,7 @@ void MainWindow::on_action_exit_triggered() {
 
   if (confirm_before_closing()) {
     ui.tab_widget->save_open_files_list();
+    ui.tab_widget->close_without_confirmation();
     QApplication::exit(0);
   }
 }
@@ -1775,6 +1776,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 
   if (confirm_before_closing()) {
     ui.tab_widget->save_open_files_list();
+    ui.tab_widget->close_without_confirmation();
     event->accept();
   }
   else {

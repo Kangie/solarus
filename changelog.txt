@@ -3,6 +3,7 @@ _______________________________________
 Solarus Quest Editor 1.6.3 (in progress)
 _______________________________________
 
+* Fix possible crash when closing the window.
 * Fix opening local documentation in Windows.
 * Fix tiles getting unwanted enabled_at_start field in map data files.
 
