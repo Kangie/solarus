@@ -24,7 +24,6 @@ tile{
   width = 240,
   height = 8,
   pattern = "wall_brown_2",
-  tileset = "house",
 }
 
 tile{
@@ -34,7 +33,6 @@ tile{
   width = 8,
   height = 160,
   pattern = "wall_brown_4",
-  tileset = "house",
 }
 
 tile{
@@ -44,7 +42,6 @@ tile{
   width = 8,
   height = 160,
   pattern = "wall_brown_0",
-  tileset = "house",
 }
 
 tile{
@@ -54,7 +51,6 @@ tile{
   width = 240,
   height = 8,
   pattern = "wall_brown_6",
-  tileset = "house",
 }
 
 tile{
@@ -64,7 +60,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_3",
-  tileset = "house",
 }
 
 tile{
@@ -74,7 +69,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_1",
-  tileset = "house",
 }
 
 tile{
@@ -84,7 +78,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_5",
-  tileset = "house",
 }
 
 tile{
@@ -94,7 +87,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_7",
-  tileset = "house",
 }
 
 tile{
@@ -104,7 +96,6 @@ tile{
   width = 256,
   height = 8,
   pattern = "wall_up_brown_2",
-  tileset = "house",
 }
 
 tile{
@@ -114,7 +105,6 @@ tile{
   width = 8,
   height = 176,
   pattern = "wall_up_brown_4",
-  tileset = "house",
 }
 
 tile{
@@ -124,7 +114,6 @@ tile{
   width = 8,
   height = 176,
   pattern = "wall_up_brown_0",
-  tileset = "house",
 }
 
 tile{
@@ -134,7 +123,6 @@ tile{
   width = 256,
   height = 8,
   pattern = "wall_up_brown_6",
-  tileset = "house",
 }
 
 tile{
@@ -144,7 +132,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_3",
-  tileset = "house",
 }
 
 tile{
@@ -154,7 +141,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_1",
-  tileset = "house",
 }
 
 tile{
@@ -164,7 +150,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_5",
-  tileset = "house",
 }
 
 tile{
@@ -174,7 +159,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_7",
-  tileset = "house",
 }
 
 tile{
@@ -184,7 +168,6 @@ tile{
   width = 272,
   height = 8,
   pattern = "wall_up_brown_2",
-  tileset = "house",
 }
 
 tile{
@@ -194,7 +177,6 @@ tile{
   width = 8,
   height = 192,
   pattern = "wall_up_brown_4",
-  tileset = "house",
 }
 
 tile{
@@ -204,7 +186,6 @@ tile{
   width = 8,
   height = 192,
   pattern = "wall_up_brown_0",
-  tileset = "house",
 }
 
 tile{
@@ -214,7 +195,6 @@ tile{
   width = 272,
   height = 8,
   pattern = "wall_up_brown_6",
-  tileset = "house",
 }
 
 tile{
@@ -224,7 +204,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_3",
-  tileset = "house",
 }
 
 tile{
@@ -234,7 +213,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_1",
-  tileset = "house",
 }
 
 tile{
@@ -244,7 +222,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_5",
-  tileset = "house",
 }
 
 tile{
@@ -254,7 +231,6 @@ tile{
   width = 8,
   height = 8,
   pattern = "wall_brown_7",
-  tileset = "house",
 }
 
 tile{
