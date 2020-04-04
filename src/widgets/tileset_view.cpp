@@ -178,7 +178,7 @@ void TilesetView::set_model(TilesetModel* model) {
  */
 void TilesetView::notify_tileset_changed() {
 
-  clear_current_areas();
+  current_area_items.clear();
   initially_selected_items.clear();
   start_state_normal();
 }
