@@ -723,7 +723,7 @@ Make sure that Solarus Quest Editor is properly installed.</source>
     <message>
         <location filename="../src/shader_preview_mode_traits.cpp" line="55"/>
         <source>Swipe</source>
-        <translation>Glissement</translation>
+        <translation>Balayage</translation>
     </message>
 </context>
 <context>
