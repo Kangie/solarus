@@ -4,6 +4,7 @@ Solarus Quest Editor 1.6.3 (in progress)
 _______________________________________
 
 * Fix possible crash when closing the window.
+* Fix a crash when undoing changing the layer of entities (#471).
 * Fix crash when a tileset file changes while dragging patterns (#476).
 * Fix opening local documentation in Windows.
 * Fix tiles getting unwanted enabled_at_start field in map data files.
