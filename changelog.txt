@@ -3,6 +3,7 @@ _______________________________________
 Solarus Quest Editor 1.6.3 (in progress)
 _______________________________________
 
+* Add Ocean Set tilesets to the initial quest (#478).
 * Fix possible crash when closing the window.
 * Fix a crash when undoing changing the layer of entities (#471).
 * Fix crash when a tileset file changes while dragging patterns (#476).
