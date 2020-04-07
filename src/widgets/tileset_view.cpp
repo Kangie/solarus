@@ -821,7 +821,7 @@ void TilesetView::end_state_drawing_rectangle() {
   QRect rectangle = current_area_items.first()->rect().toRect();
   if (!rectangle.isEmpty() &&
       sceneRect().contains(rectangle) &&
-      get_items_intersecting_current_areas().isEmpty() &&
+      get_items_intersecting_current_areas(true).isEmpty() &&
       model->is_selection_empty() &&
       !is_read_only()) {
 
@@ -913,7 +913,7 @@ void TilesetView::start_state_moving_patterns(const QPoint& initial_point) {
   data->setText(text_data);
 
   drag->setMimeData(data);
-  drag->exec(Qt::MoveAction | Qt::CopyAction);
+  drag->exec(Qt::MoveAction | Qt::CopyAction);  // Blocking call during the drag operation.
 
   clear_current_areas();
   start_state_normal();
@@ -929,7 +929,7 @@ void TilesetView::end_state_moving_patterns() {
   box.translate(delta);
   if (!box.isEmpty() &&
       sceneRect().contains(box) &&
-      get_items_intersecting_current_areas().isEmpty() &&
+      get_items_intersecting_current_areas(true).isEmpty() &&
       !model->is_selection_empty() &&
       !is_read_only() &&
       dragging_current_point != dragging_start_point) {
@@ -982,6 +982,7 @@ void TilesetView::dragMoveEvent(QDragMoveEvent* event) {
 
   bool valid_move = true;
   const QList<int>& selected_indexes = model->get_selected_indexes();
+  const QList<QGraphicsItem*> selected_items = scene->selectedItems();
   for (int index : selected_indexes) {
 
     QRect area = model->get_pattern_frames_bounding_box(index);
@@ -989,12 +990,18 @@ void TilesetView::dragMoveEvent(QDragMoveEvent* event) {
     QGraphicsRectItem* item = new QGraphicsRectItem(area);
 
     // Check overlapping existing patterns.
-    QList<QGraphicsItem*> items = scene->items(
-      area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect);
+    QSet<QGraphicsItem*> overlapping_items = scene->items(
+      area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect).toSet();
+
+    // Filter out the patterns that are being moved,
+    // that is, allow the destination to overlap the source.
+    for (QGraphicsItem* selected_item : selected_items) {
+      overlapping_items.remove(selected_item);
+    }
 
     if (!area.isEmpty() &&
         sceneRect().contains(area) &&
-        items.isEmpty() &&
+        overlapping_items.isEmpty() &&
         !is_read_only()) {
       item->setPen(QPen(Qt::yellow));
     } else {
