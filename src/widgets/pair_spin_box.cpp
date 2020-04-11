@@ -29,6 +29,10 @@ PairSpinBox::PairSpinBox(QWidget *parent) :
   QHBoxLayout* layout = new QHBoxLayout(this);
   layout->setMargin(0);
 
+  first_spin_box.setMinimumSize(70, 0);
+  first_spin_box.setMaximumSize(70, 100);
+  second_spin_box.setMinimumSize(70, 0);
+  second_spin_box.setMaximumSize(70, 100);
   layout->addWidget(&first_spin_box);
   layout->addWidget(&separator_label);
   layout->addWidget(&second_spin_box);

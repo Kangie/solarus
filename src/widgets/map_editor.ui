@@ -173,6 +173,12 @@
              <layout class="QHBoxLayout" name="horizontal_layout_6">
               <item>
                <widget class="QSpinBox" name="min_layer_field">
+                <property name="minimumSize">
+                 <size>
+                  <width>70</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>70</width>
@@ -196,6 +202,12 @@
               </item>
               <item>
                <widget class="QSpinBox" name="max_layer_field">
+                <property name="minimumSize">
+                 <size>
+                  <width>70</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>70</width>
@@ -247,6 +259,12 @@
              <layout class="QHBoxLayout" name="horizontal_layout_4">
               <item>
                <widget class="QSpinBox" name="floor_field">
+                <property name="minimumSize">
+                 <size>
+                  <width>70</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>70</width>
