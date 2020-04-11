@@ -7,9 +7,14 @@
 #
 # This module is similar to FindLua51.cmake except that it finds LuaJit instead.
 
+FIND_PACKAGE(PkgConfig QUIET)
+
+PKG_CHECK_MODULES(PKG_LUAJIT QUIET luajit)
+
 FIND_PATH(LUA_INCLUDE_DIR luajit.h
   HINTS
   $ENV{LUA_DIR}
+  ${PKG_LUAJIT_INCLUDE_DIRS}
   PATH_SUFFIXES include/luajit-2.1 include/luajit-2.0 include/luajit-5_1-2.0 include/luajit-5_1-2.1 include
   PATHS
   ~/Library/Frameworks
@@ -21,9 +26,10 @@ FIND_PATH(LUA_INCLUDE_DIR luajit.h
 )
 
 FIND_LIBRARY(LUA_LIBRARY
-  NAMES luajit-5.1
+  NAMES luajit-5.1 luajit-2.0 luajit-2.1
   HINTS
   $ENV{LUA_DIR}
+  ${PKG_LUAJIT_LIBRARY_DIRS}
   PATH_SUFFIXES lib64 lib
   PATHS
   ~/Library/Frameworks
@@ -46,9 +52,9 @@ IF(LUA_LIBRARY)
 ENDIF(LUA_LIBRARY)
 
 IF(LUA_INCLUDE_DIR AND EXISTS "${LUA_INCLUDE_DIR}/luajit.h")
-  FILE(STRINGS "${LUA_INCLUDE_DIR}/luajit.h" lua_version_str REGEX "^#define[ \t]+LUA_RELEASE[ \t]+\"LuaJIT .+\"")
+  FILE(STRINGS "${LUA_INCLUDE_DIR}/luajit.h" lua_version_str REGEX "^#define[ \t]+LUAJIT_VERSION[ \t]+\"LuaJIT .+\"")
 
-  STRING(REGEX REPLACE "^#define[ \t]+LUA_RELEASE[ \t]+\"LuaJIT ([^\"]+)\".*" "\\1" LUA_VERSION_STRING "${lua_version_str}")
+  STRING(REGEX REPLACE "^#define[ \t]+LUAJIT_VERSION[ \t]+\"LuaJIT ([^\"]+)\".*" "\\1" LUA_VERSION_STRING "${lua_version_str}")
   UNSET(lua_version_str)
 ENDIF()
 

@@ -112,8 +112,7 @@ private:
   void end_state_moving_patterns();
   void update_current_areas(const QPoint& start_point, const QPoint& current_point);
   void clear_current_areas();
-  QList<QGraphicsItem*> get_items_intersecting_current_areas(
-      bool ignore_selected = true) const;
+  QList<QGraphicsItem*> get_items_intersecting_current_areas(bool ignore_selected) const;
   QRect get_selection_bounding_box() const;
 
   void dragEnterEvent(QDragEnterEvent* event) override;

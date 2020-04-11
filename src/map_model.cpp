@@ -826,9 +826,6 @@ void MapModel::set_entities_layer(
     EntityIndexes& indexes_before_gradual,
     EntityIndexes& indexes_after) {
 
-  // TODO possible improvement: entities whose layer do not change should also
-  // be moved to keep the relative order of the whole group.
-
   Q_ASSERT(layers_after.size() == indexes_before.size());
 
   // Work on entities instead of indexes, because indexes change during the traversal.
@@ -841,10 +838,8 @@ void MapModel::set_entities_layer(
   for (const EntityModel* entity : entities) {
     Q_ASSERT(entity != nullptr);
     const int layer_after = layers_after[i];
-    if (entity->get_layer() != layer_after) {
-      indexes_before_gradual.append(entity->get_index());  // Can be different from indexes_before[i].
-      set_entity_layer(entity->get_index(), layer_after);
-    }
+    indexes_before_gradual.append(entity->get_index());  // Can be different from indexes_before[i].
+    set_entity_layer(entity->get_index(), layer_after);
     ++i;
   }
 

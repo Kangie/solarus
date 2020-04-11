@@ -18,6 +18,7 @@
 #define SOLARUSEDITOR_INPUT_DIALOG_WITH_CHECK_BOX_H
 
 #include <QDialog>
+#include <QScopedPointer>
 
 namespace SolarusEditor {
 
@@ -52,14 +53,18 @@ public:
   bool is_checked() const;
   void set_checked(bool checked);
 
+  QString get_check_box_setting() const;
+  void set_check_box_setting(const QString& check_box_setting);
+
 public slots:
 
   void done(int result) override;
 
 private:
 
-  Ui::InputDialogWithCheckBox* ui;   /**< The widgets. */
-
+  QScopedPointer<Ui::InputDialogWithCheckBox> ui;   /**< The widgets. */
+  QString check_box_setting;                        /**< Setting name that saves the last
+                                                     * check box state, or an empty string. */
 };
 
 }

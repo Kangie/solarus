@@ -980,6 +980,10 @@ void EditEntityDialog::initialize_enabled_at_start() {
  */
 void EditEntityDialog::apply_enabled_at_start() {
 
+  if (!entity_before.is_dynamic()) {
+    return;
+  }
+
   entity_after->set_enabled_at_start(ui.enabled_at_start_field->isChecked());
 }
 

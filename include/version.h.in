@@ -21,14 +21,14 @@
  *
  * Must match the Solarus library major version.
  */
-#define SOLARUSEDITOR_MAJOR_VERSION 1
+#define SOLARUSEDITOR_MAJOR_VERSION @PROJECT_VERSION_MAJOR@
 
 /**
  * @brief Solarus Quest Editor minor version.
  *
  * Must match the Solarus library minor version.
  */
-#define SOLARUSEDITOR_MINOR_VERSION 6
+#define SOLARUSEDITOR_MINOR_VERSION @PROJECT_VERSION_MINOR@
 
 /**
  * @brief Solarus Quest Editor patch version.
@@ -36,7 +36,7 @@
  * Patch versions are only bug fixes.
  * No need to match the Solarus library patch version.
  */
-#define SOLARUSEDITOR_PATCH_VERSION 2
+#define SOLARUSEDITOR_PATCH_VERSION @PROJECT_VERSION_PATCH@
 
 /**
  * @brief The Solarus Quest Editor version as a string.
@@ -58,6 +58,3 @@
 #define SOLARUSEDITOR_VERSION_WITHOUT_PATCH \
     SOLARUS_STRINGIFY(SOLARUSEDITOR_MAJOR_VERSION) "." \
     SOLARUS_STRINGIFY(SOLARUSEDITOR_MINOR_VERSION)
-
-static_assert(SOLARUSEDITOR_MAJOR_VERSION == SOLARUS_MAJOR_VERSION && SOLARUSEDITOR_MINOR_VERSION == SOLARUS_MINOR_VERSION,
-              "The quest editor version is " SOLARUSEDITOR_VERSION_WITHOUT_PATCH " but the Solarus library version is " SOLARUS_VERSION_WITHOUT_PATCH);

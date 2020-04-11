@@ -5,328 +5,88 @@ properties{
   height = 240,
   min_layer = 0,
   max_layer = 2,
-  tileset = "house",
+  tileset = "oceanset_inside",
 }
 
 tile{
   layer = 0,
-  x = 40,
-  y = 40,
-  width = 240,
-  height = 160,
-  pattern = "ground_wood_mosaic_big_1",
-}
-
-tile{
-  layer = 0,
-  x = 40,
-  y = 32,
-  width = 240,
-  height = 8,
-  pattern = "wall_brown_2",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 32,
-  y = 40,
-  width = 8,
-  height = 160,
-  pattern = "wall_brown_4",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 280,
-  y = 40,
-  width = 8,
-  height = 160,
-  pattern = "wall_brown_0",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 40,
-  y = 200,
-  width = 240,
-  height = 8,
-  pattern = "wall_brown_6",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 32,
-  y = 32,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_3",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 280,
-  y = 32,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_1",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 32,
-  y = 200,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_5",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 280,
-  y = 200,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_7",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 32,
-  y = 24,
-  width = 256,
-  height = 8,
-  pattern = "wall_up_brown_2",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 24,
-  y = 32,
-  width = 8,
-  height = 176,
-  pattern = "wall_up_brown_4",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 288,
-  y = 32,
-  width = 8,
-  height = 176,
-  pattern = "wall_up_brown_0",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 32,
-  y = 208,
-  width = 256,
-  height = 8,
-  pattern = "wall_up_brown_6",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 24,
-  y = 24,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_3",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 288,
-  y = 24,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_1",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 24,
-  y = 208,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_5",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 288,
-  y = 208,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_7",
-  tileset = "house",
-}
-
-tile{
-  layer = 0,
-  x = 24,
+  x = 48,
   y = 16,
-  width = 272,
-  height = 8,
-  pattern = "wall_up_brown_2",
-  tileset = "house",
+  width = 224,
+  height = 32,
+  pattern = "35_5",
 }
 
 tile{
   layer = 0,
   x = 16,
-  y = 24,
-  width = 8,
-  height = 192,
-  pattern = "wall_up_brown_4",
-  tileset = "house",
+  y = 48,
+  width = 32,
+  height = 144,
+  pattern = "41_5",
 }
 
 tile{
   layer = 0,
-  x = 296,
-  y = 24,
-  width = 8,
-  height = 192,
-  pattern = "wall_up_brown_0",
-  tileset = "house",
+  x = 272,
+  y = 48,
+  width = 32,
+  height = 144,
+  pattern = "37_6",
 }
 
 tile{
   layer = 0,
-  x = 24,
-  y = 216,
-  width = 272,
-  height = 8,
-  pattern = "wall_up_brown_6",
-  tileset = "house",
+  x = 48,
+  y = 192,
+  width = 224,
+  height = 32,
+  pattern = "39_6",
 }
 
 tile{
   layer = 0,
   x = 16,
   y = 16,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_3",
-  tileset = "house",
+  width = 32,
+  height = 32,
+  pattern = "34_5",
 }
 
 tile{
   layer = 0,
-  x = 296,
+  x = 272,
   y = 16,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_1",
-  tileset = "house",
+  width = 32,
+  height = 32,
+  pattern = "36_5",
 }
 
 tile{
   layer = 0,
   x = 16,
-  y = 216,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_5",
-  tileset = "house",
+  y = 192,
+  width = 32,
+  height = 32,
+  pattern = "40_6",
 }
 
 tile{
   layer = 0,
-  x = 296,
-  y = 216,
-  width = 8,
-  height = 8,
-  pattern = "wall_brown_7",
-  tileset = "house",
+  x = 272,
+  y = 192,
+  width = 32,
+  height = 32,
+  pattern = "38_5",
 }
 
 tile{
   layer = 0,
-  x = 32,
-  y = 32,
-  width = 256,
-  height = 8,
-  pattern = "ground_shadow_60",
-}
-
-tile{
-  layer = 0,
-  x = 32,
-  y = 200,
-  width = 256,
-  height = 8,
-  pattern = "ground_shadow_60",
-}
-
-tile{
-  layer = 0,
-  x = 32,
-  y = 40,
-  width = 8,
-  height = 160,
-  pattern = "ground_shadow_60",
-}
-
-tile{
-  layer = 0,
-  x = 280,
-  y = 40,
-  width = 8,
-  height = 160,
-  pattern = "ground_shadow_60",
-}
-
-tile{
-  layer = 0,
-  x = 24,
-  y = 24,
-  width = 272,
-  height = 16,
-  pattern = "ground_shadow_60",
-}
-
-tile{
-  layer = 0,
-  x = 24,
-  y = 200,
-  width = 272,
-  height = 16,
-  pattern = "ground_shadow_60",
-}
-
-tile{
-  layer = 0,
-  x = 24,
-  y = 40,
-  width = 16,
-  height = 160,
-  pattern = "ground_shadow_60",
-}
-
-tile{
-  layer = 0,
-  x = 280,
-  y = 40,
-  width = 16,
-  height = 160,
-  pattern = "ground_shadow_60",
+  x = 48,
+  y = 48,
+  width = 224,
+  height = 144,
+  pattern = "20_20",
 }
 
 destination{
@@ -335,41 +95,5 @@ destination{
   x = 160,
   y = 181,
   direction = 1,
-}
-
-tile{
-  layer = 1,
-  x = 0,
-  y = 0,
-  width = 320,
-  height = 16,
-  pattern = "wall_brown_ceiling",
-}
-
-tile{
-  layer = 1,
-  x = 0,
-  y = 16,
-  width = 16,
-  height = 208,
-  pattern = "wall_brown_ceiling",
-}
-
-tile{
-  layer = 1,
-  x = 304,
-  y = 16,
-  width = 16,
-  height = 208,
-  pattern = "wall_brown_ceiling",
-}
-
-tile{
-  layer = 1,
-  x = 0,
-  y = 224,
-  width = 320,
-  height = 16,
-  pattern = "wall_brown_ceiling",
 }
 

@@ -1,11 +1,28 @@
 _______________________________________
 
+Solarus Quest Editor 1.6.3 (2020-04-11)
+_______________________________________
+
+* Add Ocean Set tilesets to the initial quest (#478).
+* Map editor: fix contours generated tileset specific (#485).
+* Map editor: fix a crash when undoing changing the layer of entities (#471).
+* Tileset editor: save the update maps option when renaming patterns (#483).
+* Tileset editor: fix moving patterns to an overlapping position (#477).
+* Tileset editor: fix crash when a tileset file changes while dragging (#476).
+* Fix possible crash when closing the window.
+* Fix opening local documentation in Windows.
+* Fix tiles getting unwanted enabled_at_start field in map data files.
+
+_______________________________________
+
 Solarus Quest Editor 1.6.2 (2019-08-15)
 _______________________________________
 
 * Fix crash when closing tileset views (#467).
 * Fix broken enemies in the initial quest (#466).
+* Fix Ctrl-B shortcut not working for contour generation.
 * Automatically install translation files.
+* Add author and license fields when creating new resources.
 * Update French translation.
 
 _______________________________________

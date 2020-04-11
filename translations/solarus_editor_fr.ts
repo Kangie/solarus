@@ -723,7 +723,7 @@ Make sure that Solarus Quest Editor is properly installed.</source>
     <message>
         <location filename="../src/shader_preview_mode_traits.cpp" line="55"/>
         <source>Swipe</source>
-        <translation>Glissement</translation>
+        <translation>Balayage</translation>
     </message>
 </context>
 <context>
@@ -1985,7 +1985,7 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>Bas-droite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/edit_entity_dialog.cpp" line="998"/>
+        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1002"/>
         <source>(Default)</source>
         <translation>(Défaut)</translation>
     </message>
@@ -2026,22 +2026,22 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation type="vanished">Boss</translation>
     </message>
     <message>
-        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1414"/>
+        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1418"/>
         <source>Save the enemy state</source>
         <translation>Sauver l&apos;état de l&apos;ennemi</translation>
     </message>
     <message>
-        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1415"/>
+        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1419"/>
         <source>Save the door state</source>
         <translation>Sauver l&apos;état de la porte</translation>
     </message>
     <message>
-        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1506"/>
+        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1510"/>
         <source>Play a sound when destroyed</source>
         <translation>Son à la destruction</translation>
     </message>
     <message>
-        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1783"/>
+        <location filename="../src/widgets/edit_entity_dialog.cpp" line="1787"/>
         <source>(None)</source>
         <translation>(Aucun)</translation>
     </message>
@@ -2407,7 +2407,7 @@ Voulez-vous l&apos;écraser ?</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="201"/>
-        <location filename="../src/widgets/main_window.cpp" line="1670"/>
+        <location filename="../src/widgets/main_window.cpp" line="1671"/>
         <source>Run quest</source>
         <translation>Exécuter la quête</translation>
     </message>
@@ -2501,14 +2501,14 @@ Voulez-vous l&apos;écraser ?</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="412"/>
-        <location filename="../src/widgets/main_window.cpp" line="1719"/>
-        <location filename="../src/widgets/main_window.cpp" line="1726"/>
+        <location filename="../src/widgets/main_window.cpp" line="1720"/>
+        <location filename="../src/widgets/main_window.cpp" line="1727"/>
         <source>Pause music</source>
         <translation>Mettre la musique en pause</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="421"/>
-        <location filename="../src/widgets/main_window.cpp" line="1715"/>
+        <location filename="../src/widgets/main_window.cpp" line="1716"/>
         <source>Stop music</source>
         <translation>Arrêter la musique</translation>
     </message>
@@ -2548,22 +2548,21 @@ Voulez-vous l&apos;écraser ?</translation>
         <translation>Construire le package</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="469"/>
         <source>Ctrl+B</source>
-        <translation>Ctrl+B</translation>
+        <translation type="vanished">Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="478"/>
+        <location filename="../src/widgets/main_window.ui" line="475"/>
         <source>Export to image...</source>
         <translation>Exporter comme image...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="481"/>
+        <location filename="../src/widgets/main_window.ui" line="478"/>
         <source>F10</source>
         <translation>F10</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="486"/>
+        <location filename="../src/widgets/main_window.ui" line="483"/>
         <source>About</source>
         <translation>À propos de</translation>
     </message>
@@ -2818,42 +2817,42 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>Impossible de trouver le dossier &quot;assets&quot;.\nVérifiez que Solarus Quest Editor est correctement installé.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1020"/>
+        <location filename="../src/widgets/main_window.cpp" line="1021"/>
         <source>Files are modified</source>
         <translation>Modifications non sauvegardées</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1021"/>
+        <location filename="../src/widgets/main_window.cpp" line="1022"/>
         <source>Do you want to save modifications before running the quest?</source>
         <translation>Enregistrer les modifications avant de lancer la quête ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1251"/>
+        <location filename="../src/widgets/main_window.cpp" line="1252"/>
         <source>Local Documentation Not Found</source>
         <translation>Documentation hors ligne non disponible</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1252"/>
+        <location filename="../src/widgets/main_window.cpp" line="1253"/>
         <source>The local copy of Solarus Documentation could not be found. Would you like to try going on line to find the documentaion?</source>
         <translation>La copie locale de la documentation de Solarus n&apos;a pas pu être trouvée. Voulez-vous consulter la documentation en ligne ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1667"/>
+        <location filename="../src/widgets/main_window.cpp" line="1668"/>
         <source>Stop quest</source>
         <translation>Arrêter la quête</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1900"/>
+        <location filename="../src/widgets/main_window.cpp" line="1902"/>
         <source>Update existing sprites using this image</source>
         <translation>Mettre à jour les sprites utilisant cette image</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1967"/>
+        <location filename="../src/widgets/main_window.cpp" line="1969"/>
         <source>Unsaved changes</source>
         <translation>Changements non sauvegardés</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1968"/>
+        <location filename="../src/widgets/main_window.cpp" line="1970"/>
         <source>All files must be saved before this operation.
 Do you want to save them now?</source>
         <translation>Tous les fichiers doivent être sauvegardés avant d&apos;effectuer cette opération.
@@ -2864,12 +2863,12 @@ Voulez-vous les sauvegarder maintenant ?</translation>
         <translation type="vanished">La quête s&apos;est terminée avec une erreur : %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1833"/>
+        <location filename="../src/widgets/main_window.cpp" line="1835"/>
         <source>File modified</source>
         <translation>Fichier en cours de modification</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1834"/>
+        <location filename="../src/widgets/main_window.cpp" line="1836"/>
         <source>This file is open and has unsaved changes.
 Please save it or close it before renaming.</source>
         <translation>Ce fichier est ouvert et a été modifié.\nVeuillez le sauvegarder ou le fermer avant de le renommer.</translation>
@@ -2883,14 +2882,14 @@ Please save it or close it before renaming.</source>
         <translation type="vanished">Nouvel id pour %1 &apos;%2&apos; :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1898"/>
-        <location filename="../src/widgets/main_window.cpp" line="1924"/>
+        <location filename="../src/widgets/main_window.cpp" line="1900"/>
+        <location filename="../src/widgets/main_window.cpp" line="1926"/>
         <source>Rename file</source>
         <translation>Renommer le fichier</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1899"/>
-        <location filename="../src/widgets/main_window.cpp" line="1925"/>
+        <location filename="../src/widgets/main_window.cpp" line="1901"/>
+        <location filename="../src/widgets/main_window.cpp" line="1927"/>
         <source>New name for file &apos;%1&apos;:</source>
         <translation>Nouveau nom pour le fichier &apos;%1&apos; :</translation>
     </message>
@@ -2899,12 +2898,12 @@ Please save it or close it before renaming.</source>
         <translation type="vanished">Couche invalide : %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1650"/>
+        <location filename="../src/widgets/main_window.cpp" line="1651"/>
         <source>Missing show entity type action</source>
         <translation>Action d&apos;affichage d&apos;entité introuvable</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1723"/>
+        <location filename="../src/widgets/main_window.cpp" line="1724"/>
         <source>Play selected music</source>
         <translation>Jouer la musique sélectionnée</translation>
     </message>
@@ -3830,12 +3829,22 @@ Please save it or close it before renaming.</source>
         <translation>Nouvelle ressource</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="22"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="32"/>
         <source>Resource id (filename):</source>
         <translation>Id de la ressource (nom de fichier) :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="32"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="48"/>
+        <source>Licence:</source>
+        <translation>Licence :</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="55"/>
+        <source>Author:</source>
+        <translation>Auteur :</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="22"/>
         <source>Description:</source>
         <translation>Description :</translation>
     </message>
@@ -4130,49 +4139,49 @@ Please save it or close it before renaming.</source>
         <translation>Impossible de créer le dossier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1897"/>
+        <location filename="../src/quest.cpp" line="1906"/>
         <source>Resource &apos;%1&apos; already exists</source>
         <translation>La ressource &apos;%1&apos; existe déjà</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1914"/>
-        <location filename="../src/quest.cpp" line="1968"/>
+        <location filename="../src/quest.cpp" line="1923"/>
+        <location filename="../src/quest.cpp" line="1977"/>
         <source>Cannot rename file &apos;%1&apos;</source>
         <translation>Impossible de renommer le fichier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2106"/>
+        <location filename="../src/quest.cpp" line="2115"/>
         <source>Cannot delete file &apos;%1&apos;</source>
         <translation>Impossible de supprimer le fichier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2146"/>
+        <location filename="../src/quest.cpp" line="2155"/>
         <source>Cannot delete folder &apos;%1&apos;</source>
         <translation>Impossible de supprimer le dossier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2183"/>
+        <location filename="../src/quest.cpp" line="2192"/>
         <source>Failed to delete file &apos;%1&apos;</source>
         <translation>Impossible de supprimer le fichier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2189"/>
+        <location filename="../src/quest.cpp" line="2198"/>
         <source>Failed to delete folder &apos;%1&apos;</source>
         <translation>Impossible de supprimer le dossier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2036"/>
+        <location filename="../src/quest.cpp" line="2045"/>
         <source>Same source and destination id</source>
         <translation>Id source et destination identiques</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2043"/>
+        <location filename="../src/quest.cpp" line="2052"/>
         <source>A resource with id &apos;%1&apos; already exists</source>
         <translation>Une ressource avec l&apos;id &apos;%1&apos; existe déjà</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2048"/>
-        <location filename="../src/quest.cpp" line="2092"/>
+        <location filename="../src/quest.cpp" line="2057"/>
+        <location filename="../src/quest.cpp" line="2101"/>
         <source>No such resource: &apos;%1&apos;</source>
         <translation>Ressource inexistante : &apos;%1&apos;</translation>
     </message>
@@ -5141,28 +5150,28 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Auteur et licence...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="800"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="801"/>
         <source>New folder</source>
         <translation>Nouveau dossier</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="801"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="802"/>
         <source>Folder name:</source>
         <translation>Nom du dossier :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="843"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="844"/>
         <source>New Lua script</source>
         <translation>Nouveau script Lua</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="844"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="895"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="845"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="896"/>
         <source>File name:</source>
         <translation>Nom de fichier :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="894"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="895"/>
         <source>New GLSL file</source>
         <translation>Nouveau fichier GLSL</translation>
     </message>
@@ -5183,37 +5192,37 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation type="vanished">Nouveau nom pour le fichier &apos;%1&apos; :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1111"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1112"/>
         <source>Change description</source>
         <translation>Changer la description</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1112"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1113"/>
         <source>New description for %1 &apos;%2&apos;:</source>
         <translation>Nouvelle description pour %1 &apos;%2&apos; :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1149"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1150"/>
         <source>File information for &apos;%1&apos;</source>
         <translation>Informations du fichier &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1151"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1152"/>
         <source>File information for %1 selected items</source>
         <translation>Informations des %1 éléments sélectionnés</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1232"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1233"/>
         <source>Do you really want to delete &apos;%1&apos;?</source>
         <translation>Voulez-vous vraiment supprimer &apos;%1&apos; ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1233"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1234"/>
         <source>Do you really want to delete these %1 items?</source>
         <translation>Voulez-vous vraiment supprimer ces %1 éléments ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1235"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1236"/>
         <source>Delete confirmation</source>
         <translation>Confirmer la suppression</translation>
     </message>
@@ -7193,12 +7202,12 @@ Voulez-vous recharger l&apos;image ?</translation>
 <context>
     <name>SolarusEditor::TilesetScene</name>
     <message>
-        <location filename="../src/widgets/tileset_scene.cpp" line="168"/>
+        <location filename="../src/widgets/tileset_scene.cpp" line="176"/>
         <source>Missing tileset image &apos;%1&apos;</source>
         <translation>Image de tileset manquante : &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_scene.cpp" line="445"/>
+        <location filename="../src/widgets/tileset_scene.cpp" line="453"/>
         <source>No such pattern index: %1</source>
         <translation>Index de motif inexistant : %1</translation>
     </message>

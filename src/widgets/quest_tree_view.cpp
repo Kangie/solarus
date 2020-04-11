@@ -757,9 +757,10 @@ void QuestTreeView::new_element_action_triggered() {
 
     QString element_id = dialog.get_element_id();
     QString description = dialog.get_element_description();
+    QuestDatabase::FileInfo file_info = dialog.get_file_info();
 
     model->get_quest().create_resource_element(
-          resource_type, element_id, description);
+          resource_type, element_id, description, file_info);
 
     QString created_path = quest.get_resource_element_path(resource_type, element_id);
     if (quest.exists(created_path)) {

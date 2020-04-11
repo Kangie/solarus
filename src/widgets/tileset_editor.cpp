@@ -1311,6 +1311,7 @@ void TilesetEditor::change_selected_pattern_id_requested() {
         tr("Update existing maps using this pattern"),
         old_id,
         this);
+  dialog.set_check_box_setting(EditorSettings::tileset_refactoring_change_pattern_id);
   int result = dialog.exec();
 
   if (result != QDialog::Accepted) {
