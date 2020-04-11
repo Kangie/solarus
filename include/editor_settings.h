@@ -87,6 +87,7 @@ public:
   static const QString tileset_grid_size;
   static const QString tileset_grid_style;
   static const QString tileset_grid_color;
+  static const QString tileset_refactoring_change_pattern_id;
 
   // Shader editor keys.
   static const QString shader_preview_type;

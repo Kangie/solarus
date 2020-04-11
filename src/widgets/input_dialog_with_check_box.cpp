@@ -16,6 +16,7 @@
  */
 #include "widgets/gui_tools.h"
 #include "widgets/input_dialog_with_check_box.h"
+#include "editor_settings.h"
 #include "ui_input_dialog_with_check_box.h"
 
 namespace SolarusEditor {
@@ -35,7 +36,8 @@ InputDialogWithCheckBox::InputDialogWithCheckBox(
     const QString& initial_value,
     QWidget* parent) :
   QDialog(parent),
-  ui(new Ui::InputDialogWithCheckBox()) {
+  ui(new Ui::InputDialogWithCheckBox()),
+  check_box_setting() {
 
   ui->setupUi(this);
 
@@ -89,6 +91,30 @@ void InputDialogWithCheckBox::set_checked(bool checked) {
 }
 
 /**
+ * @brief Returns the setting name that saves the check box state, if any.
+ * @return The setting name or an empty string.
+ */
+QString InputDialogWithCheckBox::get_check_box_setting() const {
+  return check_box_setting;
+}
+
+/**
+ * @brief Sets the setting name that saves the check box state.
+ *
+ * Modifies the check box state to match the setting if it exists.
+ *
+ * @param check_box_setting The setting name or an empty string.
+ */
+void InputDialogWithCheckBox::set_check_box_setting(const QString& check_box_setting) {
+
+  this->check_box_setting = check_box_setting;
+  if (!check_box_setting.isEmpty()) {
+    EditorSettings settings;
+    set_checked(settings.get_value_bool(check_box_setting));
+  }
+}
+
+/**
  * @brief Closes the dialog unless the user tries to set invalid data.
  * @param result Result code of the dialog.
  */
@@ -99,6 +125,11 @@ void InputDialogWithCheckBox::done(int result) {
     if (get_value().isEmpty()) {
       GuiTools::error_dialog("Empty pattern id");
       return;
+    }
+
+    if (!check_box_setting.isEmpty()) {
+      EditorSettings settings;
+      settings.set_value(check_box_setting, is_checked());
     }
   }
 

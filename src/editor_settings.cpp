@@ -93,6 +93,7 @@ const QString EditorSettings::tileset_grid_show_at_opening =
 const QString EditorSettings::tileset_grid_size = "tileset_editor/grid_size";
 const QString EditorSettings::tileset_grid_style = "tileset_editor/grid_style";
 const QString EditorSettings::tileset_grid_color = "tileset_editor/grid_color";
+const QString EditorSettings::tileset_refactoring_change_pattern_id = "tileset_editor/refactoring_change_pattern_id";
 
 // Shader editor keys.
 const QString EditorSettings::shader_preview_type = "shader_editor/preview_type";
@@ -161,6 +162,7 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::tileset_grid_size, QSize(16, 16) },
   { EditorSettings::tileset_grid_style, static_cast<int>(GridStyle::DASHED) },
   { EditorSettings::tileset_grid_color, "#000000" },
+  { EditorSettings::tileset_refactoring_change_pattern_id, true },
 
   // Shader editor.
   { EditorSettings::shader_preview_type, "picture" },

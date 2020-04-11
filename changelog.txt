@@ -6,6 +6,7 @@ _______________________________________
 * Add Ocean Set tilesets to the initial quest (#478).
 * Map editor: fix contours generated tileset specific (#485).
 * Map editor: fix a crash when undoing changing the layer of entities (#471).
+* Tileset editor: save the update maps option when renaming patterns (#483).
 * Tileset editor: fix moving patterns to an overlapping position (#477).
 * Tileset editor: fix crash when a tileset file changes while dragging (#476).
 * Fix possible crash when closing the window.
