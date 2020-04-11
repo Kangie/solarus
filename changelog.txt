@@ -1,6 +1,6 @@
 _______________________________________
 
-Solarus Quest Editor 1.6.3 (in progress)
+Solarus Quest Editor 1.6.3 (2020-04-11)
 _______________________________________
 
 * Add Ocean Set tilesets to the initial quest (#478).
