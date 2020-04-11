@@ -2440,9 +2440,6 @@ void MapEditor::generate_borders_requested(const EntityIndexes& indexes) {
   QString tileset_id = ui.border_set_tileset_field->get_selected_id();
   QString border_set_id = ui.border_set_field->get_selected_border_set_id();
 
-  if (tileset_id.isEmpty()) {
-    tileset_id = get_map().get_tileset_id();
-  }
   if (border_set_id.isEmpty()) {
     return;
   }
