@@ -1134,12 +1134,12 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.map_view->set_common_actions(&get_common_actions());
   ui.tileset_view->set_read_only(true);
   ui.tileset_view->set_view_settings(tileset_view_settings);
-  ui.size_field->config("x", 0, 99999, 8);
+  ui.size_field->config("x", 0, std::numeric_limits<int>::max(), 8);
   ui.size_field->set_tooltips(
     tr("Width of the map in pixels"),
     tr("Height of the map in pixels"));
 
-  ui.location_field->config(",", 0, 99999, 8);
+  ui.location_field->config(",", 0, std::numeric_limits<int>::max(), 8);
   ui.location_field->set_tooltips(
     tr("Coordinates of the map in its world (useful to make adjacent scrolling maps)"),
     tr("Coordinates of the map in its world (useful to make adjacent scrolling maps)"));
