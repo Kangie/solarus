@@ -1,6 +1,6 @@
 _______________________________________
 
-Solarus Quest Editor 1.6.4 (in progress)
+Solarus Quest Editor 1.6.4 (2020-04-12)
 _______________________________________
 
 * Fix spin boxes breaking the UI on Windows (#486).
