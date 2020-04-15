@@ -1,14 +1,10 @@
-_______________________________________
+# Changelog
 
-Solarus Quest Editor 1.6.4 (2020-04-12)
-_______________________________________
+## Solarus Quest Editor 1.6.4 (2020-04-12)
 
 * Fix spin boxes breaking the UI on Windows (#486).
 
-_______________________________________
-
-Solarus Quest Editor 1.6.3 (2020-04-11)
-_______________________________________
+## Solarus Quest Editor 1.6.3 (2020-04-11)
 
 * Add Ocean Set tilesets to the initial quest (#478).
 * Map editor: fix contours generated tileset specific (#485).
@@ -20,10 +16,7 @@ _______________________________________
 * Fix opening local documentation in Windows.
 * Fix tiles getting unwanted enabled_at_start field in map data files.
 
-_______________________________________
-
-Solarus Quest Editor 1.6.2 (2019-08-15)
-_______________________________________
+## Solarus Quest Editor 1.6.2 (2019-08-15)
 
 * Fix crash when closing tileset views (#467).
 * Fix broken enemies in the initial quest (#466).
@@ -32,10 +25,7 @@ _______________________________________
 * Add author and license fields when creating new resources.
 * Update French translation.
 
-_______________________________________
-
-Solarus Quest Editor 1.6.1 (2019-08-10)
-_______________________________________
+## Solarus Quest Editor 1.6.1 (2019-08-10)
 
 * Allow to build a quest package (#431).
 * Map editor: allow teletransporters to have any size multiple of 8 pixels.
@@ -48,10 +38,7 @@ _______________________________________
 * Initial quest: remove proprietary file added by mistake.
 * Add Force Software Rendering option to 'Running' section (stdgregwar).
 
-_______________________________________
-
-Solarus Quest Editor 1.6.0 (2018-12-22)
-_______________________________________
+## Solarus Quest Editor 1.6.0 (2018-12-22)
 
 * Allow to import files from other quests (#4).
 * Quest tree: show all .png and .dat files (#260).
@@ -99,10 +86,7 @@ _______________________________________
 * Text editor: allow to set an external editor to be used instead of the
 built-in one (#398)
 
-_______________________________________
-
-Solarus Quest Editor 1.5.3 (2017-04-01)
-_______________________________________
+## Solarus Quest Editor 1.5.3 (2017-04-01)
 
 * Initial quest: add enemy killed animation from Diarandor.
 * Initial quest: fix the source image of the bomb sprite.
@@ -111,26 +95,18 @@ _______________________________________
 * Initial quest: play a sound with the Solarus logo.
 * Fix error message when converting from older formats to 1.5.2.
 
-_______________________________________
-
-Solarus Quest Editor 1.5.2 (2016-12-06)
-_______________________________________
+## Solarus Quest Editor 1.5.2 (2016-12-06)
 
 * Fix recursive folders when creating a quest in initial_quest itself (#253).
 
-_______________________________________
+## Solarus Quest Editor 1.5.1 (2016-11-29)
 
-Solarus Quest Editor 1.5.1 (2016-11-29)
-_______________________________________
-
-New features
-------------
+### New features
 
 * Spanish translation (thanks Diarandor!).
 * Update maps when renaming musics, enemies and custom entities (#222).
 
-Bug fixes
----------
+### Bug fixes
 
 * Fix resizing the console when a sprite editor is open (#215).
 * Fix quest reopened even if it was closed in previous session (#220).
@@ -148,13 +124,9 @@ Bug fixes
 * Initial quest: put the solarus logo script in scripts/menus/ (#216)
 * Initial quest: fix wrong hero sprite after game-over.
 
-_______________________________________
+## Solarus Quest Editor 1.5.0 (2016-07-27)
 
-Solarus Quest Editor 1.5.0 (2016-07-27)
-_______________________________________
-
-New features
-------------
+### New features
 
 * Add an execution log view of the quest.
 * Add a console to execute Lua instructions when the quest is running.
@@ -200,8 +172,7 @@ New features
 * Add select all to map, tileset and text editors (#106).
 * Add unselect all to map, tileset and text editors (#115).
 
-Bug fixes
----------
+### Bug fixes
 
 * Fix wrong hero movements sometimes when playing from the editor (#138).
 * Fix tabs not closed when opening another quest (#44).
@@ -222,10 +193,7 @@ Bug fixes
 * Sprite editor: fix "missing image" message staying after solving it (#191).
 * Quest properties: don't allow slashes or backslashes in the write dir (#59).
 
-_______________________________________
-
-Solarus Quest Editor 1.4.5 (2015-11-22)
-_______________________________________
+## Solarus Quest Editor 1.4.5 (2015-11-22)
 
 Bugfix release for the 1.4 branch.
 
@@ -241,10 +209,7 @@ Bugfix release for the 1.4 branch.
 * Fix crash on Mac OS X 64 bit.
 * Fix crash when removing from the tree a resource that does not exist (#124).
 
-_______________________________________
-
-Solarus Quest Editor 1.4.4 (2015-08-20)
-_______________________________________
+## Solarus Quest Editor 1.4.4 (2015-08-20)
 
 Bugfix release for the 1.4 branch.
 
@@ -256,10 +221,7 @@ Bugfix release for the 1.4 branch.
 * Sprite editor: fix change selection no update frame delay of previewer (#67).
 * Protect resource description fields from wrong characters (#74).
 
-_______________________________________
-
-Solarus Quest Editor 1.4.3 (2015-08-13)
-_______________________________________
+## Solarus Quest Editor 1.4.3 (2015-08-13)
 
 Bugfix release for the 1.4 branch.
 
@@ -281,19 +243,13 @@ Bugfix release for the 1.4 branch.
 * Make the numpad enter key work like the return key (#49).
 * Check the Solarus library version at compilation time (#41).
 
-________________________________________
-
-Solarus Quest Editor 1.4.2 (2015-05-09)
-________________________________________
+## Solarus Quest Editor 1.4.2 (2015-05-09)
 
 Bugfix release for the 1.4 branch.
 
 * Fix inversion between generalized and usual NPCs in the entity dialog box.
 
-________________________________________
-
-Solarus Quest Editor 1.4.1 (2015-05-09)
-________________________________________
+## Solarus Quest Editor 1.4.1 (2015-05-09)
 
 Bugfix release for the 1.4 branch.
 
@@ -309,16 +265,12 @@ Bugfix release for the 1.4 branch.
 * Fix typos.
 * Sprite editor: fix adding a new direction with the plus button (#27).
 
-________________________________________
-
-Solarus Quest Editor 1.4.0 (2015-05-02)
-________________________________________
+## Solarus Quest Editor 1.4.0 (2015-05-02)
 
 The quest editor was rewritten from scratch in C++/Qt with a lot of
 improvements and new features.
 
-New features
-------------
+### New features
 
 * Dialogs editor (by Maxs).
 * Strings editor (by Maxs).
@@ -352,8 +304,7 @@ New features
 * Add a menu item to open the official Solarus website.
 * Add a menu item to open Solarus documentation.
 
-Bug fixes
----------
+### Bug fixes
 
 * Fix encoding of non-ascii characters in project_db.dat with Windows.
 * Fix Ctrl+S shortcut not always working.
