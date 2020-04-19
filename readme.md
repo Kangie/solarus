@@ -23,7 +23,7 @@ See the license.txt file for more details.
 To build Solarus Quest Editor, you need:
 - A C++ compiler with support of C++11 (gcc 4.8 and clang 3.4 are okay).
 - CMake 2.8.11 or greater.
-- Qt 5.2 or greater (for versions 1.6.3 or greater, Qt 5.7 or greater).
+- Qt 5.7 or greater.
   - Debian qt5 packages required:
     - qtbase5-dev
     - qttools5-dev
