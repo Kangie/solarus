@@ -1095,12 +1095,16 @@ void AutoTiler::compute_tiles_outer() {
 
 /**
  * @brief Creates border tiles around the given entities.
- * @return The border tiles ready to be added to the map.  1 1
+ * @return The border tiles ready to be added to the map.
  */
 AddableEntities AutoTiler::generate_border_tiles() {
 
   if (entity_rectangles.empty()) {
-    return AddableEntities();
+    return {};
+  }
+
+  if (!get_tileset().border_set_patterns_exist(border_set_id)) {
+    return {};
   }
 
   // Determine the 8x8 grid.
@@ -1116,7 +1120,7 @@ AddableEntities AutoTiler::generate_border_tiles() {
   // Create the corresponding tiles.
   compute_tiles();
   if (tiles.empty()) {
-    return AddableEntities();
+    return {};
   }
 
   const EntityModelPtr& first_tile = *tiles.begin();

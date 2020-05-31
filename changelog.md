@@ -1,5 +1,9 @@
 # Changelog
 
+## Solarus Quest Editor 1.6.5 (in progress)
+
+* Map editor: fix crash when generating contours with missing patterns (#494).
+
 ## Solarus Quest Editor 1.6.4 (2020-04-12)
 
 * Fix spin boxes breaking the UI on Windows (#486).

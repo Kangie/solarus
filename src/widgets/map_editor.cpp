@@ -2444,6 +2444,15 @@ void MapEditor::generate_borders_requested(const EntityIndexes& indexes) {
     return;
   }
 
+  const TilesetModel* tileset = map->get_tileset_model();
+  if (tileset == nullptr) {
+    return;
+  }
+
+  if (!tileset->border_set_patterns_exist(border_set_id)) {
+    GuiTools::error_dialog(tr("Cannot generate tiles: some patterns of the contour '%1' are missing.\nPlease fix it in the tileset.").arg(border_set_id));
+    return;
+  }
   AutoTiler auto_tiler(get_map(), tileset_id, border_set_id, indexes);
   try_command(new AddEntitiesCommand(*this, auto_tiler.generate_border_tiles(), false));
 }
