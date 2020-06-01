@@ -17,6 +17,7 @@
 #include "entities/jumper.h"
 #include "map_model.h"
 #include <QPainter>
+#include <QPainterPath>
 
 namespace SolarusEditor {
 
