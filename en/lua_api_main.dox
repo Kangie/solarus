@@ -464,6 +464,25 @@ Returns the current
 - Return value (\ref lua_api_game "game"): The game currently running,
   or \c nil if no game is running.
 
+\subsection lua_api_main_rawget sol.main.rawget(object, key)
+
+Get a value from a table or a Solarus userdata that acts as a table without
+using metamethods.
+
+- \c object (\c table or \c userdata): The table or userdata.
+- \c key (any type): The key to look up.
+- Return value (any type): The value associated with the key on the object.
+
+\subsection lua_api_main_rawset sol.main.rawset(object, key, value)
+
+Set a value on a table or a Solarus userdata that acts as a table without
+using metamethods.
+
+- \c object (\c table or \c userdata): The table or userdata.
+- \c key (any type): The key to set. The key should not be \c nil or \c NaN.
+- \c value (any type): The value that should now be associated with the key.
+- Return value (\c table or \c userdata): The \c object argument.
+
 \section lua_api_main_events Events of sol.main
 
 Events are callback methods automatically called by the engine if you define
