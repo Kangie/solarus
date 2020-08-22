@@ -282,6 +282,9 @@ void MapView::set_map(MapModel* map) {
 
     // Start the state mechanism.
     start_state_doing_nothing();
+
+    connect(scene, &MapScene::selectionChanged,
+            this, &MapView::map_selection_changed);
   }
 }
 
@@ -674,12 +677,9 @@ QMenu* MapView::create_context_menu() {
     // Edit.
     const bool single_selection = indexes.size() <= 1;
     Q_ASSERT(edit_action != nullptr);
-    edit_action->setEnabled(single_selection);
     menu->addAction(edit_action);
 
     // Resize.
-    const bool resizable = are_entities_resizable(indexes);
-    resize_action->setEnabled(resizable);
     menu->addAction(resize_action);
 
     // Direction.
@@ -770,8 +770,6 @@ QMenu* MapView::create_context_menu() {
       menu->addAction(action);
     }
 
-    up_one_layer_action->setEnabled(!has_common_layer || common_layer < get_map()->get_max_layer());
-    down_one_layer_action->setEnabled(!has_common_layer || common_layer > get_map()->get_min_layer());
     menu->addAction(up_one_layer_action);
     menu->addAction(down_one_layer_action);
 
@@ -1058,6 +1056,32 @@ void MapView::mouse_coordinates_changed(const QPoint& xy) {
 
   QPoint map_xy = mapToScene(xy).toPoint() - MapScene::get_margin_top_left();
   emit mouse_map_coordinates_changed(map_xy);
+}
+
+/**
+ * @brief Slot called when the entity selection has changed.
+ *
+ * Updates the availability of actions.
+ */
+void MapView::map_selection_changed() {
+
+  const EntityIndexes& indexes = get_selected_entities();
+
+  if (!indexes.empty()) {
+    const bool single_selection = indexes.size() <= 1;
+
+    Q_ASSERT(edit_action != nullptr);
+    edit_action->setEnabled(single_selection);
+
+    const bool resizable = are_entities_resizable(indexes);
+    Q_ASSERT(resize_action != nullptr);
+    resize_action->setEnabled(resizable);
+
+    int common_layer = -1;
+    bool has_common_layer = map->is_common_layer(indexes, common_layer);
+    up_one_layer_action->setEnabled(!has_common_layer || common_layer < get_map()->get_max_layer());
+    down_one_layer_action->setEnabled(!has_common_layer || common_layer > get_map()->get_min_layer());
+  }
 }
 
 /**
