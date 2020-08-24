@@ -38,8 +38,8 @@ Only \c solarus_version and \c title are mandatory, but
 \c write_dir is also required if you want to be able to use savegames.
 - \c solarus_version (string): Format of the engine your data files are
   compatible with. This string should be a major and minor version, for
-  example "1.6". You can also indicate a full version string, including
-  the patch number (like "1.6.1") but the patch number will be ignored.
+  example "1.7". You can also indicate a full version string, including
+  the patch number (like "1.7.0") but the patch number will be ignored.
   Patch versions are ignored because they don't break compatibility.
 - \c title (string): Name of your quest.
 - \c short_description (string, optional): A one-line description of the quest.
@@ -101,7 +101,7 @@ Example of \c quest.dat file:
 
 \verbatim
 quest{
-  solarus_version = "1.6",
+  solarus_version = "1.7",
   title = "My incredible quest",
   write_dir = "my_quest",
   short_description = "This is the best game ever",
