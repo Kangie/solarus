@@ -41,6 +41,14 @@ Creates a text surface with the specified properties.
     No effect on bitmap fonts.
   - \c font_size (number, default \c 11): Font size to use.
     No effect on bitmap fonts.
+  - \c font_hinting (string, default \c "normal"): Sets the font hinting mode
+    for the surface, which controls how characters are rendered,
+    there are four options:
+    \c "none", \c "normal", \c "light" or \c "mono".
+    No effect on bitmap fonts.
+  - \c font_kerning (boolean, default \c true): Whether kerning is used for
+    the surface, which controls spacing between characters.
+    Font dependent. No effect on bitmap fonts.
   - \c text (string, default \c ""): The text to show
     (must be valid UTF-8).
   - \c text_key (string, default \c nil): Key of the localized text
