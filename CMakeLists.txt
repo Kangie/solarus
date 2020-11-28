@@ -47,33 +47,26 @@ endif()
 # FreeDesktop compatible icons
 if(UNIX AND NOT APPLE)
   # Pixmap icons for sizes under 48x48 pixels
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-16x16.png
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/16x16/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-20x20.png
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/20x20/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-24x24.png
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/24x24/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-32x32.png
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-40x40.png
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/40x40/apps RENAME solarus-quest-editor.png)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-48x48.png
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps RENAME solarus-quest-editor.png)
+  foreach(SIZE IN ITEMS 16 20 24 32 40 48)
+    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-${SIZE}x${SIZE}.png
+      DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME ${SOLARUS_APP_ID}.QuestEditor.png)
+  endforeach(SIZE)
   
   # Pixmap icon for desktops that don't support multiple sizes
   install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-512x512.png
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/pixmaps RENAME solarus-quest-editor.png)
+    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/pixmaps RENAME ${SOLARUS_APP_ID}.QuestEditor.png)
 
   # Vector icons, automatically chosen for sizes above 48x48 pixels
   install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor.svg
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps)
+    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps RENAME ${SOLARUS_APP_ID}.QuestEditor.svg)
   install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app-icon/solarus-quest-editor-symbolic.svg
-    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/symbolic/apps)
+    DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/symbolic/apps RENAME ${SOLARUS_APP_ID}.QuestEditor-symbolic.svg)
   
 endif(UNIX AND NOT APPLE)
 
 # FreeDesktop compatible start menu launcher
 if(UNIX AND NOT APPLE)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/solarus-quest-editor.desktop
+  configure_file (resources/solarus-quest-editor.desktop.in resources/${SOLARUS_APP_ID}.QuestEditor.desktop @ONLY)
+  install (FILES ${CMAKE_CURRENT_BINARY_DIR}/resources/${SOLARUS_APP_ID}.QuestEditor.desktop
     DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/applications)
 endif(UNIX AND NOT APPLE)
