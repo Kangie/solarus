@@ -52,6 +52,7 @@ class Jumper: public Entity {
     virtual void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
 
     int get_jump_length() const;
+    void set_jump_length(int length);
     bool is_jump_horizontal() const;
     bool is_jump_vertical() const;
     bool is_jump_diagonal() const;

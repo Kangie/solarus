@@ -37,6 +37,7 @@
 #include "solarus/entities/EntityTypeInfo.h"
 #include "solarus/entities/GroundInfo.h"
 #include "solarus/entities/Hero.h"
+#include "solarus/entities/Jumper.h"
 #include "solarus/entities/Npc.h"
 #include "solarus/entities/Pickable.h"
 #include "solarus/entities/Sensor.h"
@@ -312,6 +313,7 @@ void LuaContext::register_entity_module() {
       { "set_open", chest_api_set_open },
       { "get_treasure", chest_api_get_treasure },
       { "set_treasure", chest_api_set_treasure },
+      { "get_opening_method", chest_api_get_opening_method}
   };
 
   chest_methods.insert(chest_methods.end(), common_methods.begin(), common_methods.end());
@@ -331,6 +333,7 @@ void LuaContext::register_entity_module() {
       { "set_pullable", block_api_set_pullable },
       { "get_maximum_moves", block_api_get_maximum_moves },
       { "set_maximum_moves", block_api_set_maximum_moves },
+      { "get_direction", block_api_get_direction}
   };
   if (CurrentQuest::is_format_at_least({ 1, 6 })) {
     block_methods.insert(block_methods.end(), {
@@ -460,6 +463,8 @@ void LuaContext::register_entity_module() {
       { "get_damage_on_enemies", destructible_api_get_damage_on_enemies },
       { "set_damage_on_enemies", destructible_api_set_damage_on_enemies },
       { "get_modified_ground", destructible_api_get_modified_ground },
+      { "get_weight", destructible_api_get_weight},
+      { "set_weight", destructible_api_set_weight},
   };
   if (CurrentQuest::is_format_at_most({ 1, 5 })) {
     destructible_methods.insert(destructible_methods.end(), {
@@ -583,6 +588,20 @@ void LuaContext::register_entity_module() {
       metamethods
   );
 
+  //Jumper.
+  std::vector<luaL_Reg> jumper_methods = {
+    { "get_jump_length", jumper_api_get_jump_length},
+    { "set_jump_length", jumper_api_set_jump_length},
+  };
+
+  jumper_methods.insert(jumper_methods.end(), common_methods.begin(), common_methods.end());
+  register_type(
+      get_entity_internal_type_name(EntityType::JUMPER),
+      {},
+      jumper_methods,
+      metamethods
+  );
+
   // Custom entity.
   std::vector<luaL_Reg> custom_entity_methods = {
       { "get_model", custom_entity_api_get_model },
@@ -631,7 +650,6 @@ void LuaContext::register_entity_module() {
 
   // Also register all other types of entities that have no specific methods.
   register_type(get_entity_internal_type_name(EntityType::TILE), {}, common_methods, metamethods);
-  register_type(get_entity_internal_type_name(EntityType::JUMPER), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::SENSOR), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::SEPARATOR), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::WALL), {}, common_methods, metamethods);
@@ -3654,6 +3672,40 @@ int LuaContext::chest_api_set_treasure(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of chest:get_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_get_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    Chest::OpeningMethod method = chest.get_opening_method();
+
+    switch(method){
+      case Chest::OpeningMethod::BY_INTERACTION: 
+      {
+        lua_pushstring(l, "interaction");
+        break;
+      }
+      case Chest::OpeningMethod::BY_INTERACTION_IF_ITEM: 
+      {
+        lua_pushstring(l, "item");
+        break;
+      }
+      case Chest::OpeningMethod::BY_INTERACTION_IF_SAVEGAME_VARIABLE:
+      {
+        lua_pushstring(l, "savegame variable");
+        break;
+      }
+      default:
+        lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Returns whether a value is a userdata of type block.
  * \param l A Lua context.
  * \param index An index in the stack.
@@ -3814,6 +3866,29 @@ int LuaContext::block_api_set_max_moves(lua_State* l) {
     }
 
     return 0;
+  });
+}
+
+/**
+ * \brief Implementation of block:get_direction().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_direction(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const int direction = block.get_direction();
+
+    if (direction == -1) {
+      // -1 means no maximum.
+      lua_pushnil(l);
+    }
+    else {
+      lua_pushinteger(l, direction);
+    }
+    return 1;
   });
 }
 
@@ -4892,6 +4967,36 @@ int LuaContext::destructible_api_get_modified_ground(lua_State* l) {
 
     push_string(l, enum_to_name(modified_ground));
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of destructible:get_weight().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::destructible_api_get_weight(lua_State* l){
+  return state_boundary_handle(l, [&]{
+    const Destructible& destructible = *check_destructible(l, 1);
+    const int weight = destructible.get_weight();
+    lua_pushnumber(l, weight);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of destructible:set_weight().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::destructible_api_set_weight(lua_State* l){
+  return state_boundary_handle(l, [&]{
+    Destructible& destructible = *check_destructible(l, 1);
+    int weight = LuaTools::check_int(l, 2);
+    destructible.set_weight(weight);
+    return 0;
   });
 }
 
@@ -6033,6 +6138,58 @@ int LuaContext::enemy_api_create_enemy(lua_State* l) {
 
     push_entity(l, *entity);
     return 1;
+  });
+}
+
+/**
+ * \brief Returns whether a value is a userdata of type jumper.
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \return \c true if the value at this index is an enemy.
+ */
+bool LuaContext::is_jumper(lua_State* l, int index) {
+  return is_userdata(l, index, get_entity_internal_type_name(EntityType::JUMPER));
+}
+
+/**
+ * \brief Checks that the userdata at the specified index of the stack is a
+ * jumper and returns it.
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \return The enemy.
+ */
+std::shared_ptr<Jumper> LuaContext::check_jumper(lua_State* l, int index) {
+  return std::static_pointer_cast<Jumper>(check_userdata(
+      l, index, get_entity_internal_type_name(EntityType::JUMPER)
+  ));
+}
+
+/** 
+ * \brief Implementation of jumper:get_jump_length().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ * */
+
+int LuaContext::jumper_api_get_jump_length(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Jumper& jumper = *check_jumper(l, 1);
+    lua_pushinteger(l, jumper.get_jump_length());
+    return 1;
+  });
+}
+
+/** 
+ * \brief Implementation of jumper:set_jump_length().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ * */
+
+int LuaContext::jumper_api_set_jump_length(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Jumper& jumper = *check_jumper(l, 1);
+    int length = LuaTools::check_int(l, 2);
+    jumper.set_jump_length(length);
+    return 0;
   });
 }
 

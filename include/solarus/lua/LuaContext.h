@@ -1112,6 +1112,7 @@ class LuaContext {
       chest_api_set_open,
       chest_api_get_treasure,
       chest_api_set_treasure,
+      chest_api_get_opening_method,
       block_api_reset,
       block_api_is_pushable,
       block_api_set_pushable,
@@ -1119,6 +1120,7 @@ class LuaContext {
       block_api_set_pullable,
       block_api_get_max_moves,
       block_api_set_max_moves,
+      block_api_get_direction,
       block_api_get_maximum_moves,
       block_api_set_maximum_moves,
       switch_api_is_activated,
@@ -1161,6 +1163,8 @@ class LuaContext {
       destructible_api_get_damage_on_enemies,
       destructible_api_set_damage_on_enemies,
       destructible_api_get_modified_ground,
+      destructible_api_get_weight,
+      destructible_api_set_weight,
       dynamic_tile_api_get_pattern_id,
       dynamic_tile_api_get_modified_ground,
       dynamic_tile_api_get_tileset,
@@ -1212,6 +1216,8 @@ class LuaContext {
       enemy_api_is_immobilized,
       enemy_api_immobilize,
       enemy_api_create_enemy,
+      jumper_api_get_jump_length,
+      jumper_api_set_jump_length,
       custom_entity_api_get_model,
       custom_entity_api_get_direction,
       custom_entity_api_set_direction,
@@ -1493,6 +1499,8 @@ private:
     static std::shared_ptr<DynamicTile> check_dynamic_tile(lua_State* current_l, int index);
     static bool is_enemy(lua_State* current_l, int index);
     static std::shared_ptr<Enemy> check_enemy(lua_State* current_l, int index);
+    static bool is_jumper(lua_State* current_l, int index);
+    static std::shared_ptr<Jumper> check_jumper(lua_State* current_l, int index);
     static bool is_custom_entity(lua_State* current_l, int index);
     static std::shared_ptr<CustomEntity> check_custom_entity(lua_State* current_l, int index);
 
