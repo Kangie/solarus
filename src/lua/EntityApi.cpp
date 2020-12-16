@@ -58,6 +58,8 @@
 #include "solarus/movements/Movement.h"
 #include <sstream>
 
+#include "solarus/core/Logger.h"
+
 namespace Solarus {
 
 namespace {
@@ -546,6 +548,7 @@ void LuaContext::register_entity_module() {
       { "set_attack_consequence_sprite", enemy_api_set_attack_consequence_sprite },
       { "set_default_attack_consequences", enemy_api_set_default_attack_consequences },
       { "set_default_attack_consequences_sprite", enemy_api_set_default_attack_consequences_sprite },
+      { "get_savegame_variable", enemy_api_get_savegame_variable},
       { "set_invincible", enemy_api_set_invincible },
       { "set_invincible_sprite", enemy_api_set_invincible_sprite },
       { "has_layer_independent_collisions", entity_api_has_layer_independent_collisions },
@@ -5795,6 +5798,20 @@ int LuaContext::enemy_api_set_default_attack_consequences_sprite(lua_State* l) {
 }
 
 /**
+ * \brief Impplementation of enemy:get_savegame_variable()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Enemy& enemy = *check_enemy(l, 1);
+    push_string(l, enemy.get_savegame_variable());
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of enemy:set_invincible().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -6172,7 +6189,7 @@ std::shared_ptr<Jumper> LuaContext::check_jumper(lua_State* l, int index) {
 
 int LuaContext::jumper_api_get_jump_length(lua_State* l) {
   return state_boundary_handle(l, [&]{
-    Jumper& jumper = *check_jumper(l, 1);
+    const Jumper& jumper = *check_jumper(l, 1);
     lua_pushinteger(l, jumper.get_jump_length());
     return 1;
   });

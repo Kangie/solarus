@@ -143,7 +143,8 @@ class Enemy: public Entity {
     void set_no_attack_consequences_sprite(const Sprite& sprite);
     void set_default_attack_consequences();
     void set_default_attack_consequences_sprite(const Sprite& sprite);
-
+    const std::string& get_savegame_variable() const;
+    
     // sprites
     std::string get_animation() const;
     void set_animation(const std::string& animation);

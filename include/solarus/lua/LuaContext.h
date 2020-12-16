@@ -1201,6 +1201,7 @@ class LuaContext {
       enemy_api_set_attack_consequence_sprite,
       enemy_api_set_default_attack_consequences,
       enemy_api_set_default_attack_consequences_sprite,
+      enemy_api_get_savegame_variable,
       enemy_api_set_invincible,
       enemy_api_set_invincible_sprite,
       enemy_api_get_treasure,
