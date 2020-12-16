@@ -58,8 +58,6 @@
 #include "solarus/movements/Movement.h"
 #include <sstream>
 
-#include "solarus/core/Logger.h"
-
 namespace Solarus {
 
 namespace {
@@ -395,6 +393,7 @@ void LuaContext::register_entity_module() {
 
   // Door.
   std::vector<luaL_Reg> door_methods = {
+      { "get_savegame_variable", door_api_get_savegame_variable},
       { "is_open", door_api_is_open },
       { "is_opening", door_api_is_opening },
       { "is_closed", door_api_is_closed },
@@ -4293,6 +4292,20 @@ std::shared_ptr<Door> LuaContext::check_door(lua_State* l, int index) {
  */
 void LuaContext::push_door(lua_State* l, Door& door) {
   push_userdata(l, door);
+}
+
+/**
+ * \brief Impplementation of door:get_savegame_variable()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_savegame_variable(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Door& door = *check_door(l, 1);
+    push_string(l, door.get_savegame_variable());
+    return 1;
+  });
 }
 
 /**

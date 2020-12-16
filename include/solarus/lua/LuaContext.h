@@ -1140,6 +1140,7 @@ class LuaContext {
       stream_api_set_allow_attack,
       stream_api_get_allow_item,
       stream_api_set_allow_item,
+      door_api_get_savegame_variable,
       door_api_is_open,
       door_api_is_opening,
       door_api_is_closed,
