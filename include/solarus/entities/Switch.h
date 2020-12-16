@@ -74,6 +74,8 @@ class Switch: public Entity {
     void set_activated(bool enabled);
     bool is_locked() const;
     void set_locked(bool locked);
+    bool is_inactivate_when_leaving() const;
+    void set_inactivate_when_leaving(bool inactivate_when_leaving);
 
     void try_activate(Hero& hero);
     void try_activate(Block& block);

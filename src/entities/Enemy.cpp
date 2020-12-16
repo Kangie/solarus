@@ -755,6 +755,7 @@ void Enemy::set_default_attack_consequences_sprite(const Sprite& sprite) {
 /**
  * \brief Returns the boolean variable indicating whether this enemy is killed,
  * or an empty string if it is not saved
+ * \return the savegame variable.
  */
 
 const std::string& Enemy::get_savegame_variable() const {

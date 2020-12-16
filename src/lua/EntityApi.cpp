@@ -358,6 +358,8 @@ void LuaContext::register_entity_module() {
       { "set_activated", switch_api_set_activated },
       { "is_locked", switch_api_is_locked },
       { "set_locked", switch_api_set_locked },
+      { "is_inactivate_when_leaving", switch_api_is_inactivate_when_leaving},
+      { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
       { "is_walkable", switch_api_is_walkable },
   };
 
@@ -4014,6 +4016,37 @@ int LuaContext::switch_api_set_locked(lua_State* l) {
     bool locked = LuaTools::opt_boolean(l, 2, true);
 
     sw.set_locked(locked);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of switch:is_inactivate_when_leaving().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::switch_api_is_inactivate_when_leaving(lua_State* l){
+  return state_boundary_handle(l, [&]{
+    const Switch& sw = *check_switch(l, 1);
+    lua_pushboolean(l, sw.is_inactivate_when_leaving());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of switch:set_inactivate_when_leaving().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::switch_api_set_inactivate_when_leaving(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Switch& sw = *check_switch(l, 1);
+    bool iwl = LuaTools::opt_boolean(l, 2, true);
+
+    sw.set_inactivate_when_leaving(iwl);
 
     return 0;
   });
