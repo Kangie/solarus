@@ -23,6 +23,7 @@
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QTimer>
+#include <set>
 
 namespace SolarusEditor {
 
@@ -196,7 +197,7 @@ void ImportDialog::find_missing_button_triggered() {
   QString initial_source_path = !selected_source_path.isEmpty() ?
         selected_source_path : source_quest.get_data_path();
   QStringList missing_source_paths;
-  ui.source_quest_tree_view->expand_to_path(initial_source_path);  // TODO expand the directory
+  ui.source_quest_tree_view->expand_to_path(initial_source_path);
   find_source_paths_not_in_destination_quest(initial_source_path, missing_source_paths);
 
   ui.source_quest_tree_view->set_selected_paths(missing_source_paths);
@@ -277,36 +278,35 @@ void ImportDialog::import_button_triggered() {
   ui.missing_files_count_label->clear();
 
   try {
-    QStringList source_paths = ui.source_quest_tree_view->get_selected_paths();
-    if (source_paths.isEmpty()) {
+    const QStringList source_paths = ui.source_quest_tree_view->get_selected_paths();
+    std::set<QString> source_path_set(source_paths.begin(), source_paths.end());
+    if (source_path_set.empty()) {
       return;
     }
 
     // When a folder is selected, remove its children from the list
     // because they are already imported recursively.
-    QSet<QString> source_path_set = source_paths.toSet();
-    for (const QString& source_path : source_paths) {
+    std::set<QString> unique_source_path_set = source_path_set;
+    for (const QString& source_path : source_path_set) {
       QString parent = QFileInfo(source_path).dir().path();
-      if (source_path_set.contains(parent)) {
-        source_path_set.remove(source_path);
+      if (source_path_set.find(parent) != source_path_set.end()) {
+        unique_source_path_set.erase(source_path);
       }
     }
-    QStringList unique_source_paths = source_path_set.toList();
-    std::sort(unique_source_paths.begin(), unique_source_paths.end());
 
     // Show a warning if a lot of files are about to be imported.
-    if (source_paths.size() > 5 && QMessageBox::warning(
+    if (source_path_set.size() > 5 && QMessageBox::warning(
           nullptr,
           tr("Import confirmation"),
-          tr("%1 items will be imported to your quest.").arg(source_paths.size()),
+          tr("%1 items will be imported to your quest.").arg(source_path_set.size()),
           QMessageBox::Ok | QMessageBox::Cancel,
           QMessageBox::Ok
           ) == QMessageBox::Cancel) {
       return;
     }
 
-    bool multiple = unique_source_paths.size() > 1;
-    for (const QString& source_path : unique_source_paths) {
+    bool multiple = unique_source_path_set.size() > 1;
+    for (const QString& source_path : unique_source_path_set) {
       if (!import_path(source_path, multiple)) {
         // Cancelled.
         break;

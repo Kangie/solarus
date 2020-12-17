@@ -4,6 +4,7 @@
 
 * Map editor: fix crash when generating contours with missing patterns (#494).
 * Map editor: fix resize and edit shortcuts not working sometimes (#272).
+* Import dialog: fix file count inconsistencies (#446).
 
 ## Solarus Quest Editor 1.6.4 (2020-04-12)
 
