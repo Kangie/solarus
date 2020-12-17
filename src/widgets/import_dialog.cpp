@@ -203,7 +203,7 @@ void ImportDialog::find_missing_button_triggered() {
   ui.missing_files_count_label->setText(
         missing_source_paths.isEmpty() ?
           tr("No candidates found") :
-          tr("%1 candidates found").arg(missing_source_paths.size())
+          tr("%1 candidates found").arg(ui.source_quest_tree_view->get_selected_paths().size())
   );
 }
 
@@ -291,8 +291,8 @@ void ImportDialog::import_button_triggered() {
         source_path_set.remove(source_path);
       }
     }
-    source_paths = source_path_set.toList();
-    std::sort(source_paths.begin(), source_paths.end());
+    QStringList unique_source_paths = source_path_set.toList();
+    std::sort(unique_source_paths.begin(), unique_source_paths.end());
 
     // Show a warning if a lot of files are about to be imported.
     if (source_paths.size() > 5 && QMessageBox::warning(
@@ -305,8 +305,8 @@ void ImportDialog::import_button_triggered() {
       return;
     }
 
-    bool multiple = source_paths.size() > 1;
-    for (const QString& source_path : source_paths) {
+    bool multiple = unique_source_paths.size() > 1;
+    for (const QString& source_path : unique_source_paths) {
       if (!import_path(source_path, multiple)) {
         // Cancelled.
         break;
