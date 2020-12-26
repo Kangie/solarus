@@ -271,12 +271,7 @@ void QuestTreeView::set_selected_paths(const QStringList& paths) {
     selection.select(index, index);
     expand(index.parent());
   }
-  selectionModel()->select(selection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-
-  // Workaround for the buggy selection of rows that were just created when expanding the tree.
-  QTimer::singleShot(100, this, [this, selection]() {
-    selectionModel()->select(selection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-  });
+  selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
 /**

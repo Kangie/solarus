@@ -200,12 +200,17 @@ void ImportDialog::find_missing_button_triggered() {
   ui.source_quest_tree_view->expand_to_path(initial_source_path);
   find_source_paths_not_in_destination_quest(initial_source_path, missing_source_paths);
 
-  ui.source_quest_tree_view->set_selected_paths(missing_source_paths);
   ui.missing_files_count_label->setText(
         missing_source_paths.isEmpty() ?
           tr("No candidates found") :
           tr("%1 candidates found").arg(ui.source_quest_tree_view->get_selected_paths().size())
   );
+
+  ui.source_quest_tree_view->set_selected_paths(missing_source_paths);
+  // Workaround for the buggy selection of rows that were just created when expanding the tree.
+  QTimer::singleShot(100, this, [this, missing_source_paths]() {
+    ui.source_quest_tree_view->set_selected_paths(missing_source_paths);
+  });
 }
 
 /**
