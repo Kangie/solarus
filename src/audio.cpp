@@ -18,10 +18,12 @@
 #include "quest.h"
 #include <solarus/audio/Music.h>
 #include <solarus/audio/Sound.h>
+#include <solarus/audio/SoundPtr.h>
 #include <solarus/core/Arguments.h>
 #include <solarus/core/QuestFiles.h>
 #include <QApplication>
 #include <QDebug>
+#include <QMap>
 #include <QTimer>
 
 namespace SolarusEditor {
@@ -29,6 +31,7 @@ namespace SolarusEditor {
 namespace {
 
 bool initialized = false;
+QMap<QString, Solarus::SoundPtr> sound_cache;
 
 /**
  * @brief Initializes the sound features.
@@ -102,7 +105,18 @@ void play_sound(const Quest& quest, const QString& sound_id) {
     qWarning() << "Cannot open sound file " << sound_id;
     return;
   }
-  Solarus::Sound::play(sound_id.toStdString());
+
+  Solarus::SoundPtr sound;
+  const auto& it = sound_cache.find(sound_id);
+  if (it != sound_cache.end()) {
+    sound = it.value();
+  } else {
+    sound = std::make_shared<Solarus::Sound>(sound_id.toStdString());
+    sound->load();
+    sound_cache.insert(sound_id, sound);
+  }
+
+  sound->start();
 
   close_quest();
 }
