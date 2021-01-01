@@ -18,6 +18,7 @@
 #include "quest.h"
 #include <solarus/audio/Music.h>
 #include <solarus/audio/Sound.h>
+#include <solarus/audio/SoundBuffer.h>
 #include <solarus/core/Arguments.h>
 #include <solarus/core/QuestFiles.h>
 #include <QApplication>
@@ -29,6 +30,7 @@ namespace SolarusEditor {
 namespace {
 
 bool initialized = false;
+QMap<QString, QSharedPointer<Solarus::SoundBuffer>> sound_cache;
 
 /**
  * @brief Initializes the sound features.
@@ -102,7 +104,19 @@ void play_sound(const Quest& quest, const QString& sound_id) {
     qWarning() << "Cannot open sound file " << sound_id;
     return;
   }
-  Solarus::Sound::play(sound_id.toStdString());
+
+  QSharedPointer<Solarus::SoundBuffer> sound_buffer;
+  const auto& it = sound_cache.find(sound_id);
+  if (it != sound_cache.end()) {
+    sound_buffer = it.value();
+  } else {
+    sound_buffer = QSharedPointer<Solarus::SoundBuffer>(new Solarus::SoundBuffer(sound_id.toStdString()));
+    sound_buffer->load();
+    sound_cache.insert(sound_id, sound_buffer);
+  }
+
+  Solarus::SoundPtr sound = Solarus::Sound::create(*sound_buffer);
+  sound->start();
 
   close_quest();
 }
