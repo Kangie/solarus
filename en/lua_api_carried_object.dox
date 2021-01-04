@@ -69,6 +69,18 @@ loses when the \ref lua_api_hero "hero" throws this object at it.
 - \c damage_on_enemies (number): The number of life points to remove to an enemy
   hit by this object. \c 0 means that enemies will ignore this object.
 
+\subsection lua_api_carried_object_get_object_height carried_object:get_object_height()
+
+Returns the height this object will be displayed at, relative to the \ref lua_api_hero_get_carry_height "hero's carry height." 
+This means that the actual height the object will be displayed at (above the hero's origin) is a sum of the hero's carry height and this value.
+- Return value (number) : The value that is added to the carry height when displaying this carried object.
+
+\subsection lua_api_carried_object_set_object_height carried_object:set_object_height(height)
+
+Sets the height this object will me displayed at, relative to the \ref lua_api_hero_set_carry_height "hero's carry height." 
+This means that the object will be actually displayed at the hero's carry height plus this value above the hero's origin.
+- \c height (number): The value that will be added to the carry height when displaying this carried object.
+
 \subsection lua_api_carried_object_get_destruction_sound carried_object:get_destruction_sound()
 
 Returns the sound to be played when this object is cut or broken.
