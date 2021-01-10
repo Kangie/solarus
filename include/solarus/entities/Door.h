@@ -147,6 +147,12 @@ class Door: public Entity {
 
 };
 
+template <>
+struct SOLARUS_API EnumInfoTraits<Door::OpeningMethod> {
+  static const std::string pretty_name;
+  static const EnumInfo<Door::OpeningMethod>::names_type names;
+};
+
 }
 
 #endif

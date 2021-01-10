@@ -313,8 +313,12 @@ void LuaContext::register_entity_module() {
       { "set_open", chest_api_set_open },
       { "get_treasure", chest_api_get_treasure },
       { "set_treasure", chest_api_set_treasure },
-      { "get_opening_method", chest_api_get_opening_method}
   };
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    chest_methods.insert(chest_methods.end(), {
+      { "get_opening_method", chest_api_get_opening_method}
+    });
+  }
 
   chest_methods.insert(chest_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -356,10 +360,14 @@ void LuaContext::register_entity_module() {
       { "set_activated", switch_api_set_activated },
       { "is_locked", switch_api_is_locked },
       { "set_locked", switch_api_set_locked },
-      { "is_inactivate_when_leaving", switch_api_is_inactivate_when_leaving},
-      { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
       { "is_walkable", switch_api_is_walkable },
   };
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    switch_methods.insert(switch_methods.end(), {
+        { "get_inactivate_when_leaving", switch_api_get_inactivate_when_leaving},
+        { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
+    });
+  }
 
   switch_methods.insert(switch_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -3686,25 +3694,8 @@ int LuaContext::chest_api_get_opening_method(lua_State* l){
     Chest& chest = *check_chest(l, 1);
     Chest::OpeningMethod method = chest.get_opening_method();
 
-    switch(method){
-      case Chest::OpeningMethod::BY_INTERACTION: 
-      {
-        lua_pushstring(l, "interaction");
-        break;
-      }
-      case Chest::OpeningMethod::BY_INTERACTION_IF_ITEM: 
-      {
-        lua_pushstring(l, "item");
-        break;
-      }
-      case Chest::OpeningMethod::BY_INTERACTION_IF_SAVEGAME_VARIABLE:
-      {
-        lua_pushstring(l, "savegame variable");
-        break;
-      }
-      default:
-        lua_pushnil(l);
-    }
+    push_string(l, enum_to_name(method));
+
     return 1;
   });
 }
@@ -4026,7 +4017,7 @@ int LuaContext::switch_api_set_locked(lua_State* l) {
  * \return Number of values to return to Lua.
  */
 
-int LuaContext::switch_api_is_inactivate_when_leaving(lua_State* l){
+int LuaContext::switch_api_get_inactivate_when_leaving(lua_State* l){
   return state_boundary_handle(l, [&]{
     const Switch& sw = *check_switch(l, 1);
     lua_pushboolean(l, sw.is_inactivate_when_leaving());
@@ -5852,6 +5843,13 @@ int LuaContext::enemy_api_set_default_attack_consequences_sprite(lua_State* l) {
 int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
   return state_boundary_handle(l, [&]{
     const Enemy& enemy = *check_enemy(l, 1);
+    const std::string& savegame_variable = enemy.get_savegame_variable();
+
+    if (savegame_variable.empty()){
+      lua_pushnil(l);
+      return 1;
+    }
+
     push_string(l, enemy.get_savegame_variable());
     return 1;
   });
