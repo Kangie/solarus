@@ -342,7 +342,6 @@ void LuaContext::register_entity_module() {
       { "set_pullable", block_api_set_pullable },
       { "get_maximum_moves", block_api_get_maximum_moves },
       { "set_maximum_moves", block_api_set_maximum_moves },
-      { "get_direction", block_api_get_direction}
   };
   if (CurrentQuest::is_format_at_least({ 1, 6 })) {
     block_methods.insert(block_methods.end(), {
@@ -350,6 +349,12 @@ void LuaContext::register_entity_module() {
       { "set_max_moves", block_api_set_max_moves },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    block_methods.insert(block_methods.end(), {
+      { "get_direction", block_api_get_direction},
+    });
+  }
+
 
   block_methods.insert(block_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -406,7 +411,6 @@ void LuaContext::register_entity_module() {
 
   // Door.
   std::vector<luaL_Reg> door_methods = {
-      { "get_savegame_variable", door_api_get_savegame_variable},
       { "is_open", door_api_is_open },
       { "is_opening", door_api_is_opening },
       { "is_closed", door_api_is_closed },
@@ -427,6 +431,7 @@ void LuaContext::register_entity_module() {
       { "set_opening_method", chest_api_set_opening_method},
       { "set_opening_condition", chest_api_set_opening_condition},
       { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed},
+      { "get_savegame_variable", door_api_get_savegame_variable},
     });
   }
 
@@ -489,8 +494,6 @@ void LuaContext::register_entity_module() {
       { "get_damage_on_enemies", destructible_api_get_damage_on_enemies },
       { "set_damage_on_enemies", destructible_api_set_damage_on_enemies },
       { "get_modified_ground", destructible_api_get_modified_ground },
-      { "get_weight", destructible_api_get_weight},
-      { "set_weight", destructible_api_set_weight},
   };
   if (CurrentQuest::is_format_at_most({ 1, 5 })) {
     destructible_methods.insert(destructible_methods.end(), {
@@ -572,7 +575,6 @@ void LuaContext::register_entity_module() {
       { "set_attack_consequence_sprite", enemy_api_set_attack_consequence_sprite },
       { "set_default_attack_consequences", enemy_api_set_default_attack_consequences },
       { "set_default_attack_consequences_sprite", enemy_api_set_default_attack_consequences_sprite },
-      { "get_savegame_variable", enemy_api_get_savegame_variable},
       { "set_invincible", enemy_api_set_invincible },
       { "set_invincible_sprite", enemy_api_set_invincible_sprite },
       { "has_layer_independent_collisions", entity_api_has_layer_independent_collisions },
@@ -606,6 +608,11 @@ void LuaContext::register_entity_module() {
         { "set_attacking_collision_mode", enemy_api_set_attacking_collision_mode },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    enemy_methods.insert(enemy_methods.end(), {
+      { "get_savegame_variable", enemy_api_get_savegame_variable},
+    });
+  }
 
   enemy_methods.insert(enemy_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -616,10 +623,14 @@ void LuaContext::register_entity_module() {
   );
 
   //Jumper.
-  std::vector<luaL_Reg> jumper_methods = {
-    { "get_jump_length", jumper_api_get_jump_length},
-    { "set_jump_length", jumper_api_set_jump_length},
-  };
+  std::vector<luaL_Reg> jumper_methods = {};
+
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    jumper_methods.insert(enemy_methods.end(), {
+      { "get_jump_length", jumper_api_get_jump_length},
+      { "set_jump_length", jumper_api_set_jump_length},
+    });
+  }
 
   jumper_methods.insert(jumper_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -5222,36 +5233,6 @@ int LuaContext::destructible_api_get_modified_ground(lua_State* l) {
 
     push_string(l, enum_to_name(modified_ground));
     return 1;
-  });
-}
-
-/**
- * \brief Implementation of destructible:get_weight().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-
-int LuaContext::destructible_api_get_weight(lua_State* l){
-  return state_boundary_handle(l, [&]{
-    const Destructible& destructible = *check_destructible(l, 1);
-    const int weight = destructible.get_weight();
-    lua_pushnumber(l, weight);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of destructible:set_weight().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-
-int LuaContext::destructible_api_set_weight(lua_State* l){
-  return state_boundary_handle(l, [&]{
-    Destructible& destructible = *check_destructible(l, 1);
-    int weight = LuaTools::check_int(l, 2);
-    destructible.set_weight(weight);
-    return 0;
   });
 }
 
