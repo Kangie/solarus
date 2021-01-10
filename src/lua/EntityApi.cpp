@@ -626,7 +626,7 @@ void LuaContext::register_entity_module() {
   std::vector<luaL_Reg> jumper_methods = {};
 
   if (CurrentQuest::is_format_at_least({ 1, 7 })) {
-    jumper_methods.insert(enemy_methods.end(), {
+    jumper_methods.insert(jumper_methods.end(), {
       { "get_jump_length", jumper_api_get_jump_length},
       { "set_jump_length", jumper_api_set_jump_length},
     });
