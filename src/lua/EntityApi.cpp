@@ -316,7 +316,12 @@ void LuaContext::register_entity_module() {
   };
   if (CurrentQuest::is_format_at_least({ 1, 7 })) {
     chest_methods.insert(chest_methods.end(), {
-      { "get_opening_method", chest_api_get_opening_method}
+      { "get_opening_method", chest_api_get_opening_method},
+      { "get_opening_condition", chest_api_get_opening_condition},
+      { "is_opening_condition_consumed", chest_api_is_opening_condition_consumed},
+      { "set_opening_method", chest_api_set_opening_method},
+      { "set_opening_condition", chest_api_set_opening_condition},
+      { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed},
     });
   }
 
@@ -412,6 +417,16 @@ void LuaContext::register_entity_module() {
         { "open", door_api_open },
         { "close", door_api_close },
         { "set_open", door_api_set_open },
+    });
+  }
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    chest_methods.insert(chest_methods.end(), {
+      { "get_opening_method", chest_api_get_opening_method},
+      { "get_opening_condition", chest_api_get_opening_condition},
+      { "is_opening_condition_consumed", chest_api_is_opening_condition_consumed},
+      { "set_opening_method", chest_api_set_opening_method},
+      { "set_opening_condition", chest_api_set_opening_condition},
+      { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed},
     });
   }
 
@@ -3701,6 +3716,97 @@ int LuaContext::chest_api_get_opening_method(lua_State* l){
 }
 
 /**
+ * \brief Implementation of chest:get_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_get_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    const std::string& condition = chest.get_opening_condition();
+
+    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION || condition.empty()){
+      lua_pushnil(l);
+      return 1;
+    }
+
+    push_string(l, condition);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:is_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_is_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    lua_pushboolean(l, chest.is_opening_condition_consumed());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    chest.set_opening_method(LuaTools::check_enum<Chest::OpeningMethod>(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION){
+      return 0;
+    }
+
+    const std::string& condition = LuaTools::check_string(l, 2);
+    chest.set_opening_condition(condition);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    bool consumed = LuaTools::opt_boolean(l, 2, true);
+    chest.set_opening_condition_consumed(consumed);
+    
+    return 1;
+  });
+}
+
+/**
  * \brief Returns whether a value is a userdata of type block.
  * \param l A Lua context.
  * \param index An index in the stack.
@@ -4413,6 +4519,115 @@ int LuaContext::door_api_set_open(lua_State* l) {
     return 0;
   });
 }
+
+/**
+ * \brief Implementation of door:get_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    Door::OpeningMethod method = door.get_opening_method();
+
+    push_string(l, enum_to_name(method));
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    const std::string& condition = door.get_opening_condition();
+
+    if (door.get_opening_method() == Door::OpeningMethod::BY_INTERACTION || condition.empty()){
+      lua_pushnil(l);
+      return 1;
+    }
+
+    push_string(l, condition);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:is_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_is_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    lua_pushboolean(l, door.is_opening_condition_consumed());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    door.set_opening_method(LuaTools::check_enum<Door::OpeningMethod>(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    if (door.get_opening_method() == Door::OpeningMethod::BY_INTERACTION){
+      return 0;
+    }
+
+    const std::string& condition = LuaTools::check_string(l, 2);
+    door.set_opening_condition(condition);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    bool consumed = LuaTools::opt_boolean(l, 2, true);
+    door.set_opening_condition_consumed(consumed);
+    
+    return 1;
+  });
+}
+
 
 /**
  * \brief Returns whether a value is a userdata of type stairs.
@@ -5850,7 +6065,7 @@ int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
       return 1;
     }
 
-    push_string(l, enemy.get_savegame_variable());
+    push_string(l, savegame_variable);
     return 1;
   });
 }
