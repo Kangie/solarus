@@ -458,16 +458,5 @@ void Chest::set_suspended(bool suspended) {
   }
 }
 
-const std::string EnumInfoTraits<Chest::OpeningMethod>::pretty_name = "chest opening method";
-
-/**
- * \brief Lua name of each value of the Chest::Behavior enum.
- */
-const EnumInfo<Chest::OpeningMethod>::names_type EnumInfoTraits<Chest::OpeningMethod>::names = {
-  { Chest::OpeningMethod::BY_INTERACTION, "interaction" },
-  { Chest::OpeningMethod::BY_INTERACTION_IF_SAVEGAME_VARIABLE, "interaction_if_savegame_variable" },
-  { Chest::OpeningMethod::BY_INTERACTION_IF_ITEM, "interaction_if_item" }
-};
-
 }
 

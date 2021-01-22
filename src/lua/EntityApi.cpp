@@ -3720,7 +3720,14 @@ int LuaContext::chest_api_get_opening_method(lua_State* l){
     Chest& chest = *check_chest(l, 1);
     Chest::OpeningMethod method = chest.get_opening_method();
 
-    push_string(l, enum_to_name(method));
+    const auto& it = Chest::opening_method_names.find(method);
+
+    if (it == Chest::opening_method_names.end()){
+      Debug::die("Invalid chest opening method");
+      return 0;
+    }
+
+    push_string(l, it->second);
 
     return 1;
   });
@@ -3773,7 +3780,10 @@ int LuaContext::chest_api_set_opening_method(lua_State* l){
   return state_boundary_handle(l, [&] {
     Chest& chest = *check_chest(l, 1);
 
-    chest.set_opening_method(LuaTools::check_enum<Chest::OpeningMethod>(l, 2));
+    const std::map<Chest::OpeningMethod, std::string>& names = Chest::opening_method_names;
+    Chest::OpeningMethod method = LuaTools::check_enum(l, 2, names);
+
+    chest.set_opening_method(method);
 
     return 0;
   });
@@ -4542,7 +4552,14 @@ int LuaContext::door_api_get_opening_method(lua_State* l){
     Door& door = *check_door(l, 1);
     Door::OpeningMethod method = door.get_opening_method();
 
-    push_string(l, enum_to_name(method));
+    const auto& it = Door::opening_method_names.find(method);
+
+    if (it == Door::opening_method_names.end()){
+      Debug::die("Invalid chest opening method");
+      return 0;
+    }
+
+    push_string(l, it->second);
 
     return 1;
   });
@@ -4595,7 +4612,10 @@ int LuaContext::door_api_set_opening_method(lua_State* l){
   return state_boundary_handle(l, [&] {
     Door& door = *check_door(l, 1);
 
-    door.set_opening_method(LuaTools::check_enum<Door::OpeningMethod>(l, 2));
+    const std::map<Door::OpeningMethod, std::string>& names = Door::opening_method_names;
+    Door::OpeningMethod method = LuaTools::check_enum(l, 2, names);
+
+    door.set_opening_method(method);
 
     return 0;
   });

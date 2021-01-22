@@ -103,12 +103,6 @@ class Chest: public Entity {
 
 };
 
-template <>
-struct SOLARUS_API EnumInfoTraits<Chest::OpeningMethod> {
-  static const std::string pretty_name;
-  static const EnumInfo<Chest::OpeningMethod>::names_type names;
-};
-
 }
 
 #endif

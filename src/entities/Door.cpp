@@ -716,19 +716,5 @@ void Door::set_closing() {
   }
 }
 
-const std::string EnumInfoTraits<Door::OpeningMethod>::pretty_name = "door opening method";
-
-/**
- * \brief Lua name of each value of the Chest::Behavior enum.
- */
-
-const EnumInfo<Door::OpeningMethod>::names_type EnumInfoTraits<Door::OpeningMethod>::names = {
-    { Door::OpeningMethod::NONE, "none" },
-    { Door::OpeningMethod::BY_INTERACTION, "interaction" },
-    { Door::OpeningMethod::BY_INTERACTION_IF_SAVEGAME_VARIABLE, "interaction_if_savegame_variable" },
-    { Door::OpeningMethod::BY_INTERACTION_IF_ITEM, "interaction_if_item" },
-    { Door::OpeningMethod::BY_EXPLOSION, "explosion" }
-};
-
 }
 
