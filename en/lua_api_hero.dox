@@ -141,6 +141,20 @@ This speed is automatically reduced when the hero walks on special ground like
 grass, ladders or holes.
 - \c walking speed (number): The speed of normal walk in pixels par second.
 
+\subsection lua_api_hero_get_push_delay hero:get_push_delay()
+
+Returns the delay between the moment the hero starts punshing onto a wall (i.e. the hero is facing an obstacle 
+and the player keeps pressing the direction toward the wall) and the moment its state and animation are set to "pushing".
+
+- Return value (number): The push delay, in ms.
+
+\subsection lua_api_hero_set_push_delay hero:set_push_delay(delay)
+
+Sets the hero's \ref lua_api_hero_get_push_delay "push delay".
+
+The default delay is 800 ms.
+- \c delay (number): The delay before starting the pushing state, in ms.
+
 \subsection lua_api_hero_save_solid_ground hero:save_solid_ground([x, y, layer]), hero:save_solid_ground(callback)
 
 Sets a position to go back to if the hero falls into a hole or other bad
