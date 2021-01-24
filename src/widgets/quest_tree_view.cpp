@@ -320,6 +320,10 @@ void QuestTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
  */
 void QuestTreeView::contextMenuEvent(QContextMenuEvent* event) {
 
+  if(model == nullptr) {
+    return;
+  }
+
   Quest& quest = model->get_quest();
   if (!quest.is_valid()) {
     return;

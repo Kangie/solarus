@@ -170,6 +170,10 @@ int run_quest(int argc, char* argv[]) {
  */
 int main(int argc, char* argv[]) {
 
+  // Set desktop filename so that the QtWayland backend will report the correct AppID
+  // based on this and make the launcher icon and startup notification work.
+  QGuiApplication::setDesktopFileName(SOLARUS_APP_ID ".QuestEditor.desktop");
+
   if (argc > 1 && QString(argv[1]) == "-run") {
     // Quest run mode.
     return SolarusEditor::run_quest(argc, argv);

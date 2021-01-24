@@ -1,3 +1,8 @@
+# AppID to report to the window system on Linux/Wayland.
+# From a user PoV this also determines were the corresponding XDG metadata is installed in the system.
+set(SOLARUS_APP_ID "org.solarus_games.solarus" CACHE STRING "AppID base for installed XDG metadata on Linux/BSD.")
+add_definitions(-DSOLARUS_APP_ID=\"${SOLARUS_APP_ID}\")
+
 # Add defines for the install path and the build path to help guess the assets
 # location at runtime.
 add_definitions(-DSOLARUSEDITOR_SOURCE_PATH="${CMAKE_SOURCE_DIR}")
