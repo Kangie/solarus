@@ -155,6 +155,19 @@ Sets the hero's \ref lua_api_hero_get_push_delay "push delay".
 The default delay is 800 ms.
 - \c delay (number): The delay before starting the pushing state, in ms.
 
+\subsection lua_api_hero_get_carry_height hero:get_carry_height()
+
+Returns the height carried objects will be displayed at, i.e. carried objects will be displayed this many pixels above the hero's origin on screen.  
+Carried object can add their own offset to this height.
+- Return value (number): The carry height.
+
+\subsection lua_api_hero_set_carry_height hero:set_carry_height(height)
+
+Sets the height carried objects will be displayed at, i.e. carried objects will be displayed this many pixels above the hero's origin on screen.  
+Carried object can add their own offset to this height.
+The default height is 18 pixels.
+- \c height (number) : The new height.
+
 \subsection lua_api_hero_save_solid_ground hero:save_solid_ground([x, y, layer]), hero:save_solid_ground(callback)
 
 Sets a position to go back to if the hero falls into a hole or other bad
