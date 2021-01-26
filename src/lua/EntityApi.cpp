@@ -4631,7 +4631,8 @@ int LuaContext::door_api_set_opening_condition(lua_State* l){
   return state_boundary_handle(l, [&] {
     Door& door = *check_door(l, 1);
 
-    if (door.get_opening_method() == Door::OpeningMethod::BY_INTERACTION){
+    Door::OpeningMethod method = door.get_opening_method();
+    if (method == Door::OpeningMethod::BY_INTERACTION || method == Door::OpeningMethod::BY_EXPLOSION || method == Door::OpeningMethod::NONE){
       return 0;
     }
 

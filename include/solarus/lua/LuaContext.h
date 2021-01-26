@@ -1177,8 +1177,6 @@ class LuaContext {
       destructible_api_get_damage_on_enemies,
       destructible_api_set_damage_on_enemies,
       destructible_api_get_modified_ground,
-      destructible_api_get_weight,
-      destructible_api_set_weight,
       dynamic_tile_api_get_pattern_id,
       dynamic_tile_api_get_modified_ground,
       dynamic_tile_api_get_tileset,
