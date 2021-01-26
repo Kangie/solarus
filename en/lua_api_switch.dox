@@ -95,6 +95,18 @@ However, it can still changed programmatically by calling
 \remark The method \ref lua_api_switch_set_activated "switch:set_activated()"
   works even on a locked switch.
 
+\subsection lua_api_switch_get_inactivate_when_leaving "switch:get_inactivate_when_leaving()"
+  Returns whether the switch becomes inactivated when the \ref lua_api_hero "hero" or the 
+  \ref lua_api_block "block" leaves it (only for a walkable switch).
+
+  Return value (boolean) : \c true if the switch becomes inactivated when left, \c false if it stays activated.
+
+\subsection lua_api_switch_set_inactivate_when_leaving "switch:set_inactivate_when_leaving(inactivate_when_leaving)"
+  Sets whether the switch becomes inactivated when the \ref lua_api_hero "hero" or the 
+  \ref lua_api_block "block" leaves it (only for a walkable switch).
+
+  \c inactivate_when_leaving (boolean) : \c true to inactivate the switch when it is left, \c false to make it stay activated. No value means \c true.
+
 \section lua_api_switch_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define
