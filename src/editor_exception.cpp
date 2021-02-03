@@ -45,7 +45,9 @@ QString EditorException::get_message() const noexcept {
  */
 const char* EditorException::what() const noexcept {
 
-  message_utf8 = message.toUtf8();
+  if (message_utf8.isNull()) {
+    message_utf8 = message.toUtf8();
+  }
   return message_utf8.constData();
 }
 
