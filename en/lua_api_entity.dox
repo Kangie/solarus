@@ -161,6 +161,17 @@ The name uniquely identifies the entity on the map.
 - Return value (string): The name of this entity, or \c nil if the
   entity has no name (because the name is optional).
 
+\subsection lua_api_entity_set_name entity:set_name(name)
+
+Sets the name of this map entity.
+
+The name uniquely identifies the entity on the map.
+If there is already another entity on the same map with this name, then
+a numbered suffix is automatically appended to make sure that entity names
+are unique.
+- \c name (string or \c nil): The name of this entity, or \c nil to set no name
+  (because the name is optional).
+
 \subsection lua_api_entity_exists entity:exists()
 
 Returns whether this entity still exists on the map.
