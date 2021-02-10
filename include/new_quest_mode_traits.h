@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2021-2021 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,23 +14,31 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SOLARUSEDITOR_NEW_QUEST_BUILDER_H
-#define SOLARUSEDITOR_NEW_QUEST_BUILDER_H
+#ifndef SOLARUSEDITOR_NEW_QUEST_MODE_TRAITS_H
+#define SOLARUSEDITOR_NEW_QUEST_MODE_TRAITS_H
 
-class QString;
+#include "enum_traits.h"
+#include "new_quest_builder.h"
 
 namespace SolarusEditor {
 
-namespace NewQuestBuilder {
+using NewQuestMode = NewQuestBuilder::NewQuestMode;
+using NewQuestModeTraits = EnumTraits<NewQuestMode>;
 
-enum NewQuestMode {
-  COPY_INITIAL_QUEST,
-  BLANK_QUEST,
+/**
+ * \brief Provides useful properties of NewQuestMode enum values.
+ */
+template<>
+class EnumTraits<NewQuestMode> {
+
+public:
+
+  static QList<NewQuestMode> get_values();
+  static QString get_friendly_name(NewQuestMode value);
+  static QIcon get_icon(NewQuestMode value);
+
+  static QString get_description(NewQuestMode value);
 };
-
-void create_initial_quest_files(NewQuestMode mode, const QString& quest_path);
-
-}
 
 }
 

@@ -18,6 +18,7 @@ set(solarus_quest_editor_FORMS
   src/widgets/main_window.ui
   src/widgets/map_editor.ui
   src/widgets/new_entity_user_property_dialog.ui
+  src/widgets/new_quest_dialog.ui
   src/widgets/new_resource_element_dialog.ui
   src/widgets/new_string_dialog.ui
   src/widgets/package_dialog.ui

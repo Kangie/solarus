@@ -63,6 +63,7 @@ set(solarus_quest_editor_SOURCES
   include/widgets/mouse_coordinates_tracking_tool.h
   include/widgets/music_chooser.h
   include/widgets/new_entity_user_property_dialog.h
+  include/widgets/new_quest_dialog.h
   include/widgets/new_resource_element_dialog.h
   include/widgets/new_string_dialog.h
   include/widgets/package_dialog.h
@@ -109,6 +110,7 @@ set(solarus_quest_editor_SOURCES
   include/map_model.h
   include/natural_comparator.h
   include/new_quest_builder.h
+  include/new_quest_mode_traits.h
   include/obsolete_editor_exception.h
   include/obsolete_quest_exception.h
   include/pattern_repeat_mode_traits.h
@@ -194,6 +196,7 @@ set(solarus_quest_editor_SOURCES
   src/widgets/mouse_coordinates_tracking_tool.cpp
   src/widgets/music_chooser.cpp
   src/widgets/new_entity_user_property_dialog.cpp
+  src/widgets/new_quest_dialog.cpp
   src/widgets/new_resource_element_dialog.cpp
   src/widgets/new_string_dialog.cpp
   src/widgets/package_dialog.cpp
@@ -238,6 +241,7 @@ set(solarus_quest_editor_SOURCES
   src/main.cpp
   src/map_model.cpp
   src/new_quest_builder.cpp
+  src/new_quest_mode_traits.cpp
   src/obsolete_editor_exception.cpp
   src/obsolete_quest_exception.cpp
   src/pattern_repeat_mode_traits.cpp

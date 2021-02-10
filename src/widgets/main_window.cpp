@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2021 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,14 @@
 #include "widgets/import_dialog.h"
 #include "widgets/input_dialog_with_check_box.h"
 #include "widgets/main_window.h"
+#include "widgets/new_quest_dialog.h"
 #include "widgets/package_dialog.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
 #include "file_tools.h"
 #include "map_model.h"
 #include "new_quest_builder.h"
+#include "new_quest_mode_traits.h"
 #include "obsolete_editor_exception.h"
 #include "obsolete_quest_exception.h"
 #include "quest.h"
@@ -41,6 +43,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDesktopWidget>
+#include <QDir>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -746,7 +749,7 @@ void MainWindow::add_quest_to_recent_list() {
   // Keep the list limited to 10 quests.
   constexpr int max = 10;
   while (last_quests.size() > max) {
-    last_quests.removeAt(last_quests.size() - 1);
+    last_quests.removeLast();
   }
 
   settings.set_value(EditorSettings::last_quests, last_quests);
@@ -772,13 +775,14 @@ void MainWindow::on_action_new_quest_triggered() {
   }
 
   EditorSettings settings;
+  NewQuestDialog new_quest_dialog(
+      settings.get_value_string(EditorSettings::working_directory),
+      this);
+  if (QDialog::Rejected == new_quest_dialog.exec()) {
+    return;
+  }
 
-  QString quest_path = QFileDialog::getExistingDirectory(
-        this,
-        tr("Select quest directory"),
-        settings.get_value_string(EditorSettings::working_directory),
-        QFileDialog::ShowDirsOnly);
-
+  QString quest_path = new_quest_dialog.get_quest_path();
   if (quest_path.isEmpty()) {
     return;
   }
@@ -786,7 +790,9 @@ void MainWindow::on_action_new_quest_triggered() {
   close_quest();
 
   try {
-    NewQuestBuilder::create_initial_quest_files(quest_path);
+    // Create the quest directory and its contents.
+    NewQuestMode mode = new_quest_dialog.get_new_quest_mode();
+    NewQuestBuilder::create_initial_quest_files(mode, quest_path);
     if (open_quest(quest_path)) {
       // Open the quest properties editor initially.
       open_file(quest, quest.get_data_path());
