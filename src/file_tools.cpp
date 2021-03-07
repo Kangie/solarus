@@ -266,6 +266,19 @@ bool replace_in_file(
   return true;
 }
 
+/**
+ * @brief Reformat a name so it is in "Git Slug"/Unix file name form.
+ * @param name The unformated name.
+ * @return The input name converted to a path style.
+ */
+QString name_to_path(const QString& name) {
+  QString path = name;
+  for (QChar & ch : path) {
+    ch = ch.isSpace() ? QChar('-') : ch.toLower();
+  }
+  return path;
+}
+
 }  // namespace FileTools
 
 }  // namespace SolarusEditor

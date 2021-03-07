@@ -18,6 +18,7 @@
 #define SOLARUSEDITOR_NEW_QUEST_DIALOG_H
 
 #include "ui_new_quest_dialog.h"
+#include "new_quest_builder.h"
 #include <QDialog>
 
 namespace SolarusEditor {
@@ -36,8 +37,9 @@ public:
     const QString& directory = QString(),
     QWidget* parent = nullptr);
 
-  QString get_quest_path() const;
   NewQuestMode get_new_quest_mode() const;
+  QString get_quest_path() const;
+  QString get_quest_name() const;
 
 public slots:
 
@@ -46,13 +48,18 @@ public slots:
 private slots:
 
   void browse_directories();
-  void set_description_label(int index);
+  void update_path();
+  void update_error();
+  void update_file();
+  void desync_file();
 
 private:
 
   QString get_directory() const;
   void set_directory(const QString& directory);
-  QString get_quest_name() const;
+  QString get_file() const;
+  void set_file(const QString& file);
+  QString check_for_errors() const;
 
   Ui::NewQuestDialog ui; ///< The widgets.
 

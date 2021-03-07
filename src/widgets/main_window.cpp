@@ -774,10 +774,18 @@ void MainWindow::on_action_new_quest_triggered() {
     return;
   }
 
-  EditorSettings settings;
-  NewQuestDialog new_quest_dialog(
-      settings.get_value_string(EditorSettings::working_directory),
-      this);
+  // Decide the default directory to create the quest in.
+  QString default_path = quest.get_root_path();
+  QDir default_dir(default_path);
+  if (!default_path.isEmpty() && default_dir.cdUp()) {
+    default_path = default_dir.absolutePath();
+  } else {
+    EditorSettings settings;
+    default_path = settings.get_value_string(EditorSettings::working_directory);
+  }
+
+  // Open the new quest dialog and then get its results.
+  NewQuestDialog new_quest_dialog(default_path, this);
   if (QDialog::Rejected == new_quest_dialog.exec()) {
     return;
   }
@@ -792,7 +800,8 @@ void MainWindow::on_action_new_quest_triggered() {
   try {
     // Create the quest directory and its contents.
     NewQuestMode mode = new_quest_dialog.get_new_quest_mode();
-    NewQuestBuilder::create_initial_quest_files(mode, quest_path);
+    const QString& quest_name = new_quest_dialog.get_quest_name();
+    NewQuestBuilder::create_initial_quest_files(mode, quest_path, quest_name);
     if (open_quest(quest_path)) {
       // Open the quest properties editor initially.
       open_file(quest, quest.get_data_path());

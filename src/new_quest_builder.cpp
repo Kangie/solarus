@@ -72,11 +72,15 @@ static void create_blank_quest(const QString& quest_path) {
 /**
  * @brief Creates initial files of a new quest.
  * @param mode How to create the initial files.
- * @param quest_path Root path of the quest to create.
+ * @param quest_path Root path of the new quest.
  * The data directory will be created there.
+ * @param quest_name Name of the new quest.
  * @throws EditorException If the files creation failed.
  */
-void create_initial_quest_files(NewQuestMode mode, const QString& quest_path) {
+void create_initial_quest_files(
+    NewQuestMode mode,
+    const QString& quest_path,
+    const QString& quest_name) {
 
   // Create the quest directory if required.
   QDir quest_dir(quest_path);
@@ -112,6 +116,7 @@ void create_initial_quest_files(NewQuestMode mode, const QString& quest_path) {
   QString uid_string = QUuid::createUuid().toString();
   uid_string = uid_string.mid(1, uid_string.size() - 2);
   properties.set_write_dir(uid_string);
+  properties.set_title(quest_name);
   properties.save();
 }
 

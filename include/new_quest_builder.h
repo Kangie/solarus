@@ -28,7 +28,8 @@ enum NewQuestMode {
   BLANK_QUEST,
 };
 
-void create_initial_quest_files(NewQuestMode mode, const QString& quest_path);
+void create_initial_quest_files(NewQuestMode mode,
+    const QString& quest_path, const QString& quest_name);
 
 }
 

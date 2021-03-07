@@ -16,6 +16,8 @@
  */
 #include "widgets/new_quest_dialog.h"
 #include "widgets/gui_tools.h"
+#include "editor_exception.h"
+#include "file_tools.h"
 #include "new_quest_mode_traits.h"
 #include <QFile>
 #include <QFileDialog>
@@ -27,29 +29,29 @@ namespace SolarusEditor {
  */
 NewQuestDialog::NewQuestDialog(
     const QString& directory,
-    QWidget* parent
-    /*Qt::WindowFlags f = Qt::WindowFlags()*/) :
+    QWidget* parent) :
   QDialog(parent) {
 
   ui.setupUi(this);
 
   set_directory(directory);
-  set_description_label(ui.initial_combo_box->currentIndex());
+  update_path();
+  update_error();
 
   connect(ui.directory_browse_button, &QPushButton::clicked,
           this, &NewQuestDialog::browse_directories);
-  connect(ui.initial_combo_box, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(set_description_label(int)));
-}
-
-
-/**
- * @brief Get the path name of the quest.
- */
-QString NewQuestDialog::get_quest_path() const {
-
-  QDir directory(get_directory());
-  return directory.absoluteFilePath(get_quest_name());
+  connect(ui.directory_line_edit, &QLineEdit::textChanged,
+          this, &NewQuestDialog::update_path);
+  connect(ui.file_line_edit, &QLineEdit::textChanged,
+          this, &NewQuestDialog::update_path);
+  connect(ui.directory_line_edit, &QLineEdit::textChanged,
+          this, &NewQuestDialog::update_error);
+  connect(ui.file_line_edit, &QLineEdit::textChanged,
+          this, &NewQuestDialog::update_error);
+  connect(ui.name_line_edit, &QLineEdit::textEdited,
+          this, &NewQuestDialog::update_file);
+  connect(ui.file_line_edit, &QLineEdit::textEdited,
+          this, &NewQuestDialog::desync_file);
 }
 
 /**
@@ -57,7 +59,30 @@ QString NewQuestDialog::get_quest_path() const {
  */
 NewQuestMode NewQuestDialog::get_new_quest_mode() const {
 
-  return ui.initial_combo_box->get_selected_value();
+  if (ui.cr_button->isChecked()) {
+    return NewQuestMode::COPY_INITIAL_QUEST;
+  } else if (ui.bq_button->isChecked()) {
+    return NewQuestMode::BLANK_QUEST;
+  } else {
+    throw EditorException(QApplication::tr(
+        "New quest dialog got into a bad state."));
+  }
+}
+
+/**
+ * @brief Get the path name of the quest.
+ */
+QString NewQuestDialog::get_quest_path() const {
+
+  return ui.path_value->text();
+}
+
+/**
+ * @brief Get the name of the quest the user has entered.
+ */
+QString NewQuestDialog::get_quest_name() const {
+
+  return ui.name_line_edit->text();
 }
 
 /**
@@ -67,18 +92,11 @@ NewQuestMode NewQuestDialog::get_new_quest_mode() const {
 void NewQuestDialog::done(int result) {
 
   if (result == QDialog::Accepted) {
-    if (!QFile::exists(get_directory())) {
-      GuiTools::error_dialog("Cannot create a quest in missing directory.");
-      return;
-    }
-    if (get_quest_name().isEmpty()) {
-      GuiTools::error_dialog("Cannot create an empty quest name.");
-      return;
-    }
-    // Is there a helper for the data directory?
-    const QString& quest_path = get_quest_path();
-    if (QFile::exists(quest_path) && QFile::exists(quest_path + "/data")) {
-      GuiTools::error_dialog("Cannot create an existing quest.");
+    // Don't use the cached error, always double check.
+    const QString& error_message = check_for_errors();
+    ui.warning_value->setText(error_message);
+    if (!error_message.isEmpty()) {
+      GuiTools::error_dialog(error_message);
       return;
     }
   }
@@ -104,14 +122,41 @@ void NewQuestDialog::browse_directories() {
   set_directory(quest_path);
 }
 
-
 /**
  * @brief Change the description to describe the option at index.
  */
-void NewQuestDialog::set_description_label(int index) {
+void NewQuestDialog::update_path() {
 
-  ui.description_label->setText(
-    NewQuestModeTraits::get_description(NewQuestMode(index)));
+  QDir directory(get_directory());
+  const QString& path = directory.absoluteFilePath(get_file());
+  ui.path_value->setText(path);
+}
+
+/**
+ * @brief Check for errors and display a description of one found.
+ */
+void NewQuestDialog::update_error() {
+
+  ui.warning_value->setText(check_for_errors());
+}
+
+/**
+ * @brief Use the quest name to update the file name.
+ */
+void NewQuestDialog::update_file() {
+
+  ui.file_line_edit->setText(FileTools::name_to_path(get_quest_name()));
+}
+
+/**
+ * @brief Stop auto-updating the file name based on the quest name.
+ */
+void NewQuestDialog::desync_file() {
+
+  disconnect(ui.name_line_edit, &QLineEdit::textEdited,
+             this, &NewQuestDialog::update_file);
+  disconnect(ui.file_line_edit, &QLineEdit::textEdited,
+             this, &NewQuestDialog::desync_file);
 }
 
 /**
@@ -137,11 +182,41 @@ void NewQuestDialog::set_directory(const QString& directory) {
 }
 
 /**
- * @brief Get the name of the quest the user has entered.
+ * @brief Get the name of the quest file (a directory).
  */
-QString NewQuestDialog::get_quest_name() const {
+QString NewQuestDialog::get_file() const {
 
-  return ui.name_line_edit->text();
+  return ui.file_line_edit->text();
+}
+
+/**
+ * @brief Set the file name.
+ * @param file The new value for the file name.
+ */
+void NewQuestDialog::set_file(const QString& file) {
+
+  ui.file_line_edit->setText(file);
+}
+
+/**
+ * @brief Check if a new quest could be created with the current settings.
+ * @return A string describing why a quest could not be created or an empty
+ *   string if one could be.
+ */
+QString NewQuestDialog::check_for_errors() const {
+
+  if (!QFile::exists(get_directory())) {
+    return QApplication::tr("Cannot create a quest in missing directory.");
+  }
+  if (get_quest_name().isEmpty()) {
+    return QApplication::tr("Cannot create an empty quest name.");
+  }
+  // Is there a helper for the data directory?
+  const QString& quest_path = get_quest_path();
+  if (QFile::exists(quest_path) && QFile::exists(quest_path + "/data")) {
+    return QApplication::tr("Cannot create an existing quest.");
+  }
+  return QString();
 }
 
 }
