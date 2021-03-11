@@ -52,6 +52,8 @@ NewQuestDialog::NewQuestDialog(
           this, &NewQuestDialog::update_file);
   connect(ui.file_line_edit, &QLineEdit::textEdited,
           this, &NewQuestDialog::desync_file);
+
+  ui.path_value->installEventFilter(this);
 }
 
 /**
@@ -104,6 +106,15 @@ void NewQuestDialog::done(int result) {
   QDialog::done(result);
 }
 
+bool NewQuestDialog::eventFilter(QObject* watched, QEvent* event) {
+
+  if (QEvent::Resize == event->type()) {
+    update_path();
+  }
+
+  return QDialog::eventFilter(watched, event);
+}
+
 /**
  * @brief Use a file dialog to select a new directory.
  */
@@ -129,7 +140,7 @@ void NewQuestDialog::update_path() {
 
   QDir directory(get_directory());
   const QString& path = directory.absoluteFilePath(get_file());
-  ui.path_value->setText(path);
+  GuiTools::set_elided_text(*ui.path_value, path, Qt::ElideMiddle);
 }
 
 /**

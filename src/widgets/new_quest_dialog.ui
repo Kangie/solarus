@@ -70,6 +70,12 @@
      </item>
      <item row="3" column="1">
       <widget class="QLabel" name="path_value">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>PATH</string>
        </property>

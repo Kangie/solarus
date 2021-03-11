@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2021 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "grid_style.h"
 #include <QColor>
 
+class QLabel;
 class QPainter;
 class QRect;
 class QSize;
@@ -52,6 +53,9 @@ void draw_grid_point(QPainter& painter,
                const QRect& where,
                const QSize& size,
                const QColor& color = Qt::black);
+
+void set_elided_text(
+    QLabel& label, const QString& text, Qt::TextElideMode mode);
 
 }
 

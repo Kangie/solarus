@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2021 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 #include "widgets/gui_tools.h"
 #include <solarus/gui/gui_tools.h>
+#include <QLabel>
 #include <QMessageBox>
 #include <QPainter>
 
@@ -174,6 +175,18 @@ void draw_grid_point(
 
   painter.setPen(QPen(color, 1));
   painter.drawPoints(points.data(), points.size());
+}
+
+/**
+ * @brief Sets text to a label using elision to fit the text to the label.
+ * @param label The label that will be modified.
+ * @param text The unelided text to fit to the label.
+ * @param mode The form of elision to use (Qt::ElideNone is a no-op).
+ */
+void set_elided_text(
+    QLabel& label, const QString& text, Qt::TextElideMode mode) {
+
+  label.setText(label.fontMetrics().elidedText(text, mode, label.width()));
 }
 
 }

@@ -41,6 +41,8 @@ public:
   QString get_quest_path() const;
   QString get_quest_name() const;
 
+  bool eventFilter(QObject* watched, QEvent* event) override;
+
 public slots:
 
   void done(int result) override;
