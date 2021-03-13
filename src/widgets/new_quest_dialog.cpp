@@ -216,7 +216,7 @@ QString NewQuestDialog::check_for_errors() const {
   }
   const QString& quest_path = get_quest_path();
   if (QFile::exists(quest_path)
-      && QFile::exists(quest_path + QStringLiteral("/data")) {
+      && QFile::exists(quest_path + QStringLiteral("/data"))) {
     return QApplication::tr("Cannot create an existing quest.");
   }
   return QString();
