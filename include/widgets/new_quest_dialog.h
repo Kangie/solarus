@@ -43,10 +43,6 @@ public:
 
   bool eventFilter(QObject* watched, QEvent* event) override;
 
-public slots:
-
-  void done(int result) override;
-
 private slots:
 
   void browse_directories();

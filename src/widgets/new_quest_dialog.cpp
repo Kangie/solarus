@@ -88,24 +88,13 @@ QString NewQuestDialog::get_quest_name() const {
 }
 
 /**
- * @brief Closes the dialog if the quest path appears to be valid.
- * @param result Result code of the dialog.
+ * @brief Filter an event for an object that this is an event-filter for.
+ *
+ * Do not use this, its set-up to filter events for an internal object.
+ * @param watched The object whose events are being filtered.
+ * @param event The event that might be filtered.
+ * @return Wheither the event should be filtered out or not.
  */
-void NewQuestDialog::done(int result) {
-
-  if (result == QDialog::Accepted) {
-    // Don't use the cached error, always double check.
-    const QString& error_message = check_for_errors();
-    ui.warning_value->setText(error_message);
-    if (!error_message.isEmpty()) {
-      GuiTools::error_dialog(error_message);
-      return;
-    }
-  }
-
-  QDialog::done(result);
-}
-
 bool NewQuestDialog::eventFilter(QObject* watched, QEvent* event) {
 
   if (QEvent::Resize == event->type()) {
@@ -148,7 +137,10 @@ void NewQuestDialog::update_path() {
  */
 void NewQuestDialog::update_error() {
 
-  ui.warning_value->setText(check_for_errors());
+  const QString& error_message = check_for_errors();
+  ui.warning_value->setText(error_message);
+  QPushButton * ok = ui.buttonBox->button(QDialogButtonBox::Ok);
+  ok->setEnabled(error_message.isEmpty());
 }
 
 /**
@@ -222,9 +214,9 @@ QString NewQuestDialog::check_for_errors() const {
   if (get_quest_name().isEmpty()) {
     return QApplication::tr("Cannot create an empty quest name.");
   }
-  // Is there a helper for the data directory?
   const QString& quest_path = get_quest_path();
-  if (QFile::exists(quest_path) && QFile::exists(quest_path + "/data")) {
+  if (QFile::exists(quest_path)
+      && QFile::exists(quest_path + QStringLiteral("/data")) {
     return QApplication::tr("Cannot create an existing quest.");
   }
   return QString();
