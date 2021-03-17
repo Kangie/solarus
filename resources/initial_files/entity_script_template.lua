@@ -6,7 +6,7 @@
 
 -- See the Solarus Lua API documentation for the full specification
 -- of types, events and methods:
--- http://www.solarus-games.org/doc/latest
+-- https://www.solarus-games.org/doc/latest
 
 local entity = ...
 local game = entity:get_game()
