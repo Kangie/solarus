@@ -5,6 +5,7 @@
 * Map editor: fix crash when generating contours with missing patterns (#494).
 * Map editor: fix resize and edit shortcuts not working sometimes (#272).
 * Import dialog: fix file count inconsistencies (#446).
+* Script editor: fix crash when indenting wrapped lines (#440).
 
 ## Solarus Quest Editor 1.6.4 (2020-04-12)
 
@@ -20,7 +21,7 @@
 * Tileset editor: fix crash when a tileset file changes while dragging (#476).
 * Fix possible crash when closing the window.
 * Fix opening local documentation in Windows.
-* Fix tiles getting unwanted enabled_at_start field in map data files.
+* Fix tiles getting unwanted `enabled_at_start` field in map data files.
 
 ## Solarus Quest Editor 1.6.2 (2019-08-15)
 
