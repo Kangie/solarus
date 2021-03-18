@@ -148,7 +148,7 @@ void NewQuestDialog::update_error() {
  */
 void NewQuestDialog::update_file() {
 
-  ui.file_line_edit->setText(FileTools::name_to_path(get_quest_name()));
+  ui.file_line_edit->setText(FileTools::to_file_name(get_quest_name()));
 }
 
 /**

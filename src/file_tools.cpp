@@ -267,15 +267,19 @@ bool replace_in_file(
 }
 
 /**
- * @brief Reformat a name so it is in "Git Slug"/Unix file name form.
+ * @brief Modify a string so it is a safe file name on most platforms.
  * @param name The unformated name.
- * @return The input name converted to a path style.
+ * @return A string containing a safe file name.
  */
-QString name_to_path(const QString& name) {
+QString to_file_name(const QString& name) {
+  // Characters that could cause problems in Linux, Mac and Windows.
+  static const QString& forbidden_characters = "()<>\\/\"\'|&:;.";
   QString path = name;
   for (QChar & ch : path) {
-    ch = ch.isSpace() ? QChar('-') : ch.toLower();
+    ch = forbidden_characters.contains(ch) ? QChar(' ') : ch.toLower();
   }
+  path = path.simplified();
+  path = path.replace(QChar(' '), QString("-"));
   return path;
 }
 

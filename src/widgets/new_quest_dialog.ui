@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>522</width>
-    <height>477</height>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -134,7 +134,7 @@
       <item row="1" column="1">
        <widget class="QLabel" name="cr_description">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Load community resources into the new quest.&lt;/p&gt;&lt;p&gt;These resources are for a simple base for a new quest and will let you get the quest running in moments. Remember to respect the licences of all provided files.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start with enough resources and scripts to make it run immediately. Uses GPL, CC BY and CC BY-SA licenses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -144,7 +144,7 @@
       <item row="4" column="1">
        <widget class="QLabel" name="bq_description">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Leave the new quest empty.&lt;/p&gt;&lt;p&gt;This is only recomended if you want to make everything yourself or import from other quests. The quest will not run without adding the required missing resources.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start from nothing. You must add everything the quest needs. No licenses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
