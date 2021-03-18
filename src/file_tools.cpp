@@ -273,7 +273,7 @@ bool replace_in_file(
  */
 QString to_file_name(const QString& name) {
   // Characters that could cause problems in Linux, Mac and Windows.
-  static const QString& forbidden_characters = "()<>\\/\"\'|&:;.";
+  static const QString& forbidden_characters = "()<>\\/\"\'|&:;.?";
   QString path = name;
   for (QChar & ch : path) {
     ch = forbidden_characters.contains(ch) ? QChar(' ') : ch.toLower();
