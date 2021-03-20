@@ -46,6 +46,10 @@ The default value is \c "when_world_changes".
   - \c "yes": Updates the starting location.
   - \c "no": Does not update the starting location.
 
+\subsection lua_api_destination_is_default destination:is_default()
+
+Returns whether this destination is the default destination.
+
 \subsection lua_api_destination_set_starting_location_mode destination:set_starting_location_mode(mode)
 
 Sets whether this destination updates the
