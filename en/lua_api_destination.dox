@@ -49,6 +49,7 @@ The default value is \c "when_world_changes".
 \subsection lua_api_destination_is_default destination:is_default()
 
 Returns whether this destination is the default destination.
+- Return value (boolean): \c true if this destination is the default one of its map.
 
 \subsection lua_api_destination_set_starting_location_mode destination:set_starting_location_mode(mode)
 
