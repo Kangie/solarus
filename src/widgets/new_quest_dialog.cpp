@@ -54,6 +54,7 @@ NewQuestDialog::NewQuestDialog(
           this, &NewQuestDialog::desync_file);
 
   ui.path_value->installEventFilter(this);
+  ui.name_line_edit->setFocus();
 }
 
 /**
@@ -138,9 +139,11 @@ void NewQuestDialog::update_path() {
 void NewQuestDialog::update_error() {
 
   const QString& error_message = check_for_errors();
-  ui.warning_value->setText(error_message);
-  QPushButton * ok = ui.buttonBox->button(QDialogButtonBox::Ok);
-  ok->setEnabled(error_message.isEmpty());
+  if (ui.warning_value->text() != error_message) {
+    ui.warning_value->setText(error_message);
+    QPushButton * ok = ui.buttonBox->button(QDialogButtonBox::Ok);
+    ok->setEnabled(error_message.isEmpty());
+  }
 }
 
 /**
@@ -208,11 +211,14 @@ void NewQuestDialog::set_file(const QString& file) {
  */
 QString NewQuestDialog::check_for_errors() const {
 
-  if (!QFile::exists(get_directory())) {
-    return QApplication::tr("Cannot create a quest in missing directory.");
-  }
   if (get_quest_name().isEmpty()) {
-    return QApplication::tr("Cannot create an empty quest name.");
+    return QApplication::tr("Cannot create a quest without a name.");
+  }
+  if (!QFile::exists(get_directory())) {
+    return QApplication::tr("Cannot create a quest in a missing directory.");
+  }
+  if (get_file().isEmpty()) {
+    return QApplication::tr("Cannot create a quest directory without a name.");
   }
   const QString& quest_path = get_quest_path();
   if (QFile::exists(quest_path)
