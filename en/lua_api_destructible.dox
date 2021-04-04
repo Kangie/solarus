@@ -86,6 +86,28 @@ Sets whether this object can be cut by the sword.
 - \c can_be_cut (boolean, optional): \c true to allow the player to cut this
   object with the sword. No value means \c true.
 
+\subsection lua_api_destructible_get_cut_method destructible:get_cut_method()
+
+Returns how the hero's sword can cut this object.
+
+This only has an effect if \ref lua_api_destructible_get_can_be_cut is \c true.
+- Return value (string): The cut method. Can be one of:
+  - \c "aligned" (default): The hero must be sufficiently aligned with this object
+    when the sword hits it.
+    Only one object can be cut at a time with this setting
+    (unless they overlap).
+  - \c "pixel": Any pixel-precise collision between the sword and this object
+    will cut it.
+
+\subsection lua_api_destructible_set_cut_method destructible:set_cut_method(cut_method)
+
+Sets how the hero's sword can cut this object.
+
+This only has an effect if \ref lua_api_destructible_get_can_be_cut is \c true.
+- \c cut_method (string): The cut method. See
+  \ref lua_api_destructible_get_cut_method
+  for the possible values.
+
 \subsection lua_api_destructible_get_can_explode destructible:get_can_explode()
 
 Returns whether this object explodes when it is hit or after a delay when it
