@@ -12,10 +12,6 @@ function enemy:on_created()
   self:set_life(1)
   self:set_damage(1)
   self:set_pushed_back_when_hurt(false)
-  -- Enable shield push.
-  if self.set_default_behavior_on_hero_shield then
-    self:set_default_behavior_on_hero_shield("enemy_weak_to_shield_push")
-  end
 end
 
 function enemy:on_restarted()
@@ -43,8 +39,6 @@ function enemy:jump(jump_angle)
   sol.audio.play_sound("jump")
   self:set_invincible() -- Set invincible.
   self:set_can_attack(false) -- Do not attack hero during jump.
-  -- Shield protection.
-  if enemy.set_can_be_pushed_by_shield then enemy:set_can_be_pushed_by_shield(false) end
   -- Add a shadow sprite.
   local shadow = self:create_sprite("shadows/shadow_small", "shadow")
   -- Add movement towards near the hero during the jump. The jump does not target the hero.
@@ -74,9 +68,6 @@ function enemy:jump(jump_angle)
     else
       self:remove_sprite(shadow)
       self:set_can_attack(true) -- Allow to attack after jump.      
-      if enemy.set_can_be_pushed_by_shield then 
-        enemy:set_can_be_pushed_by_shield(true) -- Finish shield protection.
-      end
       self:set_default_attack_consequences() -- Stop invincibility after jump.
       self:restart()
       return false

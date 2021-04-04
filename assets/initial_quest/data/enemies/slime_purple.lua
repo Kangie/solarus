@@ -56,7 +56,11 @@ function enemy:on_restarted()
     left_wing:set_direction(0)
     right_wing:set_direction(1)
   end
-  if state == "falling" then self:fall(); return end -- Do nothing more while falling.
+  if state == "falling" then
+     self:fall()
+     -- Do nothing more while falling.
+     return
+  end
   -- Start checking for hero.
   self:start_checking()
 end
@@ -73,7 +77,7 @@ function enemy:start_checking()
     elseif state == "going_hero" then
       local d = self:get_distance(hero)
       if d > detection_distance then
-      -- If the hero is too far, stop and wait.
+        -- If the hero is too far, stop and wait.
         self:end_fly()
       elseif d <= attack_distance then
         -- Attack the hero if he is close.
@@ -106,7 +110,9 @@ function enemy:start_fly()
 end
 
 -- This function is only called when hatching from an egg.
-function enemy:jump() enemy:start_fly() end
+function enemy:jump()
+  enemy:start_fly()
+end
 
 function enemy:end_fly()
   state = "end_fly"
@@ -137,7 +143,9 @@ function enemy:go_to_hero()
   m:set_target(self:get_map():get_hero())
   m:start(self)
   -- Create an egg if necessary.
-  if needs_put_egg then self:create_egg() end
+  if needs_put_egg then
+    self:create_egg()
+  end
   -- Start wind.
   self:start_wind()
 end
@@ -210,7 +218,10 @@ end
 
 function enemy:on_dying()
   -- Remove wings entity if necessary if the enemy dies with them.
-  if wings then wings:remove(); wings = nil end
+  if wings then
+    wings:remove()
+    wings = nil
+  end
 end
 
 -- Make the enemy fall and lose its wings.
@@ -239,10 +250,7 @@ function enemy:fall()
       local x,y,layer = self:get_position()
       local slime = self:get_map():create_enemy({x=x, y=y, layer=layer, direction = 0, 
         breed = "slime_green"})
-      local sprite = slime:get_sprite()
-      if sprite then slime:remove_sprite(sprite) end
-      slime:create_sprite("enemies/slime_purple")
-      slime:on_created() -- Restart "on_created" event to redefine events on new sprite.
+      slime:replace_sprite("enemies/slime_purple")
       slime:set_split_when_hurt(false) -- Do not allow to split.
       self:remove()
       return false
@@ -258,7 +266,9 @@ function enemy:create_egg()
   needs_put_egg = false
   local sprite = self:get_sprite()
   sprite:set_animation("jump")
-  sol.timer.start(self, 250, function() sprite:set_animation("walking") end)
+  sol.timer.start(self, 250, function()
+    sprite:set_animation("walking")
+  end)
   local x, y, layer = self:get_position()
   local prop = {x = x, y = y, layer = layer, direction = 0, breed = "slime_egg"}
   local egg = map:create_enemy(prop)
@@ -269,28 +279,50 @@ function enemy:create_egg()
 end
 
 -- Enable/disable putting egg.
-function enemy:set_egg_enabled(bool) needs_put_egg = bool end
-function enemy:get_egg_enabled() return needs_put_egg end
+function enemy:set_egg_enabled(bool)
+  needs_put_egg = bool
+end
+
+function enemy:get_egg_enabled() return
+  needs_put_egg
+end
+
+-- Returns whether the hero ignores the wind attack.
+local function is_wind_ignored(hero)
+
+  local state = hero:get_state()
+  return state ~= "free" and
+         state ~= "carrying" and
+         state ~= "swimming" and
+         state ~= "sword swinging" and
+         state ~= "sword loading" and
+         state ~= "sword tapping" and
+         state ~= "sword spin attack" and
+         state ~= "running" and
+         (state ~= "custom" or not hero:get_state_object():get_can_control_movement())
+end
 
 -- Wind attack.
 function enemy:start_wind()
   state = "wind"
   local wind = wings:create_sprite("enemies/slime_purple", "wind")
   wind:set_animation("wind")
-  local h = map:get_hero()
+  local hero = map:get_hero()
   sol.audio.play_sound("wings1")
   -- Push the hero if he is close to the wind.
   local wind_timer = sol.timer.start(self, 30, function()
-    if self:get_distance(h) <= wind_distance
-    and h:get_state() ~= "frozen" then
-      local d = self:get_direction8_to(h)
-      local x, y, layer = h:get_position()
+    if self:get_distance(hero) <= wind_distance
+    and not is_wind_ignored(hero) then
+      local d = self:get_direction8_to(hero)
+      local x, y, layer = hero:get_position()
       local dx, dy = 0, 0
       dx = (d == 0 or d == 1 or d == 7) and 1 or dx
       dx = (d == 3 or d == 4 or d == 5) and -1 or dx
       dy = (d == 1 or d == 2 or d == 3) and -1 or dy
       dy = (d == 5 or d == 6 or d == 7) and 1 or dy
-      if not h:test_obstacles(dx, dy) then h:set_position(x + dx, y + dy, layer) end
+      if not hero:test_obstacles(dx, dy) then
+        hero:set_position(x + dx, y + dy, layer)
+      end
     end
     return true
   end)

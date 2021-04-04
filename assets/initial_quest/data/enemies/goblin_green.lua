@@ -13,9 +13,7 @@ local body_damage = 2
 local speed_axe, speed_nut = 100, 160
 local club_sound_id = "slash"
 local throw_axe_sound_id = "slash"
-local axe_hit_shield_sound_id = "shield"
 local throw_slingshot_sound_id = "throw"
-local slingshot_hit_shield_sound_id = "shield"
 
 --[[ CUSTOM PROPERTY "weapon" has values:
 "club", "axe", "none" (or nil), "slingshot", "random".
@@ -29,10 +27,6 @@ function enemy:on_created()
   self:set_weapon(weapon) -- Create sprites depending on the weapon.
   self:set_life(3)
   self:set_damage(body_damage)
-  -- General shield properties.
-  if self.set_default_behavior_on_hero_shield then
-    self:set_default_behavior_on_hero_shield("normal_shield_push")
-  end
 end
 
 -- Event called when the enemy should start or restart its movements.
@@ -91,11 +85,6 @@ function enemy:set_weapon(weapon_name)
     weapon_sprite = enemy:create_sprite("enemies/goblin_" .. weapon)
     self:set_sprite_damage(weapon_sprite, weapon_damage)
     self:set_invincible_sprite(weapon_sprite)
-    self:set_attack_consequence_sprite(weapon_sprite, "sword", "custom")
-  end
-  -- Club collision with shield.
-  if weapon_sprite and weapon_sprite.set_default_behavior_on_hero_shield then
-    weapon_sprite:set_default_behavior_on_hero_shield("enemy_strong_to_shield_push")
   end
 end
 
@@ -196,61 +185,18 @@ function enemy:throw()
   function projectile:on_movement_finished() projectile:remove() end
   m:start(projectile)
   -- Initialize collision properties.
-  local behavior
   if weapon_name == "axe" then
     projectile:set_invincible(true)
-    behavior = "normal_shield_push"
   elseif weapon_name == "slingshot" then
-    behavior = "enemy_weak_to_shield_push"
     function projectile:on_dying()
       self:get_sprite():set_animation("nut_break")
     end
   end
-  if projectile.set_default_behavior_on_hero_shield then
-    projectile:set_default_behavior_on_hero_shield(behavior)
-  end
   -- Start throw sounds.
   if weapon_name == "axe" then
     sol.audio.play_sound(throw_axe_sound_id)
-    if projectile.set_pushed_by_shield_property then
-      projectile:set_pushed_by_shield_property("sound_id", axe_hit_shield_sound_id)
-    end
   elseif weapon_name == "slingshot" then
     sol.audio.play_sound(throw_slingshot_sound_id)
-    if projectile.set_pushed_by_shield_property then
-      projectile:set_pushed_by_shield_property("sound_id", slingshot_hit_shield_sound_id)
-    end
-  end
-  -- Override normal push function.
-  function projectile:on_shield_collision(shield)
-    -- Disable push for a while.
-    self:set_being_pushed(true)
-    sol.timer.start(map, 200, function()
-      self:set_being_pushed(false)
-    end)
-    -- Hurt enemies after bounce on shield.
-    self:allow_hurt_enemies(true)
-    -- Override movement.
-    local m = projectile:get_movement()
-    if not m then return end
-    m = sol.movement.create("straight")
-    local angle = 0
-    if weapon_name == "axe" then
-      angle = shield:get_angle(projectile)
-      m:set_speed(speed_axe)
-    elseif weapon_name == "slingshot" then
-      angle = shield:get_direction4_to(projectile) * math.pi/2
-      m:set_speed(speed_nut)
-    end
-    m:set_angle(angle)
-    m:set_smooth(false)
-    m:set_max_distance(300)
-    m:start(self)
-    -- Disable collisions to avoid problems.
-    self.on_shield_collision = nil
-    if self.set_default_behavior_on_hero_shield then
-      self:set_default_behavior_on_hero_shield(nil)
-    end
   end
 end
 
@@ -277,17 +223,6 @@ function enemy:club_attack()
   end
 end
 
--- Push hero if sword hits the club.
-function enemy:on_custom_attack_received(attack, sprite)
-  if not hero.push then return end
-  if weapon == "club" and attack == "sword" and sprite == weapon_sprite then
-    local p = weapon_sprite:get_push_hero_on_shield_properties()
-    p.pushing_entity = self
-    hero:push(p)
-  end
-end
-
-
 -- Attach a custom damage to the sprites of the enemy.
 function enemy:get_sprite_damage(sprite)
   return (sprite and sprite.custom_damage) or self:get_damage()
@@ -296,7 +231,6 @@ function enemy:set_sprite_damage(sprite, damage)
   sprite.custom_damage = damage
 end
 
--- Warning: do not override these functions if you use the "custom shield" script.
 function enemy:on_attacking_hero(hero, enemy_sprite)
   local enemy = self
   local hero = enemy:get_map():get_hero()
@@ -304,16 +238,6 @@ function enemy:on_attacking_hero(hero, enemy_sprite)
   if enemy:get_sprite_damage(enemy_sprite) == 0 then return end
   local collision_mode = enemy:get_attacking_collision_mode()
   if not hero:overlaps(enemy, collision_mode) then return end  
-  -- Do nothing when shield is protecting.
-  if hero.is_shield_protecting_from_enemy
-      and hero:is_shield_protecting_from_enemy(enemy, enemy_sprite) then
-    return
-  end
-  -- Check for a custom attacking collision test.
-  if enemy.custom_attacking_collision_test and
-      not enemy:custom_attacking_collision_test(enemy_sprite) then
-    return
-  end
   -- Otherwise, hero is not protected. Use built-in behavior.
   local damage = enemy:get_damage()
   if enemy_sprite then
