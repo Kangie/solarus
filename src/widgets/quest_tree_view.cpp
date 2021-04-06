@@ -31,6 +31,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QUrl>
+#include <QTimer>
 
 namespace SolarusEditor {
 
@@ -260,18 +261,17 @@ void QuestTreeView::set_selected_paths(const QStringList& paths) {
   selectionModel()->clear();
   QItemSelection selection;
   for (const QString& path : paths) {
-    const QModelIndex& index = model->get_file_index(path);
-    if (index.isValid()) {
-      selection.select(index, index);
-      expand(index.parent());
-    }
-    else {
+    QModelIndex index = model->get_file_index(path);
+    if (!index.isValid()) {
       // Item to deep in the model for now: try harder
       // to build it.
       expand_to_path(path);
+      index = model->get_file_index(path);
     }
+    selection.select(index, index);
+    expand(index.parent());
   }
-  selectionModel()->select(selection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+  selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
 /**

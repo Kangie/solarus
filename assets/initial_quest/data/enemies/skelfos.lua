@@ -102,12 +102,9 @@ function enemy:on_created()
     end
   end
 
-  -- Initialize the properties (life, damage, shield push, etc).
+  -- Initialize the properties (life, damage, etc).
   self:set_life(life)
   self:set_damage(damage)
-  if self.set_default_behavior_on_hero_shield then
-    self:set_default_behavior_on_hero_shield("normal_shield_push")
-  end
   -- Initialize behavior from the script custom properties. 
   walking_behavior = self:get_property("walking_behavior") or walking_behavior
   watch_behavior = self:get_property("watch_behavior") or watch_behavior
@@ -428,7 +425,6 @@ function enemy:throw_arms()
         sol.audio.play_sound("enemy_killed")
         bone:remove()
       end
-      function bone:on_shield_collision(shield) bone:kill() end -- Break bone on shield.
       function bone:on_hurt() bone:kill() end
       local m = sol.movement.create("straight")
       m:set_smooth(false)

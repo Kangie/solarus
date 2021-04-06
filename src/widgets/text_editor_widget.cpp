@@ -482,8 +482,7 @@ void TextEditorWidget::insert_tab() {
         cursor.insertText(tab);
         end_pos += tab.size();
       }
-      cursor.movePosition(QTextCursor::StartOfLine);
-      cursor.movePosition(QTextCursor::Down);
+      cursor.movePosition(QTextCursor::NextBlock);
     }
   }
   // Insert tab before the cursor.
@@ -515,7 +514,7 @@ void TextEditorWidget::remove_tab() {
     // Loop on blocks.
     while (!cursor.atEnd() && cursor.position() <= end_pos) {
 
-      cursor.movePosition(QTextCursor::StartOfLine);
+      cursor.movePosition(QTextCursor::StartOfBlock);
       int last_pos = cursor.position();
 
       // Remove first space(s) character(s) of this line.
@@ -532,7 +531,7 @@ void TextEditorWidget::remove_tab() {
 
         // select and remove the space(s).
         if (length > 0) {
-          cursor.movePosition(QTextCursor::StartOfLine);
+          cursor.movePosition(QTextCursor::StartOfBlock);
           cursor.movePosition(
             QTextCursor::NextCharacter, QTextCursor::KeepAnchor, length);
           cursor.removeSelectedText();
@@ -550,8 +549,7 @@ void TextEditorWidget::remove_tab() {
       }
 
       cursor.setPosition(last_pos);
-      cursor.movePosition(QTextCursor::StartOfLine);
-      cursor.movePosition(QTextCursor::Down);
+      cursor.movePosition(QTextCursor::NextBlock);
     }
   }
   else {
