@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus Quest Editor 1.6.5 (in progress)
+## Solarus Quest Editor 1.6.5 (2021-04-06)
 
 * Map editor: fix crash when generating contours with missing patterns (#494).
 * Map editor: fix resize and edit shortcuts not working sometimes (#272).
