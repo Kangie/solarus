@@ -75,7 +75,8 @@ public:
 
   };
 
-  MapView(QWidget* parent = nullptr);
+  explicit MapView(QWidget* parent = nullptr);
+  ~MapView();
 
   MapModel* get_map();
   MapScene* get_scene();
@@ -136,6 +137,7 @@ public slots:
   void change_pattern_of_similar_tiles();
   void remove_selected_entities();
   void mouse_coordinates_changed(const QPoint& xy);
+  void map_selection_changed();
 
 signals:
 

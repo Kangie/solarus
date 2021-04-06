@@ -1723,6 +1723,26 @@ bool TilesetModel::border_set_exists(const QString& border_set_id) const {
 }
 
 /**
+ * @brief Returns whether all patterns of a border set exist in the tileset.
+ * @param border_set_id A border set id.
+ * @return @c true if the patterns of this border set all exist.
+ */
+bool TilesetModel::border_set_patterns_exist(const QString& border_set_id) const {
+
+  if (!border_set_exists(border_set_id)) {
+    return false;
+  }
+
+  for (int i = 0; i < 12; ++i) {
+    const QString& pattern_id = get_border_set_pattern(border_set_id, static_cast<BorderKind>(i));
+    if (!pattern_id.isEmpty() && !pattern_exists(pattern_id)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
  * @brief Creates an empty border set with the given id.
  *
  * Emits border_set_created().

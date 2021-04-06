@@ -11,6 +11,17 @@ animation{
   },
 }
 animation{
+  name = "break",
+  src_image = "enemies/slime_purple.png",
+  frame_delay = 140,
+  directions = {
+    { x = 112, y = 16, frame_width = 16, frame_height = 16, origin_x = 8, origin_y = 13, num_frames = 2 },
+    { x = 112, y = 16, frame_width = 16, frame_height = 16, origin_x = 8, origin_y = 13, num_frames = 2 },
+    { x = 112, y = 16, frame_width = 16, frame_height = 16, origin_x = 8, origin_y = 13, num_frames = 2 },
+    { x = 112, y = 16, frame_width = 16, frame_height = 16, origin_x = 8, origin_y = 13, num_frames = 2 },
+  },
+}
+animation{
   name = "finish_jump",
   src_image = "enemies/slime_purple.png",
   frame_delay = 30,

@@ -87,7 +87,9 @@ sprite{ id = "enemies/soldier_sword", description = "Soldier Sword" }
 sprite{ id = "enemies/spiderskull", description = "Spiderskull" }
 sprite{ id = "enemies/wings_evil", description = "Wings evil" }
 sprite{ id = "entities/arrow", description = "Arrow" }
+sprite{ id = "entities/block", description = "Block (grey)" }
 sprite{ id = "entities/bomb", description = "Bomb" }
+sprite{ id = "entities/chest", description = "Chest (brown)" }
 sprite{ id = "entities/crystal", description = "Crystal" }
 sprite{ id = "entities/crystal_block", description = "Crystal block" }
 sprite{ id = "entities/explosion", description = "Explosion" }
@@ -300,7 +302,6 @@ enemy{ id = "skullbat", description = "Skullbat" }
 enemy{ id = "slime_cyan", description = "Slime (cyan)" }
 enemy{ id = "slime_egg", description = "Slime egg" }
 enemy{ id = "slime_green", description = "Slime (green)" }
-enemy{ id = "slime_green_small", description = "Small Slime (green)" }
 enemy{ id = "slime_purple", description = "Slime (purple)" }
 enemy{ id = "slime_red", description = "Slime (red)" }
 enemy{ id = "slime_yellow", description = "Slime (yellow)" }
@@ -328,7 +329,6 @@ file{ path = "enemies/skullbat.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_cyan.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_egg.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_green.lua", author = "Diarandor", license = "GPL v3" }
-file{ path = "enemies/slime_green_small.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_purple.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_red.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/slime_yellow.lua", author = "Diarandor", license = "GPL v3" }
@@ -622,7 +622,9 @@ file{ path = "sprites/enemies/wings_evil.dat", author = "Diarandor", license = "
 file{ path = "sprites/entities", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/arrow.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/arrow.png", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/entities/block.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/bomb.dat", author = "Bertram, hyptosis", license = "CC BY-SA 4.0" }
+file{ path = "sprites/entities/chest.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal_block.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal_block.png", author = "Alex Gleason, Christopho", license = "CC BY-SA 4.0" }

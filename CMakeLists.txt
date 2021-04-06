@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(solarus-quest-editor VERSION 1.6.4)
+project(solarus-quest-editor VERSION 1.6.5)
 
 include(cmake/AddConfigurationVars.cmake)
 include(cmake/AddCompilationFlags.cmake)

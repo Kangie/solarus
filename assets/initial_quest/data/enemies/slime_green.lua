@@ -20,21 +20,12 @@ function enemy:on_created()
   self:set_pushed_back_when_hurt(true)
   self:set_obstacle_behavior("flying") -- Allow to traverse bad grounds (and fall on them).
   if split_when_hurt == nil then split_when_hurt = (math.random(0,1) == 1) end
-  -- Enable shield push.
-  if self.set_default_behavior_on_hero_shield then
-    self:set_default_behavior_on_hero_shield("normal_shield_push")
-  end
-  -- This function is called a second time for purple slimes, to make them purple
-  -- instead of green. In that case this function applies later to the new sprite (purple one).
-  local sprite = self:get_sprite()
-  if not sprite then -- Condition used for purple slimes, when calling on_created twice.
-    sprite = self:create_sprite("enemies/" .. self:get_breed())
-  end
+  local sprite = self:create_sprite("enemies/" .. self:get_breed())
   state = "hidden"
   function sprite:on_animation_finished(animation)
     if animation == "hide" then
       state = "hidden"
-      sprite:set_animation("hidden")
+      self:set_animation("hidden")  -- Use self to make replace_sprite() work correctly.
       enemy:restart() -- Restart enemy after hiding.
     elseif animation == "unhide" then
       enemy:start_going_hero()
@@ -42,12 +33,22 @@ function enemy:on_created()
       enemy:jump()
     elseif animation == "finish_jump" then
       state = "stopped"
-      sprite:set_animation("stopped")
+      self:set_animation("stopped")
       sol.timer.start(enemy, 200, function()
         enemy:start_going_hero()
       end)
     end
   end
+end
+
+-- Replaces the green slime sprite by another one, typically to change its
+-- color without changing the behavior.
+-- Warning: the specified sprite should have the same animations as slime_green.
+function enemy:replace_sprite(sprite_id)
+  local old_sprite = enemy:get_sprite()
+  local purple_sprite = enemy:create_sprite(sprite_id)
+  purple_sprite.on_animation_finished = old_sprite.on_animation_finished
+  enemy:remove_sprite(old_sprite)
 end
 
 -- Update sprites direction.
@@ -63,7 +64,9 @@ end
 function enemy:on_restarted()
   -- Destroy shadow sprite, if any.
   local shadow = self:get_sprite("shadow")
-  if shadow then self:remove_sprite(shadow) end
+  if shadow then
+    self:remove_sprite(shadow)
+  end
   -- Reset the starting animation if necessary (the engine sets the "walking" animation).
   if state == "hidden" then
     self:get_sprite():set_animation("hidden")
@@ -81,14 +84,13 @@ function enemy:start_checking()
   local hero = self:get_map():get_hero()
   -- Start loop for checking.
   sol.timer.start(self, 30, function()
-    --print(state)
     local is_close = (self:get_distance(hero) <= detection_distance)
     if is_close then
       -- Unhide and follow hero if hero is close.
       if state == "hidden" then
         self:unhide()
       end
-    elseif (not is_close) then
+    else
       -- Hide and stop if hero is not close.
       if state == "going_hero" then
         self:hide()
@@ -108,7 +110,9 @@ function enemy:start_going_hero()
   m:start(self)
   -- Put egg if necessary.
   if needs_put_egg then
-    sol.timer.start(self, 500, function() self:create_egg() end)
+    sol.timer.start(self, 500, function()
+      self:create_egg()
+    end)
   end
   -- Prepare jump.
   sol.timer.start(self, 2000, function()
@@ -139,8 +143,6 @@ function enemy:finish_jump()
   self:stop_movement()
   self:get_sprite():set_animation("finish_jump")
   self:set_can_attack(true) -- Allow to attack the hero again.
-  -- Finish shield protection.
-  if enemy.set_can_be_pushed_by_shield then enemy:set_can_be_pushed_by_shield(true) end
 end
 
 -- Jump.
@@ -152,8 +154,6 @@ function enemy:jump()
   sol.audio.play_sound("jump")
   self:set_invincible() -- Set invincible.
   self:set_can_attack(false) -- Do not attack hero during jump.
-  -- Shield protection.
-  if enemy.set_can_be_pushed_by_shield then enemy:set_can_be_pushed_by_shield(false) end
   -- Start shift on sprite.
   local function f(t) -- Shifting function.
     return math.floor(4 * max_height * (t / jump_duration - (t / jump_duration) ^ 2))
@@ -163,9 +163,10 @@ function enemy:jump()
   sol.timer.start(self, refreshing_time, function() -- Update shift each 10 milliseconds.
     sprite:set_xy(0, -f(t))
     t = t + refreshing_time
-    if t > jump_duration then return false
-      else return true
+    if t > jump_duration then
+      return false
     end
+    return true
   end)
   -- Add a shadow sprite.
   local shadow = self:create_sprite("shadows/shadow_big_dynamic", "shadow")
@@ -203,33 +204,42 @@ function enemy:check_on_ground()
   local ground = self:get_ground_below()
   if ground == "empty" and layer > 0 then
     -- Fall to lower layer and check ground again.
-     self:set_position(px, py, layer-1)
-     self:check_on_ground() -- Check again new ground.
+    self:set_position(px, py, layer-1)
+    self:check_on_ground() -- Check again new ground.
   elseif ground == "hole" then
     -- Create falling animation centered correctly on the 8x8 grid.
-    x = math.floor(x/8)*8 + 4; if map:get_ground(x, y, layer) ~= "hole" then x = x + 4 end
-    y = math.floor(y/8)*8 + 4; if map:get_ground(x, y, layer) ~= "hole" then y = y + 4 end
+    x = math.floor(x/8)*8 + 4
+    if map:get_ground(x, y, layer) ~= "hole" then
+      x = x + 4
+    end
+    y = math.floor(y/8)*8 + 4
+    if map:get_ground(x, y, layer) ~= "hole" then
+      y = y + 4
+    end
     local fall_on_hole = map:create_custom_entity({x = x, y = y, layer = layer, direction = 0})
     local sprite = fall_on_hole:create_sprite("ground_effects/fall_on_hole_effect")
-    sprite:set_animation("fall_on_hole")
+    sprite:set_animation("fall_on_hole", function()
+      fall_on_hole:remove()
+    end)
     self:remove()
-    function sprite:on_animation_finished() fall_on_hole:remove() end
     sol.audio.play_sound("falling_on_hole")
   elseif ground == "deep_water" then
     -- Sink in water.
     local water_splash = map:create_custom_entity({x = x, y = y, layer = layer, direction = 0})
     local sprite = water_splash:create_sprite("ground_effects/water_splash_effect")
-    sprite:set_animation("water_splash")
+    sprite:set_animation("water_splash", function()
+      water_splash:remove()
+    end)
     self:remove()
-    function sprite:on_animation_finished() water_splash:remove() end
     sol.audio.play_sound("splash")
   elseif ground == "lava" then
     -- Sink in lava.
     local lava_splash = map:create_custom_entity({x = x, y = y, layer = layer, direction = 0})
     local sprite = lava_splash:create_sprite("ground_effects/lava_splash_effect")
-    sprite:set_animation("lava_splash")
+    sprite:set_animation("lava_splash", function()
+      lava_splash:remove()
+    end)
     self:remove()
-    function sprite:on_animation_finished() lava_splash:remove() end
     sol.audio.play_sound("splash")
   end
 end
@@ -237,7 +247,9 @@ end
 -- Start a timer to check ground once per second (useful if the ground moves or changes type!!!).
 function enemy:start_checking_ground()
   sol.timer.start(self, 300, function()
-    if state == "jumping" then return true end -- Do not check the ground while jumping.
+    if state == "jumping" then
+      return true
+    end -- Do not check the ground while jumping.
     self:check_on_ground()
     return true
   end)
@@ -250,7 +262,9 @@ function enemy:create_egg()
   self:stop_movement()
   local sprite = self:get_sprite()
   sprite:set_animation("jump")
-  sol.timer.start(self, 250, function() sprite:set_animation("stopped") end)
+  sol.timer.start(self, 250, function()
+    sprite:set_animation("stopped")
+  end)
   local x, y, layer = self:get_position()
   local prop = {x = x, y = y, layer = layer, direction = 0, breed = "slime_egg"}
   local egg = map:create_enemy(prop)
@@ -261,15 +275,26 @@ function enemy:create_egg()
 end
 
 -- Enable/disable putting egg.
-function enemy:set_egg_enabled(bool) needs_put_egg = bool end
-function enemy:get_egg_enabled() return needs_put_egg end
+function enemy:set_egg_enabled(bool)
+  needs_put_egg = bool
+end
+
+function enemy:get_egg_enabled()
+  return needs_put_egg
+end
 
 -- Change default behavior of splitting when hurt.
-function enemy:set_split_when_hurt(bool) split_when_hurt = bool end
-function enemy:get_split_when_hurt() return split_when_hurt end
+function enemy:set_split_when_hurt(bool)
+  split_when_hurt = bool
+end
+function enemy:get_split_when_hurt()
+  return split_when_hurt
+end
 
 function enemy:on_hurt()
-  if not split_when_hurt then return end
+  if not split_when_hurt then
+    return
+  end
   -- Create green slimys.
   local x, y, layer = self:get_position()
   local prop = {x = x, y = y, layer = layer, direction = 0, breed = "slimy_green"}

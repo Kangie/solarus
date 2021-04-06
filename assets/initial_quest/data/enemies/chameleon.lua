@@ -26,7 +26,6 @@ local tongue_attack_speed, tongue_retreat_speed = 200, 250
 local lick_distance = 150
 local has_tongue, is_attacking = true, false
 
-
 -- Event called when the enemy is initialized.
 function enemy:on_created()
   -- Create main sprites.
@@ -58,11 +57,6 @@ function enemy:on_created()
   self:set_sprite_damage(eye_left, 0)
   self:set_invincible_sprite(eye_right)
   self:set_sprite_damage(eye_right, 0)
-  -- Shield collisions.
-  if sprite.set_default_behavior_on_hero_shield then
-    sprite:set_default_behavior_on_hero_shield("enemy_weak_to_shield_push")
-  end
-  function sprite:on_pushed_by_shield(shield) enemy:destroy_tongue() end
   -- Update eye sprites.
   function sprite:update_eyes()
     local anim, dir4 = self:get_animation(), self:get_direction()
@@ -161,9 +155,6 @@ function enemy:disappear()
   for _, s in pairs({shadow, eye_left, eye_right}) do
     s:fade_out(disappearing_delay)
   end
-  if sprite.set_can_be_pushed_by_shield then
-    sprite:set_can_be_pushed_by_shield(false)
-  end
 end
 
 -- Appear and stop invincibility.
@@ -176,9 +167,6 @@ function enemy:appear()
   end)
   for _, s in pairs({shadow, eye_left, eye_right}) do
     s:fade_in(appearing_delay)
-  end
-  if sprite.set_can_be_pushed_by_shield then
-    sprite:set_can_be_pushed_by_shield(true)
   end
 end
 
@@ -297,51 +285,13 @@ function enemy:tongue_attack(entity)
       end
     end
   end
-  -- Enable tongue main sprite collision with shield.
-  if tongue_sprite.set_can_be_pushed_by_shield then
-    tongue_sprite:set_can_be_pushed_by_shield(true)
-  end
-  function tongue_sprite:on_shield_collision(shield)
-    enemy:on_tongue_collision_shield(shield)
-  end
-  -- Add condition for shield collision: opposite direction and sprite collision.
-  function tongue_sprite:on_shield_collision_test(shield)
-    local sh_dir = shield:get_direction()
-    local dir = self:get_direction()
-    if (sh_dir + 2) % 4 == dir and shield:overlaps(tongue, "sprite") then
-      return true
-    end
-  end
 end
+
 -- Delay before restarting.
 function enemy:on_tongue_attack_finished()
   local delay = math.random(min_waiting_delay, max_waiting_delay)
   sol.timer.start(self, delay, function() enemy:restart() end)
 end
-
--- Custom event. Push enemy towards shield.
-function enemy:on_tongue_collision_shield(shield)
-  -- Do nothing if there is an entity attached.
-  if tongue.attached_entity then return end
-  -- Attach hero entity.
-  tongue:go_back()
-  tongue.attached_entity = hero
-  -- Play tongue sound once (to avoid noise).
-  if not tongue.has_played_sound then
-    sol.audio.play_sound("tongue")
-    tongue.has_played_sound = true
-  end
-  -- Unattach hero when shield disappears.
-  sol.timer.start(tongue, 1, function()
-    if (not shield:exists()) or (not shield:overlaps(tongue, "sprite")) then
-      tongue.attached_entity = nil
-      return
-    end
-    return true
-  end)
-end
-
-
 
 -- Attach a custom damage to the sprites of the enemy.
 function enemy:get_sprite_damage(sprite)
@@ -351,24 +301,15 @@ function enemy:set_sprite_damage(sprite, damage)
   sprite.custom_damage = damage
 end
 
--- Warning: do not override these functions if you use the "custom shield" script.
 function enemy:on_attacking_hero(hero, enemy_sprite)
   local enemy = self
   local hero = enemy:get_map():get_hero()
   -- Do nothing if enemy sprite cannot hurt hero.
   if enemy:get_sprite_damage(enemy_sprite) == 0 then return end
   local collision_mode = enemy:get_attacking_collision_mode()
-  if not hero:overlaps(enemy, collision_mode) then return end  
-  -- Do nothing when shield is protecting.
-  if hero.is_shield_protecting_from_enemy
-      and hero:is_shield_protecting_from_enemy(enemy, enemy_sprite) then
+  if not hero:overlaps(enemy, collision_mode) then
     return
-  end
-  -- Check for a custom attacking collision test.
-  if enemy.custom_attacking_collision_test and
-      not enemy:custom_attacking_collision_test(enemy_sprite) then
-    return
-  end
+  end  
   -- Otherwise, hero is not protected. Use built-in behavior.
   local damage = enemy:get_damage()
   if enemy_sprite then

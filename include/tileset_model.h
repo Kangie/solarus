@@ -143,6 +143,7 @@ public:
   int get_num_border_sets() const;
   QStringList get_border_set_ids() const;
   bool border_set_exists(const QString& border_set_id) const;
+  bool border_set_patterns_exist(const QString& border_set_id) const;
   void create_border_set(const QString& border_set_id);
   void delete_border_set(const QString& border_set_id);
   void set_border_set_id(const QString& old_id, const QString& new_id);
