@@ -138,6 +138,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="suspend_unfocused_field">
+            <property name="text">
+             <string>Suspend when unfocused</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

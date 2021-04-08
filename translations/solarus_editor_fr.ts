@@ -5339,114 +5339,119 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>Forcer le rendu software</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="232"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="144"/>
+        <source>Suspend when unfocused</source>
+        <translation>Suspendre si la fenêtre perd le focus</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="239"/>
         <source>Tabulation</source>
         <translation>Tabulation</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="238"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="245"/>
         <source>Length:</source>
         <translation>Longueur :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="271"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="278"/>
         <source>Replace by space</source>
         <translation>Remplacer par des espaces</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="294"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="301"/>
         <source>External Editor</source>
         <translation>Éditeur externe</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="306"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="313"/>
         <source>Command:</source>
         <translation>Commande :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="316"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="323"/>
         <source>executable %f %p</source>
         <translation>éxécutable %f %p</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="335"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="342"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="403"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="571"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="655"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="832"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1002"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="410"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="578"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="662"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="839"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="1009"/>
         <source>Default zoom:</source>
         <translation>Zoom par défaut :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="428"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="680"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1027"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="435"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="687"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="1034"/>
         <source>Grid:</source>
         <translation>Grille :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="461"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="723"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="884"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1060"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="468"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="730"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="891"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="1067"/>
         <source>Show at opening</source>
         <translation>Afficher à l&apos;ouverture</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="478"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="746"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1077"/>
-        <source>Default size:</source>
-        <translation>Taille par défaut :</translation>
     </message>
     <message>
         <location filename="../src/widgets/settings_dialog.ui" line="485"/>
         <location filename="../src/widgets/settings_dialog.ui" line="753"/>
         <location filename="../src/widgets/settings_dialog.ui" line="1084"/>
-        <source>Style:</source>
-        <translation>Style :</translation>
+        <source>Default size:</source>
+        <translation>Taille par défaut :</translation>
     </message>
     <message>
         <location filename="../src/widgets/settings_dialog.ui" line="492"/>
         <location filename="../src/widgets/settings_dialog.ui" line="760"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="891"/>
         <location filename="../src/widgets/settings_dialog.ui" line="1091"/>
+        <source>Style:</source>
+        <translation>Style :</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="499"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="767"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="898"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="1098"/>
         <source>Color:</source>
         <translation>Couleur :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="535"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="542"/>
         <source>Tileset graphics view</source>
         <translation>Vue graphique du tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="611"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="618"/>
         <source>Sprite editor</source>
         <translation>Éditeur de sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="365"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="617"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="372"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="624"/>
         <source>Main graphics view</source>
         <translation>Vue graphique principale</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="767"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="774"/>
         <source>Auto detect size</source>
         <translation>Détecter la taille automatiquement</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="794"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="801"/>
         <source>Previewer graphics view</source>
         <translation>Prévisualisation</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="857"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="864"/>
         <source>Origin:</source>
         <translation>Origine :</translation>
     </message>
@@ -5455,46 +5460,46 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation type="vanished">x</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="161"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="168"/>
         <source>Text editor</source>
         <translation>Éditeur de texte</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="167"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="174"/>
         <source>Font</source>
         <translation>Police</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="173"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="180"/>
         <source>Family:</source>
         <translation>Famille :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="207"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="214"/>
         <source>Size:</source>
         <translation>Taille :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="359"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="366"/>
         <source>Map editor</source>
         <translation>Éditeur de map</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="958"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="965"/>
         <source>Tileset editor</source>
         <translation>Éditeur de tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="964"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="971"/>
         <source>Graphics view</source>
         <translation>Vue graphique</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="373"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="541"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="625"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="802"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="972"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="380"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="548"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="632"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="809"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="979"/>
         <source>Background color:</source>
         <translation>Couleur de fond :</translation>
     </message>
@@ -5503,47 +5508,47 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation type="vanished">Taille de grille par défaut :</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="104"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="107"/>
         <source>Select external editor</source>
         <translation>Sélectionnez un éditeur l&apos;externe</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="179"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="182"/>
         <source>Restore default settings</source>
         <translation>Restaurer les paramètres par défaut</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="180"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="183"/>
         <source>Do you really want to restore default settings?</source>
         <translation>Voulez-vous vraiment restaurer les paramètres par défaut ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="313"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="317"/>
         <source>Working directory</source>
         <translation>Répertoire de travail</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1025"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="1045"/>
         <source>25 %</source>
         <translation>25 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1026"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="1046"/>
         <source>50 %</source>
         <translation>50 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1027"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="1047"/>
         <source>100 %</source>
         <translation>100 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1028"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="1048"/>
         <source>200 %</source>
         <translation>200 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1029"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="1049"/>
         <source>400 %</source>
         <translation>400 %</translation>
     </message>

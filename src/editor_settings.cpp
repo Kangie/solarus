@@ -32,6 +32,7 @@ const QString EditorSettings::save_files_before_running = "save_files_before_run
 const QString EditorSettings::no_audio = "no_audio";
 const QString EditorSettings::quest_size = "quest_size";
 const QString EditorSettings::force_software_rendering = "force_software_rendering";
+const QString EditorSettings::suspend_unfocused = "suspend_unfocused";
 
 // Import dialog keys.
 const QString EditorSettings::import_last_source_quest = "import_last_source_quest";
@@ -114,6 +115,8 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::save_files_before_running, "ask" },
   { EditorSettings::no_audio, false },
   { EditorSettings::quest_size, QSize() },
+  { EditorSettings::force_software_rendering, false },
+  { EditorSettings::suspend_unfocused, true },
 
   // Import dialog.
   { EditorSettings::import_last_source_quest, "" },
