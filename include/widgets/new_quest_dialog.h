@@ -18,8 +18,11 @@
 #define SOLARUSEDITOR_NEW_QUEST_DIALOG_H
 
 #include "ui_new_quest_dialog.h"
+#include "ui_new_quest_dialog_contents_page.h"
+#include "ui_new_quest_dialog_directory_page.h"
+#include "ui_new_quest_dialog_name_page.h"
 #include "new_quest_builder.h"
-#include <QDialog>
+#include <QWizard>
 
 namespace SolarusEditor {
 
@@ -28,39 +31,78 @@ using NewQuestMode = NewQuestBuilder::NewQuestMode;
 /**
  * @brief A dialog used to create a new quest in the editor.
  */
-class NewQuestDialog final : public QDialog {
-  Q_OBJECT
+class NewQuestDialog final : public QWizard {
 
 public:
 
   explicit NewQuestDialog(
     const QString& directory = QString(),
-    QWidget* parent = nullptr);
+    QWidget* parent = nullptr,
+    Qt::WindowFlags flags = Qt::WindowFlags());
 
   NewQuestMode get_new_quest_mode() const;
-  QString get_quest_path() const;
+  QString get_quest_directory() const;
   QString get_quest_name() const;
 
-  bool eventFilter(QObject* watched, QEvent* event) override;
+private:
+
+  Ui::NewQuestDialog ui; ///< The widgets.
+};
+
+/**
+ * @brief New quest dialog page that asks for the name of the quest.
+ */
+class NewQuestDialogNamePage : public QWizardPage {
+
+public:
+
+  explicit NewQuestDialogNamePage(QWidget* parent = nullptr);
+
+private:
+
+  Ui::NewQuestDialogNamePage ui;
+};
+
+/**
+ * @brief New quest dialog page that asks for the quest directory.
+ */
+class NewQuestDialogDirectoryPage : public QWizardPage {
+  Q_OBJECT
+
+public:
+
+  explicit NewQuestDialogDirectoryPage(
+    const QString& directory,
+    QWidget* parent = nullptr);
+
+  void initializePage() override;
+  bool validatePage() override;
+  bool isComplete() const override;
 
 private slots:
 
   void browse_directories();
-  void update_path();
-  void update_error();
-  void update_file();
-  void desync_file();
+  void update_is_complete();
 
 private:
 
-  QString get_directory() const;
-  void set_directory(const QString& directory);
-  QString get_file() const;
-  void set_file(const QString& file);
-  QString check_for_errors() const;
+  Ui::NewQuestDialogDirectoryPage ui;
 
-  Ui::NewQuestDialog ui; ///< The widgets.
+  const QString directory;
+};
 
+/**
+ * @brief New quest dialog page that asks for the initial quest contents.
+ */
+class NewQuestDialogContentsPage : public QWizardPage {
+
+public:
+
+  explicit NewQuestDialogContentsPage(QWidget* parent = nullptr);
+
+private:
+
+  Ui::NewQuestDialogContentsPage ui;
 };
 
 }

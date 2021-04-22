@@ -790,16 +790,12 @@ void MainWindow::on_action_new_quest_triggered() {
     return;
   }
 
-  QString quest_path = new_quest_dialog.get_quest_path();
-  if (quest_path.isEmpty()) {
-    return;
-  }
-
   close_quest();
 
   try {
     // Create the quest directory and its contents.
     NewQuestMode mode = new_quest_dialog.get_new_quest_mode();
+    const QString& quest_path = new_quest_dialog.get_quest_directory();
     const QString& quest_name = new_quest_dialog.get_quest_name();
     NewQuestBuilder::create_initial_quest_files(mode, quest_path, quest_name);
     if (open_quest(quest_path)) {
