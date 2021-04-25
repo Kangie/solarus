@@ -31,7 +31,6 @@
 #include "file_tools.h"
 #include "map_model.h"
 #include "new_quest_builder.h"
-#include "new_quest_mode_traits.h"
 #include "obsolete_editor_exception.h"
 #include "obsolete_quest_exception.h"
 #include "quest.h"

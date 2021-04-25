@@ -20,7 +20,6 @@
 #include "grid_style.h"
 #include <QColor>
 
-class QLabel;
 class QPainter;
 class QRect;
 class QSize;
@@ -53,9 +52,6 @@ void draw_grid_point(QPainter& painter,
                const QRect& where,
                const QSize& size,
                const QColor& color = Qt::black);
-
-void set_elided_text(
-    QLabel& label, const QString& text, Qt::TextElideMode mode);
 
 }
 

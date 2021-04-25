@@ -110,7 +110,6 @@ set(solarus_quest_editor_SOURCES
   include/map_model.h
   include/natural_comparator.h
   include/new_quest_builder.h
-  include/new_quest_mode_traits.h
   include/obsolete_editor_exception.h
   include/obsolete_quest_exception.h
   include/pattern_repeat_mode_traits.h
@@ -241,7 +240,6 @@ set(solarus_quest_editor_SOURCES
   src/main.cpp
   src/map_model.cpp
   src/new_quest_builder.cpp
-  src/new_quest_mode_traits.cpp
   src/obsolete_editor_exception.cpp
   src/obsolete_quest_exception.cpp
   src/pattern_repeat_mode_traits.cpp
