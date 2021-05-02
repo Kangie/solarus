@@ -35,7 +35,7 @@ NewQuestDialog::NewQuestDialog(
 
   ui.setupUi(this);
 
-  addPage(new NewQuestDialogNamePage);
+  addPage(new NewQuestDialogTitlePage);
   addPage(new NewQuestDialogDirectoryPage(directory));
   addPage(new NewQuestDialogContentsPage);
 }
@@ -49,11 +49,11 @@ QString NewQuestDialog::get_quest_directory() const {
 }
 
 /**
- * @brief Get the name of the quest the user has entered.
+ * @brief Get the title of the quest the user has entered.
  */
-QString NewQuestDialog::get_quest_name() const {
+QString NewQuestDialog::get_quest_title() const {
 
-  return field("quest_name").toString();
+  return field("quest_title").toString();
 }
 
 /**
@@ -69,14 +69,14 @@ NewQuestMode NewQuestDialog::get_new_quest_mode() const {
 }
 
 /**
- * @brief Constructor for the NewQuestDialogNamePage.
+ * @brief Constructor for the NewQuestDialogTitlePage.
  */
-NewQuestDialogNamePage::NewQuestDialogNamePage(QWidget* parent) :
+NewQuestDialogTitlePage::NewQuestDialogTitlePage(QWidget* parent) :
   QWizardPage(parent) {
 
   ui.setupUi(this);
 
-  registerField("quest_name*", ui.quest_name_edit);
+  registerField("quest_title*", ui.quest_title_edit);
 }
 
 /**
@@ -104,7 +104,7 @@ NewQuestDialogDirectoryPage::NewQuestDialogDirectoryPage(
 void NewQuestDialogDirectoryPage::initializePage() {
 
   QDir parent_dir(directory);
-  QString quest_name = field("quest_name").toString();
+  QString quest_name = field("quest_title").toString();
   QString quest_file = FileTools::to_file_name(quest_name);
   QString quest_path = parent_dir.absoluteFilePath(quest_file);
   ui.quest_directory_edit->setText(quest_path);

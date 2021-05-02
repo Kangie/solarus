@@ -20,7 +20,7 @@
 #include "ui_new_quest_dialog.h"
 #include "ui_new_quest_dialog_contents_page.h"
 #include "ui_new_quest_dialog_directory_page.h"
-#include "ui_new_quest_dialog_name_page.h"
+#include "ui_new_quest_dialog_title_page.h"
 #include "new_quest_builder.h"
 #include <QWizard>
 
@@ -42,7 +42,7 @@ public:
 
   NewQuestMode get_new_quest_mode() const;
   QString get_quest_directory() const;
-  QString get_quest_name() const;
+  QString get_quest_title() const;
 
 private:
 
@@ -50,17 +50,17 @@ private:
 };
 
 /**
- * @brief New quest dialog page that asks for the name of the quest.
+ * @brief New quest dialog page that asks for the title of the quest.
  */
-class NewQuestDialogNamePage : public QWizardPage {
+class NewQuestDialogTitlePage : public QWizardPage {
 
 public:
 
-  explicit NewQuestDialogNamePage(QWidget* parent = nullptr);
+  explicit NewQuestDialogTitlePage(QWidget* parent = nullptr);
 
 private:
 
-  Ui::NewQuestDialogNamePage ui;
+  Ui::NewQuestDialogTitlePage ui;
 };
 
 /**

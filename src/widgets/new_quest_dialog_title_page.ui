@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SolarusEditor::NewQuestDialogNamePage</class>
- <widget class="QWizardPage" name="SolarusEditor::NewQuestDialogNamePage">
+ <class>SolarusEditor::NewQuestDialogTitlePage</class>
+ <widget class="QWizardPage" name="SolarusEditor::NewQuestDialogTitlePage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,14 +14,14 @@
    <string>WizardPage</string>
   </property>
   <property name="title">
-   <string>Quest Name</string>
+   <string>Quest Title</string>
   </property>
   <property name="subTitle">
    <string>The name of your new quest.</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLineEdit" name="quest_name_edit"/>
+    <widget class="QLineEdit" name="quest_title_edit"/>
    </item>
   </layout>
  </widget>
