@@ -17,7 +17,7 @@
    <string>Quest Directory</string>
   </property>
   <property name="subTitle">
-   <string>The directory that will become the quest.</string>
+   <string>Choose a directory to turn into the quest.</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

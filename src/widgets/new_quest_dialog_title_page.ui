@@ -17,7 +17,7 @@
    <string>Quest Title</string>
   </property>
   <property name="subTitle">
-   <string>The name of your new quest.</string>
+   <string>Enter the title of the new quest.</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

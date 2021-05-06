@@ -17,7 +17,7 @@
    <string>Initial Quest Contents</string>
   </property>
   <property name="subTitle">
-   <string>Things that will be in your quest to start.</string>
+   <string>Choose the set of files to be the quest's initial contents.</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
