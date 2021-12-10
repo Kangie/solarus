@@ -85,6 +85,9 @@ class TextSurface: public Drawable {
         HorizontalAlignment horizontal_alignment,
         VerticalAlignment vertical_alignment);
 
+    // static information
+    static constexpr const char module_name[] = "sol.text_surface";
+
     const std::string& get_font() const;
     void set_font(const std::string& font_id);
     HorizontalAlignment get_horizontal_alignment() const;

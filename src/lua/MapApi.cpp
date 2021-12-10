@@ -59,6 +59,7 @@
 #include "solarus/entities/TilePattern.h"
 #include "solarus/entities/Tileset.h"
 #include "solarus/entities/Wall.h"
+#include "solarus/lua/LuaBind.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 #include "solarus/movements/Movement.h"
@@ -114,51 +115,386 @@ const char* move_camera_code =
  */
 const std::string LuaContext::map_module_name = "sol.map";
 
+static Savegame & get_game(Map& map) {
+  return *map.get_savegame();
+}
+
+static std::optional<std::string> get_world(Map& map) {
+  const std::string& world = map.get_world();
+  return (world.empty()) ? std::nullopt : std::make_optional(world);
+}
+
+static void set_world(Map& map, std::optional<std::string> arg) {
+  std::string world = arg.value_or(std::string());
+  map.set_world(world);
+}
+
+// Is Size already repersented this way?
+static std::tuple<int, int> get_size(Map& map) {
+  return std::make_tuple(map.get_width(), map.get_height());
+}
+
+static std::tuple<int, int> get_location(Map& map) {
+  const Rectangle& location = map.get_location();
+  return std::make_tuple(location.get_x(), location.get_y());
+}
+
+static std::optional<int> get_floor(Map & map) {
+  if (map.has_floor()) {
+    return std::make_optional(map.get_floor());
+  }
+  return std::nullopt;
+}
+
+static void set_floor(Map & map, std::optional<int> value) {
+  const int floor = value.value_or(MapData::NO_FLOOR);
+  map.set_floor(floor);
+}
+
+static std::optional<std::string> get_music(Map & map) {
+  const std::string& music_id = map.get_music_id();
+  if (Music::none == music_id) {
+    return std::nullopt;
+  } else if (Music::unchanged == music_id) {
+    return std::make_optional("same");
+  } else {
+    return std::make_optional(music_id);
+  }
+}
+
+static Camera * get_camera(Map & map) {
+  const CameraPtr& camera = map.get_camera();
+  //return (camera) ? std::make_optional(*camera) : std::nullptr;
+  return camera.get();
+}
+
+static LuaBind::OnStack get_camera_position(
+    LuaContext & context, Map & map) {
+  context.warning_deprecated(
+        { 1, 5 },
+        "map:get_camera_position()",
+        "Use map:get_camera():get_bounding_box() instead.");
+
+  const CameraPtr& camera = map.get_camera();
+
+  lua_State * l = context.get_internal_state();
+  if (nullptr == camera) {
+    lua_pushnil(l);
+    return {1};
+  }
+
+  const Rectangle& camera_position = camera->get_bounding_box();
+
+  lua_pushinteger(l, camera_position.get_x());
+  lua_pushinteger(l, camera_position.get_y());
+  lua_pushinteger(l, camera_position.get_width());
+  lua_pushinteger(l, camera_position.get_height());
+  return {4};
+}
+
+static void move_camera(LuaContext & context, Map &) {
+  context.warning_deprecated(
+    { 1, 5 },
+    "map:move_camera()",
+    "Make a target movement on map:get_camera() instead.");
+
+  lua_State * l = context.get_internal_state();
+  // Wrapper handles the map.
+  LuaTools::check_int(l, 2);
+  LuaTools::check_int(l, 3);
+  LuaTools::check_int(l, 4);
+  LuaTools::check_type(l, 5, LUA_TFUNCTION);
+  if (lua_gettop(l) >= 6) {
+    LuaTools::check_int(l, 6);
+  }
+  if (lua_gettop(l) >= 7) {
+    LuaTools::check_int(l, 7);
+  }
+  lua_settop(l, 7); // Make sure that we always have 7 arguments.
+
+  lua_getfield(l, LUA_REGISTRYINDEX, "map.move_camera");
+  if (!lua_isnil(l, -1)) {
+    SOLARUS_ASSERT(lua_isfunction(l, -1), "map:move_camera() is not a function");
+    lua_insert(l, 1);
+    context.call_function(7, 0, "move_camera");
+  }
+}
+
+static std::string get_ground(Map & map, int x, int y, int layer) {
+  Ground ground = map.get_ground(layer, x, y, nullptr);
+  return enum_to_name(ground);
+}
+
+// This one is just required for overload resolution of draw_visual.
+static void draw_visual(Map & map, Drawable & drawable, int x, int y) {
+  map.draw_visual(drawable, x, y);
+}
+
+static void draw_sprite(LuaContext & context,
+    Map & map, Sprite & sprite, int x, int y) {
+  context.warning_deprecated(
+    { 1, 5 },
+    "map:draw_sprite()",
+    "Use map:draw_visual() instead.");
+  map.draw_visual(sprite, x, y);
+}
+
+static bool get_crystal_state(Map & map) {
+  return map.get_game().get_crystal_state();
+}
+
+static void set_crystal_state(Map & map, bool state) {
+  Game& game = map.get_game();
+  if (game.get_crystal_state() != state) {
+    game.change_crystal_state();
+  }
+}
+
+static void change_crystal_state(Map & map) {
+  map.get_game().change_crystal_state();
+}
+
+static void open_doors(LuaContext& context,
+    Map& map, const std::string& prefix) {
+  bool any_opened = false;
+  Entities& entities = map.get_entities();
+  const std::vector<EntityPtr>& doors =
+      entities.get_entities_with_prefix(EntityType::DOOR, prefix);
+  for (const EntityPtr& entity: doors) {
+    Door& door = *std::static_pointer_cast<Door>(entity);
+    if (!door.is_open() && !door.is_opening()) {
+      door.open();
+      any_opened = true;
+    }
+  }
+
+  // make sure the sound is played only once even if the script calls
+  // this function repeatedly while the door is still changing
+  if (any_opened) {
+    Sound::play("door_open", context.get_main_loop().get_resource_provider());
+  }
+}
+
+static void close_doors(LuaContext& context,
+    Map& map, const std::string& prefix) {
+  bool any_closed = false;
+  Entities& entities = map.get_entities();
+  const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
+  for (const EntityPtr& entity: doors) {
+    Door& door = *std::static_pointer_cast<Door>(entity);
+    if (!door.is_closed() && !door.is_closing()) {
+      door.close();
+      any_closed = true;
+    }
+  }
+
+  // make sure the sound is played only once even if the script calls
+  // this function repeatedly while the door is still changing
+  if (any_closed) {
+    Sound::play("door_closed", context.get_main_loop().get_resource_provider());
+  }
+}
+
+static void set_doors_open(
+    Map& map, const std::string& prefix, std::optional<bool> open_arg) {
+  bool open = open_arg.value_or(true);
+  Entities& entities = map.get_entities();
+  const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
+  for (const EntityPtr& entity: doors) {
+    Door& door = *std::static_pointer_cast<Door>(entity);
+    door.set_open(open);
+  }
+}
+
+static Entity * get_entity(Map& map, const std::string& name) {
+  const EntityPtr& entity = map.get_entities().find_entity(name);
+  if (entity != nullptr && !entity->is_being_removed()) {
+    return entity.get();
+  }
+  return nullptr;
+}
+/*
+static LuaBind::OnStack get_entity(lua_State * l,
+    Map& map, const std::string& name) {
+  const EntityPtr& entity = map.get_entities().find_entity(name);
+
+  if (entity != nullptr && !entity->is_being_removed()) {
+    LuaContext::push_userdata(l, *entity);
+  } else {
+    lua_pushnil(l);
+  }
+  return {1};
+}*/
+
+static bool has_entity(Map& map, const std::string& name) {
+  const EntityPtr& entity = map.get_entities().find_entity(name);
+  return (entity != nullptr);
+}
+
+static LuaBind::OnStack get_entities(lua_State * l,
+    Map& map, std::optional<std::string> prefix_arg) {
+  std::string prefix = prefix_arg.value_or("");
+  const EntityVector& entities =
+      map.get_entities().get_entities_with_prefix_z_sorted(prefix);
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+static int get_entities_count(Map& map, const std::string& prefix) {
+  const EntityVector& entities =
+      map.get_entities().get_entities_with_prefix(prefix);
+  return entities.size();
+}
+
+static bool has_entities(Map& map, const std::string& prefix) {
+  return map.get_entities().has_entity_with_prefix(prefix);
+}
+
+static LuaBind::OnStack get_entities_by_type(lua_State* l, Map& map) {
+  EntityType type = LuaTools::check_enum<EntityType>(l, 2);
+
+  const EntityVector& entities =
+      map.get_entities().get_entities_by_type_z_sorted(type);
+
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+static LuaBind::OnStack get_entities_in_rectangle(lua_State* l,
+    Map& map, int x, int y, int width, int height) {
+  EntityVector entities;
+  map.get_entities().get_entities_in_rectangle_z_sorted(
+      Rectangle(x, y, width, height), entities
+  );
+
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+static LuaBind::OnStack get_entities_in_region(lua_State* l, Map& map) {
+  Point xy;
+  EntityPtr entity;
+  if (lua_isnumber(l, 2)) {
+    int x = LuaTools::check_int(l, 2);
+    int y = LuaTools::check_int(l, 3);
+    xy = Point(x, y);
+  }
+  else if (LuaContext::is_entity(l, 2)) {
+    entity = LuaContext::check_entity(l, 2);
+    xy = entity->get_xy();
+  }
+  else {
+    LuaTools::type_error(l, 2, "entity or number");
+  }
+
+  EntityVector entities;
+  map.get_entities().get_entities_in_region_z_sorted(
+      xy, entities
+  );
+
+  if (entity != nullptr) {
+    // Entity variant: remove the entity itself.
+    const auto& it = std::find(entities.begin(), entities.end(), entity);
+    if (it != entities.end()) {
+      entities.erase(it);
+    }
+  }
+
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+static Hero& get_hero(lua_State* l, Map& map) {
+  LuaContext::check_map_has_game(l, map);
+
+  // Return the hero even if he is no longer on this map.
+  return map.get_default_hero();
+}
+
+static void set_entities_enabled(
+    Map& map, const std::string& prefix, std::optional<bool> enabled_arg) {
+  bool enabled = enabled_arg.value_or(true);
+
+  std::vector<EntityPtr> entities =
+      map.get_entities().get_entities_with_prefix(prefix);
+  for (const EntityPtr& entity: entities) {
+    entity->set_enabled(enabled);
+  }
+}
+
+static void remove_entities(Map& map, const std::string& prefix) {
+  map.get_entities().remove_entities_with_prefix(prefix);
+}
+
+static LuaBind::OnStack create_entity(LuaContext& context, Map& map) {
+  lua_State* l = context.get_internal_state();
+  if (!map.is_loaded()) {
+    LuaTools::arg_error(l, 1, "This map is not loaded");
+  }
+  EntityType type = LuaTools::check_enum<EntityType>(
+      l, lua_upvalueindex(1)
+  );
+  const EntityData& data = EntityData::check_entity_data(l, 2, type);
+
+  context.create_map_entity_from_data(map, data);
+  return {1};
+}
+
+static LuaBind::OnStack get_cameras(lua_State* l, Map& map) {
+  LuaContext::push_userdata_iterator(l, map.get_entities().get_cameras());
+  return {1};
+}
+
+static LuaBind::OnStack get_heroes(lua_State* l, Map& map) {
+  LuaContext::push_userdata_iterator(l, map.get_entities().get_heroes());
+  return {1};
+}
+
 /**
  * \brief Initializes the map features provided to Lua.
  */
 void LuaContext::register_map_module() {
 
   const std::vector<luaL_Reg> methods = {
-      { "get_id", map_api_get_id },
-      { "get_game", map_api_get_game },
-      { "get_world", map_api_get_world },
-      { "set_world", map_api_set_world },
-      { "get_min_layer", map_api_get_min_layer },
-      { "get_max_layer", map_api_get_max_layer },
-      { "get_size", map_api_get_size },
-      { "get_location", map_api_get_location },
-      { "get_floor", map_api_get_floor },
-      { "set_floor", map_api_set_floor },
-      { "get_tileset", map_api_get_tileset },
-      { "set_tileset", map_api_set_tileset },
-      { "get_music", map_api_get_music },
-      { "get_camera", map_api_get_camera },
-      { "get_camera_position", map_api_get_camera_position },
-      { "move_camera", map_api_move_camera },
-      { "get_ground", map_api_get_ground },
-      { "draw_visual", map_api_draw_visual },
-      { "draw_sprite", map_api_draw_sprite },
-      { "get_crystal_state", map_api_get_crystal_state },
-      { "set_crystal_state", map_api_set_crystal_state },
-      { "change_crystal_state", map_api_change_crystal_state },
-      { "open_doors", map_api_open_doors },
-      { "close_doors", map_api_close_doors },
-      { "set_doors_open", map_api_set_doors_open },
-      { "get_entity", map_api_get_entity },
-      { "has_entity", map_api_has_entity },
-      { "get_entities", map_api_get_entities },
-      { "get_entities_count", map_api_get_entities_count },
-      { "has_entities", map_api_has_entities },
-      { "get_entities_by_type", map_api_get_entities_by_type },
-      { "get_entities_in_rectangle", map_api_get_entities_in_rectangle },
-      { "get_entities_in_region", map_api_get_entities_in_region },
-      { "get_hero", map_api_get_hero },
-      { "set_entities_enabled", map_api_set_entities_enabled },
-      { "remove_entities", map_api_remove_entities },
+      { "get_id", LUA_TO_C_BIND(&Map::get_id) },
+      { "get_game", LUA_TO_C_BIND(get_game) },
+      { "get_world", LUA_TO_C_BIND(get_world) },
+      { "set_world", LUA_TO_C_BIND(set_world) },
+      { "get_min_layer", LUA_TO_C_BIND(&Map::get_min_layer) },
+      { "get_max_layer", LUA_TO_C_BIND(&Map::get_max_layer) },
+      { "get_size", LUA_TO_C_BIND(get_size) },
+      { "get_location", LUA_TO_C_BIND(get_location) },
+      { "get_floor", LUA_TO_C_BIND(get_floor) },
+      { "set_floor", LUA_TO_C_BIND(set_floor) },
+      { "get_tileset", LUA_TO_C_BIND(&Map::get_tileset_id) },
+      { "set_tileset", LUA_TO_C_BIND(&Map::set_tileset) },
+      { "get_music", LUA_TO_C_BIND(get_music) },
+      { "get_camera", LUA_TO_C_BIND(get_camera) },
+      { "get_camera_position", LUA_TO_C_BIND(get_camera_position) },
+      { "move_camera", LUA_TO_C_BIND(move_camera) },
+      { "get_ground", LUA_TO_C_BIND(get_ground) },
+      { "draw_visual", LUA_TO_C_BIND(draw_visual) },
+      { "draw_sprite", LUA_TO_C_BIND(draw_sprite) },
+      { "get_crystal_state", LUA_TO_C_BIND(get_crystal_state) },
+      { "set_crystal_state", LUA_TO_C_BIND(set_crystal_state) },
+      { "change_crystal_state", LUA_TO_C_BIND(change_crystal_state) },
+      { "open_doors", LUA_TO_C_BIND(open_doors) },
+      { "close_doors", LUA_TO_C_BIND(close_doors) },
+      { "set_doors_open", LUA_TO_C_BIND(set_doors_open) },
+      { "get_entity", LUA_TO_C_BIND(get_entity) },
+      { "has_entity", LUA_TO_C_BIND(has_entity) },
+      { "get_entities", LUA_TO_C_BIND(get_entities) },
+      { "get_entities_count", LUA_TO_C_BIND(get_entities_count) },
+      { "has_entities", LUA_TO_C_BIND(has_entities) },
+      { "get_entities_by_type", LUA_TO_C_BIND(get_entities_by_type) },
+      { "get_entities_in_rectangle", LUA_TO_C_BIND(get_entities_in_rectangle) },
+      { "get_entities_in_region", LUA_TO_C_BIND(get_entities_in_region) },
+      { "get_hero", LUA_TO_C_BIND(get_hero) },
+      { "set_entities_enabled", LUA_TO_C_BIND(set_entities_enabled) },
+      { "remove_entities", LUA_TO_C_BIND(remove_entities) },
       //1.7 features
-      { "get_cameras", map_api_get_cameras },
-      { "get_heroes", map_api_get_heroes }
+      { "get_cameras", LUA_TO_C_BIND(get_cameras) },
+      { "get_heroes", LUA_TO_C_BIND(get_heroes) },
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -179,7 +515,7 @@ void LuaContext::register_map_module() {
     }
     std::string function_name = "create_" + type_name;
     push_string(current_l, type_name);
-    lua_pushcclosure(current_l, map_api_create_entity, 1);
+    lua_pushcclosure(current_l, LUA_TO_C_BIND(create_entity), 1);
     lua_setfield(current_l, -2, function_name.c_str());
   }
 

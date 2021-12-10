@@ -64,6 +64,9 @@ class Surface: public Drawable {
 
     ~Surface();
 
+    // static information
+    static constexpr const char module_name[] = "sol.surface";
+
     static SurfacePtr create(int width, int height, bool premultiplied = true);
     static SurfacePtr create(const Size& size, bool premultiplied = true, int margin = 0);
     static SurfacePtr create(const std::string& file_name,

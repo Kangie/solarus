@@ -1510,7 +1510,7 @@ private:
     static void push_state(lua_State* current_l, CustomState& state);
     static void push_entity(lua_State* current_l, Entity& entity);
 
-
+public:
     template<typename Container>
 
     /**
@@ -1550,6 +1550,7 @@ private:
       lua_pushcclosure(l, l_entity_iterator_next, 3);
     }
 
+private:
     static void push_named_sprite_iterator(
         lua_State* current_l,
         const std::vector<Entity::NamedSprite>& sprites
@@ -1581,8 +1582,6 @@ private:
     // Getting objects from Lua.
     static bool is_main(lua_State* current_l, int index);
     static bool is_menu(lua_State* current_l, int index);
-    static void* test_userdata(lua_State* current_l, int index,
-        const char* module_name);
     static bool is_userdata(lua_State* current_l, int index,
         const std::string& module_name);
     static const ExportableToLuaPtr& check_userdata(
@@ -1632,8 +1631,10 @@ private:
     static std::shared_ptr<Map> check_map(lua_State* current_l, int index);
     static bool is_state(lua_State* current_l, int index);
     static std::shared_ptr<CustomState> check_state(lua_State* current_l, int index);
+public:
     static bool is_entity(lua_State* current_l, int index);
     static EntityPtr check_entity(lua_State* current_l, int index);
+private:
     static bool is_hero(lua_State* current_l, int index);
     static HeroPtr check_hero(lua_State* current_l, int index);
     static bool is_camera(lua_State* current_l, int index);

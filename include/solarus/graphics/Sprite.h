@@ -57,6 +57,9 @@ class Sprite: public Drawable {
 
     void set_tileset(const Tileset& tileset);
 
+    // static information
+    static constexpr const char module_name[] = "sol.sprite";
+
     // animation set
     const std::string& get_animation_set_id() const;
     const SpriteAnimationSet& get_animation_set() const;

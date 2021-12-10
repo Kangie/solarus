@@ -55,6 +55,9 @@ class SOLARUS_API Map: public ExportableToLua {
     // creation and destruction
     explicit Map(const std::string& id);
 
+    // static information
+    static constexpr const char module_name[] = "sol.map";
+
     // map properties
     const std::string& get_id() const;
     const Tileset& get_tileset() const;
