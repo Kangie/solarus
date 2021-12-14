@@ -311,7 +311,7 @@ struct CheckArg {
   static T call(lua_State * L, int index) {
     // Handle Userdata Types:
     if constexpr (std::is_convertible_v<T, ExportableToLua&>) {
-      typedef std::remove_reference_t<T> base_t;
+      using base_t = std::remove_reference_t<T>;
       if (base_t * ptr = test_exportable<base_t>(L, index)) {
         return *ptr;
       }
@@ -329,7 +329,7 @@ struct CheckArg {
 };
 
 /**
- * \brief \ref LuaTypeId<T> specialization for optional primitive types.
+ * \brief \ref CheckArg<T> specialization for optional primitive types.
  *
  * If the value is of the correct type, returns it in the optional. If the
  * value is nil or none, returns an empty optional.
@@ -348,7 +348,7 @@ struct CheckArg<std::optional<T>> {
 };
 
 /**
- * \brief \ref LuaTypeId<T> specialization for optional userdata types.
+ * \brief \ref CheckArg<T> specialization for optional userdata types.
  *
  * If the value is of the correct type, returns a pointer to it. If the
  * value is nil or none, returns a null pointer.
@@ -367,7 +367,7 @@ struct CheckArg<T *> {
 };
 
 /**
- * \brief \ref LuaTypeId<T> specialization for Drawable.
+ * \brief \ref CheckArg<T> specialization for Drawable.
  *
  * Same behaviour as the unspecialized version.
  */

@@ -115,30 +115,59 @@ const char* move_camera_code =
  */
 const std::string LuaContext::map_module_name = "sol.map";
 
+/**
+ * \brief Implementation of map:get_game().
+ * \param map The map to call the method on.
+ * \return Reference to the savegame.
+ */
 static Savegame & get_game(Map& map) {
   return *map.get_savegame();
 }
 
+/**
+ * \brief Implementation of map:get_world().
+ * \param map The map to call the method on.
+ * \return
+ */
 static std::optional<std::string> get_world(Map& map) {
   const std::string& world = map.get_world();
   return (world.empty()) ? std::nullopt : std::make_optional(world);
 }
 
-static void set_world(Map& map, std::optional<std::string> arg) {
-  std::string world = arg.value_or(std::string());
+/**
+ * \brief Implementation of map:set_world(world).
+ * \param map The map to call the method on.
+ * \param world_arg A string to set the world, nullopt to unset the world.
+ */
+static void set_world(Map& map, std::optional<std::string> world_arg) {
+  std::string world = world_arg.value_or(std::string());
   map.set_world(world);
 }
 
-// Is Size already repersented this way?
+/**
+ * \brief Implementation of map:get_size().
+ * \param map The map to call the method on.
+ * \return Width and height of the map.
+ */
 static std::tuple<int, int> get_size(Map& map) {
   return std::make_tuple(map.get_width(), map.get_height());
 }
 
+/**
+ * \brief Implementation of map:get_location().
+ * \param map The map to call the method on.
+ * \return The horizontal and vertical location of the map.
+ */
 static std::tuple<int, int> get_location(Map& map) {
   const Rectangle& location = map.get_location();
   return std::make_tuple(location.get_x(), location.get_y());
 }
 
+/**
+ * \brief Implementation of map:get_floor().
+ * \param map The map to call the method on.
+ * \return The floor the map is on, or nullopt if the map has no floor.
+ */
 static std::optional<int> get_floor(Map & map) {
   if (map.has_floor()) {
     return std::make_optional(map.get_floor());
@@ -146,11 +175,21 @@ static std::optional<int> get_floor(Map & map) {
   return std::nullopt;
 }
 
-static void set_floor(Map & map, std::optional<int> value) {
-  const int floor = value.value_or(MapData::NO_FLOOR);
+/**
+ * \brief Implementation of map:set_floor(floor).
+ * \param map The map to call the method on.
+ * \param floor_arg An int to set the floor, or nullopt to unset the floor.
+ */
+static void set_floor(Map & map, std::optional<int> floor_arg) {
+  const int floor = floor_arg.value_or(MapData::NO_FLOOR);
   map.set_floor(floor);
 }
 
+/**
+ * \brief Implementation of map:get_music().
+ * \param map The map to call the method on.
+ * \return Music id, may be a special id.
+ */
 static std::optional<std::string> get_music(Map & map) {
   const std::string& music_id = map.get_music_id();
   if (Music::none == music_id) {
@@ -162,18 +201,28 @@ static std::optional<std::string> get_music(Map & map) {
   }
 }
 
+/**
+ * \brief Implementation of map:get_camera().
+ * \param map The map to call the method on.
+ * \return Pointer to a camera if the map has one, otherwise nullptr.
+ */
 static Camera * get_camera(Map & map) {
   const CameraPtr& camera = map.get_camera();
-  //return (camera) ? std::make_optional(*camera) : std::nullptr;
   return camera.get();
 }
 
+/**
+ * \brief Implementation of map:get_camera_position().
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack get_camera_position(
     LuaContext & context, Map & map) {
   context.warning_deprecated(
-        { 1, 5 },
-        "map:get_camera_position()",
-        "Use map:get_camera():get_bounding_box() instead.");
+    { 1, 5 },
+    "map:get_camera_position()",
+    "Use map:get_camera():get_bounding_box() instead.");
 
   const CameraPtr& camera = map.get_camera();
 
@@ -192,6 +241,12 @@ static LuaBind::OnStack get_camera_position(
   return {4};
 }
 
+/**
+ * \brief Implementation of map:move_camera().
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
 static void move_camera(LuaContext & context, Map &) {
   context.warning_deprecated(
     { 1, 5 },
@@ -220,16 +275,39 @@ static void move_camera(LuaContext & context, Map &) {
   }
 }
 
+/**
+ * \brief Implementation of map:get_ground(x, y, layer).
+ * \param map The map to call the method on.
+ * \param x The horizontal position to check.
+ * \param y The vertical position to check.
+ * \param layer The layer (z position) to check.
+ * \return The string reperenting the ground.
+ */
 static std::string get_ground(Map & map, int x, int y, int layer) {
   Ground ground = map.get_ground(layer, x, y, nullptr);
   return enum_to_name(ground);
 }
 
-// This one is just required for overload resolution of draw_visual.
+/**
+ * \brief Implementation of map:draw_visual(drawable, x, y).
+ *
+ * This one is just used for overload resolution of draw_visual.
+ * \param map The map to call the method on.
+ * \param drawable The visual object to draw to the map.
+ * \param x The horizontal position to draw the object.
+ * \param y The vertical position to draw the object.
+ */
 static void draw_visual(Map & map, Drawable & drawable, int x, int y) {
   map.draw_visual(drawable, x, y);
 }
 
+/**
+ * \brief Implementation of map:draw_sprite(sprite, x, y).
+ * \param map The map to call the method on.
+ * \param drawable The visual object to draw to the map.
+ * \param x The horizontal position to draw the object.
+ * \param y The vertical position to draw the object.
+ */
 static void draw_sprite(LuaContext & context,
     Map & map, Sprite & sprite, int x, int y) {
   context.warning_deprecated(
@@ -239,10 +317,20 @@ static void draw_sprite(LuaContext & context,
   map.draw_visual(sprite, x, y);
 }
 
+/**
+ * \brief Implementation of map:get_crystal_state()
+ * \param map The map to call the method on.
+ * \return The crystal state.
+ */
 static bool get_crystal_state(Map & map) {
   return map.get_game().get_crystal_state();
 }
 
+/**
+ * \brief Implementation of map:set_crystal_state(state)
+ * \param map The map to call the method on.
+ * \param state The crystal state.
+ */
 static void set_crystal_state(Map & map, bool state) {
   Game& game = map.get_game();
   if (game.get_crystal_state() != state) {
@@ -250,10 +338,20 @@ static void set_crystal_state(Map & map, bool state) {
   }
 }
 
+/**
+ * \brief Implementation of map:change_crystal_state()
+ * \param map The map to call the method on.
+ */
 static void change_crystal_state(Map & map) {
   map.get_game().change_crystal_state();
 }
 
+/**
+ * \brief Implementation of map:open_doors(prefix)
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the doors to open.
+ */
 static void open_doors(LuaContext& context,
     Map& map, const std::string& prefix) {
   bool any_opened = false;
@@ -275,6 +373,12 @@ static void open_doors(LuaContext& context,
   }
 }
 
+/**
+ * \brief Implementation of map:close_doors(prefix)
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the doors to close.
+ */
 static void close_doors(LuaContext& context,
     Map& map, const std::string& prefix) {
   bool any_closed = false;
@@ -295,6 +399,12 @@ static void close_doors(LuaContext& context,
   }
 }
 
+/**
+ * \brief Implementation of map:set_doors_open(prefix, [open]).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the doors to set.
+ * \param open_arg True to open the door, false to close them (default is true).
+ */
 static void set_doors_open(
     Map& map, const std::string& prefix, std::optional<bool> open_arg) {
   bool open = open_arg.value_or(true);
@@ -306,6 +416,12 @@ static void set_doors_open(
   }
 }
 
+/**
+ * \brief Implementation of map:get_entity(name).
+ * \param map The map to call the method on.
+ * \param name The map entity name to look-up.
+ * \return Pointer to the entity if it was found, nullptr otherwise.
+ */
 static Entity * get_entity(Map& map, const std::string& name) {
   const EntityPtr& entity = map.get_entities().find_entity(name);
   if (entity != nullptr && !entity->is_being_removed()) {
@@ -313,24 +429,25 @@ static Entity * get_entity(Map& map, const std::string& name) {
   }
   return nullptr;
 }
-/*
-static LuaBind::OnStack get_entity(lua_State * l,
-    Map& map, const std::string& name) {
-  const EntityPtr& entity = map.get_entities().find_entity(name);
 
-  if (entity != nullptr && !entity->is_being_removed()) {
-    LuaContext::push_userdata(l, *entity);
-  } else {
-    lua_pushnil(l);
-  }
-  return {1};
-}*/
-
+/**
+ * \brief Implementation of map:has_entity(name).
+ * \param map The map to call the method on.
+ * \param name The map entity name to look-up.
+ * \return True if the entity was found, nullptr otherwise.
+ */
 static bool has_entity(Map& map, const std::string& name) {
   const EntityPtr& entity = map.get_entities().find_entity(name);
   return (entity != nullptr);
 }
 
+/**
+ * \brief Implementation of map:get_entities([prefix]).
+ * \param map The map to call the method on.
+ * \param prefix_arg Prefix of the names of the entities to get.
+ *   Empty optional is the same as an empty string.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack get_entities(lua_State * l,
     Map& map, std::optional<std::string> prefix_arg) {
   std::string prefix = prefix_arg.value_or("");
@@ -340,16 +457,34 @@ static LuaBind::OnStack get_entities(lua_State * l,
   return {1};
 }
 
+/**
+ * \brief Implementation of map:get_entities_count(prefix).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the entities to count.
+ * \return Number of matching entities found.
+ */
 static int get_entities_count(Map& map, const std::string& prefix) {
   const EntityVector& entities =
       map.get_entities().get_entities_with_prefix(prefix);
   return entities.size();
 }
 
+/**
+ * \brief Implementation of map:get_entities_count(prefix).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the entities to check for.
+ * \return True if a matching entity was found, false otherwise.
+ */
 static bool has_entities(Map& map, const std::string& prefix) {
   return map.get_entities().has_entity_with_prefix(prefix);
 }
 
+/**
+ * \brief Implementation of map:get_entities_by_type(type).
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack get_entities_by_type(lua_State* l, Map& map) {
   EntityType type = LuaTools::check_enum<EntityType>(l, 2);
 
@@ -360,6 +495,16 @@ static LuaBind::OnStack get_entities_by_type(lua_State* l, Map& map) {
   return {1};
 }
 
+/**
+ * \brief Implementation of map:get_entities_in_rectangle(x, y, width, height).
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \param x The horizontal position of the rectangle's upper-left corner.
+ * \param y The vertical position of the rectangle's upper-left corner.
+ * \param width Width of the rectangle.
+ * \param height Height of the rectangle.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack get_entities_in_rectangle(lua_State* l,
     Map& map, int x, int y, int width, int height) {
   EntityVector entities;
@@ -371,6 +516,12 @@ static LuaBind::OnStack get_entities_in_rectangle(lua_State* l,
   return {1};
 }
 
+/**
+ * \brief Implementation of map:get_entities_in_region(...).
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack get_entities_in_region(lua_State* l, Map& map) {
   Point xy;
   EntityPtr entity;
@@ -404,13 +555,26 @@ static LuaBind::OnStack get_entities_in_region(lua_State* l, Map& map) {
   return {1};
 }
 
+/**
+ * \brief Implementation of map:get_hero().
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Reference to the hero.
+ */
 static Hero& get_hero(lua_State* l, Map& map) {
   LuaContext::check_map_has_game(l, map);
 
-  // Return the hero even if he is no longer on this map.
+  // Return the hero even if it is no longer on this map.
   return map.get_default_hero();
 }
 
+/**
+ * \brief Implementation of map:set_entities_enabled(prefix, [enabled]).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the name of entities to enable/disable.
+ * \param enabled_arg Should the entities be enabled or disabled.
+ *   Default value is true.
+ */
 static void set_entities_enabled(
     Map& map, const std::string& prefix, std::optional<bool> enabled_arg) {
   bool enabled = enabled_arg.value_or(true);
@@ -422,10 +586,21 @@ static void set_entities_enabled(
   }
 }
 
+/**
+ * \brief Implementation of map:remove_entities(prefix).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the name of entities to remove.
+ */
 static void remove_entities(Map& map, const std::string& prefix) {
   map.get_entities().remove_entities_with_prefix(prefix);
 }
 
+/**
+ * \brief Implementation of all entiy creation functions map:create_*.
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack create_entity(LuaContext& context, Map& map) {
   lua_State* l = context.get_internal_state();
   if (!map.is_loaded()) {
@@ -440,11 +615,23 @@ static LuaBind::OnStack create_entity(LuaContext& context, Map& map) {
   return {1};
 }
 
+/**
+ * \brief Implementation of map:get_cameras().
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack get_cameras(lua_State* l, Map& map) {
   LuaContext::push_userdata_iterator(l, map.get_entities().get_cameras());
   return {1};
 }
 
+/**
+ * \brief Implementation of map:get_heroes().
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
 static LuaBind::OnStack get_heroes(lua_State* l, Map& map) {
   LuaContext::push_userdata_iterator(l, map.get_entities().get_heroes());
   return {1};
