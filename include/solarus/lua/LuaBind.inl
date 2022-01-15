@@ -425,7 +425,29 @@ int wrapper(lua_State * L, Ret(*func)(LuaContext&, Args...)) {
   });
 }
 
-} // Private
+/**
+ * \brief Part of the Lua to C implementation.
+ *
+ * This class, and its specializations, create the function that is actually
+ * called. The passed in function may also be wrapped in another function
+ * to modify the signature so it can be passed to wrapper, where most of the
+ * works happens.
+ *
+ * \tparam FuncType The type of the function being wrapped.
+ */
+template<typename FuncType>
+class LuaToC {
+  /**
+   * \brief Calls a wrapped C function with the Lua interface.
+   *
+   * It cannot and should not be called, it is illustrative.
+   * \tparam func The function being wrapped.
+   * \param L The Lua stack.
+   * \return The number of return values on the Lua stack.
+   */
+  template<FuncType func>
+  static int call(lua_State * L);
+};
 
 /**
  * \brief \ref LuaToC<FuncType> specialization for simple functions.
@@ -513,6 +535,8 @@ public:
   }
 };
 
-}
+} // Private
 
-}
+} // LuaBind
+
+} // Solarus

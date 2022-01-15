@@ -71,29 +71,11 @@ struct Nil {};
  * In the remaining cases, get a lua_State * or LuaContext & argument and, if
  * necessary, return an OnStack value.
  *
- * \tparam FuncType The type of the function being wrapped.
- */
-template<typename FuncType>
-class LuaToC {
-  /**
-   * \brief Calls a wrapped C function with the Lua interface.
-   *
-   * See the class documentation for details.
-   * \tparam func The function being wrapped.
-   * \param L The Lua stack.
-   * \return The number of return values on the Lua stack.
-   */
-  template<FuncType func>
-  static int call(lua_State * L);
-};
-
-/**
- * \brief A convenience wrapper for using the LuaToC interface.
- * \param func_name A callable comparable with LuaToC::call.
- * \return A lua_CFunction, as described by LuaToC::call.
+ * \param func_name A callable that matches the described requirements.
+ * \return A lua_CFunction, that runs the provided function from Lua.
  */
 #define LUA_TO_C_BIND(func_name) \
-  ::Solarus::LuaBind::LuaToC<decltype(func_name)>::call<func_name>
+  ::Solarus::LuaBind::Private::LuaToC<decltype(func_name)>::call<func_name>
 
 }
 
