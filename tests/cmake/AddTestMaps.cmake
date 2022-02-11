@@ -4,6 +4,7 @@ list(APPEND LUA_TEST_MAPS
   "basic_test"
   "dynamic_tile_tests"
   "jumper_tests"
+  "lua_interface"
   "surface_tests"
   "oriented_collisions"
   "text_predict"

@@ -137,26 +137,17 @@ Nil index_to<Nil>(lua_State * L, int index) {
  *   otherwise returns nullptr.
  */
 template<typename T>
-T * test_exportable(lua_State * l, int index) {
-  void* udata = LuaTools::test_userdata(l, index, T::module_name);
-  return (udata) ? static_cast<std::shared_ptr<T> *>(udata)->get() : nullptr;
-}
-
-/**
- * \brief \ref test_exportable<T>(lua_State*,int) specialization for Drawable.
- *
- * Drawable is not a leaf type so it must check for each of its children.
- */
-template<>
-Drawable * test_exportable(lua_State * l, int index) {
-  if (Surface * ptr = test_exportable<Surface>(l, index)) {
-    return ptr;
-  } else if (TextSurface * ptr = test_exportable<TextSurface>(l, index)) {
-    return ptr;
-  } else if (Sprite * ptr = test_exportable<Sprite>(l, index)) {
-    return ptr;
+T * test_exportable(lua_State * L, int index) {
+  if constexpr (std::is_final_v<T>) {
+    void * data = LuaTools::test_userdata(L, index, T::module_name);
+    return (data) ? static_cast<std::shared_ptr<T> *>(data)->get() : nullptr;
+  } else {
+    void * data = lua_touserdata(L, index);
+    if (data == nullptr) return nullptr;
+    if (lua_islightuserdata(L, index)) return nullptr;
+    auto & shared = *static_cast<std::shared_ptr<ExportableToLua> *>(data);
+    return dynamic_cast<T*>(shared.get());
   }
-  return nullptr;
 }
 
 /**
