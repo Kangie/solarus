@@ -44,7 +44,7 @@ class Tileset;
  * A sprite can be drawn directly on a surface, or it can
  * be attached to a map entity.
  */
-class Sprite: public Drawable {
+class Sprite final: public Drawable {
 
   public:
 

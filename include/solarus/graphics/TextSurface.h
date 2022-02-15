@@ -39,7 +39,7 @@ class Size;
  * - usual fonts (TTF and other formats are supported),
  * - an image containing characters drawn.
  */
-class TextSurface: public Drawable {
+class TextSurface final: public Drawable {
 
   public:
 

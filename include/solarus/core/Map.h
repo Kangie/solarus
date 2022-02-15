@@ -48,7 +48,7 @@ class Sprite;
  * - the ground of each 8x8 square,
  * - the background music.
  */
-class SOLARUS_API Map: public ExportableToLua {
+class SOLARUS_API Map final: public ExportableToLua {
 
   public:
 

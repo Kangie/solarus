@@ -43,7 +43,7 @@ class Surface;
  * A surface can be drawn or blitted on another surface.
  * This class basically encapsulates a library-dependent surface object.
  */
-class Surface: public Drawable {
+class Surface final: public Drawable {
 
     friend class Shader;
     friend class VertexArray; // TODO find cleaner way

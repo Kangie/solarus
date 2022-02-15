@@ -142,11 +142,13 @@ T * test_exportable(lua_State * L, int index) {
     void * data = LuaTools::test_userdata(L, index, T::module_name);
     return (data) ? static_cast<std::shared_ptr<T> *>(data)->get() : nullptr;
   } else {
+    std::string module_name;
     void * data = lua_touserdata(L, index);
-    if (data == nullptr) return nullptr;
-    if (lua_islightuserdata(L, index)) return nullptr;
-    auto & shared = *static_cast<std::shared_ptr<ExportableToLua> *>(data);
-    return dynamic_cast<T*>(shared.get());
+    if (data && LuaContext::is_solarus_userdata(L, index, module_name)) {
+      auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
+      return dynamic_cast<T*>(ptr->get());
+    }
+    return nullptr;
   }
 }
 
