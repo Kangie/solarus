@@ -682,7 +682,7 @@ bool MainWindow::confirm_upgrade_quest(const QString& old_format) {
       tr("Obsolete quest"),
       tr("The format of this quest (%1) is outdated.\n"
          "Your data files will be automatically updated to Solarus %2.\n"
-         "Would you like update the quest?").
+         "Would you like to update this quest?").
          arg(old_format, SOLARUS_VERSION_WITHOUT_PATCH),
       QMessageBox::Ok | QMessageBox::Cancel,
       this);
