@@ -638,15 +638,7 @@ bool MainWindow::open_quest(const QString& quest_path) {
   }
   catch (const ObsoleteQuestException& ex) {
     // Quest data files are obsolete: upgrade them and try again.
-    QMessageBox::StandardButton answer = QMessageBox::information(
-          this,
-          tr("Obsolete quest"),
-          tr("The format of this quest (%1) is outdated.\n"
-             "Your data files will be automatically updated to Solarus %2.").
-          arg(ex.get_quest_format(), SOLARUS_VERSION_WITHOUT_PATCH),
-          QMessageBox::Ok | QMessageBox::Cancel);
-
-    if (answer == QMessageBox::Ok) {
+    if (confirm_upgrade_quest(ex.get_quest_format())) {
       try {
         upgrade_quest();
         // Reload the quest after upgrade.
@@ -677,6 +669,28 @@ bool MainWindow::open_quest(const QString& quest_path) {
   ui.quest_tree_view->set_quest(quest);
 
   return success;
+}
+
+/**
+ * @brief Check if the user wants to upgrade an obsolete quest.
+ * @param old_format The quest format to upgrade from.
+ * @return @c true if the quest should be upgraded, @c false otherwise.
+ */
+bool MainWindow::confirm_upgrade_quest(const QString& old_format) {
+  QMessageBox dialog(
+      QMessageBox::Question,
+      tr("Obsolete quest"),
+      tr("The format of this quest (%1) is outdated.\n"
+         "Your data files will be automatically updated to Solarus %2.\n"
+         "Would you like update the quest?").
+         arg(old_format, SOLARUS_VERSION_WITHOUT_PATCH),
+      QMessageBox::Ok | QMessageBox::Cancel,
+      this);
+  dialog.button(QMessageBox::Ok)->setText(tr("Update"));
+
+  int result = dialog.exec();
+
+  return (QMessageBox::Ok == result);
 }
 
 /**

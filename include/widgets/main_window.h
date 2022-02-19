@@ -122,6 +122,7 @@ protected:
 private:
 
   bool confirm_before_closing();
+  bool confirm_upgrade_quest(const QString& old_format);
   void update_title();
   void upgrade_quest();
   void add_quest_to_recent_list();
