@@ -293,6 +293,42 @@ struct AsReturn {
 };
 
 /**
+ * \brief Get the Lua type name for a given type.
+ *
+ * Types can declare their Lua type name directly.
+ * \tparam T The type being examined.
+ * \return The type's name.
+ */
+template<typename T>
+static inline auto get_type_name(int)
+    -> decltype(T::type_name, std::string()) {
+  return T::type_name;
+}
+
+/**
+ * \brief Get the Lua type name for a given type.
+ *
+ * If there is not a dedicated type_name field, use the module_name.
+ * \tparam T The type being examined.
+ * \return The type's name.
+ */
+template<typename T>
+static inline auto get_type_name(long)
+    -> decltype(T::module_name, std::string()) {
+  return LuaTools::get_type_name(T::module_name);
+}
+
+/**
+ * \brief Get the Lua type name for a given type.
+ * \tparam T The type being examined.
+ * \return The type's name.
+ */
+template<typename T>
+static inline std::string get_type_name() {
+  return get_type_name<T>(0);
+}
+
+/**
  * \brief Check the type of the argument at index, return it if the type is
  *   correct, otherwise raise a type error.
  * \tparam T C/C++ type to return, should be from AsReturn.
@@ -308,8 +344,7 @@ struct CheckArg {
       if (base_t * ptr = test_exportable<base_t>(L, index)) {
         return *ptr;
       }
-      std::string name = LuaTools::get_type_name(base_t::module_name);
-      LuaTools::type_error(L, index, name);
+      LuaTools::type_error(L, index, get_type_name<base_t>());
     // Handle Primitive Types:
     } else {
       if (index_is<T>(L, index)) {
@@ -354,23 +389,7 @@ struct CheckArg<T *> {
     } else if (lua_isnoneornil(L, index)) {
       return nullptr;
     }
-    std::string name = LuaTools::get_type_name(T::module_name);
-    LuaTools::type_error(L, index, "optional " + name);
-  }
-};
-
-/**
- * \brief \ref CheckArg<T> specialization for Drawable.
- *
- * Same behaviour as the unspecialized version.
- */
-template<>
-struct CheckArg<Drawable &> {
-  static Drawable & call(lua_State * L, int index) {
-    if (Drawable * ptr = test_exportable<Drawable>(L, index)) {
-      return *ptr;
-    }
-    LuaTools::type_error(L, index, "drawable");
+    LuaTools::type_error(L, index, "optional " + get_type_name<T>());
   }
 };
 
