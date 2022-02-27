@@ -8,3 +8,4 @@ core
 CMakeLists.txt.user
 build/
 .vscode/
+.qt_for_python

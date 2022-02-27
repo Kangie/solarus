@@ -47,6 +47,16 @@ To build Solarus Quest Editor, you need:
 We always keep branch `dev` of `solarus-quest-editor` compatible with branch
 `dev` of `solarus`.
 
+Be sure to build and install `solarus` before building `solarus-quest-editor`. You may need to clone `solarus` repository before.
+
+```bash
+cd solarus
+mkdir build
+cd build
+cmake ..
+sudo make install
+```
+
 ### With Qt Creator
 
 In Qt Creator, you can load the `solarus-quest-editor` project by opening the
@@ -78,9 +88,7 @@ you can explictly indicate their location instead:
 ```bash
 cmake \
   -DSOLARUS_INCLUDE_DIR="/path/to/solarus/include" \
-  -DSOLARUS_GUI_INCLUDE_DIR="/path/to/solarus/include" \
   -DSOLARUS_LIBRARY="/path/to/solarus/libsolarus.so" \
-  -DSOLARUS_GUI_LIBRARY="/path/to/solarus/libsolarus-gui.so" \
   .. \
 ```
 

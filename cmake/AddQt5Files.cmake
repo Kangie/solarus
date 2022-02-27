@@ -9,6 +9,7 @@ set(solarus_quest_editor_FORMS
   src/widgets/change_resource_id_dialog.ui
   src/widgets/change_source_image_dialog.ui
   src/widgets/change_string_key_dialog.ui
+  src/widgets/console.ui
   src/widgets/dialogs_editor.ui
   src/widgets/edit_entity_dialog.ui
   src/widgets/external_script_dialog.ui
