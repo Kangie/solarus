@@ -2,6 +2,7 @@
 
 ## Solarus Quest Editor 1.7.0 (in progress)
 
+* Map editor: allow to run the current map for testing purposes (#517).
 * Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
 * Initial quest: fix item icon amount displaying.
 * Initial quest: fix item icon still showing unequiped items.

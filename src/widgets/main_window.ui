@@ -103,6 +103,7 @@
      <string>Run</string>
     </property>
     <addaction name="action_run_quest"/>
+    <addaction name="action_run_map"/>
    </widget>
    <widget class="QMenu" name="menu_view">
     <property name="title">
@@ -164,6 +165,7 @@
    <addaction name="action_paste"/>
    <addaction name="separator"/>
    <addaction name="action_run_quest"/>
+   <addaction name="action_run_map"/>
    <addaction name="action_stop_music"/>
    <addaction name="separator"/>
    <addaction name="action_show_grid"/>
@@ -481,6 +483,21 @@
   <action name="action_about">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="action_run_map">
+   <property name="icon">
+    <iconset resource="../../resources/images.qrc">
+     <normaloff>:/images/icon_start_map.png</normaloff>:/images/icon_start_map.png</iconset>
+   </property>
+   <property name="text">
+    <string>Run current map</string>
+   </property>
+   <property name="toolTip">
+    <string>Run current map</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F5</string>
    </property>
   </action>
  </widget>

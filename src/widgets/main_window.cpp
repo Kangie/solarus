@@ -119,6 +119,8 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.tool_bar->insertSeparator(ui.action_run_quest);
   addAction(ui.action_run_quest);
   ui.action_run_quest->setEnabled(false);
+  addAction(ui.action_run_map);
+  ui.action_run_map->setEnabled(false);
   update_music_actions();
 
   zoom_button = new QToolButton();
@@ -200,7 +202,6 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_close_all);
   addAction(ui.action_open_quest_properties);
   addAction(ui.action_package_quest);
-  addAction(ui.action_run_quest);
   addAction(ui.action_stop_music);
   addAction(ui.action_pause_music);
   addAction(ui.action_show_console);
@@ -236,6 +237,8 @@ MainWindow::MainWindow(QWidget* parent) :
           ui.console_widget, &SolarusGui::Console::clear);
   connect(ui.tab_widget, &EditorTabs::log_message_to_console,
           this, &MainWindow::log_message_to_console);
+  connect(ui.tab_widget, &EditorTabs::run_map_requested,
+          this, &MainWindow::run_quest);
 
   connect(grid_size, &PairSpinBox::value_changed,
           this, &MainWindow::change_grid_size);
@@ -583,6 +586,7 @@ void MainWindow::close_quest() {
   ui.action_package_quest->setEnabled(false);
   ui.action_open_quest_properties->setEnabled(false);
   ui.action_run_quest->setEnabled(false);
+  ui.action_run_map->setEnabled(false);
   ui.quest_tree_view->set_quest(quest);
 
   EditorSettings settings;
@@ -1000,6 +1004,24 @@ void MainWindow::on_action_find_triggered() {
  * @brief Slot called when the user triggers the "Run quest" action.
  */
 void MainWindow::on_action_run_quest_triggered() {
+  run_quest("");
+}
+
+/**
+ * @brief Slot called when the user triggers the "Run quest" action.
+ */
+void MainWindow::on_action_run_map_triggered() {
+  Editor* editor = get_current_editor();
+  if (editor != nullptr) {
+    editor->run_map();
+  }
+}
+
+/**
+ * @brief Runs the quest, possibly on a specific map.
+ * @param map_id A map to run, or an empty string to run the quest normally.
+ */
+void MainWindow::run_quest(const QString& map_id) {
 
   if (!quest_runner.is_started()) {
 
@@ -1033,7 +1055,7 @@ void MainWindow::on_action_run_quest_triggered() {
       }
     }
 
-    quest_runner.start(quest.get_root_path());
+    quest_runner.start(quest.get_root_path(), map_id);
 
     // Automatically show the console when the quest starts.
     set_console_visible(true);
@@ -1306,6 +1328,9 @@ void MainWindow::current_editor_changed(int index) {
 
   const bool select_all_supported = has_editor && editor->is_select_all_supported();
   ui.action_select_all->setEnabled(select_all_supported);
+
+  const bool run_map_supported = has_editor && editor->is_run_map_supported();
+  ui.action_run_map->setEnabled(run_map_supported);
 
   const bool find_supported = has_editor && editor->is_find_supported();
   ui.action_find->setEnabled(find_supported);
