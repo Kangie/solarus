@@ -171,5 +171,6 @@
         <file>images/icon_camera.png</file>
         <file>images/icon_shader_code.png</file>
         <file>images/border_set.png</file>
+        <file>images/icon_start_map.png</file>
     </qresource>
 </RCC>

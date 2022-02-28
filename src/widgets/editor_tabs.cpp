@@ -451,6 +451,8 @@ void EditorTabs::insert_editor(std::unique_ptr<Editor> editor, int index) {
           this, &EditorTabs::open_file_requested);
   connect(editor.get(), &Editor::refactoring_requested,
           this, &EditorTabs::refactoring_requested);
+  connect(editor.get(), &Editor::run_map_requested,
+          this, &EditorTabs::run_map_requested);
 
   editors.emplace(path, std::move(editor));
 }
