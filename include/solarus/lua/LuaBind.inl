@@ -345,6 +345,9 @@ struct CheckArg {
         return *ptr;
       }
       LuaTools::type_error(L, index, get_type_name<base_t>());
+    // Handle Enumeration Types:
+    } else if constexpr (std::is_enum_v<T>) {
+      return LuaTools::check_enum<T>(L, index);
     // Handle Primitive Types:
     } else {
       if (index_is<T>(L, index)) {
@@ -365,13 +368,32 @@ struct CheckArg {
 template<typename T>
 struct CheckArg<std::optional<T>> {
   static std::optional<T> call(lua_State * L, int index) {
-    if (index_is<T>(L, index)) {
-      return std::optional<T>(index_to<T>(L, index));
-    } else if (lua_isnoneornil(L, index)) {
-      return std::nullopt;
+    // Handle Enumeration Types:
+    if constexpr (std::is_enum_v<T>) {
+      // Explicitely ask for a string before checking its value.
+      const auto& opt_name =
+          CheckArg<std::optional<std::string>>::call(L, index);
+      if (!opt_name.has_value()) return std::nullopt;
+      const std::string& name = opt_name.value();
+
+      const std::map<T, std::string>& names = EnumInfoTraits<T>::names;
+      for (const auto& kvp : names) {
+        if (kvp.second == name) {
+          return std::make_optional(kvp.first);
+        }
+      }
+      // This error message doesn't mention that the value is optional.
+      arg_error(L, index, check_enum_error_message(name, names));
+    // Handle Primitive Types:
+    } else {
+      if (index_is<T>(L, index)) {
+        return std::optional<T>(index_to<T>(L, index));
+      } else if (lua_isnoneornil(L, index)) {
+        return std::nullopt;
+      }
+      std::string name = lua_typename(L, LuaTypeId<T>::value);
+      LuaTools::type_error(L, index, "optional " + name);
     }
-    std::string name = lua_typename(L, LuaTypeId<T>::value);
-    LuaTools::type_error(L, index, "optional " + name);
   }
 };
 

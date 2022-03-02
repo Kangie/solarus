@@ -485,8 +485,8 @@ static bool has_entities(Map& map, const std::string& prefix) {
  * \param map The map to call the method on.
  * \return Number of values to return to Lua.
  */
-static LuaBind::OnStack get_entities_by_type(lua_State* l, Map& map) {
-  EntityType type = LuaTools::check_enum<EntityType>(l, 2);
+static LuaBind::OnStack get_entities_by_type(lua_State* l,
+    Map& map, EntityType type) {
 
   const EntityVector& entities =
       map.get_entities().get_entities_by_type_z_sorted(type);
