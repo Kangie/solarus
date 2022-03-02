@@ -29,53 +29,6 @@ namespace LuaBind {
 namespace Private {
 
 /**
- * \brief Check if a value on the Lua stack is of the appropriate type.
- * \tparam T The C/C++ type that matches the Lua type.
- * \param L The Lua state.
- * \param index An acceptable Lua index for the state.
- * \return True if the index contains a Lua value of the appropriate type,
- *   otherwise false.
- */
-template<typename T>
-static inline bool index_is(lua_State * L, int index);
-
-/// \brief \ref index_is<T>(lua_State*,int) specialization for bool.
-template<>
-bool index_is<bool>(lua_State * L, int index) {
-  return lua_isboolean(L, index);
-}
-
-/// \brief \ref index_is<T>(lua_State*,int) specialization for double.
-template<>
-bool index_is<double>(lua_State * L, int index) {
-  return lua_isnumber(L, index);
-}
-
-/// \brief \ref index_is<T>(lua_State*,int) specialization for int.
-template<>
-bool index_is<int>(lua_State * L, int index) {
-  return lua_isnumber(L, index);
-}
-
-/// \brief \ref index_is<T>(lua_State*,int) specialization for C-style strings.
-template<>
-bool index_is<const char *>(lua_State * L, int index) {
-  return lua_isstring(L, index);
-}
-
-/// \brief \ref index_is<T>(lua_State*,int) specialization for std::string.
-template<>
-bool index_is<std::string>(lua_State * L, int index) {
-  return lua_isstring(L, index);
-}
-
-/// \brief \ref index_is<T>(lua_State*,int) specialization for Nil.
-template<>
-bool index_is<Nil>(lua_State * L, int index) {
-  return lua_isnil(L, index);
-}
-
-/**
  * \brief Convert a value on the Lua stack to the appropriate C/C++ type.
  * \tparam T The C/C++ type that matches the Lua type.
  * \param L The Lua state.
@@ -83,46 +36,25 @@ bool index_is<Nil>(lua_State * L, int index) {
  * \return The converted value.
  */
 template<typename T>
-static inline T index_to(lua_State * L, int index);
-
-/// \brief \ref index_to<T>(lua_State*,int) specialization for bool.
-template<>
-bool index_to<bool>(lua_State * L, int index) {
-  return lua_toboolean(L, index);
-}
-
-/// \brief \ref index_to<T>(lua_State*,int) specialization for double.
-template<>
-double index_to<double>(lua_State * L, int index) {
-  return lua_tonumber(L, index);
-}
-
-/// \brief \ref index_to<T>(lua_State*,int) specialization for int.
-template<>
-int index_to<int>(lua_State * L, int index) {
-  return lua_tointeger(L, index);
-}
-
-/// \brief \ref index_to<T>(lua_State*,int) specialization for C-style strings.
-template<>
-const char * index_to<const char *>(lua_State * L, int index) {
-  return lua_tostring(L, index);
-}
-
-/// \brief \ref index_to<T>(lua_State*,int) specialization for std::string.
-template<>
-std::string index_to<std::string>(lua_State * L, int index) {
-  size_t len;
-  const char * str = lua_tolstring(L, index, &len);
-  return std::string(str, len);
-}
-
-/// \brief \ref index_to<T>(lua_State*,int) specialization for Nil.
-template<>
-Nil index_to<Nil>(lua_State * L, int index) {
-  (void)L;
-  (void)index;
-  return Nil();
+static inline T to_type(lua_State * L, int index) {
+  if constexpr (std::is_same_v<bool, T>) {
+    return lua_toboolean(L, index);
+  } else if constexpr (std::is_same_v<double, T>) {
+    return lua_tonumber(L, index);
+  } else if constexpr (std::is_same_v<int, T>) {
+    return lua_tointeger(L, index);
+  } else if constexpr (std::is_same_v<const char *, T>) {
+    return lua_tostring(L, index);
+  } else if constexpr (std::is_same_v<std::string, T>) {
+    size_t len;
+    const char * str = lua_tolstring(L, index, &len);
+    return std::string(str, len);
+  } else if constexpr (std::is_same_v<Nil, T>) {
+    (void)L;
+    (void)index;
+    return Nil();
+  }
+  // If none of the options match there will be no return.
 }
 
 /**
@@ -350,8 +282,8 @@ struct CheckArg {
       return LuaTools::check_enum<T>(L, index);
     // Handle Primitive Types:
     } else {
-      if (index_is<T>(L, index)) {
-        return index_to<T>(L, index);
+      if (LuaTypeId<T>::value == lua_type(L, index)) {
+        return to_type<T>(L, index);
       }
       const char * name = lua_typename(L, LuaTypeId<T>::value);
       LuaTools::type_error(L, index, name);
@@ -386,8 +318,8 @@ struct CheckArg<std::optional<T>> {
       arg_error(L, index, check_enum_error_message(name, names));
     // Handle Primitive Types:
     } else {
-      if (index_is<T>(L, index)) {
-        return std::optional<T>(index_to<T>(L, index));
+      if (LuaTypeId<T>::value == lua_type(L, index)) {
+        return std::optional<T>(to_type<T>(L, index));
       } else if (lua_isnoneornil(L, index)) {
         return std::nullopt;
       }
@@ -460,28 +392,15 @@ int wrapper(lua_State * L, Ret(*func)(LuaContext&, Args...)) {
 }
 
 /**
- * \brief Part of the Lua to C implementation.
+ * \brief Adapter type to make functions match the wrapper function.
  *
- * This class, and its specializations, create the function that is actually
- * called. The passed in function may also be wrapped in another function
- * to modify the signature so it can be passed to wrapper, where most of the
- * works happens.
+ * Every specialization adds a `call` template static method that is the
+ * adapter itself, parameterized over the adapted function.
  *
- * \tparam FuncType The type of the function being wrapped.
+ * \tparam FuncType The type of function to adapt.
  */
 template<typename FuncType>
-class LuaToC {
-  /**
-   * \brief Calls a wrapped C function with the Lua interface.
-   *
-   * It cannot and should not be called, it is illustrative.
-   * \tparam func The function being wrapped.
-   * \param L The Lua stack.
-   * \return The number of return values on the Lua stack.
-   */
-  template<FuncType func>
-  static int call(lua_State * L);
-};
+struct AdaptC;
 
 /**
  * \brief \ref LuaToC<FuncType> specialization for simple functions.
@@ -489,15 +408,10 @@ class LuaToC {
  * A simple function is one that has all arguments that can be taken from Lua.
  */
 template<typename Ret, typename... Args>
-class LuaToC<Ret(Args...)> {
-  template<Ret (*func)(Args...)>
-  static Ret runc(LuaContext&, Args... args) {
+struct AdaptC<Ret(Args...)> {
+  template<Ret(*func)(Args...)>
+  static Ret call(LuaContext&, Args... args) {
     return func(std::forward<Args>(args)...);
-  }
-public:
-  template<Ret (*func)(Args...)>
-  static constexpr int call(lua_State * L) {
-    return Private::wrapper(L, runc<func>);
   }
 };
 
@@ -507,29 +421,10 @@ public:
  * The lua_State * must be the first argument and the rest must be standard.
  */
 template<typename Ret, typename... Args>
-class LuaToC<Ret(lua_State *, Args...)> {
+struct AdaptC<Ret(lua_State *, Args...)> {
   template<Ret(*func)(lua_State *, Args...)>
-  static Ret runc(LuaContext& context, Args... args) {
+  static Ret call(LuaContext& context, Args... args) {
     return func(context.get_internal_state(), std::forward<Args>(args)...);
-  }
-public:
-  template<Ret(*func)(lua_State *, Args...)>
-  static constexpr int call(lua_State * L) {
-    return Private::wrapper(L, runc<func>);
-  }
-};
-
-/**
- * \brief \ref LuaToC<FuncType> specialization for functions with a LuaContext.
- *
- * The LuaContext& must be the first argument and the rest must be standard.
- */
-template<typename Ret, typename... Args>
-class LuaToC<Ret(LuaContext&, Args...)> {
-public:
-  template<Ret(*func)(LuaContext&, Args...)>
-  static constexpr int call(lua_State * L) {
-    return Private::wrapper(L, func);
   }
 };
 
@@ -539,15 +434,10 @@ public:
  * The object type and all arguments must be types we can get from Lua.
  */
 template<typename Ret, typename Class, typename... Args>
-class LuaToC<Ret(Class::*)(Args...) const> {
+struct AdaptC<Ret(Class::*)(Args...) const> {
   template<Ret(Class::*func)(Args...) const>
-  static Ret runc(LuaContext&, Class& object, Args... args) {
+  static Ret call(LuaContext&, Class& object, Args... args) {
     return (object.*func)(std::forward<Args>(args)...);
-  }
-public:
-  template<Ret (Class::*func)(Args...) const>
-  static constexpr int call(lua_State * L) {
-    return Private::wrapper(L, runc<func>);
   }
 };
 
@@ -557,20 +447,45 @@ public:
  * The object type and all arguments must be types we can get from Lua.
  */
 template<typename Ret, typename Class, typename... Args>
-class LuaToC<Ret(Class::*)(Args...)> {
+struct AdaptC<Ret(Class::*)(Args...)> {
   template<Ret(Class::*func)(Args...)>
-  static Ret runc(LuaContext&, Class& object, Args... args) {
+  static Ret call(LuaContext&, Class& object, Args... args) {
     return (object.*func)(std::forward<Args>(args)...);
-  }
-public:
-  template<Ret (Class::*func)(Args...)>
-  static constexpr int call(lua_State * L) {
-    return Private::wrapper(L, runc<func>);
   }
 };
 
-} // Private
+/**
+ * \brief Interface to create Lua functions that run C code.
+ *
+ * \tparam FuncType The type of function to run (see LUA_TO_C_BIND).
+ */
+template<typename FuncType>
+struct LuaToC {
+  /**
+   * \brief Run C code from Lua.
+   * \tparam func The C function to run from Lua.
+   * \param L The Lua stack.
+   * \return The number of return values on the Lua stack.
+   */
+  template<FuncType func>
+  static constexpr int call(lua_State * L) {
+    return wrapper(L, AdaptC<FuncType>::template call<func>);
+  }
+};
 
-} // LuaBind
+/**
+ * \brief \ref LuaToC<FuncType> specialization for unadapted functions.
+ */
+template<typename Ret, typename... Args>
+struct LuaToC<Ret(LuaContext&, Args...)> {
+  template<Ret(*func)(LuaContext&, Args...)>
+  static constexpr int call(lua_State * L) {
+    return wrapper(L, func);
+  }
+};
 
-} // Solarus
+} // namespace Private
+
+} // namespace LuaBind
+
+} // namespace Solarus
