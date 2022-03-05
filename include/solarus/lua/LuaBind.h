@@ -50,18 +50,27 @@ struct Nil {};
  * 2.  Read arguments from Lua and passes them to the wrapped function.
  * 3.  Push the return values from the wrapped function to Lua.
  *
- * The interface mostly works with types that have a Lua representation.
- * These include ones that match with Lua's primitive types (bool, int,
- * double, const char * / std::string and Nil) along with references to types
- * that inherit from ExportableToLua, these are represented as userdata in Lua.
- * Optional versions are also supported, the primitive types are wrapped in
- * std::optional and the userdata types use a pointer instead of a reference.
+ * The interface is based around types with direct Lua representations,
+ * here called compatable types. These types are:
+ * +   Reprsentations of Lua's primitive types: bool, int, double,
+ *     const char * (or std::string) and Nil.
+ * +   Enumerations with EnumInfoTraits defined.
+ * +   The userdata types, repersented by a reference to ExportableToLua
+ *     or one of its child types.
+ * +   An optional version of one of the above.
+ *     For primitive types and enumerations, wrap the type in std::optional.
+ *     For userdata types, replace the reference with a pointer.
+ *
+ * The function should take compatable types as arguments. The wrapper will
+ * read the Lua stack to get the arguments, causing an error in Lua if that
+ * cannot be done. The optional types accept nil or none as a no-value
+ * alternative.
  *
  * The first argument may be lua_State * or LuaContext &, in which case
- * the current context is passed. All other arguments (including the receiver
- * in a method) must be of one of the Lua representable types.
+ * the current context is passed. Instead the function can be a method,
+ * in which case the receiver must be a userdata type.
  *
- * The return type may be one of the representable types, a tuple of those
+ * The return type may be one of the compatable types, a tuple of compatable
  * types, void or OnStack. The first three handle most cases where you want
  * to return a value, multiple values or nothing to Lua, the wrapper will
  * handle the conversion to Lua. OnStack gives the number of values already
@@ -69,7 +78,8 @@ struct Nil {};
  *
  * This can completely automate the interaction with Lua in some simple cases.
  * In the remaining cases, get a lua_State * or LuaContext & argument and, if
- * necessary, return an OnStack value.
+ * necessary, return an OnStack value. This allows for direct interaction
+ * with the Lua stack.
  *
  * \param func_name A callable that matches the described requirements.
  * \return A lua_CFunction, that runs the provided function from Lua.

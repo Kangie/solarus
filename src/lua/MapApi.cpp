@@ -483,6 +483,7 @@ static bool has_entities(Map& map, const std::string& prefix) {
  * \brief Implementation of map:get_entities_by_type(type).
  * \param l The Lua state that called this method.
  * \param map The map to call the method on.
+ * \param type The type of entity to get.
  * \return Number of values to return to Lua.
  */
 static LuaBind::OnStack get_entities_by_type(lua_State* l,

@@ -70,14 +70,18 @@ static inline T to_type(lua_State * L, int index) {
  */
 template<typename T>
 T * test_exportable(lua_State * L, int index) {
+  // Leaf types can be handled with a standard metatable test.
   if constexpr (std::is_final_v<T>) {
     void * data = LuaTools::test_userdata(L, index, T::module_name);
     return (data) ? static_cast<std::shared_ptr<T> *>(data)->get() : nullptr;
+  // Super-types are several types on Lua's side, this checks for them all.
   } else {
     std::string module_name;
     void * data = lua_touserdata(L, index);
+    // Make sure this is a solarus userdata, with a known underlying type.
     if (data && LuaContext::is_solarus_userdata(L, index, module_name)) {
       auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
+      // Now we can rely on C++'s type infomation for the check.
       return dynamic_cast<T*>(ptr->get());
     }
     return nullptr;
@@ -116,6 +120,13 @@ static inline void push_any(lua_State * L, const std::string& str) {
 /// \copydoc push_any(lua_State*,bool)
 static inline void push_any(lua_State * L, ExportableToLua& userdata) {
   LuaContext::push_userdata(L, userdata);
+}
+
+/// \copydoc push_any(lua_State*,bool)
+template<typename E>
+static inline auto push_any(lua_State * L, E value)
+    -> decltype(EnumInfoTraits<E>::pretty_name, void()) {
+  push_any(L, enum_to_name<E>(value));
 }
 
 /// \copydoc push_any(lua_State*,bool)
@@ -355,10 +366,16 @@ template<typename... Args>
 struct CheckArgs {
   using ret_t = std::tuple<LuaContext &, Args...>;
 
+  // "Zips" the Args with their index in the parameter pack.
   template<int... Inds>
   static ret_t help(LuaContext & context, std::integer_sequence<int, Inds...>) {
     lua_State * l = context.get_internal_state();
     return ret_t{context, CheckArg<Args>::call(l, Inds + 1)...};
+  }
+
+  // This specialisation avoids warnings on empty Args/Inds lists.
+  static ret_t help(LuaContext & context, std::integer_sequence<int>) {
+    return ret_t{context};
   }
 
   static ret_t call(LuaContext & context) {
@@ -376,9 +393,12 @@ struct CheckArgs {
  */
 template<typename Ret, typename... Args>
 int wrapper(lua_State * L, Ret(*func)(LuaContext&, Args...)) {
+  // Decide how to handle arguments:
   using CheckArgs = Private::CheckArgs<typename AsReturn<Args>::type...>;
+  // State and error handling:
   LuaContext & context = LuaContext::get();
   return context.state_boundary_handle(L, [&context, func](){
+    // Decide how to handle the return value (and make the call):
     if constexpr (std::is_same_v<void, Ret>) {
       std::apply(func, CheckArgs::call(context));
       return 0;
