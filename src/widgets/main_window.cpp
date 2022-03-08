@@ -690,6 +690,7 @@ bool MainWindow::confirm_upgrade_quest(const QString& old_format) {
          arg(old_format, SOLARUS_VERSION_WITHOUT_PATCH),
       QMessageBox::Ok | QMessageBox::Cancel,
       this);
+  dialog.setDefaultButton(QMessageBox::Ok);
   dialog.button(QMessageBox::Ok)->setText(tr("Update"));
 
   int result = dialog.exec();
