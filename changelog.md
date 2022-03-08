@@ -4,6 +4,7 @@
 
 * Map editor: allow to run the current map for testing purposes (#517).
 * Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
+* Fix zoom clamping in map, tileset, sprite and image views (#513).
 * Initial quest: fix item icon amount displaying.
 * Initial quest: fix item icon still showing unequiped items.
 
