@@ -58,7 +58,7 @@ Pickable::Pickable(
   falling_height(FALLING_NONE),
   will_disappear(false),
   shadow_xy(xy),
-  appear_date(System::now()),
+  appear_date(System::now_ms()),
   allow_pick_date(0),
   can_be_picked(true),
   blink_date(0),
@@ -204,7 +204,7 @@ bool Pickable::initialize_sprites() {
   set_size(16, 16);
   set_origin(8, 13);
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   if (falling_height != FALLING_NONE) {
     allow_pick_date = now + 700;  // The player will be allowed to take the item after 0.7 seconds.
@@ -234,8 +234,10 @@ void Pickable::notify_created() {
   notify_ground_below_changed();  // Necessary if on empty ground.
 
   // This entity and the map are now both ready. Notify the Lua item.
-  EquipmentItem& item = get_equipment().get_item(treasure.get_item_name());
-  item.notify_pickable_appeared(*this);
+  for_each_hero([&](const HeroPtr& hero) {
+    EquipmentItem& item = hero->get_equipment().get_item(treasure.get_item_name());
+    item.notify_pickable_appeared(*this);
+  });
 }
 
 /**
@@ -300,7 +302,7 @@ bool Pickable::is_stream_obstacle(Stream& /* stream */) {
 void Pickable::notify_collision(Entity& entity_overlapping, CollisionMode /* collision_mode */) {
 
   if (entity_overlapping.is_hero()) {
-    try_give_item_to_player();
+    try_give_item_to_player(entity_overlapping.as<Hero>());
   }
   else if (entity_followed == nullptr) {
 
@@ -347,9 +349,9 @@ void Pickable::notify_collision(
 
   // Taking the item with the sword.
   if (other_entity.is_hero()) {
-    Hero& hero = static_cast<Hero&>(other_entity);
+    Hero& hero = other_entity.as<Hero>();
     if (other_sprite.get_animation_set_id() == hero.get_hero_sprites().get_sword_sprite_id()) {
-      try_give_item_to_player();
+      try_give_item_to_player(hero);
     }
   }
 }
@@ -399,7 +401,7 @@ void Pickable::check_bad_ground() {
     return;
   }
 
-  if (System::now() <= appear_date + 200) {
+  if (System::now_ms() <= appear_date + 200) {
     // The pickable appeared very recently, let the user see it for
     // a short time at least.
     return;
@@ -412,7 +414,7 @@ void Pickable::check_bad_ground() {
     {
       // Fall to a lower layer.
       int layer = get_layer();
-      if (layer > 0) {
+      if (layer > get_map().get_min_layer()) {
         --layer;
         get_entities().set_entity_layer(*this, layer);
       }
@@ -421,7 +423,7 @@ void Pickable::check_bad_ground() {
 
     case Ground::HOLE:
     {
-      Sound::play("jump");
+      Sound::play("jump", get_game().get_resource_provider());
       remove_from_map();
     }
     break;
@@ -429,7 +431,7 @@ void Pickable::check_bad_ground() {
     case Ground::DEEP_WATER:
     case Ground::LAVA:
     {
-      Sound::play("splash");
+      Sound::play("splash", get_game().get_resource_provider());
       remove_from_map();
     }
     break;
@@ -442,14 +444,14 @@ void Pickable::check_bad_ground() {
 /**
  * \brief Gives the item to the player.
  */
-void Pickable::try_give_item_to_player() {
+void Pickable::try_give_item_to_player(Hero& hero) {
 
   EquipmentItem& item = treasure.get_item();
 
   if (!can_be_picked
       || given_to_player
       || get_game().is_dialog_enabled()
-      || !get_hero().can_pick_treasure(item)) {
+      || !hero.can_pick_treasure(item)) {
     return;
   }
 
@@ -460,14 +462,14 @@ void Pickable::try_give_item_to_player() {
   // play the sound
   const std::string& sound_id = item.get_sound_when_picked();
   if (!sound_id.empty()) {
-    Sound::play(sound_id);
+    Sound::play(sound_id, get_game().get_resource_provider());
   }
 
   // give the item
   if (item.get_brandish_when_picked()) {
     // The treasure is brandished.
     // on_obtained() will be called after the dialog.
-    get_hero().start_treasure(treasure, ScopedLuaRef());
+    hero.start_treasure(treasure, ScopedLuaRef());
   }
   else {
     treasure.give_to_player();
@@ -514,7 +516,7 @@ void Pickable::set_suspended(bool suspended) {
   if (!suspended) {
     // suspend the timers
 
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
 
     if (!can_be_picked && get_when_suspended() != 0) {
       allow_pick_date = now + (allow_pick_date - get_when_suspended());
@@ -560,8 +562,11 @@ void Pickable::update() {
         entity_followed->get_type() == EntityType::HOOKSHOT) {
       // The pickable may have been dropped by the boomerang/hookshot
       // not exactly on the hero so let's fix this.
-      if (get_distance(get_hero()) < 16) {
-        try_give_item_to_player();
+      auto res = find_hero([&](const HeroPtr& hero){
+        return get_distance(*hero) < 16;
+      });
+      if (res.first) {
+        try_give_item_to_player(**res.second);
       }
     }
     entity_followed = nullptr;
@@ -572,13 +577,15 @@ void Pickable::update() {
   if (!is_suspended()) {
 
     // check the timer
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
 
     // wait 0.7 second before allowing the hero to take the item
     if (!can_be_picked && now >= allow_pick_date) {
       can_be_picked = true;
       falling_height = FALLING_NONE;
-      get_hero().check_collision_with_detectors();
+      for(const HeroPtr& hero: get_heroes()) {
+        hero->check_collision_with_detectors();
+      }
     }
     else {
       // make the item blink and then disappear

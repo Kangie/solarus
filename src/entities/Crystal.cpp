@@ -39,7 +39,7 @@ namespace Solarus {
 Crystal::Crystal(const std::string& name, int layer, const Point& xy):
   Entity(name, 0, layer, xy, Size(16, 16)),
   state(false),
-  next_possible_hit_date(System::now()) {
+  next_possible_hit_date(System::now_ms()) {
 
   set_collision_modes(
       CollisionMode::COLLISION_SPRITE |
@@ -108,19 +108,19 @@ void Crystal::notify_collision(Entity& other_entity, Sprite& this_sprite, Sprite
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool Crystal::notify_action_command_pressed() {
+bool Crystal::notify_action_command_pressed(Hero& hero) {
 
-  if (get_hero().is_free() &&
-      get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_LOOK
+  if (hero.is_free() &&
+      hero.get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_LOOK
   ) {
-    get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
+    hero.get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
 
     // start a dialog
     get_game().start_dialog("_crystal", ScopedLuaRef(), ScopedLuaRef());
     return true;
   }
 
-  return Entity::notify_action_command_pressed();
+  return Entity::notify_action_command_pressed(hero);
 }
 
 /**
@@ -137,9 +137,9 @@ void Crystal::activate(Entity& entity_activating) {
     }
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   if (!recently_activated || now >= next_possible_hit_date) {
-    Sound::play("switch");
+    Sound::play("switch", get_game().get_resource_provider());
     get_game().change_crystal_state();
     next_possible_hit_date = now + 1000;
     entities_activating.push_back(&entity_activating);
@@ -174,7 +174,7 @@ void Crystal::update() {
       twinkle();
     }
 
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
     if (now >= next_possible_hit_date) {
       entities_activating.clear();
     }
@@ -192,7 +192,7 @@ void Crystal::set_suspended(bool suspended) {
   Entity::set_suspended(suspended);
 
   if (!suspended) {
-    next_possible_hit_date += System::now() - get_when_suspended();
+    next_possible_hit_date += System::now_ms() - get_when_suspended();
   }
 }
 

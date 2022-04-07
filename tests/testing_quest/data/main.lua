@@ -1,3 +1,5 @@
+require('scripts/coroutine_test_helper')
+
 -- Postpone a continuation to let engine simulate a bit.
 function later(cont)
   local context = sol.main
@@ -74,7 +76,7 @@ function assert_error(test)
     local fmte, fmtg = format_value(test.msg), format_value(message)
     failure = string.format("expected %s, got %s", fmte, fmtg)
   else
-      return
+    return
   end
   if test.label then
     failure = string.format("%s (%s)", test.label, failure)

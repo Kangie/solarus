@@ -19,6 +19,7 @@
 
 #include "solarus/core/Common.h"
 #include "solarus/core/ResourceProvider.h"
+#include "solarus/core/ControlsDispatcher.h"
 #include "solarus/graphics/SurfacePtr.h"
 #include <atomic>
 #include <memory>
@@ -46,23 +47,32 @@ class SOLARUS_API MainLoop {
     ~MainLoop();
 
     void run();
-    void step();
+    void step(uint64_t timestep_ns);
 
     void set_exiting();
     bool is_exiting();
     void set_resetting();
     bool is_resetting();
+    void set_suspended(bool suspended);
+    bool is_suspended();
     Game* get_game();
     void set_game(Game* game);
     ResourceProvider& get_resource_provider();
     int push_lua_command(const std::string& command);
 
+    void notify_control(const ControlEvent& event);
+
     LuaContext& get_lua_context();
 
   private:
 
+    void dynamic_run();
+    void fixed_run();
+
     void check_input();
     void notify_input(const InputEvent& event);
+
+
     void draw();
     void update();
 
@@ -70,6 +80,8 @@ class SOLARUS_API MainLoop {
     void load_quest_properties();
     void initialize_lua_console();
     void quit_lua_console();
+
+    void make_root_surface();
 
     std::unique_ptr<LuaContext>
         lua_context;              /**< The Lua world where scripts are run. */
@@ -81,6 +93,10 @@ class SOLARUS_API MainLoop {
     std::atomic<bool> exiting;    /**< Indicates that the program is about to stop. */
     uint32_t debug_lag;           /**< Artificial lag added to each frame.
                                    * Useful to debug issues that only happen on slow systems. */
+    bool lua_console_enabled;     /**< Whether the Lua console is enabled. */
+    bool suspend_unfocused;       /**< Whether to suspend the simulation when the
+                                   * application window is not focused. */
+    bool suspended;               /**< Indicates that the simulation is suspended. */
     bool turbo;                   /**< Whether to run the simulation as fast as possible
                                    * rather than following real time. */
 
@@ -91,7 +107,8 @@ class SOLARUS_API MainLoop {
         lua_commands_mutex;       /**< Lock for the list of scheduled Lua commands. */
     int num_lua_commands_pushed;  /**< Counter of Lua commands requested. */
     int num_lua_commands_done;    /**< Counter of Lua commands executed. */
-
+    ControlsDispatcher
+        commands_dispatcher;      /**< Commands mappings disptatcher. */
 };
 
 }

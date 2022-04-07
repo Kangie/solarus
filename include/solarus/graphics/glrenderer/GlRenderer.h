@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2018-2020 std::gregwar, Solarus - http://www.solarus-games.org
+ *
+ * Solarus is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Solarus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 #pragma once
 
 #include <solarus/graphics/Renderer.h>
@@ -35,11 +51,12 @@ public:
   struct Fbo{
     GLuint id;
     glm::mat4 view;
+    glm::ivec2 viewport;
   };
 
   GlRenderer(SDL_GLContext ctx);
   static RendererPtr create(SDL_Window* window, bool force_software);
-  SurfaceImplPtr create_texture(int width, int height) override;
+  SurfaceImplPtr create_texture(int width, int height, int margin) override;
   SurfaceImplPtr create_texture(SDL_Surface_UniquePtr &&surface) override;
   SurfaceImplPtr create_window_surface(SDL_Window* w, int width, int height) override;
   ShaderPtr create_shader(const std::string& shader_id) override;
@@ -51,6 +68,7 @@ public:
   void draw(SurfaceImpl& dst, const SurfaceImpl& src, const DrawInfos& infos) override;
   void clear(SurfaceImpl& dst) override;
   void fill(SurfaceImpl& dst, const Color& color, const Rectangle& where, BlendMode mode = BlendMode::BLEND) override;
+  void notify_target_changed(const SurfaceImpl& surf) override;
   void invalidate(const SurfaceImpl& surf) override;
   std::string get_name() const override;
   void present(SDL_Window* window) override;
@@ -89,9 +107,13 @@ private:
   void add_sprite(const DrawInfos& infos);
   size_t buffered_indices() const;
   size_t buffered_vertices() const;
-  Fbo* get_fbo(int width, int height, bool screen = false);
+
+  Fbo* get_fbo(int width, int height, bool screen = false, int margin = 0);
+  void setup_viewport(GlTexture* target);
 
   void shader_about_to_change(GlShader* shader);
+
+  glm::mat4 dst_mvp(GlTexture* dst) const;
 
   static GlRenderer* instance;
   SDL_GLContext sdl_gl_context;
@@ -114,7 +136,7 @@ private:
 
   std::vector<Vertex> vertex_buffer;
 
-  Fbo screen_fbo = {0,glm::mat4(1.f)};
+  Fbo screen_fbo = {0,glm::mat4(1.f),{1,1}};
   std::unordered_map<uint_fast64_t,Fbo> fbos;
   Rectangle window_viewport;
 

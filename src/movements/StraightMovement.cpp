@@ -17,6 +17,7 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/System.h"
+#include "solarus/core/Profiler.h"
 #include "solarus/entities/Entity.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/movements/StraightMovement.h"
@@ -36,8 +37,8 @@ StraightMovement::StraightMovement(bool ignore_obstacles, bool smooth):
   angle(0),
   x_speed(0),
   y_speed(0),
-  next_move_date_x(System::now()),
-  next_move_date_y(System::now()),
+  next_move_date_x(System::now_ns()),
+  next_move_date_y(System::now_ns()),
   x_delay(0),
   y_delay(0),
   x_move(0),
@@ -84,8 +85,8 @@ double StraightMovement::get_speed() const {
   return std::sqrt(x_speed * x_speed + y_speed * y_speed);
 }
 
-void StraightMovement::set_dim_speed(uint32_t& delay,
-                                     uint32_t& next_move_date,
+void StraightMovement::set_dim_speed(uint64_t& delay,
+                                     uint64_t& next_move_date,
                                      double &current_speed,
                                      int& move,
                                      double target_speed,
@@ -94,10 +95,9 @@ void StraightMovement::set_dim_speed(uint32_t& delay,
     target_speed = 0;
   }
 
-  uint32_t now = System::now();
+  uint64_t now = System::now_ns();
 
   int64_t remaining = now < next_move_date ? static_cast<int64_t>(delay) - (static_cast<int64_t>(next_move_date) - static_cast<int64_t>(now)) : 0;
-  //if(remaining < 0) return 0; //Don't counter compensate TODO check if to_go needs to be 0 in this case
   int64_t to_go = target_speed != 0.0 ? keep_factor * remaining : 0;
 
   current_speed = target_speed;
@@ -107,11 +107,11 @@ void StraightMovement::set_dim_speed(uint32_t& delay,
   }
   else {
     if (target_speed > 0) {
-      delay = (uint32_t) (1000 / target_speed);
+      delay = (uint64_t) (1000000000 / target_speed);
       move = 1;
     }
     else {
-      delay = (uint32_t) (1000 / (-target_speed));
+      delay = (uint64_t) (1000000000 / (-target_speed));
       move = -1;
     }
 
@@ -129,6 +129,7 @@ void StraightMovement::set_dim_speed(uint32_t& delay,
  * \param x_speed the x speed of the object in pixels per second
  */
 void StraightMovement::set_x_speed(double x_speed, double keep_factor) {
+  x_blocked = true;
   set_dim_speed(x_delay, next_move_date_x, this->x_speed, x_move, x_speed, keep_factor);
 }
 
@@ -137,6 +138,7 @@ void StraightMovement::set_x_speed(double x_speed, double keep_factor) {
  * \param y_speed the y speed of the object in pixels per second
  */
 void StraightMovement::set_y_speed(double y_speed, double keep_factor) {
+  y_blocked = true;
   set_dim_speed(y_delay, next_move_date_y, this->y_speed, y_move, y_speed, keep_factor);
 }
 
@@ -182,14 +184,29 @@ void StraightMovement::stop() {
 }
 
 /**
+ * @copydoc Movement::get_subpixel_offset
+ * @return
+ */
+glm::vec2 StraightMovement::get_subpixel_offset() const {
+  auto now = System::now_ns();
+  auto remaining = [&](uint64_t /*delay*/, uint64_t next_move_date) {
+    return now < next_move_date ? static_cast<int64_t>(next_move_date) - static_cast<int64_t>(now) : 0;
+  };
+  return {
+    x_blocked ? 0.f : remaining(x_delay, next_move_date_x) * -1e-9f * x_move * std::abs(get_x_speed()),
+    y_blocked ? 0.f : remaining(y_delay, next_move_date_y) * -1e-9f * y_move * std::abs(get_y_speed())
+  };
+}
+
+/**
  * \brief Sets the date of the next change of the dim coordinate.
  * \param next_move_date_x the date in milliseconds
  */
-void StraightMovement::set_next_move_date(uint32_t& current_next_move_date, uint32_t next_move_date) {
+void StraightMovement::set_next_move_date(uint64_t& current_next_move_date, uint64_t next_move_date) {
 
   if (is_suspended()) {
-    uint32_t delay = next_move_date - System::now();
-    current_next_move_date = get_when_suspended() + delay;
+    uint64_t delay = next_move_date - System::now_ns();
+    current_next_move_date = get_when_suspended_ns() + delay;
   }
   else {
     current_next_move_date = next_move_date;
@@ -279,7 +296,7 @@ int StraightMovement::get_displayed_direction4() const {
  */
 bool StraightMovement::has_to_move_now() const {
 
-  uint32_t now = System::now();
+  uint64_t now = System::now_ns();
 
   return (x_move != 0 && now >= next_move_date_x)
     || (y_move != 0 && now >= next_move_date_y);
@@ -299,8 +316,8 @@ void StraightMovement::set_suspended(bool suspended) {
   if (!suspended) {
 
     // recalculate the next move date
-    if (get_when_suspended() != 0) {
-      uint32_t diff = System::now() - get_when_suspended();
+    if (get_when_suspended_ns() != 0) {
+      uint64_t diff = System::now_ns() - get_when_suspended_ns();
       next_move_date_x += diff;
       next_move_date_y += diff;
     }
@@ -330,11 +347,11 @@ void StraightMovement::set_smooth(bool smooth) {
  * in the smooth case.
  */
 void StraightMovement::update_smooth_xy() {
-
+  SOL_PFUN();
   // Save the current coordinates.
   Point old_xy = get_xy();
 
-  uint32_t now = System::now();
+  uint64_t now = System::now_ns();
   bool x_move_now = x_move != 0 && now >= next_move_date_x;
   bool y_move_now = y_move != 0 && now >= next_move_date_y;
 
@@ -394,7 +411,7 @@ void StraightMovement::update_smooth_x() {
     // x speed needs to be fixed.
 
     bool did_increment = false;
-    auto increment_next_move_date = [&](uint32_t incr) {
+    auto increment_next_move_date = [&](uint64_t incr) {
       did_increment = true;
       next_move_date_x += incr;
     };
@@ -404,16 +421,16 @@ void StraightMovement::update_smooth_x() {
       if (y_move != 0 && test_collision_with_obstacles(x_move, y_move)) {
         // If there is also a y move, and if this y move is illegal,
         // we still allow the x move and we give it all the speed.
-        increment_next_move_date(1000.0 / get_speed());
+        increment_next_move_date(1000000000.0 / get_speed());
       } else {
         increment_next_move_date(x_delay);
       }
 
       translate_x(x_move);  // Make the move.
-
-
+      x_blocked = false;
     }
     else {
+      x_blocked = true;
       if (y_move == 0) {
         // The move on x is not possible and there is no y move:
         // let's try to add a move on y to make a diagonal move,
@@ -495,7 +512,7 @@ void StraightMovement::update_smooth_y() {
     // y speed needs to be fixed.
 
     bool did_increment = false;
-    auto increment_next_move_date = [&](uint32_t incr) {
+    auto increment_next_move_date = [&](uint64_t incr) {
       next_move_date_y += incr;
       did_increment = true;
     };
@@ -505,13 +522,15 @@ void StraightMovement::update_smooth_y() {
       if (x_move != 0 && test_collision_with_obstacles(x_move, y_move)) {
         // If there is also an x move, and if this x move is illegal,
         // we still allow the y move and we give it all the speed.
-        increment_next_move_date(1000.0 / get_speed());
+        increment_next_move_date(1000000000.0 / get_speed());
       } else {
         increment_next_move_date(y_delay);
       }
       translate_y(y_move);  // Make the move.
+      y_blocked = false;
     }
     else {
+      y_blocked = true;
       if (x_move == 0) {
         // The move on y is not possible and there is no x move:
         // let's try to add a move on x to make a diagonal move,
@@ -586,11 +605,11 @@ void StraightMovement::update_smooth_y() {
  * in the non-smooth case.
  */
 void StraightMovement::update_non_smooth_xy() {
-
+  SOL_PFUN();
   // Save the current coordinates.
   Point old_xy = get_xy();
 
-  uint32_t now = System::now();
+  uint64_t now = System::now_ns();
   bool x_move_now = x_move != 0 && now >= next_move_date_x;
   bool y_move_now = y_move != 0 && now >= next_move_date_y;
 
@@ -625,7 +644,6 @@ void StraightMovement::update_non_smooth_xy() {
   if (!is_suspended() &&
       get_entity() != nullptr &&
       !finished) {
-
     // the movement was successful if the entity's coordinates have changed
     // and the movement was not stopped
     bool success = (get_xy() != old_xy)
@@ -644,10 +662,10 @@ void StraightMovement::update_non_smooth_xy() {
  * This function is called repeatedly.
  */
 void StraightMovement::update() {
-
+  SOL_PFUN();
   if (!is_suspended()) {
 
-    uint32_t now = System::now();
+    uint64_t now = System::now_ns();
     bool x_move_now = x_move != 0 && now >= next_move_date_x;
     bool y_move_now = y_move != 0 && now >= next_move_date_y;
 
@@ -660,7 +678,7 @@ void StraightMovement::update() {
         update_non_smooth_xy();
       }
 
-      now = System::now();
+      now = System::now_ns();
 
       if (!finished &&
           max_distance != 0 &&

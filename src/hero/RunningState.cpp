@@ -17,13 +17,14 @@
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Equipment.h"
 #include "solarus/core/Game.h"
-#include "solarus/core/GameCommands.h"
+#include "solarus/core/Controls.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
 #include "solarus/hero/FreeState.h"
 #include "solarus/hero/HeroSprites.h"
 #include "solarus/hero/RunningState.h"
+#include "solarus/entities/Destructible.h"
 #include "solarus/entities/Enemy.h"
 #include "solarus/entities/Jumper.h"
 #include "solarus/entities/Stream.h"
@@ -38,7 +39,7 @@ namespace Solarus {
  * \param hero The hero controlled by this state.
  * \param command The game command that triggers running.
  */
-Hero::RunningState::RunningState(Hero& hero, GameCommand command):
+Hero::RunningState::RunningState(Hero& hero, Command command):
   HeroState(hero, "running"),
   phase(0),
   next_phase_date(0),
@@ -59,7 +60,7 @@ void Hero::RunningState::start(const State* previous_state) {
 
   phase = 0;
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   next_phase_date = now + 500;
   next_sound_date = now + 300;
 }
@@ -87,10 +88,10 @@ void Hero::RunningState::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   if (!is_bouncing() && now >= next_sound_date) {
-    Sound::play("running");
+    Sound::play("running", get_game().get_resource_provider());
     next_sound_date = now + 170;
   }
 
@@ -129,7 +130,7 @@ void Hero::RunningState::set_suspended(bool suspended) {
   HeroState::set_suspended(suspended);
 
   if (!suspended) {
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     next_phase_date += diff;
     next_sound_date += diff;
   }
@@ -180,7 +181,7 @@ void Hero::RunningState::notify_obstacle_reached() {
         opposite_direction, 32, 64, false
     ));
     get_sprites().set_animation_hurt();
-    Sound::play("running_obstacle");
+    Sound::play("running_obstacle", get_game().get_resource_provider());
     phase++;
   }
 }
@@ -356,32 +357,41 @@ bool Hero::RunningState::is_sensor_obstacle(Sensor& /* sensor */) {
 /**
  * \copydoc Entity::State::is_cutting_with_sword
  */
-bool Hero::RunningState::is_cutting_with_sword(Entity& entity) {
+bool Hero::RunningState::is_cutting_with_sword(Destructible& destructible) {
 
-  // check the distance to the detector
-  const int distance = 8;
-  Point tested_point = get_entity().get_facing_point();
+  switch (destructible.get_cut_method()) {
+  case Destructible::CutMethod::PIXEL:
+    return true;
 
-  switch (get_sprites().get_animation_direction()) {
+  case Destructible::CutMethod::ALIGNED:
+    {
+      // check the distance to the detector
+      const int distance = 8;
+      Point tested_point = get_entity().get_facing_point();
 
-    case 0: // right
-      tested_point.x += distance;
-      break;
+      switch (get_sprites().get_animation_direction()) {
 
-    case 1: // up
-      tested_point.y -= distance;
-      break;
+        case 0: // right
+          tested_point.x += distance;
+          break;
 
-    case 2: // left
-      tested_point.x -= distance;
-      break;
+        case 1: // up
+          tested_point.y -= distance;
+          break;
 
-    case 3: // down
-      tested_point.y += distance;
-      break;
+        case 2: // left
+          tested_point.x -= distance;
+          break;
+
+        case 3: // down
+          tested_point.y += distance;
+          break;
+      }
+      return destructible.overlaps(tested_point);
+    }
   }
 
-  return entity.overlaps(tested_point);
+  return false;
 }
 
 /**

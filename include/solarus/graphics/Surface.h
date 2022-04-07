@@ -60,12 +60,12 @@ class Surface: public Drawable {
 
     explicit Surface(SurfaceImplPtr impl, bool premultiplied = false);
     explicit Surface(SDL_Surface_UniquePtr surf, bool premultiplied = false);
-    Surface(int width, int height, bool premultiplied = true);
+    Surface(int width, int height, bool premultiplied = true, int margin = 0);
 
     ~Surface();
 
     static SurfacePtr create(int width, int height, bool premultiplied = true);
-    static SurfacePtr create(const Size& size, bool premultiplied = true);
+    static SurfacePtr create(const Size& size, bool premultiplied = true, int margin = 0);
     static SurfacePtr create(const std::string& file_name,
         ImageDirectory base_directory = DIR_SPRITES, bool premultiplied = false);
     static SurfacePtr create(SurfaceImplPtr impl, bool premultiplied = false);
@@ -119,6 +119,13 @@ class Surface: public Drawable {
     const std::string& get_lua_type_name() const override;
 
     static void empty_cache();
+
+    void set_view(const View& view);
+    const View& get_view() const;
+    View& get_view();
+
+    void set_viewport(const Rectangle& viewport);
+    Rectangle get_viewport() const;
   private:
     static SurfaceImplPtr get_surface_from_file(
         const std::string& file_name,

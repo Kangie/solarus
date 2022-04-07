@@ -318,7 +318,7 @@ void CustomState::update_jumper() {
     current_jumper = nullptr;
     jumper_start_date = 0;
   }
-  else if (System::now() >= jumper_start_date) {
+  else if (System::now_ms() >= jumper_start_date) {
     // Time to make the jump and everything is okay.
     hero.start_jumping(
         jump_direction8, current_jumper->get_jump_length(), true, true);
@@ -334,10 +334,10 @@ void CustomState::set_suspended(bool suspended) {
 
   if (!suspended) {
     if (jumper_start_date != 0) {
-      jumper_start_date += System::now() - get_when_suspended();
+      jumper_start_date += System::now_ms() - get_when_suspended();
     }
     if (start_pushing_date != 0) {
-      start_pushing_date += System::now() - get_when_suspended();
+      start_pushing_date += System::now_ms() - get_when_suspended();
     }
   }
 
@@ -355,17 +355,23 @@ bool CustomState::notify_input(const InputEvent& event) {
   return get_lua_context().state_on_input(*this, event);
 }
 
-/**
- * \copydoc Entity::State::notify_command_pressed
- */
-void CustomState::notify_command_pressed(GameCommand command) {
-
-  // See if the state script handles the command.
-  if (get_lua_context().state_on_command_pressed(*this, command)) {
+void CustomState::notify_control(const ControlEvent& event) {
+  if (get_lua_context().state_on_command(*this, event)) {
     return;
   }
 
-  if (command == GameCommand::ACTION) {
+  Entity::State::notify_control(event);
+}
+
+/**
+ * \copydoc Entity::State::notify_command_pressed
+ */
+void CustomState::notify_command_pressed(Command command) {
+
+  // See if the state script handles the command.
+
+
+  if (command == Command(CommandId::ACTION)) {
     Hero& hero = get_entity();
     Entity* facing_entity = hero.get_facing_entity();
     bool facing_entity_interaction = false;
@@ -375,7 +381,7 @@ void CustomState::notify_command_pressed(GameCommand command) {
           get_commands_effects().is_action_key_acting_on_facing_entity()
       ) {
         // Action on the facing entity.
-        facing_entity_interaction = facing_entity->notify_action_command_pressed();
+        facing_entity_interaction = facing_entity->notify_action_command_pressed(hero);
       }
     }
 
@@ -395,28 +401,13 @@ void CustomState::notify_command_pressed(GameCommand command) {
 }
 
 /**
- * \copydoc Entity::State::notify_command_released
- */
-void CustomState::notify_command_released(GameCommand command) {
-
-  // See if the state script handles the command.
-  if (get_lua_context().state_on_command_released(*this, command)) {
-    return;
-  }
-
-  Entity::State::notify_command_released(command);
-}
-
-/**
  * \copydoc Entity::State::draw_on_map
  */
-void CustomState::draw_on_map() {
-
-  Camera& camera = *get_entity().get_map().get_camera();
+void CustomState::draw_on_map(Camera &camera) {
   get_lua_context().state_on_pre_draw(*this, camera);
   if (draw_override.is_empty()) {
     // Use the built-in default state draw.
-    HeroState::draw_on_map();
+    HeroState::draw_on_map(camera);
   }
   else {
     get_lua_context().do_state_draw_override_function(draw_override, *this, camera);
@@ -507,6 +498,9 @@ int CustomState::get_wanted_movement_direction8() const {
   if (!get_can_control_movement()) {
     const std::shared_ptr<const Movement>& movement = get_entity().get_movement();
     if (movement == nullptr) {
+      if (get_can_control_direction()) {
+        return get_commands().get_wanted_direction8();
+      }
       return -1;
     }
     return static_cast<int>((movement->get_angle() + Geometry::PI / 8.0) * 8.0 / Geometry::TWO_PI);
@@ -518,7 +512,7 @@ int CustomState::get_wanted_movement_direction8() const {
     return -1;
   }
 
-  const GameCommands& commands = get_commands();
+  const Controls& commands = get_commands();
   return commands.get_wanted_direction8();
 }
 
@@ -534,7 +528,7 @@ void CustomState::set_can_control_movement(bool can_control_movement) {
 
   this->can_control_movement = can_control_movement;
 
-  if (is_current_state()) {
+  if (is_current_state() && can_control_movement) {
     start_player_movement();
   }
 }
@@ -553,7 +547,8 @@ void CustomState::start_player_movement() {
 
   Hero& hero = get_entity();
   player_movement = std::make_shared<PlayerMovement>(
-      hero.get_walking_speed()
+      hero.get_walking_speed(),
+      hero.get_controls()
   );
   hero.set_movement(player_movement);
 }
@@ -1161,8 +1156,8 @@ void CustomState::set_can_be_hurt(const ScopedLuaRef& can_be_hurt) {
 /**
  * \copydoc Entity::State::is_cutting_with_sword
  */
-bool CustomState::is_cutting_with_sword(Entity& entity) {
-  return get_can_cut(&entity);
+bool CustomState::is_cutting_with_sword(Destructible& destructible) {
+  return get_can_cut(&destructible);
 }
 
 /**
@@ -1541,7 +1536,7 @@ void CustomState::notify_obstacle_reached() {
     if (hero.is_facing_point_on_obstacle() &&   // He is really facing an obstacle.
         equipment.has_ability(Ability::PUSH)    // He is able to push.
     ) {
-      uint32_t now = System::now();
+      uint32_t now = System::now_ms();
       if (pushing_direction4 == -1) {
         // Start state "pushing" after a delay.
         start_pushing_date = now + get_pushing_delay();
@@ -1626,7 +1621,7 @@ void CustomState::notify_jumper_activated(Jumper& jumper) {
 
   // Add a small delay before jumping.
   current_jumper = std::static_pointer_cast<Jumper>(jumper.shared_from_this());
-  jumper_start_date = System::now() + get_jumper_delay();
+  jumper_start_date = System::now_ms() + get_jumper_delay();
   update_jumper();
 }
 

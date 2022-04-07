@@ -30,7 +30,7 @@ class Hero::RunningState: public HeroState {
 
   public:
 
-    RunningState(Hero& hero, GameCommand command);
+    RunningState(Hero& hero, Command command);
 
     void start(const State* previous_state) override;
     void stop(const State* next_state) override;
@@ -57,7 +57,7 @@ class Hero::RunningState: public HeroState {
     bool can_avoid_stream(const Stream& stream) const override;
     bool can_persist_on_stream(const Stream& stream) const override;
     bool is_sensor_obstacle(Sensor& sensor) override;
-    bool is_cutting_with_sword(Entity& entity) override;
+    bool is_cutting_with_sword(Destructible& destructible) override;
     int get_sword_damage_factor() const override;
 
   private:
@@ -67,7 +67,7 @@ class Hero::RunningState: public HeroState {
     int phase;                      /**< current phase of the run */
     uint32_t next_phase_date;       /**< date of the next phase */
     uint32_t next_sound_date;       /**< date of the next time a sound is played during the run */
-    GameCommand command;            /**< the command pressed to make the hero run */
+    Command command;            /**< the command pressed to make the hero run */
 
 };
 

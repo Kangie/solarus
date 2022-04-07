@@ -804,7 +804,7 @@ void Enemy::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   if (being_hurt) {
 
@@ -858,7 +858,7 @@ void Enemy::update() {
   }
 
   if (exploding) {
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
     if (now >= next_explosion_date) {
 
       // create an explosion
@@ -868,7 +868,7 @@ void Enemy::update() {
       get_entities().add_entity(std::make_shared<Explosion>(
           "", get_map().get_max_layer(), xy, false
       ));
-      Sound::play("explosion");
+      Sound::play("explosion", get_game().get_resource_provider());
 
       next_explosion_date = now + 200;
       nb_explosions++;
@@ -913,7 +913,7 @@ void Enemy::set_suspended(bool suspended) {
   Entity::set_suspended(suspended);
 
   if (!suspended) {
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     stop_hurt_date += diff;
     vulnerable_again_date += diff;
     if (can_attack_again_date != 0) {
@@ -1047,7 +1047,7 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
 
     bool hero_protected = false;
     if (minimum_shield_needed != 0
-        && get_equipment().has_ability(Ability::SHIELD, minimum_shield_needed)
+        && hero.get_equipment().has_ability(Ability::SHIELD, minimum_shield_needed)
         && hero.can_use_shield()) {
 
       // Compute the direction corresponding to the angle between the enemy and the hero.
@@ -1067,7 +1067,7 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
     }
 
     if (hero_protected) {
-      attack_stopped_by_hero_shield();
+      attack_stopped_by_hero_shield(hero);
     }
     else {
       // Let the enemy script handle this if it wants.
@@ -1088,15 +1088,15 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
  *
  * By default, the shield sound is played and the enemy cannot attack again for a while.
  */
-void Enemy::attack_stopped_by_hero_shield() {
+void Enemy::attack_stopped_by_hero_shield(Hero& hero) {
 
-  Sound::play("shield");
+  Sound::play("shield", get_game().get_resource_provider());
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   can_attack = false;
   can_attack_again_date = now + 1000;
 
-  get_equipment().notify_ability_used(Ability::SHIELD);
+  hero.get_equipment().notify_ability_used(Ability::SHIELD);
 }
 
 /**
@@ -1121,7 +1121,7 @@ void Enemy::play_hurt_sound() {
 
   }
 
-  Sound::play(sound_id);
+  Sound::play(sound_id, get_game().get_resource_provider());
 }
 
 /**
@@ -1197,14 +1197,14 @@ void Enemy::try_hurt(EnemyAttack attack, Entity& source, Sprite* this_sprite) {
       // Ideally, ReactionType::CUSTOM should not make the enemy invulnerable
       // either, but we don't want to break the behavior of existing scripts.
       invulnerable = true;
-      vulnerable_again_date = System::now() + 500;
+      vulnerable_again_date = System::now_ms() + 500;
   }
 
   switch (reaction.type) {
 
     case EnemyReaction::ReactionType::PROTECTED:
       // attack failure sound
-      Sound::play("sword_tapping");
+      Sound::play("sword_tapping", get_game().get_resource_provider());
       break;
 
     case EnemyReaction::ReactionType::IMMOBILIZED:
@@ -1252,7 +1252,7 @@ void Enemy::try_hurt(EnemyAttack attack, Entity& source, Sprite* this_sprite) {
         Hero& hero = static_cast<Hero&>(source);
 
         // Sword attacks only use pixel-precise collisions.
-        Debug::check_assertion(this_sprite != nullptr,
+        SOLARUS_REQUIRE(this_sprite != nullptr,
             "Missing enemy sprite for sword attack"
         );
 
@@ -1303,7 +1303,7 @@ void Enemy::try_hurt(EnemyAttack attack, Entity& source, Sprite* this_sprite) {
  */
 void Enemy::hurt(Entity& source, Sprite* this_sprite) {
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   // update the enemy state
   set_movement_notifications_enabled(false);
@@ -1381,7 +1381,7 @@ void Enemy::kill() {
     // A boss: create some explosions.
     exploding = true;
     nb_explosions = 0;
-    next_explosion_date = System::now() + 2000;
+    next_explosion_date = System::now_ms() + 2000;
   }
   else {
     // Replace the enemy sprites.
@@ -1393,7 +1393,7 @@ void Enemy::kill() {
         if (get_obstacle_behavior() != ObstacleBehavior::FLYING) {
           // TODO animation of falling into a hole.
           special_ground = true;
-          Sound::play("jump");
+          Sound::play("jump", get_game().get_resource_provider());
           clear_treasure();
         }
         break;
@@ -1403,7 +1403,7 @@ void Enemy::kill() {
             get_obstacle_behavior() != ObstacleBehavior::SWIMMING) {
           // TODO water animation.
           special_ground = true;
-          Sound::play("splash");
+          Sound::play("splash", get_game().get_resource_provider());
           clear_treasure();
         }
         break;
@@ -1413,7 +1413,7 @@ void Enemy::kill() {
             get_obstacle_behavior() != ObstacleBehavior::SWIMMING) {
           // TODO lava animation.
           special_ground = true;
-          Sound::play("splash");
+          Sound::play("splash", get_game().get_resource_provider());
           clear_treasure();
         }
         break;
@@ -1430,7 +1430,7 @@ void Enemy::kill() {
         }
         create_sprite(dying_sprite_id);
       }
-      Sound::play("enemy_killed");
+      Sound::play("enemy_killed", get_game().get_resource_provider());
     }
   }
 
@@ -1538,7 +1538,7 @@ bool Enemy::is_sprite_finished_or_looping() const {
 void Enemy::immobilize() {
 
   immobilized = true;
-  start_shaking_date = System::now() + 5000;
+  start_shaking_date = System::now_ms() + 5000;
 }
 
 /**

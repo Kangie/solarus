@@ -22,6 +22,8 @@
 #include "solarus/core/EquipmentItem.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/MainLoop.h"
+#include "solarus/core/QuestDatabase.h"
+#include "solarus/core/Savegame.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/ResourceProvider.h"
 #include "solarus/core/Timer.h"
@@ -154,7 +156,10 @@ void LuaContext::register_map_module() {
       { "get_entities_in_region", map_api_get_entities_in_region },
       { "get_hero", map_api_get_hero },
       { "set_entities_enabled", map_api_set_entities_enabled },
-      { "remove_entities", map_api_remove_entities }
+      { "remove_entities", map_api_remove_entities },
+      //1.7 features
+      { "get_cameras", map_api_get_cameras },
+      { "get_heroes", map_api_get_heroes }
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -186,7 +191,7 @@ void LuaContext::register_map_module() {
     lua_pop(current_l, 1);
   }
   else {
-    Debug::check_assertion(lua_isfunction(current_l, -1), "map:move_camera() is not a function");
+    SOLARUS_ASSERT(lua_isfunction(current_l, -1), "map:move_camera() is not a function");
     lua_setfield(current_l, LUA_REGISTRYINDEX, "map.move_camera");
   }
 }
@@ -718,10 +723,17 @@ int LuaContext::l_create_enemy(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
+
+    const std::string& breed = data.get_string("breed");
+    const QuestDatabase& database = CurrentQuest::get_database();
+    if (!database.resource_exists(ResourceType::ENEMY, breed)) {
+      LuaTools::arg_error(l, 2, "No such enemy breed: '" + breed + "'");
+    }
+
     Game& game = map.get_game();
     EntityPtr entity = Enemy::create(
         game,
-        data.get_string("breed"),
+        breed,
         entity_creation_check_savegame_variable_optional(l, 1, data, "savegame_variable"),
         data.get_name(),
         entity_creation_check_layer(l, 1, data, map),
@@ -1244,6 +1256,12 @@ int LuaContext::l_create_custom_entity(lua_State* l) {
     Map& map = *check_map(l, 1);
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
+    const std::string& model = data.get_string("model");
+    const QuestDatabase& database = CurrentQuest::get_database();
+    if (!model.empty() && !database.resource_exists(ResourceType::ENTITY, model)) {
+      LuaTools::arg_error(l, 2, "No such custom entity model: '" + model + "'");
+    }
+
     Game& game = map.get_game();
     EntityPtr entity = std::make_shared<CustomEntity>(
         game,
@@ -1254,7 +1272,7 @@ int LuaContext::l_create_custom_entity(lua_State* l) {
         entity_creation_check_size(l, 1, data),
         Point(data.get_integer("origin_x"), data.get_integer("origin_y")),
         data.get_string("sprite"),
-        data.get_string("model")
+        model
     );
     entity->set_tiled(data.get_boolean("tiled"));
     entity->set_user_properties(data.get_user_properties());
@@ -1325,6 +1343,78 @@ int LuaContext::l_create_explosion(lua_State* l) {
 }
 
 /**
+ * @brief Creates a camera on the map
+ * @param  l The Lua context that is calling this function.
+ * @return Number of values to return to Lua.
+ */
+int LuaContext::l_create_camera(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Map& map = *check_map(l, 1);
+    EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
+
+    CameraPtr entity = std::make_shared<Camera>(
+        data.get_name()
+    );
+    entity->set_xy(data.get_xy());
+    entity->set_layer(data.get_layer());
+    entity->set_user_properties(data.get_user_properties());
+    entity->set_enabled(data.is_enabled_at_start());
+
+    entity->place_on_map(map);
+    if (map.is_started()) {
+      push_entity(l, *entity);
+      return 1;
+    }
+    return 0;
+  });
+}
+
+/**
+ * @brief Creates a hero on the map
+ * @param  l The Lua context that is calling this function.
+ * @return Number of values to return to Lua.
+ */
+int LuaContext::l_create_hero(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Map& map = *check_map(l, 1);
+    Game& game = map.get_game();
+
+    EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
+
+    //Create new volatile savegame (no file name) to hold hero equipement
+    SavegamePtr save = std::make_shared<Savegame>(game.get_savegame().get_main_loop(), "");
+    EquipmentPtr equipment = std::make_shared<Equipment>(save, ""); //TODO set prefix correctly
+
+    //Initialize the save and equipment in-place
+    save->initialize();
+    equipment->set_initial_values();
+    equipment->load_items();
+
+    HeroPtr entity = std::make_shared<Hero>(
+     equipment, data.get_name()
+    );
+
+    ControlsPtr cmds = ControlsDispatcher::get().create_commands_from_keyboard();
+    entity->set_controls(cmds);
+    entity->start_free();
+    entity->place_on_map(map);
+    entity->set_xy(data.get_xy());
+
+    entity->set_layer(data.get_layer());
+    entity->set_user_properties(data.get_user_properties());
+    entity->set_enabled(data.is_enabled_at_start());
+
+    if(map.is_started()) {
+      //entity->notify_creating();
+
+      push_entity(l, *entity);
+      return 1;
+    }
+    return 0;
+  });
+}
+
+/**
  * \brief Creates a fire entity on the map.
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -1338,7 +1428,8 @@ int LuaContext::l_create_fire(lua_State* l) {
     EntityPtr entity = std::make_shared<Fire>(
         data.get_name(),
         entity_creation_check_layer(l, 1, data, map),
-        data.get_xy()
+        data.get_xy(),
+        map.get_default_hero().shared_from_this_cast<Hero>() //In doubt, default hero //TODO allow to specify throwing hero
     );
     entity->set_user_properties(data.get_user_properties());
     entity->set_enabled(data.is_enabled_at_start());
@@ -1375,6 +1466,7 @@ const std::map<EntityType, lua_CFunction> LuaContext::entity_creation_functions 
     { EntityType::SEPARATOR, LuaContext::l_create_separator },
     { EntityType::CUSTOM, LuaContext::l_create_custom_entity },
     { EntityType::EXPLOSION, LuaContext::l_create_explosion },
+    { EntityType::HERO, LuaContext::l_create_hero},
     { EntityType::BOMB, LuaContext::l_create_bomb },
     { EntityType::FIRE, LuaContext::l_create_fire },
 };
@@ -1382,8 +1474,9 @@ const std::map<EntityType, lua_CFunction> LuaContext::entity_creation_functions 
 /**
  * \brief Creates on the current map an entity from the specified data.
  *
- * Pushes onto the Lua stack the created entity.
- * In case of error, pushes nothing and returns \c false.
+ * This function is meant to be called from C++.
+ * It pushes nothing to Lua and does not raise Lua errors.
+ * In case of failure, it prints an error message.
  *
  * \param map The map where to create an entity.
  * \param entity_data Description of the entity to create.
@@ -1391,18 +1484,28 @@ const std::map<EntityType, lua_CFunction> LuaContext::entity_creation_functions 
  */
 bool LuaContext::create_map_entity_from_data(Map& map, const EntityData& entity_data) {
 
-  const std::string& type_name = enum_to_name(entity_data.get_type());
-  std::string function_name = "create_" + type_name;
-  const auto& it = entity_creation_functions.find(entity_data.get_type());
-  Debug::check_assertion(it != entity_creation_functions.end(),
-      "Missing entity creation function for type '" + type_name + "'"
-  );
-  lua_CFunction function = it->second;
-
-  lua_pushcfunction(current_l, function);
+  lua_pushcfunction(current_l, entity_creation_functions.find(entity_data.get_type())->second);
   push_map(current_l, map);
   lua_pushlightuserdata(current_l, const_cast<EntityData*>(&entity_data));
-  return call_function(2, 1, function_name.c_str());
+  return call_function(2, 0, ("create_" + enum_to_name(entity_data.get_type())).c_str());
+}
+
+/**
+ * \brief Creates on the current map an entity from the specified data.
+ *
+ * This function is meant to be called from a Lua API call.
+ * Pushes onto the Lua stack the created entity.
+ * In case of failure, raises a Lua error.
+ *
+ * \param map The map where to create an entity.
+ * \param entity_data Description of the entity to create.
+ */
+void LuaContext::create_map_entity_from_data_to_lua(Map &map, const EntityData &entity_data) {
+
+  lua_pushcfunction(current_l, entity_creation_functions.find(entity_data.get_type())->second);
+  push_map(current_l, map);
+  lua_pushlightuserdata(current_l, const_cast<EntityData*>(&entity_data));
+  lua_call(current_l, 2, 1);
 }
 
 /**
@@ -1464,7 +1567,7 @@ int LuaContext::l_easy_index(lua_State* l) {
       }
 
       if (game->has_current_map()) {
-        Map& map = game->get_current_map();
+        Map& map = game->get_default_map(); //TODO : see if we can search many maps
         if (name == "map") {
           push_map(l, map);
           return 1;
@@ -1498,7 +1601,8 @@ int LuaContext::l_hero_teleport(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     lua_pushvalue(l, lua_upvalueindex(1));
-    Hero& hero = *check_hero(l, -1);
+    HeroPtr hero_ptr = check_hero(l, -1);
+    Hero& hero = *hero_ptr;
     lua_pop(l, 1);
     Game& game = hero.get_game();
     const std::string& map_id = LuaTools::check_string(l, 1);
@@ -1510,7 +1614,7 @@ int LuaContext::l_hero_teleport(lua_State* l) {
       LuaTools::arg_error(l, 2, std::string("No such map: '") + map_id + "'");
     }
 
-    game.set_current_map(map_id, destination_name, transition_style);
+    hero.get_game().teleport_hero(hero_ptr, map_id, destination_name, transition_style);
 
     return 0;
   });
@@ -1889,7 +1993,7 @@ int LuaContext::map_api_move_camera(lua_State* l) {
 
     lua_getfield(l, LUA_REGISTRYINDEX, "map.move_camera");
     if (!lua_isnil(l, -1)) {
-      Debug::check_assertion(lua_isfunction(l, -1), "map:move_camera() is not a function");
+      SOLARUS_ASSERT(lua_isfunction(l, -1), "map:move_camera() is not a function");
       lua_insert(l, 1);
       lua_context.call_function(7, 0, "move_camera");
     }
@@ -2039,7 +2143,7 @@ int LuaContext::map_api_open_doors(lua_State* l) {
     // make sure the sound is played only once even if the script calls
     // this function repeatedly while the door is still changing
     if (done) {
-      Sound::play("door_open");
+      Sound::play("door_open", get().get_main_loop().get_resource_provider());
     }
 
     return 0;
@@ -2071,7 +2175,7 @@ int LuaContext::map_api_close_doors(lua_State* l) {
     // make sure the sound is played only once even if the script calls
     // this function repeatedly while the door is still changing
     if (done) {
-      Sound::play("door_closed");
+      Sound::play("door_closed", get().get_main_loop().get_resource_provider());
     }
 
     return 0;
@@ -2156,7 +2260,7 @@ int LuaContext::map_api_get_entities(lua_State* l) {
     const EntityVector& entities =
         map.get_entities().get_entities_with_prefix_z_sorted(prefix);
 
-    push_entity_iterator(l, entities);
+    push_userdata_iterator(l, entities);
     return 1;
   });
 }
@@ -2210,7 +2314,7 @@ int LuaContext::map_api_get_entities_by_type(lua_State* l) {
     const EntityVector& entities =
         map.get_entities().get_entities_by_type_z_sorted(type);
 
-    push_entity_iterator(l, entities);
+    push_userdata_iterator(l, entities);
     return 1;
   });
 }
@@ -2234,7 +2338,7 @@ int LuaContext::map_api_get_entities_in_rectangle(lua_State* l) {
         Rectangle(x, y, width, height), entities
     );
 
-    push_entity_iterator(l, entities);
+    push_userdata_iterator(l, entities);
     return 1;
   });
 }
@@ -2276,7 +2380,7 @@ int LuaContext::map_api_get_entities_in_region(lua_State* l) {
       }
     }
 
-    push_entity_iterator(l, entities);
+    push_userdata_iterator(l, entities);
     return 1;
   });
 }
@@ -2294,7 +2398,8 @@ int LuaContext::map_api_get_hero(lua_State* l) {
     check_map_has_game(l, map);
 
     // Return the hero even if he is no longer on this map.
-    push_hero(l, *map.get_game().get_hero());
+    Hero& hero = map.get_default_hero();
+    push_hero(l, hero);
     return 1;
   });
 }
@@ -2355,7 +2460,41 @@ int LuaContext::map_api_create_entity(lua_State* l) {
     }
     const EntityData& data = EntityData::check_entity_data(l, 2, type);
 
-    get().create_map_entity_from_data(map, data);
+    get().create_map_entity_from_data_to_lua(map, data);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of map:get_cameras()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::map_api_get_cameras(lua_State *l) {
+
+  return state_boundary_handle(l, [&] {
+
+    Map& map = *check_map(l, 1);
+
+    push_userdata_iterator(l, map.get_entities().get_cameras());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of map:get_heroes()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::map_api_get_heroes(lua_State *l) {
+
+  return state_boundary_handle(l, [&] {
+
+    Map& map = *check_map(l, 1);
+
+    push_userdata_iterator(l, map.get_entities().get_heroes());
 
     return 1;
   });
@@ -2375,9 +2514,11 @@ void LuaContext::map_on_started(Map& map, const std::shared_ptr<Destination>& de
     return;
   }
 
-  push_map(current_l, map);
-  on_started(destination);
-  lua_pop(current_l, 1);
+  run_on_main([this, &map, destination](lua_State* l){
+    push_map(l, map);
+    on_started(destination);
+    lua_pop(l, 1);
+  });
 }
 
 /**
@@ -2468,39 +2609,15 @@ bool LuaContext::map_on_input(Map& map, const InputEvent& event) {
  * \param command The command pressed.
  * \return \c true if the event was handled and should stop being propagated.
  */
-bool LuaContext::map_on_command_pressed(Map& map, GameCommand command) {
+bool LuaContext::map_on_control(Map& map, const ControlEvent& event) {
 
   bool handled = false;
   push_map(current_l, map);
-  if (userdata_has_field(map, "on_command_pressed")) {
-    handled = on_command_pressed(command);
+  if (userdata_has_field(map, event.event_name())) {
+    handled = on_command(event);
   }
   if (!handled) {
-    handled = menus_on_command_pressed(-1, command);
-  }
-  lua_pop(current_l, 1);
-  return handled;
-}
-
-/**
- * \brief Calls the on_command_released() method of a Lua map.
- *
- * Also notifies the menus of the game if the game itself does not handle the
- * event.
- *
- * \param map A map.
- * \param command The command released.
- * \return \c true if the event was handled and should stop being propagated.
- */
-bool LuaContext::map_on_command_released(Map& map, GameCommand command) {
-
-  bool handled = false;
-  push_map(current_l, map);
-  if (userdata_has_field(map, "on_command_released")) {
-    handled = on_command_released(command);
-  }
-  if (!handled) {
-    handled = menus_on_command_released(-1, command);
+    handled = menus_on_command(-1, event);
   }
   lua_pop(current_l, 1);
   return handled;

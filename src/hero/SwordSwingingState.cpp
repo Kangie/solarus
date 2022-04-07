@@ -16,7 +16,8 @@
  */
 #include "solarus/core/Equipment.h"
 #include "solarus/core/Game.h"
-#include "solarus/core/GameCommands.h"
+#include "solarus/core/Controls.h"
+#include "solarus/entities/Destructible.h"
 #include "solarus/entities/Enemy.h"
 #include "solarus/hero/FreeState.h"
 #include "solarus/hero/HeroSprites.h"
@@ -81,7 +82,7 @@ void Hero::SwordSwingingState::update() {
     if (hero.get_movement() == nullptr) {
 
       // if the player is still pressing the sword key, start loading the sword
-      if (get_commands().is_command_pressed(GameCommand::ATTACK)
+      if (get_commands().is_command_pressed(CommandId::ATTACK)
           && !attacked) {
         hero.set_state(std::make_shared<SwordLoadingState>(hero, 1000));
       }
@@ -150,37 +151,47 @@ bool Hero::SwordSwingingState::can_sword_hit_crystal() const {
  * \copydoc Entity::State::is_cutting_with_sword
  */
 bool Hero::SwordSwingingState::is_cutting_with_sword(
-    Entity& entity) {
+    Destructible& destructible) {
 
   Hero& hero = get_entity();
   if (hero.get_movement() != nullptr) {
     return false;
   }
 
-  // check the distance to the detector
-  int distance = entity.is_obstacle_for(hero) ? 14 : 4;
-  Point tested_point = hero.get_facing_point();
+  switch (destructible.get_cut_method()) {
+  case Destructible::CutMethod::PIXEL:
+    return true;
 
-  switch (get_sprites().get_animation_direction()) {
+  case Destructible::CutMethod::ALIGNED:
+    {
+      // check the distance to the detector
+      int distance = destructible.is_obstacle_for(hero) ? 14 : 4;
+      Point tested_point = hero.get_facing_point();
 
-    case 0: // right
-      tested_point.x += distance;
-      break;
+      switch (get_sprites().get_animation_direction()) {
 
-    case 1: // up
-      tested_point.y -= distance;
-      break;
+        case 0: // right
+          tested_point.x += distance;
+          break;
 
-    case 2: // left
-      tested_point.x -= distance;
-      break;
+        case 1: // up
+          tested_point.y -= distance;
+          break;
 
-    case 3: // down
-      tested_point.y += distance;
-      break;
+        case 2: // left
+          tested_point.x -= distance;
+          break;
+
+        case 3: // down
+          tested_point.y += distance;
+          break;
+      }
+
+      return destructible.overlaps(tested_point);
+    }
   }
 
-  return entity.overlaps(tested_point);
+  return false;
 }
 
 /**

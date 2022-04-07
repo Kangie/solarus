@@ -34,7 +34,7 @@ SpriteAnimationDirection::SpriteAnimationDirection(
   frames(frames),
   origin(origin) {
 
-  Debug::check_assertion(!frames.empty(), "Empty sprite direction");
+  SOLARUS_REQUIRE(!frames.empty(), "Empty sprite direction");
 }
 
 /**
@@ -43,7 +43,7 @@ SpriteAnimationDirection::SpriteAnimationDirection(
  */
 Size SpriteAnimationDirection::get_size() const {
 
-  Debug::check_assertion(get_nb_frames() > 0, "Invalid number of frames");
+  SOLARUS_REQUIRE(get_nb_frames() > 0, "Invalid number of frames");
   return { frames[0].get_width(), frames[0].get_height() };
 }
 

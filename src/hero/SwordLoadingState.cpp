@@ -17,7 +17,7 @@
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Equipment.h"
 #include "solarus/core/Game.h"
-#include "solarus/core/GameCommands.h"
+#include "solarus/core/Controls.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/core/System.h"
@@ -64,7 +64,7 @@ void Hero::SwordLoadingState::start(const State* previous_state) {
   }
   else {
     // Allowed after a delay.
-    sword_loaded_date = System::now() + spin_attack_delay;
+    sword_loaded_date = System::now_ms() + spin_attack_delay;
   }
 }
 
@@ -79,8 +79,10 @@ void Hero::SwordLoadingState::update() {
     return;
   }
 
-  bool attack_pressed = get_commands().is_command_pressed(GameCommand::ATTACK);
-  uint32_t now = System::now();
+
+  bool attack_pressed = get_commands().is_command_pressed(CommandId::ATTACK);
+  uint32_t now = System::now_ms();
+
 
   // detect when the sword is loaded (i.e. ready for a spin attack)
   if (attack_pressed &&
@@ -116,7 +118,7 @@ void Hero::SwordLoadingState::set_suspended(bool suspended) {
   PlayerMovementState::set_suspended(suspended);
 
   if (!suspended) {
-    sword_loaded_date += System::now() - get_when_suspended();
+    sword_loaded_date += System::now_ms() - get_when_suspended();
   }
 }
 
@@ -223,10 +225,10 @@ void Hero::SwordLoadingState::play_load_sound() {
   oss << "sword_spin_attack_load_" << get_equipment().get_ability(Ability::SWORD);
   std::string custom_sound_name = oss.str();
   if (Sound::exists(custom_sound_name)) {
-    Sound::play(custom_sound_name); // this particular sword has a custom loading sound effect
+    Sound::play(custom_sound_name, get_game().get_resource_provider()); // this particular sword has a custom loading sound effect
   }
   else {
-    Sound::play("sword_spin_attack_load");
+    Sound::play("sword_spin_attack_load", get_game().get_resource_provider());
   }
 }
 

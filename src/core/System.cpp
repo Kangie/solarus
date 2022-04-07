@@ -23,6 +23,11 @@
 #include "solarus/graphics/Color.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/graphics/Video.h"
+#include <chrono>
+#if _POSIX_C_SOURCE >= 200112L
+#  include <stdlib.h>
+#  include <string.h>
+#endif
 #include <SDL.h>
 #ifdef SOLARUS_USE_APPLE_POOL
 #  include "lowlevel/apple/AppleInterface.h"
@@ -30,8 +35,8 @@
 
 namespace Solarus {
 
-uint32_t System::initial_time = 0;
-uint32_t System::ticks = 0;
+System::Clock::time_point System::initial_time;
+uint64_t System::ticks = 0;
 
 /**
  * \brief Initializes the basic low-level system.
@@ -43,10 +48,46 @@ uint32_t System::ticks = 0;
  */
 void System::initialize(const Arguments& args) {
 
+#if _POSIX_C_SOURCE >= 200112L
+  // Back up state of environment variables about to be modified.
+  char* sdl_video_x11_wmclass = getenv("SDL_VIDEO_X11_WMCLASS");
+  if(sdl_video_x11_wmclass != NULL) {
+    sdl_video_x11_wmclass = strdup(sdl_video_x11_wmclass);
+  }
+
+  char* sdl_video_wayland_wmclass = getenv("SDL_VIDEO_WAYLAND_WMCLASS");
+  if(sdl_video_wayland_wmclass != NULL) {
+    sdl_video_wayland_wmclass = strdup(sdl_video_wayland_wmclass);
+  }
+
+  // Set AppID that SDL should report on Wayland and X11.
+  setenv("SDL_VIDEO_X11_WMCLASS", SOLARUS_APP_ID ".Runner", 1);
+  setenv("SDL_VIDEO_WAYLAND_WMCLASS", SOLARUS_APP_ID ".Runner", 1);
+#endif
+
   // initialize SDL
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
-  initial_time = get_real_time();
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+  initial_time = Clock::now();
   ticks = 0;
+
+#if _POSIX_C_SOURCE >= 200112L
+  // Restore environment variable state.
+  if(sdl_video_wayland_wmclass != NULL) {
+    setenv("SDL_VIDEO_WAYLAND_WMCLASS", sdl_video_wayland_wmclass, 1);
+    free(sdl_video_wayland_wmclass);
+    sdl_video_wayland_wmclass = NULL;
+  } else {
+    unsetenv("SDL_VIDEO_WAYLAND_WMCLASS");
+  }
+
+  if(sdl_video_x11_wmclass != NULL) {
+    setenv("SDL_VIDEO_X11_WMCLASS", sdl_video_x11_wmclass, 1);
+    free(sdl_video_x11_wmclass);
+    sdl_video_x11_wmclass = NULL;
+  } else {
+    unsetenv("SDL_VIDEO_X11_WMCLASS");
+  }
+#endif
 
   // audio
   Sound::initialize(args);
@@ -85,7 +126,7 @@ void System::quit() {
  *
  * It calls the update function of low-level systems that need it.
  */
-void System::update() {
+void System::update(uint64_t timestep) {
 
   // Use a constant timestep here to have deterministic updates.
   ticks += timestep;
@@ -107,6 +148,20 @@ std::string System::get_os() {
 }
 
 /**
+ * \brief Returns the number of simulated nanoseconds elapsed since the
+ * main loop started.
+ *
+ * Follows to the real time unless the system is too slow to play at
+ * normal speed.
+ *
+ * \return The number of simulated milliseconds elapsed since the
+ * initialization.
+ */
+uint64_t System::now_ns() {
+  return ticks;
+}
+
+/**
  * \brief Returns the number of simulated milliseconds elapsed since the
  * main loop started.
  *
@@ -116,8 +171,21 @@ std::string System::get_os() {
  * \return The number of simulated milliseconds elapsed since the
  * initialization.
  */
-uint32_t System::now() {
-  return ticks;
+uint32_t System::now_ms() {
+  return ticks / 1000000;
+}
+
+/**
+ * \brief Returns the number of real nanoseconds elapsed since the
+ * initialization of the Solarus library.
+ *
+ * This function is not deterministic, so use it at your own risks.
+ *
+ * \return The number of nanoseconds elapsed since the initialization.
+ */
+uint64_t System::get_real_time_ns() {
+  auto time = Clock::now();
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(time - initial_time).count();
 }
 
 /**
@@ -128,8 +196,8 @@ uint32_t System::now() {
  *
  * \return The number of milliseconds elapsed since the initialization.
  */
-uint32_t System::get_real_time() {
-  return SDL_GetTicks() - initial_time;
+uint32_t System::get_real_time_ms() {
+  return get_real_time_ns() / 1000000;
 }
 
 /**

@@ -87,7 +87,7 @@ Boomerang::Boomerang(
   movement->set_max_distance(max_distance);
   set_movement(movement);
 
-  next_sound_date = System::now();
+  next_sound_date = System::now_ms();
 }
 
 /**
@@ -237,7 +237,7 @@ bool Boomerang::is_going_back() const {
  */
 void Boomerang::go_back() {
 
-  Debug::check_assertion(!is_going_back(), "The boomerang is already going back");
+  SOLARUS_REQUIRE(!is_going_back(), "The boomerang is already going back");
 
   has_to_go_back = true;
 }
@@ -253,9 +253,9 @@ void Boomerang::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   if (now >= next_sound_date) {
-    Sound::play("boomerang");
+    Sound::play("boomerang", get_game().get_resource_provider());
     next_sound_date = now + 150;
   }
 
@@ -278,7 +278,7 @@ void Boomerang::notify_obstacle_reached() {
     if (!get_map().test_collision_with_border(
         get_movement()->get_last_collision_box_on_obstacle())) {
       // play a sound unless the obstacle is the map border
-      Sound::play("sword_tapping");
+      Sound::play("sword_tapping", get_game().get_resource_provider());
     }
     go_back();
   }
@@ -311,7 +311,7 @@ void Boomerang::notify_collision_with_switch(Switch& sw, CollisionMode collision
     sw.try_activate();
     if (!is_going_back()) {
       go_back();
-      Sound::play("sword_tapping");
+      Sound::play("sword_tapping", get_game().get_resource_provider());
     }
   }
 }

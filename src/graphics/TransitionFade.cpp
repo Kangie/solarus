@@ -68,7 +68,7 @@ void TransitionFade::set_delay(uint32_t delay) {
  */
 void TransitionFade::start() {
   alpha = alpha_start;
-  next_frame_date = System::now();
+  next_frame_date = System::now_ms();
 }
 
 /**
@@ -143,7 +143,7 @@ bool TransitionFade::is_finished() const {
 void TransitionFade::notify_suspended(bool suspended) {
 
   if (!suspended) {
-    next_frame_date += System::now() - get_when_suspended();
+    next_frame_date += System::now_ms() - get_when_suspended();
   }
 }
 
@@ -158,7 +158,7 @@ void TransitionFade::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   // update the transition effect if needed
   while (now >= next_frame_date && !finished) {
@@ -187,7 +187,7 @@ void TransitionFade::draw(Surface& dst_surface, const Surface &src_surface, cons
     // A full opaque transition corresponds to a foreground with full alpha.
     Color fade_color(r, g, b, 255 - std::min(alpha_impl, (int) a));
     infos.proxy.draw(dst_surface,src_surface,infos);
-    dst_surface.fill_with_color(fade_color);
+    dst_surface.fill_with_color(fade_color, infos.dst_rectangle());
   }
 }
 

@@ -79,7 +79,7 @@ void Hero::BackToSolidGroundState::start(const State* previous_state) {
   lua_State* l = get_lua_context().get_internal_state();
 
   // Call the Lua function to get the coordinates and layer.
-  Debug::check_assertion(!target_position.is_empty(), "Missing solid ground callback");
+  SOLARUS_REQUIRE(!target_position.is_empty(), "Missing solid ground callback");
   target_position.push(l);
   bool success = LuaTools::call_function(l, 0, 3, "Solid ground callback");
   if (success &&
@@ -138,14 +138,14 @@ void Hero::BackToSolidGroundState::update() {
   Hero& hero = get_entity();
   if (hero.get_movement()->is_finished()) {
 
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
     if (end_date == 0) {
       end_date = now + end_delay;
       get_sprites().set_animation_stopped_normal();
       get_sprites().blink(2000);
 
       if (with_sound) {
-        Sound::play("message_end");  // TODO rename this sound.
+        Sound::play("message_end", get_game().get_resource_provider());  // TODO rename this sound.
       }
     }
 
@@ -154,7 +154,7 @@ void Hero::BackToSolidGroundState::update() {
       if (get_equipment().get_life() <= 0 &&
           !get_game().is_showing_game_over()) {
         get_sprites().stop_blinking();
-        get_game().start_game_over();
+        get_game().start_game_over(hero.shared_from_this_cast<Hero>());
         return;
       }
 
@@ -168,7 +168,7 @@ void Hero::BackToSolidGroundState::set_suspended(bool suspended) {
   HeroState::set_suspended(suspended);
 
   if (!suspended && end_date != 0) {
-    end_date += System::now() - get_when_suspended();
+    end_date += System::now_ms() - get_when_suspended();
   }
 }
 

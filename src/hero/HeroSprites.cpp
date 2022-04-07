@@ -567,7 +567,7 @@ void HeroSprites::blink(uint32_t duration) {
     end_blink_date = 0;
   }
   else {
-    end_blink_date = System::now() + duration;
+    end_blink_date = System::now_ms() + duration;
   }
 }
 
@@ -690,7 +690,7 @@ int HeroSprites::get_animation_direction(
  */
 void HeroSprites::set_animation_direction(int direction) {
 
-  Debug::check_assertion(direction >= 0 && direction < 4,
+  SOLARUS_REQUIRE(direction >= 0 && direction < 4,
     "Invalid direction for set_animation_direction");
 
   if (tunic_sprite != nullptr) {
@@ -803,7 +803,7 @@ void HeroSprites::update() {
   // Blinking.
   if (is_blinking()
       && end_blink_date != 0
-      && System::now() >= end_blink_date) {
+      && System::now_ms() >= end_blink_date) {
     stop_blinking();
   }
 
@@ -818,15 +818,11 @@ void HeroSprites::update() {
  * \brief Called after sprites of the hero were drawn on the camera.
  * \param camera The camera where to draw.
  */
-void HeroSprites::draw_on_map() {
+void HeroSprites::draw_on_map(Camera& camera) {
+  hero.draw_sprites(camera, clipping_rectangle);
 
-  const CameraPtr& camera = hero.get_map().get_camera();
-  if (camera == nullptr) {
-    return;
-  }
-  hero.draw_sprites(*camera, clipping_rectangle);
   if (lifted_item != nullptr) {
-    lifted_item->draw(*camera);
+    lifted_item->draw(camera);
   }
 }
 
@@ -842,7 +838,7 @@ void HeroSprites::set_suspended(bool suspended) {
   hero.set_sprites_suspended(suspended);
 
   // Timer.
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   if (suspended) {
     when_suspended = now;
   }
@@ -862,15 +858,22 @@ void HeroSprites::notify_creating() {
   hero.set_default_sprite_name("tunic");
   shadow_sprite = hero.create_sprite("entities/shadow", "shadow");
   shadow_sprite->stop_animation();
-  set_tunic_sprite_id(get_default_tunic_sprite_id());
+  if (has_default_tunic_sprite) {
+    // Only set it if Lua has not customized it already.
+    set_tunic_sprite_id(get_default_tunic_sprite_id());
+  }
   trail_sprite = hero.create_sprite("hero/trail", "trail");
   trail_sprite->stop_animation();
   create_ground(Ground::SHALLOW_WATER);
   ground_sprite->stop_animation();
-  set_sword_sprite_id(get_default_sword_sprite_id());
+  if (has_default_sword_sprite) {
+    set_sword_sprite_id(get_default_sword_sprite_id());
+  }
   sword_stars_sprite = hero.create_sprite("hero/sword_stars1", "sword_stars");
   sword_stars_sprite->stop_animation();
-  set_shield_sprite_id(get_default_shield_sprite_id());
+  if (has_default_shield_sprite) {
+    set_shield_sprite_id(get_default_shield_sprite_id());
+  }
 
   rebuild_equipment();
 }
@@ -1201,7 +1204,7 @@ void HeroSprites::set_animation_sword() {
  * \brief Plays the sound corresponding to the current sword.
  */
 void HeroSprites::play_sword_sound() {
-  Sound::play(sword_sound_id);
+  Sound::play(sword_sound_id, hero.get_game().get_resource_provider());
 }
 
 /**
@@ -1575,7 +1578,7 @@ void HeroSprites::destroy_ground() {
  * \brief Plays a sound for the ground displayed under the hero.
  */
 void HeroSprites::play_ground_sound() {
-  Sound::play(ground_sound_id);
+  Sound::play(ground_sound_id, hero.get_game().get_resource_provider());
 }
 
 /**

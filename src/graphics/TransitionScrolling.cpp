@@ -46,8 +46,9 @@ TransitionScrolling::TransitionScrolling(Transition::Direction direction):
 Rectangle TransitionScrolling::get_previous_map_dst_position(
     int scrolling_direction) {
 
-  const Surface* previous_map_surface = get_previous_surface();
-  Debug::check_assertion(previous_map_surface != nullptr, "Missing previous surface for scrolling");
+  const SurfacePtr& previous_map_surface = get_previous_surface();
+  SOLARUS_REQUIRE(previous_map_surface != nullptr,
+      "Missing previous surface for scrolling");
   const Size& camera_size = previous_map_surface->get_size();
 
   Rectangle dst_position(0, 0);
@@ -72,15 +73,12 @@ void TransitionScrolling::start() {
     return;
   }
 
-  const Game* game = get_game();
-  Debug::check_assertion(game != nullptr, "Missing game for scrolling transition");
-  const Surface* previous_map_surface = get_previous_surface();
-  Debug::check_assertion(previous_map_surface != nullptr, "Missing previous surface for scrolling");
-
-  const Map& map = get_game()->get_current_map();
+  const SurfacePtr& previous_map_surface = get_previous_surface();
+  SOLARUS_REQUIRE(previous_map_surface != nullptr,
+      "Missing previous surface for scrolling");
 
   // get the scrolling direction
-  scrolling_direction = (map.get_destination_side() + 2) % 4;
+  scrolling_direction = (get_destination_side() + 2) % 4;
 
   const int scrolling_step = 5;
 
@@ -104,7 +102,7 @@ void TransitionScrolling::start() {
   current_scrolling_position = previous_map_dst_position;
   current_scrolling_position.set_size(camera_size);
 
-  next_scroll_date = System::now();
+  next_scroll_date = System::now_ms();
 }
 
 /**
@@ -179,7 +177,7 @@ void TransitionScrolling::scroll() {
 void TransitionScrolling::notify_suspended(bool suspended) {
 
   if (!suspended) {
-    next_scroll_date += System::now() - get_when_suspended();
+    next_scroll_date += System::now_ms() - get_when_suspended();
   }
 }
 
@@ -194,7 +192,7 @@ void TransitionScrolling::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   while (now >= next_scroll_date && !is_finished()) {
     scroll();
     next_scroll_date += 10;
@@ -211,9 +209,15 @@ void TransitionScrolling::draw(Surface& dst_surface, const Surface &src_surface,
     return;
   }
 
-  Surface* previous_surface = get_previous_surface();
-  Debug::check_assertion(previous_surface != nullptr,
+  const SurfacePtr& previous_surface = get_previous_surface();
+  SOLARUS_REQUIRE(previous_surface != nullptr,
       "No previous surface defined for scrolling");
+
+  Rectangle dst = infos.dst_rectangle();
+
+  Rectangle previous_viewport = dst_surface.get_viewport();
+
+  dst_surface.set_viewport(dst);
 
   // draw the old map
   infos.proxy.draw(dst_surface,*previous_surface,
@@ -226,5 +230,7 @@ void TransitionScrolling::draw(Surface& dst_surface, const Surface &src_surface,
                    DrawInfos(infos,
                              Rectangle(Point(),src_surface.get_size()),
                              current_map_dst_position.get_xy()-current_scrolling_position.get_xy()));
+
+  dst_surface.set_viewport(previous_viewport);
 }
 }

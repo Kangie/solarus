@@ -125,7 +125,7 @@ void LuaContext::add_timer(
     }
   });
 
-  Debug::check_assertion(timers.find(timer) == timers.end(),
+  SOLARUS_REQUIRE(timers.find(timer) == timers.end(),
       "Duplicate timer in the system");
 
   timers[timer].callback_ref = callback_ref;
@@ -159,7 +159,7 @@ void LuaContext::add_timer(
         if (is_entity(current_l, context_index)) {
           EntityPtr entity = check_entity(current_l, context_index);
 
-          Debug::check_assertion(!entity->is_being_removed(), "Cannot add timer: this entity is being removed");
+          SOLARUS_REQUIRE(!entity->is_being_removed(), "Cannot add timer: this entity is being removed");
 
           initially_suspended = entity->is_suspended() || !entity->is_enabled();
         } else {  // State.
@@ -238,7 +238,7 @@ void LuaContext::update_timers() {
     if (it != timers.end()) {
       timers.erase(it);
 
-      Debug::check_assertion(timers.find(timer) == timers.end(),
+      SOLARUS_REQUIRE(timers.find(timer) == timers.end(),
           "Failed to remove timer");
     }
   }
@@ -308,7 +308,7 @@ void LuaContext::set_entity_timers_suspended_as_map(
  * \param timer The timer to execute.
  */
 void LuaContext::do_timer_callback(const TimerPtr& timer) {
-  Debug::check_assertion(timer->is_finished(), "This timer is still running");
+  SOLARUS_REQUIRE(timer->is_finished(), "This timer is still running");
 
   auto it = timers.find(timer);
   if (it != timers.end() &&
@@ -412,7 +412,7 @@ int LuaContext::timer_api_start(lua_State *l) {
 
       Game* game = lua_context.get_main_loop().get_game();
       if (game != nullptr && game->has_current_map()) {
-        push_map(l, game->get_current_map());
+        push_map(l, game->get_default_map()); //TODO verify is default map is okay....
       }
       else {
         push_main(l);
@@ -580,7 +580,7 @@ int LuaContext::timer_api_set_suspended_with_map(lua_State* l) {
         game->has_current_map() &&
         suspended_with_map) {
       // If the game is running, suspend/resume the timer like the map.
-      timer->set_suspended(game->get_current_map().is_suspended());
+      timer->set_suspended(game->is_suspended()); //TODO check if correct
     }
 
     return 0;
@@ -605,7 +605,7 @@ int LuaContext::timer_api_get_remaining_time(lua_State* l) {
       lua_pushinteger(l, 0);
     }
     else {
-      int remaining_time = (int) timer->get_expiration_date() - (int) System::now();
+      int remaining_time = (int) timer->get_expiration_date() - (int) System::now_ms();
       if (remaining_time < 0) {
         remaining_time = 0;
       }
@@ -631,7 +631,7 @@ int LuaContext::timer_api_set_remaining_time(lua_State* l) {
     if (it != lua_context.timers.end() &&
         !it->second.callback_ref.is_empty()) {
       // The timer is still active.
-      const uint32_t now = System::now();
+      const uint32_t now = System::now_ms();
       const uint32_t expiration_date = now + remaining_time;
       timer->set_expiration_date(expiration_date);
       if (now >= expiration_date) {

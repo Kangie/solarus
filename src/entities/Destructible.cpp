@@ -38,6 +38,13 @@
 
 namespace Solarus {
 
+const std::string EnumInfoTraits<Destructible::CutMethod>::pretty_name = "cut method";
+
+const EnumInfo<Destructible::CutMethod>::names_type EnumInfoTraits<Destructible::CutMethod>::names = {
+  { Destructible::CutMethod::ALIGNED, "aligned" },
+  { Destructible::CutMethod::PIXEL, "pixel" },
+};
+
 /**
  * \brief Creates a new destructible item with the specified subtype.
  * \param name Name identifying the entity on the map or an empty string.
@@ -61,6 +68,7 @@ Destructible::Destructible(
   animation_set_id(animation_set_id),
   destruction_sound_id(),
   can_be_cut(false),
+  cut_method(CutMethod::ALIGNED),
   can_explode(false),
   can_regenerate(false),
   damage_on_enemies(1),
@@ -153,6 +161,22 @@ void Destructible::set_can_be_cut(bool can_be_cut) {
 
   this->can_be_cut = can_be_cut;
   update_collision_modes();
+}
+
+/**
+ * \brief Returns how this object can be cut by the hero's sword.
+ * \return The cut method.
+ */
+Destructible::CutMethod Destructible::get_cut_method() const {
+  return cut_method;
+}
+
+/**
+ * \brief Sets how this object can be cut by the hero's sword.
+ * \param cut_method The cut method.
+ */
+void Destructible::set_cut_method(CutMethod cut_method) {
+  this->cut_method = cut_method;
 }
 
 /**
@@ -299,11 +323,11 @@ void Destructible::notify_collision_with_hero(Hero& hero, CollisionMode /* colli
       && !is_being_cut
       && !is_waiting_for_regeneration()
       && !is_regenerating
-      && get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_NONE
+      && hero.get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_NONE
       && hero.is_free()) {
 
-    if (!get_equipment().has_ability(Ability::LIFT, get_weight())) {
-      get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_LOOK);
+    if (!hero.get_equipment().has_ability(Ability::LIFT, get_weight())) {
+      hero.get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_LOOK);
     }
   }
 }
@@ -324,7 +348,7 @@ void Destructible::notify_collision(
 
     Hero& hero = static_cast<Hero&>(other_entity);
     if (other_sprite.get_animation_set_id() == hero.get_hero_sprites().get_sword_sprite_id() &&
-        hero.is_striking_with_sword(*this)) {
+        hero.is_cutting_with_sword(*this)) {
 
       play_destroy_animation();
       hero.check_position();  // To update the ground under the hero.
@@ -354,9 +378,9 @@ void Destructible::notify_collision(
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool Destructible::notify_action_command_pressed() {
+bool Destructible::notify_action_command_pressed(Hero &hero) {
 
-  CommandsEffects::ActionKeyEffect effect = get_commands_effects().get_action_key_effect();
+  CommandsEffects::ActionKeyEffect effect = hero.get_commands_effects().get_action_key_effect();
 
   if ((effect == CommandsEffects::ACTION_KEY_LIFT || effect == CommandsEffects::ACTION_KEY_LOOK)
       && get_weight() != -1
@@ -364,21 +388,21 @@ bool Destructible::notify_action_command_pressed() {
       && !is_waiting_for_regeneration()
       && !is_regenerating) {
 
-    if (get_equipment().has_ability(Ability::LIFT, get_weight())) {
+    if (hero.get_equipment().has_ability(Ability::LIFT, get_weight())) {
 
-      uint32_t explosion_date = get_can_explode() ? System::now() + 6000 : 0;
+      uint32_t explosion_date = get_can_explode() ? System::now_ms() + 6000 : 0;
       std::shared_ptr<CarriedObject> carried_object = std::make_shared<CarriedObject>(
-          get_hero(),
+          hero,
           *this,
           get_animation_set_id(),
           get_destruction_sound(),
           get_damage_on_enemies(),
           explosion_date
       );
-      get_hero().start_lifting(carried_object);
+      hero.start_lifting(carried_object);
 
       // Play the sound.
-      Sound::play("lift");
+      Sound::play("lift", get_game().get_resource_provider());
 
       // Create the pickable treasure.
       create_treasure();
@@ -393,12 +417,12 @@ bool Destructible::notify_action_command_pressed() {
       }
 
       // Notify Lua.
-      get_lua_context()->entity_on_lifting(*this, get_hero(), *carried_object);
+      get_lua_context()->entity_on_lifting(*this, hero, *carried_object);
     }
     else {
       // Cannot lift the object.
-      if (get_hero().can_grab()) {
-        get_hero().start_grabbing();
+      if (hero.can_grab()) {
+        hero.start_grabbing();
       }
       get_lua_context()->destructible_on_looked(*this);
     }
@@ -416,7 +440,7 @@ void Destructible::play_destroy_animation() {
 
   is_being_cut = true;
   if (!destruction_sound_id.empty()) {
-    Sound::play(destruction_sound_id);
+    Sound::play(destruction_sound_id, get_game().get_resource_provider());
   }
   const SpritePtr& sprite = get_sprite();
   if (sprite != nullptr) {
@@ -446,7 +470,7 @@ void Destructible::explode() {
   get_entities().add_entity(std::make_shared<Explosion>(
       "", get_layer(), get_xy(), true
   ));
-  Sound::play("explosion");
+  Sound::play("explosion", get_game().get_resource_provider());
   get_lua_context()->destructible_on_exploded(*this);
 }
 
@@ -460,7 +484,7 @@ void Destructible::set_suspended(bool suspended) {
 
   if (!suspended && regeneration_date != 0) {
     // Recompute the date.
-    regeneration_date += System::now() - get_when_suspended();
+    regeneration_date += System::now_ms() - get_when_suspended();
   }
 }
 
@@ -487,13 +511,15 @@ void Destructible::update() {
     }
     else {
       is_being_cut = false;
-      regeneration_date = System::now() + 10000;
+      regeneration_date = System::now_ms() + 10000;
     }
   }
 
   else if (is_waiting_for_regeneration()
-      && System::now() >= regeneration_date
-      && !overlaps(get_hero())) {
+      && System::now_ms() >= regeneration_date
+      && !any_hero([&](const HeroPtr& hero){
+        return hero->overlaps(*this);
+      })) {
 
     if (sprite != nullptr) {
       sprite->set_current_animation("regenerating");

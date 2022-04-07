@@ -94,9 +94,11 @@ void Chest::notify_enabled(bool enabled) {
 
   Entity::notify_enabled(enabled);
 
-  // Make sure the chest does not appear on the hero.
-  if (enabled && overlaps(get_hero())) {
-    get_hero().avoid_collision(*this, 3);
+  // Make sure the chest does not appear on the heroes
+  for(const HeroPtr& hero: get_heroes()) {
+    if (enabled && overlaps(*hero)) {
+      hero->avoid_collision(*this, 3);
+    }
   }
 }
 
@@ -169,7 +171,7 @@ void Chest::set_open(bool open) {
  * \brief Returns whether the player is able to open this chest now.
  * \return \c true if this the player can open the chest.
  */
-bool Chest::can_open() {
+bool Chest::can_open(Hero& hero) {
 
   switch (get_opening_method()) {
 
@@ -208,7 +210,7 @@ bool Chest::can_open() {
       if (required_item_name.empty()) {
         return false;
       }
-      const EquipmentItem& item = get_equipment().get_item(required_item_name);
+      const EquipmentItem& item = hero.get_equipment().get_item(required_item_name);
       return item.is_saved()
         && item.get_variant() > 0
         && (!item.has_amount() || item.get_amount() > 0);
@@ -380,7 +382,7 @@ void Chest::update() {
 
   if (is_open() && !is_suspended()) {
 
-    if (!treasure_given && treasure_date != 0 && System::now() >= treasure_date) {
+    if (!treasure_given && treasure_date != 0 && System::now_ms() >= treasure_date) {
 
       treasure_date = 0;
       treasure_given = true;
@@ -398,13 +400,14 @@ void Chest::update() {
         ) {
           // No treasure and the script does not define any behavior:
           // unfreeze the hero.
-          get_hero().start_free();
+          opening_hero->start_free();
         }
         else {
           // Give the treasure to the player.
-          get_hero().start_treasure(treasure, ScopedLuaRef());
+          opening_hero->start_treasure(treasure, ScopedLuaRef());
         }
       }
+      opening_hero.reset();
     }
   }
 
@@ -414,30 +417,31 @@ void Chest::update() {
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool Chest::notify_action_command_pressed() {
-
+bool Chest::notify_action_command_pressed(Hero &hero) {
   if (is_enabled() &&
-      get_hero().is_free() &&
-      get_commands_effects().get_action_key_effect() != CommandsEffects::ACTION_KEY_NONE
+      hero.is_free() &&
+      hero.get_commands_effects().get_action_key_effect() != CommandsEffects::ACTION_KEY_NONE
   ) {
 
-    if (can_open()) {
-      Sound::play("chest_open");
-      set_open(true);
-      treasure_date = System::now() + 300;
+    if (can_open(hero)) {
+      Sound::play("chest_open", get_game().get_resource_provider());
 
-      get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
-      get_hero().start_frozen();
+      set_open(true);
+      treasure_date = System::now_ms() + 300;
+
+      hero.get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
+      hero.start_frozen();
+      opening_hero = hero.shared_from_this_cast<Hero>();
     }
     else if (!get_cannot_open_dialog_id().empty()) {
-      Sound::play("wrong");
+      Sound::play("wrong", get_game().get_resource_provider());
       get_game().start_dialog(get_cannot_open_dialog_id(), ScopedLuaRef(), ScopedLuaRef());
     }
 
     return true;
   }
 
-  return Entity::notify_action_command_pressed();
+  return Entity::notify_action_command_pressed(hero);
 }
 
 /**
@@ -454,7 +458,7 @@ void Chest::set_suspended(bool suspended) {
 
   if (!suspended && treasure_date != 0) {
     // restore the timer
-    treasure_date = System::now() + (treasure_date - get_when_suspended());
+    treasure_date = System::now_ms() + (treasure_date - get_when_suspended());
   }
 }
 

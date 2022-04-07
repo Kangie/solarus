@@ -357,7 +357,7 @@ bool TextSurface::is_empty() const {
 
 /**
  * \brief Returns the text currently displayed.
- * \return the text currently displayed, or nullptr if there is no text
+ * \return The text currently displayed.
  */
 const std::string& TextSurface::get_text() const {
   return text;
@@ -368,7 +368,7 @@ const std::string& TextSurface::get_text() const {
  *
  * If the specified string is the same than the current text, nothing is done.
  *
- * \param text the text to display (cannot be nullptr)
+ * \param text The text to display.
  */
 void TextSurface::set_text(const std::string& text) {
 
@@ -444,9 +444,8 @@ void TextSurface::rebuild() {
     return;
   }
 
-  Debug::check_assertion(FontResource::exists(font_id),
-      std::string("No such font: '") + font_id + "'"
-  );
+  SOLARUS_REQUIRE(FontResource::exists(font_id),
+      std::string("No such font: '") + font_id + "'");
 
   if (FontResource::is_bitmap_font(font_id)) {
     rebuild_bitmap();
@@ -567,6 +566,12 @@ void TextSurface::rebuild_ttf() {
         TTF_RenderUTF8_Blended(&internal_font, text.c_str(), internal_color));
     break;
   }
+
+  SOLARUS_REQUIRE(surface != nullptr,
+    std::string("Error rendering text surface for '") + text + "'"
+    " (font: " + font_id + "): " + TTF_GetError()
+  );
+
   SDL_PixelFormat* format = Video::get_pixel_format();
   SDL_Surface_UniquePtr full = SDL_Surface_UniquePtr(SDL_CreateRGBSurface(
        0,

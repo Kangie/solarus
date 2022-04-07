@@ -106,7 +106,14 @@ void LuaContext::register_game_module() {
       { "set_command_joypad_binding", game_api_set_command_joypad_binding },
       { "capture_command_binding", game_api_capture_command_binding },
       { "simulate_command_pressed", game_api_simulate_command_pressed },
-      { "simulate_command_released", game_api_simulate_command_released }
+      { "simulate_command_released", game_api_simulate_command_released },
+      //1.7 methods
+      { "get_controls", game_api_get_controls },
+      { "create_camera", game_api_create_camera },
+      { "remove_camera", game_api_remove_camera },
+      { "get_cameras", game_api_get_cameras },
+      { "get_maps", game_api_get_maps },
+      { "get_values", game_api_get_values },
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -485,11 +492,11 @@ int LuaContext::game_api_stop_dialog(lua_State* l) {
 
     Game* game = savegame.get_game();
     if (game == nullptr) {
-      LuaTools::error(l, "Cannot stop dialog: this game is not running.");
+      LuaTools::error(l, "Cannot stop dialog: this game is not running");
     }
 
     if (!game->is_dialog_enabled()) {
-      LuaTools::error(l, "Cannot stop dialog: no dialog is active.");
+      LuaTools::error(l, "Cannot stop dialog: no dialog is active");
     }
 
     // Optional parameter: status.
@@ -538,12 +545,17 @@ int LuaContext::game_api_start_game_over(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
+    HeroPtr hero;
+    if(!lua_isnil(l, 2)){
+      hero = check_hero(l, 2);
+    }
+
     Game* game = savegame.get_game();
     if (game == nullptr) {
       LuaTools::error(l, "Cannot start game-over: this game is not running");
     }
 
-    game->start_game_over();
+    game->start_game_over(hero);
 
     return 0;
   });
@@ -559,12 +571,17 @@ int LuaContext::game_api_stop_game_over(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    Game* game = savegame.get_game();
-    if (game == nullptr) {
-      LuaTools::error(l, "Cannot stop game-over: this game is not running.");
+    HeroPtr hero;
+    if(!lua_isnil(l, 2)){
+      hero = check_hero(l, 2);
     }
 
-    game->stop_game_over();
+    Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "Cannot stop game-over: this game is not running");
+    }
+
+    game->stop_game_over(hero);
 
     return 0;
   });
@@ -585,7 +602,7 @@ int LuaContext::game_api_get_map(lua_State* l) {
       lua_pushnil(l);
     }
     else {
-      push_map(l, game->get_current_map());
+      push_map(l, game->get_default_map());
     }
     return 1;
   });
@@ -698,6 +715,40 @@ int LuaContext::game_api_set_value(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of game:get_values()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_get_values(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Savegame& game = *check_game(l, 1);
+    // ...
+    const auto& saved_values = game.get_saved_values();
+    lua_createtable(l, 0, saved_values.size());
+    // ... table
+    for (auto & pair : saved_values) {
+      switch (pair.second.type) {
+      case Savegame::SavedValue::VALUE_STRING:
+        lua_pushlstring(l, pair.second.string_data.c_str(),
+                           pair.second.string_data.size());
+        break;
+      case Savegame::SavedValue::VALUE_INTEGER:
+        lua_pushinteger(l, pair.second.int_data);
+        break;
+      case Savegame::SavedValue::VALUE_BOOLEAN:
+        lua_pushboolean(l, pair.second.int_data);
+        break;
+      }
+      // ... table value
+      lua_setfield(l, -2, pair.first.c_str());
+      // ... table
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of game:get_starting_location().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -790,7 +841,7 @@ int LuaContext::game_api_get_life(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    int life = savegame.get_equipment().get_life();
+    int life = savegame.get_default_equipment()->get_life();
     lua_pushinteger(l, life);
     return 1;
   });
@@ -807,7 +858,7 @@ int LuaContext::game_api_set_life(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     int life = LuaTools::check_int(l, 2);
 
-    savegame.get_equipment().set_life(life);
+    savegame.get_default_equipment()->set_life(life);
 
     return 0;
   });
@@ -828,7 +879,7 @@ int LuaContext::game_api_add_life(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid life value: must be positive or zero");
     }
 
-    savegame.get_equipment().add_life(life);
+    savegame.get_default_equipment()->add_life(life);
 
     return 0;
   });
@@ -849,7 +900,7 @@ int LuaContext::game_api_remove_life(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid life value: must be positive or zero");
     }
 
-    savegame.get_equipment().remove_life(life);
+    savegame.get_default_equipment()->remove_life(life);
 
     return 0;
   });
@@ -865,7 +916,7 @@ int LuaContext::game_api_get_max_life(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    int life = savegame.get_equipment().get_max_life();
+    int life = savegame.get_default_equipment()->get_max_life();
 
     lua_pushinteger(l, life);
     return 1;
@@ -887,7 +938,7 @@ int LuaContext::game_api_set_max_life(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid life value: max life must be strictly positive");
     }
 
-    savegame.get_equipment().set_max_life(life);
+    savegame.get_default_equipment()->set_max_life(life);
 
     return 0;
   });
@@ -908,8 +959,8 @@ int LuaContext::game_api_add_max_life(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid life value: must be positive or zero");
     }
 
-    Equipment& equipment = savegame.get_equipment();
-    equipment.set_max_life(equipment.get_max_life() + life);
+    const EquipmentPtr& equipment = savegame.get_default_equipment();
+    equipment->set_max_life(equipment->get_max_life() + life);
 
     return 0;
   });
@@ -925,7 +976,7 @@ int LuaContext::game_api_get_money(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    int money = savegame.get_equipment().get_money();
+    int money = savegame.get_default_equipment()->get_money();
 
     lua_pushinteger(l, money);
     return 1;
@@ -943,7 +994,7 @@ int LuaContext::game_api_set_money(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     int money = LuaTools::check_int(l, 2);
 
-    savegame.get_equipment().set_money(money);
+    savegame.get_default_equipment()->set_money(money);
 
     return 0;
   });
@@ -964,7 +1015,7 @@ int LuaContext::game_api_add_money(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid money value: must be positive or zero");
     }
 
-    savegame.get_equipment().add_money(money);
+    savegame.get_default_equipment()->add_money(money);
 
     return 0;
   });
@@ -985,7 +1036,7 @@ int LuaContext::game_api_remove_money(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid money value: must be positive or zero");
     }
 
-    savegame.get_equipment().remove_money(money);
+    savegame.get_default_equipment()->remove_money(money);
 
     return 0;
   });
@@ -1001,7 +1052,7 @@ int LuaContext::game_api_get_max_money(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    int money = savegame.get_equipment().get_max_money();
+    int money = savegame.get_default_equipment()->get_max_money();
 
     lua_pushinteger(l, money);
     return 1;
@@ -1023,7 +1074,7 @@ int LuaContext::game_api_set_max_money(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid money value: must be positive or zero");
     }
 
-    savegame.get_equipment().set_max_money(money);
+    savegame.get_default_equipment()->set_max_money(money);
 
     return 0;
   });
@@ -1039,7 +1090,7 @@ int LuaContext::game_api_get_magic(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    int magic = savegame.get_equipment().get_magic();
+    int magic = savegame.get_default_equipment()->get_magic();
 
     lua_pushinteger(l, magic);
     return 1;
@@ -1057,7 +1108,7 @@ int LuaContext::game_api_set_magic(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     int magic = LuaTools::check_int(l, 2);
 
-    savegame.get_equipment().set_magic(magic);
+    savegame.get_default_equipment()->set_magic(magic);
 
     return 0;
   });
@@ -1078,7 +1129,7 @@ int LuaContext::game_api_add_magic(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid magic points value: must be positive or zero");
     }
 
-    savegame.get_equipment().add_magic(magic);
+    savegame.get_default_equipment()->add_magic(magic);
 
     return 0;
   });
@@ -1099,7 +1150,7 @@ int LuaContext::game_api_remove_magic(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid magic points value: must be positive or zero");
     }
 
-    savegame.get_equipment().remove_magic(magic);
+    savegame.get_default_equipment()->remove_magic(magic);
 
     return 0;
   });
@@ -1115,7 +1166,7 @@ int LuaContext::game_api_get_max_magic(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    int magic = savegame.get_equipment().get_max_magic();
+    int magic = savegame.get_default_equipment()->get_max_magic();
 
     lua_pushinteger(l, magic);
     return 1;
@@ -1137,7 +1188,7 @@ int LuaContext::game_api_set_max_magic(lua_State* l) {
       LuaTools::arg_error(l, 2, "Invalid magic points value: must be positive or zero");
     }
 
-    savegame.get_equipment().set_max_magic(magic);
+    savegame.get_default_equipment()->set_max_magic(magic);
 
     return 0;
   });
@@ -1154,7 +1205,7 @@ int LuaContext::game_api_has_ability(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     Ability ability = LuaTools::check_enum<Ability>(l, 2);
 
-    bool has_ability = savegame.get_equipment().has_ability(ability);
+    bool has_ability = savegame.get_default_equipment()->has_ability(ability);
 
     lua_pushboolean(l, has_ability);
     return 1;
@@ -1172,7 +1223,7 @@ int LuaContext::game_api_get_ability(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     Ability ability = LuaTools::check_enum<Ability>(l, 2);
 
-    int ability_level = savegame.get_equipment().get_ability(ability);
+    int ability_level = savegame.get_default_equipment()->get_ability(ability);
 
     lua_pushinteger(l, ability_level);
     return 1;
@@ -1191,7 +1242,7 @@ int LuaContext::game_api_set_ability(lua_State* l) {
     Ability ability = LuaTools::check_enum<Ability>(l, 2);
     int level = LuaTools::check_int(l, 3);
 
-    savegame.get_equipment().set_ability(ability, level);
+    savegame.get_default_equipment()->set_ability(ability, level);
 
     return 0;
   });
@@ -1208,11 +1259,11 @@ int LuaContext::game_api_get_item(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     const std::string& item_name = LuaTools::check_string(l, 2);
 
-    if (!savegame.get_equipment().item_exists(item_name)) {
+    if (!savegame.get_default_equipment()->item_exists(item_name)) {
       LuaTools::error(l, std::string("No such item: '") + item_name + "'");
     }
 
-    push_item(l, savegame.get_equipment().get_item(item_name));
+    push_item(l, savegame.get_default_equipment()->get_item(item_name));
     return 1;
   });
 }
@@ -1228,16 +1279,16 @@ int LuaContext::game_api_has_item(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     const std::string& item_name = LuaTools::check_string(l, 2);
 
-    Equipment& equipment = savegame.get_equipment();
-    if (!equipment.item_exists(item_name)) {
+    const EquipmentPtr& equipment = savegame.get_default_equipment();
+    if (!equipment->item_exists(item_name)) {
       LuaTools::error(l, std::string("No such item: '") + item_name + "'");
     }
 
-    if (!equipment.get_item(item_name).is_saved()) {
+    if (!equipment->get_item(item_name).is_saved()) {
       LuaTools::error(l, std::string("Item '") + item_name + "' is not saved");
     }
 
-    lua_pushboolean(l, equipment.get_item(item_name).get_variant() > 0);
+    lua_pushboolean(l, equipment->get_item(item_name).get_variant() > 0);
     return 1;
   });
 }
@@ -1257,7 +1308,7 @@ int LuaContext::game_api_get_item_assigned(lua_State* l) {
       LuaTools::arg_error(l, 2, "The item slot should be 1 or 2");
     }
 
-    EquipmentItem* item = savegame.get_equipment().get_item_assigned(slot);
+    EquipmentItem* item = savegame.get_default_equipment()->get_item_assigned(slot);
 
     if (item == nullptr) {
       lua_pushnil(l);
@@ -1288,7 +1339,7 @@ int LuaContext::game_api_set_item_assigned(lua_State* l) {
       LuaTools::arg_error(l, 2, "The item slot should be 1 or 2");
     }
 
-    savegame.get_equipment().set_item_assigned(slot, item);
+    savegame.get_default_equipment()->set_item_assigned(slot, item);
 
     return 0;
   });
@@ -1303,70 +1354,68 @@ int LuaContext::game_api_get_command_effect(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
 
     Game* game = savegame.get_game();
-    if (game == nullptr) {
+    if (game == nullptr || std::holds_alternative<CustomId>(command)) {
       lua_pushnil(l);
     }
     else {
-
       std::string effect_name;
-      switch (command) {
+      switch (ControlEvent::command_to_id(command)) {
 
-      case GameCommand::ACTION:
+      case CommandId::ACTION:
       {
         CommandsEffects::ActionKeyEffect effect = game->get_commands_effects().get_action_key_effect();
         effect_name = enum_to_name(effect);
         break;
       }
 
-      case GameCommand::ATTACK:
+      case CommandId::ATTACK:
       {
         CommandsEffects::AttackKeyEffect effect = game->get_commands_effects().get_sword_key_effect();
         effect_name = enum_to_name(effect);
         break;
       }
 
-      case GameCommand::ITEM_1:
+      case CommandId::ITEM_1:
       {
         effect_name = game->is_suspended() ? "" : "use_item_1";
         break;
       }
 
-      case GameCommand::ITEM_2:
+      case CommandId::ITEM_2:
       {
         effect_name = game->is_suspended() ? "" : "use_item_2";
         break;
       }
 
-      case GameCommand::PAUSE:
+      case CommandId::PAUSE:
       {
         CommandsEffects::PauseKeyEffect effect = game->get_commands_effects().get_pause_key_effect();
         effect_name = enum_to_name(effect);
         break;
       }
 
-      case GameCommand::RIGHT:
+      case CommandId::RIGHT:
       {
         effect_name = game->is_suspended() ? "" : "move_right";
         break;
       }
 
-      case GameCommand::UP:
+      case CommandId::UP:
       {
         effect_name = game->is_suspended() ? "" : "move_up";
         break;
       }
 
-      case GameCommand::LEFT:
+      case CommandId::LEFT:
       {
         effect_name = game->is_suspended() ? "" : "move_left";
         break;
       }
 
-      case GameCommand::DOWN:
+      case CommandId::DOWN:
       {
         effect_name = game->is_suspended() ? "" : "move_down";
         break;
@@ -1397,10 +1446,14 @@ int LuaContext::game_api_get_command_keyboard_binding(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
 
-    GameCommands& commands = savegame.get_game()->get_commands();
+    const Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+
+    const Controls& commands = game->get_controls();
     InputEvent::KeyboardKey key = commands.get_keyboard_binding(command);
     const std::string& key_name = enum_to_name(key);
 
@@ -1423,14 +1476,18 @@ int LuaContext::game_api_set_command_keyboard_binding(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
     if (lua_gettop(l) <= 2) {
       LuaTools::type_error(l, 3, "string or nil");
     }
     const std::string& key_name = LuaTools::opt_string(l, 3, "");
 
-    GameCommands& commands = savegame.get_game()->get_commands();
+    Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+
+    Controls& commands = game->get_controls();
     InputEvent::KeyboardKey key = name_to_enum(key_name, InputEvent::KeyboardKey::NONE);
     if (!key_name.empty() && key == InputEvent::KeyboardKey::NONE) {
       LuaTools::arg_error(l, 3,
@@ -1451,17 +1508,23 @@ int LuaContext::game_api_get_command_joypad_binding(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
 
-    GameCommands& commands = savegame.get_game()->get_commands();
-    const std::string& joypad_string = commands.get_joypad_binding(command);
+    Command command = check_command(l, 2);
 
-    if (joypad_string.empty()) {
+    const Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+    //const GameCommands& commands = game->get_commands();
+    //const std::string& joypad_string = commands.get_joypad_binding(command);
+
+    Controls& commands = savegame.get_game()->get_controls();
+    auto binding = commands.get_joypad_binding(command);
+    if (!binding) {
       lua_pushnil(l);
     }
     else {
-      push_string(l, joypad_string);
+      push_string(l, binding->to_string());
     }
     return 1;
   });
@@ -1476,19 +1539,24 @@ int LuaContext::game_api_set_command_joypad_binding(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
     if (lua_gettop(l) <= 2) {
       LuaTools::type_error(l, 3, "string or nil");
     }
     const std::string& joypad_string = LuaTools::opt_string(l, 3, "");
 
-    if (!joypad_string.empty() && !GameCommands::is_joypad_string_valid(joypad_string)) {
+    if (!joypad_string.empty() && !Controls::is_joypad_string_valid(joypad_string)) {
       LuaTools::arg_error(l, 3,
           std::string("Invalid joypad string: '") + joypad_string + "'");
     }
-    GameCommands& commands = savegame.get_game()->get_commands();
-    commands.set_joypad_binding(command, joypad_string);
+
+    Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+
+    Controls& commands = savegame.get_game()->get_controls();
+    commands.set_joypad_binding(command, Controls::JoypadBinding(joypad_string));
 
     return 0;
   });
@@ -1503,13 +1571,15 @@ int LuaContext::game_api_capture_command_binding(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
     const ScopedLuaRef& callback_ref = LuaTools::opt_function(l, 3);
 
-    GameCommands& commands = savegame.get_game()->get_commands();
+    Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+    Controls& commands = game->get_controls();
     commands.customize(command, callback_ref);
-
     return 0;
   });
 }
@@ -1523,10 +1593,14 @@ int LuaContext::game_api_is_command_pressed(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
 
-    GameCommands& commands = savegame.get_game()->get_commands();
+    const Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+
+    const Controls& commands = savegame.get_game()->get_controls();
     lua_pushboolean(l, commands.is_command_pressed(command));
 
     return 1;
@@ -1543,11 +1617,13 @@ int LuaContext::game_api_get_commands_direction(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
 
-    if(!savegame.get_game()) {
+    const Game* game = savegame.get_game();
+    if (game == nullptr) {
       return 0;
     }
 
-    GameCommands& commands = savegame.get_game()->get_commands();
+    const Controls& commands = savegame.get_game()->get_controls();
+
     int wanted_direction8 = commands.get_wanted_direction8();
     if (wanted_direction8 == -1) {
       lua_pushnil(l);
@@ -1569,10 +1645,13 @@ int LuaContext::game_api_simulate_command_pressed(lua_State* l){
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
 
-    savegame.get_game()->simulate_command_pressed(command);
+    Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+    game->simulate_command_pressed(command);
 
     return 0;
   });
@@ -1587,12 +1666,122 @@ int LuaContext::game_api_simulate_command_released(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
-    GameCommand command = LuaTools::check_enum<GameCommand>(
-        l, 2, GameCommands::command_names);
+    Command command = check_command(l, 2);
 
-    savegame.get_game()->simulate_command_released(command);
+    Game* game = savegame.get_game();
+    if (game == nullptr) {
+      LuaTools::error(l, "This game is not running");
+    }
+    game->simulate_command_released(command);
 
     return 0;
+  });
+}
+
+/**
+ * \brief Implementation of game:get_controls().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_get_controls(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+
+    Controls& cmds = savegame.get_game()->get_controls();
+
+    push_controls(l, cmds);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of game:create_camera().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_create_camera(lua_State * l) {
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+
+    Game* game = savegame.get_game();
+    SOLARUS_REQUIRE(game, "Game is not started!");
+
+    std::string cam_id = LuaTools::check_string(l, 2);
+    std::string map_id = LuaTools::check_string(l, 3);
+    std::string destination_name = LuaTools::opt_string(l, 4, "");
+    Transition::Style transition_style = LuaTools::opt_enum<Transition::Style>(
+        l, 5, game->get_default_transition_style());
+
+    CameraPtr camera = game->create_camera(cam_id);
+
+    game->teleport_camera(camera, map_id, destination_name, transition_style, nullptr);
+    push_camera(l, *camera);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of game:remove_camera().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_remove_camera(lua_State * l) { //TODO
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+    CameraPtr camera = check_camera(l, 2);
+
+    Game* game = savegame.get_game();
+    SOLARUS_REQUIRE(game, "Game is not started!");
+
+    Transition::Style transition_style = LuaTools::opt_enum<Transition::Style>(
+        l, 3, game->get_default_transition_style());
+
+    game->remove_camera(camera, transition_style);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of game:remove_camera().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_get_cameras(lua_State *l) { //TODO
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+
+    Game* game = savegame.get_game();
+    SOLARUS_REQUIRE(game, "Game is not started!");
+
+    push_userdata_iterator(l, game->get_cameras());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of game:remove_camera().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_get_maps(lua_State * l) { //TODO
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+
+    Game* game = savegame.get_game();
+    SOLARUS_REQUIRE(game, "Game is not started!");
+
+    push_userdata_iterator(l, game->get_maps());
+
+    return 1;
   });
 }
 
@@ -1678,15 +1867,17 @@ void LuaContext::game_on_draw(Game& game, const SurfacePtr& dst_surface) {
  * \param game A game.
  * \param map The new active map.
  */
-void LuaContext::game_on_map_changed(Game& game, Map& map) {
+void LuaContext::game_on_map_changed(Game& game, Map& map, Camera& camera) {
 
   if (!userdata_has_field(game.get_savegame(), "on_map_changed")) {
     return;
   }
 
-  push_game(current_l, game.get_savegame());
-  on_map_changed(map);
-  lua_pop(current_l, 1);
+  run_on_main([this, &game, &map, &camera](lua_State* l){
+    push_game(l, game.get_savegame());
+    on_map_changed(map, camera);
+    lua_pop(l, 1);
+  });
 }
 
 /**
@@ -1813,14 +2004,14 @@ void LuaContext::game_on_dialog_finished(Game& game,
  * \param game A game.
  * \return true if the game:on_game_over_started() method is defined.
  */
-bool LuaContext::game_on_game_over_started(Game& game) {
+bool LuaContext::game_on_game_over_started(Game& game, const HeroPtr& hero) {
 
   if (!userdata_has_field(game.get_savegame(), "on_game_over_started")) {
     return false;
   }
 
   push_game(current_l, game.get_savegame());
-  bool exists = on_game_over_started();
+  bool exists = on_game_over_started(hero);
   lua_pop(current_l, 1);
 
   return exists;
@@ -1833,14 +2024,14 @@ bool LuaContext::game_on_game_over_started(Game& game) {
  *
  * \param game A game.
  */
-void LuaContext::game_on_game_over_finished(Game& game) {
+void LuaContext::game_on_game_over_finished(Game& game, const HeroPtr& hero) {
 
   if (!userdata_has_field(game.get_savegame(), "on_game_over_finished")) {
     return;
   }
 
   push_game(current_l, game.get_savegame());
-  on_game_over_finished();
+  on_game_over_finished(hero);
   lua_pop(current_l, 1);
 }
 
@@ -1866,49 +2057,14 @@ bool LuaContext::game_on_input(Game& game, const InputEvent& event) {
   return handled;
 }
 
-/**
- * \brief Calls the on_command_pressed() method of a Lua game if it exists.
- *
- * Also notifies the menus of the game if the game itself does not handle the
- * event.
- *
- * \param game A game.
- * \param command The command pressed.
- * \return \c true if the event was handled and should stop being propagated.
- */
-bool LuaContext::game_on_command_pressed(Game& game, GameCommand command) {
-
+bool LuaContext::game_on_control(Game& game, const ControlEvent& event) {
   bool handled = false;
   push_game(current_l, game.get_savegame());
-  if (userdata_has_field(game.get_savegame(), "on_command_pressed")) {
-    handled = on_command_pressed(command);
+  if (userdata_has_field(game.get_savegame(), event.event_name())) {
+    handled = on_command(event);
   }
   if (!handled) {
-    handled = menus_on_command_pressed(-1, command);
-  }
-  lua_pop(current_l, 1);
-  return handled;
-}
-
-/**
- * \brief Calls the on_command_released() method of a Lua game if it exists.
- *
- * Also notifies the menus of the game if the game itself does not handle the
- * event.
- *
- * \param game A game.
- * \param command The command released.
- * \return \c true if the event was handled and should stop being propagated.
- */
-bool LuaContext::game_on_command_released(Game& game, GameCommand command) {
-
-  bool handled = false;
-  push_game(current_l, game.get_savegame());
-  if (userdata_has_field(game.get_savegame(), "on_command_released")) {
-    handled = on_command_released(command);
-  }
-  if (!handled) {
-    handled = menus_on_command_released(-1, command);
+    handled = menus_on_command(-1, event);
   }
   lua_pop(current_l, 1);
   return handled;

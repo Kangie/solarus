@@ -84,7 +84,7 @@ Entity* Movement::get_entity() const {
  */
 void Movement::set_entity(Entity* entity) {
 
-  Debug::check_assertion(drawable == nullptr, "This movement is already assigned to a drawable");
+  SOLARUS_REQUIRE(drawable == nullptr, "This movement is already assigned to a drawable");
 
   this->entity = entity;
 
@@ -117,7 +117,7 @@ Drawable* Movement::get_drawable() const {
  */
 void Movement::set_drawable(Drawable* drawable) {
 
-  Debug::check_assertion(entity == nullptr, "This movement is already assigned to an entity");
+  SOLARUS_REQUIRE(entity == nullptr, "This movement is already assigned to an entity");
 
   this->drawable = drawable;
 
@@ -207,7 +207,6 @@ void Movement::set_xy(int x, int y) {
  * \param xy The new coordinates.
  */
 void Movement::set_xy(const Point& xy) {
-
   if (entity != nullptr) {
     // The object controlled is a map entity.
     entity->set_xy(xy);
@@ -222,7 +221,7 @@ void Movement::set_xy(const Point& xy) {
   this->xy = xy;
 
   notify_position_changed();
-  last_move_date = System::now();
+  last_move_date = System::now_ns();
 }
 
 /**
@@ -325,6 +324,14 @@ void Movement::notify_movement_finished() {
 }
 
 /**
+ * @brief get offset from current integer position to "should-be" subpixel position
+ * @return 2D offset in pixels of movement
+ */
+glm::vec2 Movement::get_subpixel_offset() const {
+  return {0.f,0.f};
+}
+
+/**
  * \brief Returns whether the movement is stopped.
  * \return true if the object is stopped, false otherwise
  */
@@ -384,7 +391,7 @@ void Movement::set_suspended(bool suspended) {
   if (suspended != this->suspended) {
     this->suspended = suspended;
 
-    uint32_t now = System::now();
+    uint64_t now = System::now_ns();
 
     if (suspended) {
       // the movement is being suspended
@@ -423,7 +430,7 @@ void Movement::set_ignore_suspend(bool ignore_suspend) {
  *
  * \return the date when this movement started to be suspended
  */
-uint32_t Movement::get_when_suspended() const {
+uint64_t Movement::get_when_suspended_ns() const {
   return when_suspended;
 }
 
@@ -582,7 +589,7 @@ const ScopedLuaRef& Movement::get_finished_callback() const {
  */
 void Movement::set_finished_callback(const ScopedLuaRef& finished_callback_ref) {
 
-  Debug::check_assertion(get_lua_context() != nullptr, "Undefined Lua context");
+  SOLARUS_REQUIRE(get_lua_context() != nullptr, "Undefined Lua context");
 
   this->finished_callback_ref = finished_callback_ref;
 }

@@ -40,7 +40,7 @@ namespace Solarus {
  */
 Hero::StairsState::StairsState(
     Hero& hero,
-    const std::shared_ptr<const Stairs>& stairs,
+    const std::shared_ptr<Stairs>& stairs,
     Stairs::Way way
 ):
   HeroState(hero, "stairs"),
@@ -102,7 +102,7 @@ void Hero::StairsState::start(const State* previous_state) {
     if (way == Stairs::NORMAL_WAY) {
       // Toward a higher layer: change the layer now.
       int layer = stairs->get_layer();
-      Debug::check_assertion(get_map().is_valid_layer(layer), "Invalid stairs layer");
+      SOLARUS_REQUIRE(get_map().is_valid_layer(layer), "Invalid stairs layer");
       get_entities().set_entity_layer(hero, layer + 1);
     }
   }
@@ -163,7 +163,7 @@ void Hero::StairsState::update() {
   // first time: we play the sound and initialize
   if (phase == 0) {
     stairs->play_sound(way);
-    next_phase_date = System::now() + 450;
+    next_phase_date = System::now_ms() + 450;
     phase++;
   }
 
@@ -225,7 +225,7 @@ void Hero::StairsState::update() {
     }
     else { // movement not finished yet
 
-      uint32_t now = System::now();
+      uint32_t now = System::now_ms();
       if (now >= next_phase_date) {
         phase++;
         next_phase_date += 350;
@@ -275,7 +275,7 @@ void Hero::StairsState::set_suspended(bool suspended) {
   }
 
   if (!suspended) {
-    next_phase_date += System::now() - get_when_suspended();
+    next_phase_date += System::now_ms() - get_when_suspended();
   }
 }
 

@@ -14,142 +14,42 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include <algorithm>
-#include <cstring>  // memcpy
-#include <sstream>
+#include "solarus/audio/Music.h"
+#include "solarus/audio/Sound.h"
 #include "solarus/core/Arguments.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/PerfCounter.h"
 #include "solarus/core/QuestFiles.h"
+#include "solarus/core/ResourceProvider.h"
 #include "solarus/core/String.h"
-#include "solarus/audio/Music.h"
-#include "solarus/audio/Sound.h"
-#include <cstdio>
+#include "solarus/lua/LuaContext.h"
+#include <algorithm>
+#ifdef SOLARUS_OPENAL_EXTENSIONS_RECONNECT
+#  include <alext.h>
+#endif
+#include <cstdlib>
+#include <cstring>
 
 namespace Solarus {
 
+bool Sound::audio_enabled = false;
 ALCdevice* Sound::device = nullptr;
 ALCcontext* Sound::context = nullptr;
-bool Sound::initialized = false;
-bool Sound::sounds_preloaded = false;
 float Sound::volume = 1.0;
 bool Sound::pc_play = false;
-std::list<Sound*> Sound::current_sounds;
-std::map<std::string, Sound> Sound::all_sounds;
-
-namespace {
-
-/**
- * \brief Loads an encoded sound from memory.
- *
- * This function respects the prototype specified by libvorbisfile.
- *
- * \param ptr pointer to a buffer to load
- * \param size size
- * \param nb_bytes number of bytes to load
- * \param datasource source of the data to read
- * \return number of bytes loaded
- */
-size_t cb_read(void* ptr, size_t /* size */, size_t nb_bytes, void* datasource) {
-
-  Sound::SoundFromMemory* mem = static_cast<Sound::SoundFromMemory*>(datasource);
-
-  const size_t total_size = mem->data.size();
-  if (mem->position >= total_size) {
-    if (mem->loop) {
-      mem->position = 0;
-    }
-    else {
-      return 0;
-    }
-  }
-  else if (mem->position + nb_bytes >= total_size) {
-    nb_bytes = total_size - mem->position;
-  }
-
-  std::memcpy(ptr, mem->data.data() + mem->position, nb_bytes);
-  mem->position += nb_bytes;
-
-  return nb_bytes;
-}
-
-/**
- * \brief Seeks the sound stream to the specified offset.
- *
- * This function respects the prototype specified by libvorbisfile.
- *
- * \param datasource Source of the data to read.
- * \param offset Where to seek.
- * \param whence How to seek: SEEK_SET, SEEK_CUR or SEEK_END.
- * \return 0 in case of success, -1 in case of error.
- */
-int cb_seek(void* datasource, ogg_int64_t offset, int whence) {
-
-  Sound::SoundFromMemory* mem = static_cast<Sound::SoundFromMemory*>(datasource);
-
-  switch (whence) {
-
-  case SEEK_SET:
-    mem->position = offset;
-    break;
-
-  case SEEK_CUR:
-    mem->position += offset;
-    break;
-
-  case SEEK_END:
-    mem->position = mem->data.size() - offset;
-    break;
-  }
-
-  if (mem->position >= mem->data.size()) {
-    mem->position = mem->data.size();
-  }
-
-  return 0;
-}
-
-/**
- * \brief Returns the current position in a sound stream.
- *
- * This function respects the prototype specified by libvorbisfile.
- *
- * \param datasource Source of the data to read.
- * \return The current position.
- */
-long cb_tell(void* datasource) {
-
-  Sound::SoundFromMemory* mem = static_cast<Sound::SoundFromMemory*>(datasource);
-  return mem->position;
-}
-
-}  // Anonymous namespace.
-
-ov_callbacks Sound::ogg_callbacks = {
-    cb_read,
-    cb_seek,
-    nullptr,  // close
-    cb_tell,
-};
+std::list<SoundPtr> Sound::current_sounds;
+uint32_t Sound::next_device_detection_date = 0;
+bool Sound::paused_by_system = false;
 
 /**
  * \brief Creates a new Ogg Vorbis sound.
+ * \param data The loaded sound data ready to be played.
  */
-Sound::Sound():
-  Sound(std::string("")) {
-
-}
-
-/**
- * \brief Creates a new Ogg Vorbis sound.
- * \param sound_id id of the sound: name of a .ogg file in the sounds subdirectory,
- * without the extension (.ogg is added automatically)
- */
-Sound::Sound(const std::string& sound_id):
-  id(sound_id),
-  buffer(AL_NONE) {
-
+Sound::Sound(const SoundBuffer& data):
+  data(data),
+  source(AL_NONE),
+  paused_by_script(false) {
 }
 
 /**
@@ -157,17 +57,18 @@ Sound::Sound(const std::string& sound_id):
  */
 Sound::~Sound() {
 
-  if (is_initialized() && buffer != AL_NONE) {
-
-    // stop the sources where this buffer is attached
-    for (ALuint source: sources) {
-      alSourceStop(source);
-      alSourcei(source, AL_BUFFER, 0);
-      alDeleteSources(1, &source);
-    }
-    alDeleteBuffers(1, &buffer);
-    current_sounds.remove(this);
+  if (device != nullptr && source != AL_NONE) {
+    stop_source();
   }
+}
+
+/**
+ * \brief Creates a new Ogg Vorbis sound.
+ * \param data The loaded sound data ready to be played.
+ */
+SoundPtr Sound::create(const SoundBuffer& data) {
+  Sound* sound = new Sound(data);
+  return SoundPtr(sound);
 }
 
 /**
@@ -184,8 +85,8 @@ Sound::~Sound() {
 void Sound::initialize(const Arguments& args) {
 
   // Check the -no-audio option.
-  const bool disable = args.has_argument("-no-audio");
-  if (disable) {
+  audio_enabled = !args.has_argument("-no-audio");
+  if (!audio_enabled) {
     return;
   }
 
@@ -193,29 +94,13 @@ void Sound::initialize(const Arguments& args) {
   pc_play = args.get_argument_value("-perf-sound-play") == "yes";
 
   // Initialize OpenAL.
-
-  device = alcOpenDevice(nullptr);
-  if (!device) {
-    Debug::error("Cannot open audio device");
-    return;
-  }
-
-  context = alcCreateContext(device, nullptr);
-  if (!context) {
-    Debug::error("Cannot create audio context");
-    alcCloseDevice(device);
-    return;
-  }
-  if (!alcMakeContextCurrent(context)) {
-    Debug::error("Cannot activate audio context");
-    alcDestroyContext(context);
-    alcCloseDevice(device);
+  update_device_connection();
+  if (device == nullptr) {
     return;
   }
 
   alGenBuffers(0, nullptr);  // Necessary on some systems to avoid errors with the first sound loaded.
 
-  initialized = true;
   set_volume(100);
 
   // initialize the music system
@@ -229,53 +114,121 @@ void Sound::initialize(const Arguments& args) {
  */
 void Sound::quit() {
 
-  if (is_initialized()) {
+  if (!is_initialized()) {
+    return;
+  }
 
-    // uninitialize the music subsystem
-    Music::quit();
+  // uninitialize the music subsystem
+  Music::quit();
 
-    // clear the sounds
-    all_sounds.clear();
+  // uninitialize OpenAL
+  alcMakeContextCurrent(nullptr);
+  alcDestroyContext(context);
+  context = nullptr;
+  alcCloseDevice(device);
+  device = nullptr;
+  volume = 1.0;
+  audio_enabled = false;
+}
 
-    // uninitialize OpenAL
+/**
+ * \brief Checks if the audio device is connected.
+ */
+void Sound::update_device_connection() {
 
-    alcMakeContextCurrent(nullptr);
-    alcDestroyContext(context);
-    context = nullptr;
-    alcCloseDevice(device);
-    device = nullptr;
-    volume = 1.0;
+#if SOLARUS_OPENAL_EXTENSIONS_RECONNECT
+#define SOLARUS_OPENAL_DEVICE_SPECIFIER ALC_ALL_DEVICES_SPECIFIER
+#else
+#define SOLARUS_OPENAL_DEVICE_SPECIFIER ALC_DEVICE_SPECIFIER
+#endif
 
-    initialized = false;
+  if (device != nullptr) {
+    // Check if the device is still connected.
+    ALCint is_connected = 0;
+#ifdef SOLARUS_OPENAL_EXTENSIONS_RECONNECT
+    alcGetIntegerv(device, ALC_CONNECTED, 1, &is_connected);
+#else
+    is_connected = device != nullptr;
+#endif
+    if (!is_connected) {
+      Logger::info("Lost connection to audio device");
+    } else {
+      if (System::now_ms() >= next_device_detection_date) {
+        // Check if this device is still the default one.
+        next_device_detection_date = System::now_ms() + 1000;
+
+        const ALchar* current_device_name = alcGetString(device, SOLARUS_OPENAL_DEVICE_SPECIFIER);
+        const ALchar* default_device_name = alcGetString(nullptr, SOLARUS_OPENAL_DEVICE_SPECIFIER);
+        if (current_device_name != nullptr &&
+            default_device_name != nullptr &&
+            std::strcmp(current_device_name, default_device_name)) {
+          // This device is no longer the default one.
+          Logger::info(std::string("Disconnecting from audio device '") + current_device_name +
+                       "' because the default device is now '" + default_device_name + "'");
+          is_connected = false;
+        }
+      }
+    }
+    if (!is_connected) {
+      ALboolean success = alcMakeContextCurrent(nullptr);
+      if (!success) {
+        Debug::error("Failed to unset OpenAL context");
+      }
+      alcDestroyContext(context);
+      context = nullptr;
+      alcCloseDevice(device);
+      device = nullptr;
+      next_device_detection_date = System::now_ms();
+      Music::notify_device_disconnected_all();
+    }
+  }
+
+  if (device == nullptr) {
+    if (System::now_ms() >= next_device_detection_date) {
+      // Try to connect or reconnect to an audio device.
+      device = alcOpenDevice(nullptr);
+      if (device == nullptr) {
+        Debug::error("Cannot open audio device");
+      } else {
+        context = alcCreateContext(device, nullptr);
+        if (context == nullptr) {
+          Debug::error("Cannot create audio context");
+          alcCloseDevice(device);
+          device = nullptr;
+        } else if (!alcMakeContextCurrent(context)) {
+          Debug::error("Cannot activate audio context");
+          alcDestroyContext(context);
+          context = nullptr;
+          alcCloseDevice(device);
+          device = nullptr;
+        } else {
+          const ALchar* current_device_name = alcGetString(device, SOLARUS_OPENAL_DEVICE_SPECIFIER);
+          Logger::info(std::string("Connected to audio device '") + (current_device_name ? current_device_name : "") + "'");
+          Music::notify_device_reconnected_all();
+        }
+      }
+      if (device == nullptr) {
+        // The attempt failed: try again later.
+        next_device_detection_date = System::now_ms() + 1000;
+      }
+    }
   }
 }
 
 /**
  * \brief Returns whether the audio (music and sound) system is initialized.
- * \return true if the audio (music and sound) system is initilialized
+ * \return \c true if the audio (music and sound) system is initilialized.
  */
 bool Sound::is_initialized() {
-  return initialized;
+  return audio_enabled;
 }
 
 /**
- * \brief Loads and decodes all sounds listed in the game database.
+ * \brief Returns the id of this sound.
+ * \return The sound id.
  */
-void Sound::load_all() {
-
-  if (is_initialized() && !sounds_preloaded) {
-
-    const std::map<std::string, std::string>& sound_elements =
-        CurrentQuest::get_resources(ResourceType::SOUND);
-    for (const auto& kvp: sound_elements) {
-      const std::string& sound_id = kvp.first;
-
-      all_sounds[sound_id] = Sound(sound_id);
-      all_sounds[sound_id].load();
-    }
-
-    sounds_preloaded = true;
-  }
+const std::string& Sound::get_id() const {
+  return data.get_id();
 }
 
 /**
@@ -292,18 +245,17 @@ bool Sound::exists(const std::string& sound_id) {
 
 /**
  * \brief Starts playing the specified sound.
- * \param sound_id id of the sound to play
+ * \param sound_id Id of the sound to play.
+ * \param resource_provider The resource provider.
  */
-void Sound::play(const std::string& sound_id) {
+void Sound::play(const std::string& sound_id, ResourceProvider& resource_provider) {
   if (pc_play) {
     PerfCounter::update("sound-play");
   }
 
-  if (all_sounds.find(sound_id) == all_sounds.end()) {
-    all_sounds[sound_id] = Sound(sound_id);
-  }
-
-  all_sounds[sound_id].start();
+  SoundBuffer& buffer = resource_provider.get_sound(sound_id);
+  SoundPtr sound = Sound::create(buffer);
+  sound->start();
 }
 
 /**
@@ -332,16 +284,25 @@ void Sound::set_volume(int volume) {
  */
 void Sound::update() {
 
-  // update the playing sounds
-  std::list<Sound*> sounds_to_remove;
-  for (Sound* sound: current_sounds) {
-    if (!sound->update_playing()) {
-      sounds_to_remove.push_back(sound);
-    }
+  if (!is_initialized()) {
+    return;
   }
 
-  for (Sound* sound: sounds_to_remove) {
-    current_sounds.remove(sound);
+  update_device_connection();
+
+  if (device != nullptr) {
+
+    // update the playing sounds
+    std::list<SoundPtr> sounds_to_remove;
+    for (const SoundPtr& sound: current_sounds) {
+      if (!sound->update_playing()) {
+        sounds_to_remove.push_back(sound);
+      }
+    }
+
+    for (const SoundPtr& sound: sounds_to_remove) {
+      current_sounds.remove(sound);
+    }
   }
 
   // also update the music
@@ -354,203 +315,241 @@ void Sound::update() {
  */
 bool Sound::update_playing() {
 
+  check_openal_clean_state("Sound::update_playing");
+
   // See if this sound is still playing.
-  if (sources.empty()) {
+  if (source == AL_NONE) {
     return false;
   }
 
-  ALuint source = *sources.begin();
   ALint status;
   alGetSourcei(source, AL_SOURCE_STATE, &status);
 
-  if (status != AL_PLAYING) {
-    sources.pop_front();
-    alSourcei(source, AL_BUFFER, 0);
-    alDeleteSources(1, &source);
+  if (status == AL_STOPPED) {
+    stop_source();
   }
 
-  return !sources.empty();
-}
-
-/**
- * \brief Loads and decodes the sound into memory.
- */
-void Sound::load() {
-
-  if (alGetError() != AL_NONE) {
-    Debug::error("Previous audio error not cleaned");
-  }
-
-  std::string file_name = std::string("sounds/" + id);
-  if (id.find(".") == std::string::npos) {
-    file_name += ".ogg";
-  }
-
-  // Create an OpenAL buffer with the sound decoded by the library.
-  buffer = decode_file(file_name);
-
-  // buffer is now AL_NONE if there was an error.
+  return source != AL_NONE;
 }
 
 /**
  * \brief Plays the sound.
- * \return true if the sound was loaded successfully, false otherwise
+ * \return \c true if the sound was started successfully, \c false otherwise.
  */
 bool Sound::start() {
 
-  bool success = false;
+  if (device == nullptr) {
+    // Sound might be disabled.
+    return false;
+  }
 
-  if (is_initialized()) {
+  if (!check_openal_clean_state("Sound::start")) {
+    return false;
+  }
 
-    if (buffer == AL_NONE) { // first time: load and decode the file
-      load();
-    }
+  ALuint buffer = data.get_buffer();
+  if (buffer == AL_NONE) {
+    return false;
+  }
 
-    if (buffer != AL_NONE) {
+  if (source == AL_NONE) {
+    // create a source
+    alGenSources(1, &source);
+    alSourcei(source, AL_BUFFER, buffer);
+    alSourcef(source, AL_GAIN, volume);
 
-      // create a source
-      ALuint source;
-      alGenSources(1, &source);
-      alSourcei(source, AL_BUFFER, buffer);
-      alSourcef(source, AL_GAIN, volume);
-
-      // play the sound
-      int error = alGetError();
-      if (error != AL_NO_ERROR) {
-        std::ostringstream oss;
-        oss << "Cannot attach buffer " << buffer
-            << " to the source to play sound '" << id << "': error " << error;
-        Debug::error(oss.str());
-        alDeleteSources(1, &source);
-      }
-      else {
-        sources.push_back(source);
-        current_sounds.remove(this); // to avoid duplicates
-        current_sounds.push_back(this);
-        alSourcePlay(source);
-        error = alGetError();
-        if (error != AL_NO_ERROR) {
-          std::ostringstream oss;
-          oss << "Cannot play sound '" << id << "': error " << error;
-          Debug::error(oss.str());
-        }
-        else {
-          success = true;
-        }
-      }
+    // play the sound
+    ALenum error = alGetError();
+    if (error != AL_NO_ERROR) {
+      std::ostringstream oss;
+      oss << "Cannot attach buffer " << buffer
+          << " to source " << source << " to play sound '" << get_id() << "': error " << std::hex << error;
+      Debug::error(oss.str());
+      alDeleteSources(1, &source);
+      source = AL_NONE;
+      return false;
     }
   }
-  return success;
+
+  SoundPtr shared_this = std::static_pointer_cast<Sound>(shared_from_this());
+  current_sounds.remove(shared_this);  // To avoid duplicates.
+  current_sounds.push_back(shared_this);
+  alSourcePlay(source);
+  ALenum error = alGetError();
+  if (error != AL_NO_ERROR) {
+    std::ostringstream oss;
+    oss << "Cannot play sound '" << get_id() << "': error " << std::hex << error;
+    Debug::error(oss.str());
+    return false;
+  }
+
+  return true;
 }
 
 /**
- * \brief Loads the specified sound file and decodes its content into an OpenAL buffer.
- * \param file_name name of the file to open
- * \return the buffer created, or AL_NONE if the sound could not be loaded
+ * \brief Stops playing this sound.
  */
-ALuint Sound::decode_file(const std::string& file_name) {
+void Sound::stop() {
 
-  ALuint buffer = AL_NONE;
-
-  if (!QuestFiles::data_file_exists(file_name)) {
-    Debug::error(std::string("Cannot find sound file '") + file_name + "'");
-    return AL_NONE;
+  if (device == nullptr) {
+    return;
   }
 
-  // load the sound file
-  SoundFromMemory mem;
-  mem.loop = false;
-  mem.position = 0;
-  mem.data = QuestFiles::data_file_read(file_name);
+  check_openal_clean_state("Sound::stop");
 
-  OggVorbis_File file;
-  int error = ov_open_callbacks(&mem, &file, nullptr, 0, ogg_callbacks);
+  if (source == AL_NONE) {
+    // Nothing to do.
+    return;
+  }
 
-  if (error) {
+  ALint status;
+  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  if (status == AL_PLAYING || status == AL_PAUSED) {
+    stop_source();
+  }
+}
+
+/**
+ * \brief Stops playing the sound.
+ */
+void Sound::stop_source() {
+
+  if (source == AL_NONE) {
+    return;
+  }
+
+  alSourceStop(source);
+  alSourcei(source, AL_BUFFER, 0);
+  alDeleteSources(1, &source);
+
+  int error = alGetError();
+  if (error != AL_NO_ERROR) {
     std::ostringstream oss;
-    oss << "Cannot load sound file '" << file_name
-        << "' from memory: error " << error;
+    oss << "Failed to delete AL source " << source
+        << " for sound '" << get_id() << "': error " << std::hex << error;
     Debug::error(oss.str());
   }
-  else {
 
-    // read the encoded sound properties
-    vorbis_info* info = ov_info(&file, -1);
-    ALsizei sample_rate = ALsizei(info->rate);
+  source = AL_NONE;
+}
 
-    ALenum format = AL_NONE;
-    if (info->channels == 1) {
-      format = AL_FORMAT_MONO16;
-    }
-    else if (info->channels == 2) {
-      format = AL_FORMAT_STEREO16;
-    }
+/**
+ * \brief Returns whether the sound is currently paused.
+ * \return \c true if the sound is paused.
+ */
+bool Sound::is_paused() const {
 
-    if (format == AL_NONE) {
-      Debug::error(std::string("Invalid audio format for sound file '")
-          + file_name + "'");
-    }
-    else {
-      // decode the sound with vorbisfile
-      std::vector<char> samples;
-      int bitstream;
-      long bytes_read;
-      long total_bytes_read = 0;
-      const int buffer_size = 16384;
-      char samples_buffer[buffer_size];
-      do {
-        bytes_read = ov_read(&file, samples_buffer, buffer_size, 0, 2, 1, &bitstream);
-        if (bytes_read < 0) {
-          std::ostringstream oss;
-          oss << "Error while decoding ogg chunk in sound file '"
-              << file_name << "': " << bytes_read;
-          Debug::error(oss.str());
-        }
-        else {
-          total_bytes_read += bytes_read;
-          if (format == AL_FORMAT_STEREO16) {
-            samples.insert(samples.end(), samples_buffer, samples_buffer + bytes_read);
-          }
-          else {
-            // mono sound files make no sound on some machines
-            // workaround: convert them on-the-fly into stereo sounds
-            // TODO find a better solution
-            for (int i = 0; i < bytes_read; i += 2) {
-              samples.insert(samples.end(), samples_buffer + i, samples_buffer + i + 2);
-              samples.insert(samples.end(), samples_buffer + i, samples_buffer + i + 2);
-            }
-            total_bytes_read += bytes_read;
-          }
-        }
-      }
-      while (bytes_read > 0);
-
-      // copy the samples into an OpenAL buffer
-      alGenBuffers(1, &buffer);
-      if (alGetError() != AL_NO_ERROR) {
-          Debug::error("Failed to generate audio buffer");
-      }
-      alBufferData(buffer,
-          AL_FORMAT_STEREO16,
-          reinterpret_cast<ALshort*>(samples.data()),
-          ALsizei(total_bytes_read),
-          sample_rate);
-      ALenum error = alGetError();
-      if (error != AL_NO_ERROR) {
-        std::ostringstream oss;
-        oss << "Cannot copy the sound samples of '"
-            << file_name << "' into buffer " << buffer
-            << ": error " << error;
-        Debug::error(oss.str());
-        buffer = AL_NONE;
-      }
-    }
-    ov_clear(&file);
+  if (device == nullptr || source == AL_NONE) {
+    return false;
   }
 
-  mem.data.clear();
+  ALint status;
+  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  return status == AL_PAUSED;
+}
 
-  return buffer;
+/**
+ * \brief Pauses or resumes this sound.
+ * \param paused \c true to pause the source, \c false to resume it.
+ */
+void Sound::set_paused(bool paused) {
+
+  if (device == nullptr || source == AL_NONE) {
+    return;
+  }
+
+  ALint status;
+  alGetSourcei(source, AL_SOURCE_STATE, &status);
+
+  if (paused) {
+    if (status == AL_PLAYING) {
+      alSourcePause(source);
+    }
+  }
+  else {
+    if (status == AL_PAUSED) {
+      alSourcePlay(source);
+    }
+  }
+}
+
+/**
+ * \brief Returns whether the sound is currently paused by a script.
+ * \return \c true if the sound is paused by a script.
+ */
+bool Sound::is_paused_by_script() const {
+  return paused_by_script;
+}
+
+/**
+ * \brief Pauses or resumes this sound from a script perspective.
+ *
+ * This is independent of the automatic pause/resume that can happen when
+ * the window loses focus.
+ *
+ * \param paused \c true to pause the sound, \c false to resume it.
+ */
+void Sound::set_paused_by_script(bool paused_by_script) {
+
+  this->paused_by_script = paused_by_script;
+  update_paused();
+}
+
+/**
+ * \brief Pauses all currently playing sounds.
+ */
+void Sound::pause_all() {
+
+  paused_by_system = true;
+  for (const SoundPtr& sound: current_sounds) {
+    sound->update_paused();
+  }
+}
+
+/**
+ * \brief Resumes playing all sounds previously paused.
+ */
+void Sound::resume_all() {
+
+  paused_by_system = false;
+  for (const SoundPtr& sound: current_sounds) {
+    sound->update_paused();
+  }
+}
+
+/**
+ * \brief Pauses or resumes the sound depending on the current pause state.
+ */
+void Sound::update_paused() {
+
+  set_paused(paused_by_script || paused_by_system);
+}
+
+/**
+ * \brief Prints an error message if there is a current OpenAL error.
+ * \param function_name Current function name for debugging purposes.
+ * \return \c false if there is an error.
+ */
+bool Sound::check_openal_clean_state(const std::string& function_name) {
+
+  ALenum error = alGetError();
+  if (error != AL_NONE) {
+    std::ostringstream oss;
+    oss << "Previous audio error not cleaned in " << function_name << ": " << std::hex << error;
+    Debug::error(oss.str());
+    return false;
+  }
+
+  return true;
+}
+
+
+/**
+ * \brief Returns the name identifying this type in Lua.
+ * \return The name identifying this type in Lua.
+ */
+const std::string& Sound::get_lua_type_name() const {
+  return LuaContext::sound_module_name;
 }
 
 }

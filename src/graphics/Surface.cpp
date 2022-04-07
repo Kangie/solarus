@@ -26,6 +26,8 @@
 #include "solarus/lua/LuaContext.h"
 #include "solarus/graphics/Shader.h"
 
+#include "solarus/core/Profiler.h"
+
 #include <algorithm>
 #include <iostream>
 #include <mutex>
@@ -55,15 +57,15 @@ void Surface::empty_cache() {
  * \param width The width in pixels.
  * \param height The height in pixels.
  */
-Surface::Surface(int width, int height, bool premultiplied):
+Surface::Surface(int width, int height, bool premultiplied, int margin):
   Drawable(),
   internal_surface(nullptr)
 {
 
-  Debug::check_assertion(width > 0 && height > 0,
-                         "Attempt to create a surface with an empty size");
+  SOLARUS_REQUIRE(width > 0 && height > 0,
+      "Attempt to create a surface with an empty size");
 
-  internal_surface = Video::get_renderer().create_texture(width,height);
+  internal_surface = Video::get_renderer().create_texture(width,height, margin);
   internal_surface->set_premultiplied(premultiplied);
 }
 
@@ -119,8 +121,8 @@ SurfacePtr Surface::create(int width, int height, bool premultiplied) {
  * \param size The size in pixels.
  * \return The created surface.
  */
-SurfacePtr Surface::create(const Size& size, bool premultiplied) {
-  SurfacePtr surface = std::make_shared<Surface>(size.width, size.height, premultiplied);
+SurfacePtr Surface::create(const Size& size, bool premultiplied, int margin) {
+  SurfacePtr surface = std::make_shared<Surface>(size.width, size.height, premultiplied, margin);
   return surface;
 }
 
@@ -175,7 +177,7 @@ SurfacePtr Surface::create(SDL_Surface_UniquePtr surf, bool premultiplied) {
  */
 SDL_Surface_UniquePtr Surface::create_sdl_surface_from_file(
     const std::string& file_name) {
-
+  SOL_PFUN(profiler::colors::Green);
   if (!QuestFiles::data_file_exists(file_name)) {
     return nullptr;
   }
@@ -185,8 +187,8 @@ SDL_Surface_UniquePtr Surface::create_sdl_surface_from_file(
   SDL_Surface_UniquePtr surface = SDL_Surface_UniquePtr(IMG_Load_RW(rw, 0));
   SDL_RWclose(rw);
 
-  Debug::check_assertion(surface != nullptr,
-                         std::string("Cannot load image '") + file_name + "'");
+  SOLARUS_REQUIRE(surface != nullptr,
+      std::string("Cannot load image '") + file_name + "'");
 
   // Check if the surface is too large and emit a warning
   if (surface->w > 2048 || surface->h > 2048) {
@@ -207,8 +209,8 @@ SDL_Surface_UniquePtr Surface::create_sdl_surface_from_file(
         pixel_format,
         0
   ));
-  Debug::check_assertion(converted_surface != nullptr,
-                         std::string("Failed to convert software surface: ") + SDL_GetError());
+  SOLARUS_REQUIRE(converted_surface != nullptr,
+      std::string("Failed to convert software surface: ") + SDL_GetError());
   return converted_surface;
 }
 
@@ -222,6 +224,7 @@ SDL_Surface_UniquePtr Surface::create_sdl_surface_from_memory(
     void* data,
     size_t data_len
     ) {
+  SOL_PFUN(profiler::colors::Green);
   SDL_RWops* rw = SDL_RWFromMem(data, data_len);
   SDL_Surface* surface = IMG_Load_RW(rw, true);
   return SDL_Surface_UniquePtr{surface};
@@ -236,7 +239,7 @@ SDL_Surface_UniquePtr Surface::create_sdl_surface_from_memory(
 SurfaceImplPtr Surface::get_surface_from_file(
     const std::string& file_name,
     ImageDirectory base_directory) {
-
+  SOL_PFUN(profiler::colors::Green);
   std::string prefix;
   bool language_specific = false;
 
@@ -335,6 +338,7 @@ void Surface::set_pixels(const std::string& buffer) {
  * The opacity property of the surface is preserved.
  */
 void Surface::clear() {
+  SOL_PFUN(profiler::colors::Green);
   Video::get_renderer().clear(*internal_surface);
 }
 
@@ -347,6 +351,7 @@ void Surface::clear() {
  * \param where The rectangle to clear.
  */
 void Surface::clear(const Rectangle& where) { //TODO deprecate
+  SOL_PFUN(profiler::colors::Green);
   Video::get_renderer().fill(*internal_surface,Color::transparent,where,BlendMode::NONE);
 }
 
@@ -359,6 +364,7 @@ void Surface::clear(const Rectangle& where) { //TODO deprecate
  * \param color A color.
  */
 void Surface::fill_with_color(const Color& color) {
+  SOL_PFUN(profiler::colors::Green);
   fill_with_color(color,Rectangle(get_size()));
 }
 
@@ -372,6 +378,7 @@ void Surface::fill_with_color(const Color& color) {
  * \param where The rectangle to fill.
  */
 void Surface::fill_with_color(const Color& color, const Rectangle& where) {
+  SOL_PFUN(profiler::colors::Green);
   Video::get_renderer().fill(*internal_surface,color,where);
 }
 
@@ -381,6 +388,7 @@ void Surface::fill_with_color(const Color& color, const Rectangle& where) {
  * \param infos draw infos bundle
  */
 void Surface::raw_draw_region(Surface& dst_surface, const DrawInfos& infos) const {
+  SOL_PFUN(profiler::colors::Green);
   infos.proxy.draw(dst_surface,*this,infos);
 }
 
@@ -390,6 +398,7 @@ void Surface::raw_draw_region(Surface& dst_surface, const DrawInfos& infos) cons
  * \param infos draw infos bundle
  */
 void Surface::raw_draw(Surface& dst_surface, const DrawInfos& infos) const {
+  SOL_PFUN(profiler::colors::Green);
   infos.proxy.draw(dst_surface,*this,infos);
 }
 
@@ -420,6 +429,7 @@ void Surface::apply_pixel_filter(
  * \return \c true if the pixel is transparent.
  */
 bool Surface::is_pixel_transparent(int index) const {
+  SOL_PFUN(profiler::colors::Green);
   return internal_surface->is_pixel_transparent(index);
 }
 
@@ -435,6 +445,33 @@ void Surface::bind_as_texture() const {
  */
 void Surface::bind_as_target() {
   //Video::set_render_target(request_render().get_texture());
+}
+
+void  Surface::set_view(const View& view) {
+  internal_surface->set_view(view);
+}
+
+const View&  Surface::get_view() const {
+  return internal_surface->get_view();
+}
+
+View& Surface::get_view() {
+  return internal_surface->get_view();
+}
+
+void Surface::set_viewport(const Rectangle& viewport) {
+    FRectangle vp(viewport.get_left() / (float)get_width(),
+                  viewport.get_top() / (float)get_height(),
+                  viewport.get_width() / (float)get_width(),
+                  viewport.get_height() / (float)get_height());
+    get_view().set_viewport(vp);
+    get_view().reset(Rectangle(viewport.get_size()));
+    Video::get_renderer().notify_target_changed(*internal_surface);
+}
+
+Rectangle Surface::get_viewport() const {
+    const FRectangle& vp = get_view().get_viewport();
+    return Rectangle(vp.left*get_width(), vp.top*get_height(), vp.width*get_width(), vp.height*get_height());
 }
 
 /**
