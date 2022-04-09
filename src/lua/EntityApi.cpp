@@ -480,14 +480,14 @@ void LuaContext::register_entity_module() {
     });
   }
   if (CurrentQuest::is_format_at_least({ 1, 7 })) {
-    chest_methods.insert(chest_methods.end(), {
-      { "get_opening_method", chest_api_get_opening_method},
-      { "get_opening_condition", chest_api_get_opening_condition},
-      { "is_opening_condition_consumed", chest_api_is_opening_condition_consumed},
-      { "set_opening_method", chest_api_set_opening_method},
-      { "set_opening_condition", chest_api_set_opening_condition},
-      { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed},
-      { "get_savegame_variable", door_api_get_savegame_variable},
+    door_methods.insert(door_methods.end(), {
+      { "get_opening_method", door_api_get_opening_method},
+      { "get_opening_condition", door_api_get_opening_condition},
+      { "is_opening_condition_consumed", door_api_is_opening_condition_consumed},
+      { "set_opening_method", door_api_set_opening_method},
+      { "set_opening_condition", door_api_set_opening_condition},
+      { "set_opening_condition_consumed", door_api_set_opening_condition_consumed},
+      { "get_savegame_variable", door_api_get_savegame_variable}
     });
   }
 
@@ -5191,7 +5191,12 @@ void LuaContext::push_door(lua_State* l, Door& door) {
 int LuaContext::door_api_get_savegame_variable(lua_State* l) {
   return state_boundary_handle(l, [&]{
     const Door& door = *check_door(l, 1);
-    push_string(l, door.get_savegame_variable());
+
+    if (door.is_saved()){
+      push_string(l, door.get_savegame_variable());
+    } else {
+      lua_pushnil(l);
+    }
     return 1;
   });
 }
@@ -6906,6 +6911,13 @@ int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
 
     push_string(l, savegame_variable);
     return 1;
+
+  /*
+    if (enemy.is_saved()){
+      push_string(l, enemy.get_savegame_variable());
+    } else {
+      lua_pushnil(l);
+    }*/ //Requires Enemy::is_saved to be public
   });
 }
 
