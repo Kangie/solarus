@@ -4514,7 +4514,7 @@ int LuaContext::chest_api_get_opening_condition(lua_State* l){
     Chest& chest = *check_chest(l, 1);
     const std::string& condition = chest.get_opening_condition();
 
-    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION || condition.empty()){
+    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION){
       lua_pushnil(l);
       return 1;
     }
@@ -4774,7 +4774,7 @@ int LuaContext::block_api_get_direction(lua_State* l) {
     const int direction = block.get_direction();
 
     if (direction == -1) {
-      // -1 means no maximum.
+      // -1 means no direction, can be pushed//pulled towards any direction.
       lua_pushnil(l);
     }
     else {
@@ -5330,7 +5330,7 @@ int LuaContext::door_api_get_opening_method(lua_State* l){
     const auto& it = Door::opening_method_names.find(method);
 
     if (it == Door::opening_method_names.end()){
-      Debug::die("Invalid chest opening method");
+      Debug::die("Invalid door opening method");
       return 0;
     }
 
@@ -5351,7 +5351,7 @@ int LuaContext::door_api_get_opening_condition(lua_State* l){
     Door& door = *check_door(l, 1);
     const std::string& condition = door.get_opening_condition();
 
-    if (door.get_opening_method() == Door::OpeningMethod::BY_INTERACTION || condition.empty()){
+    if (door.get_opening_method() == Door::OpeningMethod::BY_INTERACTION){
       lua_pushnil(l);
       return 1;
     }
