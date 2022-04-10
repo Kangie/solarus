@@ -6902,22 +6902,12 @@ int LuaContext::enemy_api_set_default_attack_consequences_sprite(lua_State* l) {
 int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
   return state_boundary_handle(l, [&]{
     const Enemy& enemy = *check_enemy(l, 1);
-    const std::string& savegame_variable = enemy.get_savegame_variable();
 
-    if (savegame_variable.empty()){
-      lua_pushnil(l);
-      return 1;
-    }
-
-    push_string(l, savegame_variable);
-    return 1;
-
-  /*
     if (enemy.is_saved()){
       push_string(l, enemy.get_savegame_variable());
     } else {
       lua_pushnil(l);
-    }*/ //Requires Enemy::is_saved to be public
+    }
   });
 }
 
