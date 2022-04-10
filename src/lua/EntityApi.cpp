@@ -6908,6 +6908,7 @@ int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
     } else {
       lua_pushnil(l);
     }
+    return 1;
   });
 }
 
