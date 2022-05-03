@@ -4187,6 +4187,10 @@ int LuaContext::teletransporter_api_set_destination_map(lua_State* l) {
     Teletransporter& teletransporter = *check_teletransporter(l, 1);
     const std::string& map_id = LuaTools::check_string(l, 2);
 
+    if (!CurrentQuest::resource_exists(ResourceType::MAP, map_id)) {
+      LuaTools::arg_error(l, 2, std::string("No such map: '") + map_id + "'");
+    }
+
     teletransporter.set_destination_map_id(map_id);
 
     return 0;

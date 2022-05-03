@@ -178,6 +178,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1534_unicode_filenames"
   "bugs/1547_teletransporter_on_activated_twice/map_1"
   "bugs/1550_use_bow"
+  "bugs/1551_error_teletransporter_set_destination_map"
   "bugs/1552_entire_savegame_access"
   "bugs/1562_crash_entity_on_stream"
   "bugs/1565_state_set_can_control_direction"
