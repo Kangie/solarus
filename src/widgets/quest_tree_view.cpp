@@ -800,10 +800,7 @@ void QuestTreeView::new_directory_action_triggered() {
   }
 
   try {
-    QString initial_id_value;
-
-    NewElementDialog dialog(parentWidget());
-    dialog.set_element_id(initial_id_value);
+    NewElementDialog dialog("folder", parentWidget());
     int result = dialog.exec();
     QString dir_name = dialog.get_element_id();
     QuestDatabase::FileInfo file_info = dialog.get_file_info();
@@ -852,11 +849,9 @@ void QuestTreeView::new_script_action_triggered() {
   }
 
   try {
-    QString initial_id_value;
     const QString file_type = "lua";
 
     NewElementDialog dialog(file_type, parentWidget());
-    dialog.set_element_id(initial_id_value);
     int result = dialog.exec();
     QString file_name = dialog.get_element_id();
     QuestDatabase::FileInfo file_info = dialog.get_file_info();
@@ -867,7 +862,7 @@ void QuestTreeView::new_script_action_triggered() {
 
     // Automatically add .lua extension if not present.
     if (!file_name.contains(".")) {
-      file_name = file_name + ".lua";
+      file_name = file_name + "." + file_type;
     }
     Quest::check_valid_file_name(file_name);
     Quest& quest = model->get_quest();
@@ -911,11 +906,9 @@ void QuestTreeView::new_shader_code_file_action_triggered() {
   }
 
   try {
-    QString initial_id_value;
     const QString file_type = "glsl";
 
     NewElementDialog dialog(file_type, parentWidget());
-    dialog.set_element_id(initial_id_value);
     int result = dialog.exec();
     QString file_name = dialog.get_element_id();
     QuestDatabase::FileInfo file_info = dialog.get_file_info();
@@ -926,7 +919,7 @@ void QuestTreeView::new_shader_code_file_action_triggered() {
 
     // Automatically add .glsl extension if not present.
     if (!file_name.contains(".")) {
-      file_name = file_name + ".glsl";
+      file_name = file_name + "." + file_type;
     }
     Quest::check_valid_file_name(file_name);
     Quest& quest = model->get_quest();
