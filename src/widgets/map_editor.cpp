@@ -2453,7 +2453,11 @@ void MapEditor::generate_borders_requested(const EntityIndexes& indexes) {
     return;
   }
 
-  const TilesetModel* tileset = map->get_tileset_model();
+  if (tileset_id.isEmpty()) {
+    tileset_id = map->get_tileset_id();
+  }
+  const TilesetModel* tileset = map->get_quest().get_tileset(tileset_id);
+
   if (tileset == nullptr) {
     return;
   }
