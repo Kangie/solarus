@@ -1324,7 +1324,6 @@ void MainWindow::current_editor_changed(int index) {
 
   Editor* editor = get_current_editor();
   const bool has_editor = editor != nullptr;
-  ViewSettings& view_settings = editor->get_view_settings();
 
   // Set up toolbar buttons for this editor.
   ui.action_cut->setEnabled(has_editor);
@@ -1382,6 +1381,7 @@ void MainWindow::current_editor_changed(int index) {
   show_entities_button->setEnabled(entity_type_visibility_supported);
 
   if (has_editor) {
+    ViewSettings& view_settings = editor->get_view_settings();
 
     connect(&view_settings, &ViewSettings::zoom_changed,
             this, &MainWindow::update_zoom);
