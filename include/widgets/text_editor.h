@@ -49,6 +49,7 @@ public:
   void unselect_all() override;
   void find() override;
   void reload_settings() override;
+  void run_map() override;
 
 private slots:
 
