@@ -306,7 +306,8 @@ struct CheckArg {
  * \brief \ref CheckArg<T> specialization for optional primitive types.
  *
  * If the value is of the correct type, returns it in the optional. If the
- * value is nil or none, returns an empty optional.
+ * value is nil or none, returns an empty optional. Except for nil for
+ * booleans, this is a type error, as are all the remaining cases.
  */
 template<typename T>
 struct CheckArg<std::optional<T>> {
@@ -331,8 +332,16 @@ struct CheckArg<std::optional<T>> {
     } else {
       if (LuaTypeId<T>::value == lua_type(L, index)) {
         return std::optional<T>(to_type<T>(L, index));
-      } else if (lua_isnoneornil(L, index)) {
-        return std::nullopt;
+      }
+      // This case makes the handling of bool consistent with opt_boolean.
+      if constexpr (std::is_same_v<bool, T>) {
+        if (lua_isnone(L, index)) {
+          return std::nullopt;
+        }
+      } else {
+        if (lua_isnoneornil(L, index)) {
+          return std::nullopt;
+        }
       }
       std::string name = lua_typename(L, LuaTypeId<T>::value);
       LuaTools::type_error(L, index, "optional " + name);
