@@ -27,6 +27,16 @@ namespace Solarus {
 namespace LuaBind {
 
 namespace Private {
+/* The Private namespace holds all the implementation details of LuaBind.
+ * Many of these details involve all sorts of template meta-programming
+ * tricks. From SFINAE and partial specialization to using overloading in
+ * the right place and various type_traits helpers. Be prepared to look
+ * some of them up if you are not already familiar with them.
+ *
+ * Hopefully good code design and documentation will make it easier to
+ * follow. Also, the template function wrapper is the center of the design,
+ * so that may be a good place to start.
+ */
 
 /**
  * \brief Convert a value on the Lua stack to the appropriate C/C++ type.
@@ -37,6 +47,7 @@ namespace Private {
  */
 template<typename T>
 static inline T to_type(lua_State * L, int index) {
+  // This fakes explicit/full specialization in much less code.
   if constexpr (std::is_same_v<bool, T>) {
     return lua_toboolean(L, index);
   } else if constexpr (std::is_same_v<double, T>) {
@@ -238,6 +249,7 @@ struct AsReturn {
 /**
  * \brief Get the Lua type name for a given type.
  *
+ * This is a SFINAE helper for \ref get_type_name<T>().
  * Types can declare their Lua type name directly.
  * \tparam T The type being examined.
  * \return The type's name.
@@ -251,6 +263,7 @@ static inline auto get_type_name(int)
 /**
  * \brief Get the Lua type name for a given type.
  *
+ * This is a SFINAE helper for \ref get_type_name<T>().
  * If there is not a dedicated type_name field, use the module_name.
  * \tparam T The type being examined.
  * \return The type's name.
@@ -263,7 +276,7 @@ static inline auto get_type_name(long)
 
 /**
  * \brief Get the Lua type name for a given type.
- * \tparam T The type being examined.
+ * \tparam T The type being examined, must be a properly labeled class.
  * \return The type's name.
  */
 template<typename T>
@@ -307,7 +320,7 @@ struct CheckArg {
  *
  * If the value is of the correct type, returns it in the optional. If the
  * value is nil or none, returns an empty optional. Except for nil for
- * booleans, this is a type error, as are all the remaining cases.
+ * booleans, where it is a type error, as are all the remaining cases.
  */
 template<typename T>
 struct CheckArg<std::optional<T>> {
@@ -373,20 +386,33 @@ struct CheckArg<T *> {
  */
 template<typename... Args>
 struct CheckArgs {
+  /**
+   * \brief The result of the functions in this class.
+   */
   using ret_t = std::tuple<LuaContext &, Args...>;
 
-  // "Zips" the Args with their index in the parameter pack.
+  /**
+   * \brief Get all arguments and return the result tuple (private).
+   *
+   * This creates a zip for the Args and their index in the parameter pack.
+   * \tparam Inds Must always be 0, 1, ... sizeof(Args)-1.
+   * \param context The LuaContext with the arguments.
+   */
   template<int... Inds>
   static ret_t help(LuaContext & context, std::integer_sequence<int, Inds...>) {
-    lua_State * l = context.get_internal_state();
-    return ret_t{context, CheckArg<Args>::call(l, Inds + 1)...};
+    // This mimimizes calls to get_internal_state and avoids warnings.
+    if constexpr (0 != sizeof...(Inds)) {
+      lua_State * L = context.get_internal_state();
+      return ret_t(context, CheckArg<Args>::call(L, Inds + 1)...);
+    } else {
+      return ret_t(context);
+    }
   }
 
-  // This specialisation avoids warnings on empty Args/Inds lists.
-  static ret_t help(LuaContext & context, std::integer_sequence<int>) {
-    return ret_t{context};
-  }
-
+  /**
+   * \brief Get all arguments and return the result tuple.
+   * \param context The Lua context to read from.
+   */
   static ret_t call(LuaContext & context) {
     return help(context, std::make_integer_sequence<int, sizeof...(Args)>());
   }
