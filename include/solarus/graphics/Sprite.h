@@ -53,7 +53,8 @@ class Sprite: public Drawable {
     static void quit();
 
     // creation and destruction
-    explicit Sprite(const std::string& id);
+    explicit Sprite(SpriteAnimationSet& animation_set);
+    static SpritePtr create(const std::string& id);
 
     void set_tileset(const Tileset& tileset);
 
@@ -125,7 +126,7 @@ class Sprite: public Drawable {
 
   private:
 
-    static SpriteAnimationSet& get_animation_set(const std::string& id);
+    static SpriteAnimationSet* get_animation_set(const std::string& id);
     int get_next_frame() const;
     Surface& get_intermediate_surface() const ;
     void set_frame_changed(bool frame_changed);
@@ -133,7 +134,6 @@ class Sprite: public Drawable {
 
     // animation set
     static std::map<std::string, SpriteAnimationSet*> all_animation_sets;
-    const std::string animation_set_id;  /**< id of this sprite's animation set */
     SpriteAnimationSet& animation_set;   /**< animation set of this sprite */
 
     // current state of the sprite

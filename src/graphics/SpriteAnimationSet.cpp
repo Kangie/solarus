@@ -34,15 +34,13 @@ namespace Solarus {
  * (name of a sprite definition file, without the ".dat" extension).
  */
 SpriteAnimationSet::SpriteAnimationSet(const std::string& id):
-  id(id) {
-
-  load();
-}
+  id(id) {}
 
 /**
  * \brief Attempts to load this animation set from its file.
+ * \return If the load was successful, true, otherwise false.
  */
-void SpriteAnimationSet::load() {
+bool SpriteAnimationSet::load() {
 
   SOLARUS_REQUIRE(animations.empty(),
       "Animation set already loaded");
@@ -58,6 +56,15 @@ void SpriteAnimationSet::load() {
       add_animation(kvp.first, kvp.second);
     }
   }
+  return success;
+}
+
+/**
+ * \brief Get the id of the animation set.
+ * \return Constant reference to id.
+ */
+const std::string& SpriteAnimationSet::get_id() const {
+  return id;
 }
 
 /**
