@@ -21,7 +21,14 @@
 namespace SolarusEditor {
 
 /**
- * @brief Creates a dialog for a new file or folder.
+ * @brief Creates a dialog for a new directory.
+ * @param parent parent The parent widget or nullptr.
+ */
+NewElementDialog::NewElementDialog(QWidget *parent) :
+    NewElementDialog("no extension", parent) {}
+
+/**
+ * @brief Creates a dialog for a new file.
  * @param file_type The new file type to be created.
  * @param parent parent The parent widget or nullptr.
  */

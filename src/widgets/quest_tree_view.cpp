@@ -800,7 +800,7 @@ void QuestTreeView::new_directory_action_triggered() {
   }
 
   try {
-    NewElementDialog dialog("folder", parentWidget());
+    NewElementDialog dialog(parentWidget());
     int result = dialog.exec();
     QString dir_name = dialog.get_element_id();
     QuestDatabase::FileInfo file_info = dialog.get_file_info();

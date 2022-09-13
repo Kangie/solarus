@@ -34,6 +34,7 @@ class NewElementDialog : public QDialog {
 
 public:
 
+  explicit NewElementDialog(QWidget* parent = nullptr);
   explicit NewElementDialog(QString file_type, QWidget* parent = nullptr);
 
   QString get_file_type() const;
