@@ -172,7 +172,7 @@ Called when the user releases a keyboard key while the handler is active.
   return \c true, the event won't be propagated to other objects.
   If you return \c false or nothing, the event will continue its propagation.
 
-\remark This event indicates the raw keyboard key pressed.
+\remark This event indicates the raw keyboard key released.
 If you want the corresponding higher-level game command (if any), check if
 the handler also supports an \c on_command_released event.
 
