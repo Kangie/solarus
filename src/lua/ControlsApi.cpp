@@ -212,7 +212,7 @@ int LuaContext::controls_api_set_keyboard_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Command cmd = check_command(l, 2);
 
-    InputEvent::KeyboardKey key = LuaTools::check_enum<InputEvent::KeyboardKey>(l, 3);
+    auto key = LuaTools::opt_enum<InputEvent::KeyboardKey>(l, 3, InputEvent::KeyboardKey::NONE);
 
     cmds.set_keyboard_binding(cmd, key);
 
@@ -297,7 +297,7 @@ int LuaContext::controls_api_set_joypad_axis_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Axis cmd = check_axis(l, 2);
 
-    JoyPadAxis axis = LuaTools::check_enum<JoyPadAxis>(l, 3);
+    auto axis = LuaTools::opt_enum<JoyPadAxis>(l, 3, JoyPadAxis::INVALID);
 
     cmds.set_joypad_axis_binding(cmd, axis);
 
@@ -336,8 +336,8 @@ int LuaContext::controls_api_set_keyboard_axis_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Axis cmd = check_axis(l, 2);
 
-    InputEvent::KeyboardKey mkey = LuaTools::check_enum<InputEvent::KeyboardKey>(l, 3);
-    InputEvent::KeyboardKey pkey = LuaTools::check_enum<InputEvent::KeyboardKey>(l,4);
+    auto mkey = LuaTools::opt_enum<InputEvent::KeyboardKey>(l, 3, InputEvent::KeyboardKey::NONE);
+    auto pkey = LuaTools::opt_enum<InputEvent::KeyboardKey>(l,4, InputEvent::KeyboardKey::NONE);
 
     cmds.set_keyboard_axis_binding(cmd, mkey, pkey);
 
