@@ -534,7 +534,7 @@ class LuaContext {
     void enemy_on_dying(Enemy& enemy);
     void enemy_on_dead(Enemy& enemy);
     void enemy_on_immobilized(Enemy& enemy);
-    bool enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* enemy_sprite);
+    bool entity_on_attacking_hero(Entity &enemy, Hero& hero, Sprite* enemy_sprite);
     void custom_entity_on_ground_below_changed(
         CustomEntity& custom_entity, Ground ground_below);
     void state_on_started(

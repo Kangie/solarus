@@ -1061,7 +1061,7 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
     }
     else {
       // Let the enemy script handle this if it wants.
-      const bool handled = get_lua_context()->enemy_on_attacking_hero(
+      const bool handled = get_lua_context()->entity_on_attacking_hero(
           *this, hero, this_sprite
       );
       if (!handled) {

@@ -8481,7 +8481,7 @@ void LuaContext::enemy_on_immobilized(Enemy& enemy) {
  * \param attacker_sprite Enemy's sprite that caused the collision or nullptr.
  * \return \c true if the method is defined.
  */
-bool LuaContext::enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* attacker_sprite) {
+bool LuaContext::entity_on_attacking_hero(Entity& enemy, Hero& hero, Sprite* attacker_sprite) {
 
   if (!userdata_has_field(enemy, "on_attacking_hero")) {
     return false;
@@ -8490,7 +8490,7 @@ bool LuaContext::enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* attac
   // TODO make this on main
   check_callback_thread();
 
-  push_enemy(current_l, enemy);
+  push_entity(current_l, enemy);
   bool exists = on_attacking_hero(hero, attacker_sprite);
   lua_pop(current_l, 1);
   return exists;
