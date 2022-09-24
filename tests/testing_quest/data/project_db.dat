@@ -102,6 +102,7 @@ map{ id = "bugs/1547_teletransporter_on_activated_twice/map_2", description = "#
 map{ id = "bugs/1550_use_bow", description = "#1550: Using bow crash" }
 map{ id = "bugs/1551_error_teletransporter_set_destination_map", description = "#1551: No Error Reported: teletransporter:set_destination_map(map_id)" }
 map{ id = "bugs/1552_entire_savegame_access", description = "#1552: Entire Savegame Access" }
+map{ id = "bugs/1556_boolean_parameters_treat_nil_as_true", description = "#1556: Boolean Parameters Treat Nil as True" }
 map{ id = "bugs/1562_crash_entity_on_stream", description = "#1562: Crash when throwing an entity on a stream" }
 map{ id = "bugs/1565_state_set_can_control_direction", description = "#1565: Custom state direction control without movement" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
@@ -636,6 +637,8 @@ file{ path = "maps/bugs/1551_error_teletransporter_set_destination_map.dat", aut
 file{ path = "maps/bugs/1551_error_teletransporter_set_destination_map.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
 file{ path = "maps/bugs/1552_entire_savegame_access.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1552_entire_savegame_access.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
+file{ path = "maps/bugs/1556_boolean_parameters_treat_nil_as_true.dat", author = "Cluedrew Kenfar Ink", }
+file{ path = "maps/bugs/1556_boolean_parameters_treat_nil_as_true.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
 file{ path = "maps/bugs/1562_crash_entity_on_stream.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1562_crash_entity_on_stream.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1565_state_set_can_control_direction.dat", author = "Christopho", license = "CC BY-SA 4.0" }
