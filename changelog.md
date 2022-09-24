@@ -6,6 +6,7 @@
 
 * Fix crash when teletransporting to a map without the same layer (#1419).
 * Fix crash when a moving custom entity activates a stream (#1562).
+* Fix return of invalid sprite object with bad sprite id (#1423).
 * Fix separator region detection corner cases (#1425).
 * Fix error reporting when creating entities with a non-existent model (#1494).
 * Fix custom state direction control when the movement is disallowed (#1565).
