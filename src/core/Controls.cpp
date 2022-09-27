@@ -360,11 +360,11 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
   if (std::abs(state) < 1e-5) {
     // Axis in centered position : Test both positive and negative binding for release
     Command command = get_command_from_joypad(JoypadBinding(axis, AxisDirection::PLUS));
-    if (command != Command(CommandId::NONE)) {
+    if (is_command_pressed(command)) {
       command_released(command);
     }
     command = get_command_from_joypad(JoypadBinding(axis, AxisDirection::MINUS));
-    if (command != Command(CommandId::NONE)) {
+    if (is_command_pressed(command)) {
       command_released(command);
     }
   }
@@ -375,13 +375,14 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
     Command inverse_command_pressed = get_command_from_joypad(JoypadBinding(axis, -state > 0 ? AxisDirection::PLUS : AxisDirection::MINUS));
 
     if (!customizing) {
-
       // If the command is mapped, notify the game.
       if (command != Command(CommandId::NONE)) {
         if (is_command_pressed(inverse_command_pressed)) {
           command_released(inverse_command_pressed);
         }
-        command_pressed(command);
+        if(!is_command_pressed(command)){
+          command_pressed(command);
+        }
       }
     }
     else {
