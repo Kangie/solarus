@@ -16,6 +16,7 @@
  */
 #include "solarus/core/Joypad.h"
 #include "solarus/lua/LuaContext.h"
+#include "solarus/core/InputEvent.h"
 
 namespace Solarus {
 
@@ -64,7 +65,7 @@ bool Joypad::is_button_pressed(JoyPadButton button) const {
 }
 
 double Joypad::get_axis(JoyPadAxis axis) const {
-  return computeAxisVal(SDL_GameControllerGetAxis(controller.get(),
+  return compute_axis_val(SDL_GameControllerGetAxis(controller.get(),
                                    (SDL_GameControllerAxis)axis));
 }
 
@@ -98,15 +99,13 @@ const std::string& Joypad::get_lua_type_name() const {
   return LuaContext::joypad_module_name;
 }
 
-double Joypad::computeAxisVal(int16_t axis) {
-  constexpr int16_t deadzone = 8000;
-  constexpr double factor = 1.0 / 32767.0;
-
-  if(std::abs(axis) < deadzone) {
+double Joypad::compute_axis_val(int16_t axis) {
+  if (std::abs(axis) < InputEvent::get_joypad_deadzone()) {
     return 0.0;
   }
-
-  return axis*factor;
+  else {
+    return axis > 0 ? double(axis) / 32767 : double(axis) / 32768;
+  }
 }
 
 }
