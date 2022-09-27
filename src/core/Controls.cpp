@@ -114,6 +114,14 @@ Controls::Controls(MainLoop& main_loop, Game& game):
 }
 
 Controls::~Controls() {
+}
+
+/**
+ * @brief Removes the controls from the control dispatcher, preventing inputs to be dispatched to this control object,
+ *
+ * Acts like entity:remove
+ */
+void Controls::remove() const {
   ControlsDispatcher::get().remove_commands(this);
 }
 

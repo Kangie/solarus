@@ -64,8 +64,8 @@ bool Joypad::is_button_pressed(JoyPadButton button) const {
 }
 
 double Joypad::get_axis(JoyPadAxis axis) const {
-  return SDL_GameControllerGetAxis(controller.get(),
-                                   (SDL_GameControllerAxis)axis);
+  return computeAxisVal(SDL_GameControllerGetAxis(controller.get(),
+                                   (SDL_GameControllerAxis)axis));
 }
 
 std::string Joypad::get_name() const {
