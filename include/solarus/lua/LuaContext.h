@@ -957,6 +957,7 @@ class LuaContext {
       game_api_simulate_command_pressed,
       game_api_simulate_command_released,
       game_api_get_controls,
+      game_api_set_controls,
       game_api_create_camera,
       game_api_remove_camera,
       game_api_get_cameras,

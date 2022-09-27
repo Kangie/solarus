@@ -1692,8 +1692,23 @@ int LuaContext::game_api_get_controls(lua_State* l) {
     Controls& cmds = savegame.get_game()->get_controls();
 
     push_controls(l, cmds);
-
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of game:set_controls().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_set_controls(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+    ControlsPtr cmds = check_controls(l, 2);
+
+    savegame.get_game()->set_controls(cmds);
+    return 0;
   });
 }
 
