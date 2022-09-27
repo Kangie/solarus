@@ -1412,6 +1412,7 @@ class LuaContext {
       controls_api_simulate_axis_moved,
       controls_api_set_joypad,
       controls_api_get_joypad,
+      controls_api_remove,
 
 
       // available to all userdata types

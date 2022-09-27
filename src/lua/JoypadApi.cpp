@@ -82,8 +82,7 @@ std::shared_ptr<Joypad> LuaContext::check_joypad(lua_State* current_l, int index
 int LuaContext::joypad_api_get_axis(lua_State* l) {
   return state_boundary_handle(l,[&](){
     auto joy = check_joypad(l,1);
-    JoyPadAxis axis = name_to_enum(
-          LuaTools::check_string(l,2),JoyPadAxis::INVALID);
+    JoyPadAxis axis = LuaTools::check_enum<JoyPadAxis>(l, 2);
     double val = joy->get_axis(axis);
     lua_pushnumber(l,val);
     return 1;
@@ -98,8 +97,7 @@ int LuaContext::joypad_api_get_axis(lua_State* l) {
 int LuaContext::joypad_api_is_button_pressed(lua_State* l) {
   return state_boundary_handle(l,[&](){
     auto joy = check_joypad(l,1);
-    JoyPadButton button = name_to_enum(
-          LuaTools::check_string(l,2), JoyPadButton::INVALID);
+    JoyPadButton button = LuaTools::check_enum<JoyPadButton>(l,2);
     lua_pushboolean(l,joy->is_button_pressed(button));
     return 1;
   });

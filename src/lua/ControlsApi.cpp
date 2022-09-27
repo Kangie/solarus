@@ -51,7 +51,8 @@ void LuaContext::register_controls_module() {
     { "simulate_released", controls_api_simulate_released},
     { "simulate_axis_moved", controls_api_simulate_axis_moved},
     { "set_joypad", controls_api_set_joypad},
-    { "get_joypad", controls_api_get_joypad}
+    { "get_joypad", controls_api_get_joypad},
+    { "remove", controls_api_remove}
   };
 
   // Metamethods of the commands type
@@ -443,7 +444,7 @@ int LuaContext::controls_api_simulate_axis_moved(lua_State* l) {
 }
 
 /**
- * \brief Implementation of commands:controls_api_set_joypad.
+ * \brief Implementation of commands:set_joypad.
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
  */
@@ -461,7 +462,7 @@ int LuaContext::controls_api_set_joypad(lua_State* l) {
 }
 
 /**
- * \brief Implementation of commands:controls_api_get_joypad.
+ * \brief Implementation of commands:get_joypad.
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
  */
@@ -476,6 +477,20 @@ int LuaContext::controls_api_get_joypad(lua_State* l) {
       lua_pushnil(l);
     }
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of commands:remove.
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::controls_api_remove(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Controls& cmds = *check_controls(l, 1);
+
+    cmds.remove();
+    return 0;
   });
 }
 
