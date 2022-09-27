@@ -110,6 +110,7 @@ void LuaContext::register_game_module() {
       //1.7 methods
       // FIXME only include them if the quest is >= 1.7
       { "get_controls", game_api_get_controls },
+      { "set_controls", game_api_set_controls },
       { "create_camera", game_api_create_camera },
       { "remove_camera", game_api_remove_camera },
       { "get_cameras", game_api_get_cameras },
