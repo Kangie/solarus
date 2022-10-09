@@ -64,7 +64,7 @@ struct Nil {};
  * The function should take compatable types as arguments. The wrapper will
  * read the Lua stack to get the arguments, causing an error in Lua if that
  * cannot be done. The optional types accept nil or none as a no-value
- * alternative.
+ * alternative, except for booleans where only none can be used.
  *
  * The first argument may be lua_State * or LuaContext &, in which case
  * the current context is passed. Instead the function can be a method,

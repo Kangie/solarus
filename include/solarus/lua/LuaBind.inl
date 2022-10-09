@@ -60,12 +60,12 @@ static inline T to_type(lua_State * L, int index) {
     size_t len;
     const char * str = lua_tolstring(L, index, &len);
     return std::string(str, len);
-  } else if constexpr (std::is_same_v<Nil, T>) {
+  } else {
+    static_assert(std::is_same_v<Nil, T>, "Unknown to_type template type.");
     (void)L;
     (void)index;
     return Nil();
   }
-  // If none of the options match there will be no return.
 }
 
 /**
