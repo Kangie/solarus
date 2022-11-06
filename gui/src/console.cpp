@@ -87,12 +87,14 @@ void Console::add_message(const QString& log_level, const QString& message) {
 }
 
 /**
- * @brief Adds some HTML text to the console.
+ * @brief Adds some HTML pre-formatted text to the console wrapped in a <pre/> tag.
  * @param html The content to add.
  */
 void Console::add_html(const QString& html) {
 
-  ui.log_view->appendHtml(html);
+  const QString &wrapped = QString(
+    "<pre style=\"font-family: 'DejaVu Sans Mono', monospace\">%1</pre>").arg(html);
+  ui.log_view->appendHtml(wrapped);
 }
 
 /**
@@ -222,6 +224,7 @@ int Console::execute_command(const QString& command) {
 void Console::parse_output(const QString& line) {
 
   if (line.isEmpty()) {
+    add_html("");
     return;
   }
 
@@ -302,7 +305,7 @@ bool Console::detect_command_result(
     // We show the command only when receiving its results,
     // to make sure it is displayed just before its results.
     QString command = pending_commands.take(output_command_id);
-    add_html(QString("> %1").arg(command).toHtmlEscaped());
+    add_html(QString("&gt; %1").arg(command.toHtmlEscaped()));
 
     return true;
   }
