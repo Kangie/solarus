@@ -18,6 +18,7 @@
 #include "solarus/gui/quest_runner.h"
 #include "solarus/gui/settings.h"
 #include <QDebug>
+#include <QFont>
 #include <QRegularExpression>
 
 namespace SolarusGui {
@@ -55,6 +56,13 @@ Console::Console(QWidget* parent) :
   command_enabled(true) {
 
   ui.setupUi(this);
+
+  // Font.
+  QFont font("DejaVu Sans Mono");
+  font.setPointSize(9);
+  font.setStyleHint(QFont::Monospace);
+  ui.log_view->setFont(font);
+  ui.command_field->setFont(font);
 }
 
 /**
