@@ -27,6 +27,10 @@ This release adds new features but does not introduce any incompatibility.
 
 * Fix Quest Runner not working on Windows when binaries are under Unicode paths.
 * Add error reporting to the Quest Runner process manager.
+* Use monospaced font consistently across platforms in the GUI console.
+* Wrap lines with `<pre/>` tags to preserve spaces in the GUI console.
+* Preserve empty lines from the engine in the GUI console.
+* Only remove _trailing_ '\n' characters in the GUI console.
 
 ## Solarus 1.6.5 (2021-04-06)
 
