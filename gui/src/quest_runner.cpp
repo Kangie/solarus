@@ -194,10 +194,8 @@ void QuestRunner::standard_output_data_available() {
   QStringList lines;
   while (process.canReadLine()) {
     QString line(process.readLine());
-    line = line.trimmed();  // Remove the final '\n'.
-    if (!line.isEmpty()) {
-      lines << line;
-    }
+    while (line.size() > 0 && line.at(line.size() - 1).isSpace()) line.chop(1);  // Remove trailing '\n'
+    lines << line;
   }
 
   if (!lines.isEmpty()) {
