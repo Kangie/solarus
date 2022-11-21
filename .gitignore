@@ -11,3 +11,4 @@ developer_doc/1.*
 work/unversioned/
 build/
 
+.vscode/settings.json

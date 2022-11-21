@@ -48,10 +48,9 @@ class StraightMovement: public Movement {
                        uint64_t&next_move_date,
                        double &current_speed,
                        int& move,
-                       double target_speed,
-                       double keep_factor);
-    void set_x_speed(double x_speed, double keep_factor = 0);
-    void set_y_speed(double y_speed, double keep_factor = 0);
+                       double target_speed);
+    void set_x_speed(double x_speed);
+    void set_y_speed(double y_speed);
     void set_speed(double speed);
     double get_angle() const override;
     void set_angle(double angle);

@@ -753,6 +753,16 @@ void Enemy::set_default_attack_consequences_sprite(const Sprite& sprite) {
 }
 
 /**
+ * \brief Returns the boolean variable indicating whether this enemy is killed,
+ * or an empty string if it is not saved
+ * \return the savegame variable.
+ */
+
+const std::string& Enemy::get_savegame_variable() const {
+  return savegame_variable;
+}
+
+/**
  * \brief Returns the current animation of the first sprite of the enemy.
  *
  * This function is useful when the enemy has several sprites.
@@ -1061,7 +1071,7 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
     }
     else {
       // Let the enemy script handle this if it wants.
-      const bool handled = get_lua_context()->enemy_on_attacking_hero(
+      const bool handled = get_lua_context()->entity_on_attacking_hero(
           *this, hero, this_sprite
       );
       if (!handled) {

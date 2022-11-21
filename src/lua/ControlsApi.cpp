@@ -49,7 +49,10 @@ void LuaContext::register_controls_module() {
     { "capture_bindings", controls_api_capture_bindings},
     { "simulate_pressed", controls_api_simulate_pressed},
     { "simulate_released", controls_api_simulate_released},
-    { "simulate_axis_moved", controls_api_simulate_axis_moved}
+    { "simulate_axis_moved", controls_api_simulate_axis_moved},
+    { "set_joypad", controls_api_set_joypad},
+    { "get_joypad", controls_api_get_joypad},
+    { "remove", controls_api_remove}
   };
 
   // Metamethods of the commands type
@@ -210,7 +213,7 @@ int LuaContext::controls_api_set_keyboard_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Command cmd = check_command(l, 2);
 
-    InputEvent::KeyboardKey key = LuaTools::check_enum<InputEvent::KeyboardKey>(l, 3);
+    auto key = LuaTools::opt_enum<InputEvent::KeyboardKey>(l, 3, InputEvent::KeyboardKey::NONE);
 
     cmds.set_keyboard_binding(cmd, key);
 
@@ -250,16 +253,16 @@ int LuaContext::controls_api_set_joypad_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Command cmd = check_command(l, 2);
 
-    const std::string& key_name = LuaTools::opt_string(l, 3, "");
+    auto binding = [&]()->Controls::JoypadBinding{
+      if(lua_isnil(l, 3)){
+        return Controls::JoypadBinding(JoyPadButton::INVALID);
+      } else {
+        return Controls::JoypadBinding(LuaTools::check_string(l, 3));
+      }
+    }();
 
-    Controls::JoypadBinding binding(key_name);
 
-    if(!binding.is_invalid()) {
-      cmds.set_joypad_binding(cmd, binding);
-    } else {
-      LuaTools::error(l, "invalid joypad binding : " + key_name);
-    }
-
+    cmds.set_joypad_binding(cmd, binding);
     return 0;
   });
 }
@@ -276,7 +279,7 @@ int LuaContext::controls_api_get_joypad_binding(lua_State* l) {
 
     auto binding = cmds.get_joypad_binding(command);
 
-    if (binding) {
+    if (binding and not binding->is_invalid()) {
       push_string(l, binding->to_string());
     } else {
       lua_pushnil(l);
@@ -295,7 +298,7 @@ int LuaContext::controls_api_set_joypad_axis_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Axis cmd = check_axis(l, 2);
 
-    JoyPadAxis axis = LuaTools::check_enum<JoyPadAxis>(l, 3);
+    auto axis = LuaTools::opt_enum<JoyPadAxis>(l, 3, JoyPadAxis::INVALID);
 
     cmds.set_joypad_axis_binding(cmd, axis);
 
@@ -334,8 +337,8 @@ int LuaContext::controls_api_set_keyboard_axis_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Axis cmd = check_axis(l, 2);
 
-    InputEvent::KeyboardKey mkey = LuaTools::check_enum<InputEvent::KeyboardKey>(l, 3);
-    InputEvent::KeyboardKey pkey = LuaTools::check_enum<InputEvent::KeyboardKey>(l,4);
+    auto mkey = LuaTools::opt_enum<InputEvent::KeyboardKey>(l, 3, InputEvent::KeyboardKey::NONE);
+    auto pkey = LuaTools::opt_enum<InputEvent::KeyboardKey>(l,4, InputEvent::KeyboardKey::NONE);
 
     cmds.set_keyboard_axis_binding(cmd, mkey, pkey);
 
@@ -395,10 +398,12 @@ int LuaContext::controls_api_capture_bindings(lua_State* l) {
  */
 int LuaContext::controls_api_simulate_pressed(lua_State* l) {
   return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
+    ControlsPtr cmds = check_controls(l, 1);
     Command command = check_command(l, 2);
 
-    cmds.command_pressed(command);
+    run_on_main([cmds, command](lua_State*){
+      cmds->command_pressed(command);
+    });
     return 0;
   });
 }
@@ -410,10 +415,12 @@ int LuaContext::controls_api_simulate_pressed(lua_State* l) {
  */
 int LuaContext::controls_api_simulate_released(lua_State* l) {
   return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
+    ControlsPtr cmds = check_controls(l, 1);
     Command command = check_command(l, 2);
 
-    cmds.command_released(command);
+    run_on_main([cmds, command](lua_State*){
+      cmds->command_released(command);
+    });
     return 0;
   });
 }
@@ -425,11 +432,64 @@ int LuaContext::controls_api_simulate_released(lua_State* l) {
  */
 int LuaContext::controls_api_simulate_axis_moved(lua_State* l) {
   return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
+    ControlsPtr cmds = check_controls(l, 1);
     Axis command = check_axis(l, 2);
     double state = LuaTools::check_number(l, 3);
 
-    cmds.command_axis_moved(command, state);
+    run_on_main([cmds, command, state](lua_State*){
+      cmds->command_axis_moved(command, state);
+    });
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of commands:set_joypad.
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::controls_api_set_joypad(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Controls& cmds = *check_controls(l, 1);
+    JoypadPtr joypad;
+    if(!lua_isnil(l, 2)) {
+      joypad = check_joypad(l, 2);
+    }
+
+    cmds.set_joypad(joypad);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of commands:get_joypad.
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::controls_api_get_joypad(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Controls& cmds = *check_controls(l, 1);
+    JoypadPtr joypad = cmds.get_joypad();
+
+    if(joypad) {
+      push_joypad(l, *joypad);
+    } else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of commands:remove.
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::controls_api_remove(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Controls& cmds = *check_controls(l, 1);
+
+    cmds.remove();
     return 0;
   });
 }

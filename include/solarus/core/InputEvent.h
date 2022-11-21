@@ -234,6 +234,7 @@ class InputEvent {
     static Point get_global_mouse_position();
     static bool get_global_finger_position(int finger_id, Point& finger_xy);
     static bool get_global_finger_pressure(int finger_id, float& finger_pressure);
+    static int get_joypad_deadzone();
 
     static int get_jopad_count();
     static const Joypads &get_joypads();

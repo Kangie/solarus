@@ -94,7 +94,7 @@ public:
   bool is_attached();
   void reset();
   const std::string& get_lua_type_name() const override;
-  static double computeAxisVal(int16_t axis);
+  static double compute_axis_val(int16_t axis);
 private:
   SDL_GameControllerUniquePtr controller;
   SDL_JoystickUniquePtr joystick;

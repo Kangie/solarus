@@ -39,6 +39,7 @@
 #include "solarus/entities/EntityTypeInfo.h"
 #include "solarus/entities/GroundInfo.h"
 #include "solarus/entities/Hero.h"
+#include "solarus/entities/Jumper.h"
 #include "solarus/entities/Npc.h"
 #include "solarus/entities/Pickable.h"
 #include "solarus/entities/Sensor.h"
@@ -369,6 +370,16 @@ void LuaContext::register_entity_module() {
       { "get_treasure", chest_api_get_treasure },
       { "set_treasure", chest_api_set_treasure },
   };
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    chest_methods.insert(chest_methods.end(), {
+      { "get_opening_method", chest_api_get_opening_method},
+      { "get_opening_condition", chest_api_get_opening_condition},
+      { "is_opening_condition_consumed", chest_api_is_opening_condition_consumed},
+      { "set_opening_method", chest_api_set_opening_method},
+      { "set_opening_condition", chest_api_set_opening_condition},
+      { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed},
+    });
+  }
 
   chest_methods.insert(chest_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -394,6 +405,12 @@ void LuaContext::register_entity_module() {
       { "set_max_moves", block_api_set_max_moves },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    block_methods.insert(block_methods.end(), {
+      { "get_direction", block_api_get_direction},
+    });
+  }
+
 
   block_methods.insert(block_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -411,6 +428,12 @@ void LuaContext::register_entity_module() {
       { "set_locked", switch_api_set_locked },
       { "is_walkable", switch_api_is_walkable },
   };
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    switch_methods.insert(switch_methods.end(), {
+        { "get_inactivate_when_leaving", switch_api_get_inactivate_when_leaving},
+        { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
+    });
+  }
 
   switch_methods.insert(switch_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -454,6 +477,17 @@ void LuaContext::register_entity_module() {
         { "open", door_api_open },
         { "close", door_api_close },
         { "set_open", door_api_set_open },
+    });
+  }
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    door_methods.insert(door_methods.end(), {
+      { "get_opening_method", door_api_get_opening_method},
+      { "get_opening_condition", door_api_get_opening_condition},
+      { "is_opening_condition_consumed", door_api_is_opening_condition_consumed},
+      { "set_opening_method", door_api_set_opening_method},
+      { "set_opening_condition", door_api_set_opening_condition},
+      { "set_opening_condition_consumed", door_api_set_opening_condition_consumed},
+      { "get_savegame_variable", door_api_get_savegame_variable}
     });
   }
 
@@ -638,12 +672,35 @@ void LuaContext::register_entity_module() {
         { "set_attacking_collision_mode", enemy_api_set_attacking_collision_mode },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    enemy_methods.insert(enemy_methods.end(), {
+      { "get_savegame_variable", enemy_api_get_savegame_variable},
+    });
+  }
 
   enemy_methods.insert(enemy_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
       get_entity_internal_type_name(EntityType::ENEMY),
       {},
       enemy_methods,
+      metamethods
+  );
+
+  //Jumper.
+  std::vector<luaL_Reg> jumper_methods = {};
+
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    jumper_methods.insert(jumper_methods.end(), {
+      { "get_jump_length", jumper_api_get_jump_length},
+      { "set_jump_length", jumper_api_set_jump_length},
+    });
+  }
+
+  jumper_methods.insert(jumper_methods.end(), common_methods.begin(), common_methods.end());
+  register_type(
+      get_entity_internal_type_name(EntityType::JUMPER),
+      {},
+      jumper_methods,
       metamethods
   );
 
@@ -695,7 +752,6 @@ void LuaContext::register_entity_module() {
 
   // Also register all other types of entities that have no specific methods.
   register_type(get_entity_internal_type_name(EntityType::TILE), {}, common_methods, metamethods);
-  register_type(get_entity_internal_type_name(EntityType::JUMPER), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::SENSOR), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::SEPARATOR), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::WALL), {}, common_methods, metamethods);
@@ -4428,6 +4484,124 @@ int LuaContext::chest_api_set_treasure(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of chest:get_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_get_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    Chest::OpeningMethod method = chest.get_opening_method();
+
+    const auto& it = Chest::opening_method_names.find(method);
+
+    if (it == Chest::opening_method_names.end()){
+      Debug::die("Invalid chest opening method");
+      return 0;
+    }
+
+    push_string(l, it->second);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:get_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_get_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    const std::string& condition = chest.get_opening_condition();
+
+    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION){
+      lua_pushnil(l);
+      return 1;
+    }
+
+    push_string(l, condition);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:is_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_is_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    lua_pushboolean(l, chest.is_opening_condition_consumed());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    const std::map<Chest::OpeningMethod, std::string>& names = Chest::opening_method_names;
+    Chest::OpeningMethod method = LuaTools::check_enum(l, 2, names);
+
+    chest.set_opening_method(method);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION){
+      return 0;
+    }
+
+    const std::string& condition = LuaTools::check_string(l, 2);
+    chest.set_opening_condition(condition);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    bool consumed = LuaTools::opt_boolean(l, 2, true);
+    chest.set_opening_condition_consumed(consumed);
+    
+    return 1;
+  });
+}
+
+/**
  * \brief Returns whether a value is a userdata of type block.
  * \param l A Lua context.
  * \param index An index in the stack.
@@ -4592,6 +4766,29 @@ int LuaContext::block_api_set_max_moves(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of block:get_direction().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_direction(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const int direction = block.get_direction();
+
+    if (direction == -1) {
+      // -1 means no direction, can be pushed//pulled towards any direction.
+      lua_pushnil(l);
+    }
+    else {
+      lua_pushinteger(l, direction);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of block:get_maximum_moves().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -4710,6 +4907,37 @@ int LuaContext::switch_api_set_locked(lua_State* l) {
     bool locked = LuaTools::opt_boolean(l, 2, true);
 
     sw.set_locked(locked);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of switch:is_inactivate_when_leaving().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::switch_api_get_inactivate_when_leaving(lua_State* l){
+  return state_boundary_handle(l, [&]{
+    const Switch& sw = *check_switch(l, 1);
+    lua_pushboolean(l, sw.is_inactivate_when_leaving());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of switch:set_inactivate_when_leaving().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::switch_api_set_inactivate_when_leaving(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Switch& sw = *check_switch(l, 1);
+    bool iwl = LuaTools::opt_boolean(l, 2, true);
+
+    sw.set_inactivate_when_leaving(iwl);
 
     return 0;
   });
@@ -4959,6 +5187,25 @@ void LuaContext::push_door(lua_State* l, Door& door) {
 }
 
 /**
+ * \brief Impplementation of door:get_savegame_variable()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_savegame_variable(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Door& door = *check_door(l, 1);
+
+    if (door.is_saved()){
+      push_string(l, door.get_savegame_variable());
+    } else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of door:is_open().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -5072,6 +5319,126 @@ int LuaContext::door_api_set_open(lua_State* l) {
     return 0;
   });
 }
+
+/**
+ * \brief Implementation of door:get_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    Door::OpeningMethod method = door.get_opening_method();
+
+    const auto& it = Door::opening_method_names.find(method);
+
+    if (it == Door::opening_method_names.end()){
+      Debug::die("Invalid door opening method");
+      return 0;
+    }
+
+    push_string(l, it->second);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    const std::string& condition = door.get_opening_condition();
+
+    if (door.get_opening_method() == Door::OpeningMethod::BY_INTERACTION){
+      lua_pushnil(l);
+      return 1;
+    }
+
+    push_string(l, condition);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:is_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_is_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    lua_pushboolean(l, door.is_opening_condition_consumed());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    const std::map<Door::OpeningMethod, std::string>& names = Door::opening_method_names;
+    Door::OpeningMethod method = LuaTools::check_enum(l, 2, names);
+
+    door.set_opening_method(method);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    Door::OpeningMethod method = door.get_opening_method();
+    if (method == Door::OpeningMethod::BY_INTERACTION || method == Door::OpeningMethod::BY_EXPLOSION || method == Door::OpeningMethod::NONE){
+      return 0;
+    }
+
+    const std::string& condition = LuaTools::check_string(l, 2);
+    door.set_opening_condition(condition);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    bool consumed = LuaTools::opt_boolean(l, 2, true);
+    door.set_opening_condition_consumed(consumed);
+    
+    return 1;
+  });
+}
+
 
 /**
  * \brief Returns whether a value is a userdata of type stairs.
@@ -6531,6 +6898,25 @@ int LuaContext::enemy_api_set_default_attack_consequences_sprite(lua_State* l) {
 }
 
 /**
+ * \brief Impplementation of enemy:get_savegame_variable()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Enemy& enemy = *check_enemy(l, 1);
+
+    if (enemy.is_saved()){
+      push_string(l, enemy.get_savegame_variable());
+    } else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of enemy:set_invincible().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -6874,6 +7260,58 @@ int LuaContext::enemy_api_create_enemy(lua_State* l) {
 
     push_entity(l, *entity);
     return 1;
+  });
+}
+
+/**
+ * \brief Returns whether a value is a userdata of type jumper.
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \return \c true if the value at this index is an enemy.
+ */
+bool LuaContext::is_jumper(lua_State* l, int index) {
+  return is_userdata(l, index, get_entity_internal_type_name(EntityType::JUMPER));
+}
+
+/**
+ * \brief Checks that the userdata at the specified index of the stack is a
+ * jumper and returns it.
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \return The enemy.
+ */
+std::shared_ptr<Jumper> LuaContext::check_jumper(lua_State* l, int index) {
+  return std::static_pointer_cast<Jumper>(check_userdata(
+      l, index, get_entity_internal_type_name(EntityType::JUMPER)
+  ));
+}
+
+/** 
+ * \brief Implementation of jumper:get_jump_length().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ * */
+
+int LuaContext::jumper_api_get_jump_length(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Jumper& jumper = *check_jumper(l, 1);
+    lua_pushinteger(l, jumper.get_jump_length());
+    return 1;
+  });
+}
+
+/** 
+ * \brief Implementation of jumper:set_jump_length().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ * */
+
+int LuaContext::jumper_api_set_jump_length(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Jumper& jumper = *check_jumper(l, 1);
+    int length = LuaTools::check_int(l, 2);
+    jumper.set_jump_length(length);
+    return 0;
   });
 }
 
@@ -8485,7 +8923,7 @@ void LuaContext::enemy_on_immobilized(Enemy& enemy) {
  * \param attacker_sprite Enemy's sprite that caused the collision or nullptr.
  * \return \c true if the method is defined.
  */
-bool LuaContext::enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* attacker_sprite) {
+bool LuaContext::entity_on_attacking_hero(Entity& enemy, Hero& hero, Sprite* attacker_sprite) {
 
   if (!userdata_has_field(enemy, "on_attacking_hero")) {
     return false;
@@ -8494,7 +8932,7 @@ bool LuaContext::enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* attac
   // TODO make this on main
   check_callback_thread();
 
-  push_enemy(current_l, enemy);
+  push_entity(current_l, enemy);
   bool exists = on_attacking_hero(hero, attacker_sprite);
   lua_pop(current_l, 1);
   return exists;

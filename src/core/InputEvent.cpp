@@ -45,7 +45,7 @@ InputEvent::Joypads InputEvent::joypads;
 std::map<int, SDL_JoystickID> InputEvent::jindex2id;
 // Default the axis states to centered
 
-int InputEvent::joypad_deadzone = 500;
+int InputEvent::joypad_deadzone = 8000;
 std::set<Uint8> InputEvent::jbuttons_pressed;
 std::set<Uint8> InputEvent::quit_combo;
 
@@ -1089,16 +1089,7 @@ double InputEvent::get_joypad_axis_state() const {
     return 0;
   }
 
-  double result;
-  int value = internal_event.caxis.value;
-  if (std::abs(value) < joypad_deadzone) {
-    result = 0.0;
-  }
-  else {
-    result = value > 0 ? double(value) / 32767 : double(value) / 32768;
-  }
-
-  return result;
+  return Joypad::compute_axis_val(internal_event.caxis.value);
 }
 
 /**
@@ -1477,6 +1468,14 @@ int InputEvent::get_direction() const {
 }
 
 /**
+ * @brief Gets the global joypad deadzone
+ * @return deadzone in the 0->32768 range
+ */
+int InputEvent::get_joypad_deadzone() {
+  return joypad_deadzone;
+}
+
+/**
  * @brief return the amount of connected joypads
  * @return the count
  */
@@ -1613,7 +1612,7 @@ bool InputEvent::notify_joypad(LuaContext& lua_context) const {
       auto joy = joypads.at(internal_event.caxis.which);
       return lua_context.on_joypad_axis_moved(*joy,
                                               JoyPadAxis(internal_event.caxis.axis),
-                                              Joypad::computeAxisVal(internal_event.caxis.value));
+                                              Joypad::compute_axis_val(internal_event.caxis.value));
     }
     case SDL_CONTROLLERBUTTONUP: {
       auto joy = joypads.at(internal_event.cbutton.which);

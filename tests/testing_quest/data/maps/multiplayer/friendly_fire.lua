@@ -40,13 +40,33 @@ end
 -- Event called after the opening transition effect of the map,
 -- that is, when the player takes control of the hero.
 function map:on_opening_transition_finished()
+  local took_damage = false
+  local hx, hy = hero:get_position()
+  function hero:on_taking_damage(num)
+    took_damage = true
+  end
   simulate_attack(alter_controls)
-  
-  sol.timer.start(2000, function()
-      error("Timout... hero was not touched")
+
+  timeout = sol.timer.start(10000, function()
+      error("Timeout... hero was not touched")
       end)
+
+  sol.timer.start(2500, function()
+                    timeout:stop()
+                    assert(took_damage, "Hero should take damage if there is not override of on_attacking_hero")
+                    took_damage = false
+                    hero:set_position(hx,hy)
+                    function alter_hero:on_attacking_hero(ahero, sprite)
+                      assert_equal(ahero, hero)
+                      return true -- say the attack was handled and no need to do anything (this disable friendly fire)
+                    end
+                    simulate_attack(alter_controls)
+                    sol.timer.start(2000, function()
+                                      assert(not took_damage, "Hero should not take damage if the on_attacking_hero is set")
+                                      sol.main.exit()
+                    end)
+  end)
+
 end
 
-function hero:on_taking_damage(num)
-  sol.main.exit()
-end
+

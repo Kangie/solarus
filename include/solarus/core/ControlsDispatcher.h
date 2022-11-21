@@ -40,12 +40,11 @@ public:
   ControlsPtr create_commands_from_joypad(const JoypadPtr& joypad);
 private:
   static ControlsDispatcher* instance;
-  using WeakCommands = std::weak_ptr<Controls>;
 
-  void add_commands(const WeakCommands& cmds);
+  void add_commands(const ControlsPtr& cmds);
   void remove_commands(const Controls *cmds);
 
-  std::vector<WeakCommands> commands;
+  std::vector<ControlsPtr> commands;
   MainLoop& main_loop;
 };
 

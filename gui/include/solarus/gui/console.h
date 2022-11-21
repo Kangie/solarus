@@ -39,7 +39,6 @@ public:
 
   void clear();
   void add_message(const QString& log_level, const QString& message);
-  void add_html(const QString& html);
 
   void set_quest_runner(QuestRunner& quest_runner);
 
@@ -65,6 +64,7 @@ private:
   bool detect_command_result(const QString& log_level, const QString& message);
   void detect_setting_change(const QString& log_level, const QString& message);
   QString colorize_output(const QString& log_level, const QString& message);
+  void add_html(const QString& html);
 
   QStringList get_quest_lua_commands_from_settings() const;
   bool apply_settings();

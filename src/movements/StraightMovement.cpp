@@ -89,16 +89,16 @@ void StraightMovement::set_dim_speed(uint64_t& delay,
                                      uint64_t& next_move_date,
                                      double &current_speed,
                                      int& move,
-                                     double target_speed,
-                                     double keep_factor) {
+                                     double target_speed) {
   if (std::abs(target_speed) <= 1E-6) {
     target_speed = 0;
   }
 
   uint64_t now = System::now_ns();
 
-  int64_t remaining = now < next_move_date ? static_cast<int64_t>(delay) - (static_cast<int64_t>(next_move_date) - static_cast<int64_t>(now)) : 0;
-  int64_t to_go = target_speed != 0.0 ? keep_factor * remaining : 0;
+  bool same_dir = std::signbit(target_speed) == std::signbit(current_speed);
+  int64_t remaining = std::abs(current_speed) <= 1e-6 ? 0 : static_cast<int64_t>(delay) - (static_cast<int64_t>(next_move_date) - static_cast<int64_t>(now));
+  int64_t to_go = (same_dir ? remaining : -remaining);
 
   current_speed = target_speed;
   // compute x_delay, x_move and next_move_date_x
@@ -128,18 +128,18 @@ void StraightMovement::set_dim_speed(uint64_t& delay,
  * \brief Sets the x speed.
  * \param x_speed the x speed of the object in pixels per second
  */
-void StraightMovement::set_x_speed(double x_speed, double keep_factor) {
+void StraightMovement::set_x_speed(double x_speed) {
   x_blocked = true;
-  set_dim_speed(x_delay, next_move_date_x, this->x_speed, x_move, x_speed, keep_factor);
+  set_dim_speed(x_delay, next_move_date_x, this->x_speed, x_move, x_speed);
 }
 
 /**
  * \brief Sets the y speed.
  * \param y_speed the y speed of the object in pixels per second
  */
-void StraightMovement::set_y_speed(double y_speed, double keep_factor) {
+void StraightMovement::set_y_speed(double y_speed) {
   y_blocked = true;
-  set_dim_speed(y_delay, next_move_date_y, this->y_speed, y_move, y_speed, keep_factor);
+  set_dim_speed(y_delay, next_move_date_y, this->y_speed, y_move, y_speed);
 }
 
 /**
@@ -153,8 +153,8 @@ void StraightMovement::set_speed(double speed) {
 
   // compute the new speed vector
   double old_angle = this->angle;
-  set_x_speed(speed * std::cos(old_angle), is_stopped() ? 0.0 : 1.0);
-  set_y_speed(-speed * std::sin(old_angle), is_stopped() ? 0.0 : 1.0);
+  set_x_speed(speed * std::cos(old_angle));
+  set_y_speed(-speed * std::sin(old_angle));
   this->angle = old_angle;
 
   notify_movement_changed();
@@ -231,9 +231,8 @@ void StraightMovement::set_angle(double angle) {
 
   if (!is_stopped()) {
     double speed = get_speed();
-    double dot = std::cos(std::fabs(angle-this->angle));
-    set_x_speed(speed * std::cos(angle), is_stopped() ? 0.0 : dot);
-    set_y_speed(-speed * std::sin(angle), is_stopped() ? 0.0 : dot);
+    set_x_speed(speed * std::cos(angle));
+    set_y_speed(-speed * std::sin(angle));
   }
   this->angle = angle;
 

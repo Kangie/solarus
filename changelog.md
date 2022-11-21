@@ -6,6 +6,7 @@
 
 * Fix crash when teletransporting to a map without the same layer (#1419).
 * Fix crash when a moving custom entity activates a stream (#1562).
+* Fix return of invalid sprite object with bad sprite id (#1423).
 * Fix separator region detection corner cases (#1425).
 * Fix error reporting when creating entities with a non-existent model (#1494).
 * Fix custom state direction control when the movement is disallowed (#1565).
@@ -27,6 +28,10 @@ This release adds new features but does not introduce any incompatibility.
 
 * Fix Quest Runner not working on Windows when binaries are under Unicode paths.
 * Add error reporting to the Quest Runner process manager.
+* Use monospaced font consistently across platforms in the GUI console.
+* Wrap lines with `<pre/>` tags to preserve spaces in the GUI console.
+* Preserve empty lines from the engine in the GUI console.
+* Only remove _trailing_ '\n' characters in the GUI console.
 
 ## Solarus 1.6.5 (2021-04-06)
 

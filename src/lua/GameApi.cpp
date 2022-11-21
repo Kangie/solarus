@@ -108,7 +108,9 @@ void LuaContext::register_game_module() {
       { "simulate_command_pressed", game_api_simulate_command_pressed },
       { "simulate_command_released", game_api_simulate_command_released },
       //1.7 methods
+      // FIXME only include them if the quest is >= 1.7
       { "get_controls", game_api_get_controls },
+      { "set_controls", game_api_set_controls },
       { "create_camera", game_api_create_camera },
       { "remove_camera", game_api_remove_camera },
       { "get_cameras", game_api_get_cameras },
@@ -1520,7 +1522,7 @@ int LuaContext::game_api_get_command_joypad_binding(lua_State* l) {
 
     Controls& commands = savegame.get_game()->get_controls();
     auto binding = commands.get_joypad_binding(command);
-    if (!binding) {
+    if (!binding || binding->is_invalid()) {
       lua_pushnil(l);
     }
     else {
@@ -1691,8 +1693,23 @@ int LuaContext::game_api_get_controls(lua_State* l) {
     Controls& cmds = savegame.get_game()->get_controls();
 
     push_controls(l, cmds);
-
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of game:set_controls().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_set_controls(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+    ControlsPtr cmds = check_controls(l, 2);
+
+    savegame.get_game()->set_controls(cmds);
+    return 0;
   });
 }
 

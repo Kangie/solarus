@@ -167,6 +167,7 @@ class LuaContext {
     void exit();
     void update();
     bool notify_input(const InputEvent& event);
+    bool notify_control(const ControlEvent& event);
 
 
     void notify_map_suspended(Map& map, bool suspended);
@@ -360,6 +361,7 @@ class LuaContext {
     void main_on_update();
     void main_on_draw(const SurfacePtr& dst_surface);
     bool main_on_input(const InputEvent& event);
+    bool main_on_control(const ControlEvent& event);
 
     // Video events.
     void video_on_draw(const SurfacePtr& screen);
@@ -532,7 +534,7 @@ class LuaContext {
     void enemy_on_dying(Enemy& enemy);
     void enemy_on_dead(Enemy& enemy);
     void enemy_on_immobilized(Enemy& enemy);
-    bool enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* enemy_sprite);
+    bool entity_on_attacking_hero(Entity &enemy, Hero& hero, Sprite* enemy_sprite);
     void custom_entity_on_ground_below_changed(
         CustomEntity& custom_entity, Ground ground_below);
     void state_on_started(
@@ -955,6 +957,7 @@ class LuaContext {
       game_api_simulate_command_pressed,
       game_api_simulate_command_released,
       game_api_get_controls,
+      game_api_set_controls,
       game_api_create_camera,
       game_api_remove_camera,
       game_api_get_cameras,
@@ -1206,6 +1209,12 @@ class LuaContext {
       chest_api_set_open,
       chest_api_get_treasure,
       chest_api_set_treasure,
+      chest_api_get_opening_method,
+      chest_api_get_opening_condition,
+      chest_api_is_opening_condition_consumed,
+      chest_api_set_opening_method,
+      chest_api_set_opening_condition,
+      chest_api_set_opening_condition_consumed,
       block_api_reset,
       block_api_is_pushable,
       block_api_set_pushable,
@@ -1213,12 +1222,15 @@ class LuaContext {
       block_api_set_pullable,
       block_api_get_max_moves,
       block_api_set_max_moves,
+      block_api_get_direction,
       block_api_get_maximum_moves,
       block_api_set_maximum_moves,
       switch_api_is_activated,
       switch_api_set_activated,
       switch_api_is_locked,
       switch_api_set_locked,
+      switch_api_get_inactivate_when_leaving,
+      switch_api_set_inactivate_when_leaving,
       switch_api_is_walkable,
       stream_api_get_direction,
       stream_api_set_direction,
@@ -1230,6 +1242,7 @@ class LuaContext {
       stream_api_set_allow_attack,
       stream_api_get_allow_item,
       stream_api_set_allow_item,
+      door_api_get_savegame_variable,
       door_api_is_open,
       door_api_is_opening,
       door_api_is_closed,
@@ -1237,6 +1250,12 @@ class LuaContext {
       door_api_open,
       door_api_close,
       door_api_set_open,
+      door_api_get_opening_method,
+      door_api_get_opening_condition,
+      door_api_is_opening_condition_consumed,
+      door_api_set_opening_method,
+      door_api_set_opening_condition,
+      door_api_set_opening_condition_consumed,
       stairs_api_get_direction,
       stairs_api_is_inner,
       pickable_api_get_followed_entity,
@@ -1295,6 +1314,7 @@ class LuaContext {
       enemy_api_set_attack_consequence_sprite,
       enemy_api_set_default_attack_consequences,
       enemy_api_set_default_attack_consequences_sprite,
+      enemy_api_get_savegame_variable,
       enemy_api_set_invincible,
       enemy_api_set_invincible_sprite,
       enemy_api_get_treasure,
@@ -1310,6 +1330,8 @@ class LuaContext {
       enemy_api_is_immobilized,
       enemy_api_immobilize,
       enemy_api_create_enemy,
+      jumper_api_get_jump_length,
+      jumper_api_set_jump_length,
       custom_entity_api_get_model,
       custom_entity_api_get_direction,
       custom_entity_api_set_direction,
@@ -1407,6 +1429,9 @@ class LuaContext {
       controls_api_simulate_pressed,
       controls_api_simulate_released,
       controls_api_simulate_axis_moved,
+      controls_api_set_joypad,
+      controls_api_get_joypad,
+      controls_api_remove,
 
 
       // available to all userdata types
@@ -1670,6 +1695,8 @@ private:
     static std::shared_ptr<DynamicTile> check_dynamic_tile(lua_State* current_l, int index);
     static bool is_enemy(lua_State* current_l, int index);
     static std::shared_ptr<Enemy> check_enemy(lua_State* current_l, int index);
+    static bool is_jumper(lua_State* current_l, int index);
+    static std::shared_ptr<Jumper> check_jumper(lua_State* current_l, int index);
     static bool is_custom_entity(lua_State* current_l, int index);
     static std::shared_ptr<CustomEntity> check_custom_entity(lua_State* current_l, int index);
     static bool is_joypad(lua_State* current_l, int index);

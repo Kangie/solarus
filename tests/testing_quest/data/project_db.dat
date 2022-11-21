@@ -73,6 +73,7 @@ map{ id = "bugs/1381_jumpers_hero_16_8", description = "#1381: Jumpers not worki
 map{ id = "bugs/1383_blocks_hero_16_8", description = "#1383: Blocks not working with a 16x8 hero" }
 map{ id = "bugs/1392_carried_object_directions", description = "#1392: Allow carried objects to have 4 directions" }
 map{ id = "bugs/1395_large_map_memory_leak", description = "#1395: Memory leak when traversing a large map" }
+map{ id = "bugs/1402_sol_sprite_create_returns_invalid_sprite_object", description = "#1402: sol.sprite.create() returns invalid sprite object" }
 map{ id = "bugs/1416_state_set_affected_by_ground_speed", description = "#1416: state:set_affected_by_ground() not working on grounds that alter the speed" }
 map{ id = "bugs/1418_state_set_can_be_hurt", description = "#1418: state:set_can_be_hurt() not working with touching attack mode" }
 map{ id = "bugs/1419_crash_teletransporting_to_invalid_layer/map_1" }
@@ -196,6 +197,7 @@ map{ id = "multiplayer/heroes", description = "Multiple heroes test" }
 map{ id = "multiplayer/heroes2", description = "Second heroes map" }
 map{ id = "multiplayer/heroes_game_over", description = "Heroes Transitions" }
 map{ id = "oriented_collisions", description = "Test rotation and scaled collisions" }
+map{ id = "straight_movement", description = "Test straight movement quirks" }
 map{ id = "surface_tests", description = "Surface tests" }
 map{ id = "teletransportation_tests/main", description = "Main map" }
 map{ id = "teletransportation_tests/start_in_deep_water_drown", description = "Start in deep water (drowning)" }
@@ -579,6 +581,8 @@ file{ path = "maps/bugs/1392_carried_object_directions.dat", author = "Christoph
 file{ path = "maps/bugs/1392_carried_object_directions.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1395_large_map_memory_leak.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1395_large_map_memory_leak.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1402_sol_sprite_create_returns_invalid_sprite_object.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1402_sol_sprite_create_returns_invalid_sprite_object.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
 file{ path = "maps/bugs/1416_state_set_affected_by_ground_speed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1416_state_set_affected_by_ground_speed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1418_state_set_can_be_hurt.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -826,6 +830,8 @@ file{ path = "maps/multiplayer/heroes_game_over.dat", author = "stdgregwar", lic
 file{ path = "maps/multiplayer/heroes_game_over.lua", author = "stdgregwar", license = "CC by SA" }
 file{ path = "maps/oriented_collisions.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/oriented_collisions.lua", author = "std::gregwar", license = "GPL v3" }
+file{ path = "maps/straight_movement.dat", author = "std::gregwar", license = "CC-BY-SA" }
+file{ path = "maps/straight_movement.lua", author = "std::gregwar", license = "CC-BY-SA" }
 file{ path = "maps/surface_tests.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/surface_tests.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/teletransportation_tests/main.dat", author = "Christopho", license = "CC BY-SA 4.0" }

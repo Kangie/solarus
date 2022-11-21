@@ -192,7 +192,9 @@ void Treasure::give_to_player() const {
  */
 SpritePtr Treasure::create_sprite() const {
 
-  SpritePtr sprite = std::make_shared<Sprite>("entities/items");
+  SpritePtr sprite = Sprite::create("entities/items");
+  SOLARUS_REQUIRE(sprite,
+    "Treasure::create_sprite(): cannot load 'entities/items'");
   sprite->set_current_animation(get_item_name());
   sprite->set_current_direction(get_variant() - 1);
   return sprite;
