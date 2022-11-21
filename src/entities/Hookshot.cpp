@@ -45,7 +45,7 @@ Hookshot::Hookshot(Hero& hero):
     has_to_go_back(false),
     going_back(false),
     entity_reached(nullptr),
-    link_sprite(std::make_shared<Sprite>("entities/hookshot")),
+    link_sprite(Sprite::create("entities/hookshot")),
     hero(hero)
 {
 

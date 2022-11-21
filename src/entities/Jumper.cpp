@@ -241,6 +241,14 @@ int Jumper::get_jump_length() const {
 }
 
 /**
+ * \brief Sets the length of the jump to make with this jumper.
+ * \param length Length of the jump in pixels (usually a multiple of 8).
+ */
+void Jumper::set_jump_length(int length) {
+  this->jump_length = length;
+}
+
+/**
  * \brief Returns whether this jumper makes horizontal jumps.
  * \return \c true if this jumper makes horizontal jumps.
  */

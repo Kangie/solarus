@@ -45,6 +45,9 @@ class SpriteAnimationSet {
 
     explicit SpriteAnimationSet(const std::string& id);
 
+    bool load();
+    const std::string& get_id() const;
+
     void set_tileset(const Tileset& tileset);
 
     bool has_animation(const std::string& animation_name) const;
@@ -58,8 +61,6 @@ class SpriteAnimationSet {
     const Rectangle& get_max_bounding_box() const;
 
   private:
-
-    void load();
 
     void add_animation(const std::string& animation_name,
         const SpriteAnimationData& animation_data);
