@@ -143,7 +143,9 @@ class Enemy: public Entity {
     void set_no_attack_consequences_sprite(const Sprite& sprite);
     void set_default_attack_consequences();
     void set_default_attack_consequences_sprite(const Sprite& sprite);
-
+    const std::string& get_savegame_variable() const;
+    bool is_saved() const;
+    
     // sprites
     std::string get_animation() const;
     void set_animation(const std::string& animation);
@@ -210,7 +212,6 @@ class Enemy: public Entity {
     void notify_hurt(Entity& source, EnemyAttack attack);
     void notify_dead();
     void notify_immobilized();
-    bool is_saved() const;
 
     // enemy characteristics
     std::string breed;                 /**< breed of the enemy (determines its sprites and behavior) */

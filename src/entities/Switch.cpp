@@ -207,6 +207,24 @@ void Switch::set_locked(bool locked) {
   this->locked = locked;
 }
 
+/** 
+ * \brief Returns whether this walkable switch becomes inactivated when the hero or the block leaves it.
+ * \return \c true if inactivated when leaving
+ */
+
+bool Switch::is_inactivate_when_leaving() const{
+  return inactivate_when_leaving;
+}
+
+/** 
+ * \brief Sets whether this walkable switch becomes inactivated when the hero or the block leaves it.
+ * \return \c true if inactivated when leaving
+ */
+
+void Switch::set_inactivate_when_leaving(bool inactivate_when_leaving){
+   this->inactivate_when_leaving = inactivate_when_leaving;
+}
+
 /**
  * \brief Updates this switch.
  */
