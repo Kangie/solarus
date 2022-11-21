@@ -253,16 +253,16 @@ int LuaContext::controls_api_set_joypad_binding(lua_State* l) {
     Controls& cmds = *check_controls(l, 1);
     Command cmd = check_command(l, 2);
 
-    const std::string& key_name = LuaTools::opt_string(l, 3, "");
+    auto binding = [&]()->Controls::JoypadBinding{
+      if(lua_isnil(l, 3)){
+        return Controls::JoypadBinding(JoyPadButton::INVALID);
+      } else {
+        return Controls::JoypadBinding(LuaTools::check_string(l, 3));
+      }
+    }();
 
-    Controls::JoypadBinding binding(key_name);
 
-    if(!binding.is_invalid()) {
-      cmds.set_joypad_binding(cmd, binding);
-    } else {
-      LuaTools::error(l, "invalid joypad binding : " + key_name);
-    }
-
+    cmds.set_joypad_binding(cmd, binding);
     return 0;
   });
 }
@@ -279,7 +279,7 @@ int LuaContext::controls_api_get_joypad_binding(lua_State* l) {
 
     auto binding = cmds.get_joypad_binding(command);
 
-    if (binding) {
+    if (binding and not binding->is_invalid()) {
       push_string(l, binding->to_string());
     } else {
       lua_pushnil(l);

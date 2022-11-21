@@ -534,16 +534,15 @@ void Controls::set_joypad_binding(const Command &command, const JoypadBinding& j
     if (previous_command != Command(CommandId::NONE)) {
       // This joypad action is already mapped to a command.
       joypad_mapping[*previous_joypad_binding] = previous_command;
-      //set_saved_joypad_binding(previous_command, previous_joypad_string);
     }
     else {
       joypad_mapping.erase(*previous_joypad_binding);
     }
   }
 
-  joypad_mapping[joypad_binding] = command;
-
-  //set_saved_joypad_binding(command, joypad_string);
+  if(!joypad_binding.is_invalid()){
+    joypad_mapping[joypad_binding] = command;
+  }
 }
 
 /**
@@ -627,7 +626,9 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     }
   }
 
-  joypad_axis_mapping[axis] = ControlAxisBinding{command_axis, AxisDirection::PLUS};
+  if(axis != JoyPadAxis::INVALID) {
+    joypad_axis_mapping[axis] = ControlAxisBinding{command_axis, AxisDirection::PLUS};
+  }
 }
 
   /**
