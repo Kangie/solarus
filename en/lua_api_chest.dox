@@ -104,6 +104,54 @@ that will be put back in case you
   \ref lua_api_item_is_obtainable "non-obtainable item",
   the hero will actually get no treasure when opening the chest.
 
+\subsection lua_api_chest_get_opening_method chest:get_opening_method()
+
+Returns a string describing the way this chest can be opened. Can be either 
+  \c "interaction" (when the hero interacts with it), 
+  \c "interaction_if_item" (when the hero interacts with it while possessing a certain item, 
+  returned by \ref lua_api_chest_get_opening_condition "chest:get_opening_condition()"), 
+  \c "interaction_if_savegame_variable" (when the hero interacts with it while the value of a certain savegame variable, 
+  returned by \ref lua_api_chest_get_opening_condition "chest:get_opening_condition()", is true), 
+
+- Return value (string) : the opening method.
+
+\subsection lua_api_chest_get_opening_condition chest:get_opening_condition()
+Returns the name of the item or savegame variable required to open this chest (if the \ref lua_api_chest_get_opening_method "opening method" is
+  \c "interaction_if_item" or \c "interaction_if_savegame_variable", respectively).
+
+- Return value (string) : item name or savegame variable.
+
+\subsection lua_api_chest_is_opening_condition_consumed chest:is_opening_condition_consumed()
+Returns whether the \ref lua_api_chest_get_opening_condition "opening condition" of this chest is consumed when you open it
+(only if the \ref lua_api_chest_get_opening_method "opening method" is \c "interaction_if_item" or \c "interaction_if_savegame_variable")
+
+If the condition is an item (i.e. the \ref lua_api_chest_get_opening_method "opening method" is \c "interaction_if_item"), 
+the item is removed, which means setting its \ref lua_api_item_set_variant "possessed variant" to \c 0), unless it has an associated 
+amount : in this case, the amount is decremented.
+
+If the condition is a savegame variable (i.e. the \ref lua_api_chest_get_opening_method "opening method" is \c "interaction_if_savegame_variable"),
+it is reset to \c false, \c 0 or \c "" (depending on its type).
+
+- Return value (boolean) : \c true if the condition is consumed, \c false if it is not.
+
+\subsection lua_api_chest_set_opening_method chest:set_opening_method(method)
+Sets the opening method of this chest. See \ref lua_api_chest_get_opening_method "chest:get_opening_method()" for a list of possible methods.
+- \c method (string) : the string associated with the wanted method, as returned by \ref lua_api_chest_get_opening_method "chest:get_opening_method()"
+
+\subsection lua_api_chest_set_opening_condition chest:set_opening_condition(condition)
+Sets the name of the item or savegame variable required to open this chest (if the \ref lua_api_chest_get_opening_method "opening method" is
+  \c "interaction_if_item" or \c "interaction_if_savegame_variable", respectively).
+
+- \c condition (string) : item name or savegame variable that will be required to open this chest.
+
+\subsection lua_api_chest_set_opening_condition_consumed chest:set_opening_condition_consumed([condition_consumed])
+Returns whether the \ref lua_api_chest_get_opening_condition "opening condition" of this chest is consumed when you open it
+(only if the \ref lua_api_chest_get_opening_method "opening method" is \c "interaction_if_item" or \c "interaction_if_savegame_variable"). 
+See lua_api_chest_is_opening_condition_consumed "chest:is_opening_condition_consumed()" for more information about what happens when the condition
+is consumed.
+
+- \c condition_consumed (boolean) : \c true if the condition is consumed, \c false if it is not. No value means \c true.
+
 \section lua_api_chest_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define

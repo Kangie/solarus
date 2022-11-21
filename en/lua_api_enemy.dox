@@ -436,6 +436,10 @@ Restores the default attack consequences for this enemy and its sprites.
 Restores the default attack consequences for a particular sprite of this enemy.
 - \c sprite (\ref lua_api_sprite "sprite"): A sprite of this enemy.
 
+\subsection lua_api_enemy_get_savegame_variable enemy:get_savegame_variable()
+Returns the name of the savegame variable where the state of this enemy is stored.
+ - Return value (string or nil) : the name of the variable (or nil if the enemy is not saved).
+
 \subsection lua_api_enemy_set_invincible enemy:set_invincible()
 
 Makes this enemy ignore all attacks.

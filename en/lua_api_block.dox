@@ -109,6 +109,11 @@ This resets the remaining allowed moves.
 - \c maximum_moves (number or nil): How many times the block can be moved.
   \c nil means unlimited.
 
+\subsection lua_api_block_get_direction block:get_direction()
+Returns the direction the block can be moved to, if it is restricted to a specific direction.
+
+- Return value (number or nil) : a direction between \c 0 (East) and \c 3 (South), or nil if this block is not restricted to a specific direction.
+
 \section lua_api_block_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define

@@ -157,6 +157,8 @@ traversable too but with an additional grass sprite below the hero.
 - Return value (string): The ground defined by this destructible object.
   See \ref lua_api_map_get_ground "map:get_ground()" for the list of possible grounds.
 
+\subsection lua_api_destructible_get_weight
+
 \section lua_api_destructible_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define

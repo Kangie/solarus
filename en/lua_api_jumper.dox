@@ -39,7 +39,15 @@ See \ref lua_api_entity_methods to know these methods.
 
 \section lua_api_jumper_methods Methods of the type jumper
 
-None.
+\subsection lua_api_jumper_get_jump_length jumper:get_jump_length()
+Returns the length of the jump.
+
+- Return value (number) : the length in pixels.
+
+\subsection lua_api_jumper_set_jump_length jumper:set_jump_length(length)
+Sets the length of the jump.
+
+- \c jump (number) : the length in pixels.
 
 \section lua_api_jumper_inherited_events Events inherited from map entity
 

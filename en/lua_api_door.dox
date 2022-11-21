@@ -137,6 +137,60 @@ to notice the change, typically when your map starts
   \c false to close it.
   No value means \c true.
 
+\subsection lua_api_door_get_savegame_variable door:get_savegame_variable()
+Returns the name of the savegame variable where the state of this door is stored.
+ - Return value (string or nil) : the name of the variable (or nil if the door is not saved).
+
+\subsection lua_api_door_get_opening_method door:get_opening_method()
+
+Returns a string describing the way this door can be opened. Can be either 
+  \c "none" (the door can't be opened)
+  \c "interaction" (when the hero interacts with it), 
+  \c "interaction_if_item" (when the hero interacts with it while possessing a certain item, 
+  returned by \ref lua_api_door_get_opening_condition "door:get_opening_condition()"), 
+  \c "interaction_if_savegame_variable" (when the hero interacts with it while the value of a certain savegame variable, 
+  returned by \ref lua_api_door_get_opening_condition "door:get_opening_condition()", is true), 
+  \c "explosion" (this door is opened when struck by an \ref lua_api_explosion "explosion")
+
+- Return value (string) : the opening method.
+
+\subsection lua_api_door_get_opening_condition door:get_opening_condition()
+Returns the name of the item or savegame variable required to open this door (if the \ref lua_api_door_get_opening_method "opening method" is
+  \c "interaction_if_item" or \c "interaction_if_savegame_variable", respectively).
+
+- Return value (string) : item name or savegame variable.
+
+\subsection lua_api_door_is_opening_condition_consumed door:is_opening_condition_consumed()
+Returns whether the \ref lua_api_door_get_opening_condition "opening condition" of this door is consumed when you open it
+(only if the \ref lua_api_door_get_opening_method "opening method" is \c "interaction_if_item" or \c "interaction_if_savegame_variable")
+
+If the condition is an item (i.e. the \ref lua_apidoor_get_opening_method "opening method" is \c "interaction_if_item"), 
+the item is removed, which means setting its \ref lua_api_item_set_variant "possessed variant" to \c 0), unless it has an associated 
+amount : in this case, the amount is decremented.
+
+If the condition is a savegame variable (i.e. the \ref lua_api_door_get_opening_method "opening method" is \c "interaction_if_savegame_variable"),
+it is reset to \c false, \c 0 or \c "" (depending on its type).
+
+- Return value (boolean) : \c true if the condition is consumed, \c false if it is not.
+
+\subsection lua_api_door_set_opening_method door:set_opening_method(method)
+Sets the opening method of this door. See \ref lua_api_door_get_opening_method "door:get_opening_method()" for a list of possible methods.
+- \c method (string) : the string associated with the wanted method, as returned by \ref lua_api_door_get_opening_method "door:get_opening_method()"
+
+\subsection lua_api_door_set_opening_condition door:set_opening_condition(condition)
+Sets the name of the item or savegame variable required to open this door (if the \ref lua_api_door_get_opening_method "opening method" is
+  \c "interaction_if_item" or \c "interaction_if_savegame_variable", respectively).
+
+- \c condition (string) : item name or savegame variable that will be required to open this door.
+
+\subsection lua_api_door_set_opening_condition_consumed door:set_opening_condition_consumed([condition_consumed])
+Returns whether the \ref lua_api_door_get_opening_condition "opening condition" of this door is consumed when you open it
+(only if the \ref lua_api_door_get_opening_method "opening method" is \c "interaction_if_item" or \c "interaction_if_savegame_variable"). 
+See lua_api_door_is_opening_condition_consumed "door:is_opening_condition_consumed()" for more information about what happens when the condition
+is consumed.
+
+- \c condition_consumed (boolean) : \c true if the condition is consumed, \c false if it is not. No value means \c true.
+
 \section lua_api_door_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define
