@@ -72,6 +72,7 @@ class SOLARUS_API Game {
     const HeroPtr& get_hero() const;
     Controls& get_controls();
     const Controls& get_controls() const;
+    void set_controls(const ControlsPtr& ctrls);
     CommandsEffects& get_commands_effects();
     Savegame& get_savegame();
     const Savegame& get_savegame() const;

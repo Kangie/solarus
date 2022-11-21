@@ -214,6 +214,14 @@ const Controls& Game::get_controls() const {
 }
 
 /**
+ * \brief Sets the control object of this game
+ * \param ctrls controls
+ */
+void Game::set_controls(const ControlsPtr& ctrls) {
+  controls = ctrls;
+}
+
+/**
  * \brief Returns the current effect of the main keys (action, sword, pause, etc.).
  * \return the current effect of the main keys
  */

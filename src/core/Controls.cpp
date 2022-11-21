@@ -114,6 +114,14 @@ Controls::Controls(MainLoop& main_loop, Game& game):
 }
 
 Controls::~Controls() {
+}
+
+/**
+ * @brief Removes the controls from the control dispatcher, preventing inputs to be dispatched to this control object,
+ *
+ * Acts like entity:remove
+ */
+void Controls::remove() const {
   ControlsDispatcher::get().remove_commands(this);
 }
 
@@ -352,11 +360,11 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
   if (std::abs(state) < 1e-5) {
     // Axis in centered position : Test both positive and negative binding for release
     Command command = get_command_from_joypad(JoypadBinding(axis, AxisDirection::PLUS));
-    if (command != Command(CommandId::NONE)) {
+    if (is_command_pressed(command)) {
       command_released(command);
     }
     command = get_command_from_joypad(JoypadBinding(axis, AxisDirection::MINUS));
-    if (command != Command(CommandId::NONE)) {
+    if (is_command_pressed(command)) {
       command_released(command);
     }
   }
@@ -367,13 +375,14 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
     Command inverse_command_pressed = get_command_from_joypad(JoypadBinding(axis, -state > 0 ? AxisDirection::PLUS : AxisDirection::MINUS));
 
     if (!customizing) {
-
       // If the command is mapped, notify the game.
       if (command != Command(CommandId::NONE)) {
         if (is_command_pressed(inverse_command_pressed)) {
           command_released(inverse_command_pressed);
         }
-        command_pressed(command);
+        if(!is_command_pressed(command)){
+          command_pressed(command);
+        }
       }
     }
     else {
@@ -525,16 +534,15 @@ void Controls::set_joypad_binding(const Command &command, const JoypadBinding& j
     if (previous_command != Command(CommandId::NONE)) {
       // This joypad action is already mapped to a command.
       joypad_mapping[*previous_joypad_binding] = previous_command;
-      //set_saved_joypad_binding(previous_command, previous_joypad_string);
     }
     else {
       joypad_mapping.erase(*previous_joypad_binding);
     }
   }
 
-  joypad_mapping[joypad_binding] = command;
-
-  //set_saved_joypad_binding(command, joypad_string);
+  if(!joypad_binding.is_invalid()){
+    joypad_mapping[joypad_binding] = command;
+  }
 }
 
 /**
@@ -618,7 +626,9 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     }
   }
 
-  joypad_axis_mapping[axis] = ControlAxisBinding{command_axis, AxisDirection::PLUS};
+  if(axis != JoyPadAxis::INVALID) {
+    joypad_axis_mapping[axis] = ControlAxisBinding{command_axis, AxisDirection::PLUS};
+  }
 }
 
   /**

@@ -196,6 +196,7 @@ map{ id = "multiplayer/heroes", description = "Multiple heroes test" }
 map{ id = "multiplayer/heroes2", description = "Second heroes map" }
 map{ id = "multiplayer/heroes_game_over", description = "Heroes Transitions" }
 map{ id = "oriented_collisions", description = "Test rotation and scaled collisions" }
+map{ id = "straight_movement", description = "Test straight movement quirks" }
 map{ id = "surface_tests", description = "Surface tests" }
 map{ id = "teletransportation_tests/main", description = "Main map" }
 map{ id = "teletransportation_tests/start_in_deep_water_drown", description = "Start in deep water (drowning)" }
@@ -826,6 +827,8 @@ file{ path = "maps/multiplayer/heroes_game_over.dat", author = "stdgregwar", lic
 file{ path = "maps/multiplayer/heroes_game_over.lua", author = "stdgregwar", license = "CC by SA" }
 file{ path = "maps/oriented_collisions.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/oriented_collisions.lua", author = "std::gregwar", license = "GPL v3" }
+file{ path = "maps/straight_movement.dat", author = "std::gregwar", license = "CC-BY-SA" }
+file{ path = "maps/straight_movement.lua", author = "std::gregwar", license = "CC-BY-SA" }
 file{ path = "maps/surface_tests.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/surface_tests.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/teletransportation_tests/main.dat", author = "Christopho", license = "CC BY-SA 4.0" }
