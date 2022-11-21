@@ -100,11 +100,13 @@ const std::string& Joypad::get_lua_type_name() const {
 }
 
 double Joypad::compute_axis_val(int16_t axis) {
-  if (std::abs(axis) < InputEvent::get_joypad_deadzone()) {
+  auto deadzone = InputEvent::get_joypad_deadzone();
+  if (std::abs(axis) < deadzone) {
     return 0.0;
   }
   else {
-    return axis > 0 ? double(axis) / 32767 : double(axis) / 32768;
+    return axis > 0 ? double(std::max(axis-deadzone,0)) / (32767-deadzone) : double(std::min(axis+deadzone,0)) / (32768-deadzone);
+    //return axis > 0 ? double(axis) / (32767) : double(axis) / (32768); //Old straight deadzone computation
   }
 }
 
