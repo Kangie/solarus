@@ -58,7 +58,7 @@ ShopTreasure::ShopTreasure(
   price(price),
   dialog_id(dialog_id),
   treasure_sprite(treasure.create_sprite()),
-  rupee_icon_sprite(std::make_shared<Sprite>("entities/rupee_icon")),
+  rupee_icon_sprite(Sprite::create("entities/rupee_icon")),
   price_digits(0, 0, TextSurface::HorizontalAlignment::LEFT, TextSurface::VerticalAlignment::TOP) {
 
   set_collision_modes(CollisionMode::COLLISION_FACING);

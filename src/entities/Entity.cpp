@@ -1449,7 +1449,8 @@ SpritePtr Entity::create_sprite(
   if (order == -1) {
     order = sprites.size();
   }
-  SpritePtr sprite = std::make_shared<Sprite>(animation_set_id);
+  SpritePtr sprite = Sprite::create(animation_set_id);
+  SOLARUS_REQUIRE(sprite, "Entity::create_sprite failed.");
 
   NamedSprite named_sprite;
   named_sprite.name = sprite_name;

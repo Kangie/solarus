@@ -64,34 +64,33 @@ void Sprite::quit() {
  * The animation set may be created if it is new, or just retrieved from
  * memory if it way already used before.
  *
- * \param id id of the animation set
- * \return the corresponding animation set
+ * \param id Id of the animation set.
+ * \return Pointer to the animation set, nullptr if it could not be created.
  */
-SpriteAnimationSet& Sprite::get_animation_set(const std::string& id) {
+SpriteAnimationSet* Sprite::get_animation_set(const std::string& id) {
 
-  SpriteAnimationSet* animation_set = nullptr;
   auto it = all_animation_sets.find(id);
   if (it != all_animation_sets.end()) {
-    animation_set = it->second;
+    return it->second;
   }
-  else {
-    animation_set = new SpriteAnimationSet(id);
+
+  SpriteAnimationSet* animation_set = new SpriteAnimationSet(id);
+  if (animation_set->load()) {
     all_animation_sets[id] = animation_set;
+    return animation_set;
+  } else {
+    delete animation_set;
+    return nullptr;
   }
-
-  SOLARUS_REQUIRE(animation_set != nullptr, "No animation set");
-
-  return *animation_set;
 }
 
 /**
- * \brief Creates a sprite with the specified animation set.
- * \param id name of an animation set
+ * \brief Creates a sprite with the animation set.
+ * \param animation_set Reference to the animation set.
  */
-Sprite::Sprite(const std::string& id):
+Sprite::Sprite(SpriteAnimationSet& animation_set):
   Drawable(),
-  animation_set_id(id),
-  animation_set(get_animation_set(id)),
+  animation_set(animation_set),
   current_animation(nullptr),
   current_direction(0),
   current_frame(-1),
@@ -111,11 +110,26 @@ Sprite::Sprite(const std::string& id):
 }
 
 /**
+ * \brief Attempt to create a sprite with the specified animation set.
+ *
+ * Generally, this should be used instead of calling the constructor directly.
+ * \param id Name of an animation set.
+ * \return Pointer to sprite if it was created, otherwise a nullptr.
+ */
+SpritePtr Sprite::create(const std::string& id) {
+  if (SpriteAnimationSet* animation_set = get_animation_set(id)) {
+    return std::make_shared<Sprite>(*animation_set);
+  } else {
+    return nullptr;
+  }
+}
+
+/**
  * \brief Returns the id of the animation set of this sprite.
- * \return the animation set id of this sprite
+ * \return The animation set id of this sprite.
  */
 const std::string& Sprite::get_animation_set_id() const {
-  return animation_set_id;
+  return animation_set.get_id();
 }
 
 /**
