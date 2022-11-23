@@ -998,47 +998,6 @@ class LuaContext {
       item_api_set_max_amount,
       item_api_set_finished,
 
-      // Map API.
-      map_api_get_id,
-      map_api_get_game,
-      map_api_get_world,
-      map_api_set_world,
-      map_api_get_floor,
-      map_api_set_floor,
-      map_api_get_min_layer,
-      map_api_get_max_layer,
-      map_api_get_size,
-      map_api_get_location,
-      map_api_get_tileset,
-      map_api_set_tileset,
-      map_api_get_music,
-      map_api_get_camera,
-      map_api_get_camera_position,
-      map_api_move_camera,
-      map_api_get_ground,
-      map_api_draw_visual,
-      map_api_draw_sprite,
-      map_api_get_crystal_state,
-      map_api_set_crystal_state,
-      map_api_change_crystal_state,
-      map_api_open_doors,
-      map_api_close_doors,
-      map_api_set_doors_open,
-      map_api_get_entity,
-      map_api_has_entity,
-      map_api_get_entities,
-      map_api_get_entities_count,
-      map_api_has_entities,
-      map_api_get_entities_by_type,
-      map_api_get_entities_in_rectangle,
-      map_api_get_entities_in_region,
-      map_api_get_hero,
-      map_api_set_entities_enabled,
-      map_api_remove_entities,
-      map_api_create_entity,  // Same function used for all entity types.
-      map_api_get_cameras,
-      map_api_get_heroes,
-
       // Map entity API.
       entity_api_get_type,
       entity_api_get_map,
@@ -1537,7 +1496,7 @@ private:
     static void push_state(lua_State* current_l, CustomState& state);
     static void push_entity(lua_State* current_l, Entity& entity);
 
-
+public:
     template<typename Container>
 
     /**
@@ -1577,6 +1536,7 @@ private:
       lua_pushcclosure(l, l_entity_iterator_next, 3);
     }
 
+private:
     static void push_named_sprite_iterator(
         lua_State* current_l,
         const std::vector<Entity::NamedSprite>& sprites
@@ -1608,8 +1568,6 @@ private:
     // Getting objects from Lua.
     static bool is_main(lua_State* current_l, int index);
     static bool is_menu(lua_State* current_l, int index);
-    static void* test_userdata(lua_State* current_l, int index,
-        const char* module_name);
     static bool is_userdata(lua_State* current_l, int index,
         const std::string& module_name);
     static const ExportableToLuaPtr& check_userdata(
@@ -1659,8 +1617,10 @@ private:
     static std::shared_ptr<Map> check_map(lua_State* current_l, int index);
     static bool is_state(lua_State* current_l, int index);
     static std::shared_ptr<CustomState> check_state(lua_State* current_l, int index);
+public:
     static bool is_entity(lua_State* current_l, int index);
     static EntityPtr check_entity(lua_State* current_l, int index);
+private:
     static bool is_hero(lua_State* current_l, int index);
     static HeroPtr check_hero(lua_State* current_l, int index);
     static bool is_camera(lua_State* current_l, int index);

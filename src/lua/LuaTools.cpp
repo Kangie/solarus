@@ -47,6 +47,38 @@ int get_positive_index(lua_State* l, int index) {
 }
 
 /**
+ * \brief Get pointer to userdata if it is of the given type.
+ *
+ * This is luaL_testudata from the Lua auxiliary library.
+ * It should be replaced when Lua 5.3/LuaJIT 2.1 or higher is required.
+ *
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \param metatable_name Name of a userdata metatable in the registry.
+ * \return Pointer to userdata if it is a userdata of the given type,
+ *   nullptr otherwise.
+ */
+void* test_userdata(lua_State* l, int index, const char* metatable_name) {
+
+  index = get_positive_index(l, index);
+
+  void* udata = lua_touserdata(l, index);
+  // ... value ...
+  if (udata == nullptr || !lua_getmetatable(l, index)) {
+    return nullptr;
+  }
+  // ... udata ... meta(found)
+  lua_getfield(l, LUA_REGISTRYINDEX, metatable_name);
+  // ... udata ... meta(found) meta(expected)
+  if (lua_rawequal(l, -1, -2) == 0) {
+    udata = nullptr;
+  }
+  lua_pop(l, 2);
+  // ... udata ...
+  return udata;
+}
+
+/**
  * \brief Returns whether the specified name is a valid Lua identifier.
  * \param name The name to check.
  * \return \c true if the name only contains alphanumeric characters or '_' and

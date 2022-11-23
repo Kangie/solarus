@@ -48,12 +48,15 @@ class Sprite;
  * - the ground of each 8x8 square,
  * - the background music.
  */
-class SOLARUS_API Map: public ExportableToLua {
+class SOLARUS_API Map final: public ExportableToLua {
 
   public:
 
     // creation and destruction
     explicit Map(const std::string& id);
+
+    // static information
+    static constexpr const char module_name[] = "sol.map";
 
     // map properties
     const std::string& get_id() const;

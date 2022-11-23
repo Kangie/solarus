@@ -48,6 +48,9 @@ class Drawable: public ExportableToLua {
 
     virtual Point get_origin() const;
 
+    // static information
+    static constexpr const char type_name[] = "drawable";
+
     /**
      * \brief Returns the size of this drawable.
      * \return The size of this drawable.

@@ -44,7 +44,7 @@ class Tileset;
  * A sprite can be drawn directly on a surface, or it can
  * be attached to a map entity.
  */
-class Sprite: public Drawable {
+class Sprite final: public Drawable {
 
   public:
 
@@ -57,6 +57,9 @@ class Sprite: public Drawable {
     static SpritePtr create(const std::string& id);
 
     void set_tileset(const Tileset& tileset);
+
+    // static information
+    static constexpr const char module_name[] = "sol.sprite";
 
     // animation set
     const std::string& get_animation_set_id() const;

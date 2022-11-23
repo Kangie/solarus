@@ -39,7 +39,7 @@ class Size;
  * - usual fonts (TTF and other formats are supported),
  * - an image containing characters drawn.
  */
-class TextSurface: public Drawable {
+class TextSurface final: public Drawable {
 
   public:
 
@@ -84,6 +84,9 @@ class TextSurface: public Drawable {
     TextSurface(int x, int y,
         HorizontalAlignment horizontal_alignment,
         VerticalAlignment vertical_alignment);
+
+    // static information
+    static constexpr const char module_name[] = "sol.text_surface";
 
     const std::string& get_font() const;
     void set_font(const std::string& font_id);

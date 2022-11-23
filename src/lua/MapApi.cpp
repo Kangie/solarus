@@ -60,6 +60,7 @@
 #include "solarus/entities/TilePattern.h"
 #include "solarus/entities/Tileset.h"
 #include "solarus/entities/Wall.h"
+#include "solarus/lua/LuaBind.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 #include "solarus/movements/Movement.h"
@@ -116,50 +117,573 @@ const char* move_camera_code =
 const std::string LuaContext::map_module_name = "sol.map";
 
 /**
+ * \brief Implementation of map:get_game().
+ * \param map The map to call the method on.
+ * \return Reference to the savegame.
+ */
+static Savegame & get_game(Map& map) {
+  return *map.get_savegame();
+}
+
+/**
+ * \brief Implementation of map:get_world().
+ * \param map The map to call the method on.
+ * \return
+ */
+static std::optional<std::string> get_world(Map& map) {
+  const std::string& world = map.get_world();
+  return (world.empty()) ? std::nullopt : std::make_optional(world);
+}
+
+/**
+ * \brief Implementation of map:set_world(world).
+ * \param map The map to call the method on.
+ * \param world_arg A string to set the world, nullopt to unset the world.
+ */
+static void set_world(Map& map, std::optional<std::string> world_arg) {
+  std::string world = world_arg.value_or(std::string());
+  map.set_world(world);
+}
+
+/**
+ * \brief Implementation of map:get_size().
+ * \param map The map to call the method on.
+ * \return Width and height of the map.
+ */
+static std::tuple<int, int> get_size(Map& map) {
+  return std::make_tuple(map.get_width(), map.get_height());
+}
+
+/**
+ * \brief Implementation of map:get_location().
+ * \param map The map to call the method on.
+ * \return The horizontal and vertical location of the map.
+ */
+static std::tuple<int, int> get_location(Map& map) {
+  const Rectangle& location = map.get_location();
+  return std::make_tuple(location.get_x(), location.get_y());
+}
+
+/**
+ * \brief Implementation of map:get_floor().
+ * \param map The map to call the method on.
+ * \return The floor the map is on, or nullopt if the map has no floor.
+ */
+static std::optional<int> get_floor(Map & map) {
+  if (map.has_floor()) {
+    return std::make_optional(map.get_floor());
+  }
+  return std::nullopt;
+}
+
+/**
+ * \brief Implementation of map:set_floor(floor).
+ * \param map The map to call the method on.
+ * \param floor_arg An int to set the floor, or nullopt to unset the floor.
+ */
+static void set_floor(Map & map, std::optional<int> floor_arg) {
+  const int floor = floor_arg.value_or(MapData::NO_FLOOR);
+  map.set_floor(floor);
+}
+
+/**
+ * \brief Implementation of map:get_music().
+ * \param map The map to call the method on.
+ * \return Music id, may be a special id.
+ */
+static std::optional<std::string> get_music(Map & map) {
+  const std::string& music_id = map.get_music_id();
+  if (Music::none == music_id) {
+    return std::nullopt;
+  } else if (Music::unchanged == music_id) {
+    return std::make_optional("same");
+  } else {
+    return std::make_optional(music_id);
+  }
+}
+
+/**
+ * \brief Implementation of map:get_camera().
+ * \param map The map to call the method on.
+ * \return Pointer to a camera if the map has one, otherwise nullptr.
+ */
+static Camera * get_camera(Map & map) {
+  const CameraPtr& camera = map.get_camera();
+  return camera.get();
+}
+
+/**
+ * \brief Implementation of map:get_camera_position().
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack get_camera_position(
+    LuaContext & context, Map & map) {
+  context.warning_deprecated(
+    { 1, 5 },
+    "map:get_camera_position()",
+    "Use map:get_camera():get_bounding_box() instead.");
+
+  const CameraPtr& camera = map.get_camera();
+
+  lua_State * l = context.get_internal_state();
+  if (nullptr == camera) {
+    lua_pushnil(l);
+    return {1};
+  }
+
+  const Rectangle& camera_position = camera->get_bounding_box();
+
+  lua_pushinteger(l, camera_position.get_x());
+  lua_pushinteger(l, camera_position.get_y());
+  lua_pushinteger(l, camera_position.get_width());
+  lua_pushinteger(l, camera_position.get_height());
+  return {4};
+}
+
+/**
+ * \brief Implementation of map:move_camera().
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
+static void move_camera(LuaContext & context, Map &) {
+  context.warning_deprecated(
+    { 1, 5 },
+    "map:move_camera()",
+    "Make a target movement on map:get_camera() instead.");
+
+  lua_State * l = context.get_internal_state();
+  // Wrapper handles the map.
+  LuaTools::check_int(l, 2);
+  LuaTools::check_int(l, 3);
+  LuaTools::check_int(l, 4);
+  LuaTools::check_type(l, 5, LUA_TFUNCTION);
+  if (lua_gettop(l) >= 6) {
+    LuaTools::check_int(l, 6);
+  }
+  if (lua_gettop(l) >= 7) {
+    LuaTools::check_int(l, 7);
+  }
+  lua_settop(l, 7); // Make sure that we always have 7 arguments.
+
+  lua_getfield(l, LUA_REGISTRYINDEX, "map.move_camera");
+  if (!lua_isnil(l, -1)) {
+    SOLARUS_ASSERT(lua_isfunction(l, -1), "map:move_camera() is not a function");
+    lua_insert(l, 1);
+    context.call_function(7, 0, "move_camera");
+  }
+}
+
+/**
+ * \brief Implementation of map:get_ground(x, y, layer).
+ * \param map The map to call the method on.
+ * \param x The horizontal position to check.
+ * \param y The vertical position to check.
+ * \param layer The layer (z position) to check.
+ * \return The string reperenting the ground.
+ */
+static std::string get_ground(Map & map, int x, int y, int layer) {
+  Ground ground = map.get_ground(layer, x, y, nullptr);
+  return enum_to_name(ground);
+}
+
+/**
+ * \brief Implementation of map:draw_visual(drawable, x, y).
+ *
+ * This one is just used for overload resolution of draw_visual.
+ * \param map The map to call the method on.
+ * \param drawable The visual object to draw to the map.
+ * \param x The horizontal position to draw the object.
+ * \param y The vertical position to draw the object.
+ */
+static void draw_visual(Map & map, Drawable & drawable, int x, int y) {
+  map.draw_visual(drawable, x, y);
+}
+
+/**
+ * \brief Implementation of map:draw_sprite(sprite, x, y).
+ * \param map The map to call the method on.
+ * \param drawable The visual object to draw to the map.
+ * \param x The horizontal position to draw the object.
+ * \param y The vertical position to draw the object.
+ */
+static void draw_sprite(LuaContext & context,
+    Map & map, Sprite & sprite, int x, int y) {
+  context.warning_deprecated(
+    { 1, 5 },
+    "map:draw_sprite()",
+    "Use map:draw_visual() instead.");
+  map.draw_visual(sprite, x, y);
+}
+
+/**
+ * \brief Implementation of map:get_crystal_state()
+ * \param map The map to call the method on.
+ * \return The crystal state.
+ */
+static bool get_crystal_state(Map & map) {
+  return map.get_game().get_crystal_state();
+}
+
+/**
+ * \brief Implementation of map:set_crystal_state(state)
+ * \param map The map to call the method on.
+ * \param state The crystal state.
+ */
+static void set_crystal_state(Map & map, bool state) {
+  Game& game = map.get_game();
+  if (game.get_crystal_state() != state) {
+    game.change_crystal_state();
+  }
+}
+
+/**
+ * \brief Implementation of map:change_crystal_state()
+ * \param map The map to call the method on.
+ */
+static void change_crystal_state(Map & map) {
+  map.get_game().change_crystal_state();
+}
+
+/**
+ * \brief Implementation of map:open_doors(prefix)
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the doors to open.
+ */
+static void open_doors(LuaContext& context,
+    Map& map, const std::string& prefix) {
+  bool any_opened = false;
+  Entities& entities = map.get_entities();
+  const std::vector<EntityPtr>& doors =
+      entities.get_entities_with_prefix(EntityType::DOOR, prefix);
+  for (const EntityPtr& entity: doors) {
+    Door& door = *std::static_pointer_cast<Door>(entity);
+    if (!door.is_open() && !door.is_opening()) {
+      door.open();
+      any_opened = true;
+    }
+  }
+
+  // make sure the sound is played only once even if the script calls
+  // this function repeatedly while the door is still changing
+  if (any_opened) {
+    Sound::play("door_open", context.get_main_loop().get_resource_provider());
+  }
+}
+
+/**
+ * \brief Implementation of map:close_doors(prefix)
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the doors to close.
+ */
+static void close_doors(LuaContext& context,
+    Map& map, const std::string& prefix) {
+  bool any_closed = false;
+  Entities& entities = map.get_entities();
+  const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
+  for (const EntityPtr& entity: doors) {
+    Door& door = *std::static_pointer_cast<Door>(entity);
+    if (!door.is_closed() && !door.is_closing()) {
+      door.close();
+      any_closed = true;
+    }
+  }
+
+  // make sure the sound is played only once even if the script calls
+  // this function repeatedly while the door is still changing
+  if (any_closed) {
+    Sound::play("door_closed", context.get_main_loop().get_resource_provider());
+  }
+}
+
+/**
+ * \brief Implementation of map:set_doors_open(prefix, [open]).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the doors to set.
+ * \param open_arg True to open the door, false to close them (default is true).
+ */
+static void set_doors_open(
+    Map& map, const std::string& prefix, std::optional<bool> open_arg) {
+  bool open = open_arg.value_or(true);
+  Entities& entities = map.get_entities();
+  const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
+  for (const EntityPtr& entity: doors) {
+    Door& door = *std::static_pointer_cast<Door>(entity);
+    door.set_open(open);
+  }
+}
+
+/**
+ * \brief Implementation of map:get_entity(name).
+ * \param map The map to call the method on.
+ * \param name The map entity name to look-up.
+ * \return Pointer to the entity if it was found, nullptr otherwise.
+ */
+static Entity * get_entity(Map& map, const std::string& name) {
+  const EntityPtr& entity = map.get_entities().find_entity(name);
+  if (entity != nullptr && !entity->is_being_removed()) {
+    return entity.get();
+  }
+  return nullptr;
+}
+
+/**
+ * \brief Implementation of map:has_entity(name).
+ * \param map The map to call the method on.
+ * \param name The map entity name to look-up.
+ * \return True if the entity was found, nullptr otherwise.
+ */
+static bool has_entity(Map& map, const std::string& name) {
+  const EntityPtr& entity = map.get_entities().find_entity(name);
+  return (entity != nullptr);
+}
+
+/**
+ * \brief Implementation of map:get_entities([prefix]).
+ * \param map The map to call the method on.
+ * \param prefix_arg Prefix of the names of the entities to get.
+ *   Empty optional is the same as an empty string.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack get_entities(lua_State * l,
+    Map& map, std::optional<std::string> prefix_arg) {
+  std::string prefix = prefix_arg.value_or("");
+  const EntityVector& entities =
+      map.get_entities().get_entities_with_prefix_z_sorted(prefix);
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+/**
+ * \brief Implementation of map:get_entities_count(prefix).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the entities to count.
+ * \return Number of matching entities found.
+ */
+static int get_entities_count(Map& map, const std::string& prefix) {
+  const EntityVector& entities =
+      map.get_entities().get_entities_with_prefix(prefix);
+  return entities.size();
+}
+
+/**
+ * \brief Implementation of map:get_entities_count(prefix).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the names of the entities to check for.
+ * \return True if a matching entity was found, false otherwise.
+ */
+static bool has_entities(Map& map, const std::string& prefix) {
+  return map.get_entities().has_entity_with_prefix(prefix);
+}
+
+/**
+ * \brief Implementation of map:get_entities_by_type(type).
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \param type The type of entity to get.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack get_entities_by_type(lua_State* l,
+    Map& map, EntityType type) {
+
+  const EntityVector& entities =
+      map.get_entities().get_entities_by_type_z_sorted(type);
+
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+/**
+ * \brief Implementation of map:get_entities_in_rectangle(x, y, width, height).
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \param x The horizontal position of the rectangle's upper-left corner.
+ * \param y The vertical position of the rectangle's upper-left corner.
+ * \param width Width of the rectangle.
+ * \param height Height of the rectangle.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack get_entities_in_rectangle(lua_State* l,
+    Map& map, int x, int y, int width, int height) {
+  EntityVector entities;
+  map.get_entities().get_entities_in_rectangle_z_sorted(
+      Rectangle(x, y, width, height), entities
+  );
+
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+/**
+ * \brief Implementation of map:get_entities_in_region(...).
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack get_entities_in_region(lua_State* l, Map& map) {
+  Point xy;
+  EntityPtr entity;
+  if (lua_isnumber(l, 2)) {
+    int x = LuaTools::check_int(l, 2);
+    int y = LuaTools::check_int(l, 3);
+    xy = Point(x, y);
+  }
+  else if (LuaContext::is_entity(l, 2)) {
+    entity = LuaContext::check_entity(l, 2);
+    xy = entity->get_xy();
+  }
+  else {
+    LuaTools::type_error(l, 2, "entity or number");
+  }
+
+  EntityVector entities;
+  map.get_entities().get_entities_in_region_z_sorted(
+      xy, entities
+  );
+
+  if (entity != nullptr) {
+    // Entity variant: remove the entity itself.
+    const auto& it = std::find(entities.begin(), entities.end(), entity);
+    if (it != entities.end()) {
+      entities.erase(it);
+    }
+  }
+
+  LuaContext::push_userdata_iterator(l, entities);
+  return {1};
+}
+
+/**
+ * \brief Implementation of map:get_hero().
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Reference to the hero.
+ */
+static Hero& get_hero(lua_State* l, Map& map) {
+  LuaContext::check_map_has_game(l, map);
+
+  // Return the hero even if it is no longer on this map.
+  return map.get_default_hero();
+}
+
+/**
+ * \brief Implementation of map:set_entities_enabled(prefix, [enabled]).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the name of entities to enable/disable.
+ * \param enabled_arg Should the entities be enabled or disabled.
+ *   Default value is true.
+ */
+static void set_entities_enabled(
+    Map& map, const std::string& prefix, std::optional<bool> enabled_arg) {
+  bool enabled = enabled_arg.value_or(true);
+
+  std::vector<EntityPtr> entities =
+      map.get_entities().get_entities_with_prefix(prefix);
+  for (const EntityPtr& entity: entities) {
+    entity->set_enabled(enabled);
+  }
+}
+
+/**
+ * \brief Implementation of map:remove_entities(prefix).
+ * \param map The map to call the method on.
+ * \param prefix Prefix of the name of entities to remove.
+ */
+static void remove_entities(Map& map, const std::string& prefix) {
+  map.get_entities().remove_entities_with_prefix(prefix);
+}
+
+/**
+ * \brief Implementation of all entiy creation functions map:create_*.
+ * \param context The context this Lua call was made in.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack create_entity(LuaContext& context, Map& map) {
+  lua_State* l = context.get_internal_state();
+  if (!map.is_loaded()) {
+    LuaTools::arg_error(l, 1, "This map is not loaded");
+  }
+  EntityType type = LuaTools::check_enum<EntityType>(
+      l, lua_upvalueindex(1)
+  );
+  const EntityData& data = EntityData::check_entity_data(l, 2, type);
+
+  context.create_map_entity_from_data_to_lua(map, data);
+  return {1};
+}
+
+/**
+ * \brief Implementation of map:get_cameras().
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack get_cameras(lua_State* l, Map& map) {
+  LuaContext::push_userdata_iterator(l, map.get_entities().get_cameras());
+  return {1};
+}
+
+/**
+ * \brief Implementation of map:get_heroes().
+ * \param l The Lua state that called this method.
+ * \param map The map to call the method on.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack get_heroes(lua_State* l, Map& map) {
+  LuaContext::push_userdata_iterator(l, map.get_entities().get_heroes());
+  return {1};
+}
+
+/**
  * \brief Initializes the map features provided to Lua.
  */
 void LuaContext::register_map_module() {
 
   const std::vector<luaL_Reg> methods = {
-      { "get_id", map_api_get_id },
-      { "get_game", map_api_get_game },
-      { "get_world", map_api_get_world },
-      { "set_world", map_api_set_world },
-      { "get_min_layer", map_api_get_min_layer },
-      { "get_max_layer", map_api_get_max_layer },
-      { "get_size", map_api_get_size },
-      { "get_location", map_api_get_location },
-      { "get_floor", map_api_get_floor },
-      { "set_floor", map_api_set_floor },
-      { "get_tileset", map_api_get_tileset },
-      { "set_tileset", map_api_set_tileset },
-      { "get_music", map_api_get_music },
-      { "get_camera", map_api_get_camera },
-      { "get_camera_position", map_api_get_camera_position },
-      { "move_camera", map_api_move_camera },
-      { "get_ground", map_api_get_ground },
-      { "draw_visual", map_api_draw_visual },
-      { "draw_sprite", map_api_draw_sprite },
-      { "get_crystal_state", map_api_get_crystal_state },
-      { "set_crystal_state", map_api_set_crystal_state },
-      { "change_crystal_state", map_api_change_crystal_state },
-      { "open_doors", map_api_open_doors },
-      { "close_doors", map_api_close_doors },
-      { "set_doors_open", map_api_set_doors_open },
-      { "get_entity", map_api_get_entity },
-      { "has_entity", map_api_has_entity },
-      { "get_entities", map_api_get_entities },
-      { "get_entities_count", map_api_get_entities_count },
-      { "has_entities", map_api_has_entities },
-      { "get_entities_by_type", map_api_get_entities_by_type },
-      { "get_entities_in_rectangle", map_api_get_entities_in_rectangle },
-      { "get_entities_in_region", map_api_get_entities_in_region },
-      { "get_hero", map_api_get_hero },
-      { "set_entities_enabled", map_api_set_entities_enabled },
-      { "remove_entities", map_api_remove_entities },
+      { "get_id", LUA_TO_C_BIND(&Map::get_id) },
+      { "get_game", LUA_TO_C_BIND(get_game) },
+      { "get_world", LUA_TO_C_BIND(get_world) },
+      { "set_world", LUA_TO_C_BIND(set_world) },
+      { "get_min_layer", LUA_TO_C_BIND(&Map::get_min_layer) },
+      { "get_max_layer", LUA_TO_C_BIND(&Map::get_max_layer) },
+      { "get_size", LUA_TO_C_BIND(get_size) },
+      { "get_location", LUA_TO_C_BIND(get_location) },
+      { "get_floor", LUA_TO_C_BIND(get_floor) },
+      { "set_floor", LUA_TO_C_BIND(set_floor) },
+      { "get_tileset", LUA_TO_C_BIND(&Map::get_tileset_id) },
+      { "set_tileset", LUA_TO_C_BIND(&Map::set_tileset) },
+      { "get_music", LUA_TO_C_BIND(get_music) },
+      { "get_camera", LUA_TO_C_BIND(get_camera) },
+      { "get_camera_position", LUA_TO_C_BIND(get_camera_position) },
+      { "move_camera", LUA_TO_C_BIND(move_camera) },
+      { "get_ground", LUA_TO_C_BIND(get_ground) },
+      { "draw_visual", LUA_TO_C_BIND(draw_visual) },
+      { "draw_sprite", LUA_TO_C_BIND(draw_sprite) },
+      { "get_crystal_state", LUA_TO_C_BIND(get_crystal_state) },
+      { "set_crystal_state", LUA_TO_C_BIND(set_crystal_state) },
+      { "change_crystal_state", LUA_TO_C_BIND(change_crystal_state) },
+      { "open_doors", LUA_TO_C_BIND(open_doors) },
+      { "close_doors", LUA_TO_C_BIND(close_doors) },
+      { "set_doors_open", LUA_TO_C_BIND(set_doors_open) },
+      { "get_entity", LUA_TO_C_BIND(get_entity) },
+      { "has_entity", LUA_TO_C_BIND(has_entity) },
+      { "get_entities", LUA_TO_C_BIND(get_entities) },
+      { "get_entities_count", LUA_TO_C_BIND(get_entities_count) },
+      { "has_entities", LUA_TO_C_BIND(has_entities) },
+      { "get_entities_by_type", LUA_TO_C_BIND(get_entities_by_type) },
+      { "get_entities_in_rectangle", LUA_TO_C_BIND(get_entities_in_rectangle) },
+      { "get_entities_in_region", LUA_TO_C_BIND(get_entities_in_region) },
+      { "get_hero", LUA_TO_C_BIND(get_hero) },
+      { "set_entities_enabled", LUA_TO_C_BIND(set_entities_enabled) },
+      { "remove_entities", LUA_TO_C_BIND(remove_entities) },
       //1.7 features
-      { "get_cameras", map_api_get_cameras },
-      { "get_heroes", map_api_get_heroes }
+      { "get_cameras", LUA_TO_C_BIND(get_cameras) },
+      { "get_heroes", LUA_TO_C_BIND(get_heroes) },
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -180,7 +704,7 @@ void LuaContext::register_map_module() {
     }
     std::string function_name = "create_" + type_name;
     push_string(current_l, type_name);
-    lua_pushcclosure(current_l, map_api_create_entity, 1);
+    lua_pushcclosure(current_l, LUA_TO_C_BIND(create_entity), 1);
     lua_setfield(current_l, -2, function_name.c_str());
   }
 
@@ -1668,836 +2192,6 @@ void LuaContext::check_map_has_game(lua_State* l, const Map& map) {
     // Return nil if the game is already destroyed.
     LuaTools::error(l, "The game of this map is no longer running");
   }
-}
-
-/**
- * \brief Implementation of map:get_game().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_game(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-
-    push_game(l, *map.get_savegame());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_id().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_id(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    push_string(l, map.get_id());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_world().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_world(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    const std::string& world = map.get_world();
-
-    if (world.empty()) {
-      lua_pushnil(l);
-    }
-    else {
-      push_string(l, world);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:set_world().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_set_world(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    std::string world;
-    if (lua_type(l, 2) != LUA_TSTRING && lua_type(l, 2) != LUA_TNIL) {
-      LuaTools::type_error(l, 2, "string or nil");
-    }
-    if (!lua_isnil(l, 2)) {
-      world = LuaTools::check_string(l, 2);
-    }
-
-    map.set_world(world);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:get_min_layer().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_min_layer(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    lua_pushinteger(l, map.get_min_layer());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_max_layer().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_max_layer(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    lua_pushinteger(l, map.get_max_layer());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_floor().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_floor(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    if (!map.has_floor()) {
-      lua_pushnil(l);
-    }
-    else {
-      lua_pushinteger(l, map.get_floor());
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:set_floor().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_set_floor(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    int floor = MapData::NO_FLOOR;
-    if (lua_type(l, 2) != LUA_TNUMBER && lua_type(l, 2) != LUA_TNIL) {
-      LuaTools::type_error(l, 2, "number or nil");
-    }
-    if (!lua_isnil(l, 2)) {
-      floor = LuaTools::check_int(l, 2);
-    }
-
-    map.set_floor(floor);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:get_size().
- * \param l the Lua context that is calling this function
- * \return number of values to return to Lua
- */
-int LuaContext::map_api_get_size(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    lua_pushinteger(l, map.get_width());
-    lua_pushinteger(l, map.get_height());
-
-    return 2;
-  });
-}
-
-/**
- * \brief Implementation of map:get_location().
- * \param l the Lua context that is calling this function
- * \return number of values to return to Lua
- */
-int LuaContext::map_api_get_location(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    lua_pushinteger(l, map.get_location().get_x());
-    lua_pushinteger(l, map.get_location().get_y());
-
-    return 2;
-  });
-}
-
-/**
- * \brief Implementation of map:get_tileset().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_tileset(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    push_string(l, map.get_tileset_id());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_music().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_music(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-
-    const std::string& music_id = map.get_music_id();
-    if (music_id == Music::none) {
-      // Special id to stop any music.
-      lua_pushnil(l);
-    }
-    else if (music_id == Music::unchanged) {
-      // Special id to keep the music unchanged.
-      push_string(l, "same");
-    }
-    else {
-      push_string(l, music_id);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:set_tileset().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_set_tileset(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& tileset_id = LuaTools::check_string(l, 2);
-
-    map.set_tileset(tileset_id);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:get_camera().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_camera(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-
-    const CameraPtr& camera = map.get_camera();
-    if (camera == nullptr) {
-      lua_pushnil(l);
-      return 1;
-    }
-
-    push_camera(l, *camera);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_camera_position().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_camera_position(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-
-    get().warning_deprecated(
-        { 1, 5 },
-        "map:get_camera_position()",
-        "Use map:get_camera():get_bounding_box() instead.");
-
-    const Map& map = *check_map(l, 1);
-
-    const CameraPtr& camera = map.get_camera();
-    if (camera == nullptr) {
-      lua_pushnil(l);
-      return 1;
-    }
-
-    const Rectangle& camera_position = camera->get_bounding_box();
-
-    lua_pushinteger(l, camera_position.get_x());
-    lua_pushinteger(l, camera_position.get_y());
-    lua_pushinteger(l, camera_position.get_width());
-    lua_pushinteger(l, camera_position.get_height());
-    return 4;
-  });
-}
-
-/**
- * \brief Implementation of map:move_camera().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_move_camera(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-
-    LuaContext& lua_context = get();
-    lua_context.warning_deprecated(
-        { 1, 5 },
-        "map:move_camera()",
-        "Make a target movement on map:get_camera() instead.");
-
-    check_map(l, 1);
-    LuaTools::check_int(l, 2);
-    LuaTools::check_int(l, 3);
-    LuaTools::check_int(l, 4);
-    LuaTools::check_type(l, 5, LUA_TFUNCTION);
-    if (lua_gettop(l) >= 6) {
-      LuaTools::check_int(l, 6);
-    }
-    if (lua_gettop(l) >= 7) {
-      LuaTools::check_int(l, 7);
-    }
-    lua_settop(l, 7); // Make sure that we always have 7 arguments.
-
-    lua_getfield(l, LUA_REGISTRYINDEX, "map.move_camera");
-    if (!lua_isnil(l, -1)) {
-      SOLARUS_ASSERT(lua_isfunction(l, -1), "map:move_camera() is not a function");
-      lua_insert(l, 1);
-      lua_context.call_function(7, 0, "move_camera");
-    }
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:get_ground().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_ground(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    int x = LuaTools::check_int(l, 2);
-    int y = LuaTools::check_int(l, 3);
-    int layer = LuaTools::check_layer(l, 4, map);
-
-    Ground ground = map.get_ground(layer, x, y, nullptr);
-
-    push_string(l, enum_to_name(ground));
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:draw_visual().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_draw_visual(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-
-    Map& map = *check_map(l, 1);
-    Drawable& drawable = *check_drawable(l, 2);
-    int x = LuaTools::check_int(l, 3);
-    int y = LuaTools::check_int(l, 4);
-
-    map.draw_visual(drawable, x, y);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:draw_sprite().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_draw_sprite(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-
-    get().warning_deprecated(
-        { 1, 5 },
-        "map:draw_sprite()",
-        "Use map:draw_visual() instead.");
-
-    Map& map = *check_map(l, 1);
-    Sprite& sprite = *check_sprite(l, 2);
-    int x = LuaTools::check_int(l, 3);
-    int y = LuaTools::check_int(l, 4);
-
-    map.draw_visual(sprite, x, y);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:get_crystal_state().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_crystal_state(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-
-    lua_pushboolean(l, map.get_game().get_crystal_state());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:set_crystal_state().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_set_crystal_state(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    bool state = LuaTools::check_boolean(l, 2);
-
-    Game& game = map.get_game();
-    if (game.get_crystal_state() != state) {
-      game.change_crystal_state();
-    }
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:change_crystal_state().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_change_crystal_state(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-
-    map.get_game().change_crystal_state();
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:open_doors().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_open_doors(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::check_string(l, 2);
-
-    bool done = false;
-    Entities& entities = map.get_entities();
-    const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
-    for (const EntityPtr& entity: doors) {
-      Door& door = *std::static_pointer_cast<Door>(entity);
-      if (!door.is_open() && !door.is_opening()) {
-        door.open();
-        done = true;
-      }
-    }
-
-    // make sure the sound is played only once even if the script calls
-    // this function repeatedly while the door is still changing
-    if (done) {
-      Sound::play("door_open", get().get_main_loop().get_resource_provider());
-    }
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:close_doors().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_close_doors(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::check_string(l, 2);
-
-    bool done = false;
-    Entities& entities = map.get_entities();
-    const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
-    for (const EntityPtr& entity: doors) {
-      Door& door = *std::static_pointer_cast<Door>(entity);
-      if (!door.is_closed() && !door.is_closing()) {
-        door.close();
-        done = true;
-      }
-    }
-
-    // make sure the sound is played only once even if the script calls
-    // this function repeatedly while the door is still changing
-    if (done) {
-      Sound::play("door_closed", get().get_main_loop().get_resource_provider());
-    }
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:set_doors_open().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_set_doors_open(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::check_string(l, 2);
-    bool open = LuaTools::opt_boolean(l, 3, true);
-
-    Entities& entities = map.get_entities();
-    const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
-    for (const EntityPtr& entity: doors) {
-      Door& door = *std::static_pointer_cast<Door>(entity);
-      door.set_open(open);
-    }
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:get_entity().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_entity(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& name = LuaTools::check_string(l, 2);
-
-    const EntityPtr& entity = map.get_entities().find_entity(name);
-
-    if (entity != nullptr && !entity->is_being_removed()) {
-      push_entity(l, *entity);
-    }
-    else {
-      lua_pushnil(l);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:has_entity().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_has_entity(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& name = LuaTools::check_string(l, 2);
-
-    const EntityPtr& entity = map.get_entities().find_entity(name);
-
-    lua_pushboolean(l, entity != nullptr);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_entities().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_entities(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::opt_string(l, 2, "");
-
-    const EntityVector& entities =
-        map.get_entities().get_entities_with_prefix_z_sorted(prefix);
-
-    push_userdata_iterator(l, entities);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_entities_count().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_entities_count(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::check_string(l, 2);
-
-    const EntityVector& entities =
-        map.get_entities().get_entities_with_prefix(prefix);
-
-    lua_pushinteger(l, entities.size());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:has_entities().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_has_entities(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::check_string(l, 2);
-
-    lua_pushboolean(l, map.get_entities().has_entity_with_prefix(prefix));
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_entities_by_type().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_entities_by_type(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    EntityType type = LuaTools::check_enum<EntityType>(l, 2);
-
-    const EntityVector& entities =
-        map.get_entities().get_entities_by_type_z_sorted(type);
-
-    push_userdata_iterator(l, entities);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_entities_in_rectangle().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_entities_in_rectangle(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const int x = LuaTools::check_int(l, 2);
-    const int y = LuaTools::check_int(l, 3);
-    const int width = LuaTools::check_int(l, 4);
-    const int height = LuaTools::check_int(l, 5);
-
-    EntityVector entities;
-    map.get_entities().get_entities_in_rectangle_z_sorted(
-        Rectangle(x, y, width, height), entities
-    );
-
-    push_userdata_iterator(l, entities);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_entities_in_region().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_entities_in_region(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    Point xy;
-    EntityPtr entity;
-    if (lua_isnumber(l, 2)) {
-      int x = LuaTools::check_int(l, 2);
-      int y = LuaTools::check_int(l, 3);
-      xy = Point(x, y);
-    }
-    else if (is_entity(l, 2)) {
-      entity = check_entity(l, 2);
-      xy = entity->get_xy();
-    }
-    else {
-      LuaTools::type_error(l, 2, "entity or number");
-    }
-
-    EntityVector entities;
-    map.get_entities().get_entities_in_region_z_sorted(
-        xy, entities
-    );
-
-    if (entity != nullptr) {
-      // Entity variant: remove the entity itself.
-      const auto& it = std::find(entities.begin(), entities.end(), entity);
-      if (it != entities.end()) {
-        entities.erase(it);
-      }
-    }
-
-    push_userdata_iterator(l, entities);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_hero().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_hero(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-
-    check_map_has_game(l, map);
-
-    // Return the hero even if he is no longer on this map.
-    Hero& hero = map.get_default_hero();
-    push_hero(l, hero);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:set_entities_enabled().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_set_entities_enabled(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::check_string(l, 2);
-    bool enabled = LuaTools::opt_boolean(l, 3, true);
-
-    std::vector<EntityPtr> entities =
-        map.get_entities().get_entities_with_prefix(prefix);
-    for (const EntityPtr& entity: entities) {
-      entity->set_enabled(enabled);
-    }
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of map:remove_entities().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_remove_entities(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    Map& map = *check_map(l, 1);
-    const std::string& prefix = LuaTools::check_string(l, 2);
-
-    map.get_entities().remove_entities_with_prefix(prefix);
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of all entity creation functions: map_api_create_*.
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_create_entity(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-
-    EntityType type = LuaTools::check_enum<EntityType>(
-        l, lua_upvalueindex(1)
-    );
-    Map& map = *check_map(l, 1);
-    if (!map.is_loaded()) {
-      LuaTools::arg_error(l, 1, "This map is not loaded");
-    }
-    const EntityData& data = EntityData::check_entity_data(l, 2, type);
-
-    get().create_map_entity_from_data_to_lua(map, data);
-
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_cameras()
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_cameras(lua_State *l) {
-
-  return state_boundary_handle(l, [&] {
-
-    Map& map = *check_map(l, 1);
-
-    push_userdata_iterator(l, map.get_entities().get_cameras());
-
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of map:get_heroes()
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::map_api_get_heroes(lua_State *l) {
-
-  return state_boundary_handle(l, [&] {
-
-    Map& map = *check_map(l, 1);
-
-    push_userdata_iterator(l, map.get_entities().get_heroes());
-
-    return 1;
-  });
 }
 
 /**

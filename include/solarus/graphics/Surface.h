@@ -43,7 +43,7 @@ class Surface;
  * A surface can be drawn or blitted on another surface.
  * This class basically encapsulates a library-dependent surface object.
  */
-class Surface: public Drawable {
+class Surface final: public Drawable {
 
     friend class Shader;
     friend class VertexArray; // TODO find cleaner way
@@ -63,6 +63,9 @@ class Surface: public Drawable {
     Surface(int width, int height, bool premultiplied = true, int margin = 0);
 
     ~Surface();
+
+    // static information
+    static constexpr const char module_name[] = "sol.surface";
 
     static SurfacePtr create(int width, int height, bool premultiplied = true);
     static SurfacePtr create(const Size& size, bool premultiplied = true, int margin = 0);
