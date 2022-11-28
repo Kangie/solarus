@@ -1907,15 +1907,12 @@ int LuaContext::l_create_hero(lua_State* l) {
 
     //Create new volatile savegame (no file name) to hold hero equipement
     SavegamePtr save = std::make_shared<Savegame>(game.get_savegame().get_main_loop(), "");
-    EquipmentPtr equipment = std::make_shared<Equipment>(save, ""); //TODO set prefix correctly
 
     //Initialize the save and equipment in-place
     save->initialize();
-    equipment->set_initial_values();
-    equipment->load_items();
 
     HeroPtr entity = std::make_shared<Hero>(
-     equipment, data.get_name()
+     save->get_equipment(), data.get_name()
     );
 
     ControlsPtr cmds = ControlsDispatcher::get().create_commands_from_keyboard();
@@ -1929,8 +1926,6 @@ int LuaContext::l_create_hero(lua_State* l) {
     entity->set_enabled(data.is_enabled_at_start());
 
     if(map.is_started()) {
-      //entity->notify_creating();
-
       push_entity(l, *entity);
       return 1;
     }

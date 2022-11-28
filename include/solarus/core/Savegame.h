@@ -101,7 +101,7 @@ class SOLARUS_API Savegame: public ExportableToLua {
     const Game* get_game() const;
     Game* get_game();
     void set_game(Game* game);
-    const EquipmentPtr& get_default_equipment() const;
+    const EquipmentPtr& get_equipment() const;
 
     Transition::Style get_default_transition_style() const;
     void set_default_transition_style(Transition::Style default_transition_style);
@@ -161,7 +161,7 @@ class SOLARUS_API Savegame: public ExportableToLua {
     std::map<std::string, SavedValue> saved_values;
     //std::vector<PlayerPtr> players;
 
-    EquipmentPtr opt_equipment;    /**< Optional main equipement of this savegame */
+    EquipmentPtr equipment;    /**< Optional main equipement of this savegame */
 
     bool empty;
     std::string file_name;         /**< Savegame file name relative to the quest write directory. */

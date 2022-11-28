@@ -65,7 +65,7 @@ Game::Game(MainLoop& main_loop, const SavegamePtr& savegame):
   // initialize members
   controls = ControlsDispatcher::get().create_commands_from_game(*this); //TODO differentiate commands from hero to hero
 
-  default_hero = std::make_shared<Hero>(savegame->get_default_equipment(), "hero");
+  default_hero = std::make_shared<Hero>(savegame->get_equipment(), "hero");
   CameraPtr default_camera = create_camera("main_camera");
 
   default_hero->set_controls(controls);
@@ -125,7 +125,6 @@ void Game::start() {
 
   started = true;
   get_hero()->get_equipment().notify_game_started();
-  //Update teleportations a first time so that cameras are added to first map
   get_lua_context().game_on_started(*this);
 }
 
@@ -818,9 +817,15 @@ void Game::teleport_camera(const CameraPtr& camera,
   // Add the teleportation details to the list of current teleportations
   cameras_teleportations.emplace_back(std::move(ct));
 
-  if(!camera->is_on_map() && started) {
+  if(!camera->is_on_map()) {
     //Fast forward to opening transition
-    teleportation_change_map(cameras_teleportations.back());
+    auto& ct = cameras_teleportations.back();
+    if(started) {
+      teleportation_change_map(ct);
+    } else { // Place the hero on the very first map before game starts
+      ct.camera->place_on_map(*ct.next_map);
+      if(opt_hero) opt_hero->place_on_map(*ct.next_map);
+    }
   }
 }
 
