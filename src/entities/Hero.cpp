@@ -2347,7 +2347,8 @@ void Hero::update_invincibility() {
 
   if (is_invincible() &&
       end_invincible_date != 0 &&
-      System::now_ms() >= end_invincible_date && get_game().is_paused()) {
+      System::now_ms() >= end_invincible_date && 
+      get_game().is_paused()) {
     set_invincible(false, 0);
   }
 }
