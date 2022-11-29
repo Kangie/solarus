@@ -1,7 +1,7 @@
 local map = ...
 local game = map:get_game()
 
-function map:on_started()
+function map:on_opening_transition_finished()
 
   -- Set invincible with no limit.
   hero:set_invincible(true)
@@ -31,9 +31,8 @@ function map:on_started()
       end)
       sol.timer.start(sol.main, 310, function()
         assert(not hero:is_invincible())
+      	sol.main.exit()
       end) 
-
-      sol.main.exit()
     end)
   end)
 end
