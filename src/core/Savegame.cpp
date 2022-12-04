@@ -109,7 +109,7 @@ void Savegame::initialize() {
       "The quest write directory for savegames was not set in quest.dat");
 
   if (file_name.empty() || !QuestFiles::data_file_exists(file_name)) {
-    // This save does not exist yet.
+    // // File-less save (for multi), or savegame does not exist
     empty = true;
     set_initial_values();
   }

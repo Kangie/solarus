@@ -822,7 +822,8 @@ void Game::teleport_camera(const CameraPtr& camera,
     auto& ct = cameras_teleportations.back();
     if(started) {
       teleportation_change_map(ct);
-    } else { // Place the hero on the very first map before game starts
+    } else {
+      // Place the hero on the very first map before game starts
       ct.camera->place_on_map(*ct.next_map);
       if(opt_hero) opt_hero->place_on_map(*ct.next_map);
     }
