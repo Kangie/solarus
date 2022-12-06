@@ -802,12 +802,12 @@ void QuestTreeView::new_directory_action_triggered() {
   try {
     NewElementDialog dialog(parentWidget());
     int result = dialog.exec();
-    QString dir_name = dialog.get_element_id();
-    QuestDatabase::FileInfo file_info = dialog.get_file_info();
 
     if (result != QDialog::Accepted) {
       return;
     }
+
+    QString dir_name = dialog.get_element_id();
 
     Quest& quest = model->get_quest();
     Quest::check_valid_file_name(dir_name);
@@ -818,6 +818,8 @@ void QuestTreeView::new_directory_action_triggered() {
     const QString& relative_path =
         quest.get_path_relative_to_data_path(dir_path);
     QuestDatabase& database = quest.get_database();
+    QuestDatabase::FileInfo file_info = dialog.get_file_info();
+
     database.set_file_info(relative_path, file_info);
     database.save();
 
@@ -853,12 +855,12 @@ void QuestTreeView::new_script_action_triggered() {
 
     NewElementDialog dialog(file_type, parentWidget());
     int result = dialog.exec();
-    QString file_name = dialog.get_element_id();
-    QuestDatabase::FileInfo file_info = dialog.get_file_info();
 
     if (result != QDialog::Accepted) {
       return;
     }
+
+    QString file_name = dialog.get_element_id();
 
     // Automatically add .lua extension if not present.
     if (!file_name.contains(".")) {
@@ -873,6 +875,8 @@ void QuestTreeView::new_script_action_triggered() {
     const QString& relative_path =
           quest.get_path_relative_to_data_path(script_path);
     QuestDatabase& database = quest.get_database();
+    QuestDatabase::FileInfo file_info = dialog.get_file_info();
+
     database.set_file_info(relative_path, file_info);
     database.save();
 
@@ -910,12 +914,12 @@ void QuestTreeView::new_shader_code_file_action_triggered() {
 
     NewElementDialog dialog(file_type, parentWidget());
     int result = dialog.exec();
-    QString file_name = dialog.get_element_id();
-    QuestDatabase::FileInfo file_info = dialog.get_file_info();
 
     if (result != QDialog::Accepted) {
       return;
     }
+
+    QString file_name = dialog.get_element_id();
 
     // Automatically add .glsl extension if not present.
     if (!file_name.contains(".")) {
@@ -930,6 +934,8 @@ void QuestTreeView::new_shader_code_file_action_triggered() {
     const QString& relative_path =
         quest.get_path_relative_to_data_path(path);
     QuestDatabase& database = quest.get_database();
+    QuestDatabase::FileInfo file_info = dialog.get_file_info();
+
     database.set_file_info(relative_path, file_info);
     database.save();
 
