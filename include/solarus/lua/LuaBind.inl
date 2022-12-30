@@ -119,6 +119,11 @@ static inline void push_any(lua_State * L, int integer) {
 }
 
 /// \copydoc push_any(lua_State*,bool)
+static inline void push_any(lua_State * L, unsigned int integer) {
+  lua_pushinteger(L, integer);
+}
+
+/// \copydoc push_any(lua_State*,bool)
 static inline void push_any(lua_State * L, const char * str) {
   lua_pushstring(L, str);
 }
@@ -147,6 +152,35 @@ static inline void push_any(lua_State * L, const std::optional<T>& option) {
     push_any(L, *option);
   } else {
     lua_pushnil(L);
+  }
+}
+
+/// \copydoc push_any(lua_State*,bool)
+template<typename T>
+static inline void push_any(lua_State * L, const std::vector<T>& vec) {
+  // Build a Lua table containing the map content.
+  lua_settop(L, 0);
+  lua_newtable(L);
+  int i = 1;
+  for (const auto& v : vec) {
+    push_any(L, v);
+    lua_rawseti(L, 1, i);
+    ++i;
+  }
+}
+
+/// \copydoc push_any(lua_State*,bool)
+template<typename K, typename V>
+static inline void push_any(lua_State * L, const std::map<K, V>& map) {
+  // Build a Lua table containing the map content.
+  lua_settop(L, 0);
+  lua_newtable(L);
+  int i = 1;
+  for (const auto& [k, v] : map) {
+    push_any(L, k);
+    push_any(L, v);
+    lua_rawset(L, 2);
+    ++i;
   }
 }
 
