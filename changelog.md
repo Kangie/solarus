@@ -12,7 +12,6 @@
 * Fix custom state direction control when the movement is disallowed (#1565).
 * Fix hero.set_invincible not suspended with the game (#1554)
 
-
 ### Lua API changes
 
 This release adds new features but does not introduce any incompatibility.
@@ -64,7 +63,8 @@ This release adds new features but does not introduce any incompatibility.
 
 ## Solarus 1.6.4 (2020-04-12)
 
-No change in the engine package.
+This release only contains changes in the Solarus Quest Editor.
+There are no changes in the engine source code.
 
 ## Solarus 1.6.3 (2020-04-11)
 
@@ -329,6 +329,11 @@ but does not introduce any incompatibility.
 * Fix `text_surface:set_horizontal/vertical_alignment()` not working.
 * Fix parallax dynamic tiles still displayed when disabled or invisible.
 * Improve error message of non-square tile patterns with diagonal obstacles.
+
+## Solarus 1.5.2 (2016-12-06)
+
+This release only contains changes in the Solarus Quest Editor.
+There are no changes in the engine source code.
 
 ## Solarus 1.5.1 (2016-11-29)
 
