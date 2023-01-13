@@ -115,7 +115,7 @@ static std::optional<std::string> get_quest_write_dir() {
  * @param [string] dir
  */
 static void set_quest_write_dir(const std::optional<std::string>& dir) {
-  QuestFiles::set_quest_write_dir(dir ? *dir : "");
+  QuestFiles::set_quest_write_dir(dir.value_or(""));
 }
 
 /**
@@ -189,12 +189,11 @@ static double get_angle(int x1, int y1, int x2, int y2) {
  * @param ctx the lua context
  * @return string : typename
  */
-static LuaBind::OnStack get_type(LuaContext& ctx){
-  auto l = ctx.get_internal_state();
-  luaL_checkany(l, 1);
-  lua_pushstring(l, LuaTools::get_type_name(l, 1).c_str());
-  return {1};
+static std::string get_type(lua_State* L) {
+  luaL_checkany(L, 1);
+  return LuaTools::get_type_name(L, 1);
 }
+
 
 /**
  * @brief Implementation of sol.main.get_metatable(type_name)
@@ -293,11 +292,10 @@ static Savegame* get_game(LuaContext& ctx) {
 
 /**
  * @brief Implementation of sol.main.rawget(t, k)
- * @param ctx the lua context
+ * @param l the lua state
  * @return
  */
-static LuaBind::OnStack rawget(LuaContext& ctx) {
-  auto l = ctx.get_internal_state();
+static LuaBind::OnStack rawget(lua_State* l) {
   switch (lua_type(l, 1)) {
   case LUA_TUSERDATA:
     return {LuaContext::userdata_rawget_as_table(l)};
@@ -314,11 +312,10 @@ static LuaBind::OnStack rawget(LuaContext& ctx) {
 
 /**
  * @brief Implementation of sol.main.rawset(t, k, v)
- * @param ctx the lua context
+ * @param l the lua state
  * @return
  */
-static LuaBind::OnStack rawset(LuaContext& ctx) {
-  auto l = ctx.get_internal_state();
+static LuaBind::OnStack rawset(lua_State* l) {
   switch (lua_type(l, 1)) {
   case LUA_TUSERDATA:
     LuaContext::userdata_meta_newindex_as_table(l);
@@ -419,7 +416,6 @@ bool LuaContext::is_main(lua_State* l, int index) {
   lua_pop(l, 1);
   return result;
 }
-
 
 /**
  * \brief Calls sol.main.on_started() if it exists.
