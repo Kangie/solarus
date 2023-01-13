@@ -104,20 +104,12 @@ Savegame::Savegame(MainLoop& main_loop, const std::string& file_name):
  * the equipment.
  */
 void Savegame::initialize() {
-
-  //This is a volatile savegame that is not meant to be saved
-  if(file_name.size() == 0) {
-    empty = true;
-    set_initial_values();
-    return;
-  }
-
   const std::string& quest_write_dir = QuestFiles::get_quest_write_dir();
   SOLARUS_REQUIRE(!quest_write_dir.empty(),
       "The quest write directory for savegames was not set in quest.dat");
 
-  if (!QuestFiles::data_file_exists(file_name)) {
-    // This save does not exist yet.
+  if (file_name.empty() || !QuestFiles::data_file_exists(file_name)) {
+    // // File-less save (for multi), or savegame does not exist
     empty = true;
     set_initial_values();
   }
@@ -129,10 +121,10 @@ void Savegame::initialize() {
   }
 
   // This is a main savegame ! Lets inflate an equipement
-  opt_equipment = std::make_shared<Equipment>(shared_from_this_cast<Savegame>(), "");
-  opt_equipment->load_items();
+  equipment = std::make_shared<Equipment>(shared_from_this_cast<Savegame>(), "");
+  equipment->load_items();
   if(empty) {
-    opt_equipment->set_initial_values();
+    equipment->set_initial_values();
   }
   //get_equipment().load_items(); //TODO load equipement elsewhere
 }
@@ -595,8 +587,8 @@ void Savegame::unset(const std::string& key) {
   saved_values.erase(key);
 }
 
-const EquipmentPtr& Savegame::get_default_equipment() const {
-  return opt_equipment;
+const EquipmentPtr& Savegame::get_equipment() const {
+  return equipment;
 }
 
 /**
