@@ -2907,6 +2907,9 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
       Q_ASSERT(index > previous_index);
     }
     previous_index = index;
+
+    // Once we know where it is going, do context initialization and add it.
+    entity->set_context_values();
     addable_entities.emplace_back(std::move(entity), index);
   }
 

@@ -1554,7 +1554,7 @@ void EntityModel::notify_field_changed(const QString& key, const QVariant& value
  * @brief This function is called when this is a new entity.
  *
  * Field values are initially set to their default value as specified by
- * Solarus.
+ * the file format, which are simple for compatability.
  * Subclasses can reimplement this function to set more appropriate initial
  * values for the user.
  */
@@ -1562,6 +1562,17 @@ void EntityModel::set_initial_values() {
 
   // Choose an initial position aligned to the grid.
   set_top_left(QPoint(0, 0));
+}
+
+/**
+ * @brief This function is called when this new entity is placed on the map.
+ *
+ * Used to further refine the initial values once the entity's context within
+ * the map is known.
+ */
+void EntityModel::set_context_values() {
+
+  // Nothing done by default.
 }
 
 /**

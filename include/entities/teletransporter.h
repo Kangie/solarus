@@ -34,6 +34,7 @@ public:
 protected:
 
   void set_initial_values() override;
+  void set_context_values() override;
 
 };
 

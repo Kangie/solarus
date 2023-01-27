@@ -150,6 +150,7 @@ public:
   virtual void notify_tileset_changed(const QString& tileset_id);
 
   void reload_sprite();
+  virtual void set_context_values();
 
 protected:
 
