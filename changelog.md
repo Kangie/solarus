@@ -2,6 +2,7 @@
 
 ## Solarus Quest Editor 1.7.0 (in progress)
 
+* Map editor: Teletransporter uses location to decide starting values (#473).
 * Map editor: allow to run the current map for testing purposes (#517).
 * Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
 * Map editor: fix countour generation from other tilesets.
