@@ -81,7 +81,7 @@ void print_help(const Arguments& args) {
     << std::endl
     << "  -quit-combo=<b1>+<b2>+...     enables joypad buttons combo for quitting (default disabled)"
     << std::endl
-    << "  -s=<script>                   set a script to be executed before the main.lua of the quest."
+    << "  -s=<code>                     execute some Lua code before the main.lua script of the quest."
     << std::endl
     << "  -force-software-rendering     force the engine to use SDL software rendering. Disabling opengl."
     << std::endl;
