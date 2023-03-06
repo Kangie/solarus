@@ -28,7 +28,7 @@ This may be true even without any joypad plugged.
 
 \subsection lua_api_input_set_joypad_enabled sol.input.set_joypad_enabled([joypad_enabled])
 
-Enables or disables joypad support.
+Enables or disables legacy joypad support. For new joypad support see \ref lua_api_joypad.
 
 Joypad support may be enabled even without any joypad plugged.
 - \c joypad_enabled \c true to enable joypad support, false to disable it.
@@ -124,6 +124,20 @@ Simulates pressing a keyboard key.
 
 Simulates releasing a keyboard key.
 - \c key (string): The keyboard key to simulate.
+
+\subsection lua_api_input_get_joypad_count sol.input.get_joypad_count()
+
+- Return value (number): The amount of connected joypads.
+
+\subsection lua_api_input_get_joypads sol.input.get_joypads()
+
+- Return value (array of \ref lua_api_joypad): Array of connected joypad objects.
+
+\section lua_api_input_events Events of sol.input
+
+\subsection lua_api_input_on_joypad_connected sol.input.on_joypad_connected(joypad)
+
+- \c joypad (\ref lua_joypad_api): a hot plugged joypad.
 
 \section lua_api_input_handler_events Events of Input Handlers
 
