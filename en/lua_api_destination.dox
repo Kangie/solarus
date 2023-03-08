@@ -80,10 +80,12 @@ See \ref lua_api_entity_events to know these events.
 
 The following events are specific to destinations.
 
-\subsection lua_api_destination_on_activated destination:on_activated()
+\subsection lua_api_destination_on_activated destination:on_activated(hero)
 
 Called when the
 \ref lua_api_hero "hero" arrives on this destination.
+
+- \c hero (\ref lua_api_hero): The hero that activated the destination
 
 The map opening transition is about to start at this point.
 

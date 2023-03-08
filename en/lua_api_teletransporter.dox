@@ -116,10 +116,12 @@ See \ref lua_api_entity_events to know these events.
 
 The following events are specific to teletransporters.
 
-\subsection lua_api_teletransporter_on_activated teletransporter:on_activated()
+\subsection lua_api_teletransporter_on_activated teletransporter:on_activated(hero)
 
 Called when the user takes this teletransporter, just before the map closing
 transition starts.
+
+- \c hero (\ref lua_api_hero): The hero that activated the teletransporter
 
 \remark If you \ref lua_api_entity_set_enabled "disable"
   or \ref lua_api_entity_remove "remove" the teletransporter
