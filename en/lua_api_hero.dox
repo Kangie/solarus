@@ -972,4 +972,13 @@ to give better resistance to injuries.
   an enemy or a call to
   \ref lua_api_hero_start_hurt "hero:start_hurt()".
 
+\subsection lua_api_hero_on_attacking_hero hero:on_attacking_hero(other_hero, our_sprite)
+
+Called when this hero is attacking another hero.
+
+- \c other_hero (\ref lua_api_hero): The hero this hero is attacking
+- \c our_sprite (\ref lua_api_sprite): The sprite of this hero that attacked
+
+This can return true without doing anything to tell the engine to avoid friendly fire.
+
 */
