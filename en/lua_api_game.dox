@@ -29,40 +29,7 @@ Only one game can be running at a time.
 
 \subsection lua_api_game_overview_commands Game commands
 
-An important concept that comes with the game is the notion of
-game commands.
-Game commands are built-in game actions that can be mapped to a
-low-level keyboard or joypad input.
-They can be seen as an abstraction of the keyboard and the joypad.
-Game commands are like a virtual game device that provides
-the the following buttons:
-- \c "action": Contextual action such as talking, swimming, throwing, etc.
-- \c "attack": Main attack (using the sword).
-- \c "pause": Pausing or unpausing the game.
-- \c "item_1": Using the equipment item placed in slot 1 (see \ref
-  lua_api_game_get_item_assigned "game:get_item_assigned()")
-- \c "item_2": Using the equipment item placed in slot 2 (see \ref
-  lua_api_game_get_item_assigned "game:get_item_assigned()")
-- \c "right": Moving to the right.
-- \c "left": Moving to the left.
-- \c "up": Moving to the top.
-- \c "down": Moving to the bottom.
-
-Of course, these virtual commands are mapped to real, low-level inputs from
-the keyboard and/or the joypad.
-You script can control which keyboard and joypad inputs are associated to
-each game command.
-
-When a game command is pressed,
-no matter if the command came from the keyboard or the joypad,
-the engine performs some built-in behavior by
-default (like pausing the game or moving the hero to the right).
-But you can also extend or override this behavior,
-because the engine notifies you first
-(see \ref lua_api_game_on_command_pressed "game:on_command_pressed()").
-Therefore, you usually don't have to worry about the underlying keyboard or
-joypad input (but if you want to you can as the game object is an
-\ref lua_api_input_handler_events "input handler").
+Commands moved to \ref lua_api_controls
 
 \subsection lua_api_game_overview_table Accessing the game like tables
 
@@ -413,23 +380,22 @@ full life.
 
 \subsection lua_api_game_get_map game:get_map()
 
-Returns the current map.
+Returns one of the current maps.
 - Return value (\ref lua_api_map "map"): The current map of this game
   (\c nil if this game is not running).
 
 \subsection lua_api_game_get_hero game:get_hero()
 
-Returns the
-\ref lua_api_hero "hero".
+Returns one of the current
+\ref lua_api_hero "heroes".
 
-The hero is a \ref lua_api_entity "map entity" that always exists
-while the game is running, and that persists when the map changes.
-For this reason, he can be seen as belonging to the game more than to the
-current map. That's why this function exists.
+Heroes are \ref lua_api_entity "map entities" that can follow cameras from map to map.
+For this reason, they can be seen as belonging to the game more than to the
+current maps. That's why this function exists.
 - Return value (\ref lua_api_hero "hero"): The hero, or \c nil if the game
   is not running.
 
-\remark Equivalent to <tt>game:get_map():get_entity("hero")</tt>.
+\remark Equivalent to <tt>game:get_map():get_entity("hero")</tt> if there is only one map / one hero.
 
 \subsection lua_api_game_get_value game:get_value(savegame_variable)
 
@@ -764,6 +730,8 @@ intercepting the events
 \ref lua_api_game_on_command_pressed "game:on_command_pressed()"
 \ref lua_api_game_on_command_released "game:on_command_released()".
 
+\remark equivalent to <tt>game:get_controls():get_effect(command)</tt>.
+
 \subsection lua_api_game_get_command_keyboard_binding game:get_command_keyboard_binding(command)
 
 Returns the keyboard key that triggers the specified game command.
@@ -773,6 +741,8 @@ Returns the keyboard key that triggers the specified game command.
   \c "right", \c "up", \c "left" and \c "down".
 - Return value (string): Name of the keyboard key that triggers this game
   command, or \c nil if no keyboard key is mapped to this game command.
+
+\remark equivalent to <tt>game:get_controls():get_keyboard_binding(command)</tt>.
 
 \subsection lua_api_game_set_command_keyboard_binding game:set_command_keyboard_binding(command, key)
 
@@ -786,6 +756,8 @@ Sets the keyboard key that triggers a game command.
 
 \note If this keyboard key was already mapped to a command, keyboard keys of
 both commands are switched.
+
+\remark equivalent to <tt>game:get_controls():set_keyboard_binding(command)</tt>.
 
 \subsection lua_api_game_get_command_joypad_binding game:get_command_joypad_binding(command)
 
@@ -802,6 +774,8 @@ Returns the joypad input that triggers the specified game command.
   - <tt>"axis X -"</tt> where X is the index of a joypad axis (first is \c 0),
   - <tt>"hat X Y"</tt> where X is the index of a joypad hat (first is \c 0)
   and Y is a direction (\c 0 to \c 7).
+
+\remark equivalent to <tt>game:get_controls():get_joypad_binding(command)</tt>.
 
 \subsection lua_api_game_set_command_joypad_binding game:set_command_joypad_binding(command, joypad_string)
 
@@ -822,6 +796,8 @@ Sets the joypad input that should trigger the specified game command.
 \note If this joypad input was already mapped to a command, joypad inputs of
 both commands are switched.
 
+\remark equivalent to <tt>game:get_controls():set_joypad_binding(command)</tt>.
+
 \subsection lua_api_game_capture_command_binding game:capture_command_binding(command, [callback])
 
 Makes the next keyboard or joypad input become the new binding for the
@@ -841,6 +817,8 @@ it automatically becomes the new keyboard or joypad binding for a game command.
 \note If the keyboard (or joypad) input was already mapped to a command,
 keyboard (or joypad) inputs of both commands are switched.
 
+\remark equivalent to <tt>game:get_controls():capture_bindings(command)</tt>.
+
 \subsection lua_api_game_is_command_pressed game:is_command_pressed(command)
 
 Returns whether a built-in game command is currently pressed.
@@ -850,6 +828,8 @@ Returns whether a built-in game command is currently pressed.
   \c "right", \c "up", \c "left" and \c "down".
 - Return value (boolean): \c true if this game command is currently pressed by
   the player.
+
+\remark equivalent to <tt>game:get_controls():is_pressed(command)</tt>.
 
 \subsection lua_api_game_get_commands_direction game:get_commands_direction()
 
@@ -866,6 +846,8 @@ of directional game commands currently pressed by the player.
   \ref lua_api_game_is_command_pressed "game:is_command_pressed()" four times
   (with the four directional game commands).
 
+\remark equivalent to <tt>game:get_controls():get_direction()</tt>.
+
 \subsection lua_api_game_simulate_command_pressed game:simulate_command_pressed(command)
 
 Creates a command pressed input event.
@@ -877,6 +859,9 @@ game command.
   \c "action", \c "attack", \c "pause", \c "item_1", \c "item_2",
   \c "right", \c "up", \c "left" and \c "down".
 
+
+\remark equivalent to <tt>game:get_controls():simulate_pressed(command)</tt>.
+
 \subsection lua_api_game_simulate_command_released game:simulate_command_released(command)
 
 Creates a command released input event.
@@ -887,6 +872,45 @@ game command.
   Valid commands are
   \c "action", \c "attack", \c "pause", \c "item_1", \c "item_2",
   \c "right", \c "up", \c "left" and \c "down".
+
+\remark equivalent to <tt>game:get_controls():simulate_released(command)</tt>.
+
+\subsection lua_api_game_get_controls game:get_controls()
+
+Gets the \ref lua_api_controls object bound to the game (and the hero in the default case).
+
+- Return value (\ref lua_api_controls): main controls of the game
+
+\subsection lua_api_game_set_controls game:set_controls(controls)
+
+Sets the \ref lua_api_controls object bound to the game.
+
+- \c controls (\ref lua_api_controls): controls to set as main game controls
+
+\subsection lua_api_game_create_camera game:create_camera(id, map_id, [detination id, [transition_style]])
+
+Creates a new camera on the map with id `map_id`. If the map is already loaded,
+camera is added to currently running map, else it loads the new map.
+
+- \c id (string): Name of this new camera.
+- \c map_id (string): Id of the map to create this camera onto
+- \c destination_id (string): Id of the destination that this camera should look at when created
+- \c transition_style (string): Style of the transition the camera will use to fade-in.
+
+\subsection lua_api_game_remove_camera game:remove_camera(camera, [transition_style])
+
+Remove a camera from this game. If the camera was the last on its map, the map gets unloaded and removed. This is different from `camera:remove()` that means removing the camera from the map.
+
+- \c camera (\ref lua_api_camera): Camera to remove.
+- \c transition_style (string): Style of the transition the camera will use to fade-out.
+
+\subsection lua_api_game_get_cameras game:get_cameras()
+
+Gets an iterator to all the cameras in the game, note that each of cameras could be on a separate map.
+
+\subsection lua_api_game_get_maps game:get_maps()
+
+Gets an iterator to all the maps currently loaded.
 
 \section lua_api_game_events Events of the type game
 
@@ -924,7 +948,7 @@ Use this event if you want to draw some additional content before the menus.
 - \c dst_surface (\ref lua_api_surface "surface"): The surface where the game
   is drawn.
 
-\subsection lua_api_game_on_map_changed game:on_map_changed(map)
+\subsection lua_api_game_on_map_changed game:on_map_changed(map, camera)
 
 Called when the player has just entered a map.
 
@@ -932,6 +956,7 @@ The new map is already started at this point.
 For example, you may use this event if some parts of your HUD needs to be
 changed on particular maps.
 - \c map (\ref lua_api_map "map"): The new active map.
+- \c camera (\ref lua_api_camera "camera"): The camera that transitioned to this map
 
 \remark When you \ref lua_api_game_start "start or restart" the game,
   this event is always called,
