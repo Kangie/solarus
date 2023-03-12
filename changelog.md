@@ -14,6 +14,7 @@
 * Fix missing equipement for second heroes (#1576).
 * Fix `hero.set_invincible` not suspended with the game (#1554).
 * Fix thrown objects destruction animation position (#1508).
+* Fix crash when loading a save file with Lua keywords (#1609).
 
 ### Lua API changes
 

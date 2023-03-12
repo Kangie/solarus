@@ -23,6 +23,7 @@
 #include "solarus/core/Profiler.h"
 #include <cctype>
 #include <sstream>
+#include <unordered_set>
 
 namespace Solarus {
 namespace LuaTools {
@@ -78,6 +79,41 @@ void* test_userdata(lua_State* l, int index, const char* metatable_name) {
   return udata;
 }
 
+/* \brief Check to see if a name is a Lua keyword.
+ *
+ * This is update to date with Lua 5.4.
+ * \param name Any valid string.
+ * \return True if the name is a keyword, otherwise false.
+ */
+static bool is_lua_keyword(const std::string& name) {
+
+  static const std::unordered_set<std::string> keywords = {
+    "and",
+    "break",
+    "do",
+    "else",
+    "elseif",
+    "end",
+    "false",
+    "for",
+    "function",
+    "goto",
+    "if",
+    "in",
+    "local",
+    "nil",
+    "not",
+    "or",
+    "repeat",
+    "return",
+    "then",
+    "true",
+    "until",
+    "while",
+  };
+  return keywords.count(name);
+}
+
 /**
  * \brief Returns whether the specified name is a valid Lua identifier.
  * \param name The name to check.
@@ -95,7 +131,7 @@ bool is_valid_lua_identifier(const std::string& name) {
       return false;
     }
   }
-  return true;
+  return !is_lua_keyword(name);
 }
 
 /**
