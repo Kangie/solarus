@@ -437,7 +437,7 @@ void ShaderPreviewer::setup_framebuffers(const QSize& output_size) {
  * @brief Render input to input buffer and rerender it with shader to output buffer
  */
 void ShaderPreviewer::render_fbs() {
-  if (input_texture == nullptr) {
+  if (input_texture == nullptr || input_fb == nullptr) {
     return;
   }
   QOpenGLFunctions* gl = context()->functions();
@@ -589,7 +589,7 @@ void ShaderPreviewer::paintGL() {
   QOpenGLFunctions* gl = context()->functions();
   gl->glClearColor(0.3f, 0.3f, 0.3f, 1);
   gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  if (model == nullptr) {
+  if (model == nullptr || input_fb == nullptr) {
     return;
   }
   if (should_recompile) {
