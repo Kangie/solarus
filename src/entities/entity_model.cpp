@@ -452,6 +452,10 @@ void EntityModel::set_entity(const EntityData& entity) {
     set_size(QSize(entity.get_integer("width"), entity.get_integer("height")));
   }
 
+  if (entity.is_integer("origin_x") && entity.is_integer("origin_y")) {
+    set_origin(QPoint(entity.get_integer("origin_x"), entity.get_integer("origin_y")));
+  }
+
   for (const auto& kvp : entity.get_specific_properties()) {
     QString key = QString::fromStdString(kvp.first);
     QVariant value = get_field(key);
