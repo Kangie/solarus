@@ -1787,8 +1787,18 @@ on the map.
     (default \c 16).
   - \c height (number): Height of the entity in pixels
     (default \c 16).
+  - \c origin_x (number, optional): X coordinate of the origin point,
+    relative to the entity's upper left corner.
+    The default origin is <tt>8, 13</tt>.
+  - \c origin_y (number, optional): Y coordinate of the origin point,
+    relative to the entity's upper left corner.
+    The default origin is <tt>8, 13</tt>.
   - \c sprite (string, optional): Name of the animation set of a
     \ref lua_api_sprite "sprite" to create for the custom entity.
+  - \c tiled (boolean, optional): Whether to repeat the sprite with
+    tiling to fit the size of the custom entity, when the size is bigger
+    than the sprite.
+    No value means \c false.
   - \c model (string, optional): Model of custom entity or \c nil.
     The model is the name of a Lua script in the \c "entities" directory of
     your quest. It will define the behavior of your entity.
