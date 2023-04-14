@@ -11,7 +11,8 @@
 * Fix error reporting when creating entities with a non-existent model (#1494).
 * Fix custom state direction control when the movement is disallowed (#1565).
 * Fix missing equipement for second heroes (#1576).
-* Fix hero.set_invincible not suspended with the game (#1554)
+* Fix hero.set_invincible not suspended with the game (#1554).
+* Fix thrown objects destruction animation position (#1508).
 
 ### Lua API changes
 
