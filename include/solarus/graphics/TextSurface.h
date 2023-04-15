@@ -137,16 +137,20 @@ class TextSurface final: public Drawable {
     void rebuild_ttf();
 
     std::string font_id;                              /**< id of the font of the current text surface */
-    HorizontalAlignment horizontal_alignment;         /**< horizontal alignment of the current text surface */
-    VerticalAlignment vertical_alignment;             /**< vertical alignment of the current text surface */
-    RenderingMode rendering_mode;                     /**< rendering mode of the current text surface */
+    HorizontalAlignment horizontal_alignment =
+        HorizontalAlignment::LEFT;                    /**< horizontal alignment of the current text surface */
+    VerticalAlignment vertical_alignment =
+        VerticalAlignment::MIDDLE;                    /**< vertical alignment of the current text surface */
+    RenderingMode rendering_mode =
+        RenderingMode::SOLID;                         /**< rendering mode of the current text surface */
     Color text_color;                                 /**< color of the text */
-    int font_size;                                    /**< size of the font */
-    HintingSetting font_hinting;                      /**< hinting setting of the font */
-    bool font_kerning;                                /**< whether to use kerning when rendering the font */
+    int font_size = 0;                                /**< size of the font */
+    HintingSetting font_hinting =
+        HintingSetting::NORMAL;                       /**< hinting setting of the font */
+    bool font_kerning = false;                        /**< whether to use kerning when rendering the font */
 
-    int x;                                            /**< x coordinate of where the text is aligned */
-    int y;                                            /**< y coordinate of where the text is aligned */
+    int x = 0;                                        /**< x coordinate of where the text is aligned */
+    int y = 0;                                        /**< y coordinate of where the text is aligned */
 
     SurfacePtr surface;                               /**< the surface to draw */
     Point text_position;                              /**< position of the top-left corner of the surface on the screen */
