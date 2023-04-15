@@ -39,7 +39,6 @@ class Sensor: public Entity {
     Sensor(const std::string& name, int layer, const Point& xy, const Size& size);
 
     virtual EntityType get_type() const override;
-    virtual bool can_be_drawn() const override;
 
     virtual bool is_obstacle_for(Entity& other) override;
     virtual void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;

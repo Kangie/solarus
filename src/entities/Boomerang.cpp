@@ -99,14 +99,6 @@ EntityType Boomerang::get_type() const {
 }
 
 /**
- * \brief Returns whether entities of this type can be drawn.
- * \return true if this type of entity can be drawn
- */
-bool Boomerang::can_be_drawn() const {
-  return true;
-}
-
-/**
  * \brief Returns whether a teletransporter is currently considered as an obstacle for this entity.
  * \param teletransporter a teletransporter
  * \return true if the teletransporter is currently an obstacle for this entity

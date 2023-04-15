@@ -57,7 +57,6 @@ class Camera : public Entity {
 
     EntityType get_type() const override;
 
-    bool can_be_drawn() const override;
     void set_suspended(bool suspended) override;
     void notify_movement_started() override;
     void notify_size_changed() override;

@@ -250,18 +250,6 @@ void Entity::update_ground_below() {
 }
 
 /**
- * \brief Returns whether entities of this type can be drawn.
- *
- * This function returns \c true by default. Redefine it to return
- * \c false if your type of entity has nothing to display.
- *
- * \return true if this type of entity can be drawn
- */
-bool Entity::can_be_drawn() const {
-  return true;
-}
-
-/**
  * @brief Notify this entity that a command event happend
  */
 bool Entity::notify_control(const ControlEvent& /*event*/) {

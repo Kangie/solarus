@@ -45,7 +45,6 @@ class Jumper: public Entity {
     );
 
     virtual EntityType get_type() const override;
-    virtual bool can_be_drawn() const override;
     virtual bool is_sword_ignored() const override;
     virtual bool is_obstacle_for(Entity& other, const Rectangle& candidate_position) override;
     virtual bool test_collision_custom(Entity& entity) override;

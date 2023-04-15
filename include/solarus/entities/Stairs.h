@@ -81,7 +81,6 @@ class Stairs: public Entity {
     );
 
     virtual EntityType get_type() const override;
-    virtual bool can_be_drawn() const override;
     bool can_change_ground() const;
     Ground get_ground() const;
 

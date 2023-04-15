@@ -115,7 +115,6 @@ class SOLARUS_API Entity: public ExportableToLua {
     Point get_ground_point() const;
     bool is_ground_modifier() const;
     virtual Ground get_modified_ground() const;
-    virtual bool can_be_drawn() const;
     virtual bool is_drawn_at_its_position() const;
 
     virtual bool notify_control(const ControlEvent& event);

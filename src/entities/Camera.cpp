@@ -295,16 +295,6 @@ EntityType Camera::get_type() const {
 }
 
 /**
- * \copydoc Entity::can_be_drawn()
- */
-bool Camera::can_be_drawn() const {
-
-  // The camera itself is not drawn.
-  // Entities only use its position to draw the map.
-  return false;
-}
-
-/**
  * \brief Initializes the surface where this camera draws entities.
  *
  * This function should be called when the camera size is changed.
