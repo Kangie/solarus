@@ -300,8 +300,9 @@ void LuaContext::register_entity_module() {
         { "set_size", entity_api_set_size },
     });
   }
+
   if (CurrentQuest::is_format_at_least({ 1, 6 })) {
-    common_methods.insert(common_methods.end(), {
+    camera_methods.insert(camera_methods.end(), {
         { "get_surface", camera_api_get_surface },
     });
   }
