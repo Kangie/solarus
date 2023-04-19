@@ -126,6 +126,9 @@ void Game::start() {
   started = true;
   get_hero()->get_equipment().notify_game_started();
   get_lua_context().game_on_started(*this);
+
+  // Make sure to (re-)enable input
+  ControlsDispatcher::get().add_commands(controls);
 }
 
 /**
@@ -159,6 +162,7 @@ void Game::stop() {
   get_lua_context().game_on_finished(*this);
   get_savegame().set_game(nullptr);
 
+  controls->remove(); // Stop our controls
   Music::stop_playing();
 
   started = false;

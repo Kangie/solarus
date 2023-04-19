@@ -141,7 +141,7 @@ class Controls : public ExportableToLua {
     bool is_customizing() const;
     Command get_command_to_customize() const;
 
-    void remove() const;
+    void remove();
 
     static bool is_joypad_string_valid(const std::string& joypad_string);
     static std::string get_command_name(const Command &command);

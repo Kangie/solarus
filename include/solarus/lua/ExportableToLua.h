@@ -54,6 +54,15 @@ class ExportableToLua:
       return std::static_pointer_cast<T>(shared_from_this());
     }
 
+    template<class T>
+    /**
+     * @brief helper method to directly cast the shared_from_this result
+     * @return
+     */
+    inline const std::weak_ptr<T> weak_from_this_cast(){
+      return std::static_pointer_cast<T>(shared_from_this());
+    }
+
     virtual const std::string& get_lua_type_name() const;
   private:
 

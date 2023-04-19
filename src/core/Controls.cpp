@@ -114,6 +114,7 @@ Controls::Controls(MainLoop& main_loop, Game& game):
 }
 
 Controls::~Controls() {
+  remove();
 }
 
 /**
@@ -121,8 +122,8 @@ Controls::~Controls() {
  *
  * Acts like entity:remove
  */
-void Controls::remove() const {
-  ControlsDispatcher::get().remove_commands(this);
+void Controls::remove() {
+  ControlsDispatcher::get().remove_commands(weak_from_this_cast<Controls>());
 }
 
 /**

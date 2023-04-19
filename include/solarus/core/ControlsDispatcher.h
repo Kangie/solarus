@@ -20,6 +20,8 @@
 #include "solarus/core/ControlsPtr.h"
 #include "solarus/core/Command.h"
 
+#include <set>
+
 namespace Solarus {
 
 class MainLoop;
@@ -38,13 +40,23 @@ public:
   ControlsPtr create_commands_from_game(Game& game);
   ControlsPtr create_commands_from_keyboard();
   ControlsPtr create_commands_from_joypad(const JoypadPtr& joypad);
+  void add_commands(const ControlsPtr& cmds);
 private:
   static ControlsDispatcher* instance;
 
-  void add_commands(const ControlsPtr& cmds);
-  void remove_commands(const Controls *cmds);
+  void remove_commands(const std::weak_ptr<Controls>& cmds);
 
-  std::vector<ControlsPtr> commands;
+  struct WeakPtrCmp {
+      bool operator() (const std::weak_ptr<Controls> &lhs, const std::weak_ptr<Controls> &rhs)const {
+          auto lptr = lhs.lock(), rptr = rhs.lock();
+          return lptr < rptr;
+      }
+  };
+
+  using ControlSet = std::set<std::weak_ptr<Controls>, WeakPtrCmp>;
+
+  ControlSet commands;
+  ControlSet to_remove;
   MainLoop& main_loop;
 };
 
