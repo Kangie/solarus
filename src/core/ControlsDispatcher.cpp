@@ -34,8 +34,16 @@ ControlsDispatcher& ControlsDispatcher::get() {
 }
 
 void ControlsDispatcher::notify_input(const InputEvent& event) {
-  for(const ControlsPtr& ptr : commands) {
-      ptr->notify_input(event);
+  for(const auto& ptr : to_remove) {
+      commands.erase(ptr);
+  }
+
+  to_remove.clear();
+
+  for(const auto& wptr : commands) {
+      if(const auto ptr = wptr.lock(); ptr) {
+        ptr->notify_input(event);
+      }
   }
 }
 
@@ -65,20 +73,12 @@ ControlsPtr ControlsDispatcher::create_commands_from_joypad(const JoypadPtr& joy
 }
 
 void ControlsDispatcher::add_commands(const ControlsPtr&cmds) {
-  commands.push_back(cmds);
+    commands.insert(std::weak_ptr<Controls>(cmds));
 }
 
-void ControlsDispatcher::remove_commands(const Controls* cmds)
+void ControlsDispatcher::remove_commands(const std::weak_ptr<Controls>& cmds)
 {
-  commands.erase(
-        std::remove_if(
-          commands.begin(),
-          commands.end(),
-          [&](const ControlsPtr& other){
-            return other.get() == cmds;
-          }),
-        commands.end()
-        );
+    to_remove.insert(cmds);
 }
 
 }
