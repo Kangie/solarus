@@ -34,7 +34,7 @@ end
 
 local function genModule(name, api)
     local f = assert(io.open("emmy_api/" .. name .. ".lua", 'w'))
-    f:write("---@class " .. name .. '\n')
+    f:write("---@class " .. name .. (api.inherits and (" : " .. api.inherits) or "") .. '\n')
     if api.description then
         f:write('---' .. safeDesc(api.description) .. '\n')
     end
