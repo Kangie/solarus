@@ -32,7 +32,7 @@ local function genFunction(moduleName, funName, fun, static)
     return code
 end
 
-local function genModule(name, api)
+local function genModule(name, api, nested)
     local f = assert(io.open("emmy_api/" .. name .. ".lua", 'w'))
     f:write("---@class " .. name .. (api.inherits and (" : " .. api.inherits) or "") .. '\n')
     if api.description then
@@ -46,17 +46,17 @@ local function genModule(name, api)
             if (child.type == "class" or child.type == "lib") then
                 f:write("---@type " .. name .. '.' .. childName .. '\n')
                 f:write("m." .. childName .. ' = nil\n\n')
-                genModule(name .. '.' .. childName, child)
+                genModule(name .. '.' .. childName, child, true)
             end
 
             -- functions
             if (child.type == "function" or child.type == "method") then
-                f:write(genFunction('m', childName, child, false))
+                f:write(genFunction('m', childName, child, child.type == "function"))
             end
         end
     end
 
-    f:write("return m")
+    f:write((nested ~= true and "_G." .. name .. " = m\n\n" or "") .. "return m")
     f:close()
 end
 
