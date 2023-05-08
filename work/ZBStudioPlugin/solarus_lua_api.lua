@@ -282,7 +282,7 @@ Returns whether a resource element with the specified id is declared in the [que
 
 
 ]],
-          args = "resource_type: string, id",
+          args = "resource_type: string",
           returns = "boolean",
           valuetype = "boolean"
           },
@@ -356,7 +356,7 @@ This function is similar to the standard Lua function type(), except that for us
 
 
 ]],
-          args = "value: any type",
+          args = "value: any",
           returns = "string",
           valuetype = "string"
           },
@@ -1659,7 +1659,7 @@ Example: dumping some global information periodically while the program is runni
 Remarks
     When they are created, [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) timers, [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) timers and [item](http://www.solarus-games.org/doc/1.6/lua_api_item.html) timers are initially suspended if a dialog is active. After that, they get automatically suspended and unsuspended when the map is suspended or unsuspended. This default behavior is suited for most use cases, but if you want to change it, you can use [timer:set_suspended()](http://www.solarus-games.org/doc/1.6/lua_api_timer.html#lua_api_timer_set_suspended) and [timer:set_suspended_with_map()](http://www.solarus-games.org/doc/1.6/lua_api_timer.html#lua_api_timer_set_suspended_with_map).
 ]],
-          args = "[context: map, game, item, map entity, state, menu or sol.main; optional], delay: number, callback: function",
+          args = "[context: map, game, item, entity, state, menu or sol.main; optional], delay: number, callback: function",
           returns = "timer",
           valuetype = "timer"
           },
@@ -1680,7 +1680,7 @@ Remarks
 
 #  Methods of the type timer
 ]],
-          args = "context: map, game, item, map entity, menu or sol.main",
+          args = "context: map, game, item, entity, menu or sol.main",
           returns = "",
           valuetype = ""
           }
@@ -1757,9 +1757,9 @@ See [Methods of all drawable types](http://www.solarus-games.org/doc/1.6/lua_api
 
 The following methods are specific to text surfaces.
 ]],
-          args = "[properties: optional table]",
-          returns = "text surface",
-          valuetype = "text surface"
+          args = "[properties: table]",
+          returns = "text_surface",
+          valuetype = "text_surface"
           }
         }
       },
@@ -5070,7 +5070,7 @@ An empty table will be initialized with `{x = 0, y = 0}`.
 Remarks
     The [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) is a [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) just like any other. So you can apply a custom movement to him using this function. The usual way to do this is to call [hero:freeze()](http://www.solarus-games.org/doc/1.6/lua_api_hero.html#lua_api_hero_freeze) first to properly remove control from the player, and then to start the movement. When you have finished, you can restore the control with [hero:unfreeze()](http://www.solarus-games.org/doc/1.6/lua_api_hero.html#lua_api_hero_unfreeze). Indeed, changing the movement while the hero is in a state other than `"frozen"` might give surprising results. Your movement will be applied, replacing any built-in movement of the state, but whatever was happening in the state will still continue. Furthermore, your movement will disappear as soon as the state changes. So don't start a movement on the hero during an arbitrary state unless you know what you are doing.
 ]],
-      args = "object_to_move: map entity, drawable object or table, [callback: function]",
+      args = "object_to_move: entity, drawable or table, [callback: function]",
       returns = "",
       valuetype = ""
       },
@@ -5552,7 +5552,7 @@ To make this example work, you need a dialog box system that performs the substi
 Note
     The `info` parameter of [game:start_dialog()](http://www.solarus-games.org/doc/1.6/lua_api_game.html#lua_api_game_start_dialog) and the status parameter of the callback are a flexible way to make the map script communicate with the dialog box system in both directions. They can been seen as the parameter and the result (respectively) of the dialog being displayed. They can both be any value, like a table with many information.
 ]],
-      args = "dialog_id: string, [info: any type], [callback: function]",
+      args = "dialog_id: string, [info: any], [callback: function]",
       returns = "",
       valuetype = ""
       },
@@ -5570,7 +5570,7 @@ The [game:on_dialog_finished()](http://www.solarus-games.org/doc/1.6/lua_api_gam
 
 
 ]],
-      args = "[status: any type]",
+      args = "[status: any]",
       returns = "",
       valuetype = ""
       },
@@ -6473,7 +6473,7 @@ The table also contains all custom entries defined in [text/dialogs.dat](http://
 
 
 ]],
-      args = "dialog: table, [info: any value]",
+      args = "dialog: table, [info: any]",
       returns = "",
       valuetype = ""
       },
@@ -6937,9 +6937,9 @@ If not, any treasure representing this item is automatically replaced by an empt
 
 
 ]],
-      args = "[obtainable]",
-      returns = "boolean, optional",
-      valuetype = "boolean, optional"
+      args = "[obtainable: boolean]",
+      returns = "optional boolean",
+      valuetype = "optional boolean"
       },
     is_assignable = {
       type = "method",
@@ -7579,7 +7579,7 @@ The ground is defined by [tiles](http://www.solarus-games.org/doc/1.6/lua_api_ti
 
 
 ]],
-      args = "x: number, y: number, lay: numberer",
+      args = "x: number, y: number, lay: number",
       returns = "string",
       valuetype = "string"
       },
@@ -7931,7 +7931,7 @@ Disabled entities are not displayed and are not updated. Therefore, they don't m
 Remarks
     Equivalent to calling [entity:set_enabled()](http://www.solarus-games.org/doc/1.6/lua_api_entity.html#lua_api_entity_set_enabled) on a group of entities.
 ]],
-      args = "prefix: string, [enable: booleand]",
+      args = "prefix: string, [enable: boolean]",
       returns = "",
       valuetype = ""
       },
@@ -8243,8 +8243,8 @@ Creates an entity of type [dynamic tile](http://www.solarus-games.org/doc/1.6/lu
 
 ]],
       args = "properties: table: table",
-      returns = "dynamic tile",
-      valuetype = "dynamic tile"
+      returns = "dynamic_tile",
+      valuetype = "dynamic_tile"
       },
     create_switch = {
       type = "method",
@@ -8396,8 +8396,8 @@ Remarks
     The state of the [shop treasure](http://www.solarus-games.org/doc/1.6/lua_api_shop_treasure.html) (purchased or not) and the possessed variant of its [item](http://www.solarus-games.org/doc/1.6/lua_api_item.html) (a number) are two independent values that have different meanings and are saved separately.
 ]],
       args = "properties: table: table",
-      returns = "shop treasure",
-      valuetype = "shop treasure"
+      returns = "shop_treasure",
+      valuetype = "shop_treasure"
       },
     create_stream = {
       type = "method",
@@ -8606,8 +8606,8 @@ Creates an entity of type [custom entity](http://www.solarus-games.org/doc/1.6/l
 Events are callback methods automatically called by the engine if you define them. In the case of maps, they are only called on the current map.
 ]],
       args = "properties: table: table",
-      returns = "custom entity",
-      valuetype = "custom entity"
+      returns = "custom_entity",
+      valuetype = "custom_entity"
       },
     on_started = {
       type = "method",
@@ -9093,7 +9093,7 @@ To set a function that indicates the position to go back to:
 
 
 ]],
-      args = "[x: number, y: number, lay: numberer]",
+      args = "[x: number, y: number, lay: number]",
       returns = "",
       valuetype = ""
       },
@@ -9384,8 +9384,8 @@ Returns the [carried object](http://www.solarus-games.org/doc/1.6/lua_api_carrie
 
 ]],
       args = "",
-      returns = "carried object",
-      valuetype = "carried object"
+      returns = "carried_object",
+      valuetype = "carried_object"
       },
     freeze = {
       type = "method",
@@ -9572,7 +9572,7 @@ Same as [hero:start_hurt(source_x, source_y, damage)](http://www.solarus-games.o
 
 
 ]],
-      args = "[source_entity: map entity, [source_sprite: sprite]], damage",
+      args = "[source_entity: entity, [source_sprite: sprite]], damage: number",
       returns = "",
       valuetype = ""
       },
@@ -9588,8 +9588,8 @@ Returns the name of the current state of the hero, and possibly the correspondin
 
 ]],
       args = "",
-      returns = "string,state or no value",
-      valuetype = "string,state or no value"
+      returns = "string,state or nil",
+      valuetype = "string,state or nil"
       },
     start_state = {
       type = "method",
@@ -13202,7 +13202,7 @@ Changes instantly the position of this entity on the map (coordinates and layer)
 Remarks
     Be careful: this function does not check collisions with obstacles.
 ]],
-      args = "x: number, y: number, [lay: numberer]",
+      args = "x: number, y: number, [lay: number]",
       returns = "",
       valuetype = ""
       },
@@ -13389,7 +13389,7 @@ Returns whether another entity collides with this entity according to the specif
 Remarks
     For custom entities, see also [custom_entity:add_collision_test()](http://www.solarus-games.org/doc/1.6/lua_api_custom_entity.html#lua_api_custom_entity_add_collision_test) to be automatically notified when a collision is detected.
 ]],
-      args = "other_entity: entity, [collision_mode: string, [entity: entity_sprite: sprite or nil, [other_entity: entity_sprite: sprite or nil]]]",
+      args = "other_entity: entity, [collision_mode: string, [entity_sprite: sprite or nil, [other_entity_sprite: sprite or nil]]]",
       returns = "boolean",
       valuetype = "boolean"
       },
@@ -14040,7 +14040,7 @@ Called when the coordinates of this entity have just changed.
 
 
 ]],
-      args = "x: number, y: number, lay: numberer",
+      args = "x: number, y: number, lay: number",
       returns = "",
       valuetype = ""
       },
@@ -14113,7 +14113,7 @@ This entity no longer exists (unless it is a destructible object that can [regen
 
 
 ]],
-      args = "carrier: entity, carried_object: carried object",
+      args = "carrier: entity, carried_object: carried_object",
       returns = "",
       valuetype = ""
       },
@@ -14876,7 +14876,7 @@ Called when this state starts.
 
 
 ]],
-      args = "previous_state: state or nil_name: string or nil, previous_state: state or nil",
+      args = "previous_state_name: string or nil, previous_state: state or nil",
       returns = "",
       valuetype = ""
       },
@@ -14891,7 +14891,7 @@ Called when this state finishes.
 
 
 ]],
-      args = "next_state: state or nil_name: string or nil, next_state: state or nil",
+      args = "next_state_name: string or nil, next_state: state or nil",
       returns = "",
       valuetype = ""
       },
@@ -15008,7 +15008,7 @@ Called when the coordinates of the entity controlled by this state have just cha
 
 
 ]],
-      args = "x: number, y: number, lay: numberer",
+      args = "x: number, y: number, lay: number",
       returns = "",
       valuetype = ""
       },
@@ -15093,7 +15093,7 @@ Called when the entity has just attacked an enemy during this state, even if the
 
 
 ]],
-      args = "enemy: enemy, enemy: enemy_sprite: sprite, attack: string, consequence: number, string or function",
+      args = "enemy: enemy, enemy_sprite: sprite, attack: string, consequence: number, string or function",
       returns = "",
       valuetype = ""
       },

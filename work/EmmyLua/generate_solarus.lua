@@ -11,24 +11,37 @@ local function genFunction(moduleName, funName, fun, static)
 
     -- args
     local currentArg = ""
-    for match in fun.args:gmatch("[^%[]%S+[:]?") do
-        if (match:match(":") or match:match("^%S$")) then
-            currentArg = match:match("%S+[:]?"):gsub("[:$]", ", ")
-            argList = argList .. currentArg
-        elseif (match ~= " or" and (match:match(",") or match:match("$"))) then
-            typeList[currentArg] = (typeList[currentArg] or "") .. match:gsub(", ?", ""):gsub(" ", ""):gsub("%]", "") .. (currentArg:match("^%[") and " | nil" or "") .. " | "
+    for match in fun.args:gsub(" or ", "|"):gsub("any type", "any"):gsub(" ", ""):gsub(",", " "):gsub(":", ": "):gmatch("%S+") do
+        if ((match ~= "nil:") and
+                (match ~= "any:") and
+                (match ~= "boolean:") and
+                (match ~= "string:") and
+                (match ~= "number:") and
+                (match ~= "integer:") and
+                (match ~= "function:") and
+                (match ~= "table:") and
+                (match ~= "thread:") and
+                (match ~= "userdata:")) then
+            if (match:match(":")) then
+                currentArg = match:gsub(":", "")
+                argList = argList .. currentArg .. ","
+            else
+                typeList[currentArg] = (typeList[currentArg] or "") .. match:gsub(" or ", ""):gsub("%]", "") .. (currentArg:match("^%[") and "|nil" or "") .. "|"
+            end
         end
+        if (funName == "on_finger_moved") then
     end
-    for arg in argList:gmatch("%S+, ") do
-        code = code .. '---@param ' .. arg:gsub(", $", ""):gsub("%[", "") .. " " .. tostring(typeList[arg]):gsub(" | $", ""):gsub(", $", "") .. '\n'
+end
+    for arg in argList:gmatch("[^,]+") do
+        code = code .. '---@param ' .. arg:gsub("%[", "") .. " " .. tostring(typeList[arg]):gsub("|$", ""):gsub(",$", "") .. '\n'
     end
 
     if fun.returns ~= "" then
-        code = code .. '---@return ' .. fun.returns:gsub(" or ", " | "):gsub(", optional %S", ", %1 | nil"):gsub("%s?+%s?", ", "):gsub("%s?and%s?", ", "):gsub(", $", "") .. '\n'
+        code = code .. '---@return ' .. fun.returns:gsub(" or ", "|"):gsub("optional (%S+)", "%1|nil"):gsub("%s?+%s?", ", "):gsub("%s?and%s?", ", "):gsub(", $", "") .. '\n'
     end
 
     local dot = static and '.' or ':'
-        code = code .. "function " .. moduleName .. dot .. funName .. "(" .. argList:gsub(", $", ""):gsub("%[", "") .. ") end\n\n"
+        code = code .. "function " .. moduleName .. dot .. funName .. "(" .. argList:gsub(",$", ""):gsub("%[", "") .. ") end\n\n"
     return code
 end
 
@@ -60,9 +73,13 @@ local function genModule(name, api, nested)
     f:close()
 end
 
-os.execute("mkdir emmy_api")
+print("---start")
+
+local succeed = os.execute("mkdir emmy_api")
+print(succeed and "   'emmy_api' directory created" or "   'emmy_api' directory already exists")
 for moduleName, module in pairs(api) do
+    print("   class '" .. moduleName .. "' created")
     genModule(moduleName, module)
 end
 
-print('--finished.')
+print('---finished')

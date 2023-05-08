@@ -7,7 +7,7 @@ import requests
 from html2text import HTML2Text
 from bs4 import BeautifulSoup
 
-api_doc_host = "http://www.solarus-games.org/doc/1.6/"
+api_doc_host = "https://doxygen.solarus-games.org/latest/"
 api_doc_root = api_doc_host + 'lua_api.html'
 
 match_meth_name_and_args = r":([a-zA-Z0-9_]+)\(([a-zA-Z0-9 _\[\],]*)\)"
