@@ -1,0 +1,52 @@
+---@class sol.movement
+---
+---If you need to move an [enemy](http://www.solarus-games.org/doc/1.6/lua_api_enemy.html) of the map, a [sprite](http://www.solarus-games.org/doc/1.6/lua_api_sprite.html) in a menu or simply an arbitrary point, you can create a movement object and set its properties. There are several types of movements. They differ by the kind of trajectory they can make. When you create a movement, you obtain a value of the movement type you chose. Then, to get and set its properties (like the speed, the angle, etc.), a movement object has several methods available. As detailed below, the methods available differ depending on the movement type because all movement types don't have the same properties.
+---
+---The following movement types are available.
+---
+---  * [Straight movement](http://www.solarus-games.org/doc/1.6/lua_api_straight_movement.html): Rectilinear trajectory in any direction.
+---  * [Random movement](http://www.solarus-games.org/doc/1.6/lua_api_random_movement.html): A straight movement whose direction changes randomly from time to time.
+---  * [Target movement](http://www.solarus-games.org/doc/1.6/lua_api_target_movement.html): Straight trajectory towards a possibly moving target.
+---  * [Path movement](http://www.solarus-games.org/doc/1.6/lua_api_path_movement.html): Predetermined path composed of steps in the 8 main directions.
+---  * [Random path movement](http://www.solarus-games.org/doc/1.6/lua_api_random_path_movement.html): Like a path movement, but with random steps.
+---  * [Path finding movement](http://www.solarus-games.org/doc/1.6/lua_api_path_finding_movement.html): Like a path movement, but calculated to reach a possibly moving target.
+---  * [Circle movement](http://www.solarus-games.org/doc/1.6/lua_api_circle_movement.html): Circular trajectory around a possibly moving center.
+---  * [Jump movement](http://www.solarus-games.org/doc/1.6/lua_api_jump_movement.html): An illusion of jump above a baseline.
+---  * [Pixel movement](http://www.solarus-games.org/doc/1.6/lua_api_pixel_movement.html): A trajectory described pixel by pixel.
+---
+---
+---
+---This page desribes the methods and callbacks common to all movement types.
+---
+---Movements can be applied in-game to [map entities](http://www.solarus-games.org/doc/1.6/lua_api_entity.html), but also outside a game, typically in a [menu](http://www.solarus-games.org/doc/1.6/lua_api_menu.html) to move a [sprite](http://www.solarus-games.org/doc/1.6/lua_api_sprite.html), an [image](http://www.solarus-games.org/doc/1.6/lua_api_surface.html) or just an `(x,y)` value. However, some properties of movements (like [movement:set_ignore_obstacles()](http://www.solarus-games.org/doc/1.6/lua_api_movement.html#lua_api_movement_set_ignore_obstacles)) only take effect in the case of a [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) because they refer to [map-specific](http://www.solarus-games.org/doc/1.6/lua_api_map.html) notions like obstacles.
+---
+local m = {}
+
+---
+---Creates a movement.
+---
+---Depending on the movement type, several methods are then available to get and set its properties.
+---
+---  * `movement_type` (string): Type of movement to create. Must be one of:
+---    * `"straight"`: Follows a rectilinear trajectory.
+---    * `"random"`: Like "straight" but with random, changing angles.
+---    * `"target"`: Like "straight" but goes into the direction of a fixed point or a moving entity.
+---    * `"path"`: Follows a specified succession of basic moves on an 8x8 pixels grid.
+---    * `"random_path"`: Like "path" but computes the path randomly.
+---    * `"path_finding"`: Like "path" but computes the shortest path to an entity, avoiding obstacles of the map (only possible in game).
+---    * `"circle"`: Follows a circular trajectory around a center.
+---    * `"jump"`: Makes a jump above a rectilinear trajectory.
+---    * `"pixel"`: Follows a trajectory specified pixel by pixel.
+---  * Return value (movement): The movement created. See the sections below to know the get and set methods available for your movement type.
+---
+---
+---
+---#  Methods of all movement types
+---
+---These methods exist in all movement types.
+---
+---@param movement_type string
+---@return movement
+function m.create(movement_type) end
+
+return m
