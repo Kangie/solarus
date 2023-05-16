@@ -1,13 +1,43 @@
 ---@class carried_object : entity
 ---
----A carried object is a [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) that the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) is lifting, carrying or throwing.
+---A carried object is a [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) that the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html) is lifting, carrying or throwing.
 ---
 local m = {}
 
 ---
----Returns the [entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) that carried this object.
+---Returns the sound to be played when this object is cut or broken.
 ---
----  * Return value ([entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html)): The carrier entity.
+---  * Return value (string): Id of the destruction sound. `nil` means that no sound will be played.
+---
+---
+---
+---@return string
+function m:get_destruction_sound() end
+
+---
+---Sets the number of life points that an [enemy](https://doxygen.solarus-games.org/latest/lua_api_enemy.html) loses when the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html) throws this object at it.
+---
+---  * `damage_on_enemies` (number): The number of life points to remove to an enemy hit by this object. `0` means that enemies will ignore this object.
+---
+---
+---
+---@param damage_on_enemies number
+function m:set_damage_on_enemies(damage_on_enemies) end
+
+---
+---Called when this object has finished being lifted and is now actually carried.
+---
+function m:on_lifted() end
+
+---
+---Called when this object starts being thrown.
+---
+function m:on_thrown() end
+
+---
+---Returns the [entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) that carried this object.
+---
+---  * Return value ([entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html)): The carrier entity.
 ---
 ---
 ---
@@ -15,7 +45,7 @@ local m = {}
 function m:get_carrier() end
 
 ---
----Returns the number of life points that an [enemy](http://www.solarus-games.org/doc/1.6/lua_api_enemy.html) loses when the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) throws this object at it.
+---Returns the number of life points that an [enemy](https://doxygen.solarus-games.org/latest/lua_api_enemy.html) loses when the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html) throws this object at it.
 ---
 ---  * Return value (number): The number of life points to remove to an enemy hit by this object. `0` means that enemies will ignore this object.
 ---
@@ -35,9 +65,9 @@ function m:get_damage_on_enemies() end
 ---
 ---Events are callback methods automatically called by the engine if you define them.
 ---
----Carried objects are particular [map entities](http://www.solarus-games.org/doc/1.6/lua_api_entity.html). Therefore, they inherit all events from the type map entity.
+---Carried objects are particular [map entities](https://doxygen.solarus-games.org/latest/lua_api_entity.html). Therefore, they inherit all events from the type map entity.
 ---
----See [Events of all entity types](http://www.solarus-games.org/doc/1.6/lua_api_entity.html#lua_api_entity_events) to know these events.
+---See [Events of all entity types](https://doxygen.solarus-games.org/latest/lua_api_entity.html#lua_api_entity_events) to know these events.
 ---
 ---#  Events of the type carried object
 ---
@@ -50,36 +80,6 @@ function m:set_destruction_sound(destruction_sound_id) end
 ---Called when this object falls on the ground and starts breaking. 
 ---
 function m:on_breaking() end
-
----
----Called when this object starts being thrown.
----
-function m:on_thrown() end
-
----
----Sets the number of life points that an [enemy](http://www.solarus-games.org/doc/1.6/lua_api_enemy.html) loses when the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) throws this object at it.
----
----  * `damage_on_enemies` (number): The number of life points to remove to an enemy hit by this object. `0` means that enemies will ignore this object.
----
----
----
----@param damage_on_enemies number
-function m:set_damage_on_enemies(damage_on_enemies) end
-
----
----Returns the sound to be played when this object is cut or broken.
----
----  * Return value (string): Id of the destruction sound. `nil` means that no sound will be played.
----
----
----
----@return string
-function m:get_destruction_sound() end
-
----
----Called when this object has finished being lifted and is now actually carried.
----
-function m:on_lifted() end
 
 _G.carried_object = m
 

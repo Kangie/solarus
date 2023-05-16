@@ -1,24 +1,24 @@
 ---@class sol.movement
 ---
----If you need to move an [enemy](http://www.solarus-games.org/doc/1.6/lua_api_enemy.html) of the map, a [sprite](http://www.solarus-games.org/doc/1.6/lua_api_sprite.html) in a menu or simply an arbitrary point, you can create a movement object and set its properties. There are several types of movements. They differ by the kind of trajectory they can make. When you create a movement, you obtain a value of the movement type you chose. Then, to get and set its properties (like the speed, the angle, etc.), a movement object has several methods available. As detailed below, the methods available differ depending on the movement type because all movement types don't have the same properties.
+---If you need to move an [enemy](https://doxygen.solarus-games.org/latest/lua_api_enemy.html) of the map, a [sprite](https://doxygen.solarus-games.org/latest/lua_api_sprite.html) in a menu or simply an arbitrary point, you can create a movement object and set its properties. There are several types of movements. They differ by the kind of trajectory they can make. When you create a movement, you obtain a value of the movement type you chose. Then, to get and set its properties (like the speed, the angle, etc.), a movement object has several methods available. As detailed below, the methods available differ depending on the movement type because all movement types don't have the same properties.
 ---
 ---The following movement types are available.
 ---
----  * [Straight movement](http://www.solarus-games.org/doc/1.6/lua_api_straight_movement.html): Rectilinear trajectory in any direction.
----  * [Random movement](http://www.solarus-games.org/doc/1.6/lua_api_random_movement.html): A straight movement whose direction changes randomly from time to time.
----  * [Target movement](http://www.solarus-games.org/doc/1.6/lua_api_target_movement.html): Straight trajectory towards a possibly moving target.
----  * [Path movement](http://www.solarus-games.org/doc/1.6/lua_api_path_movement.html): Predetermined path composed of steps in the 8 main directions.
----  * [Random path movement](http://www.solarus-games.org/doc/1.6/lua_api_random_path_movement.html): Like a path movement, but with random steps.
----  * [Path finding movement](http://www.solarus-games.org/doc/1.6/lua_api_path_finding_movement.html): Like a path movement, but calculated to reach a possibly moving target.
----  * [Circle movement](http://www.solarus-games.org/doc/1.6/lua_api_circle_movement.html): Circular trajectory around a possibly moving center.
----  * [Jump movement](http://www.solarus-games.org/doc/1.6/lua_api_jump_movement.html): An illusion of jump above a baseline.
----  * [Pixel movement](http://www.solarus-games.org/doc/1.6/lua_api_pixel_movement.html): A trajectory described pixel by pixel.
+---  * [Straight movement](https://doxygen.solarus-games.org/latest/lua_api_straight_movement.html): Rectilinear trajectory in any direction.
+---  * [Random movement](https://doxygen.solarus-games.org/latest/lua_api_random_movement.html): A straight movement whose direction changes randomly from time to time.
+---  * [Target movement](https://doxygen.solarus-games.org/latest/lua_api_target_movement.html): Straight trajectory towards a possibly moving target.
+---  * [Path movement](https://doxygen.solarus-games.org/latest/lua_api_path_movement.html): Predetermined path composed of steps in the 8 main directions.
+---  * [Random path movement](https://doxygen.solarus-games.org/latest/lua_api_random_path_movement.html): Like a path movement, but with random steps.
+---  * [Path finding movement](https://doxygen.solarus-games.org/latest/lua_api_path_finding_movement.html): Like a path movement, but calculated to reach a possibly moving target.
+---  * [Circle movement](https://doxygen.solarus-games.org/latest/lua_api_circle_movement.html): Circular trajectory around a possibly moving center.
+---  * [Jump movement](https://doxygen.solarus-games.org/latest/lua_api_jump_movement.html): An illusion of jump above a baseline.
+---  * [Pixel movement](https://doxygen.solarus-games.org/latest/lua_api_pixel_movement.html): A trajectory described pixel by pixel.
 ---
 ---
 ---
 ---This page desribes the methods and callbacks common to all movement types.
 ---
----Movements can be applied in-game to [map entities](http://www.solarus-games.org/doc/1.6/lua_api_entity.html), but also outside a game, typically in a [menu](http://www.solarus-games.org/doc/1.6/lua_api_menu.html) to move a [sprite](http://www.solarus-games.org/doc/1.6/lua_api_sprite.html), an [image](http://www.solarus-games.org/doc/1.6/lua_api_surface.html) or just an `(x,y)` value. However, some properties of movements (like [movement:set_ignore_obstacles()](http://www.solarus-games.org/doc/1.6/lua_api_movement.html#lua_api_movement_set_ignore_obstacles)) only take effect in the case of a [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) because they refer to [map-specific](http://www.solarus-games.org/doc/1.6/lua_api_map.html) notions like obstacles.
+---Movements can be applied in-game to [map entities](https://doxygen.solarus-games.org/latest/lua_api_entity.html), but also outside a game, typically in a [menu](https://doxygen.solarus-games.org/latest/lua_api_menu.html) to move a [sprite](https://doxygen.solarus-games.org/latest/lua_api_sprite.html), an [image](https://doxygen.solarus-games.org/latest/lua_api_surface.html) or just an `(x,y)` value. However, some properties of movements (like [movement:set_ignore_obstacles()](https://doxygen.solarus-games.org/latest/lua_api_movement.html#lua_api_movement_set_ignore_obstacles)) only take effect in the case of a [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) because they refer to [map-specific](https://doxygen.solarus-games.org/latest/lua_api_map.html) notions like obstacles.
 ---
 local m = {}
 

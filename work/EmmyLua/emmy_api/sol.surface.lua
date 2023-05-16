@@ -15,9 +15,9 @@ local m = {}
 ---
 ---#  Methods inherited from drawable
 ---
----Surfaces are particular [drawable](http://www.solarus-games.org/doc/1.6/lua_api_drawable.html) objects. Therefore, they inherit all methods from the type drawable.
+---Surfaces are particular [drawable](https://doxygen.solarus-games.org/latest/lua_api_drawable.html) objects. Therefore, they inherit all methods from the type drawable.
 ---
----See [Methods of all drawable types](http://www.solarus-games.org/doc/1.6/lua_api_drawable.html#lua_api_drawable_methods) to know these methods.
+---See [Methods of all drawable types](https://doxygen.solarus-games.org/latest/lua_api_drawable.html#lua_api_drawable_methods) to know these methods.
 ---
 ---#  Methods of the type surface
 ---

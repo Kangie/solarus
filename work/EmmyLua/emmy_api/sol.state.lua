@@ -1,6 +1,6 @@
 ---@class sol.state
 ---
----This module provides a datatype `state` that represents a custom state allowing advanced customization of the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html).
+---This module provides a datatype `state` that represents a custom state allowing advanced customization of the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html).
 ---
 local m = {}
 

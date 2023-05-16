@@ -1,9 +1,9 @@
 ---@class random_path_movement : movement
 ---
----The random path movement is a particular case of [path movement](http://www.solarus-games.org/doc/1.6/lua_api_path_movement.html), where the path is chosen automatically. The resulting movement is composed of repeated random steps in the four main directions only and with a length that is a multiple of 8 pixels.
+---The random path movement is a particular case of [path movement](https://doxygen.solarus-games.org/latest/lua_api_path_movement.html), where the path is chosen automatically. The resulting movement is composed of repeated random steps in the four main directions only and with a length that is a multiple of 8 pixels.
 ---
 ---Remarks
----    This movement is a typical random walk movement. You will probably use it for [NPCs](http://www.solarus-games.org/doc/1.6/lua_api_npc.html).
+---    This movement is a typical random walk movement. You will probably use it for [NPCs](https://doxygen.solarus-games.org/latest/lua_api_npc.html).
 ---
 ---Example of use: 
 ---    
@@ -17,27 +17,6 @@
 ---    
 ---
 local m = {}
-
----
----Returns the angle of the current trajectory in radians.
----
----East is `0`, North is `math.pi / 2`, West is `math.pi`, South is `3 * math.pi / 2`.
----
----  * Return value (number): The angle in radians.
----
----
----
----Remarks
----    If you prefer a value in a 4-direction system, see [movement:get_direction4()](http://www.solarus-games.org/doc/1.6/lua_api_movement.html#lua_api_movement_get_direction4).
----
----#  Events inherited from movement
----
----Random path movements are particular [movement](http://www.solarus-games.org/doc/1.6/lua_api_movement.html) objects. Therefore, they inherit all events from the type movement.
----
----See [Events of all movement types](http://www.solarus-games.org/doc/1.6/lua_api_movement.html#lua_api_movement_events) to know these events. 
----
----@return number
-function m:get_angle() end
 
 ---
 ---Sets the speed of this movement.
@@ -58,6 +37,27 @@ function m:set_speed(speed) end
 ---
 ---@return number
 function m:get_speed() end
+
+---
+---Returns the angle of the current trajectory in radians.
+---
+---East is `0`, North is `math.pi / 2`, West is `math.pi`, South is `3 * math.pi / 2`.
+---
+---  * Return value (number): The angle in radians.
+---
+---
+---
+---Remarks
+---    If you prefer a value in a 4-direction system, see [movement:get_direction4()](https://doxygen.solarus-games.org/latest/lua_api_movement.html#lua_api_movement_get_direction4).
+---
+---#  Events inherited from movement
+---
+---Random path movements are particular [movement](https://doxygen.solarus-games.org/latest/lua_api_movement.html) objects. Therefore, they inherit all events from the type movement.
+---
+---See [Events of all movement types](https://doxygen.solarus-games.org/latest/lua_api_movement.html#lua_api_movement_events) to know these events. 
+---
+---@return number
+function m:get_angle() end
 
 _G.random_path_movement = m
 

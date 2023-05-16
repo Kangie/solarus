@@ -60,39 +60,14 @@
 local m = {}
 
 ---
----Cancels this timer.
+---Returns whether this timer gets automatically suspended when the [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) is suspended.
 ---
----If the timer was already finished or canceled, nothing happens.
----
----Remarks
----    Canceling timers by hand may be tedious and error-prone. In lots of cases, you can simply pass a context parameter to [sol.timer.start()](http://www.solarus-games.org/doc/1.6/lua_api_timer.html#lua_api_timer_start) in order to restrict the lifetime of your timer to some other object.
----
-function m:stop() end
-
----
----Changes the remaining time of this timer.
----
----This function has no effect if the timer is already finished.
----
----  * `remaining_time` (number): The time remaining in milliseconds. `0` makes the timer finish now and immediately executes its callback.
----
----
----
----Remarks
----    When a timer is repeated (that is, if its callback returns `true` or a number), the timer gets rescheduled with its full delay again, no matter if you called this function in the meantime. 
----
----@param remaining_time number
-function m:set_remaining_time(remaining_time) end
-
----
----Returns whether this timer is currently suspended.
----
----  * Return value (boolean): `true` if this timer is currently suspended.
+---  * Return value (boolean): `true` if this timer gets suspended when the map is suspended.
 ---
 ---
 ---
 ---@return boolean
-function m:is_suspended() end
+function m:is_suspended_with_map() end
 
 ---
 ---Returns whether this timer is currently suspended.
@@ -105,33 +80,6 @@ function m:is_suspended() end
 function m:set_suspended(suspended) end
 
 ---
----Sets whether this timer should automatically be suspended when the [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) gets suspended.
----
----The map is suspended by the engine in a few cases, like when the game is paused, when there is a dialog or when the camera is being moved by a script. When this happens, all [map entities](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) stop moving and most [sprites](http://www.solarus-games.org/doc/1.6/lua_api_sprite.html) stop their animation. With this setting, you can choose whether your timer gets suspended automatically as well.
----
----By default, [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) timers, [entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) timers, [state](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) timers and [item](http://www.solarus-games.org/doc/1.6/lua_api_item.html) timers are suspended with the map.
----
----  * `suspended_with_map` (boolean, optional): `true` to suspend the timer when the map is suspended, `false` to continue (no value means `true`).
----
----
----
----Remarks
----    When this setting is `true`, entity timers also get automatically suspended when the entity is [disabled](http://www.solarus-games.org/doc/1.6/lua_api_entity.html#lua_api_entity_set_enabled).
----
----@param suspended_with_map boolean|nil
-function m:set_suspended_with_map(suspended_with_map) end
-
----
----Returns whether this timer gets automatically suspended when the [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) is suspended.
----
----  * Return value (boolean): `true` if this timer gets suspended when the map is suspended.
----
----
----
----@return boolean
-function m:is_suspended_with_map() end
-
----
 ---Returns whether a clock sound is played repeatedly during this timer.
 ---
 ---  * Return value (boolean): `true` if a clock sound is played with this timer.
@@ -140,6 +88,26 @@ function m:is_suspended_with_map() end
 ---
 ---@return boolean
 function m:is_with_sound() end
+
+---
+---Returns whether this timer is currently suspended.
+---
+---  * Return value (boolean): `true` if this timer is currently suspended.
+---
+---
+---
+---@return boolean
+function m:is_suspended() end
+
+---
+---Cancels this timer.
+---
+---If the timer was already finished or canceled, nothing happens.
+---
+---Remarks
+---    Canceling timers by hand may be tedious and error-prone. In lots of cases, you can simply pass a context parameter to [sol.timer.start()](https://doxygen.solarus-games.org/latest/lua_api_timer.html#lua_api_timer_start) in order to restrict the lifetime of your timer to some other object.
+---
+function m:stop() end
 
 ---
 ---Returns the remaining time of this timer.
@@ -160,6 +128,38 @@ function m:get_remaining_time() end
 ---
 ---@param with_sound boolean
 function m:set_with_sound(with_sound) end
+
+---
+---Changes the remaining time of this timer.
+---
+---This function has no effect if the timer is already finished.
+---
+---  * `remaining_time` (number): The time remaining in milliseconds. `0` makes the timer finish now and immediately executes its callback.
+---
+---
+---
+---Remarks
+---    When a timer is repeated (that is, if its callback returns `true` or a number), the timer gets rescheduled with its full delay again, no matter if you called this function in the meantime. 
+---
+---@param remaining_time number
+function m:set_remaining_time(remaining_time) end
+
+---
+---Sets whether this timer should automatically be suspended when the [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) gets suspended.
+---
+---The map is suspended by the engine in a few cases, like when the game is paused, when there is a dialog or when the camera is being moved by a script. When this happens, all [map entities](https://doxygen.solarus-games.org/latest/lua_api_entity.html) stop moving and most [sprites](https://doxygen.solarus-games.org/latest/lua_api_sprite.html) stop their animation. With this setting, you can choose whether your timer gets suspended automatically as well.
+---
+---By default, [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) timers, [entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) timers, [state](https://doxygen.solarus-games.org/latest/lua_api_entity.html) timers and [item](https://doxygen.solarus-games.org/latest/lua_api_item.html) timers are suspended with the map.
+---
+---  * `suspended_with_map` (boolean, optional): `true` to suspend the timer when the map is suspended, `false` to continue (no value means `true`).
+---
+---
+---
+---Remarks
+---    When this setting is `true`, entity timers also get automatically suspended when the entity is [disabled](https://doxygen.solarus-games.org/latest/lua_api_entity.html#lua_api_entity_set_enabled).
+---
+---@param suspended_with_map boolean|nil
+function m:set_suspended_with_map(suspended_with_map) end
 
 _G.timer = m
 

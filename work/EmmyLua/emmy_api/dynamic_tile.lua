@@ -1,8 +1,8 @@
 ---@class dynamic_tile : entity
 ---
----Dynamic tiles are [tiles](http://www.solarus-games.org/doc/1.6/lua_api_tile.html) that can be hidden, shown, created and deleted at runtime.
+---Dynamic tiles are [tiles](https://doxygen.solarus-games.org/latest/lua_api_tile.html) that can be hidden, shown, created and deleted at runtime.
 ---
----This type of [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) can be declared in the [map data file](http://www.solarus-games.org/doc/1.6/lua_api_map.html#lua_api_map_overview_files). It can also be created dynamically with [map:create_dynamic_tile()](http://www.solarus-games.org/doc/1.6/lua_api_map.html#lua_api_map_create_dynamic_tile).
+---This type of [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) can be declared in the [map data file](https://doxygen.solarus-games.org/latest/lua_api_map.html#lua_api_map_overview_files). It can also be created dynamically with [map:create_dynamic_tile()](https://doxygen.solarus-games.org/latest/lua_api_map.html#lua_api_map_create_dynamic_tile).
 ---
 local m = {}
 
@@ -15,16 +15,6 @@ local m = {}
 ---
 ---@param tileset_id string|nil
 function m:set_tileset(tileset_id) end
-
----
----Returns the id of the tile pattern of this dynamic tile.
----
----  * Return value (string): The tile pattern id in the tileset.
----
----
----
----@return string
-function m:get_pattern_id() end
 
 ---
 ---Returns the id of the tileset of this dynamic tile.
@@ -41,7 +31,7 @@ function m:get_tileset() end
 ---
 ---The presence of a dynamic tile can modify the ground of the map. This is determined by the ground property of the tile pattern.
 ---
----  * Return value (string): The ground defined by this dynamic tile. `"empty"` means that this dynamic tile does not modify the ground of the map. See [map:get_ground()](http://www.solarus-games.org/doc/1.6/lua_api_map.html#lua_api_map_get_ground) for the list of possible grounds.
+---  * Return value (string): The ground defined by this dynamic tile. `"empty"` means that this dynamic tile does not modify the ground of the map. See [map:get_ground()](https://doxygen.solarus-games.org/latest/lua_api_map.html#lua_api_map_get_ground) for the list of possible grounds.
 ---
 ---
 ---
@@ -49,9 +39,9 @@ function m:get_tileset() end
 ---
 ---Events are callback methods automatically called by the engine if you define them.
 ---
----Dynamic tiles are particular [map entities](http://www.solarus-games.org/doc/1.6/lua_api_entity.html). Therefore, they inherit all events from the type map entity.
+---Dynamic tiles are particular [map entities](https://doxygen.solarus-games.org/latest/lua_api_entity.html). Therefore, they inherit all events from the type map entity.
 ---
----See [Events of all entity types](http://www.solarus-games.org/doc/1.6/lua_api_entity.html#lua_api_entity_events) to know these events.
+---See [Events of all entity types](https://doxygen.solarus-games.org/latest/lua_api_entity.html#lua_api_entity_events) to know these events.
 ---
 ---#  Events of the type dynamic tile
 ---
@@ -59,6 +49,16 @@ function m:get_tileset() end
 ---
 ---@return string
 function m:get_modified_ground() end
+
+---
+---Returns the id of the tile pattern of this dynamic tile.
+---
+---  * Return value (string): The tile pattern id in the tileset.
+---
+---
+---
+---@return string
+function m:get_pattern_id() end
 
 _G.dynamic_tile = m
 

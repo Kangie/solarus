@@ -5,7 +5,23 @@
 local m = {}
 
 ---
----Returns whether this movement adjusts its trajectory when an obstacle of the [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) is reached. This property has no effect if the movement is not attached to a [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) or if the movement ignores obstacles.
+---Sets whether this movement should adjust its trajectory when an obstacle of the [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) is reached. This property has no effect if the movement is not attached to a [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) or if the movement ignores obstacles.
+---
+---  * `smooth` (boolean, optional): `true` to make this movement smooth. No value means `true`.
+---
+---
+---
+---#  Events inherited from movement
+---
+---Straight movements are particular [movement](https://doxygen.solarus-games.org/latest/lua_api_movement.html) objects. Therefore, they inherit all events from the type movement.
+---
+---See [Events of all movement types](https://doxygen.solarus-games.org/latest/lua_api_movement.html#lua_api_movement_events) to know these events. 
+---
+---@param smooth boolean|nil
+function m:set_smooth(smooth) end
+
+---
+---Returns whether this movement adjusts its trajectory when an obstacle of the [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) is reached. This property has no effect if the movement is not attached to a [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) or if the movement ignores obstacles.
 ---
 ---  * Return value (boolean): `true` if this movement is smooth.
 ---
@@ -15,42 +31,14 @@ local m = {}
 function m:is_smooth() end
 
 ---
----Returns the maximum distance of this movement.
+---Returns the speed of this movement.
 ---
----The movement will stop when this distance is reached.
----
----  * Return value (number): The maximum distance in pixels (`0` means no limit).
+---  * Return value (number): The speed in pixels per second.
 ---
 ---
 ---
 ---@return number
-function m:get_max_distance() end
-
----
----Sets whether this movement should adjust its trajectory when an obstacle of the [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) is reached. This property has no effect if the movement is not attached to a [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) or if the movement ignores obstacles.
----
----  * `smooth` (boolean, optional): `true` to make this movement smooth. No value means `true`.
----
----
----
----#  Events inherited from movement
----
----Straight movements are particular [movement](http://www.solarus-games.org/doc/1.6/lua_api_movement.html) objects. Therefore, they inherit all events from the type movement.
----
----See [Events of all movement types](http://www.solarus-games.org/doc/1.6/lua_api_movement.html#lua_api_movement_events) to know these events. 
----
----@param smooth boolean|nil
-function m:set_smooth(smooth) end
-
----
----Sets the speed of this movement.
----
----  * `speed` (number): The new speed in pixels per second.
----
----
----
----@param speed number
-function m:set_speed(speed) end
+function m:get_speed() end
 
 ---
 ---Sets the angle of the trajectory in radians.
@@ -77,6 +65,28 @@ function m:set_angle(angle) end
 function m:set_max_distance(max_distance) end
 
 ---
+---Returns the maximum distance of this movement.
+---
+---The movement will stop when this distance is reached.
+---
+---  * Return value (number): The maximum distance in pixels (`0` means no limit).
+---
+---
+---
+---@return number
+function m:get_max_distance() end
+
+---
+---Sets the speed of this movement.
+---
+---  * `speed` (number): The new speed in pixels per second.
+---
+---
+---
+---@param speed number
+function m:set_speed(speed) end
+
+---
 ---Returns the angle of the trajectory in radians.
 ---
 ---East is `0`, North is `math.pi / 2`, West is `math.pi`, South is `3 * math.pi / 2` and any intermediate value is possible.
@@ -86,20 +96,10 @@ function m:set_max_distance(max_distance) end
 ---
 ---
 ---Remarks
----    If you prefer a value in a 4-direction system, see [movement:get_direction4()](http://www.solarus-games.org/doc/1.6/lua_api_movement.html#lua_api_movement_get_direction4).
+---    If you prefer a value in a 4-direction system, see [movement:get_direction4()](https://doxygen.solarus-games.org/latest/lua_api_movement.html#lua_api_movement_get_direction4).
 ---
 ---@return number
 function m:get_angle() end
-
----
----Returns the speed of this movement.
----
----  * Return value (number): The speed in pixels per second.
----
----
----
----@return number
-function m:get_speed() end
 
 _G.straight_movement = m
 

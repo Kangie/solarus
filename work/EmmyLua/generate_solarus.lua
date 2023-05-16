@@ -29,15 +29,13 @@ local function genFunction(moduleName, funName, fun, static)
                 typeList[currentArg] = (typeList[currentArg] or "") .. match:gsub(" or ", ""):gsub("%]", "") .. (currentArg:match("^%[") and "|nil" or "") .. "|"
             end
         end
-        if (funName == "on_finger_moved") then
     end
-end
     for arg in argList:gmatch("[^,]+") do
-        code = code .. '---@param ' .. arg:gsub("%[", "") .. " " .. tostring(typeList[arg]):gsub("|$", ""):gsub(",$", "") .. '\n'
+        code = code .. '---@param ' .. arg:gsub("%[", "") .. " " .. tostring(typeList[arg]):gsub("|$", ""):gsub(",$", ""):gsub(" ", "_") .. '\n'
     end
 
     if fun.returns ~= "" then
-        code = code .. '---@return ' .. fun.returns:gsub(" or ", "|"):gsub("optional (%S+)", "%1|nil"):gsub("%s?+%s?", ", "):gsub("%s?and%s?", ", "):gsub(", $", "") .. '\n'
+        code = code .. '---@return ' .. fun.returns:gsub(", ?", "|"):gsub(" or ", "|"):gsub("optional (%S+)", "%1|nil"):gsub("%s?+%s?", ","):gsub("%s?and%s?", ","):gsub(", ?$", ""):gsub(" ", "_") .. '\n'
     end
 
     local dot = static and '.' or ':'

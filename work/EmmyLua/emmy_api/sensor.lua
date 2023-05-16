@@ -1,23 +1,23 @@
 ---@class sensor : entity
 ---
----A sensor is an invisible detector that triggers something when the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) overlaps it.
+---A sensor is an invisible detector that triggers something when the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html) overlaps it.
 ---
----This type of [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) can be declared in the [map data file](http://www.solarus-games.org/doc/1.6/lua_api_map.html#lua_api_map_overview_files). It can also be created dynamically with [map:create_sensor()](http://www.solarus-games.org/doc/1.6/lua_api_map.html#lua_api_map_create_sensor).
+---This type of [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) can be declared in the [map data file](https://doxygen.solarus-games.org/latest/lua_api_map.html#lua_api_map_overview_files). It can also be created dynamically with [map:create_sensor()](https://doxygen.solarus-games.org/latest/lua_api_map.html#lua_api_map_create_sensor).
 ---
 local m = {}
 
 ---
----Called when the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) stops overlapping this sensor.
+---Called when the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html) stops overlapping this sensor.
 ---
 function m:on_left() end
 
 ---
----Called continuously while the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) overlaps this sensor.
+---Called continuously while the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html) overlaps this sensor.
 ---
 function m:on_activated_repeat() end
 
 ---
----Called when the [hero](http://www.solarus-games.org/doc/1.6/lua_api_hero.html) overlaps this sensor.
+---Called when the [hero](https://doxygen.solarus-games.org/latest/lua_api_hero.html) overlaps this sensor.
 ---
 ---The bounding box of the hero (of size 16x16 pixels) must fit entirely the sensor. This means that if the sensor has a size of 16x16, the hero and the sensor must overlap perfectly.
 ---
@@ -26,7 +26,7 @@ function m:on_activated_repeat() end
 function m:on_activated() end
 
 ---
----Called when an [explosion](http://www.solarus-games.org/doc/1.6/lua_api_explosion.html) touches this sensor. 
+---Called when an [explosion](https://doxygen.solarus-games.org/latest/lua_api_explosion.html) touches this sensor. 
 ---
 function m:on_collision_explosion() end
 

@@ -2,9 +2,9 @@
 ---
 ---You can get information about the low-level keyboard and joypad inputs through `sol.input`.
 ---
----But remember that when a low-level keyboard or joypad input event occurs, all useful objects ([sol.main](http://www.solarus-games.org/doc/1.6/lua_api_main.html), the [game](http://www.solarus-games.org/doc/1.6/lua_api_game.html), [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) and [menus](http://www.solarus-games.org/doc/1.6/lua_api_menu.html)) are already notified. For example, when the user presses a keyboard key, the engine automatically calls [sol.main:on_key_pressed()](http://www.solarus-games.org/doc/1.6/lua_api_main.html#lua_api_main_on_key_pressed).
+---But remember that when a low-level keyboard or joypad input event occurs, all useful objects ([sol.main](https://doxygen.solarus-games.org/latest/lua_api_main.html), the [game](https://doxygen.solarus-games.org/latest/lua_api_game.html), [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) and [menus](https://doxygen.solarus-games.org/latest/lua_api_menu.html)) are already notified. For example, when the user presses a keyboard key, the engine automatically calls [sol.main:on_key_pressed()](https://doxygen.solarus-games.org/latest/lua_api_main.html#lua_api_main_on_key_pressed).
 ---
----Also note that during the game, there exists the higher-level notion of [game commands](http://www.solarus-games.org/doc/1.6/lua_api_game.html#lua_api_game_overview_commands) to ease your life.
+---Also note that during the game, there exists the higher-level notion of [game commands](https://doxygen.solarus-games.org/latest/lua_api_game.html#lua_api_game_overview_commands) to ease your life.
 ---
 local m = {}
 
@@ -21,31 +21,6 @@ local m = {}
 function m.get_joypad_hat_direction(hat) end
 
 ---
----Returns whether a finger is currently pressed.
----
----  * `finger` (integer): The finger id to check.
----  * Return value (boolean): `true` if the finger is down.
----
----
----
----@param finger integer
----@return boolean
-function m.is_finger_pressed(finger) end
-
----
----Returns the current position of a finger if it exists.
----
----  * `finger` (integer): The finger id to check.
----  * Return value 1 (integer): The `x` position of the finger in [quest size](http://www.solarus-games.org/doc/1.6/lua_api_video.html#lua_api_video_get_quest_size) coordinates. Return `nil` if the finger does not exist or is not pressed.
----  * Return value 2 (integer): The `y` position of the finger in [quest size](http://www.solarus-games.org/doc/1.6/lua_api_video.html#lua_api_video_get_quest_size) coordinates.
----
----
----
----@param finger integer
----@return integer,integer
-function m.get_finger_position(finger) end
-
----
 ---Enables or disables joypad support.
 ---
 ---Joypad support may be enabled even without any joypad plugged.
@@ -57,14 +32,37 @@ function m.get_finger_position(finger) end
 function m.set_joypad_enabled() end
 
 ---
----Returns the keyboard key modifiers currently active.
+---Simulates releasing a keyboard key.
 ---
----  * Return value (table): A table whose keys indicate what modifiers are currently down. Possible table keys are `"shift"`, `"control"`, `"alt"` and `"caps lock"`. Table values are `true`.
+---  * `key` (string): The keyboard key to simulate. 
 ---
 ---
 ---
----@return table
-function m.get_modifiers() end
+---@param key string
+function m.simulate_key_released(key) end
+
+---
+---Returns the current position of the mouse cursor relative to the quest size.
+---
+---If the mouse is outside the window, mouse coordinates are captured only if a mouse button is pressed. In this case, the returned values can be out of bounds of the quest size and can be negative. This allows you to keep track of the mouse movement when dragging something. Otherwise, when no mouse button is pressed, the returned coordinates are the last position of the mouse in the window.
+---
+---  * Return value 1 (integer): The `x` position of the mouse in [quest size](https://doxygen.solarus-games.org/latest/lua_api_video.html#lua_api_video_get_quest_size) coordinates.
+---  * Return value 2 (integer): The `y` position of the mouse in [quest size](https://doxygen.solarus-games.org/latest/lua_api_video.html#lua_api_video_get_quest_size) coordinates.
+---
+---
+---
+---@return integer|integer
+function m.get_mouse_position() end
+
+---
+---Simulates pressing a keyboard key.
+---
+---  * `key` (string): The keyboard key to simulate.
+---
+---
+---
+---@param key string
+function m.simulate_key_pressed(key) end
 
 ---
 ---Returns whether a joypad button is currently down.
@@ -79,36 +77,28 @@ function m.get_modifiers() end
 function m.is_joypad_button_pressed(button) end
 
 ---
----Returns the current state of an axis of the joypad.
+---Returns whether a keyboard key is currently down.
 ---
----  * `axis` (number): Index of a joypad axis. The first one is `0`.
----  * Return value (number): The state of that axis. `-1` means left or up, `0` means centered and `1` means right or down.
----
----
----
----@param axis number
----@return number
-function m.get_joypad_axis_state(axis) end
-
----
----Simulates pressing a keyboard key.
----
----  * `key` (string): The keyboard key to simulate.
+---  * `key` (string): The name of a keyboard key.
+---  * Return value (boolean): `true` if this keyboard key is currently down.
 ---
 ---
 ---
 ---@param key string
-function m.simulate_key_pressed(key) end
+---@return boolean
+function m.is_key_pressed(key) end
 
 ---
----Simulates releasing a keyboard key.
+---Returns whether a finger is currently pressed.
 ---
----  * `key` (string): The keyboard key to simulate. 
+---  * `finger` (integer): The finger id to check.
+---  * Return value (boolean): `true` if the finger is down.
 ---
 ---
 ---
----@param key string
-function m.simulate_key_released(key) end
+---@param finger integer
+---@return boolean
+function m.is_finger_pressed(finger) end
 
 ---
 ---Returns the current pressure of a finger if it exists.
@@ -123,16 +113,39 @@ function m.simulate_key_released(key) end
 function m.get_finger_pressure(finger) end
 
 ---
----Returns whether joypad support is enabled.
+---Returns the current position of a finger if it exists.
 ---
----This may be true even without any joypad plugged.
+---  * `finger` (integer): The finger id to check.
+---  * Return value 1 (integer): The `x` position of the finger in [quest size](https://doxygen.solarus-games.org/latest/lua_api_video.html#lua_api_video_get_quest_size) coordinates. Return `nil` if the finger does not exist or is not pressed.
+---  * Return value 2 (integer): The `y` position of the finger in [quest size](https://doxygen.solarus-games.org/latest/lua_api_video.html#lua_api_video_get_quest_size) coordinates.
 ---
----  * Return value (boolean): `true` if joypad support is enabled.
+---
+---
+---@param finger integer
+---@return integer|integer
+function m.get_finger_position(finger) end
+
+---
+---Returns the current state of an axis of the joypad.
+---
+---  * `axis` (number): Index of a joypad axis. The first one is `0`.
+---  * Return value (number): The state of that axis. `-1` means left or up, `0` means centered and `1` means right or down.
 ---
 ---
 ---
----@return boolean
-function m.is_joypad_enabled() end
+---@param axis number
+---@return number
+function m.get_joypad_axis_state(axis) end
+
+---
+---Returns the keyboard key modifiers currently active.
+---
+---  * Return value (table): A table whose keys indicate what modifiers are currently down. Possible table keys are `"shift"`, `"control"`, `"alt"` and `"caps lock"`. Table values are `true`.
+---
+---
+---
+---@return table
+function m.get_key_modifiers() end
 
 ---
 ---Returns whether a mouse button is currently down.
@@ -147,28 +160,15 @@ function m.is_joypad_enabled() end
 function m.is_mouse_button_pressed(button) end
 
 ---
----Returns whether a keyboard key is currently down.
+---Returns whether joypad support is enabled.
 ---
----  * `key` (string): The name of a keyboard key.
----  * Return value (boolean): `true` if this keyboard key is currently down.
+---This may be true even without any joypad plugged.
+---
+---  * Return value (boolean): `true` if joypad support is enabled.
 ---
 ---
 ---
----@param key string
 ---@return boolean
-function m.is_key_pressed(key) end
-
----
----Returns the current position of the mouse cursor relative to the quest size.
----
----If the mouse is outside the window, mouse coordinates are captured only if a mouse button is pressed. In this case, the returned values can be out of bounds of the quest size and can be negative. This allows you to keep track of the mouse movement when dragging something. Otherwise, when no mouse button is pressed, the returned coordinates are the last position of the mouse in the window.
----
----  * Return value 1 (integer): The `x` position of the mouse in [quest size](http://www.solarus-games.org/doc/1.6/lua_api_video.html#lua_api_video_get_quest_size) coordinates.
----  * Return value 2 (integer): The `y` position of the mouse in [quest size](http://www.solarus-games.org/doc/1.6/lua_api_video.html#lua_api_video_get_quest_size) coordinates.
----
----
----
----@return integer,integer
-function m.get_mouse_position() end
+function m.is_joypad_enabled() end
 
 return m

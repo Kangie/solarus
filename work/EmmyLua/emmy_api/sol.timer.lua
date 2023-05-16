@@ -60,53 +60,56 @@
 local m = {}
 
 ---
+---Cancels all timers that are currently running in a context.
+---
+---  * `context` ([map](https://doxygen.solarus-games.org/latest/lua_api_map.html), [game](https://doxygen.solarus-games.org/latest/lua_api_game.html), [item](https://doxygen.solarus-games.org/latest/lua_api_item.html), [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html), [menu](https://doxygen.solarus-games.org/latest/lua_api_menu.html) or [sol.main](https://doxygen.solarus-games.org/latest/lua_api_main.html)): The context where you want to stop timers.
+---
+---
+---
+---This function is equivalent to calling [timer:stop()](https://doxygen.solarus-games.org/latest/lua_api_timer.html#lua_api_timer_stop) on each timer of the context. It may allow you to avoid to store explicitly all your timers.
+---
+---Remarks
+---    Canceling timers by hand may be tedious and error-prone. In lots of cases, you can simply pass a context parameter to [sol.timer.start()](https://doxygen.solarus-games.org/latest/lua_api_timer.html#lua_api_timer_start) in order to restrict the lifetime of your timer to some other object.
+---
+---#  Methods of the type timer
+---
+---@param context map|game|item|entity|menu|sol.main
+function m.stop_all(context) end
+
+---
 ---Sets a function to be called after a delay.
 ---
 ---If the delay is set to zero, the function is called immediately.
 ---
----  * `context` ([map](http://www.solarus-games.org/doc/1.6/lua_api_map.html), [game](http://www.solarus-games.org/doc/1.6/lua_api_game.html), [item](http://www.solarus-games.org/doc/1.6/lua_api_item.html), [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html), [state](http://www.solarus-games.org/doc/1.6/lua_api_state.html), [menu](http://www.solarus-games.org/doc/1.6/lua_api_menu.html) or [sol.main](http://www.solarus-games.org/doc/1.6/lua_api_main.html); optional): Determines the lifetime of the timer. The context is where the timer belongs.  
+---  * `context` ([map](https://doxygen.solarus-games.org/latest/lua_api_map.html), [game](https://doxygen.solarus-games.org/latest/lua_api_game.html), [item](https://doxygen.solarus-games.org/latest/lua_api_item.html), [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html), [state](https://doxygen.solarus-games.org/latest/lua_api_state.html), [menu](https://doxygen.solarus-games.org/latest/lua_api_menu.html) or [sol.main](https://doxygen.solarus-games.org/latest/lua_api_main.html); optional): Determines the lifetime of the timer. The context is where the timer belongs.  
 ---If the context gets closed before the timer is finished, then the timer is automatically canceled. More precisely, the following rules are applied.
----    * If you set the context to a [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html), the timer is canceled when the player goes to another map.  
+---    * If you set the context to a [map](https://doxygen.solarus-games.org/latest/lua_api_map.html), the timer is canceled when the player goes to another map.  
 ---Example: a button that opens a door for a limited time.
----    * If you set the context to a [game](http://www.solarus-games.org/doc/1.6/lua_api_game.html) or an [item](http://www.solarus-games.org/doc/1.6/lua_api_item.html), the timer is canceled when the game is closed. (Items have the same lifetime as the game they belong to.) This is only possible when the game is running. Example: hot water that becomes cold after a few minutes, and that the player should bring to an NPC on another map while it's still hot.
----    * If you set the context to a [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html), the timer is canceled when the entity is removed from the map. In the case of an enemy, the timer is also canceled when the enemy is hurt, immobilized or restarts. Also note that while the entity is suspended, the timer is also suspended. An entity may be suspended when the [game is suspended](http://www.solarus-games.org/doc/1.6/lua_api_game.html#lua_api_game_is_suspended), or when the entity is [disabled](http://www.solarus-games.org/doc/1.6/lua_api_entity.html#lua_api_entity_set_enabled).  
+---    * If you set the context to a [game](https://doxygen.solarus-games.org/latest/lua_api_game.html) or an [item](https://doxygen.solarus-games.org/latest/lua_api_item.html), the timer is canceled when the game is closed. (Items have the same lifetime as the game they belong to.) This is only possible when the game is running. Example: hot water that becomes cold after a few minutes, and that the player should bring to an NPC on another map while it's still hot.
+---    * If you set the context to a [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html), the timer is canceled when the entity is removed from the map. In the case of an enemy, the timer is also canceled when the enemy is hurt, immobilized or restarts. Also note that while the entity is suspended, the timer is also suspended. An entity may be suspended when the [game is suspended](https://doxygen.solarus-games.org/latest/lua_api_game.html#lua_api_game_is_suspended), or when the entity is [disabled](https://doxygen.solarus-games.org/latest/lua_api_entity.html#lua_api_entity_set_enabled).  
 ---Example: a boss who shoots fireballs every 10 seconds. Most enemy scripts usually create timers.
----    * If you set the context to a [state](http://www.solarus-games.org/doc/1.6/lua_api_state.html), the timer is canceled when the custom hero state finishes or when the hero is removed. Like entity timers, state timers get suspended when the hero is suspended. Example: charging an attack during 3 seconds in a custom state.
----    * If you set the context to a [menu](http://www.solarus-games.org/doc/1.6/lua_api_menu.html), the timer is canceled when the menu is closed.  
+---    * If you set the context to a [state](https://doxygen.solarus-games.org/latest/lua_api_state.html), the timer is canceled when the custom hero state finishes or when the hero is removed. Like entity timers, state timers get suspended when the hero is suspended. Example: charging an attack during 3 seconds in a custom state.
+---    * If you set the context to a [menu](https://doxygen.solarus-games.org/latest/lua_api_menu.html), the timer is canceled when the menu is closed.  
 ---Example: in the title screen, show some animations after a few seconds without action from the user.
----    * If you set the context to the [sol.main](http://www.solarus-games.org/doc/1.6/lua_api_main.html) table, the timer is canceled when Lua is closed. Thus, it will be a global timer. This kind of timer is not often needed.  
+---    * If you set the context to the [sol.main](https://doxygen.solarus-games.org/latest/lua_api_main.html) table, the timer is canceled when Lua is closed. Thus, it will be a global timer. This kind of timer is not often needed.  
 ---Example: dumping some global information periodically while the program is running.
----    * If you don't specify a context, then a default context is set for you: the current [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) during a [game](http://www.solarus-games.org/doc/1.6/lua_api_game.html), and [sol.main](http://www.solarus-games.org/doc/1.6/lua_api_main.html) if no game is running.
+---    * If you don't specify a context, then a default context is set for you: the current [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) during a [game](https://doxygen.solarus-games.org/latest/lua_api_game.html), and [sol.main](https://doxygen.solarus-games.org/latest/lua_api_main.html) if no game is running.
 ---  * `delay` (number): Delay before calling the function in milliseconds.
----  * `callback` (function): The function to be called when the timer finishes. If this callback function returns `true`, then the timer automatically repeats itself with the same delay. In this case, if the delay is shorter than the time of a cycle of the main loop, the callback may be executed several times in the same cycle in order to catch up.
+---  * `callback` (function): The function to be called when the timer finishes.
+---    * If this callback function returns `true`, then the timer automatically repeats itself with the same delay.
+---    * If the callback function returns a positive integer value, then the timer automatically repeats itself after this specified delay in milliseconds.
+---    * Otherwise, the timer does not repeats. If the repeating delay is shorter than the time of a cycle of the main loop, then the callback may be executed several times in the same cycle in order to catch up.
 ---  * Return value (timer): The timer created. Most of the time, you don't need to store the returned timer. Indeed, there is no problem if it gets garbage-collected: the timer persists in the engine side until its completion or the end of its context. Usually, you will store the return value only if you need to stop the timer explicitly later or to call another method on it.
 ---
 ---
 ---
 ---Remarks
----    When they are created, [map](http://www.solarus-games.org/doc/1.6/lua_api_map.html) timers, [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html) timers and [item](http://www.solarus-games.org/doc/1.6/lua_api_item.html) timers are initially suspended if a dialog is active. After that, they get automatically suspended and unsuspended when the map is suspended or unsuspended. This default behavior is suited for most use cases, but if you want to change it, you can use [timer:set_suspended()](http://www.solarus-games.org/doc/1.6/lua_api_timer.html#lua_api_timer_set_suspended) and [timer:set_suspended_with_map()](http://www.solarus-games.org/doc/1.6/lua_api_timer.html#lua_api_timer_set_suspended_with_map).
+---    When they are created, [map](https://doxygen.solarus-games.org/latest/lua_api_map.html) timers, [map entity](https://doxygen.solarus-games.org/latest/lua_api_entity.html) timers and [item](https://doxygen.solarus-games.org/latest/lua_api_item.html) timers are initially suspended if a dialog is active. After that, they get automatically suspended and unsuspended when the map is suspended or unsuspended. This default behavior is suited for most use cases, but if you want to change it, you can use [timer:set_suspended()](https://doxygen.solarus-games.org/latest/lua_api_timer.html#lua_api_timer_set_suspended) and [timer:set_suspended_with_map()](https://doxygen.solarus-games.org/latest/lua_api_timer.html#lua_api_timer_set_suspended_with_map).
 ---
 ---@param context map|nil|game|nil|item|nil|entity|nil|state|nil|menu|sol.main;optional|nil
 ---@param delay number
 ---@param callback function
 ---@return timer
 function m.start(context,delay,callback) end
-
----
----Cancels all timers that are currently running in a context.
----
----  * `context` ([map](http://www.solarus-games.org/doc/1.6/lua_api_map.html), [game](http://www.solarus-games.org/doc/1.6/lua_api_game.html), [item](http://www.solarus-games.org/doc/1.6/lua_api_item.html), [map entity](http://www.solarus-games.org/doc/1.6/lua_api_entity.html), [menu](http://www.solarus-games.org/doc/1.6/lua_api_menu.html) or [sol.main](http://www.solarus-games.org/doc/1.6/lua_api_main.html)): The context where you want to stop timers.
----
----
----
----This function is equivalent to calling [timer:stop()](http://www.solarus-games.org/doc/1.6/lua_api_timer.html#lua_api_timer_stop) on each timer of the context. It may allow you to avoid to store explicitly all your timers.
----
----Remarks
----    Canceling timers by hand may be tedious and error-prone. In lots of cases, you can simply pass a context parameter to [sol.timer.start()](http://www.solarus-games.org/doc/1.6/lua_api_timer.html#lua_api_timer_start) in order to restrict the lifetime of your timer to some other object.
----
----#  Methods of the type timer
----
----@param context map|game|item|entity|menu|sol.main
-function m.stop_all(context) end
 
 return m

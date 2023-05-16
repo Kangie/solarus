@@ -10,7 +10,7 @@
 ---
 ---
 ---
----The animation set of a sprite is composed of one or several PNG images that store all the frames, and a data file that describes how frames are organized in the PNG images. The data file also indicates the delay to make between frames when animating them and other properties like whether the animation should loop. See the [sprites syntax](http://www.solarus-games.org/doc/1.6/quest_sprite_data_file.html) for more information about the format of sprites.
+---The animation set of a sprite is composed of one or several PNG images that store all the frames, and a data file that describes how frames are organized in the PNG images. The data file also indicates the delay to make between frames when animating them and other properties like whether the animation should loop. See the [sprites syntax](https://doxygen.solarus-games.org/latest/quest_sprite_data_file.html) for more information about the format of sprites.
 ---
 ---We describe here the Lua API that you can use to show sprites during your game or your menus.
 ---
@@ -26,9 +26,9 @@ local m = {}
 ---
 ---#  Methods inherited from drawable
 ---
----Sprites are particular [drawable](http://www.solarus-games.org/doc/1.6/lua_api_drawable.html) objects. Therefore, they inherit all methods from the type drawable.
+---Sprites are particular [drawable](https://doxygen.solarus-games.org/latest/lua_api_drawable.html) objects. Therefore, they inherit all methods from the type drawable.
 ---
----See [Methods of all drawable types](http://www.solarus-games.org/doc/1.6/lua_api_drawable.html#lua_api_drawable_methods) to know these methods.
+---See [Methods of all drawable types](https://doxygen.solarus-games.org/latest/lua_api_drawable.html#lua_api_drawable_methods) to know these methods.
 ---
 ---#  Methods of the type sprite
 ---
