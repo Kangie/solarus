@@ -19,10 +19,11 @@
 #include "solarus/gui/main_window.h"
 #include "solarus/gui/quests_view.h"
 #include "solarus/gui/settings.h"
-#include <QDesktopWidget>
 #include <QFileDialog>
+#include <QGuiApplication>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QScreen>
 
 namespace SolarusGui {
 
@@ -99,12 +100,13 @@ MainWindow::MainWindow(QWidget* parent) :
  */
 void MainWindow::initialize_geometry_on_screen() {
 
-  QDesktopWidget* desktop = QApplication::desktop();
-  QRect screen = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
+  const auto* screen = QGuiApplication::screenAt(QCursor::pos());
+  const auto screen_rect = screen ? screen->geometry() : QRect();
+  const auto window_rect = frameGeometry();
 
   // Center the window on the screen where the mouse is currently.
-  int x = screen.width() / 2 - frameGeometry().width() / 2 + screen.left() - 2;
-  int y = screen.height() / 2 - frameGeometry().height() / 2 + screen.top() - 10;
+  const int x = screen_rect.width() / 2 - window_rect.width() / 2 + screen_rect.left() - 2;
+  const int y = screen_rect.height() / 2 - window_rect.height() / 2 + screen_rect.top() - 10;
 
   move(qMax(0, x), qMax(0, y));
 }
