@@ -83,15 +83,11 @@ void TransitionScrolling::start() {
   const int scrolling_step = 5;
 
   const Size& camera_size = previous_map_surface->get_size();
-  int width = camera_size.width;
-  int height = camera_size.height;
   if (scrolling_direction % 2 == 0) {
     // right or left
-    width *= 2;
     dx = (scrolling_direction == 0) ? scrolling_step : -scrolling_step;
   }
   else {
-    height *= 2;
     dy = (scrolling_direction == 3) ? scrolling_step : -scrolling_step;
   }
 
