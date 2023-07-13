@@ -1184,8 +1184,9 @@ void Entities::remove_marked_entities() {
     // Remove it from the whole list.
     all_entities.remove(entity);
     const std::string& name = entity->get_name();
-    if (!name.empty()) {
-      named_entities.erase(name);
+    auto nit = named_entities.find(name);
+    if (nit != named_entities.end() && nit->second == entity) {
+      named_entities.erase(nit);
     }
 
     // Update the specific entities lists.
