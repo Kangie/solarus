@@ -60,6 +60,7 @@ class ExportableToLua:
      * @return
      */
     inline const std::weak_ptr<T> weak_from_this_cast(){
+      if(weak_from_this().expired()) return {};
       return std::static_pointer_cast<T>(shared_from_this());
     }
 
