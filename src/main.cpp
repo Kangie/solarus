@@ -19,7 +19,11 @@
 #include "version.h"
 #include <solarus/core/Arguments.h>
 #include <solarus/core/Debug.h>
+#include <solarus/core/Game.h>
 #include <solarus/core/MainLoop.h>
+#include <solarus/core/Savegame.h>
+#include <solarus/core/System.h>
+#include <solarus/lua/LuaContext.h>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QLibraryInfo>
@@ -135,7 +139,7 @@ int run_editor_gui(int argc, char* argv[]) {
 }
 
 /**
- * @brief Runs a quest like the solarus-run executable does.
+ * @brief Runs a quest or a map for testing purposes.
  * @param argc Number of arguments of the command line.
  * @param argv Command-line arguments.
  * @return 0 in case of success.
@@ -147,7 +151,23 @@ int run_quest(int argc, char* argv[]) {
 
   // Run the Solarus main loop.
   const Solarus::Arguments args(argc, argv);
-  Solarus::MainLoop(args).run();
+  const std::string& map_id = args.get_argument_value("-map");
+  Solarus::MainLoop main_loop(args);
+  if (map_id.empty()) {
+    // Just run the quest like solarus-run does.
+    main_loop.run();
+  } else {
+    // Run a specific map.
+    std::shared_ptr<Solarus::Savegame> savegame = std::make_shared<Solarus::Savegame>(
+        main_loop, "save1.dat"
+    );
+    savegame->initialize();
+    savegame->set_string(Solarus::Savegame::KEY_STARTING_MAP, map_id);
+    savegame->unset(Solarus::Savegame::KEY_STARTING_POINT);
+    Solarus::Game* game = new Solarus::Game(main_loop, savegame);
+    main_loop.set_game(game);
+    main_loop.run();
+  }
 
   return 0;
 }
@@ -163,6 +183,8 @@ int run_quest(int argc, char* argv[]) {
  *   solarus-quest-editor [quest_path [file_path]]
  * To directly run a quest (no GUI, similar to solarus-run):
  *   solarus-quest-editor -run quest_path
+ * To directly run a map of a quest quest for testing purposes:
+ *   solarus-quest-editor -run -map=your_map_id quest_path
  *
  * @param argc Number of arguments of the command line.
  * @param argv Command-line arguments.
@@ -177,8 +199,7 @@ int main(int argc, char* argv[]) {
   if (argc > 1 && QString(argv[1]) == "-run") {
     // Quest run mode.
     return SolarusEditor::run_quest(argc, argv);
-  }
-  else {
+  } else {
     // Editor GUI mode.
     return SolarusEditor::run_editor_gui(argc, argv);
   }

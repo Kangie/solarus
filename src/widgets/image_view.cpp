@@ -82,8 +82,6 @@ void ImageView::update_zoom() {
   }
 
   double zoom = view_settings->get_zoom();
-  zoom = qMin(4.0, qMax(0.25, zoom));
-
   if (zoom == this->zoom) {
     return;
   }

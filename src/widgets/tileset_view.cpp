@@ -122,20 +122,20 @@ TilesetModel* TilesetView::get_model() {
  */
 void TilesetView::set_model(TilesetModel* model) {
 
-  int horizontal_scrollbar_value = 0;
-  int vertical_scrollbar_value = 0;
-  double zoom = 2.0;  // Initial zoom: x2.
-
   if (this->model != nullptr) {
+    double zoom = 1.0;
+    if (view_settings != nullptr) {
+      zoom = view_settings->get_zoom();
+    }
+    QPoint scroll_bar_position(horizontalScrollBar()->value(), verticalScrollBar()->value());
+    recent_scroll_settings[this->model->get_tileset_id()] = ScrollSettings{
+        scroll_bar_position, zoom
+    };
+
     disconnect(this->model, nullptr,
                this, nullptr);
     this->model = nullptr;
     this->scene = nullptr;
-    horizontal_scrollbar_value = horizontalScrollBar()->value();
-    vertical_scrollbar_value = verticalScrollBar()->value();
-    if (view_settings != nullptr) {
-      zoom = view_settings->get_zoom();
-    }
   }
 
   this->model = model;
@@ -150,17 +150,20 @@ void TilesetView::set_model(TilesetModel* model) {
     }
 
     // Restore the previous zoom and scrollbar positions.
+    const ScrollSettings& scroll_settings = recent_scroll_settings.value(
+          model->get_tileset_id(),
+          ScrollSettings{QPoint(), 2.0}
+    );
     if (view_settings != nullptr) {
-      view_settings->set_zoom(zoom);
+      view_settings->set_zoom(scroll_settings.zoom);
     }
-
     horizontalScrollBar()->setValue(0);  // To force an actual change (refresh bug).
     horizontalScrollBar()->setValue(10);
-    horizontalScrollBar()->setValue(horizontal_scrollbar_value);
+    horizontalScrollBar()->setValue(scroll_settings.scroll_bar_position.x());
 
     verticalScrollBar()->setValue(0);
     verticalScrollBar()->setValue(10);
-    verticalScrollBar()->setValue(vertical_scrollbar_value);
+    verticalScrollBar()->setValue(scroll_settings.scroll_bar_position.y());
 
     // Install panning and zooming helpers.
     new PanTool(this);
@@ -266,8 +269,6 @@ void TilesetView::update_zoom() {
   }
 
   double zoom = view_settings->get_zoom();
-  zoom = qMin(4.0, qMax(0.25, zoom));
-
   if (zoom == this->zoom) {
     return;
   }

@@ -25,9 +25,6 @@ function enemy:on_created()
   self:set_invincible_sprite(wings_sprite)
   self:set_sprite_damage(shadow_sprite, 0)
   self:set_sprite_damage(wings_sprite, 0)
-  if body_sprite.set_default_behavior_on_hero_shield then
-    body_sprite:set_default_behavior_on_hero_shield("enemy_weak_to_shield_push")
-  end
   -- Set enemy properties.
   self:set_obstacle_behavior("flying")
   self:set_life(2)
@@ -148,7 +145,6 @@ function enemy:start_flying()
   m:start(self) -- Start movement.
 end
 
-
 -- Attach a custom damage to the sprites of the enemy.
 function enemy:get_sprite_damage(sprite)
   return (sprite and sprite.custom_damage) or self:get_damage()
@@ -157,24 +153,15 @@ function enemy:set_sprite_damage(sprite, damage)
   sprite.custom_damage = damage
 end
 
--- Warning: do not override these functions if you use the "custom shield" script.
 function enemy:on_attacking_hero(hero, enemy_sprite)
   local enemy = self
   local hero = enemy:get_map():get_hero()
   -- Do nothing if enemy sprite cannot hurt hero.
   if enemy:get_sprite_damage(enemy_sprite) == 0 then return end
   local collision_mode = enemy:get_attacking_collision_mode()
-  if not hero:overlaps(enemy, collision_mode) then return end  
-  -- Do nothing when shield is protecting.
-  if hero.is_shield_protecting_from_enemy
-      and hero:is_shield_protecting_from_enemy(enemy, enemy_sprite) then
+  if not hero:overlaps(enemy, collision_mode) then
     return
-  end
-  -- Check for a custom attacking collision test.
-  if enemy.custom_attacking_collision_test and
-      not enemy:custom_attacking_collision_test(enemy_sprite) then
-    return
-  end
+  end  
   -- Otherwise, hero is not protected. Use built-in behavior.
   local damage = enemy:get_damage()
   if enemy_sprite then

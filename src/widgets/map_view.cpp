@@ -231,6 +231,16 @@ MapView::MapView(QWidget* parent) :
 }
 
 /**
+ * @brief Destructor.
+ */
+MapView::~MapView() {
+
+  // Avoid a crash when closing the tab with an active selection.
+  disconnect(scene, &MapScene::selectionChanged,
+             this, &MapView::map_selection_changed);
+}
+
+/**
  * @brief Returns the map represented in this view.
  * @return The map model or nullptr if none was set.
  */
@@ -1000,8 +1010,6 @@ void MapView::update_zoom() {
   }
 
   double zoom = view_settings->get_zoom();
-  zoom = qMin(4.0, qMax(0.25, zoom));
-
   if (zoom == this->zoom) {
     return;
   }

@@ -65,6 +65,7 @@ set(solarus_quest_editor_SOURCES
   include/widgets/new_entity_user_property_dialog.h
   include/widgets/new_quest_dialog.h
   include/widgets/new_resource_element_dialog.h
+  include/widgets/new_element_dialog.h
   include/widgets/new_string_dialog.h
   include/widgets/package_dialog.h
   include/widgets/pair_spin_box.h
@@ -197,6 +198,7 @@ set(solarus_quest_editor_SOURCES
   src/widgets/new_entity_user_property_dialog.cpp
   src/widgets/new_quest_dialog.cpp
   src/widgets/new_resource_element_dialog.cpp
+  src/widgets/new_element_dialog.cpp
   src/widgets/new_string_dialog.cpp
   src/widgets/package_dialog.cpp
   src/widgets/pair_spin_box.cpp

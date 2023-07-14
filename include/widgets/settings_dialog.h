@@ -31,7 +31,7 @@ class SettingsDialog : public QDialog {
 
 public:
 
-  SettingsDialog(QWidget *parent = nullptr);
+  explicit SettingsDialog(QWidget *parent = nullptr);
 
 public slots:
 
@@ -59,6 +59,8 @@ public slots:
   void change_quest_size();
   void update_force_software();
   void change_force_software();
+  void update_suspend_unfocused();
+  void change_suspend_unfocused();
 
   // Text editor.
   void update_font_family();

@@ -99,6 +99,14 @@ private:
                                  * place in the PNG image. */
   };
 
+  /**
+   * @brief Stores the scrollbar position and zoom of recent tilesets.
+   */
+  struct ScrollSettings {
+    QPoint scroll_bar_position;
+    double zoom = 1.0;
+  };
+
   void show_context_menu(const QPoint& where);
   void build_context_menu_ground(QMenu& menu, const QList<int>& indexes);
   void build_context_menu_layer(QMenu& menu, const QList<int>& indexes);
@@ -152,6 +160,8 @@ private:
 
   bool read_only;                      /**< Whether the view forbids editing the tileset. */
   bool multi_selection_enabled;        /**< Whether it is allowed to select multiple patterns. */
+  QMap<QString, ScrollSettings>
+      recent_scroll_settings;          /**< Scroll bar positions and zoom of recent tilesets. */
 
 };
 

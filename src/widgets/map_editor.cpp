@@ -1092,6 +1092,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   set_close_confirm_message(
         tr("Map '%1' has been modified. Save changes?").arg(map_id));
   set_select_all_supported(true);
+  set_run_map_supported(true);
   set_zoom_supported(true);
   set_grid_supported(true);
   set_traversables_visibility_supported(true);
@@ -1440,6 +1441,14 @@ void MapEditor::unselect_all() {
   if (scene != nullptr) {
     scene->unselect_all();
   }
+}
+
+/**
+ * @copydoc Editor::run_map
+ */
+void MapEditor::run_map() {
+
+  emit run_map_requested(map_id);
 }
 
 /**
@@ -2444,7 +2453,11 @@ void MapEditor::generate_borders_requested(const EntityIndexes& indexes) {
     return;
   }
 
-  const TilesetModel* tileset = map->get_tileset_model();
+  if (tileset_id.isEmpty()) {
+    tileset_id = map->get_tileset_id();
+  }
+  const TilesetModel* tileset = map->get_quest().get_tileset(tileset_id);
+
   if (tileset == nullptr) {
     return;
   }

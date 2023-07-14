@@ -51,6 +51,7 @@ public:
   bool open_quest(const QString& quest_path);
   void open_file(Quest& quest, const QString& path);
   Editor* get_current_editor();
+  void run_quest(const QString& map_id);
 
 private slots:
 
@@ -73,6 +74,7 @@ private slots:
   void on_action_unselect_all_triggered();
   void on_action_find_triggered();
   void on_action_run_quest_triggered();
+  void on_action_run_map_triggered();
   void on_action_stop_music_triggered();
   void on_action_show_grid_triggered();
   void on_action_show_console_triggered();
@@ -122,6 +124,7 @@ protected:
 private:
 
   bool confirm_before_closing();
+  bool confirm_upgrade_quest(const QString& old_format);
   void update_title();
   void upgrade_quest();
   void add_quest_to_recent_list();

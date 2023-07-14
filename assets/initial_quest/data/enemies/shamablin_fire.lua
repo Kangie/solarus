@@ -14,10 +14,6 @@ function enemy:on_created()
   body_sprite = enemy:create_sprite("enemies/" .. enemy:get_breed())
   self:set_life(life)
   self:set_damage(body_damage)
-  -- General shield properties.
-  if self.set_default_behavior_on_hero_shield then
-    self:set_default_behavior_on_hero_shield("normal_shield_push")
-  end
 end
 
 -- Event called when the enemy should start or restart its movements.
@@ -63,9 +59,6 @@ function enemy:throw_fireball_to(entity)
   fireball_sprite:set_animation("create_fireball")
   -- Set fireball custom properties.
   fireball:set_invincible()
-  if fireball.set_default_behavior_on_hero_shield then
-    fireball:set_default_behavior_on_hero_shield("burn_push")
-  end
   -- Start movement on fireball after creating animation.
   function fireball:on_restarted() -- This avoids restart problem.
     fireball_sprite:set_animation("create_fireball")
