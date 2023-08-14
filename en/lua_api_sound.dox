@@ -9,9 +9,7 @@ You can create, play, or pause sound effects through \c sol.sound.
 
 \subsection lua_api_sound_create sol.sound.create(sound_id, [language_specific])
 
-Creates a sound effect.
-
-This creates an OGG Vorbis (<tt>.ogg</tt>) formatted sound effect.
+Creates a new OGG Vorbis (<tt>.ogg</tt>) formatted sound effect.
 
 Generates a Lua error if the sound does not exist.
 
@@ -23,24 +21,24 @@ Generates a Lua error if the sound does not exist.
 
 \subsection lua_api_sound_play sound:play()
 
-Plays the created sound effect.
+Starts playing the created sound effect.
 
 This method does not play if a sound was not previously created.
 
 \subsection lua_api_sound_stop sound:stop()
 
-Stops the created sound effect.
+Stops playing the created sound effect.
 
 \subsection lua_api_sound_is_paused sound:is_paused()
 
-Checks whether the created sound is paused during playback.
+Returns whether the created sound is currently paused.
 
 - Return value (boolean): \c true if the sound is paused, \c false if it is
   not paused.
 
 \subsection lua_api_sound_set_paused sound:set_paused([paused])
 
-Pauses the sound effect if it is currently playing.
+Pauses or resumes the created sound.
 
 - \c paused (boolean, optional): \c true to pause the sound, \c false to
   unpause it. No value means \c true.
