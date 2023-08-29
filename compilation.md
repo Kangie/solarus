@@ -321,7 +321,7 @@ Type from your build directory:
 To install the needed packages via the brew package manager, type:
 
 ```bash
-brew install cmake ninja sdl2 sdl2_image sdl2_ttf luajit libvorbis libmodplug physfs
+brew install cmake ninja sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug physfs glm
 ```
 
 You will also need a copy of the OS X SDK, which is included with XCode.
@@ -330,8 +330,7 @@ XCode is freely available on the App Store.
 #### Compile on macOS
 
 You can follow the standard compilation instructions to build Solarus on macOS.
-However here are some tips that may be useful depending on your developer
-environment.
+However here are some tips that may be useful depending on your environment.
 
 You can build the XCode project using CMake:
 
@@ -339,13 +338,23 @@ You can build the XCode project using CMake:
 cmake -G Xcode ..
 ```
 
-If you wish to build the solarus GUI, the CMake invocation will probably become
-something like this:
+If you wish to build the solarus GUI, you might need to explicitly tell CMake the location of
+you Qt installation like this:
 
 ```bash
 cmake \
   -DCMAKE_PREFIX_PATH="<path_to_Qt>/Qt/<version>/clang_64/lib/cmake" \
   -Wno-dev  ..
+```
+
+If you are compiling on an Apple Silicon architecture, Solarus will by default still compile
+an Intel x86_64 binary for better compatibility.
+But for this to work, you need all your dependencies to be also x86_64.
+Alternatively, you can also build an actual Apple Silicen (arm64)
+binary by using the SOLARUS_ARCH CMake variable as follows:
+
+```bash
+cmake -DSOLARUS_ARCH=arm64 ..
 ```
 
 #### Deploy on macOS

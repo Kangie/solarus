@@ -15,10 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/Debug.h"
-#include "solarus/core/Game.h"
-#include "solarus/core/Map.h"
 #include "solarus/core/System.h"
-#include "solarus/graphics/Color.h"
 #include "solarus/graphics/Surface.h"
 #include "solarus/graphics/TransitionScrolling.h"
 #include <memory>
@@ -83,15 +80,11 @@ void TransitionScrolling::start() {
   const int scrolling_step = 5;
 
   const Size& camera_size = previous_map_surface->get_size();
-  int width = camera_size.width;
-  int height = camera_size.height;
   if (scrolling_direction % 2 == 0) {
     // right or left
-    width *= 2;
     dx = (scrolling_direction == 0) ? scrolling_step : -scrolling_step;
   }
   else {
-    height *= 2;
     dy = (scrolling_direction == 3) ? scrolling_step : -scrolling_step;
   }
 
