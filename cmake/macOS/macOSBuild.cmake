@@ -24,17 +24,6 @@ if(NOT SOLARUS_DEPLOYMENT)
 endif()
 set(CMAKE_OSX_DEPLOYMENT_TARGET "${SOLARUS_DEPLOYMENT}" CACHE STRING "Oldest OS version supported" FORCE)
 
-# Add a run-time search path for the bundle use case.
-set(CMAKE_MACOSX_RPATH ON)
-if(NOT CMAKE_EXE_LINKER_FLAGS MATCHES "-Xlinker -rpath")
-  set(CMAKE_EXE_LINKER_FLAGS         "${CMAKE_EXE_LINKER_FLAGS} -Xlinker -rpath -Xlinker @loader_path/../Frameworks/" CACHE STRING "Embed frameworks search path" FORCE)
-endif()
-set_target_properties(solarus PROPERTIES
-  MACOSX_RPATH                       ON
-  BUILD_WITH_INSTALL_RPATH           1
-  INSTALL_NAME_DIR                   "@rpath"
-)
-
 # LuaJIT workaround.
 # According to the LuaJIT doc, additional linker flags are needed with a 64bit build.
 if(SOLARUS_USE_LUAJIT AND SOLARUS_ARCH MATCHES "x86_64")
