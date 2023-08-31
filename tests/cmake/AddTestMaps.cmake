@@ -185,6 +185,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1556_boolean_parameters_treat_nil_as_true"
   "bugs/1562_crash_entity_on_stream"
   "bugs/1565_state_set_can_control_direction"
+  "bugs/1585_get_entity_by_name"
 )
 
 # Test that should succeed when there are non-fatal errors
