@@ -10,7 +10,6 @@ Of course, these virtual commands and axes are mapped to real, low-level inputs 
 
 \section lua_api_controls_overview Overview
 
-
 \subsection lua_api_controls_overview_commands Commands
 
 Commands are the "buttons" of solarus' virtual controls.
@@ -86,6 +85,12 @@ Enable the use of axes for built-in movements of the hero when controlled by tho
 Tells whether those controls are analog
 
 - Return value (boolean): \c true if those controls are analog
+
+\subsection lua_api_controls_is_pressed(command)
+
+Tells if a command is pressed.
+
+- \c command (string): Any valid command name
 
 \subsection lua_api_controls_get_axis_state controls:get_axis_state(axis)
 
@@ -175,6 +180,24 @@ Simulate an axis moved event. You can also simulate custom axis names.
 
 - \c axis (string): Any valid axis name
 - \c state (number): State to signal
+
+\subsection lua_api_controls_set_joypad controls:set_joypad(joypad)
+
+Sets the joypad that is bound to those controls.
+
+- \c joypad (\ref lua_api_joypad): joypad to set, nil to disable joypad input.
+
+\subsection lua_api_controls_get_joypad controls:get_joypad()
+
+Gets the joypad bound to those controls. 
+
+- Return value (\ref lua_api_joypad): bound joypad or nil if none
+
+\subsection lua_api_controls_remove controls:remove()
+
+Remove those controls from the event handler, effectively disabling them forever.
+The lua object is still usable but will never trigger any output. If the reference is forgotten
+by lua the object is freed.
 
 \section lua_api_controls_control_handlers Control Handlers
 
