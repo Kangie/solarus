@@ -1203,8 +1203,9 @@ void Entities::remove_marked_entities() {
                                  heroes.end(),
                                  std::static_pointer_cast<Hero>(entity)),
                      heroes.end());
+        break;
       default:
-      break;
+        break;
     }
 
     // Update the list of entities by type.
