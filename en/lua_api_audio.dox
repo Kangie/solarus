@@ -13,17 +13,21 @@ Plays a sound effect.
 
 Generates a Lua error if the sound does not exist.
 
-Several sounds can be played in parallel.
-In the current version, a sound cannot be interrupted after you start
-playing it.
+Multiple sounds can be played in parallel.
+But to get more control of your sound effect being played,
+especially if you want to pause or stop it,
+you can use the more powerful \ref lua_api_sound "sol.sound module"
+instead of this function.
 
-Unlike musics, sounds files are entirely read before being played.
+Unlike musics, sound files are entirely read before being played.
 A file access is made only the first time you play each sound.
 You can use \ref lua_api_audio_preload_sounds if you want to also avoid this
 initial file access.
 - \c sound_id (string): Name of the sound file to play, relative to the
-  \c sounds directory and without extension. Currently, <tt>.ogg</tt> is the
-  only extension supported.
+  \c sounds directory and without extension.
+  Currently, only OGG Vorbis (<tt>.ogg</tt>) sound files are supported.
+
+\remark This is equivalent to <tt>sol.sound.create(sound_id):play()</tt>.
 
 \subsection lua_api_audio_preload_sounds sol.audio.preload_sounds()
 

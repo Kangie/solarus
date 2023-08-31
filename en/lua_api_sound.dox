@@ -5,41 +5,45 @@
 
 You can create, play, or pause sound effects through \c sol.sound.
 
+An object of type \c sound represents a sound effect with its current playing
+state.
+Multiple sounds effects can be played, paused, resumed or
+stopped independently, even from the same sound file.
+
 \section lua_api_sound_functions Functions of sol.sound
 
-\subsection lua_api_sound_create sol.sound.create(sound_id, [language_specific])
+\subsection lua_api_sound_create sol.sound.create(sound_id)
 
-Creates a new OGG Vorbis (<tt>.ogg</tt>) formatted sound effect.
+Creates a new sound effect but does not play it.
 
-Generates a Lua error if the sound does not exist.
+Generates a Lua error if the sound file does not exist.
 
-- \c sound_id (string): Name of the sound file to create.
-- \c language_specific (boolean, optional): Check whether or not 
-  if the sound is created based on the language version. 
+Unlike musics, sound files are entirely read before being played.
+A file access is made only the first time you play each sound.
+You can use \ref lua_api_audio_preload_sounds if you want to also avoid this
+initial file access.
+- \c sound_id (string): Name of the sound file to read, relative to
+  the \c sounds directory and without extension.
+  Currently, only OGG Vorbis (<tt>.ogg</tt>) sound files are supported.
 
 \section lua_api_sound_methods Methods of sol.sound
 
 \subsection lua_api_sound_play sound:play()
 
-Starts playing the created sound effect.
-
-This method does not play if a sound was not previously created.
+Starts playing the sound effect.
 
 \subsection lua_api_sound_stop sound:stop()
 
-Stops playing the created sound effect.
+Stops playing the sound effect.
 
 \subsection lua_api_sound_is_paused sound:is_paused()
 
-Returns whether the created sound is currently paused.
-
-- Return value (boolean): \c true if the sound is paused, \c false if it is
-  not paused.
+Returns whether the sound effect is currently paused.
+- Return value (boolean): \c true if the sound is paused, \c false otherwise.
 
 \subsection lua_api_sound_set_paused sound:set_paused([paused])
 
-Pauses or resumes the created sound.
-
+Pauses or resumes the sound effect.
 - \c paused (boolean, optional): \c true to pause the sound, \c false to
   unpause it. No value means \c true.
 
