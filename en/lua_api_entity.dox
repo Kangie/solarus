@@ -519,7 +519,7 @@ of size 1x1):
 
 Returns whether another entity collides with this entity according to
 the specified collision test.
-- \c entity (entity): Another entity.
+- \c other_entity (entity): Another entity.
 - \c collision_mode (string, optional): Specifies what kind of collision you
   want to test. This may be one of:
   - \c "overlapping": Collision if the
