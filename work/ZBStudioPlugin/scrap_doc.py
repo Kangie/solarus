@@ -7,7 +7,7 @@ import requests
 from html2text import HTML2Text
 from bs4 import BeautifulSoup
 
-api_doc_host = "http://www.solarus-games.org/doc/1.6/"
+api_doc_host = "https://doxygen.solarus-games.org/latest/"
 api_doc_root = api_doc_host + 'lua_api.html'
 
 match_meth_name_and_args = r":([a-zA-Z0-9_]+)\(([a-zA-Z0-9 _\[\],]*)\)"
@@ -197,7 +197,7 @@ def scrap_sub_classes_of(module_name, t_block):
         for sub in subs:
             scrap_api_page('lua_api_' + sub + '.html', module_name)
         return
-    raise Exception(f"Unknow super module {module_name}")
+    raise Exception(f"Unknown super module {module_name}")
 
 
 match_module_name = r"lua_api_(.*).html"
@@ -248,9 +248,13 @@ def scrap_api_page(api_page_addr, super_class=None):
     #     del class_['inherits']
 
     # hoist all classes in a top level dict
-    if methods or super_methods or events or super_events:
-        print(f"registering class {module_name} with {len(methods)} methods, {len(events)} events")
-        classes[module_name] = class_
+    if (methods or super_methods):
+        print(f"registering class {module_name} with {len(methods) + len(super_methods)} methods")
+    if (events or super_events):
+        print(f"registering class {module_name} with {len(events) + len(super_events)} events")
+    if (methods or super_methods) and (events or super_events):
+        print(f"registering class {module_name} with {len(methods) + len(super_methods)} methods and {len(events) + len(super_events)} events")
+    classes[module_name] = class_
 
     if functions:
         # It's a lib with an attached class
