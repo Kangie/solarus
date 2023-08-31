@@ -578,33 +578,6 @@ class LuaContext {
     // All functions named <type>_api_<name> can be called by Lua.
     static FunctionExportedToLua
 
-      // Main API.
-      main_api_get_solarus_version,
-      main_api_get_quest_version,
-      main_api_get_quest_format,
-      main_api_load_file,
-      main_api_do_file,
-      main_api_reset,
-      main_api_exit,
-      main_api_get_elapsed_time,
-      main_api_get_quest_write_dir,
-      main_api_set_quest_write_dir,
-      main_api_load_settings,
-      main_api_save_settings,
-      main_api_get_distance,
-      main_api_get_angle,
-      main_api_get_resource_ids,
-      main_api_resource_exists,
-      main_api_get_resource_description,
-      main_api_add_resource,
-      main_api_remove_resource,
-      main_api_get_type,
-      main_api_get_metatable,
-      main_api_get_os,
-      main_api_get_game,
-      main_api_rawget,
-      main_api_rawset,
-
       // Audio API.
       audio_api_get_sound_volume,
       audio_api_set_sound_volume,
