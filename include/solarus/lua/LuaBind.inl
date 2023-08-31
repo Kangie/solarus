@@ -175,12 +175,10 @@ static inline void push_any(lua_State * L, const std::map<K, V>& map) {
   // Build a Lua table containing the map content.
   lua_settop(L, 0);
   lua_newtable(L);
-  int i = 1;
   for (const auto& [k, v] : map) {
     push_any(L, k);
     push_any(L, v);
     lua_rawset(L, 2);
-    ++i;
   }
 }
 
