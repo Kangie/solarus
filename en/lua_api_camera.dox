@@ -172,7 +172,7 @@ The size of this surface is the size of the camera.
 
 \subsection lua_api_camera_set_viewport camera:set_viewport(x, y, w, h)
 
-Sets the viewport of the camera, only has an effect if \lef lua_api_video_geometry_mode is set to "dynamic_quest_size" or "dynamic_absolute".
+Sets the viewport of the camera, only has an effect if \ref lua_api_video_set_geometry_mode is set to "dynamic_quest_size" or "dynamic_absolute".
 
 - \c x (nomber): relative horizontal position of the viewport on screen [0, 1]
 - \c y (number): relative vertical position of the viewport on screen [0, 1]

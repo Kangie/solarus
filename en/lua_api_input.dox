@@ -137,7 +137,7 @@ Simulates releasing a keyboard key.
 
 \subsection lua_api_input_on_joypad_connected sol.input.on_joypad_connected(joypad)
 
-- \c joypad (\ref lua_joypad_api): a hot plugged joypad.
+- \c joypad (\ref lua_api_joypad): a hot plugged joypad.
 
 \section lua_api_input_handler_events Events of Input Handlers
 

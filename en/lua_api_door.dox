@@ -164,8 +164,8 @@ Returns the name of the item or savegame variable required to open this door (if
 Returns whether the \ref lua_api_door_get_opening_condition "opening condition" of this door is consumed when you open it
 (only if the \ref lua_api_door_get_opening_method "opening method" is \c "interaction_if_item" or \c "interaction_if_savegame_variable")
 
-If the condition is an item (i.e. the \ref lua_apidoor_get_opening_method "opening method" is \c "interaction_if_item"), 
-the item is removed, which means setting its \ref lua_api_item_set_variant "possessed variant" to \c 0), unless it has an associated 
+If the condition is an item (i.e. the \ref lua_api_door_get_opening_method "opening method" is \c "interaction_if_item"),
+the item is removed, which means setting its \ref lua_api_item_set_variant "possessed variant" to \c 0), unless it has an associated
 amount : in this case, the amount is decremented.
 
 If the condition is a savegame variable (i.e. the \ref lua_api_door_get_opening_method "opening method" is \c "interaction_if_savegame_variable"),
