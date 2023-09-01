@@ -58,9 +58,11 @@ See \ref lua_api_entity_events to know these events.
 
 The following events are specific to sensors.
 
-\subsection lua_api_sensor_on_activated sensor:on_activated()
+\subsection lua_api_sensor_on_activated sensor:on_activated(hero)
 
 Called when the \ref lua_api_hero "hero" overlaps this sensor.
+
+- \c hero (\ref lua_api_hero): The hero that activated the sensor
 
 The bounding box of the hero (of size 16x16 pixels)
 must fit entirely the sensor. This means that if the sensor has a size of

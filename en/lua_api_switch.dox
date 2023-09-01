@@ -121,23 +121,29 @@ See \ref lua_api_entity_events to know these events.
 
 The following events are specific to switches.
 
-\subsection lua_api_switch_on_activated switch:on_activated()
+\subsection lua_api_switch_on_activated switch:on_activated([entity])
 
 Called when this switch has just been turned on.
+
+- \c entity (\ref lua_api_entity): The entity that activated the switch, or nil
 
 This is the right place to define the action that you want your switch to
 perform.
 
-\subsection lua_api_switch_on_inactivated switch:on_inactivated()
+\subsection lua_api_switch_on_inactivated switch:on_inactivated([entity])
 
 Called when a switch has just been turned off.
 
-\subsection lua_api_switch_on_left switch:on_left()
+- \c entity (\ref lua_api_entity): The entity that inactivated the switch, or nil
+
+\subsection lua_api_switch_on_left switch:on_left([entity])
 
 Called when an entity placed on a switch
 (like the \ref lua_api_hero "hero" or a
 \ref lua_api_block "block")
 has just left the switch, regardless of whether the switch was activated or not.
+
+- \c entity (\ref lua_api_entity): The entity that left the switch, or nil
 
 */
 
