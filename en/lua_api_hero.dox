@@ -109,9 +109,9 @@ Returns the direction of the hero's \ref lua_api_sprite "sprites".
   (East) and 3 (South).
 
 \remark The direction of the hero's sprites may be different from both the
-  direction pressed by the \ref lua_api_game_get_commands_direction "player's
-  commands" and from the actual direction of the hero's \ref lua_api_movement
-  "movement".
+  direction pressed by the \ref lua_api_game_get_commands_direction
+  "player's commands" and from the actual direction of the hero's
+  \ref lua_api_movement "movement".
 
 \subsection lua_api_hero_set_direction hero:set_direction(direction4)
 
@@ -120,9 +120,9 @@ Sets the direction of the hero's \ref lua_api_sprite "sprites".
   (East) and 3 (South).
 
 \remark The direction of the hero's sprites may be different from both the
-  direction pressed by the \ref lua_api_game_get_commands_direction "player's
-  commands" and from the actual direction of the hero's \ref lua_api_movement
-  "movement".
+  direction pressed by the \ref lua_api_game_get_commands_direction
+  "player\'s commands" and from the actual direction of the hero's
+  \ref lua_api_movement "movement".
 
 \subsection lua_api_hero_get_walking_speed hero:get_walking_speed()
 
