@@ -192,7 +192,7 @@ list(APPEND LUA_TEST_MAPS
 list(APPEND LUA_TEST_MAPS_NON_FATAL
   "bugs/1015_crash_scrolling_to_invalid_layer/map_1"
   "bugs/1299_crash_invalid_tile_pattern"
-  "bugs/1402_sol_sprite_create_returns_invalid_sprite_object"
+  "bugs/1402_sol_sprite_create_invalid"
 )
 
 # Tests that require showing the window
