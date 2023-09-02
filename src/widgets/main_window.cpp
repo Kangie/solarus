@@ -732,7 +732,7 @@ void MainWindow::upgrade_quest() {
     root_dir.rename(backup_dir_name, "data");
 
     throw EditorException(
-          tr("An error occured while upgrading the quest.\n"
+          tr("An error occurred while upgrading the quest.\n"
              "Your quest was kept unchanged in format %1.").arg(quest_version));
   }
 }
