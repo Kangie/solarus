@@ -15,13 +15,11 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/Debug.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/core/Rectangle.h"
 #include "solarus/graphics/SpriteAnimation.h"
 #include "solarus/graphics/SpriteAnimationSet.h"
 #include "solarus/graphics/SpriteAnimationDirection.h"
 #include "solarus/graphics/SpriteData.h"
-#include "solarus/lua/LuaTools.h"
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -34,13 +32,14 @@ namespace Solarus {
  * (name of a sprite definition file, without the ".dat" extension).
  */
 SpriteAnimationSet::SpriteAnimationSet(const std::string& id):
-  id(id) {}
+  id(id) {
+  load();
+}
 
 /**
  * \brief Attempts to load this animation set from its file.
- * \return If the load was successful, true, otherwise false.
  */
-bool SpriteAnimationSet::load() {
+void SpriteAnimationSet::load() {
 
   SOLARUS_REQUIRE(animations.empty(),
       "Animation set already loaded");
@@ -56,7 +55,18 @@ bool SpriteAnimationSet::load() {
       add_animation(kvp.first, kvp.second);
     }
   }
-  return success;
+}
+
+/**
+ * \brief Returns whether this sprite animation set is valid.
+ *
+ * A sprite animation set is considered valid if it was loaded successfully
+ * and has at least one animation.
+ *
+ * \return \c true if the sprite animation set is valid.
+ */
+bool SpriteAnimationSet::is_valid() const {
+  return !animations.empty();
 }
 
 /**

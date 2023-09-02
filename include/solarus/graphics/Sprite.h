@@ -17,7 +17,6 @@
 #ifndef SOLARUS_SPRITE_H
 #define SOLARUS_SPRITE_H
 
-#include "solarus/core/Common.h"
 #include "solarus/graphics/Drawable.h"
 #include "solarus/graphics/SpritePtr.h"
 #include "solarus/lua/ScopedLuaRef.h"
@@ -55,6 +54,7 @@ class Sprite final: public Drawable {
     // creation and destruction
     explicit Sprite(SpriteAnimationSet& animation_set);
     static SpritePtr create(const std::string& id);
+    bool is_valid() const;
 
     void set_tileset(const Tileset& tileset);
 
@@ -129,7 +129,7 @@ class Sprite final: public Drawable {
 
   private:
 
-    static SpriteAnimationSet* get_animation_set(const std::string& id);
+    static SpriteAnimationSet& get_animation_set(const std::string& id);
     int get_next_frame() const;
     Surface& get_intermediate_surface() const ;
     void set_frame_changed(bool frame_changed);
@@ -142,7 +142,8 @@ class Sprite final: public Drawable {
     // current state of the sprite
 
     std::string current_animation_name;  /**< name of the current animation */
-    SpriteAnimation* current_animation;  /**< the current animation or nullptr if the sprite sheet has no animation */
+    const SpriteAnimation*
+        current_animation;             /**< the current animation or nullptr if the sprite sheet has no animation */
     int current_direction;             /**< current direction of the animation (the first one is number 0);
                                         * it can be different from the movement direction
                                         * of the entity, because sometimes a sprite can

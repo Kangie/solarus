@@ -17,9 +17,7 @@
 #ifndef SOLARUS_SPRITE_ANIMATION_H
 #define SOLARUS_SPRITE_ANIMATION_H
 
-#include "solarus/core/Common.h"
 #include "solarus/core/Debug.h"
-#include "solarus/graphics/Drawable.h"
 #include "solarus/graphics/SpriteAnimationDirection.h"
 #include "solarus/graphics/SurfacePtr.h"
 #include <string>

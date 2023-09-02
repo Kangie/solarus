@@ -141,14 +141,14 @@ int LuaContext::sprite_api_create(lua_State* l) {
   return state_boundary_handle(l, [&] {
     const std::string& animation_set_id = LuaTools::check_string(l, 1);
 
-    SpritePtr sprite = Sprite::create(animation_set_id);
-    if (sprite) {
+    const SpritePtr sprite = Sprite::create(animation_set_id);
+    if (sprite->is_valid()) {
       get().add_drawable(sprite);
       push_sprite(l, *sprite);
-    } else {
-      lua_pushnil(l);
+      return 1;
     }
-    return 1;
+
+    LuaTools::arg_error(l, 1, "Invalid sprite sheet: " + animation_set_id);
   });
 }
 

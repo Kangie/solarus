@@ -15,21 +15,16 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/Debug.h"
-#include "solarus/core/Game.h"
-#include "solarus/core/Map.h"
 #include "solarus/core/PixelBits.h"
 #include "solarus/core/Size.h"
 #include "solarus/core/System.h"
-#include "solarus/graphics/Color.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/graphics/SpriteAnimation.h"
 #include "solarus/graphics/SpriteAnimationDirection.h"
 #include "solarus/graphics/SpriteAnimationSet.h"
 #include "solarus/graphics/Surface.h"
-#include "solarus/graphics/Shader.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
-#include "solarus/movements/Movement.h"
 #include <lua.hpp>
 #include <limits>
 #include <memory>
@@ -65,28 +60,23 @@ void Sprite::quit() {
  * memory if it way already used before.
  *
  * \param id Id of the animation set.
- * \return Pointer to the animation set, nullptr if it could not be created.
+ * \return The animation set, nullptr if it could not be created.
  */
-SpriteAnimationSet* Sprite::get_animation_set(const std::string& id) {
+SpriteAnimationSet& Sprite::get_animation_set(const std::string& id) {
 
   auto it = all_animation_sets.find(id);
   if (it != all_animation_sets.end()) {
-    return it->second;
+    return *it->second;
   }
 
   SpriteAnimationSet* animation_set = new SpriteAnimationSet(id);
-  if (animation_set->load()) {
-    all_animation_sets[id] = animation_set;
-    return animation_set;
-  } else {
-    delete animation_set;
-    return nullptr;
-  }
+  all_animation_sets[id] = animation_set;
+  return *animation_set;
 }
 
 /**
- * \brief Creates a sprite with the animation set.
- * \param animation_set Reference to the animation set.
+ * \brief Creates a sprite with the given animation set.
+ * \param animation_set The animation set.
  */
 Sprite::Sprite(SpriteAnimationSet& animation_set):
   Drawable(),
@@ -110,18 +100,26 @@ Sprite::Sprite(SpriteAnimationSet& animation_set):
 }
 
 /**
- * \brief Attempt to create a sprite with the specified animation set.
+ * \brief Creates a sprite with the specified animation set.
  *
- * Generally, this should be used instead of calling the constructor directly.
+ * If the animation set is invalid, the created sprite will be invalid too.
+ *
  * \param id Name of an animation set.
- * \return Pointer to sprite if it was created, otherwise a nullptr.
+ * \return Pointer to sprite created.
  */
 SpritePtr Sprite::create(const std::string& id) {
-  if (SpriteAnimationSet* animation_set = get_animation_set(id)) {
-    return std::make_shared<Sprite>(*animation_set);
-  } else {
-    return nullptr;
-  }
+  return std::make_shared<Sprite>(get_animation_set(id));
+}
+
+/**
+ * \brief Returns whether this sprite is valid.
+ *
+ * A sprite is considered valid if it has a valid animation set.
+ *
+ * \return \c true if the sprite is valid.
+ */
+bool Sprite::is_valid() const {
+  return animation_set.is_valid();
 }
 
 /**
