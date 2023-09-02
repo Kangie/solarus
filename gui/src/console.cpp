@@ -19,6 +19,7 @@
 #include "solarus/gui/settings.h"
 #include <QDebug>
 #include <QFont>
+#include <QMessageBox>
 #include <QRegularExpression>
 
 namespace SolarusGui {
@@ -123,16 +124,17 @@ void Console::set_quest_runner(QuestRunner& quest_runner) {
 
   this->quest_runner = &quest_runner;
 
-  connect(ui.command_field, SIGNAL(returnPressed()),
-          this, SLOT(command_field_activated()));
+  connect(ui.command_field, &QLineEdit::returnPressed,
+          this, &Console::command_field_activated);
 
-  connect(&quest_runner, SIGNAL(running()),
-          this, SLOT(quest_running()));
-  connect(&quest_runner, SIGNAL(finished()),
-          this, SLOT(quest_finished()));
-  connect(&quest_runner, SIGNAL(output_produced(QStringList)),
-          this, SLOT(quest_output_produced(QStringList)));
-
+  connect(&quest_runner, &QuestRunner::running,
+          this, &Console::quest_running);
+  connect(&quest_runner, &QuestRunner::finished,
+          this, &Console::quest_finished);
+  connect(&quest_runner, &QuestRunner::error,
+          this, &Console::quest_error);
+  connect(&quest_runner, &QuestRunner::output_produced,
+          this, &Console::quest_output_produced);
 }
 
 /**
@@ -168,6 +170,32 @@ void Console::quest_output_produced(const QStringList& lines) {
   }
 }
 
+/**
+ * @brief Slot called when the quest encounters a process execution error.
+ * @param error The process error that happened.
+ */
+void Console::quest_error(QProcess::ProcessError error) {
+
+  switch (error) {
+  case QProcess::FailedToStart:
+    add_message("Fatal", tr("The quest process failed to start."));
+    break;
+  case QProcess::Crashed:
+    add_message("Fatal", tr("The quest process crashed."));
+    break;
+  case QProcess::Timedout:
+    add_message("Error", tr("The quest process timed out."));
+    break;
+  case QProcess::WriteError:
+  case QProcess::ReadError:
+    // Nothing useful to log. Usually happens when the process is already
+    // finished but then the user was already notified.
+    break;
+  case QProcess::UnknownError:
+    add_message("Error", tr("An unknown error occurred to the quest process."));
+    break;
+  }
+}
 /**
  * @brief Slot called when the user wants to execute a Lua instruction from the console.
  */

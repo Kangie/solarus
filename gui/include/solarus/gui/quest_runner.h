@@ -30,7 +30,7 @@ class SOLARUS_GUI_API QuestRunner : public QObject {
 
 public:
 
-  QuestRunner(QObject* parent = nullptr);
+  explicit QuestRunner(QObject* parent = nullptr);
   ~QuestRunner();
 
   bool is_started() const;
@@ -47,6 +47,7 @@ signals:
 
   void running();
   void finished();
+  void error(QProcess::ProcessError error);
   void solarus_fatal(const QString& what);
   void output_produced(const QStringList& lines);
 
@@ -54,7 +55,6 @@ private slots:
 
   void standard_output_data_available();
   void on_finished();
-  void on_error(QProcess::ProcessError perr);
 
 private:
 

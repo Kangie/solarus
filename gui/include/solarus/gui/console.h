@@ -21,6 +21,7 @@
 #include "ui_console.h"
 #include <QMap>
 #include <QPointer>
+#include <QProcess>
 
 namespace SolarusGui {
 
@@ -56,6 +57,7 @@ private slots:
   void quest_running();
   void quest_finished();
   void quest_output_produced(const QStringList& lines);
+  void quest_error(QProcess::ProcessError error);
   void command_field_activated();
 
 private:

@@ -17,7 +17,6 @@
 #include "solarus/gui/quest_runner.h"
 #include "solarus/gui/settings.h"
 #include <QApplication>
-#include <QMessageBox>
 #include <QSize>
 #include <QTimer>
 
@@ -36,14 +35,14 @@ QuestRunner::QuestRunner(QObject* parent) :
   process.setProcessChannelMode(QProcess::MergedChannels);
 
   // Connect to QProcess signals to know when the quest is running and finished.
-  connect(&process, SIGNAL(started()),
-          this, SIGNAL(running()));
-  connect(&process, SIGNAL(finished(int)),
-          this, SLOT(on_finished()));
-  connect(&process, SIGNAL(error(QProcess::ProcessError)),
-          this, SLOT(on_error(QProcess::ProcessError)));
-  connect(&process, SIGNAL(readyReadStandardOutput()),
-          this, SLOT(standard_output_data_available()));
+  connect(&process, &QProcess::started,
+          this, &QuestRunner::running);
+  connect(&process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+          this, &QuestRunner::on_finished);
+  connect(&process, &QProcess::errorOccurred,
+          this, &QuestRunner::error);
+  connect(&process, &QProcess::readyReadStandardOutput,
+          this, &QuestRunner::standard_output_data_available);
 
   // Workaround to make the quest process close properly instead of hanging
   // while reading on its stdin on windows.
@@ -237,42 +236,6 @@ void QuestRunner::on_finished() {
 
   last_command_id = -1;
   emit finished();
-}
-
-/**
- * @brief Slot called when there is a process execution error.
- * @param perr the process error to report to the user.
- *
- * This function simply notifies the user of an error and returns immediately.
- */
-void QuestRunner::on_error(QProcess::ProcessError perr) {
-
-  switch (perr) {
-    case QProcess::FailedToStart:
-      QMessageBox::critical(nullptr, tr("Quest Runner"),
-          tr("The process failed to start."));
-      break;
-    case QProcess::Crashed:
-      QMessageBox::critical(nullptr, tr("Quest Runner"),
-          tr("The process crashed some time after starting successfully."));
-      break;
-    case QProcess::Timedout:
-      QMessageBox::critical(nullptr, tr("Quest Runner"),
-          tr("The last wait-for function on the process timed out."));
-      break;
-    case QProcess::WriteError:
-      QMessageBox::critical(nullptr, tr("Quest Runner"),
-          tr("An error occurred when attempting to write to the process."));
-      break;
-    case QProcess::ReadError:
-      QMessageBox::critical(nullptr, tr("Quest Runner"),
-          tr("An error occurred when attempting to read from the process."));
-      break;
-    case QProcess::UnknownError:
-      QMessageBox::critical(nullptr, tr("Quest Runner"),
-          tr("An unknown error occurred."));
-      break;
-  }
 }
 
 }
