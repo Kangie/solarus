@@ -217,7 +217,7 @@ void PathMovement::restart() {
 }
 
 /**
- * \brief This function is called when a one-pixel step of the current elementary move just occured.
+ * \brief This function is called when a one-pixel step of the current elementary move just occurred.
  * \param step_index index of the one-pixel step in the elementary move (the first one is 0)
  * \param success true if the one-pixel move was made, false if the movement was stopped by an obstacle
  */

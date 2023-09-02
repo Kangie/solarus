@@ -319,24 +319,24 @@ void Npc::call_script_hero_interaction(Hero& hero) {
  * while the hero is facing this NPC.
  *
  * \param item_used The equipment item used.
- * \return true if an interaction occured.
+ * \return true if an interaction occurred.
  */
 bool Npc::notify_interaction_with_item(EquipmentItem& item_used) {
 
-  bool interaction_occured;
+  bool interaction_occurred;
   if (behavior == BEHAVIOR_ITEM_SCRIPT) {
     EquipmentItem& item_to_notify = item_used.get_equipment().get_item(item_name);
-    interaction_occured = get_lua_context()->item_on_npc_interaction_item(
+    interaction_occurred = get_lua_context()->item_on_npc_interaction_item(
         item_to_notify, *this, item_used
     );
   }
   else {
-    interaction_occured = get_lua_context()->entity_on_interaction_item(
+    interaction_occurred = get_lua_context()->entity_on_interaction_item(
         *this, item_used
     );
   }
 
-  return interaction_occured;
+  return interaction_occurred;
 }
 
 /**

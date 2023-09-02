@@ -165,7 +165,7 @@ Point JumpMovement::get_displayed_xy() const {
 }
 
 /**
- * \brief This function is called when a step of the trajectory just occured.
+ * \brief This function is called when a step of the trajectory just occurred.
  *
  * If updates the height of the jump when a step of the basic movement is made.
  *

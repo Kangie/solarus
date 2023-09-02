@@ -32,14 +32,11 @@
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Npc.h"
 #include "solarus/entities/Separator.h"
-#include "solarus/entities/SeparatorPtr.h"
 #include "solarus/entities/StreamAction.h"
 #include "solarus/entities/Switch.h"
 #include "solarus/entities/Tileset.h"
 #include "solarus/graphics/Sprite.h"
-#include "solarus/graphics/SpriteAnimationSet.h"
 #include "solarus/lua/LuaContext.h"
-#include "solarus/lua/LuaTools.h"
 #include "solarus/movements/Movement.h"
 #include <algorithm>
 #include <iterator>

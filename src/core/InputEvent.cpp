@@ -810,7 +810,7 @@ bool InputEvent::is_keyboard_non_direction_key_released() const {
 
 /**
  * \brief Returns whether the SHIFT key was pressed
- * when this keyboard event occured.
+ * when this keyboard event occurred.
  *
  * If this is not a keyboard event, false is returned.
  *
@@ -824,7 +824,7 @@ bool InputEvent::is_with_shift() const {
 
 /**
  * \brief Returns whether the CTRL key was pressed
- * when this keyboard event occured.
+ * when this keyboard event occurred.
  *
  * If this is not a keyboard event, false is returned.
  *
@@ -838,7 +838,7 @@ bool InputEvent::is_with_control() const {
 
 /**
  * \brief Returns whether the ALT key was pressed
- * when this keyboard event occured.
+ * when this keyboard event occurred.
  *
  * If this is not a keyboard event, false is returned.
  *
