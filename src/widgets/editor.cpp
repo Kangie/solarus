@@ -153,6 +153,7 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
   common_actions(),
   save_supported(true),
   select_all_supported(false),
+  run_map_supported(false),
   find_supported(false),
   zoom_supported(false),
   grid_supported(false),
@@ -638,6 +639,35 @@ void Editor::select_all() {
  * Subclasses that support unselect all should reimplement this function.
  */
 void Editor::unselect_all() {
+}
+
+/**
+ * @brief Returns whether this editor supports running a map.
+ * @return @c true if selecting all is supported.
+ */
+bool Editor::is_run_map_supported() const {
+  return run_map_supported;
+}
+
+/**
+ * @brief Sets whether this editor supports running a map.
+ *
+ * If your editor supports it, you are responsible to
+ * reimplement run_map().
+ *
+ * @param run_map_supported @c true to support selecting all.
+ */
+void Editor::set_run_map_supported(bool run_map_supported) {
+  this->run_map_supported = run_map_supported;
+}
+
+/**
+ * @brief Performs a run map operation.
+ *
+ * The default implementation does nothing.
+ * Subclasses that support it should reimplement this function.
+ */
+void Editor::run_map() {
 }
 
 /**

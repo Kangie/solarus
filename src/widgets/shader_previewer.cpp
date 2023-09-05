@@ -142,7 +142,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   setCursor(hover_cursor);
   setMouseTracking(true);
 
-  connect(&fps_timer,&QTimer::timeout,[this]{
+  connect(&fps_timer, &QTimer::timeout, this, [this]{
     update();
   });
   fps_timer.setInterval(10);
@@ -233,16 +233,16 @@ QVector2D ShaderPreviewer::to_frame_center(const QPoint& mouse_position) const {
 void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
 
   float old_zoom = zoom;
-  if (event->delta() > 0) {
+  if (event->angleDelta().y() > 0) {
     zoom_in();
-    if(zoom != old_zoom) {
-      translation += (to_frame_center(event->pos())/zoom) / pixelFactor();
+    if (zoom != old_zoom) {
+        translation += to_frame_center((event->position() / zoom).toPoint()) / pixelFactor();
     }
   }
   else {
     zoom_out();
-    if(zoom != old_zoom) {
-      translation -= 0.5*(to_frame_center(event->pos())/zoom) / pixelFactor();
+    if (zoom != old_zoom) {
+      translation -= 0.5 * to_frame_center((event->position() / zoom).toPoint()) / pixelFactor();
     }
   }
 

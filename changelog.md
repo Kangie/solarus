@@ -1,5 +1,17 @@
 # Changelog
 
+## Solarus Quest Editor 1.7.0 (in progress)
+
+* Quest tree: allow to set the author and license information of folders and GLSL files.
+* Quest tree: allow to set the author and license information of scripts (#501).
+* Map editor: allow to run the current map for testing purposes (#517).
+* Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
+* Map editor: fix countour generation from other tilesets.
+* Map editor: fix origin lost when copy-pasting a custom entity (#432).
+* Fix zoom clamping in map, tileset, sprite and image views (#513).
+* Initial quest: fix item icon amount displaying.
+* Initial quest: fix item icon still showing unequiped items.
+
 ## Solarus Quest Editor 1.6.5 (2021-04-06)
 
 * Map editor: fix crash when generating contours with missing patterns (#494).

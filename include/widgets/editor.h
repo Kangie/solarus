@@ -63,6 +63,7 @@ public:
 
   bool is_save_supported() const;
   bool is_select_all_supported() const;
+  bool is_run_map_supported() const;
   bool is_find_supported() const;
   bool is_zoom_supported() const;
   bool is_grid_supported() const;
@@ -85,6 +86,7 @@ public:
   virtual void paste();
   virtual void select_all();
   virtual void unselect_all();
+  virtual void run_map();
   virtual void find();
   virtual void export_to_image();
   virtual void reload_settings();
@@ -96,6 +98,7 @@ signals:
   void can_paste_changed(bool can_paste);
   void open_file_requested(Quest& quest, const QString& path);
   void refactoring_requested(const Refactoring& refactoring);
+  void run_map_requested(const QString& map_id);
   void clear_console();
   void log_message_to_console(const QString& log_level, const QString& message);
 
@@ -109,6 +112,7 @@ protected:
   void set_icon(const QIcon& icon);
   void set_save_supported(bool save_supported);
   void set_select_all_supported(bool select_all_supported);
+  void set_run_map_supported(bool run_map_supported);
   void set_find_supported(bool find_supported);
   void set_zoom_supported(bool zoom_supported);
   void set_grid_supported(bool grid_supported);
@@ -141,6 +145,7 @@ private:
   QMap<QString, QAction*> common_actions;   /**< Actions available to all editors. */
   bool save_supported;                      /**< Whether the editor supports saving the file. */
   bool select_all_supported;                /**< Whether the editor supports selecting all. */
+  bool run_map_supported;                   /**< Whether the editor supports running a map. */
   bool find_supported;                      /**< Whether the editor supports finding. */
   bool zoom_supported;                      /**< Whether the editor supports zooming. */
   bool grid_supported;                      /**< Whether the editor supports showing/hiding a grid. */

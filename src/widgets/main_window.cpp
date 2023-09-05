@@ -119,6 +119,8 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.tool_bar->insertSeparator(ui.action_run_quest);
   addAction(ui.action_run_quest);
   ui.action_run_quest->setEnabled(false);
+  addAction(ui.action_run_map);
+  ui.action_run_map->setEnabled(false);
   update_music_actions();
 
   zoom_button = new QToolButton();
@@ -200,7 +202,6 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_close_all);
   addAction(ui.action_open_quest_properties);
   addAction(ui.action_package_quest);
-  addAction(ui.action_run_quest);
   addAction(ui.action_stop_music);
   addAction(ui.action_pause_music);
   addAction(ui.action_show_console);
@@ -236,6 +237,8 @@ MainWindow::MainWindow(QWidget* parent) :
           ui.console_widget, &SolarusGui::Console::clear);
   connect(ui.tab_widget, &EditorTabs::log_message_to_console,
           this, &MainWindow::log_message_to_console);
+  connect(ui.tab_widget, &EditorTabs::run_map_requested,
+          this, &MainWindow::run_quest);
 
   connect(grid_size, &PairSpinBox::value_changed,
           this, &MainWindow::change_grid_size);
@@ -583,6 +586,7 @@ void MainWindow::close_quest() {
   ui.action_package_quest->setEnabled(false);
   ui.action_open_quest_properties->setEnabled(false);
   ui.action_run_quest->setEnabled(false);
+  ui.action_run_map->setEnabled(false);
   ui.quest_tree_view->set_quest(quest);
 
   EditorSettings settings;
@@ -638,15 +642,7 @@ bool MainWindow::open_quest(const QString& quest_path) {
   }
   catch (const ObsoleteQuestException& ex) {
     // Quest data files are obsolete: upgrade them and try again.
-    QMessageBox::StandardButton answer = QMessageBox::information(
-          this,
-          tr("Obsolete quest"),
-          tr("The format of this quest (%1) is outdated.\n"
-             "Your data files will be automatically updated to Solarus %2.").
-          arg(ex.get_quest_format(), SOLARUS_VERSION_WITHOUT_PATCH),
-          QMessageBox::Ok | QMessageBox::Cancel);
-
-    if (answer == QMessageBox::Ok) {
+    if (confirm_upgrade_quest(ex.get_quest_format())) {
       try {
         upgrade_quest();
         // Reload the quest after upgrade.
@@ -677,6 +673,29 @@ bool MainWindow::open_quest(const QString& quest_path) {
   ui.quest_tree_view->set_quest(quest);
 
   return success;
+}
+
+/**
+ * @brief Check if the user wants to upgrade an obsolete quest.
+ * @param old_format The quest format to upgrade from.
+ * @return @c true if the quest should be upgraded, @c false otherwise.
+ */
+bool MainWindow::confirm_upgrade_quest(const QString& old_format) {
+  QMessageBox dialog(
+      QMessageBox::Question,
+      tr("Obsolete quest"),
+      tr("The format of this quest (%1) is outdated.\n"
+         "Your data files will be automatically updated to Solarus %2.\n"
+         "Would you like to update this quest?").
+         arg(old_format, SOLARUS_VERSION_WITHOUT_PATCH),
+      QMessageBox::Ok | QMessageBox::Cancel,
+      this);
+  dialog.setDefaultButton(QMessageBox::Ok);
+  dialog.button(QMessageBox::Ok)->setText(tr("Update"));
+
+  int result = dialog.exec();
+
+  return (QMessageBox::Ok == result);
 }
 
 /**
@@ -713,7 +732,7 @@ void MainWindow::upgrade_quest() {
     root_dir.rename(backup_dir_name, "data");
 
     throw EditorException(
-          tr("An error occured while upgrading the quest.\n"
+          tr("An error occurred while upgrading the quest.\n"
              "Your quest was kept unchanged in format %1.").arg(quest_version));
   }
 }
@@ -1000,6 +1019,24 @@ void MainWindow::on_action_find_triggered() {
  * @brief Slot called when the user triggers the "Run quest" action.
  */
 void MainWindow::on_action_run_quest_triggered() {
+  run_quest("");
+}
+
+/**
+ * @brief Slot called when the user triggers the "Run quest" action.
+ */
+void MainWindow::on_action_run_map_triggered() {
+  Editor* editor = get_current_editor();
+  if (editor != nullptr) {
+    editor->run_map();
+  }
+}
+
+/**
+ * @brief Runs the quest, possibly on a specific map.
+ * @param map_id A map to run, or an empty string to run the quest normally.
+ */
+void MainWindow::run_quest(const QString& map_id) {
 
   if (!quest_runner.is_started()) {
 
@@ -1033,7 +1070,7 @@ void MainWindow::on_action_run_quest_triggered() {
       }
     }
 
-    quest_runner.start(quest.get_root_path());
+    quest_runner.start(quest.get_root_path(), map_id);
 
     // Automatically show the console when the quest starts.
     set_console_visible(true);
@@ -1287,7 +1324,6 @@ void MainWindow::current_editor_changed(int index) {
 
   Editor* editor = get_current_editor();
   const bool has_editor = editor != nullptr;
-  ViewSettings& view_settings = editor->get_view_settings();
 
   // Set up toolbar buttons for this editor.
   ui.action_cut->setEnabled(has_editor);
@@ -1306,6 +1342,9 @@ void MainWindow::current_editor_changed(int index) {
 
   const bool select_all_supported = has_editor && editor->is_select_all_supported();
   ui.action_select_all->setEnabled(select_all_supported);
+
+  const bool run_map_supported = has_editor && editor->is_run_map_supported();
+  ui.action_run_map->setEnabled(run_map_supported);
 
   const bool find_supported = has_editor && editor->is_find_supported();
   ui.action_find->setEnabled(find_supported);
@@ -1342,6 +1381,7 @@ void MainWindow::current_editor_changed(int index) {
   show_entities_button->setEnabled(entity_type_visibility_supported);
 
   if (has_editor) {
+    ViewSettings& view_settings = editor->get_view_settings();
 
     connect(&view_settings, &ViewSettings::zoom_changed,
             this, &MainWindow::update_zoom);

@@ -69,6 +69,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_quest_size()));
   connect(ui.force_software_rendering_field, SIGNAL(toggled(bool)),
           this, SLOT(change_force_software()));
+  connect(ui.suspend_unfocused_field, SIGNAL(toggled(bool)),
+          this, SLOT(change_suspend_unfocused()));
+
   // Text editor.
   connect(ui.font_family_field, SIGNAL(currentTextChanged(QString)),
           this, SLOT(change_font_family()));
@@ -79,7 +82,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   connect(ui.replace_tab_by_spaces, SIGNAL(toggled(bool)),
           this, SLOT(change_replace_tab_by_spaces()));
   connect(ui.editor_group_box,SIGNAL(toggled(bool)),
-          this,SLOT(change_external_editor_enabled()));
+          this, SLOT(change_external_editor_enabled()));
   connect(ui.editor_cmd_field,SIGNAL(textChanged(QString)),
           this, SLOT(change_external_editor_cmd()));
 
@@ -212,6 +215,7 @@ void SettingsDialog::update() {
   update_no_audio();
   update_quest_size();
   update_force_software();
+  update_suspend_unfocused();
 
   // Text editor.
   update_font_family();
@@ -386,6 +390,7 @@ void SettingsDialog::change_no_audio() {
   edited_settings[EditorSettings::no_audio] = ui.no_audio_field->isChecked();
   update_buttons();
 }
+
 /**
  * @brief Updates the force software rendering fields
  */
@@ -398,6 +403,21 @@ void SettingsDialog::update_force_software() {
  */
 void SettingsDialog::change_force_software() {
   edited_settings[EditorSettings::force_software_rendering] = ui.force_software_rendering_field->isChecked();
+  update_buttons();
+}
+
+/**
+ * @brief Updates the suspend when unfocused field.
+ */
+void SettingsDialog::update_suspend_unfocused() {
+  ui.suspend_unfocused_field->setChecked(settings.get_value_bool(EditorSettings::suspend_unfocused));
+}
+
+/**
+ * @brief Slot called when the user change the suspend when unfocused field.
+ */
+void SettingsDialog::change_suspend_unfocused() {
+  edited_settings[EditorSettings::suspend_unfocused] = ui.suspend_unfocused_field->isChecked();
   update_buttons();
 }
 

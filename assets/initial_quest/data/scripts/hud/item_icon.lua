@@ -20,7 +20,8 @@ function item_icon_builder:new(game, config)
   item_icon.item_variant_displayed = 0
   item_icon.amount_text = sol.text_surface.create{
     horizontal_alignment = "right",
-    vertical_alignment = "top"
+    vertical_alignment = "bottom",
+    font = "8_bit",
   }
   item_icon.amount_displayed = nil
   item_icon.max_amount_displayed = nil
@@ -36,10 +37,11 @@ function item_icon_builder:new(game, config)
 
   -- Rebuild the foreground (called only when needed).
   function item_icon:rebuild_foreground()    
-    if item_icon.item_displayed ~= nil then
-      -- Clear the surface.
-      item_icon.foreground:clear()
 
+    -- Clear the surface.
+    item_icon.foreground:clear()
+
+    if item_icon.item_displayed ~= nil then
       -- Item.
       local foreground_w, foreground_h = item_icon.foreground:get_size()
       item_icon.item_sprite:draw(item_icon.foreground, foreground_w / 2, foreground_h / 2 + 4)
@@ -47,15 +49,7 @@ function item_icon_builder:new(game, config)
       -- Amount.
       if item_icon.amount_displayed ~= nil then
         item_icon.amount_text:set_text(tostring(item_icon.amount_displayed))
-
-        -- The font color changes according to the amount.
-        if item_icon.amount_displayed == item_icon.max_amount_displayed then
-          item_icon.amount_text:set_font("green_digits")
-        else
-          item_icon.amount_text:set_font("white_digits")
-        end
-
-        item_icon.amount_text:draw(item_icon.foreground, foreground_w, foreground_h - 8)
+        item_icon.amount_text:draw(item_icon.foreground, foreground_w, foreground_h)
       end
     end
   end

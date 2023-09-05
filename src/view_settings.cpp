@@ -55,6 +55,7 @@ double ViewSettings::get_zoom() const {
 /**
  * @brief Sets the zoom factor.
  *
+ * The given zoon factor will be clamped to ensure it does not get off limits.
  * Emits zoom_changed() if there is a change.
  *
  * @param zoom The zoom factor to set.
@@ -65,7 +66,7 @@ void ViewSettings::set_zoom(double zoom) {
     return;
   }
 
-  this->zoom = zoom;
+  this->zoom = qMin(4.0, qMax(0.25, zoom));
   emit zoom_changed(zoom);
 }
 

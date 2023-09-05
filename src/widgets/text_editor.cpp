@@ -59,7 +59,9 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   open_map_action->setShortcut(tr("F4"));
   open_map_action->setShortcutContext(Qt::WindowShortcut);
   addAction(open_map_action);
-  if (!quest.is_map_script(file_path, map_id)) {
+  if (quest.is_map_script(file_path, map_id)) {
+    set_run_map_supported(true);
+  } else {
     map_id.clear();
   }
   connect(open_map_action, SIGNAL(triggered(bool)),
@@ -209,6 +211,14 @@ void TextEditor::find() {
   dialog->show();
   dialog->raise();  // Put the dialog on top.
   dialog->activateWindow();
+}
+
+/**
+ * @copydoc Editor::run_map
+ */
+void TextEditor::run_map() {
+
+  emit run_map_requested(map_id);
 }
 
 /**

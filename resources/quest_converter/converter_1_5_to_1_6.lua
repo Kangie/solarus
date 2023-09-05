@@ -1,7 +1,7 @@
 -- This script updates all data files of a solarus 1.5 quest
 -- into the format of solarus 1.6.
 -- Usage: lua update_quest.lua path/to/your_quest
---   local converter = require("converter_1_5_to_1_5")
+--   local converter = require("converter_1_5_to_1_6")
 --   converter.convert(quest_path)
 
 local converter = {}
