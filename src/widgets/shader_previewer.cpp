@@ -236,13 +236,13 @@ void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
   if (event->angleDelta().y() > 0) {
     zoom_in();
     if (zoom != old_zoom) {
-        translation += to_frame_center((event->position() / zoom).toPoint()) / pixelFactor();
+        translation += to_frame_center(event->pos() / zoom) / pixelFactor();
     }
   }
   else {
     zoom_out();
     if (zoom != old_zoom) {
-      translation -= 0.5 * to_frame_center((event->position() / zoom).toPoint()) / pixelFactor();
+      translation -= 0.5 * to_frame_center(event->pos() / zoom) / pixelFactor();
     }
   }
 
