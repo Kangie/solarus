@@ -23,17 +23,17 @@ To compile Solarus, instructions can be found in the [compilation.md](compilatio
 
 ## Create your own game
 
-See [tutorials](https://www.solarus-games.org/en/development/tutorials) (video and text), and [documentation](https://www.solarus-games.org/doc/latest/) on Solarus website.
+See [tutorials](https://docs.solarus-games.org/) (video and text), and [documentation](https://doxygen.solarus-games.org/latest) on Solarus website.
 
 ## License
 
 The source code of Solarus is licensed under the terms of the [GNU GPL v3](https://www.gnu.org/copyleft/gpl.html).
 
-Resources made for Solarus are licensed under the terms of the [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/).
+Resources made for Solarus are licensed under the terms of the [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0) and [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0).
 
 ## Donate
 
-Solarus is backed by [Solarus Labs](https://www.solarus-games.org/en/about/nonprofit-organization), a nonprofit organization under French law. All your donations will be totally reinvested into the project.
+Solarus is backed by [Solarus Labs](https://www.solarus-games.org/about/legal-terms/), a nonprofit organization under French law. All your donations will be totally reinvested into the project.
 
 [![](https://img.shields.io/liberapay/receives/solarus-labs.svg?logo=liberapay)](https://liberapay.com/solarus-labs/donate
 )
