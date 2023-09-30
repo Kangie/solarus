@@ -385,6 +385,60 @@ private:
   QSize max_size_after;
 };
 
+/**
+ * @brief Change subpixel camera
+ */
+class SetSubpixelCameraCommand : public QuestPropertiesEditorCommand {
+
+  public:
+
+  SetSubpixelCameraCommand(QuestPropertiesEditor& editor, bool enabled) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Set subpixel camera")),
+      enabled_before(get_model().is_subpixel_camera()),
+      enabled_after(enabled) {
+  }
+
+  virtual void undo() override {
+    get_model().set_subpixel_camera(enabled_before);
+  }
+
+  virtual void redo() override {
+    get_model().set_subpixel_camera(enabled_after);
+  }
+
+  private:
+  bool enabled_before;
+  bool enabled_after;
+};
+
+/**
+ * @brief Change dynamic timestep
+ */
+class SetDynamicTimestepCommand : public QuestPropertiesEditorCommand {
+
+  public:
+
+  SetDynamicTimestepCommand(QuestPropertiesEditor& editor, bool enabled) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Set dynamic timestep")),
+      enabled_before(get_model().is_dynamic_timestep()),
+      enabled_after(enabled) {
+  }
+
+  virtual void undo() override {
+    get_model().set_dynamic_timestep(enabled_before);
+  }
+
+  virtual void redo() override {
+    get_model().set_dynamic_timestep(enabled_after);
+  }
+
+  private:
+  bool enabled_before;
+  bool enabled_after;
+};
+
 }
 
 /**
@@ -477,6 +531,16 @@ QuestPropertiesEditor::QuestPropertiesEditor(Quest& quest, QWidget* parent) :
           this, SLOT(change_max_size_requested()));
   connect(ui.max_size_height_field, SIGNAL(editingFinished()),
           this, SLOT(change_max_size_requested()));
+
+  connect(&model, SIGNAL(subpixel_camera_changed(bool)),
+          this, SLOT(update_subpixel_camera_field()));
+  connect(ui.subpixel_camera, SIGNAL(clicked(bool)),
+          this, SLOT(change_subpixel_camera_requested()));
+
+  connect(&model, SIGNAL(dynamic_timestep_changed(bool)),
+          this, SLOT(update_dynamic_timestep_field()));
+  connect(ui.dynamic_timestep, SIGNAL(clicked(bool)),
+          this, SLOT(change_dynamic_timestep_requested()));
 }
 
 /**
@@ -514,6 +578,8 @@ void QuestPropertiesEditor::update() {
   update_normal_size_field();
   update_min_size_field();
   update_max_size_field();
+  update_subpixel_camera_field();
+  update_dynamic_timestep_field();
 }
 
 /**
@@ -791,6 +857,38 @@ void QuestPropertiesEditor::change_max_size_requested() {
   }
 
   try_command(new SetMaxSizeCommand(*this, size));
+}
+
+/**
+ * @brief Update the maximum size field.
+ */
+void QuestPropertiesEditor::update_subpixel_camera_field() {
+  auto enabled = model.is_subpixel_camera();
+  ui.subpixel_camera->setChecked(enabled);
+}
+
+/**
+ * @brief Slot called when the user change the maximum size.
+ */
+void QuestPropertiesEditor::change_subpixel_camera_requested() {
+  auto enabled = ui.subpixel_camera->isChecked();
+  try_command(new SetSubpixelCameraCommand(*this, enabled));
+}
+
+/**
+ * @brief Update the maximum size field.
+ */
+void QuestPropertiesEditor::update_dynamic_timestep_field() {
+  auto enabled = model.is_dynamic_timestep();
+  ui.dynamic_timestep->setChecked(enabled);
+}
+
+/**
+ * @brief Slot called when the user change the maximum size.
+ */
+void QuestPropertiesEditor::change_dynamic_timestep_requested() {
+  auto enabled = ui.dynamic_timestep->isChecked();
+  try_command(new SetDynamicTimestepCommand(*this, enabled));
 }
 
 /**
