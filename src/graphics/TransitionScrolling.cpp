@@ -199,6 +199,8 @@ void TransitionScrolling::update() {
 void TransitionScrolling::draw(Surface& dst_surface, const Surface &src_surface, const DrawInfos &infos) const {
 
   if (get_direction() == Direction::CLOSING) {
+    // When closing, draw the surface as if nothing changed, to accomodate for 1 frame delay in transition start
+    infos.proxy.draw(dst_surface, src_surface, infos);
     return;
   }
 
