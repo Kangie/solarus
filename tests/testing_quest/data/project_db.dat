@@ -107,6 +107,8 @@ map{ id = "bugs/1556_boolean_parameters_treat_nil_as_true", description = "#1556
 map{ id = "bugs/1562_crash_entity_on_stream", description = "#1562: Crash when throwing an entity on a stream" }
 map{ id = "bugs/1565_state_set_can_control_direction", description = "#1565: Custom state direction control without movement" }
 map{ id = "bugs/1585_get_entity_by_name", description = "#1585: Get entity by name" }
+map{ id = "bugs/1600_map_loading_single_cam/map1" }
+map{ id = "bugs/1600_map_loading_single_cam/map2" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/526_get_entities_same_region", description = "#526: map:get_entities_in_same_region()" }
@@ -651,6 +653,11 @@ file{ path = "maps/bugs/1565_state_set_can_control_direction.dat", author = "Chr
 file{ path = "maps/bugs/1565_state_set_can_control_direction.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1585_get_entity_by_name.dat", author = "stdgregwar", license = "GPLv3, CC-BY-SA" }
 file{ path = "maps/bugs/1585_get_entity_by_name.lua", author = "stdgregwar", license = "GPLv3, CC-BY-SA" }
+file{ path = "maps/bugs/1600_map_loading_single_cam", author = "stdgregwar", license = "CC-BY-SA" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map1.dat", author = "stdgregwar", license = "CC-BY" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map1.lua", author = "stdgregwar", license = "CC-BY" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map2.dat", author = "stdgregwar", license = "CC-BY" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map2.lua", author = "stdgregwar", license = "CC-BY" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }

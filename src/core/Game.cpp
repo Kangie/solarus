@@ -377,19 +377,27 @@ void Game::update() {
     return;
   }
 
-  //If we are not doing any teleportation
-  if(cameras_teleportations.empty()) {
-    //Remove map that must be unloaded
-    for(const MapPtr& map : maps_to_unload) {
-      map->leave(); // Leave the map
-      map->unload();
 
-      current_maps.erase(std::remove(current_maps.begin(),
-                                     current_maps.end(),
-                                     map),
-                         current_maps.end());
+  //Remove map that must be unloaded
+  for(auto it = maps_to_unload.begin(); it != maps_to_unload.end();) {
+    const auto& map = *it;
+
+    // Test if this map is target in any teleportations
+    if(std::count_if(cameras_teleportations.begin(), cameras_teleportations.end(), [&](const CameraTeleportation& ct){
+            return ct.next_map == map;
+        })) {
+      //skip this unload as a transition targeting the map is there
+      it++;
+      continue;
     }
-    maps_to_unload.clear(); //Done removing maps
+    map->leave(); // Leave the map
+    map->unload();
+    current_maps.erase(std::remove(current_maps.begin(),
+                                   current_maps.end(),
+                                   map),
+                       current_maps.end());
+
+    maps_to_unload.erase(it++); //This deletion is done
   }
 
   if(restarting or not started) {
