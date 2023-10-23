@@ -63,14 +63,15 @@ function map:on_opening_transition_finished()
     
     -- check if cameras are correctly in game
     check_iter(game:get_cameras(), {camera, alter_camera})
-    
+
+
     -- check if cameras are in second map
     check_iter(other_map:get_cameras(), {alter_camera, camera})
-    
-    -- check if maps are in game
-    check_iter(game:get_maps(), {other_map, map}) 
-    
-    
+
+
+    -- check if first map got correctly unloaded
+    check_iter(game:get_maps(), {other_map})
+
     wait(1000)
     
     game:remove_camera(camera)
@@ -85,12 +86,12 @@ function map:on_opening_transition_finished()
   end)
 end
 
-local cam_order = {"alter_camera", "main_camera"}
+local cam_order = {"main_camera", "alter_camera", "main_camera"}
 local i = 1
 
 function game:on_map_changed(map, camera)
   local expected = cam_order[i]
   --assert_equal(camera:get_name(), expected)
-  print("Changing cam",i, camera:get_name())
+  print("Changing cam",i, camera:get_name(), "expected", expected)
   i = i +1
 end
