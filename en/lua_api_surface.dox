@@ -38,6 +38,16 @@ See \ref lua_api_drawable_methods to know these methods.
 
 The following methods are specific to surfaces.
 
+\subsection lua_api_surface_save surface:save(file_name)
+
+Saves the content of the surface into a PNG file.
+
+If the file already exists, it will be overwritten.
+In case of failure, a Lua error is raised.
+- \c file_name (string): Name of the file to save, including its .png extension,
+  relative to the
+  \ref lua_api_main_get_quest_write_dir "quest write directory".
+
 \subsection lua_api_surface_get_size surface:get_size()
 
 Returns the size of this surface.
@@ -64,7 +74,6 @@ color is blended onto the existing pixels.
 - \c y (number, optional): Y coordinate of the region to fill on this surface.
 - \c width (number, optional): Width of the region to fill on this surface.
 - \c height (number, optional): Height of the region to fill on this surface.
-
 
 \subsection lua_api_surface_get_pixels surface:get_pixels()
 
