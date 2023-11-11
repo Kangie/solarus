@@ -37,7 +37,7 @@ QMap<QString, QSharedPointer<Solarus::SoundBuffer>> sound_cache;
  */
 void initialize() {
 
-  Solarus::Sound::initialize(Solarus::Arguments());
+  Solarus::Sound::initialize(Solarus::Arguments(), nullptr);
   initialized = true;
 
   // Cleanup Solarus sound system at exit.
