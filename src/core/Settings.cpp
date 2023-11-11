@@ -293,7 +293,7 @@ void Settings::set_from_quest() {
     set_boolean(key_fullscreen, Video::is_fullscreen());
   }
   if (Sound::is_initialized()) {
-    set_integer(key_sound_volume, Sound::get_volume());
+    set_integer(key_sound_volume, Sound::get_default_volume());
     set_integer(key_music_volume, Music::get_volume());
   }
   if (InputEvent::is_initialized()) {
@@ -332,7 +332,7 @@ void Settings::apply_to_quest() {
     // Sound volume.
     auto sound_volume = get_integer(key_sound_volume);
     if (sound_volume.second) {
-      Sound::set_volume(sound_volume.first);
+      Sound::set_default_volume(sound_volume.first);
     }
 
     // Music volume.

@@ -23,6 +23,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <optional>
 #include <al.h>
 #include <alc.h>
 #include <vorbis/vorbisfile.h>
@@ -54,6 +55,8 @@ class SOLARUS_API Sound: public ExportableToLua {
     bool is_paused_by_script() const;
     void set_paused_by_script(bool paused_by_script);
     void update_paused();
+    std::optional<int> get_volume() const;
+    void set_volume(const std::optional<int>& volume);
 
     static bool exists(const std::string& sound_id);
     static void play(const std::string& sound_id);
@@ -66,14 +69,15 @@ class SOLARUS_API Sound: public ExportableToLua {
     static void update();
     static bool check_openal_clean_state(const std::string& function_name);
 
-    static int get_volume();
-    static void set_volume(int volume);
+    static int get_default_volume();
+    static void set_default_volume(int default_volume);
 
     const std::string& get_lua_type_name() const override;
 
   private:
 
     explicit Sound(const SoundBuffer& data);
+    float get_actual_volume() const;
     bool update_playing();
     void stop_source();
     static void update_device_connection();
@@ -82,9 +86,9 @@ class SOLARUS_API Sound: public ExportableToLua {
     const SoundBuffer& data;                     /**< The loaded sound data. */
     ALuint source;                               /**< The source currently playing this sound. */
     bool paused_by_script;                       /**< Whether the sound is paused by a Lua script. */
+    std::optional<float> volume;                 /**< Volume of this sound effect (0.0 to 1.0, no value means default. */
     static bool paused_by_system;                /**< Whether sounds are currently paused by the main loop,
                                                   * e.g. when losing focus */
-
 
     static bool audio_enabled;                   /**< \c true unless -no-audio was passed. */
     static ALCdevice* device;                    /**< OpenAL device, nullptr if disconnected. */
@@ -92,7 +96,7 @@ class SOLARUS_API Sound: public ExportableToLua {
     static std::list<SoundPtr>
         current_sounds;                          /**< The sounds currently playing. */
 
-    static float volume;                         /**< the volume of sound effects (0.0 to 1.0) */
+    static float default_volume;                 /**< Default volume of sound effects (0.0 to 1.0). */
     static uint32_t next_device_detection_date;  /**< Date of the next attempt to detect an audio device. */
     static bool pc_play;                         /**< Whether playing performance counter is used. */
     static ResourceProvider* resource_provider;  /**< The main loop resource cache. */

@@ -20,6 +20,7 @@
 This release adds new features but does not introduce any incompatibility.
 
 * Allow to stop or pause a sound effect (#1289).
+* Allow to change the volume of a sound effect (#1608).
 * Add a method `surface:save()` to save a surface to a PNG file (#1215).
 * Add functions `sol.main.rawget/rawset()` (#1424).
 * Add a method `destination:is_default()`.

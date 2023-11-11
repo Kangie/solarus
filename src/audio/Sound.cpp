@@ -36,7 +36,7 @@ namespace Solarus {
 bool Sound::audio_enabled = false;
 ALCdevice* Sound::device = nullptr;
 ALCcontext* Sound::context = nullptr;
-float Sound::volume = 1.0;
+float Sound::default_volume = 1.0;
 bool Sound::pc_play = false;
 std::list<SoundPtr> Sound::current_sounds;
 uint32_t Sound::next_device_detection_date = 0;
@@ -50,7 +50,8 @@ ResourceProvider* Sound::resource_provider = nullptr;
 Sound::Sound(const SoundBuffer& data):
   data(data),
   source(AL_NONE),
-  paused_by_script(false) {
+  paused_by_script(false),
+  volume() {
 }
 
 /**
@@ -104,7 +105,7 @@ void Sound::initialize(const Arguments& args, ResourceProvider* resource_provide
 
   alGenBuffers(0, nullptr);  // Necessary on some systems to avoid errors with the first sound loaded.
 
-  set_volume(100);
+  set_default_volume(100);
 
   // initialize the music system
   Music::initialize();
@@ -130,7 +131,7 @@ void Sound::quit() {
   context = nullptr;
   alcCloseDevice(device);
   device = nullptr;
-  volume = 1.0;
+  default_volume = 1.0;
   audio_enabled = false;
   resource_provider = nullptr;
 }
@@ -287,22 +288,66 @@ void Sound::play(const std::string& sound_id) {
 }
 
 /**
- * \brief Returns the current volume of sound effects.
- * \return the volume (0 to 100)
+ * \brief Returns the default volume of sound effects.
+ * \return The volume (0 to 100).
  */
-int Sound::get_volume() {
+int Sound::get_default_volume() {
 
-  return (int) (volume * 100.0 + 0.5);
+  return (int) (default_volume * 100.0 + 0.5);
 }
 
 /**
- * \brief Sets the volume of sound effects.
- * \param volume the new volume (0 to 100)
+ * \brief Sets the default volume of sound effects.
+ * \param volume The new volume (0 to 100).
  */
-void Sound::set_volume(int volume) {
+void Sound::set_default_volume(int default_volume) {
 
-  volume = std::min(100, std::max(0, volume));
-  Sound::volume = volume / 100.0;
+  default_volume = std::min(100, std::max(0, default_volume));
+  Sound::default_volume = default_volume / 100.0;
+}
+
+/**
+ * \brief Returns the volume of this sound effect.
+ * \return The volume (0 to 100), or no value to mean default.
+ */
+std::optional<int> Sound::get_volume() const {
+
+  if (volume.has_value()) {
+    return (int) (volume.value() * 100.0 + 0.5);
+  }
+  return {};
+}
+
+/**
+ * \brief Sets the volume of this sound effect.
+ * \return The volume (0 to 100), or no value to mean default.
+ */
+void Sound::set_volume(const std::optional<int>& volume) {
+
+  if (volume.has_value()) {
+    this->volume = std::min(100, std::max(0, volume.value())) / 100.0;
+  } else {
+    this->volume = std::nullopt;
+  }
+
+  if (source != AL_NONE) {
+    alSourcef(source, AL_GAIN, get_actual_volume());
+  }
+}
+
+/**
+ * \brief Returns the actual volume of this sound.
+ *
+ * It may either be the default one or the one specific to this sound if any.
+ *
+ * \return The actual volume between 0.0 and 1.0.
+ */
+float Sound::get_actual_volume() const {
+
+  if (volume.has_value()) {
+    return volume.value();
+  }
+  return default_volume;
 }
 
 /**
@@ -386,7 +431,7 @@ bool Sound::start() {
     // create a source
     alGenSources(1, &source);
     alSourcei(source, AL_BUFFER, buffer);
-    alSourcef(source, AL_GAIN, volume);
+    alSourcef(source, AL_GAIN, get_actual_volume());
 
     // play the sound
     ALenum error = alGetError();

@@ -47,6 +47,8 @@ void LuaContext::register_sound_module() {
       { "stop", sound_api_stop },
       { "is_paused", sound_api_is_paused },
       { "set_paused", sound_api_set_paused },
+      { "get_volume", sound_api_get_volume },
+      { "set_volume", sound_api_set_volume },
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -165,6 +167,48 @@ int LuaContext::sound_api_set_paused(lua_State* l) {
 
     sound.set_paused_by_script(paused);
 
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of sound:get_volume().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_get_volume(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Sound& sound = *check_sound(l, 1);
+
+    std::optional<int> volume = sound.get_volume();
+    if (!volume.has_value()) {
+      lua_pushnil(l);
+    } else {
+      lua_pushinteger(l, volume.value());
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of sound:set_volume().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_set_volume(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Sound& sound = *check_sound(l, 1);
+    if (!lua_isnumber(l, 2) && !lua_isnil(l, 2)) {
+      LuaTools::type_error(l, 2, "number or nil");
+    }
+    std::optional<int> volume;
+    if (!lua_isnil(l, 2)) {
+      volume = LuaTools::check_int(l, 2);
+    }
+
+    sound.set_volume(volume);
     return 0;
   });
 }

@@ -64,7 +64,7 @@ void LuaContext::register_audio_module() {
 int LuaContext::audio_api_get_sound_volume(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
-    lua_pushinteger(l, Sound::get_volume());
+    lua_pushinteger(l, Sound::get_default_volume());
     return 1;
   });
 }
@@ -77,8 +77,8 @@ int LuaContext::audio_api_get_sound_volume(lua_State* l) {
 int LuaContext::audio_api_set_sound_volume(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
-    int volume = LuaTools::check_int(l, 1);
-    Sound::set_volume(volume);
+    int default_volume = LuaTools::check_int(l, 1);
+    Sound::set_default_volume(default_volume);
 
     return 0;
   });
