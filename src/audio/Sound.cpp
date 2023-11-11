@@ -269,6 +269,11 @@ bool Sound::exists(const std::string& sound_id) {
  */
 void Sound::play(const std::string& sound_id) {
 
+  if (device == nullptr) {
+    // Sound might be disabled.
+    return;
+  }
+
   if (resource_provider == nullptr) {
     Debug::error("Cannot play sound '" + sound_id + "': missing resource provider");
   }
