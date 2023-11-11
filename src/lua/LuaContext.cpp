@@ -1303,33 +1303,40 @@ bool LuaContext::is_solarus_userdata(
     int index,
     std::string& module_name
 ) {
-  void* udata = lua_touserdata(l, index);
-  if (udata == nullptr) {
-    // This is not a userdata.
-    return false;
-  }
+  const int initial_stack_size = lua_gettop(l);
 
-  if (!lua_getmetatable(l, index)) {
-    // The userdata has no metatable.
-    return false;
-  }
+  const bool result = [l, index, &module_name]() {
+    void* udata = lua_touserdata(l, index);
+    if (udata == nullptr) {
+      // This is not a userdata.
+      return false;
+    }
 
-  // Get the name of the Solarus type from this userdata.
-  lua_pushstring(l, "__solarus_type");
-  lua_rawget(l, -2);
-  if (!lua_isstring(l, -1)) {
-    // This is probably a userdata from some library other than Solarus.
+    if (!lua_getmetatable(l, index)) {
+      // The userdata has no metatable.
+      return false;
+    }
+
+    // Get the name of the Solarus type from this userdata.
+    lua_pushstring(l, "__solarus_type");
+    lua_rawget(l, -2);
+    if (!lua_isstring(l, -1)) {
+      // This is probably a userdata from some library other than Solarus.
+      lua_pop(l, 2);
+      return false;
+    }
+
+    // Check if the type name is one of the entity type names.
+    module_name = lua_tostring(l, -1);
     lua_pop(l, 2);
-    return false;
-  }
+    if (module_name.substr(0, 4) != "sol.") {
+      return false;
+    }
+    return true;
+  }();
 
-  // Check if the type name is one of the entity type names.
-  module_name = lua_tostring(l, -1);
-  if (module_name.substr(0, 4) != "sol.") {
-    return false;
-  }
-
-  return true;
+  SOLARUS_ASSERT(lua_gettop(l) == initial_stack_size, "Unbalanced Lua stack after LuaContext::is_solarus_userdata()");
+  return result;
 }
 
 /**
