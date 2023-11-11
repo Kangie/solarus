@@ -457,3 +457,21 @@ target_sources(solarus
     "${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/snes_spc/SPC_DSP.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/snes_spc/SPC_Filter.cpp"
 )
+
+# File-specific compilation options.
+
+# The SNES SPC emulator has a complex code made of tangling switch cases and macros.
+# Adding [[fallthrough]] without breaking something would be too complicated.
+set_source_files_properties(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/third_party/snes_spc/SNES_SPC.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/snes_spc/SNES_SPC.cpp"
+  PROPERTIES
+    COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-implicit-fallthrough>"
+)
+
+# Some calls to std::abs() on unsigned integers.
+set_source_files_properties(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/third_party/hqx/common.h"
+  PROPERTIES
+    COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-absolute-value>"
+)
