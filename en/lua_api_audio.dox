@@ -33,16 +33,8 @@ initial file access.
 
 Loads all sounds effects into memory for faster future access.
 
-If you don't call this function, you can still play sound effects, but the
-first access to each sound effect will require a file access that might be
-perceptible on slow machines.
-It is recommended to call this function at the beginning of the program
-(typically from \ref lua_api_main_on_started).
-
-The list of sound files to load is read from the
-\ref quest_database_file "quest database" file.
-
-This function does nothing if you already called it before.
+\warning This method is deprecated since Solarus 1.7 and has no effect anymore.
+  Sound effects are always automatically preloaded now.
 
 \subsection lua_api_audio_play_music sol.audio.play_music(music_id, [action])
 
@@ -102,26 +94,18 @@ This function has no effect if no music was playing.
 
 \subsection lua_api_audio_get_sound_volume sol.audio.get_sound_volume()
 
-Returns the current volume of sound effects.
-
-This volume applies to all sounds played by \ref lua_api_audio_play_sound
-"sol.audio.play_sound()"
-and by the engine.
-- Return value (number): The current volume of sound effects, as an integer
-  between \c 0 (mute) and \c 100 (full volume).
+Returns the default volume of sound effects.
+- Return value (number): The default volume of sound effects,
+  as an integer between \c 0 (mute) and \c 100 (full volume).
 
 \subsection lua_api_audio_set_sound_volume sol.audio.set_sound_volume(volume)
 
-Sets the volume of sound effects.
+Sets the default volume of sound effects.
 
-This volume applies to all sounds played by \ref lua_api_audio_play_sound
-"sol.audio.play_sound()"
-and by the engine.
-- \c volume (number): The new volume of sound effects, as an integer
+Note that individual sound effects can override this volume with
+\ref lua_api_sound_set_volume "sound:set_volume()".
+- \c volume (number): The new default volume of sound effects, as an integer
   between \c 0 (mute) and \c 100 (full volume).
-
-\remark When the quest is run from the Solarus GUI, the user can also
-  change the volume from the menus of the GUI.
 
 \subsection lua_api_audio_get_music_volume sol.audio.get_music_volume()
 
@@ -131,9 +115,6 @@ This volume applies to all musics played by \ref lua_api_audio_play_music.
 "sol.audio.play_music()"
 - Return value (number): The current volume of musics, as an integer
   between \c 0 (no sound effects) and \c 100 (full volume).
-
-\remark When the quest is run from the Solarus GUI, the user can also
-  change the volume from the menus of the GUI.
 
 \subsection lua_api_audio_set_music_volume sol.audio.set_music_volume(volume)
 
