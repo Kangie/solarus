@@ -213,7 +213,7 @@ void Stairs::play_sound(Way way) {
   }
 
   if (Sound::exists(sound_id)) {
-    Sound::play(sound_id, get_game().get_resource_provider());
+    Sound::play(sound_id);
   }
 }
 

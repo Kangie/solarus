@@ -1309,7 +1309,7 @@ void Hero::check_position() {
           (new_ground == Ground::TRAVERSABLE
            || new_ground == Ground::GRASS
            || new_ground == Ground::LADDER)) {
-        Sound::play("hero_lands", get_game().get_resource_provider());
+        Sound::play("hero_lands");
       }
     }
   }
@@ -2554,7 +2554,7 @@ void Hero::start_lava() {
  */
 void Hero::start_prickle(uint32_t delay) {
 
-  Sound::play("hero_hurt", get_game().get_resource_provider());
+  Sound::play("hero_hurt");
   get_equipment().remove_life(2);
   start_back_to_solid_ground(true, delay, false);
 }

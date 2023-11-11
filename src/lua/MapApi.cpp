@@ -353,8 +353,7 @@ static void change_crystal_state(Map & map) {
  * \param map The map to call the method on.
  * \param prefix Prefix of the names of the doors to open.
  */
-static void open_doors(LuaContext& context,
-    Map& map, const std::string& prefix) {
+static void open_doors(Map& map, const std::string& prefix) {
   bool any_opened = false;
   Entities& entities = map.get_entities();
   const std::vector<EntityPtr>& doors =
@@ -370,7 +369,7 @@ static void open_doors(LuaContext& context,
   // make sure the sound is played only once even if the script calls
   // this function repeatedly while the door is still changing
   if (any_opened) {
-    Sound::play("door_open", context.get_main_loop().get_resource_provider());
+    Sound::play("door_open");
   }
 }
 
@@ -380,8 +379,7 @@ static void open_doors(LuaContext& context,
  * \param map The map to call the method on.
  * \param prefix Prefix of the names of the doors to close.
  */
-static void close_doors(LuaContext& context,
-    Map& map, const std::string& prefix) {
+static void close_doors(Map& map, const std::string& prefix) {
   bool any_closed = false;
   Entities& entities = map.get_entities();
   const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
@@ -396,7 +394,7 @@ static void close_doors(LuaContext& context,
   // make sure the sound is played only once even if the script calls
   // this function repeatedly while the door is still changing
   if (any_closed) {
-    Sound::play("door_closed", context.get_main_loop().get_resource_provider());
+    Sound::play("door_closed");
   }
 }
 

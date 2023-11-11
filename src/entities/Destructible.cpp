@@ -402,7 +402,7 @@ bool Destructible::notify_action_command_pressed(Hero &hero) {
       hero.start_lifting(carried_object);
 
       // Play the sound.
-      Sound::play("lift", get_game().get_resource_provider());
+      Sound::play("lift");
 
       // Create the pickable treasure.
       create_treasure();
@@ -440,7 +440,7 @@ void Destructible::play_destroy_animation() {
 
   is_being_cut = true;
   if (!destruction_sound_id.empty()) {
-    Sound::play(destruction_sound_id, get_game().get_resource_provider());
+    Sound::play(destruction_sound_id);
   }
   const SpritePtr& sprite = get_sprite();
   if (sprite != nullptr) {
@@ -470,7 +470,7 @@ void Destructible::explode() {
   get_entities().add_entity(std::make_shared<Explosion>(
       "", get_layer(), get_xy(), true
   ));
-  Sound::play("explosion", get_game().get_resource_provider());
+  Sound::play("explosion");
   get_lua_context()->destructible_on_exploded(*this);
 }
 

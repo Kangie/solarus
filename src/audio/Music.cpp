@@ -471,7 +471,7 @@ void Music::notify_device_disconnected_all() {
 }
 
 /**
- * \brief Notifies this music system that the audio device was disconnected.
+ * \brief Notifies this music that the audio device was disconnected.
  */
 void Music::notify_device_disconnected() {
 

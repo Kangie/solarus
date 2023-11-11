@@ -423,7 +423,7 @@ void Pickable::check_bad_ground() {
 
     case Ground::HOLE:
     {
-      Sound::play("jump", get_game().get_resource_provider());
+      Sound::play("jump");
       remove_from_map();
     }
     break;
@@ -431,7 +431,7 @@ void Pickable::check_bad_ground() {
     case Ground::DEEP_WATER:
     case Ground::LAVA:
     {
-      Sound::play("splash", get_game().get_resource_provider());
+      Sound::play("splash");
       remove_from_map();
     }
     break;
@@ -462,7 +462,7 @@ void Pickable::try_give_item_to_player(Hero& hero) {
   // play the sound
   const std::string& sound_id = item.get_sound_when_picked();
   if (!sound_id.empty()) {
-    Sound::play(sound_id, get_game().get_resource_provider());
+    Sound::play(sound_id);
   }
 
   // give the item

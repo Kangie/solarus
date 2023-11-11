@@ -65,7 +65,7 @@ void Hero::TreasureState::start(const State* previous_state) {
   // Play the sound.
   const std::string& sound_id = treasure.get_item().get_sound_when_brandished();
   if (!sound_id.empty()) {
-    Sound::play(sound_id, get_game().get_resource_provider());
+    Sound::play(sound_id);
   }
 
   // Give the treasure.

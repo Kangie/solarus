@@ -171,4 +171,13 @@ void ResourceProvider::invalidate_resource_element(
   }
 }
 
+/**
+ * \brief Notifies cached audio resources that the audio device was disconnected.
+ */
+void ResourceProvider::notify_audio_device_disconnected() {
+  for (const auto& sound_buffer: sound_cache) {
+    sound_buffer.second->notify_device_disconnected();
+  }
+}
+
 }

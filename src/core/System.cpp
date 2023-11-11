@@ -34,7 +34,6 @@
 #endif
 
 namespace Solarus {
-
 System::Clock::time_point System::initial_time;
 uint64_t System::ticks = 0;
 
@@ -45,8 +44,9 @@ uint64_t System::ticks = 0;
  * the data file system, etc.
  *
  * \param args Command-line arguments.
+ * \param resource_provider The resource provider.
  */
-void System::initialize(const Arguments& args) {
+void System::initialize(const Arguments& args, ResourceProvider& resource_provider) {
 
 #if _POSIX_C_SOURCE >= 200112L
   // Back up state of environment variables about to be modified.
@@ -90,7 +90,7 @@ void System::initialize(const Arguments& args) {
 #endif
 
   // audio
-  Sound::initialize(args);
+  Sound::initialize(args, &resource_provider);
 
   // input
   InputEvent::initialize(args);
@@ -124,7 +124,10 @@ void System::quit() {
 /**
  * \brief This function is called repeatedly by the main loop.
  *
- * It calls the update function of low-level systems that need it.
+ * It makes the clock advance and calls the update function
+ * of low-level systems that need it.
+ *
+ * \param timestep The timestep of this update.
  */
 void System::update(uint64_t timestep) {
 

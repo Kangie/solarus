@@ -52,6 +52,7 @@ public:
   bool is_loaded() const;
   void load();
   ALuint get_buffer() const;
+  void notify_device_disconnected();
 
 private:
 

@@ -52,6 +52,7 @@ class SOLARUS_API ResourceProvider {
     void invalidate_resource_element(ResourceType resource_type, const std::string& element_id);
 
     void start_preloading_resources();
+    void notify_audio_device_disconnected();
 
   private:
 

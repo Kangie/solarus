@@ -41,6 +41,7 @@ bool Sound::pc_play = false;
 std::list<SoundPtr> Sound::current_sounds;
 uint32_t Sound::next_device_detection_date = 0;
 bool Sound::paused_by_system = false;
+ResourceProvider* Sound::resource_provider = nullptr;
 
 /**
  * \brief Creates a new Ogg Vorbis sound.
@@ -81,8 +82,9 @@ SoundPtr Sound::create(const SoundBuffer& data) {
  * playing will be accounted using a performance counter.
  *
  * \param args Command-line arguments.
+ * \param resource_provider The resource provider from the main loop if any, or nullptr.
  */
-void Sound::initialize(const Arguments& args) {
+void Sound::initialize(const Arguments& args, ResourceProvider* resource_provider) {
 
   // Check the -no-audio option.
   audio_enabled = !args.has_argument("-no-audio");
@@ -93,6 +95,7 @@ void Sound::initialize(const Arguments& args) {
   // Check the -perf-sound-play option.
   pc_play = args.get_argument_value("-perf-sound-play") == "yes";
 
+  Sound::resource_provider = resource_provider;
   // Initialize OpenAL.
   update_device_connection();
   if (device == nullptr) {
@@ -129,6 +132,7 @@ void Sound::quit() {
   device = nullptr;
   volume = 1.0;
   audio_enabled = false;
+  resource_provider = nullptr;
 }
 
 /**
@@ -179,6 +183,13 @@ void Sound::update_device_connection() {
       alcCloseDevice(device);
       device = nullptr;
       next_device_detection_date = System::now_ms();
+      if (resource_provider != nullptr) {
+        // Need to clear all cached sounds.
+        for (SoundPtr sound: current_sounds) {
+          sound->notify_device_disconnected();
+        }
+        resource_provider->notify_audio_device_disconnected();
+      }
       Music::notify_device_disconnected_all();
     }
   }
@@ -216,6 +227,15 @@ void Sound::update_device_connection() {
 }
 
 /**
+ * \brief Notifies this sound that the audio device was disconnected.
+ */
+void Sound::notify_device_disconnected() {
+
+  // All sources and buffers are already destroyed by OpenAL at this point.
+  source = AL_NONE;
+}
+
+/**
  * \brief Returns whether the audio (music and sound) system is initialized.
  * \return \c true if the audio (music and sound) system is initilialized.
  */
@@ -246,14 +266,17 @@ bool Sound::exists(const std::string& sound_id) {
 /**
  * \brief Starts playing the specified sound.
  * \param sound_id Id of the sound to play.
- * \param resource_provider The resource provider.
  */
-void Sound::play(const std::string& sound_id, ResourceProvider& resource_provider) {
+void Sound::play(const std::string& sound_id) {
+
+  if (resource_provider == nullptr) {
+    Debug::error("Cannot play sound '" + sound_id + "': missing resource provider");
+  }
   if (pc_play) {
     PerfCounter::update("sound-play");
   }
 
-  SoundBuffer& buffer = resource_provider.get_sound(sound_id);
+  SoundBuffer& buffer = resource_provider->get_sound(sound_id);
   SoundPtr sound = Sound::create(buffer);
   sound->start();
 }
@@ -281,6 +304,8 @@ void Sound::set_volume(int volume) {
  * \brief Updates the audio (music and sound) system.
  *
  * This function is called repeatedly by the game.
+ *
+ * \param resource_provider The resource provider.
  */
 void Sound::update() {
 

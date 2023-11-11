@@ -200,6 +200,18 @@ ALuint SoundBuffer::get_buffer() const {
 }
 
 /**
+ * \brief Notifies this sound buffer that the audio device was disconnected.
+ */
+void SoundBuffer::notify_device_disconnected() {
+  if (is_loaded()) {
+    // The OpenAL buffer was already destroyed at this point.
+    buffer = AL_NONE;  // Remove the dangling reference.
+    loaded = false;
+    // TODO we could load sounds in a thread again
+  }
+}
+
+/**
  * \brief Loads the specified sound file and decodes its content into an OpenAL buffer.
  * \param file_name name of the file to open
  * \return the buffer created, or AL_NONE if the sound could not be loaded

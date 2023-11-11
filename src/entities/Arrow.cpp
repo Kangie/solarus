@@ -273,7 +273,7 @@ void Arrow::update() {
     if (sprite != nullptr) {
       sprite->set_current_animation("reached_obstacle");
     }
-    Sound::play("arrow_hit", get_game().get_resource_provider());
+    Sound::play("arrow_hit");
 
     if (entity_reached == nullptr) {
       clear_movement();

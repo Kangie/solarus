@@ -56,11 +56,11 @@ class SOLARUS_API Sound: public ExportableToLua {
     void update_paused();
 
     static bool exists(const std::string& sound_id);
-    static void play(const std::string& sound_id, ResourceProvider& resource_provider);
+    static void play(const std::string& sound_id);
     static void pause_all();
     static void resume_all();
 
-    static void initialize(const Arguments& args);
+    static void initialize(const Arguments& args, ResourceProvider* resource_provider);
     static void quit();
     static bool is_initialized();
     static void update();
@@ -76,6 +76,8 @@ class SOLARUS_API Sound: public ExportableToLua {
     explicit Sound(const SoundBuffer& data);
     bool update_playing();
     void stop_source();
+    static void update_device_connection();
+    void notify_device_disconnected();
 
     const SoundBuffer& data;                     /**< The loaded sound data. */
     ALuint source;                               /**< The source currently playing this sound. */
@@ -83,7 +85,6 @@ class SOLARUS_API Sound: public ExportableToLua {
     static bool paused_by_system;                /**< Whether sounds are currently paused by the main loop,
                                                   * e.g. when losing focus */
 
-    static void update_device_connection();
 
     static bool audio_enabled;                   /**< \c true unless -no-audio was passed. */
     static ALCdevice* device;                    /**< OpenAL device, nullptr if disconnected. */
@@ -94,6 +95,7 @@ class SOLARUS_API Sound: public ExportableToLua {
     static float volume;                         /**< the volume of sound effects (0.0 to 1.0) */
     static uint32_t next_device_detection_date;  /**< Date of the next attempt to detect an audio device. */
     static bool pc_play;                         /**< Whether playing performance counter is used. */
+    static ResourceProvider* resource_provider;  /**< The main loop resource cache. */
 };
 
 }

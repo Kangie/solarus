@@ -522,7 +522,7 @@ void Door::update() {
       })
       && !is_suspended()
       && System::now_ms() >= next_hint_sound_date) {
-    Sound::play("cane", get_game().get_resource_provider());
+    Sound::play("cane");
     next_hint_sound_date = System::now_ms() + 500;
   }
 
@@ -566,9 +566,8 @@ bool Door::notify_action_command_pressed(Hero &hero) {
   ) {
 
     if (can_open(hero)) {
-      Sound::play("door_unlocked", get_game().get_resource_provider());
-      Sound::play("door_open", get_game().get_resource_provider());
-
+      Sound::play("door_unlocked");
+      Sound::play("door_open");
 
       if (is_saved()) {
         get_savegame().set_boolean(savegame_variable, true);
@@ -583,7 +582,7 @@ bool Door::notify_action_command_pressed(Hero &hero) {
       hero.check_position();
     }
     else if (!cannot_open_dialog_id.empty()) {
-      Sound::play("wrong", get_game().get_resource_provider());
+      Sound::play("wrong");
       get_game().start_dialog(cannot_open_dialog_id, ScopedLuaRef(), ScopedLuaRef());
     }
 

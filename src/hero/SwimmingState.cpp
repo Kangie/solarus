@@ -159,7 +159,7 @@ void Hero::SwimmingState::try_swim_faster() {
     fast_swimming = true;
     get_entity().set_walking_speed(get_fast_swimming_speed());
     get_sprites().set_animation_swimming_fast();
-    Sound::play("swim", get_game().get_resource_provider());
+    Sound::play("swim");
     end_fast_swim_date = System::now_ms() + 600;
   }
 }
