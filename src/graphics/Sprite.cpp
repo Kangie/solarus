@@ -677,12 +677,19 @@ bool Sprite::test_collision(const Sprite& other, int x1, int y1, int x2, int y2)
   }
 
   const SpriteAnimationDirection& direction1 = current_animation->get_direction(current_direction);
+  if (!direction1.are_pixel_collisions_enabled()) {
+    // Possible when tileset-specific images are not loaded yet.
+    return false;
+  }
   const Point& origin1 = direction1.get_origin();
   Point location1 = { x1 - origin1.x, y1 - origin1.y };
   location1 += get_xy();
   const PixelBits& pixel_bits1 = direction1.get_pixel_bits(current_frame);
 
   const SpriteAnimationDirection& direction2 = other.current_animation->get_direction(other.current_direction);
+  if (!direction2.are_pixel_collisions_enabled()) {
+    return false;
+  }
   const Point& origin2 = direction2.get_origin();
   Point location2 = { x2 - origin2.x, y2 - origin2.y };
   location2 += other.get_xy();
