@@ -501,11 +501,16 @@ bool Map::notify_input(const InputEvent& event) {
 }
 
 bool Map::notify_control(const ControlEvent& event) {
-  if(get_lua_context().map_on_control(*this, event)) {
+
+  if (!is_game_running()) {
+    return false;
+  }
+
+  if (get_lua_context().map_on_control(*this, event)) {
     return true;
   }
 
-  if(!is_suspended()) {
+  if (!is_suspended()) {
     for(const HeroPtr& hero : entities->get_heroes()) { //TODO verify if hero commands must short circuit or not
       hero->notify_control(event);
     }
