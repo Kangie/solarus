@@ -12,7 +12,7 @@
 * Fix error reporting when creating entities with a non-existent model (#1494).
 * Fix custom state direction control when the movement is disallowed (#1565).
 * Fix missing equipement for second heroes (#1576).
-* Fix hero.set_invincible not suspended with the game (#1554).
+* Fix `hero.set_invincible` not suspended with the game (#1554).
 * Fix thrown objects destruction animation position (#1508).
 
 ### Lua API changes
@@ -20,6 +20,7 @@
 This release adds new features but does not introduce any incompatibility.
 
 * Allow to stop or pause a sound effect (#1289).
+* Add a method `surface:save()` to save a surface to a PNG file (#1215).
 * Add functions `sol.main.rawget/rawset()` (#1424).
 * Add a method `destination:is_default()`.
 * Add a method `entity:set_name()` (#1527).

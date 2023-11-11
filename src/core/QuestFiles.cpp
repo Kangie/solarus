@@ -343,26 +343,30 @@ SOLARUS_API std::string data_file_read(
  * \brief Saves a buffer into a data file.
  * \param file_name Name of the file to write, relative to Solarus write directory.
  * \param buffer The buffer to save.
- *
+ * \return \c true in case of success.
  */
-SOLARUS_API void data_file_save(
+SOLARUS_API bool data_file_save(
     const std::string& file_name,
     const std::string& buffer
 ) {
   // open the file to write
   PHYSFS_file* file = PHYSFS_openWrite(file_name.c_str());
   if (file == nullptr) {
-    Debug::die(std::string("Cannot open file '") + file_name
+    Debug::error(std::string("Cannot open file '") + file_name
         + "' for writing: " + PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())
     );
+    return false;
   }
 
   // save the memory buffer
+  bool success = true;
   if (PHYSFS_writeBytes(file, buffer.data(), (PHYSFS_uint32) buffer.size()) == -1) {
-    Debug::die(std::string("Cannot write file '") + file_name + "': "
+    Debug::error(std::string("Cannot write file '") + file_name + "': "
         + PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+    success = false;
   }
   PHYSFS_close(file);
+  return success;
 }
 
 /**

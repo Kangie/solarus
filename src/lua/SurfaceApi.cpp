@@ -74,8 +74,14 @@ void LuaContext::register_surface_module() {
       { "get_scale", drawable_api_get_scale },
       { "set_transformation_origin", drawable_api_set_transformation_origin },
       { "get_transformation_origin", drawable_api_get_transformation_origin },
-      { "gl_bind_as_texture", surface_api_gl_bind_as_texture},
-      { "gl_bind_as_target", surface_api_gl_bind_as_target}
+      { "gl_bind_as_texture", surface_api_gl_bind_as_texture },
+      { "gl_bind_as_target", surface_api_gl_bind_as_target }
+    });
+  }
+
+  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+    methods.insert(methods.end(), {
+      { "save", surface_api_save }
     });
   }
 
@@ -159,6 +165,24 @@ int LuaContext::surface_api_create(lua_State* l) {
       push_surface(l, *surface);
     }
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of surface:save().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::surface_api_save(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Surface& surface = *check_surface(l, 1);
+    const std::string& file_name = LuaTools::check_string(l, 2);
+
+    if (!surface.save(file_name)) {
+      LuaTools::error(l, "Failed to save surface");
+    }
+    return 0;
   });
 }
 

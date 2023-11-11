@@ -713,6 +713,7 @@ class LuaContext {
 
       // Surface API.
       surface_api_create,
+      surface_api_save,
       surface_api_get_size,
       surface_api_clear,
       surface_api_fill_color,

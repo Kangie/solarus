@@ -77,11 +77,11 @@ class Surface final: public Drawable {
     static SDL_Surface_UniquePtr create_sdl_surface_from_file(
         const std::string& file_name
     );
-
     static SDL_Surface_UniquePtr create_sdl_surface_from_memory(
         void* data,
         size_t data_len
     );
+    bool save(const std::string& file_name) const;
 
     int get_width() const;
     int get_height() const;

@@ -169,9 +169,6 @@ SurfacePtr Surface::create(SDL_Surface_UniquePtr surf, bool premultiplied) {
 
 /**
  * \brief Creates an SDL surface corresponding to the requested file.
- *
- * The returned SDL surface has to be manually deleted.
- *
  * \param file_name Name of the image file to load, relative to the quest data directory.
  * \return The SDL surface created, or nullptr if it could not be read.
  */
@@ -215,10 +212,10 @@ SDL_Surface_UniquePtr Surface::create_sdl_surface_from_file(
 }
 
 /**
- * @brief create_sdl_surface_from_memory
- * @param data
- * @param data_len
- * @return
+ * \brief Creates an SDL surface corresponding to the requested file from memory.
+ * \param data Buffer where to read from memory.
+ * \param data_len Number of bytes to read.
+ * \return The SDL surface created, or nullptr if it could not be read.
  */
 SDL_Surface_UniquePtr Surface::create_sdl_surface_from_memory(
     void* data,
@@ -228,6 +225,30 @@ SDL_Surface_UniquePtr Surface::create_sdl_surface_from_memory(
   SDL_RWops* rw = SDL_RWFromMem(data, data_len);
   SDL_Surface* surface = IMG_Load_RW(rw, true);
   return SDL_Surface_UniquePtr{surface};
+}
+
+/**
+ * \brief Saves the content of the surface to a PNG file.
+ * \param file_name Name of the file to write, relative to the quest write directory.
+ * \return \c true in case of success.
+ */
+bool Surface::save(const std::string& file_name) const {
+
+  // First write into a memory buffer.
+  std::string buffer;
+  buffer.resize(get_width() * get_height() * 4 + 1024);  // Reserve more than enough space to be safe.
+  SDL_RWops* rw = SDL_RWFromMem(buffer.data(), buffer.size());
+  if (rw == nullptr) {
+    Debug::error(std::string("Failed to allocate a memory buffer to save the surface: ") + SDL_GetError());
+    return false;
+  }
+
+  if (IMG_SavePNG_RW(internal_surface->get_surface(), rw, 1) == -1) {
+    Debug::error(std::string("Failed to export the surface to PNG into memory: ") + SDL_GetError());
+    return false;
+  }
+
+  return QuestFiles::data_file_save(file_name, buffer);
 }
 
 /**
