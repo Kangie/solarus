@@ -109,9 +109,6 @@ bool is_valid_lua_identifier(const std::string& name) {
 std::string get_type_name(lua_State*l, int index) {
 
   std::string module_name;
-  if (LuaContext::is_menu(l, index)) {
-      return "menu";
-  }
   if (!LuaContext::is_solarus_userdata(l, index, module_name)) {
     // Return the same thing as the usual Lua type() function.
     return luaL_typename(l, index);

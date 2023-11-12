@@ -1449,15 +1449,14 @@ class LuaContext {
     void register_entity_module();
     void register_state_module();
 
+public:
     // Pushing objects to Lua.
     static void push_main(lua_State* current_l);
     static void push_video(lua_State* current_l);
     static void push_input(lua_State* current_l);
     static void push_string(lua_State* current_l, const std::string& text);
     static void push_color(lua_State* current_l, const Color& color);
-public:
     static void push_userdata(lua_State* current_l, ExportableToLua& userdata);
-private:
     static void push_dialog(lua_State* current_l, const Dialog& dialog);
     static void push_timer(lua_State* current_l, const TimerPtr& timer);
     static void push_sound(lua_State* current_l, Sound& sound);
@@ -1472,7 +1471,6 @@ private:
     static void push_state(lua_State* current_l, CustomState& state);
     static void push_entity(lua_State* current_l, Entity& entity);
 
-public:
     template<typename Container>
 
     /**
@@ -1512,7 +1510,6 @@ public:
       lua_pushcclosure(l, l_entity_iterator_next, 3);
     }
 
-private:
     static void push_named_sprite_iterator(
         lua_State* current_l,
         const std::vector<Entity::NamedSprite>& sprites
@@ -1593,10 +1590,8 @@ private:
     static std::shared_ptr<Map> check_map(lua_State* current_l, int index);
     static bool is_state(lua_State* current_l, int index);
     static std::shared_ptr<CustomState> check_state(lua_State* current_l, int index);
-public:
     static bool is_entity(lua_State* current_l, int index);
     static EntityPtr check_entity(lua_State* current_l, int index);
-private:
     static bool is_hero(lua_State* current_l, int index);
     static HeroPtr check_hero(lua_State* current_l, int index);
     static bool is_camera(lua_State* current_l, int index);
@@ -1644,7 +1639,7 @@ private:
     static Command check_command(lua_State* l, int index);
     static Axis check_axis(lua_State* l, int index);
 
-
+private:
     // Events.
     void check_callback_thread() const;
 
