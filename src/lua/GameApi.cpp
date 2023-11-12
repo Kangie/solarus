@@ -642,11 +642,11 @@ int LuaContext::game_api_get_value(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     const std::string& key = LuaTools::check_string(l, 2);
 
-    if (!LuaTools::is_valid_lua_identifier(key)) {
+    if (!LuaTools::is_valid_savegame_variable(key)) {
       LuaTools::arg_error(l, 3,
-          std::string("Invalid savegame variable '") + key
-          + "': the name should only contain alphanumeric characters or '_'"
-          + " and cannot start with a digit");
+                          std::string("Invalid savegame variable '") + key
+                          + "': the name should only contain alphanumeric characters or '_',"
+                          + " cannot start with a digit and should not be a keyword");
     }
 
     if (savegame.is_boolean(key)) {
@@ -683,11 +683,11 @@ int LuaContext::game_api_set_value(lua_State* l) {
           + "': names prefixed by '_' are reserved for built-in variables");
     }
 
-    if (!LuaTools::is_valid_lua_identifier(key)) {
+    if (!LuaTools::is_valid_savegame_variable(key)) {
       LuaTools::arg_error(l, 3,
-          std::string("Invalid savegame variable '") + key
-          + "': the name should only contain alphanumeric characters or '_'"
-          + " and cannot start with a digit");
+                          std::string("Invalid savegame variable '") + key
+                          + "': the name should only contain alphanumeric characters or '_',"
+                          + " cannot start with a digit and should not be a keyword");
     }
 
     switch (lua_type(l, 3)) {

@@ -526,9 +526,7 @@ void EntityData::set_enabled_at_start(bool enabled_at_start) {
  * \return \c true if this is a valid user property key.
  */
 bool EntityData::is_user_property_key_valid(const std::string& key) {
-
-  // Same rules as Lua identifiers.
-  return LuaTools::is_valid_lua_identifier(key);
+  return LuaTools::is_valid_identifier(key);
 }
 
 /**

@@ -115,12 +115,15 @@ static bool is_lua_keyword(const std::string& name) {
 }
 
 /**
- * \brief Returns whether the specified name is a valid Lua identifier.
+ * \brief Returns whether the specified name is a valid identifier.
+ *
+ * Lua keywords are considered valid identifiers by this function.
+ *
  * \param name The name to check.
  * \return \c true if the name only contains alphanumeric characters or '_' and
  * does not start with a digit.
  */
-bool is_valid_lua_identifier(const std::string& name) {
+bool is_valid_identifier(const std::string& name) {
 
   if (name.empty() || std::isdigit(name[0])) {
     return false;
@@ -131,7 +134,21 @@ bool is_valid_lua_identifier(const std::string& name) {
       return false;
     }
   }
-  return !is_lua_keyword(name);
+  return true;
+}
+
+/**
+ * \brief Returns whether the specified name is a legal savegame variable name.
+ *
+ * Same as is_valid_identifier(), except that Lua keywords are considered invalid.
+ *
+ * \param name The name to check.
+ * \return \c true if the name only contains alphanumeric characters or '_',
+ * does not start with a digit and is not a Lua keyword.
+ */
+bool is_valid_savegame_variable(const std::string& name) {
+
+  return is_valid_identifier(name) && !is_lua_keyword(name);
 }
 
 /**

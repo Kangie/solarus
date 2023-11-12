@@ -839,7 +839,7 @@ std::string entity_creation_check_savegame_variable_mandatory(
 
   const std::string& savegame_variable = entity_data.get_string(field_name);
 
-  if (!LuaTools::is_valid_lua_identifier(savegame_variable)) {
+  if (!LuaTools::is_valid_savegame_variable(savegame_variable)) {
     LuaTools::field_error(l, index, field_name,
         "invalid savegame variable identifier: '" + savegame_variable + "'");
   }
