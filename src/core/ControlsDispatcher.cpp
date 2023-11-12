@@ -35,16 +35,16 @@ ControlsDispatcher& ControlsDispatcher::get() {
 
 void ControlsDispatcher::notify_input(const InputEvent& event) {
   for(const auto& ptr : to_remove) {
-      commands.erase(ptr);
+    commands.erase(ptr);
   }
 
   to_remove.clear();
 
   const ControlSet commands_copy = commands;  // Iterate on a copy in case new controls are added during the event.
   for (const auto& wptr: commands_copy) {
-      if (const auto ptr = wptr.lock(); ptr) {
-        ptr->notify_input(event);
-      }
+    if (const auto ptr = wptr.lock(); ptr) {
+      ptr->notify_input(event);
+    }
   }
 }
 
@@ -55,32 +55,30 @@ ControlsPtr ControlsDispatcher::create_commands_from_game(Game& game) {
 }
 
 ControlsPtr ControlsDispatcher::create_commands_from_keyboard() {
-    ControlsPtr commands = std::make_shared<Controls>(main_loop);
-    add_commands(commands);
+  ControlsPtr commands = std::make_shared<Controls>(main_loop);
+  add_commands(commands);
 
-    commands->load_default_keyboard_bindings();
+  commands->load_default_keyboard_bindings();
 
-    return commands;
+  return commands;
 }
 
 ControlsPtr ControlsDispatcher::create_commands_from_joypad(const JoypadPtr& joypad) {
-    ControlsPtr commands = std::make_shared<Controls>(main_loop);
-    add_commands(commands);
+  ControlsPtr commands = std::make_shared<Controls>(main_loop);
+  add_commands(commands);
 
-    commands->load_default_joypad_bindings();
-    commands->set_joypad(joypad);
+  commands->load_default_joypad_bindings();
+  commands->set_joypad(joypad);
 
-    return commands;
+  return commands;
 }
 
 void ControlsDispatcher::add_commands(const ControlsPtr& cmds) {
-    commands.insert(std::weak_ptr<Controls>(cmds));
+  commands.insert(std::weak_ptr<Controls>(cmds));
 }
 
 void ControlsDispatcher::remove_commands(const std::weak_ptr<Controls>& cmds) {
-    to_remove.insert(cmds);
+  to_remove.insert(cmds);
 }
 
 }
-
-
