@@ -1335,7 +1335,7 @@ bool LuaContext::is_solarus_userdata(
     return true;
   }();
 
-  SOLARUS_ASSERT(lua_gettop(l) == initial_stack_size, "Unbalanced Lua stack after LuaContext::is_solarus_userdata()");
+  SOLARUS_REQUIRE(lua_gettop(l) == initial_stack_size, "Unbalanced Lua stack after LuaContext::is_solarus_userdata()");
   return result;
 }
 
