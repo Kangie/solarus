@@ -107,6 +107,7 @@ map{ id = "bugs/1552_entire_savegame_access", description = "#1552: Entire Saveg
 map{ id = "bugs/1556_boolean_parameters_treat_nil_as_true", description = "#1556: Boolean Parameters Treat Nil as True" }
 map{ id = "bugs/1562_crash_entity_on_stream", description = "#1562: Crash when throwing an entity on a stream" }
 map{ id = "bugs/1565_state_set_can_control_direction", description = "#1565: Custom state direction control without movement" }
+map{ id = "bugs/1583_crash_reset", description = "#1583: Crash when resetting the game" }
 map{ id = "bugs/1585_get_entity_by_name", description = "#1585: Get entity by name" }
 map{ id = "bugs/1600_map_loading_single_cam/map1" }
 map{ id = "bugs/1600_map_loading_single_cam/map2" }
@@ -655,6 +656,8 @@ file{ path = "maps/bugs/1562_crash_entity_on_stream.dat", author = "Christopho",
 file{ path = "maps/bugs/1562_crash_entity_on_stream.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1565_state_set_can_control_direction.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1565_state_set_can_control_direction.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1583_crash_reset.dat", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1583_crash_reset.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1585_get_entity_by_name.dat", author = "stdgregwar", license = "CC-BY-SA" }
 file{ path = "maps/bugs/1585_get_entity_by_name.lua", author = "stdgregwar", license = "GPL v3" }
 file{ path = "maps/bugs/1600_map_loading_single_cam", author = "stdgregwar", license = "CC-BY-SA" }

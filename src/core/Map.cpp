@@ -475,7 +475,7 @@ void Map::set_suspended(bool suspended) {
 
   this->suspended = suspended;
 
-  entities->set_suspended(suspended);
+  get_entities().set_suspended(suspended);
   get_lua_context().notify_map_suspended(*this, suspended);
 }
 
@@ -490,7 +490,7 @@ bool Map::notify_input(const InputEvent& event) {
 
   // Forward to heroes
   if(!handled) {
-    for(const HeroPtr& hero : entities->get_heroes()) {
+    for(const HeroPtr& hero : get_entities().get_heroes()) {
       if(hero->notify_input(event)) {
         handled = true;
         break; //Only one hero can handle the input
@@ -511,7 +511,7 @@ bool Map::notify_control(const ControlEvent& event) {
   }
 
   if (!is_suspended()) {
-    for (const HeroPtr& hero : entities->get_heroes()) { // TODO verify if hero commands must short circuit or not
+    for (const HeroPtr& hero : get_entities().get_heroes()) { // TODO verify if hero commands must short circuit or not
       hero->notify_control(event);
     }
   }
@@ -527,7 +527,7 @@ void Map::update() {
   check_suspended();
 
   // Update the elements.
-  entities->update();
+  get_entities().update();
   get_lua_context().map_on_update(*this);
 }
 
@@ -564,7 +564,7 @@ void Map::draw() {
     return;
   }
 
-  for(const CameraPtr& camera : entities->get_cameras()) {
+  for(const CameraPtr& camera : get_entities().get_cameras()) {
     if(camera->is_being_removed()){
         continue;
     }
@@ -575,7 +575,7 @@ void Map::draw() {
 
     // draw all entities (including the hero)
     camera->apply_view();
-    entities->draw(*camera);
+    get_entities().draw(*camera);
 
     // foreground
     camera->reset_view();
@@ -747,9 +747,9 @@ void Map::start(const std::string& destination_name) {
 
   Music::play(music_id, true);
   std::shared_ptr<Destination> destination = get_destination(destination_name);
-  this->entities->notify_map_starting(*this, destination);
+  get_entities().notify_map_starting(*this, destination);
   get_lua_context().run_map(*this, destination);
-  this->entities->notify_map_started(*this, destination);
+  get_entities().notify_map_started(*this, destination);
 }
 
 /**
@@ -760,7 +760,7 @@ void Map::start(const std::string& destination_name) {
 void Map::leave() {
   started = false;
   get_lua_context().map_on_finished(*this);
-  this->entities->notify_map_finished();
+  this->get_entities().notify_map_finished();
 }
 
 /**
@@ -788,9 +788,9 @@ void Map::notify_opening_transition_finished(const std::string& destination_name
 
   check_suspended();
   std::shared_ptr<Destination> destination = get_destination(destination_name);
-  entities->notify_map_opening_transition_finishing(*this, destination_name, opt_hero);
+  get_entities().notify_map_opening_transition_finishing(*this, destination_name, opt_hero);
   get_lua_context().map_on_opening_transition_finished(*this, destination);
-  entities->notify_map_opening_transition_finished(*this, destination, opt_hero);
+  get_entities().notify_map_opening_transition_finished(*this, destination, opt_hero);
 }
 
 /**
@@ -1219,7 +1219,7 @@ Ground Map::get_ground(
   }
 
   // Otherwise, return the ground defined by static tiles (this is very fast).
-  return entities->get_tile_ground(layer, xy.x, xy.y);
+  return get_entities().get_tile_ground(layer, xy.x, xy.y);
 }
 
 /**
@@ -1387,7 +1387,7 @@ void Map::check_collision_with_detectors(Entity& entity) {
   // Extend the box because some collision tests work without overlapping.
   Rectangle box = entity.get_extended_bounding_box(8);
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
   check_collision_with_detectors(entity, entities_nearby);
 }
 
@@ -1445,7 +1445,7 @@ void Map::check_collision_from_detector(Entity& detector) {
   // Check each entity with this detector.
   Rectangle box = detector.get_extended_bounding_box(8);
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
   check_collision_from_detector(detector, entities_nearby);
 }
 
@@ -1515,7 +1515,7 @@ void Map::check_collision_from_detector(Entity& detector, Sprite& detector_sprit
   // Check each entity with this detector.
   Rectangle box = detector.get_max_bounding_box();
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
   for (const EntityPtr& entity_nearby: entities_nearby) {
 
     if (detector.is_being_removed()) {
@@ -1559,7 +1559,7 @@ void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite) {
   // Check each detector.
   Rectangle box = entity.get_max_bounding_box();
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
   check_collision_with_detectors(entity, sprite, entities_nearby);
 }
 
@@ -1602,7 +1602,7 @@ void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite, EntityV
  * @param new_size
  */
 void Map::notify_window_size_changed(const Size& new_size) {
-  for(const CameraPtr& cam : entities->get_cameras()) {
+  for(const CameraPtr& cam : get_entities().get_cameras()) {
     cam->notify_window_size_changed(new_size);
   }
 }

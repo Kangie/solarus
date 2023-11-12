@@ -132,6 +132,7 @@ MainLoop::MainLoop(const Arguments& args):
   root_surface(nullptr),
   game(nullptr),
   next_game(nullptr),
+  resetting(false),
   exiting(false),
   debug_lag(0),
   lua_console_enabled(true),
@@ -321,7 +322,7 @@ void MainLoop::set_exiting() {
  */
 bool MainLoop::is_resetting() {
 
-  return game != nullptr && next_game == nullptr;
+  return resetting;
 }
 
 /**
@@ -330,11 +331,7 @@ bool MainLoop::is_resetting() {
  */
 void MainLoop::set_resetting() {
 
-  // Reset the program.
-  if (game != nullptr) {
-    game->stop();
-  }
-  set_game(nullptr);
+  resetting = true;
 }
 
 /**
@@ -537,6 +534,14 @@ void MainLoop::step(uint64_t timestep_ns) {
   lua_context->update();
   System::update(timestep_ns);
 
+  // Cleanup the game if we are resetting.
+  if (resetting) {
+    if (game != nullptr) {
+      game->stop();
+    }
+    set_game(nullptr);
+  }
+
   // Go to another game?
   if (next_game != game.get()) {
 
@@ -546,6 +551,7 @@ void MainLoop::step(uint64_t timestep_ns) {
       game->start();
     }
     else {
+      // Reset
       lua_context->exit();
       lua_context->initialize(Arguments());
       Music::stop_playing();
