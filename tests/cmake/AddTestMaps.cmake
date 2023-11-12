@@ -155,6 +155,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1383_blocks_hero_16_8"
   "bugs/1392_carried_object_directions"
   "bugs/1395_large_map_memory_leak"
+  "bugs/1407_facing_entity_not_updated"
   "bugs/1416_state_set_affected_by_ground_speed"
   "bugs/1418_state_set_can_be_hurt"
   "bugs/1419_crash_teletransporting_to_invalid_layer/map_1"

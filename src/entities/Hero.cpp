@@ -192,11 +192,11 @@ void Hero::set_suspended(bool suspended) {
  */
 void Hero::update() {
 
-
   update_invincibility();
   update_movement();
   update_direction();
   sprites->update();
+  update_facing_entity();
 
   // Update the state now because it may be impacted by movements and sprites.
   update_state();

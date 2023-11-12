@@ -275,6 +275,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     Entity* get_facing_entity();
     const Entity* get_facing_entity() const;
     void set_facing_entity(Entity* facing_entity);
+    void update_facing_entity();
     virtual void notify_facing_entity_changed(Entity* facing_entity);
     static const Point& direction_to_xy_move(int direction8);
 

@@ -1098,16 +1098,18 @@ Point Entity::get_touching_point(int direction) const {
 }
 
 /**
- * \brief Returns the detector in front of this entity.
- * \return The detector this entity is facing, or nullptr if there is no detector in front of him.
+ * \brief Returns the entity in front of this entity.
+ * \return The entity this entity is facing, or nullptr if there is no entity
+ * in front of this one.
  */
 Entity* Entity::get_facing_entity() {
   return facing_entity;
 }
 
 /**
- * \brief Returns the detector in front of this entity.
- * \return The detector this entity is facing, or nullptr if there is no detector in front of him.
+ * \brief Returns the entity in front of this entity.
+ * \return The entity this entity is facing, or nullptr if there is no entity
+ * in front of this one.
  */
 const Entity* Entity::get_facing_entity() const {
   return facing_entity;
@@ -1124,6 +1126,22 @@ void Entity::set_facing_entity(Entity* facing_entity) {
 
   this->facing_entity = facing_entity;
   notify_facing_entity_changed(facing_entity);
+}
+
+/**
+ * \brief Check if the facing entity is still facing this entity.
+ */
+void Entity::update_facing_entity() {
+
+  if (facing_entity != nullptr) {
+    // Check if the facing entity is still there.
+    if (facing_entity->is_being_removed() ||
+        !facing_entity->is_enabled() ||
+        !facing_entity->test_collision_facing_point(*this)
+    ) {
+      set_facing_entity(nullptr);
+    }
+  }
 }
 
 /**
@@ -3678,11 +3696,6 @@ void Entity::update() {
     return;
   }
 
-  // Check the facing entity.
-  if (facing_entity != nullptr && facing_entity->is_being_removed()) {
-    set_facing_entity(nullptr);
-  }
-
   update_sprites();
 
   // Update the movement.
@@ -3690,6 +3703,7 @@ void Entity::update() {
     movement->update();
   }
   clear_old_movements();
+  update_facing_entity();
   update_stream_action();
 
   // Update the state if any.
