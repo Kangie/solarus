@@ -40,8 +40,9 @@ void ControlsDispatcher::notify_input(const InputEvent& event) {
 
   to_remove.clear();
 
-  for(const auto& wptr : commands) {
-      if(const auto ptr = wptr.lock(); ptr) {
+  const ControlSet commands_copy = commands;  // Iterate on a copy in case new controls are added during the event.
+  for (const auto& wptr: commands_copy) {
+      if (const auto ptr = wptr.lock(); ptr) {
         ptr->notify_input(event);
       }
   }
@@ -72,12 +73,11 @@ ControlsPtr ControlsDispatcher::create_commands_from_joypad(const JoypadPtr& joy
     return commands;
 }
 
-void ControlsDispatcher::add_commands(const ControlsPtr&cmds) {
+void ControlsDispatcher::add_commands(const ControlsPtr& cmds) {
     commands.insert(std::weak_ptr<Controls>(cmds));
 }
 
-void ControlsDispatcher::remove_commands(const std::weak_ptr<Controls>& cmds)
-{
+void ControlsDispatcher::remove_commands(const std::weak_ptr<Controls>& cmds) {
     to_remove.insert(cmds);
 }
 

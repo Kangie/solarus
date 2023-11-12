@@ -179,23 +179,25 @@ void LuaContext::update_menus() {
  */
 bool LuaContext::is_menu(lua_State* l, int index) {
 
+  const int stack_size = lua_gettop(l);
+  bool result = false;
   index = LuaTools::get_positive_index(l, index);
 
-  if (!lua_istable(l, index)) {
-    return false;
-  }
+  if (lua_istable(l, index)) {
+    LuaContext& lua_context = get();
+    for (LuaMenuData& menu: lua_context.menus) {
+      if (menu.ref.is_empty()) {
+        continue;
+      }
 
-  LuaContext& lua_context = get();
-  for (LuaMenuData& menu: lua_context.menus) {
-    if (menu.ref.is_empty()) {
-      continue;
-    }
-
-    if(menu.ref.equals(l,index)) {
-      return true;
+      if (menu.ref.equals(l,index)) {
+        result = true;
+        break;
+      }
     }
   }
-  return false;
+  SOLARUS_REQUIRE(lua_gettop(l) == stack_size, "Unbalanced Lua stack after LuaContext::is_menu()");
+  return result;
 }
 
 /**

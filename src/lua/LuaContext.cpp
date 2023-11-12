@@ -1824,7 +1824,7 @@ bool LuaContext::on_input(const InputEvent& event) {
       handled = on_finger_released(event) || handled;
     }
     else if (event.is_finger_moved()) {
-        handled = on_finger_moved(event) || handled;
+      handled = on_finger_moved(event) || handled;
     }
   }
 
