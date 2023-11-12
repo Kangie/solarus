@@ -714,8 +714,8 @@ void Sprite::update() {
   // Update the current frame.
   if (synchronize_to == nullptr
       || current_animation_name != synchronize_to->get_current_animation()
-      || synchronize_to->get_current_direction() > get_nb_directions()
-      || synchronize_to->get_current_frame() > get_nb_frames()) {
+      || synchronize_to->get_current_direction() >= get_nb_directions()
+      || synchronize_to->get_current_frame() >= get_nb_frames()) {
 
     // Update frames normally (with time).
     while (!finished &&
