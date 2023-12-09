@@ -21,7 +21,6 @@
 #include "widgets/tileset_view.h"
 #include "widgets/zoom_tool.h"
 #include "ground_traits.h"
-#include "pattern_separation_traits.h"
 #include "point.h"
 #include "rectangle.h"
 #include "tileset_model.h"
@@ -99,7 +98,7 @@ TilesetView::TilesetView(QWidget* parent) :
   set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::HORIZONTAL)]->setShortcut(tr("H"));
   set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::VERTICAL)]->setShortcut(tr("V"));
   set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::NONE)]->setShortcut(tr("N"));
-  for (QAction* action : set_repeat_mode_actions) {
+  for (QAction* action : qAsConst(set_repeat_mode_actions)) {
     action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   }
 
@@ -721,7 +720,7 @@ void TilesetView::build_context_menu_layer(
     QAction* action = new QAction(tr("Layer %1").arg(i), &menu);
     action->setCheckable(true);
     menu.addAction(action);
-    connect(action, &QAction::triggered, [this, i]() {
+    connect(action, &QAction::triggered, this, [this, i]() {
       emit change_selected_patterns_default_layer_requested(i);
     });
 
@@ -938,7 +937,7 @@ void TilesetView::end_state_moving_patterns() {
     // Context menu to move the patterns.
     QMenu menu;
     QAction* move_pattern_action = new QAction(tr("Move here"), this);
-    connect(move_pattern_action, &QAction::triggered, [this, delta] {
+    connect(move_pattern_action, &QAction::triggered, this, [this, delta] {
       emit change_selected_patterns_position_requested(delta);
     });
     menu.addAction(move_pattern_action);
@@ -946,7 +945,7 @@ void TilesetView::end_state_moving_patterns() {
       QIcon(":/images/icon_copy.png"), tr("Duplicate here"), this);
     duplicate_pattern_action->setEnabled(
       get_items_intersecting_current_areas(false).isEmpty());
-    connect(duplicate_pattern_action, &QAction::triggered, [this, delta] {
+    connect(duplicate_pattern_action, &QAction::triggered, this, [this, delta] {
       emit duplicate_selected_patterns_requested(delta);
     });
     menu.addAction(duplicate_pattern_action);
@@ -991,8 +990,9 @@ void TilesetView::dragMoveEvent(QDragMoveEvent* event) {
     QGraphicsRectItem* item = new QGraphicsRectItem(area);
 
     // Check overlapping existing patterns.
-    QSet<QGraphicsItem*> overlapping_items = scene->items(
-      area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect).toSet();
+    QList<QGraphicsItem*> overlapping_item_list = scene->items(
+        area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect);
+    QSet<QGraphicsItem*> overlapping_items(overlapping_item_list.begin(), overlapping_item_list.end());
 
     // Filter out the patterns that are being moved,
     // that is, allow the destination to overlap the source.
@@ -1068,7 +1068,7 @@ void TilesetView::update_current_areas(
     scene->setSelectionArea(path, Qt::ContainsItemBoundingRect);
 
     // Re-select items that were already selected if Ctrl or Shift was pressed.
-    for (QGraphicsItem* item : initially_selected_items) {
+    for (QGraphicsItem* item : qAsConst(initially_selected_items)) {
       item->setSelected(true);
     }
   }
@@ -1079,7 +1079,7 @@ void TilesetView::update_current_areas(
  */
 void TilesetView::clear_current_areas() {
 
-  for (QGraphicsRectItem* item : current_area_items) {
+  for (QGraphicsRectItem* item : qAsConst(current_area_items)) {
     scene->removeItem(item);
     delete item;
   }

@@ -142,7 +142,7 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
   setCursor(hover_cursor);
   setMouseTracking(true);
 
-  connect(&fps_timer,&QTimer::timeout,[this]{
+  connect(&fps_timer, &QTimer::timeout, this, [this]{
     update();
   });
   fps_timer.setInterval(10);
@@ -233,16 +233,16 @@ QVector2D ShaderPreviewer::to_frame_center(const QPoint& mouse_position) const {
 void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
 
   float old_zoom = zoom;
-  if (event->delta() > 0) {
+  if (event->angleDelta().y() > 0) {
     zoom_in();
-    if(zoom != old_zoom) {
-      translation += (to_frame_center(event->pos())/zoom) / pixelFactor();
+    if (zoom != old_zoom) {
+        translation += to_frame_center(event->pos() / zoom) / pixelFactor();
     }
   }
   else {
     zoom_out();
-    if(zoom != old_zoom) {
-      translation -= 0.5*(to_frame_center(event->pos())/zoom) / pixelFactor();
+    if (zoom != old_zoom) {
+      translation -= 0.5 * to_frame_center(event->pos() / zoom) / pixelFactor();
     }
   }
 
@@ -437,7 +437,7 @@ void ShaderPreviewer::setup_framebuffers(const QSize& output_size) {
  * @brief Render input to input buffer and rerender it with shader to output buffer
  */
 void ShaderPreviewer::render_fbs() {
-  if (input_texture == nullptr) {
+  if (input_texture == nullptr || input_fb == nullptr) {
     return;
   }
   QOpenGLFunctions* gl = context()->functions();
@@ -589,7 +589,7 @@ void ShaderPreviewer::paintGL() {
   QOpenGLFunctions* gl = context()->functions();
   gl->glClearColor(0.3f, 0.3f, 0.3f, 1);
   gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  if (model == nullptr) {
+  if (model == nullptr || input_fb == nullptr) {
     return;
   }
   if (should_recompile) {
