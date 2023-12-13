@@ -10,7 +10,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := Solarus
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/include $(LOCAL_PATH)/include/solarus/third_party $(LOCAL_PATH)/include/solarus/third_party/snes_spc jni/lua51/include
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include $(LOCAL_PATH)/include/solarus/third_party $(LOCAL_PATH)/include/solarus/third_party/snes_spc jni/lua51/include jni/glm
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_C_INCLUDES)
 
 LOCAL_SRC_FILES := \
