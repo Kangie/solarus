@@ -2203,6 +2203,14 @@ bool Entity::test_collision(
     const SpritePtr& this_sprite,
     const SpritePtr& other_sprite) {
 
+  if (!is_on_map() || !is_enabled() || is_being_removed()) {
+    return false;
+  }
+
+  if (!entity.is_on_map() || !entity.is_enabled() || entity.is_being_removed()) {
+    return false;
+  }
+
   if (get_layer() != entity.get_layer() && !has_layer_independent_collisions()) {
     // Not the same layer: no collision.
     return false;

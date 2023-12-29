@@ -22,7 +22,6 @@
 #include "solarus/core/Equipment.h"
 #include "solarus/core/EquipmentItem.h"
 #include "solarus/core/Game.h"
-#include "solarus/core/MainLoop.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/Savegame.h"
 #include "solarus/core/Timer.h"

@@ -12,6 +12,7 @@
 * Fix return of invalid sprite object with bad sprite id (#1423).
 * Fix separator region detection corner cases (#1425).
 * Fix error reporting when creating entities with a non-existent model (#1494).
+* Fix `entity:overlaps()` returning true even with removed entities (#1611).
 * Fix custom state direction control when the movement is disallowed (#1565).
 * Fix missing equipement for second heroes (#1576).
 * Fix `hero.set_invincible` not suspended with the game (#1554).
