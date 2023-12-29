@@ -1438,9 +1438,7 @@ class LuaContext {
 
 public:
     // Pushing objects to Lua.
-public:
     static void push_main(lua_State* current_l);
-private:
     static void push_video(lua_State* current_l);
     static void push_input(lua_State* current_l);
     static void push_string(lua_State* current_l, const std::string& text);
@@ -1528,10 +1526,8 @@ private:
     static void push_player(lua_State* current_l, Player& commands);
 
     // Getting objects from Lua.
-public:
     static bool is_main(lua_State* current_l, int index);
     static bool is_menu(lua_State* current_l, int index);
-private:
     static bool is_userdata(lua_State* current_l, int index,
         const std::string& module_name);
     static const ExportableToLuaPtr& check_userdata(
