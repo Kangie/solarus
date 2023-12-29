@@ -70,11 +70,18 @@ struct Nil {};
  * the current context is passed. Instead the function can be a method,
  * in which case the receiver must be a userdata type.
  *
- * The return type may be one of the compatable types, a tuple of compatable
- * types, void or OnStack. The first three handle most cases where you want
- * to return a value, multiple values or nothing to Lua, the wrapper will
- * handle the conversion to Lua. OnStack gives the number of values already
- * on the stack that should be returned.
+ * For the return type we expand compatable types to return compatable types:
+ * +   Any compatable type.
+ * +   unsigned int or std::optional<unsigned int>
+ * +   A std::vector of a return compatable type.
+ * +   A std::map from a return compatable type to another.
+ *
+ * The return type may be a return compatable type, a tuple of return
+ * compatable types, void or OnStack.
+ * The first three handle most cases where you want to return a fixed number
+ * of return compatable types to Lua, the wrapper will handle the conversion.
+ * For more complex cases, set up the stack with the return values and then
+ * return an OnStack value containing the number of values to return.
  *
  * This can completely automate the interaction with Lua in some simple cases.
  * In the remaining cases, get a lua_State * or LuaContext & argument and, if

@@ -128,7 +128,7 @@ static Savegame & get_game(Map& map) {
 /**
  * \brief Implementation of map:get_world().
  * \param map The map to call the method on.
- * \return
+ * \return A string containing the world name, or nullopt if no world is set.
  */
 static std::optional<std::string> get_world(Map& map) {
   const std::string& world = map.get_world();

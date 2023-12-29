@@ -271,6 +271,7 @@ class LuaContext {
         int context_index,
         const ScopedLuaRef& callback_index
     );
+    bool is_timer_active(const TimerPtr& timer);
     void remove_timer(const TimerPtr& timer);
     void remove_timers(int context_index);
     void destroy_timers();
@@ -665,20 +666,6 @@ class LuaContext {
       menu_api_is_started,
       menu_api_bring_to_front,
       menu_api_bring_to_back,
-
-      // Timer API.
-      timer_api_start,
-      timer_api_stop,
-      timer_api_stop_all,
-      timer_api_is_with_sound,
-      timer_api_set_with_sound,
-      timer_api_is_suspended,
-      timer_api_set_suspended,
-      timer_api_is_suspended_with_map,
-      timer_api_set_suspended_with_map,
-      timer_api_get_remaining_time,
-      timer_api_set_remaining_time,
-      // TODO deprecate is_with_sound, set_with_sound (do this in pure Lua, possibly with a second timer)
 
       // Language API.
       language_api_get_language,
@@ -1451,7 +1438,9 @@ class LuaContext {
 
 public:
     // Pushing objects to Lua.
+public:
     static void push_main(lua_State* current_l);
+private:
     static void push_video(lua_State* current_l);
     static void push_input(lua_State* current_l);
     static void push_string(lua_State* current_l, const std::string& text);
@@ -1539,8 +1528,10 @@ public:
     static void push_player(lua_State* current_l, Player& commands);
 
     // Getting objects from Lua.
+public:
     static bool is_main(lua_State* current_l, int index);
     static bool is_menu(lua_State* current_l, int index);
+private:
     static bool is_userdata(lua_State* current_l, int index,
         const std::string& module_name);
     static const ExportableToLuaPtr& check_userdata(

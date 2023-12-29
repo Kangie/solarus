@@ -120,6 +120,7 @@ static inline void push_any(lua_State * L, int integer) {
 
 /// \copydoc push_any(lua_State*,bool)
 static inline void push_any(lua_State * L, unsigned int integer) {
+  // Lossy type conversion.
   lua_pushinteger(L, integer);
 }
 
@@ -157,14 +158,23 @@ static inline void push_any(lua_State * L, const std::optional<T>& option) {
 
 /// \copydoc push_any(lua_State*,bool)
 template<typename T>
+static inline void push_any(lua_State * L, T * ptr) {
+  if (nullptr != ptr) {
+    push_any(L, *ptr);
+  } else {
+    lua_pushnil(L);
+  }
+}
+
+/// \copydoc push_any(lua_State*,bool)
+template<typename T>
 static inline void push_any(lua_State * L, const std::vector<T>& vec) {
-  // Build a Lua table containing the map content.
-  lua_settop(L, 0);
-  lua_newtable(L);
+  // Build a Lua table containing the vector content.
+  lua_createtable(L, vec.size(), 0);
   int i = 1;
   for (const auto& v : vec) {
     push_any(L, v);
-    lua_rawseti(L, 1, i);
+    lua_rawseti(L, -2, i);
     ++i;
   }
 }
@@ -173,22 +183,11 @@ static inline void push_any(lua_State * L, const std::vector<T>& vec) {
 template<typename K, typename V>
 static inline void push_any(lua_State * L, const std::map<K, V>& map) {
   // Build a Lua table containing the map content.
-  lua_settop(L, 0);
-  lua_newtable(L);
+  lua_createtable(L, 0, map.size());
   for (const auto& [k, v] : map) {
     push_any(L, k);
     push_any(L, v);
-    lua_rawset(L, 2);
-  }
-}
-
-/// \copydoc push_any(lua_State*,bool)
-template<typename T>
-static inline void push_any(lua_State * L, T * ptr) {
-  if (nullptr != ptr) {
-    push_any(L, *ptr);
-  } else {
-    lua_pushnil(L);
+    lua_rawset(L, -3);
   }
 }
 

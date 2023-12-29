@@ -23,6 +23,7 @@
 #include "solarus/entities/Entity.h"
 #include "solarus/hero/CustomState.h"
 #include "solarus/lua/ExportableToLuaPtr.h"
+#include "solarus/lua/LuaBind.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 #include <list>
@@ -36,27 +37,225 @@ namespace Solarus {
 const std::string LuaContext::timer_module_name = "sol.timer";
 
 /**
+ * \brief Check if a Lua value is a valid context for a timer.
+ * \param l A Lua state.
+ * \param index An index in the stack.
+ * \return True if the value is a valid context, false otherwise.
+ */
+static bool is_timer_context(lua_State* l, int index) {
+  if (LuaContext::is_main(l, index) || LuaContext::is_menu(l, index)) {
+    return true;
+  }
+  std::string module_name;
+  return (LuaContext::is_solarus_userdata(l, index, module_name) && (
+    LuaContext::game_module_name == module_name ||
+    LuaContext::item_module_name == module_name ||
+    LuaContext::map_module_name == module_name ||
+    LuaContext::state_module_name == module_name)) ||
+    LuaContext::is_entity(l, index);
+}
+
+/**
+ * \brief Implementation of sol.timer.start().
+ * \param context The LuaContext the call was made from.
+ * \return Reference to the newly created Timer.
+ */
+static Timer& start(LuaContext& lua_context) {
+  // Parameters: [context] delay callback.
+  lua_State* l = lua_context.get_internal_state();
+
+  bool use_default_context = false;
+  if (lua_type(l, 1) == LUA_TNUMBER) {
+    use_default_context = true;
+  } else {
+    // The first parameter is the context.
+    if (!is_timer_context(l, 1)) {
+      // Show an error message without raising a Lua error
+      // because this problem was not detected correctly before 1.6
+      // and a lot of existing games have it.
+      // We can survive this by just using a default context as fallback.
+      std::ostringstream oss;
+      oss << "(Thread " << l <<  ")";
+      std::string message = "bad argument #1 to sol.timer.start (game, item, map, entity, menu or sol.main expected, got " +
+          LuaTools::get_type_name(l, 1) + "), will use a default context instead";
+      lua_pushcfunction(l, LuaContext::l_backtrace);
+      lua_pushlstring(l, message.c_str(), message.size());
+      LuaTools::call_function(l, 1, 1, "traceback");
+      std::string backtrace = LuaTools::check_string(l, -1);
+      lua_pop(l, 1);
+      Debug::error(backtrace + "\n" + oss.str());
+
+      lua_remove(l, 1);
+      use_default_context = true;
+    }
+  }
+
+  if (use_default_context) {
+    // Set a default context:
+    // - during a game: the current map,
+    // - outside a game: sol.main.
+
+    Game* game = lua_context.get_main_loop().get_game();
+    if (game != nullptr && game->has_current_map()) {
+      //TODO verify is default map is okay....
+      LuaContext::push_userdata(l, game->get_default_map());
+    } else {
+      LuaContext::push_main(l);
+    }
+    lua_insert(l, 1);
+  }
+  // Now the first parameter is the context.
+
+  if (LuaContext::is_entity(l, 1)) {
+    const Entity& entity = *LuaContext::check_entity(l, 1);
+    if (entity.is_being_removed()) {
+      LuaTools::arg_error(l, 1, "Cannot start a timer on an entity that was removed");
+    }
+  }
+
+  uint32_t delay = uint32_t(LuaTools::check_int(l, 2));
+  const ScopedLuaRef& callback_ref = LuaTools::check_function(l, 3);
+
+  // Create the timer.
+  TimerPtr timer = std::make_shared<Timer>(delay);
+  lua_context.add_timer(timer, 1, callback_ref);
+
+  if (delay == 0) {
+    // The delay is zero: call the function right now.
+    lua_context.do_timer_callback(timer);
+  }
+
+  return *timer;
+}
+
+/**
+ * \brief Implementation of timer:stop().
+ * \param context The LuaContext the call was made from.
+ * \param timer The Timer to stop.
+ */
+static void stop(LuaContext& context, Timer& timer) {
+  TimerPtr timer_ptr = timer.shared_from_this_cast<Timer>();
+  context.remove_timer(timer_ptr);
+}
+
+/**
+ * \brief Implementation of sol.timer.stop_all().
+ * \param context The LuaContext the call was made from.
+ */
+static void stop_all(LuaContext& context) {
+  lua_State* l = context.get_internal_state();
+  if (lua_type(l, 1) != LUA_TTABLE
+      && lua_type(l, 1) != LUA_TUSERDATA) {
+    LuaTools::type_error(l, 1, "table or userdata");
+  }
+
+  context.remove_timers(1);
+}
+
+/**
+ * \brief Implementation of timer:set_with_sound().
+ * \param timer The Timer to update.
+ * \param with_sound_arg Either the new value or nullopt which becomes true.
+ */
+static void set_with_sound(Timer& timer, std::optional<bool> with_sound_arg) {
+  bool with_sound = with_sound_arg.value_or(true);
+  timer.set_with_sound(with_sound);
+}
+
+/**
+ * \brief Implementation of timer:set_suspended().
+ * \param timer The Timer to update.
+ * \param suspended_arg Either the new value or nullopt which becomes true.
+ */
+static void set_suspended(Timer& timer, std::optional<bool> suspended_arg) {
+  bool suspended = suspended_arg.value_or(true);
+  timer.set_suspended(suspended);
+}
+
+/**
+ * \brief Implementation of timer:set_suspended_with_map().
+ * \param context The LuaContext the call was made from.
+ * \param timer The Timer to update.
+ * \param suspended_with_map_arg Either the new value or nullopt which becomes true.
+ */
+static void set_suspended_with_map(LuaContext& context,
+    Timer& timer, std::optional<bool> suspended_with_map_arg) {
+  bool suspended_with_map = suspended_with_map_arg.value_or(true);
+
+  timer.set_suspended_with_map(suspended_with_map);
+
+  Game* game = context.get_main_loop().get_game();
+  if (game != nullptr &&
+      game->has_current_map() &&
+      suspended_with_map) {
+    // If the game is running, suspend/resume the timer like the map.
+    timer.set_suspended(game->is_suspended()); //TODO check if correct
+  }
+}
+
+/**
+ * \brief Implementation of timer:get_remaining_time().
+ * \param context The LuaContext the call was made from.
+ * \param timer The Timer to query.
+ * \return The remaining time.
+ */
+static int get_remaining_time(LuaContext& context, Timer& timer) {
+  TimerPtr timer_ptr = timer.shared_from_this_cast<Timer>();
+  if (context.is_timer_active(timer_ptr)) {
+    return 0;
+  } else {
+    const uint32_t end = timer.get_expiration_date();
+    const uint32_t now = System::now_ms();
+    if (end < now) {
+      return 0;
+    }
+    return end - now;
+  }
+}
+
+/**
+ * \brief Implementation of timer:set_remaining_time().
+ * \param context The LuaContext the call was made from.
+ * \param timer The Timer to update.
+ * \param val The new remaining_time value.
+ */
+static void set_remaining_time(LuaContext& context, Timer& timer, int val) {
+  const uint32_t remaining_time = val;
+  TimerPtr timer_ptr = timer.shared_from_this_cast<Timer>();
+  if (context.is_timer_active(timer_ptr)) {
+    // The timer is still active.
+    const uint32_t now = System::now_ms();
+    const uint32_t expiration_date = now + remaining_time;
+    timer.set_expiration_date(expiration_date);
+    if (now >= expiration_date) {
+      // Execute the callback now.
+      context.do_timer_callback(timer_ptr);
+    }
+  }
+}
+
+/**
  * \brief Initializes the timer features provided to Lua.
  */
 void LuaContext::register_timer_module() {
 
   // Functions of sol.timer.
   const std::vector<luaL_Reg> functions = {
-      { "start", timer_api_start },
-      { "stop_all", timer_api_stop_all }
+      { "start", LUA_TO_C_BIND(start) },
+      { "stop_all", LUA_TO_C_BIND(stop_all) },
   };
 
   // Methods of the timer type.
   const std::vector<luaL_Reg> methods = {
-      { "stop", timer_api_stop },
-      { "is_with_sound", timer_api_is_with_sound },
-      { "set_with_sound", timer_api_set_with_sound },
-      { "is_suspended", timer_api_is_suspended },
-      { "set_suspended", timer_api_set_suspended },
-      { "is_suspended_with_map", timer_api_is_suspended_with_map },
-      { "set_suspended_with_map", timer_api_set_suspended_with_map },
-      { "get_remaining_time", timer_api_get_remaining_time },
-      { "set_remaining_time", timer_api_set_remaining_time }
+      { "stop", LUA_TO_C_BIND(stop) },
+      { "is_with_sound", LUA_TO_C_BIND(&Timer::is_with_sound) },
+      { "set_with_sound", LUA_TO_C_BIND(set_with_sound) },
+      { "is_suspended", LUA_TO_C_BIND(&Timer::is_suspended) },
+      { "set_suspended", LUA_TO_C_BIND(set_suspended) },
+      { "is_suspended_with_map", LUA_TO_C_BIND(&Timer::is_suspended_with_map) },
+      { "set_suspended_with_map", LUA_TO_C_BIND(set_suspended_with_map) },
+      { "get_remaining_time", LUA_TO_C_BIND(get_remaining_time) },
+      { "set_remaining_time", LUA_TO_C_BIND(set_remaining_time) }
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -171,6 +370,17 @@ void LuaContext::add_timer(
       timer->set_suspended(initially_suspended);
     }
   }
+}
+
+/**
+ * \brief Check if the timer is still active.
+ * \param timer The Timer to check.
+ * \return If the timer is active, true, otherwise
+ *   the timer already finished or was canceled, false.
+ */
+bool LuaContext::is_timer_active(const TimerPtr& timer) {
+  const auto it = timers.find(timer);
+  return it != timers.end() && it->second.callback_ref.is_empty();
 }
 
 /**
@@ -358,290 +568,6 @@ void LuaContext::do_timer_callback(const TimerPtr& timer) {
       }
     });
   }
-}
-
-/**
- * \brief Implementation of sol.timer.start().
- * \param l the Lua context that is calling this function
- * \return number of values to return to Lua
- */
-int LuaContext::timer_api_start(lua_State *l) {
-
-  return state_boundary_handle(l, [&] {
-    // Parameters: [context] delay callback.
-    LuaContext& lua_context = get();
-
-    bool use_default_context = false;
-    if (lua_type(l, 1) == LUA_TNUMBER) {
-      use_default_context = true;
-    }
-    else {
-      // The first parameter is the context.
-      if (!is_main(l, 1) &&
-          !is_menu(l, 1) &&
-          !is_game(l, 1) &&
-          !is_item(l, 1) &&
-          !is_map(l, 1) &&
-          !is_entity(l, 1) &&
-          !is_state(l, 1)
-      ) {
-        // Show an error message without raising a Lua error
-        // because this problem was not detected correctly before 1.6
-        // and a lot of existing games have it.
-        // We can survive this by just using a default context as fallback.
-        std::ostringstream oss;
-        oss << "(Thread " << l <<  ")";
-        std::string message = "bad argument #1 to sol.timer.start (game, item, map, entity, menu or sol.main expected, got " +
-            LuaTools::get_type_name(l, 1) + "), will use a default context instead";
-        lua_pushcfunction(l, l_backtrace);
-        push_string(l, message);
-        LuaTools::call_function(l, 1, 1, "traceback");
-        std::string backtrace = LuaTools::check_string(l, -1);
-        lua_pop(l, 1);
-        Debug::error(backtrace + "\n" + oss.str());
-
-        lua_remove(l, 1);
-        use_default_context = true;
-      }
-    }
-
-    if (use_default_context) {
-      // Set a default context:
-      // - during a game: the current map,
-      // - outside a game: sol.main.
-
-      Game* game = lua_context.get_main_loop().get_game();
-      if (game != nullptr && game->has_current_map()) {
-        push_map(l, game->get_default_map()); //TODO verify is default map is okay....
-      }
-      else {
-        push_main(l);
-      }
-      lua_insert(l, 1);
-    }
-    // Now the first parameter is the context.
-
-    if (is_entity(l, 1)) {
-      const Entity& entity = *check_entity(l, 1);
-      if (entity.is_being_removed()) {
-        LuaTools::arg_error(l, 1, "Cannot start a timer on an entity that was removed");
-      }
-    }
-
-    uint32_t delay = uint32_t(LuaTools::check_int(l, 2));
-    const ScopedLuaRef& callback_ref = LuaTools::check_function(l, 3);
-
-    // Create the timer.
-    TimerPtr timer = std::make_shared<Timer>(delay);
-    lua_context.add_timer(timer, 1, callback_ref);
-
-    if (delay == 0) {
-      // The delay is zero: call the function right now.
-      lua_context.do_timer_callback(timer);
-    }
-
-    push_timer(l, timer);
-
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of timer:stop().
- * \param l the Lua context that is calling this function
- * \return number of values to return to Lua
- */
-int LuaContext::timer_api_stop(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    LuaContext& lua_context = get();
-    const TimerPtr& timer = check_timer(l, 1);
-    lua_context.remove_timer(timer);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of sol.timer.stop_all().
- * \param l the Lua context that is calling this function
- * \return number of values to return to Lua
- */
-int LuaContext::timer_api_stop_all(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    if (lua_type(l, 1) != LUA_TTABLE
-        && lua_type(l, 1) != LUA_TUSERDATA) {
-      LuaTools::type_error(l, 1, "table or userdata");
-    }
-
-    get().remove_timers(1);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of timer:is_with_sound().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_is_with_sound(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const TimerPtr& timer = check_timer(l, 1);
-
-    lua_pushboolean(l, timer->is_with_sound());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of timer:set_with_sound().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_set_with_sound(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const TimerPtr& timer = check_timer(l, 1);
-    bool with_sound = LuaTools::opt_boolean(l, 2, true);
-
-    timer->set_with_sound(with_sound);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of timer:is_suspended().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_is_suspended(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const TimerPtr& timer = check_timer(l, 1);
-
-    lua_pushboolean(l, timer->is_suspended());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of timer:set_suspended().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_set_suspended(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const TimerPtr& timer = check_timer(l, 1);
-    bool suspended = LuaTools::opt_boolean(l, 2, true);
-
-    timer->set_suspended(suspended);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of timer:is_suspended_with_map().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_is_suspended_with_map(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const TimerPtr& timer = check_timer(l, 1);
-
-    lua_pushboolean(l, timer->is_suspended_with_map());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of timer:set_suspended_with_map().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_set_suspended_with_map(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    LuaContext& lua_context = get();
-
-    const TimerPtr& timer = check_timer(l, 1);
-    bool suspended_with_map = LuaTools::opt_boolean(l, 2, true);
-
-    timer->set_suspended_with_map(suspended_with_map);
-
-    Game* game = lua_context.get_main_loop().get_game();
-    if (game != nullptr &&
-        game->has_current_map() &&
-        suspended_with_map) {
-      // If the game is running, suspend/resume the timer like the map.
-      timer->set_suspended(game->is_suspended()); //TODO check if correct
-    }
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of timer:get_remaining_time().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_get_remaining_time(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const TimerPtr& timer = check_timer(l, 1);
-
-    LuaContext& lua_context = get();
-    const auto it = lua_context.timers.find(timer);
-    if (it == lua_context.timers.end() ||
-        it->second.callback_ref.is_empty()) {
-      // This timer is already finished or was canceled.
-      lua_pushinteger(l, 0);
-    }
-    else {
-      int remaining_time = (int) timer->get_expiration_date() - (int) System::now_ms();
-      if (remaining_time < 0) {
-        remaining_time = 0;
-      }
-      lua_pushinteger(l, remaining_time);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of timer:set_remaining_time().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::timer_api_set_remaining_time(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const TimerPtr& timer = check_timer(l, 1);
-    uint32_t remaining_time = LuaTools::check_int(l, 2);
-
-    LuaContext& lua_context = get();
-    const auto it = lua_context.timers.find(timer);
-    if (it != lua_context.timers.end() &&
-        !it->second.callback_ref.is_empty()) {
-      // The timer is still active.
-      const uint32_t now = System::now_ms();
-      const uint32_t expiration_date = now + remaining_time;
-      timer->set_expiration_date(expiration_date);
-      if (now >= expiration_date) {
-        // Execute the callback now.
-        lua_context.do_timer_callback(timer);
-      }
-    }
-
-    return 0;
-  });
 }
 
 }
