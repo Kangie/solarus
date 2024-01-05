@@ -261,24 +261,21 @@ void Controls::notify_input(const InputEvent& event) {
  * \param keyboard_key_pressed The key pressed.
  */
 void Controls::keyboard_key_pressed(InputEvent::KeyboardKey keyboard_key_pressed) {
-
-  // Retrieve the game command (if any) corresponding to this keyboard key.
-  const Command command = get_command_from_keyboard(keyboard_key_pressed);
-
   if (!customizing) {
-    // If the key is mapped, notify the game.
-    if (command != Command(CommandId::NONE)) {
+    for(const auto& command :  keyboard_mapping.vec_for(keyboard_key_pressed)) {
       command_pressed(command);
     }
 
-    ControlAxisBinding cab = get_axis_from_keyboard(keyboard_key_pressed);
-
-    if(cab.axis != Axis(AxisId::NONE)) {
-      command_axis_moved(cab.axis, get_axis_state(cab.axis)+(cab.direction == AxisDirection::PLUS ? 1.0 : -1.0));
+    //ControlAxisBinding cab = get_axis_from_keyboard(keyboard_key_pressed);
+    for(const auto& cab : keyboard_axis_mapping.vec_for(keyboard_key_pressed)) {
+        if(cab.axis != Axis(AxisId::NONE)) {
+          command_axis_moved(cab.axis, get_axis_state(cab.axis)+(cab.direction == AxisDirection::PLUS ? 1.0 : -1.0));
+        }
     }
   }
   else {
     customizing = false;
+    const Command command = get_command_from_keyboard(keyboard_key_pressed);
 
     if (command != command_to_customize) {
       // Consider this keyboard key as the new mapping for the game command being customized.
@@ -294,19 +291,14 @@ void Controls::keyboard_key_pressed(InputEvent::KeyboardKey keyboard_key_pressed
  * \param keyboard_control_released The key released.
  */
 void Controls::keyboard_key_released(InputEvent::KeyboardKey keyboard_key_released) {
-
-  // Retrieve the game command (if any) corresponding to this keyboard key.
-  Command command = get_command_from_keyboard(keyboard_key_released);
-
-  // If the keyboard key is mapped, notify the game.
-  if (command != Command(CommandId::NONE)) {
+  for(const auto& command :  keyboard_mapping.vec_for(keyboard_key_released)) {
     command_released(command);
   }
 
-  ControlAxisBinding cab = get_axis_from_keyboard(keyboard_key_released);
-
-  if(cab.axis != Axis(AxisId::NONE)) {
-    command_axis_moved(cab.axis, get_axis_state(cab.axis)+(cab.direction == AxisDirection::PLUS ? -1.0 : 1.0));
+  for(const auto& cab : keyboard_axis_mapping.vec_for(keyboard_key_released)) {
+    if(cab.axis != Axis(AxisId::NONE)) {
+      command_axis_moved(cab.axis, get_axis_state(cab.axis)+(cab.direction == AxisDirection::PLUS ? -1.0 : 1.0));
+    }
   }
 }
 
@@ -316,18 +308,19 @@ void Controls::keyboard_key_released(InputEvent::KeyboardKey keyboard_key_releas
  */
 void Controls::joypad_button_pressed(JoyPadButton button) {
 
-  // Retrieve the game command (if any) corresponding to this joypad button.
   auto binding = JoypadBinding(button);
-  Command command = get_command_from_joypad(binding);
 
   if (!customizing) {
     // If the joypad button is mapped, notify the game.
-    if (command != Command(CommandId::NONE)) {
+    for(const auto& command : joypad_mapping.vec_for(binding)) {
       command_pressed(command);
     }
   }
   else {
     customizing = false;
+
+    // Retrieve the game command (if any) corresponding to this joypad button.
+    Command command = get_command_from_joypad(binding);
 
     if (command != command_to_customize) {
       // Consider this button as the new mapping for the game command being customized.
@@ -344,10 +337,7 @@ void Controls::joypad_button_pressed(JoyPadButton button) {
  */
 void Controls::joypad_button_released(JoyPadButton button) {
   auto binding = JoypadBinding(button);
-  Command command = get_command_from_joypad(binding);
-
-  // If the key is mapped, notify the game.
-  if (command != Command(CommandId::NONE)) {
+  for(const auto& command : joypad_mapping.vec_for(binding)) {
     command_released(command);
   }
 }
@@ -359,28 +349,34 @@ void Controls::joypad_button_released(JoyPadButton button) {
  */
 void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
   if (std::abs(state) < 1e-5) {
-    // Axis in centered position : Test both positive and negative binding for release
-    Command command = get_command_from_joypad(JoypadBinding(axis, AxisDirection::PLUS));
-    if (is_command_pressed(command)) {
-      command_released(command);
+    // Axis in centered position : Test both positive and negative bindings for release
+    for(const auto& command : joypad_mapping.vec_for(JoypadBinding(axis, AxisDirection::PLUS))) {
+      if (is_command_pressed(command)) {
+        command_released(command);
+      }
     }
-    command = get_command_from_joypad(JoypadBinding(axis, AxisDirection::MINUS));
-    if (is_command_pressed(command)) {
-      command_released(command);
+    for(const auto& command : joypad_mapping.vec_for(JoypadBinding(axis, AxisDirection::MINUS))) {
+      if (is_command_pressed(command)) {
+        command_released(command);
+      }
     }
   }
   else {
     // Axis not centered.
     auto binding = JoypadBinding(axis, state > 0 ? AxisDirection::PLUS : AxisDirection::MINUS);
-    Command command = get_command_from_joypad(binding);
+
     Command inverse_command_pressed = get_command_from_joypad(JoypadBinding(axis, -state > 0 ? AxisDirection::PLUS : AxisDirection::MINUS));
 
     if (!customizing) {
-      // If the command is mapped, notify the game.
-      if (command != Command(CommandId::NONE)) {
-        if (is_command_pressed(inverse_command_pressed)) {
-          command_released(inverse_command_pressed);
+      // First release all commands going the other direction
+      for(const auto& inverse_command : joypad_mapping.vec_for((JoypadBinding(axis, -state > 0 ? AxisDirection::PLUS : AxisDirection::MINUS)))) {
+        if (is_command_pressed(inverse_command)) {
+          command_released(inverse_command);
         }
+      }
+      // Other command released.
+      // Then fire commands going in the correct one
+      for(const auto& command : joypad_mapping.vec_for(binding)) {
         if(!is_command_pressed(command)){
           command_pressed(command);
         }
@@ -388,6 +384,7 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
     }
     else {
       customizing = false;
+      Command command = get_command_from_joypad(binding);
 
       if (command != command_to_customize) {
         // Consider this axis movement as the new mapping for the game command being customized.
@@ -399,9 +396,7 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
   }
 
   //Handle command axes
-  const ControlAxisBinding& ab = get_axis_from_joypad(axis);
-  if(ab.axis != Axis(AxisId::NONE)) {
-    //Axis event !
+  for(const ControlAxisBinding& ab : joypad_axis_mapping.vec_for(axis)) {
     command_axis_moved(ab.axis, ab.direction == AxisDirection::PLUS ? state : -state);
   }
 }
@@ -453,15 +448,7 @@ void Controls::command_axis_moved(const Axis& axis, double state) {
  * if the command is not mapped to a keyboard key.
  */
 InputEvent::KeyboardKey Controls::get_keyboard_binding(const Command &command) const {
-
-  for (const auto& kvp: keyboard_mapping) {
-
-    if (kvp.second == command) {
-      return kvp.first;
-    }
-  }
-
-  return InputEvent::KeyboardKey::NONE;
+  return keyboard_mapping.search_fronts_for(command).value_or(InputEvent::KeyboardKey::NONE);
 }
 
 /**
@@ -505,14 +492,7 @@ void Controls::set_keyboard_binding(const Command &command, InputEvent::Keyboard
  * this game command is not mapped to a joypad action.
  */
 std::optional<Controls::JoypadBinding> Controls::get_joypad_binding(const Command &command) const {
-
-  for (const auto& kvp: joypad_mapping) {
-
-    if (kvp.second == command) {
-      return kvp.first;
-    }
-  }
-  return {};
+  return joypad_mapping.search_fronts_for(command);
 }
 
 /**
@@ -551,13 +531,13 @@ void Controls::set_joypad_binding(const Command &command, const JoypadBinding& j
  * @param command_axis an axis
  * @return two key for minus and plus moves
  */
-std::pair<InputEvent::KeyboardKey, InputEvent::KeyboardKey> Controls::get_keyboard_axis_binding(const Axis& command_axis) const {
+std::tuple<InputEvent::KeyboardKey, InputEvent::KeyboardKey> Controls::get_keyboard_axis_binding(const Axis& command_axis) const {
   InputEvent::KeyboardKey plus = InputEvent::KeyboardKey::NONE, minus = InputEvent::KeyboardKey::NONE;
-  for(const auto& [key, binding] : keyboard_axis_mapping) {
-    if(binding.axis == command_axis) {
-      (binding.direction == AxisDirection::PLUS ? plus : minus) = key;
-    }
-  }
+  keyboard_axis_mapping.foreach_front([&](const auto& key, const auto& binding){
+      if(binding.axis == command_axis) {
+          (binding.direction == AxisDirection::PLUS ? plus : minus) = key;
+      }
+  });
   return {minus, plus};
 }
 
@@ -598,11 +578,11 @@ void Controls::set_keyboard_axis_binding(const Axis& command_axis, InputEvent::K
  */
 JoyPadAxis Controls::get_joypad_axis_binding(const Axis& command_axis) const {
   JoyPadAxis jaxis = JoyPadAxis::INVALID;
-  for(const auto& [axis, binding] : joypad_axis_mapping) {
-    if(binding.axis == command_axis){
-      jaxis = axis;
-    }
-  }
+  joypad_axis_mapping.foreach_front([&](const auto& axis, const auto& binding){
+      if(binding.axis == command_axis){
+          jaxis = axis;
+      }
+  });
   return jaxis;
 }
 
@@ -737,13 +717,7 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
  */
   Command Controls::get_command_from_keyboard(
         InputEvent::KeyboardKey key) const {
-
-    const auto& it = keyboard_mapping.find(key);
-    if (it != keyboard_mapping.end()) {
-      return it->second;
-    }
-
-    return CommandId::NONE;
+    return keyboard_mapping.find_front(key).value_or(CommandId::NONE);
   }
 
   /**
@@ -752,12 +726,7 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
  * @return axis binding or invalid axis binding if no mapping found
  */
   Controls::ControlAxisBinding Controls::get_axis_from_keyboard(InputEvent::KeyboardKey key) const {
-    const auto& it = keyboard_axis_mapping.find(key);
-    if(it != keyboard_axis_mapping.end()){
-      return it->second;
-    }
-
-    return {};
+    return keyboard_axis_mapping.find_front(key).value_or(ControlAxisBinding{});
   }
 
   /**
@@ -835,22 +804,11 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
  */
   Command Controls::get_command_from_joypad(
         const JoypadBinding& joypad_binding) const {
-
-    const auto& it = joypad_mapping.find(joypad_binding);
-    if (it != joypad_mapping.end()) {
-      return it->second;
-    }
-
-    return CommandId::NONE;
+    return joypad_mapping.find_front(joypad_binding).value_or(CommandId::NONE);
   }
 
   Controls::ControlAxisBinding Controls::get_axis_from_joypad(JoyPadAxis joypad_axis) const {
-    const auto& it = joypad_axis_mapping.find(joypad_axis);
-    if(it != joypad_axis_mapping.end()) {
-      return it->second;
-    }
-
-    return {};
+    return joypad_axis_mapping.find_front(joypad_axis).value_or(ControlAxisBinding{});
   }
 
   // customization
@@ -1009,6 +967,39 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
   const std::string& Controls::get_lua_type_name() const {
     return LuaContext::controls_module_name;
   }
+
+  const std::vector<Command>& Controls::get_keyboard_bindings(InputEvent::KeyboardKey key) const {
+    return keyboard_mapping.vec_for(key);
+  }
+
+  void Controls::set_keyboard_bindings(InputEvent::KeyboardKey key, const std::vector<Command>& commands) {
+    keyboard_mapping.set_vec_for(key, commands);
+  }
+
+  const std::vector<Command>& Controls::get_joypad_bindings(const JoypadBinding& binding) const {
+    return joypad_mapping.vec_for(binding);
+  }
+
+  void Controls::set_joypad_bindings(const JoypadBinding& binding, const std::vector<Command>& commands) {
+    joypad_mapping.set_vec_for(binding, commands);
+  }
+
+  const std::vector<Controls::ControlAxisBinding>& Controls::get_keyboard_axis_bindings(InputEvent::KeyboardKey key) const {
+    return keyboard_axis_mapping.vec_for(key);
+  }
+
+  void Controls::set_keyboard_axis_bindings(InputEvent::KeyboardKey key, const std::vector<ControlAxisBinding>& commands) {
+    keyboard_axis_mapping.set_vec_for(key, commands);
+  }
+
+  const std::vector<Controls::ControlAxisBinding>& Controls::get_joypad_axis_bindings(JoyPadAxis axis) const {
+    return joypad_axis_mapping.vec_for(axis);
+  }
+
+  void Controls::set_joypad_axis_bindings(JoyPadAxis axis, const std::vector<ControlAxisBinding>& bindings) {
+    joypad_axis_mapping.set_vec_for(axis, bindings);
+  }
+
 
   /**
  * @brief Parses a joypad binding from a string

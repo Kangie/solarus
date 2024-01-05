@@ -22,7 +22,7 @@
 #include "solarus/core/InputEvent.h"
 #include "solarus/lua/ScopedLuaRef.h"
 #include "solarus/core/CommandsEffects.h"
-#include <unordered_map>
+#include "solarus/containers/VecMap.h"
 #include <set>
 #include <string>
 #include <variant>
@@ -46,14 +46,16 @@ class Game;
  * The corresponding low-level input event can be a keyboard event or a
  * joypad event.
  */
-class Controls : public ExportableToLua {
+class Controls final: public ExportableToLua {
 
   public:
+    // static information
+    static constexpr const char module_name[] = "sol.controls";
 
-  enum class AxisDirection{
-      PLUS,
-      MINUS
-  };
+    enum class AxisDirection{
+        PLUS,
+        MINUS
+    };
 
     /**
      * @brief Represent an axis binding used as a key in joypad bindings
@@ -120,10 +122,20 @@ class Controls : public ExportableToLua {
     std::optional<JoypadBinding> get_joypad_binding(const Command& command) const;
     void set_joypad_binding(const Command& command, const JoypadBinding& joypad_binding);
 
-    std::pair<InputEvent::KeyboardKey, InputEvent::KeyboardKey> get_keyboard_axis_binding(const Axis& command_axis) const;
+    const std::vector<Command>& get_keyboard_bindings(InputEvent::KeyboardKey key) const;
+    void set_keyboard_bindings(InputEvent::KeyboardKey key, const std::vector<Command>& commands);
+    const std::vector<Command>& get_joypad_bindings(const JoypadBinding& binding) const;
+    void set_joypad_bindings(const JoypadBinding& binding, const std::vector<Command>& commands);
+
+    std::tuple<InputEvent::KeyboardKey, InputEvent::KeyboardKey> get_keyboard_axis_binding(const Axis& command_axis) const;
     void set_keyboard_axis_binding(const Axis& command_axis, InputEvent::KeyboardKey minus, InputEvent::KeyboardKey plus);
     JoyPadAxis get_joypad_axis_binding(const Axis& command_axis) const;
     void set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis);
+
+    const std::vector<ControlAxisBinding>& get_keyboard_axis_bindings(InputEvent::KeyboardKey key) const;
+    void set_keyboard_axis_bindings(InputEvent::KeyboardKey key, const std::vector<ControlAxisBinding>& commands);
+    const std::vector<ControlAxisBinding>& get_joypad_axis_bindings(JoyPadAxis axis) const;
+    void set_joypad_axis_bindings(JoyPadAxis axis, const std::vector<ControlAxisBinding>& bindings);
 
     void set_joypad(const JoypadPtr& joypad);
     const JoypadPtr& get_joypad();
@@ -191,16 +203,16 @@ class Controls : public ExportableToLua {
     void do_customization_callback();
 
     MainLoop& main_loop;                          /**< The game we are controlling. */
-    std::map<InputEvent::KeyboardKey, Command>
+    VecMap<InputEvent::KeyboardKey, Command>
         keyboard_mapping;                /**< Associates each game command to the
                                           * keyboard key that triggers it. */
-    std::map<JoypadBinding, Command>
+    VecMap<JoypadBinding, Command>
         joypad_mapping;                  /**< Associates each game command to the
                                           * joypad action that triggers it. */
-    std::map<JoyPadAxis, ControlAxisBinding>
+    VecMap<JoyPadAxis, ControlAxisBinding>
         joypad_axis_mapping;             /**< Associates command axises to the joypad axis
                                           * that move it. */
-    std::map<InputEvent::KeyboardKey, ControlAxisBinding>
+    VecMap<InputEvent::KeyboardKey, ControlAxisBinding>
         keyboard_axis_mapping;           /**< Associates command axises to the keyboad keys
                                           * that move it. */
     std::set<Command>

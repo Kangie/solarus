@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "solarus/lua/LuaBind.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 
@@ -23,36 +24,185 @@ namespace Solarus {
 
 const std::string LuaContext::controls_module_name = "sol.controls";
 
+// Define marchaling for Commands
+namespace LuaBind {
+template<>
+struct Marshalling<Command>{
+    using actual_arg_type = std::optional<std::string>;
+    using actual_return_type = std::optional<std::string>;
+
+    static inline Command marshall_from_lua(const actual_arg_type& str) {
+      return str.has_value() ? Controls::get_command_by_name(*str) : Command(CommandId::NONE);
+    }
+
+    static inline actual_return_type marshall_to_lua(const Command& cmd) {
+      auto str = Controls::get_command_name(cmd);
+      return str.empty() ? std::nullopt : actual_return_type(str);
+    }
+};
+
+template<>
+struct Marshalling<Axis>{
+    using actual_arg_type = std::optional<std::string>;
+    using actual_return_type = std::optional<std::string>;
+
+    static inline Axis marshall_from_lua(const actual_arg_type& str) {
+      return str.has_value() ? Controls::get_axis_by_name(*str) : Axis(AxisId::NONE);
+    }
+
+    static inline actual_return_type marshall_to_lua(const Axis& axis) {
+      auto str = Controls::get_axis_name(axis);
+      return str.empty() ? std::nullopt : actual_return_type(str);
+    }
+};
+
+template<>
+struct Marshalling<Solarus::Controls::JoypadBinding>{
+    using actual_arg_type = std::optional<std::string>;
+    using actual_return_type = std::optional<std::string>;
+
+    static inline Controls::JoypadBinding marshall_from_lua(const actual_arg_type& str) {
+      return str.has_value() ? Controls::JoypadBinding(*str) : Controls::JoypadBinding(JoyPadButton::INVALID);
+    }
+
+    static inline actual_return_type marshall_to_lua(const Controls::JoypadBinding& binding) {
+      return binding.is_invalid() ? std::nullopt : actual_return_type(binding.to_string());
+    }
+};
+
+template<>
+struct Marshalling<Controls::ControlAxisBinding>{
+    using actual_arg_type = std::optional<std::string>;
+    using actual_return_type = std::optional<std::string>;
+
+    static inline Controls::ControlAxisBinding marshall_from_lua(const actual_arg_type& str) {
+      return str.has_value() ? Controls::ControlAxisBinding{Controls::get_axis_by_name(*str)} : Controls::ControlAxisBinding{};
+    }
+
+    static inline actual_return_type marshall_to_lua(const Controls::ControlAxisBinding& binding) {
+      auto str = Controls::get_axis_name(binding.axis);
+      return str.empty() ? std::nullopt : actual_return_type(str);
+    }
+};
+
+}
+
+/**
+ * \brief Implementation of sol.controls.create_from_keyboard().
+ * \return A newly created control object with default keyboard mapping
+ */
+static ControlsPtr create_from_keyboard() {
+  return ControlsDispatcher::get().create_commands_from_keyboard();
+}
+
+/**
+ * \brief Implementation of sol.controls.create_from_joypad().
+ * \param joypad a joypad to be tied to the control object
+ * \return A newly created control object with default joypad mapping
+ */
+static ControlsPtr create_from_joypad(const JoypadPtr& joypad) {
+    return ControlsDispatcher::get().create_commands_from_joypad(joypad);
+}
+
+/**
+ * \brief Implementation of so.controls:get_direction
+ * \param cmds the controls instance
+ * \return a direction or nil if nothing is pressed
+ */
+static std::optional<int> get_direction(Controls& cmds) {
+  int wanted_direction8 = cmds.get_wanted_direction8();
+  if (wanted_direction8 == -1) {
+    return {};
+  }
+  else {
+    return wanted_direction8;
+  }
+}
+
+/**
+ * \brief Implementation of sol.controls:capture_bindings
+ * \param cmds the control object
+ * \param cmd the command to capture
+ * \param callback an optional callback for when capture suceeds
+ */
+static void capture_bindings(Controls& cmds, Command cmd, std::optional<LuaBind::Callback> callback) {
+  cmds.customize(cmd, callback.value_or(LuaBind::Callback()));
+}
+
+/**
+ * \brief Implementation of sol.controls:simulate_pressed.
+ * \param cmds the control object
+ * \param command the command to simulate
+ */
+static void simulate_pressed(ControlsPtr cmds, Command command) {
+  LuaContext::run_on_main([cmds, command](lua_State*){
+    cmds->command_pressed(command);
+  });
+}
+
+/**
+ * \brief Implementation of sol.controls:simulate_released.
+ * \param cmds the control object
+ * \param command the command to simulate
+ */
+static void simulate_released(ControlsPtr cmds, Command command) {
+  LuaContext::run_on_main([cmds, command](lua_State*){
+    cmds->command_released(command);
+  });
+}
+
+/**
+ * \brief Implementation of sol.controls:simulate_axis_moved.
+ * \param cmds the control object
+ * \param axis the axis to move
+ * \param state new state to put the axis in
+ */
+static void simulate_axis_moved(ControlsPtr cmds, Axis axis, double state) {
+  LuaContext::run_on_main([cmds, axis, state](lua_State*){
+    cmds->command_axis_moved(axis, state);
+  });
+}
+
 void LuaContext::register_controls_module() {
 
   // Functions of sol.commands
   const std::vector<luaL_Reg> functions = {
-    { "create_from_keyboard", controls_api_create_from_keyboard},
-    { "create_from_joypad", controls_api_create_from_joypad},
-    { "set_analog_commands_enabled", controls_api_set_analog_commands_enabled},
-    { "are_analog_commands_enabled", controls_api_are_analog_commands_enabled}
+    { "create_from_keyboard", LUA_TO_C_BIND(create_from_keyboard)},
+    { "create_from_joypad", LUA_TO_C_BIND(create_from_joypad)},
+    { "set_analog_commands_enabled", LUA_TO_C_BIND(Controls::set_analog_commands_enabled)},
+    { "are_analog_commands_enabled", LUA_TO_C_BIND(Controls::are_analog_commands_enabled)}
   };
 
   // Methods of the commands type.
   const std::vector<luaL_Reg> methods = {
-    { "is_pressed", controls_api_is_pressed},
-    { "get_axis_state", controls_api_get_axis_state},
-    { "get_direction", controls_api_get_direction},
-    { "set_keyboard_binding", controls_api_set_keyboard_binding},
-    { "get_keyboard_binding", controls_api_get_keyboard_binding},
-    { "set_joypad_binding", controls_api_set_joypad_binding},
-    { "get_joypad_binding", controls_api_get_joypad_binding},
-    { "get_keyboard_axis_binding", controls_api_get_keyboard_axis_binding},
-    { "set_keyboard_axis_binding", controls_api_set_keyboard_axis_binding},
-    { "set_joypad_axis_binding", controls_api_set_joypad_axis_binding},
-    { "get_joypad_axis_binding", controls_api_get_joypad_axis_binding},
-    { "capture_bindings", controls_api_capture_bindings},
-    { "simulate_pressed", controls_api_simulate_pressed},
-    { "simulate_released", controls_api_simulate_released},
-    { "simulate_axis_moved", controls_api_simulate_axis_moved},
-    { "set_joypad", controls_api_set_joypad},
-    { "get_joypad", controls_api_get_joypad},
-    { "remove", controls_api_remove}
+    { "is_pressed", LUA_TO_C_BIND(&Controls::is_command_pressed)},
+    { "get_axis_state", LUA_TO_C_BIND(&Controls::get_axis_state)},
+    { "get_direction", LUA_TO_C_BIND(get_direction)},
+    { "set_keyboard_binding", LUA_TO_C_BIND(&Controls::set_keyboard_binding)},
+    { "get_keyboard_binding", LUA_TO_C_BIND(&Controls::get_keyboard_binding)},
+    { "set_joypad_binding", LUA_TO_C_BIND(&Controls::set_joypad_binding)},
+    { "get_joypad_binding", LUA_TO_C_BIND(&Controls::get_joypad_binding)},
+    { "get_keyboard_axis_binding", LUA_TO_C_BIND(&Controls::get_keyboard_axis_binding)},
+    { "set_keyboard_axis_binding", LUA_TO_C_BIND(&Controls::set_keyboard_axis_binding)},
+    { "set_joypad_axis_binding", LUA_TO_C_BIND(&Controls::set_joypad_axis_binding)},
+    { "get_joypad_axis_binding", LUA_TO_C_BIND(&Controls::get_joypad_axis_binding)},
+
+    { "set_keyboard_bindings", LUA_TO_C_BIND(&Controls::set_keyboard_bindings)},
+    { "get_keyboard_bindings", LUA_TO_C_BIND(&Controls::get_keyboard_bindings)},
+    { "set_joypad_bindings", LUA_TO_C_BIND(&Controls::set_joypad_bindings)},
+    { "get_joypad_bindings", LUA_TO_C_BIND(&Controls::get_joypad_bindings)},
+    { "get_keyboard_axis_bindings", LUA_TO_C_BIND(&Controls::get_keyboard_axis_bindings)},
+    { "set_keyboard_axis_bindings", LUA_TO_C_BIND(&Controls::set_keyboard_axis_bindings)},
+    { "set_joypad_axis_bindings", LUA_TO_C_BIND(&Controls::set_joypad_axis_bindings)},
+    { "get_joypad_axis_bindings", LUA_TO_C_BIND(&Controls::get_joypad_axis_bindings)},
+
+    { "capture_bindings", LUA_TO_C_BIND(capture_bindings)},
+    { "simulate_pressed", LUA_TO_C_BIND(simulate_pressed)},
+    { "simulate_released", LUA_TO_C_BIND(simulate_released)},
+    { "simulate_axis_moved", LUA_TO_C_BIND(simulate_axis_moved)},
+    { "set_joypad", LUA_TO_C_BIND(&Controls::set_joypad)},
+    { "get_joypad", LUA_TO_C_BIND(&Controls::get_joypad)},
+    { "remove", LUA_TO_C_BIND(&Controls::remove)}
   };
 
   // Metamethods of the commands type
@@ -97,415 +247,6 @@ std::shared_ptr<Controls> LuaContext::check_controls(lua_State* current_l, int i
 }
 
 /**
- * \brief Implementation of sol.commands.create().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_create_from_keyboard(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    ControlsPtr cmds = ControlsDispatcher::get().create_commands_from_keyboard();
-
-    push_controls(l, *cmds);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of sol.commands.create().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_create_from_joypad(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    JoypadPtr joypad = check_joypad(l, 1);
-
-    ControlsPtr cmds = ControlsDispatcher::get().create_commands_from_joypad(joypad);
-
-    push_controls(l, *cmds);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of sol.commands.set_analog_commands_enabled().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_set_analog_commands_enabled(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    bool enabled = LuaTools::check_boolean(l, 1);
-    Controls::set_analog_commands_enabled(enabled);
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of sol.commands.get_analog_commands_enabled().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_are_analog_commands_enabled(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    bool enabled = Controls::are_analog_commands_enabled();
-    lua_pushboolean(l, enabled);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of command:is_pressed
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_is_pressed(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Command cmd = check_command(l, 2);
-
-    lua_pushboolean(l, cmds.is_command_pressed(cmd));
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of command:get_axis_state
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_get_axis_state(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Axis cmda = check_axis(l, 2);
-
-    lua_pushnumber(l, cmds.get_axis_state(cmda));
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of command:get_direction
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_get_direction(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-
-    int wanted_direction8 = cmds.get_wanted_direction8();
-    if (wanted_direction8 == -1) {
-      lua_pushnil(l);
-    }
-    else {
-      lua_pushinteger(l, wanted_direction8);
-    }
-
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of command:set_keyboard_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_set_keyboard_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Command cmd = check_command(l, 2);
-
-    auto key = LuaTools::opt_enum<InputEvent::KeyboardKey>(l, 3, InputEvent::KeyboardKey::NONE);
-
-    cmds.set_keyboard_binding(cmd, key);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:get_keyboard_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_get_keyboard_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Command command = check_command(l, 2);
-
-    InputEvent::KeyboardKey key = cmds.get_keyboard_binding(command);
-    const std::string& key_name = enum_to_name(key);
-
-    if (key_name.empty()) {
-      lua_pushnil(l);
-    } else {
-      push_string(l, key_name);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of command:set_joypad_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_set_joypad_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Command cmd = check_command(l, 2);
-
-    auto binding = [&]()->Controls::JoypadBinding{
-      if(lua_isnil(l, 3)){
-        return Controls::JoypadBinding(JoyPadButton::INVALID);
-      } else {
-        return Controls::JoypadBinding(LuaTools::check_string(l, 3));
-      }
-    }();
-
-
-    cmds.set_joypad_binding(cmd, binding);
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:get_joypad_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_get_joypad_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Command command = check_command(l, 2);
-
-    auto binding = cmds.get_joypad_binding(command);
-
-    if (binding and not binding->is_invalid()) {
-      push_string(l, binding->to_string());
-    } else {
-      lua_pushnil(l);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of command:set_joypad_axis_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_set_joypad_axis_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Axis cmd = check_axis(l, 2);
-
-    auto axis = LuaTools::opt_enum<JoyPadAxis>(l, 3, JoyPadAxis::INVALID);
-
-    cmds.set_joypad_axis_binding(cmd, axis);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:get_joypad_axis_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_get_joypad_axis_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Axis command = check_axis(l, 2);
-
-    auto binding = cmds.get_joypad_axis_binding(command);
-
-    if(binding != JoyPadAxis::INVALID) {
-      push_string(l, enum_to_name(binding));
-    } else {
-      lua_pushnil(l);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of command:set_keyboard_axis_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_set_keyboard_axis_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Axis cmd = check_axis(l, 2);
-
-    auto mkey = LuaTools::opt_enum<InputEvent::KeyboardKey>(l, 3, InputEvent::KeyboardKey::NONE);
-    auto pkey = LuaTools::opt_enum<InputEvent::KeyboardKey>(l,4, InputEvent::KeyboardKey::NONE);
-
-    cmds.set_keyboard_axis_binding(cmd, mkey, pkey);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:get_keyboard_axis_binding
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_get_keyboard_axis_binding(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Axis command = check_axis(l, 2);
-
-    auto [mkey, pkey] = cmds.get_keyboard_axis_binding(command);
-
-    if(mkey != InputEvent::KeyboardKey::NONE){
-      push_string(l, enum_to_name(mkey));
-    } else {
-      lua_pushnil(l);
-    }
-
-    if(pkey != InputEvent::KeyboardKey::NONE) {
-      push_string(l, enum_to_name(pkey));
-    } else {
-      lua_pushnil(l);
-    }
-
-    return 2;
-  });
-}
-
-/**
- * \brief Implementation of commands:capture_bindings
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_capture_bindings(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    Command command = check_command(l, 2);
-    const ScopedLuaRef& callback_ref = LuaTools::opt_function(l, 3);
-
-    cmds.customize(command, callback_ref);
-
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:simulated_pressed.
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_simulate_pressed(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    ControlsPtr cmds = check_controls(l, 1);
-    Command command = check_command(l, 2);
-
-    run_on_main([cmds, command](lua_State*){
-      cmds->command_pressed(command);
-    });
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:simulate_released.
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_simulate_released(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    ControlsPtr cmds = check_controls(l, 1);
-    Command command = check_command(l, 2);
-
-    run_on_main([cmds, command](lua_State*){
-      cmds->command_released(command);
-    });
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:simulate_axis_moved.
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_simulate_axis_moved(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    ControlsPtr cmds = check_controls(l, 1);
-    Axis command = check_axis(l, 2);
-    double state = LuaTools::check_number(l, 3);
-
-    run_on_main([cmds, command, state](lua_State*){
-      cmds->command_axis_moved(command, state);
-    });
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:set_joypad.
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_set_joypad(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    JoypadPtr joypad;
-    if(!lua_isnil(l, 2)) {
-      joypad = check_joypad(l, 2);
-    }
-
-    cmds.set_joypad(joypad);
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of commands:get_joypad.
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_get_joypad(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-    JoypadPtr joypad = cmds.get_joypad();
-
-    if(joypad) {
-      push_joypad(l, *joypad);
-    } else {
-      lua_pushnil(l);
-    }
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of commands:remove.
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::controls_api_remove(lua_State* l) {
-  return state_boundary_handle(l, [&]{
-    Controls& cmds = *check_controls(l, 1);
-
-    cmds.remove();
-    return 0;
-  });
-}
-
-
-
-/**
- * @brief Push a command, custom or not, on the lua stack
- * @param l the lua state
- * @param command the command to push
- */
-void LuaContext::push_command(lua_State* l, const Command& command) {
-  push_string(l, Controls::get_command_name(command));
-}
-
-/**
  * @brief Check a command string on the stack
  * @param l the lua state
  * @param index index of the object on the stack
@@ -515,27 +256,6 @@ Command LuaContext::check_command(lua_State* l, int index) {
   std::string name = LuaTools::check_string(l, index);
 
   return Controls::get_command_by_name(name);
-}
-
-/**
- * @brief Push a command axis, custom or not, on the lua stack
- * @param l the lua state
- * @param command the command to push
- */
-void LuaContext::push_axis(lua_State* l, const Axis& command) {
-  push_string(l, Controls::get_axis_name(command));
-}
-
-/**
- * @brief Check a command axis string on the stack
- * @param l the lua state
- * @param index index of the object on the stack
- * @return command sum type
- */
-Axis LuaContext::check_axis(lua_State* l, int index) {
-  std::string name = LuaTools::check_string(l, index);
-
-  return Controls::get_axis_by_name(name);
 }
 
 } //Solarus

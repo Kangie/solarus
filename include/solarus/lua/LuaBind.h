@@ -40,6 +40,25 @@ struct OnStack {
 struct Nil {};
 
 /**
+ * @brief Metafunction used to specify the marchalling of types that need repetitive conversion from-to-lua but aren't exportable
+ */
+template<typename T>
+struct Marshalling;
+
+/**
+ * @brief Strong type asking a callback as argument
+ *
+ * Will use LuaTools::check_function
+ */
+struct Callback : public ScopedLuaRef{
+    Callback(const ScopedLuaRef& ref) : ScopedLuaRef(ref) {}
+    Callback(ScopedLuaRef&& ref) : ScopedLuaRef(std::move(ref)){}
+    Callback() = default;
+    Callback(Callback&&) = default;
+    Callback(const Callback&) = default;
+};
+
+/**
  * \brief Wraps a C function so that it can be called from Lua.
  *
  * This is not a generic wrapper and is tied to the engine. The wrapping

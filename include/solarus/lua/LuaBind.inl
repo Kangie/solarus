@@ -60,6 +60,8 @@ static inline T to_type(lua_State * L, int index) {
     size_t len;
     const char * str = lua_tolstring(L, index, &len);
     return std::string(str, len);
+  } else if constexpr (std::is_same_v<Callback, T>) {
+    return LuaTools::create_ref(L, index);
   } else {
     static_assert(std::is_same_v<Nil, T>, "Unknown to_type template type.");
     (void)L;
@@ -76,15 +78,15 @@ static inline T to_type(lua_State * L, int index) {
  * \tparam T The type of object exported to Lua.
  * \param L The Lua state.
  * \param index An acceptable Lua index for the state.
- * \return Pointer to the object if the value was of the correct type,
- *   otherwise returns nullptr.
+ * \return shared_ptr to the object if the value was of the correct type,
+ *   otherwise returns empty shared_ptr.
  */
 template<typename T>
-T * test_exportable(lua_State * L, int index) {
+std::shared_ptr<T> test_shared_exportable(lua_State * L, int index) {
   // Leaf types can be handled with a standard metatable test.
   if constexpr (std::is_final_v<T>) {
     void * data = LuaTools::test_userdata(L, index, T::module_name);
-    return (data) ? static_cast<std::shared_ptr<T> *>(data)->get() : nullptr;
+    return (data) ? *static_cast<std::shared_ptr<T> *>(data) : std::shared_ptr<T>();
   // Super-types are several types on Lua's side, this checks for them all.
   } else {
     std::string module_name;
@@ -93,11 +95,32 @@ T * test_exportable(lua_State * L, int index) {
     if (data && LuaContext::is_solarus_userdata(L, index, module_name)) {
       auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
       // Now we can rely on C++'s type infomation for the check.
-      return dynamic_cast<T*>(ptr->get());
+      return std::dynamic_pointer_cast<T>(*ptr);
     }
-    return nullptr;
+    return {};
   }
 }
+
+/**
+ * \brief Check if a Lua value is an exported userdata of a given type.
+ *
+ * Note that this assumes that Solarus's shared_ptr system is being used,
+ * including that the metatables and the type's module_name.
+ * \tparam T The type of object exported to Lua.
+ * \param L The Lua state.
+ * \param index An acceptable Lua index for the state.
+ * \return Pointer to the object if the value was of the correct type,
+ *   otherwise returns nullptr.
+ */
+template<typename T>
+T * test_exportable(lua_State * L, int index) {
+  return test_shared_exportable<T>(L, index).get();
+}
+
+/// \copydoc push_any(lua_State*,bool) FORWARD DECLARE THIS SPECIALIZATION AS IT GOES BACK AND FORTH
+template<typename T>
+static inline auto push_any(lua_State * L, const T& v)
+  -> decltype(Marshalling<std::decay_t<T>>::marshall_to_lua, void());
 
 /**
  * \brief Push a value onto a Lua stack.
@@ -140,10 +163,9 @@ static inline void push_any(lua_State * L, ExportableToLua& userdata) {
 }
 
 /// \copydoc push_any(lua_State*,bool)
-template<typename E>
-static inline auto push_any(lua_State * L, E value)
-    -> decltype(EnumInfoTraits<E>::pretty_name, void()) {
-  push_any(L, enum_to_name<E>(value));
+template<typename T>
+static inline void push_any(lua_State * L, const std::shared_ptr<T>& userdata) {
+  LuaContext::push_userdata(L, *userdata);
 }
 
 /// \copydoc push_any(lua_State*,bool)
@@ -154,6 +176,13 @@ static inline void push_any(lua_State * L, const std::optional<T>& option) {
   } else {
     lua_pushnil(L);
   }
+}
+
+/// \copydoc push_any(lua_State*,bool)
+template<typename E>
+static inline auto push_any(lua_State * L, E value)
+    -> decltype(EnumInfoTraits<E>::pretty_name, void()) {
+  push_any(L, enum_to_name<E>(value));
 }
 
 /// \copydoc push_any(lua_State*,bool)
@@ -191,6 +220,14 @@ static inline void push_any(lua_State * L, const std::map<K, V>& map) {
   }
 }
 
+/// \copydoc push_any(lua_State*,bool)
+template<typename T>
+static inline auto push_any(lua_State * L, const T& v)
+  -> decltype(Marshalling<std::decay_t<T>>::marshall_to_lua, void()) {
+  using M = Marshalling<std::decay_t<T>>;
+  push_any(L, M::marshall_to_lua(v));
+}
+
 /**
  * \brief Push each value to Lua, from left to right.
  * \tparam Args Types of the arguments to push to Lua.
@@ -212,6 +249,7 @@ static inline void push_all(lua_State * L, Args&&... args) {
  */
 template<typename T>
 static int push_ret(lua_State * L, T && value) {
+  using LuaBind::Private::push_any;
   push_any(L, value);
   return 1;
 }
@@ -260,6 +298,11 @@ struct LuaTypeId<const char *> :
 template<>
 struct LuaTypeId<std::string> :
   public std::integral_constant<int, LUA_TSTRING> {};
+
+/// \brief \ref LuaTypeId<T> specialization for Callback.
+template<>
+struct LuaTypeId<Callback> :
+  public std::integral_constant<int, LUA_TFUNCTION> {};
 
 /// \brief \ref LuaTypeId<T> specialization for Nil.
 template<>
@@ -322,7 +365,7 @@ static inline std::string get_type_name() {
  * \param L The Lua stack.
  * \param index The index on the stack to check.
  */
-template<typename T>
+template<typename T, typename = void>
 struct CheckArg {
   static T call(lua_State * L, int index) {
     // Handle Userdata Types:
@@ -394,6 +437,60 @@ struct CheckArg<std::optional<T>> {
 };
 
 /**
+ * \brief \ref CheckArg<T> specialization for optional primitive types.
+ *
+ * If the value is of the correct type, returns it in the optional. If the
+ * value is nil or none, returns an empty optional. Except for nil for
+ * booleans, where it is a type error, as are all the remaining cases.
+ */
+template<typename T>
+struct CheckArg<std::shared_ptr<T>> {
+  static std::shared_ptr<T> call(lua_State * L, int index) {
+    // Handle Enumeration Types:
+    if constexpr (std::is_convertible_v<T&, ExportableToLua&>) {
+      using base_t = std::remove_reference_t<T>;
+      if (auto sptr = test_shared_exportable<base_t>(L, index)) {
+        return sptr;
+      }
+      LuaTools::type_error(L, index, get_type_name<base_t>());
+    // Handle Enumeration Types:
+    } else {
+      static_assert(std::is_convertible_v<T, ExportableToLua&>, "Shared_Ptr args are only available for Exportable userdata");
+    }
+  }
+};
+
+/**
+ * \brief \ref CheckArg<T> specialization for optional primitive types.
+ *
+ * If the value is of the correct type, returns it in the optional. If the
+ * value is nil or none, returns an empty optional. Except for nil for
+ * booleans, where it is a type error, as are all the remaining cases.
+ */
+template<typename T>
+struct CheckArg<std::vector<T>> {
+  static std::vector<T> call(lua_State * L, int index) {
+    if(lua_type(L, index) != LUA_TTABLE) {
+      LuaTools::type_error(L, index, "array");
+    }
+
+    std::vector<T> vec; vec.reserve(lua_objlen(L, index));
+
+    for(int i = 1;;i++) {
+      lua_rawgeti(L, index, i);
+      if(lua_isnil(L, -1)) {
+        lua_pop(L, 1);
+        break; // nil element terminates array
+      }
+      vec.push_back(CheckArg<T>::call(L, -1));
+      lua_pop(L, 1);
+    }
+
+    return vec; //TODO
+  }
+};
+
+/**
  * \brief \ref CheckArg<T> specialization for optional userdata types.
  *
  * If the value is of the correct type, returns a pointer to it. If the
@@ -408,6 +505,26 @@ struct CheckArg<T *> {
       return nullptr;
     }
     LuaTools::type_error(L, index, "optional " + get_type_name<T>());
+  }
+};
+
+/*template<typename T, typename = void>
+struct ArgMarshall{
+  static inline auto call(lua_State* L, int index) -> decltype(CheckArg<T>::call(L, index)) {
+    return CheckArg<T>::call(L, index);
+  }
+};*/
+
+/**
+ * \brief \ref CheckArg<T> specialization for types that have a Marshalling<T> specialization
+ *
+ * This enables client code to specify how to convert checked lua args to C++ args
+ */
+template<typename T>
+struct CheckArg<T, decltype(void(&Marshalling<T>::marshall_from_lua))>{
+  static inline auto call(lua_State* L, int index) -> decltype(auto) {
+    using M = LuaBind::Marshalling<T>;
+    return M::marshall_from_lua(CheckArg<typename M::actual_arg_type>::call(L, index));
   }
 };
 
@@ -435,6 +552,7 @@ struct CheckArgs {
     if constexpr (0 != sizeof...(Inds)) {
       lua_State * L = context.get_internal_state();
       return ret_t(context, CheckArg<Args>::call(L, Inds + 1)...);
+      //return ret_t(context, ArgMarshall<Args>::call(L, Inds + 1)...);
     } else {
       return ret_t(context);
     }
