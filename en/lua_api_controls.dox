@@ -163,13 +163,13 @@ Gets the joypad axis that is bound to the given axis
 Sets the commands that given key will trigger
 
 - \c key (string): A valid key code (see \ref lua_api_input)
-- \c command (string): An array of valid command names
+- \c commands ({string}): An array of valid command names
 
-\subsection lua_api_controls_get_keyboard_bindings controls:get_keyboard_binding(key)
+\subsection lua_api_controls_get_keyboard_bindings controls:get_keyboard_bindings(key)
 
 Gets the key that is bound to the given command
 
-- \c key (string): Any valid command name
+- \c key (string): A valid keyboard keycode
 - Return value ({string}): An array of commands triggered by this key (see \ref lua_api_input)
 
 \subsection lua_api_controls_set_joypad_bindings controls:set_joypad_bindings(button, commands)
@@ -191,26 +191,26 @@ Gets the joypad binding code bound to the given command
 Sets axes that will be moved by the given key
 
 - \c key (string): A valid keyboard key code
-- \c bindings ({string}): An array of valid axis keycodes
+- \c bindings ({string}): An array of valid axis codes
 
 \subsection lua_api_controls_get_keyboard_axis_bindings controls:get_keyboard_axis_bindings(key)
 
 Returns the axes moved by given key
 
-- Return values ({string}): An array of valid axis keycodes
+- Return values ({string}): An array of valid axis codes
 
-\subsection lua_api_controls_set_joypad_axis_binding controls:set_joypad_axis_binding(joypad_axis, bindings)
+\subsection lua_api_controls_set_joypad_axis_bindings controls:set_joypad_axis_bindings(joypad_axis, bindings)
 
 Sets the virtual axes that given joypad axis will drive
 
-- \c joypad_axis (string): Any valid joypad axis name
-- \c bindings ({string}): An array of valid axis keycodes
+- \c joypad_axis (string): A valid joypad axis name
+- \c bindings ({string}): An array of valid axis codes
 
 \subsection lua_api_controls_get_joypad_axis_bindings controls:get_joypad_axis_bindings(joypad_axis)
 
 Returns the virtual axes moved by given joypad axis
 
-- Return value ({string}) : An array of axis keycodes
+- Return value ({string}) : An array of axis codes
 
 \subsection lua_api_controls_get_effect controls:get_effect(command)
 
