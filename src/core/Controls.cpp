@@ -1068,4 +1068,31 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
                       static_cast<const _JoypadBinding&>(*this));
   }
 
+  /**
+   * @brief Create a ControlAxisBinding from its string form
+   * @param str a string
+   * @return an optional binding, empty if failed/invalid
+   */
+  std::optional<Controls::ControlAxisBinding> Controls::ControlAxisBinding::from_string(const std::string& str) {
+    //Unserialize the binding
+    size_t spos = str.find(' ');
+    if(spos != std::string::npos) {
+      //There is a space ! Its an axis binding
+      auto axis = Controls::get_axis_by_name(str.substr(0, spos));
+      auto sdir = str[spos+1];
+      auto dir = sdir == '+' ? AxisDirection::PLUS : AxisDirection::MINUS;
+      return ControlAxisBinding{axis, dir};
+    } else {
+      return {}; //Binding is invalid
+    }
+  }
+
+  /**
+   * @brief Serializes the ControlAxisBinding to string
+   * @return a serialized binding
+   */
+  std::string Controls::ControlAxisBinding::to_string() const {
+    auto dir = direction == AxisDirection::PLUS ? " +" : " -";
+    return Controls::get_axis_name(axis) + dir;
+  }
 }

@@ -117,7 +117,9 @@ T * test_exportable(lua_State * L, int index) {
   return test_shared_exportable<T>(L, index).get();
 }
 
-/// \copydoc push_any(lua_State*,bool) FORWARD DECLARE THIS SPECIALIZATION AS IT GOES BACK AND FORTH
+/// \copydoc push_any(lua_State*,bool)
+///
+/// Forward declaration because this wrapper can be used by other push_anys
 template<typename T>
 static inline auto push_any(lua_State * L, const T& v)
   -> decltype(Marshalling<std::decay_t<T>>::marshall_to_lua, void());
@@ -461,11 +463,9 @@ struct CheckArg<std::shared_ptr<T>> {
 };
 
 /**
- * \brief \ref CheckArg<T> specialization for optional primitive types.
+ * \brief \ref CheckArg<T> specialization for vector types.
  *
- * If the value is of the correct type, returns it in the optional. If the
- * value is nil or none, returns an empty optional. Except for nil for
- * booleans, where it is a type error, as are all the remaining cases.
+ * Checks if value is a table and then recursively checks each non-nil T element
  */
 template<typename T>
 struct CheckArg<std::vector<T>> {
@@ -486,7 +486,7 @@ struct CheckArg<std::vector<T>> {
       lua_pop(L, 1);
     }
 
-    return vec; //TODO
+    return vec;
   }
 };
 
@@ -508,20 +508,14 @@ struct CheckArg<T *> {
   }
 };
 
-/*template<typename T, typename = void>
-struct ArgMarshall{
-  static inline auto call(lua_State* L, int index) -> decltype(CheckArg<T>::call(L, index)) {
-    return CheckArg<T>::call(L, index);
-  }
-};*/
-
 /**
  * \brief \ref CheckArg<T> specialization for types that have a Marshalling<T> specialization
  *
  * This enables client code to specify how to convert checked lua args to C++ args
+ * see \ref LuaBind::Marshalling<T>
  */
 template<typename T>
-struct CheckArg<T, decltype(void(&Marshalling<T>::marshall_from_lua))>{
+struct CheckArg<T, decltype(void(Marshalling<T>::marshall_from_lua))>{
   static inline auto call(lua_State* L, int index) -> decltype(auto) {
     using M = LuaBind::Marshalling<T>;
     return M::marshall_from_lua(CheckArg<typename M::actual_arg_type>::call(L, index));

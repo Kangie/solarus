@@ -72,15 +72,19 @@ struct Marshalling<Solarus::Controls::JoypadBinding>{
 
 template<>
 struct Marshalling<Controls::ControlAxisBinding>{
-    using actual_arg_type = std::optional<std::string>;
+    using actual_arg_type = std::string;
     using actual_return_type = std::optional<std::string>;
 
     static inline Controls::ControlAxisBinding marshall_from_lua(const actual_arg_type& str) {
-      return str.has_value() ? Controls::ControlAxisBinding{Controls::get_axis_by_name(*str)} : Controls::ControlAxisBinding{};
+      auto cab = Controls::ControlAxisBinding::from_string(str);
+      if(!cab){
+        //TODO error
+      }
+      return cab.value_or(Controls::ControlAxisBinding{});
     }
 
     static inline actual_return_type marshall_to_lua(const Controls::ControlAxisBinding& binding) {
-      auto str = Controls::get_axis_name(binding.axis);
+      auto str = binding.to_string();
       return str.empty() ? std::nullopt : actual_return_type(str);
     }
 };

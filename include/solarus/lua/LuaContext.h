@@ -395,8 +395,6 @@ class LuaContext {
     void menus_on_draw(int context_index, const SurfacePtr& dst_surface);
     bool menus_on_input(int context_index, const InputEvent& event);
     bool menus_on_command(int context_index, const ControlEvent& command);
-    //bool menus_on_command_pressed(int context_index, Command command);
-    //bool menus_on_command_released(int context_index, Command command);
 
     // Sprite events.
     void sprite_on_animation_finished(
@@ -1496,9 +1494,6 @@ public:
     static void push_custom_entity(lua_State* current_l, CustomEntity& entity);
     static void push_joypad(lua_State* current_l, Joypad& joypad);
     static void push_controls(lua_State* current_l, Controls& commands);
-    //static void push_command(lua_State* current_l, const Command& command);
-    //static void push_axis(lua_State* current_l, const Axis& command_axis);
-    //static void push_player(lua_State* current_l, Player& commands);
 
     // Getting objects from Lua.
     static bool is_main(lua_State* current_l, int index);
@@ -1599,7 +1594,6 @@ public:
     static bool is_player(lua_State* current_l, int index);
     static std::shared_ptr<Player> check_player(lua_State* current_l, int index);
     static Command check_command(lua_State* l, int index);
-    //static Axis check_axis(lua_State* l, int index);
 
 private:
     // Events.

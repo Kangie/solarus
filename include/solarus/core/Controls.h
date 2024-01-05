@@ -82,6 +82,9 @@ class Controls final: public ExportableToLua {
     struct ControlAxisBinding{
       Axis axis = AxisId::NONE;
       AxisDirection direction = AxisDirection::PLUS;
+
+      static std::optional<ControlAxisBinding> from_string(const std::string& str);
+      std::string to_string() const;
     };
 
   private:
