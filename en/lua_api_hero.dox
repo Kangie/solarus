@@ -529,10 +529,10 @@ If this sprite, this animation or this direction do not exist,
 then no treasure sprite is displayed above the hero.
 
 If a dialog called \c "_treasure.treasure_name.treasure_variant" exists,
+and if there is no currently active dialog already,
 then this dialog is displayed during the brandishing animation.
 For example, calling <tt>hero:start_treasure("heart", 1)</tt>
 will automatically show the dialog <tt>_treasure.heart.1</tt>.
-
 - \c treasure_name (string, optional): Kind of treasure to give
   (the name of an \ref lua_api_item "equipment item").
   The treasure must be an
