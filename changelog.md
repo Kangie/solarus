@@ -19,7 +19,7 @@
 * Fix custom entity still interacting when moved or disabled (#1056, #1407).
 * Fix thrown objects destruction animation position (#1508).
 * Fix crash when loading a save file with Lua keywords (#1609).
-* Fix crash when giving a treasure during a dialog (#988).
+* Fix crash when a dialog starts during another dialog (#988, #1582).
 
 ### Lua API changes
 

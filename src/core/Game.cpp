@@ -1064,8 +1064,9 @@ void Game::start_dialog(
 ) {
   if (!CurrentQuest::dialog_exists(dialog_id)) {
     Debug::error(std::string("No such dialog: '") + dialog_id + "'");
-  }
-  else {
+  } else if (dialog_box.is_enabled()) {
+    Debug::error("Cannot start dialog '" + dialog_id + "' because another dialog is already active: '" + dialog_box.get_dialog_id() + "'");
+  } else {
     dialog_box.open(dialog_id, info_ref, callback_ref);
   }
 }
