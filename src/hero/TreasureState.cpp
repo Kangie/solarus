@@ -16,10 +16,7 @@
  */
 #include "solarus/audio/Sound.h"
 #include "solarus/core/EquipmentItem.h"
-#include "solarus/core/Game.h"
-#include "solarus/core/Map.h"
 #include "solarus/graphics/Sprite.h"
-#include "solarus/hero/FreeState.h"
 #include "solarus/hero/HeroSprites.h"
 #include "solarus/hero/TreasureState.h"
 #include "solarus/lua/LuaContext.h"

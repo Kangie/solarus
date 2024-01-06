@@ -89,6 +89,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/967_blocks_max_moves"
   "bugs/971_sol_file_list"
   "bugs/983_timer_delay"
+  "bugs/988_crash_treasure_dialog"
   "bugs/1007_door_open_close"
   "bugs/1024_custom_entity_set_origin"
   "bugs/1026_door_sprite_higher_than_16"

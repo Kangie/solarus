@@ -3651,8 +3651,8 @@ void LuaContext::notify_hero_brandish_treasure(
   lua_pushcclosure(current_l, l_treasure_brandish_finished, 5);
   const ScopedLuaRef& treasure_callback_ref = create_ref();
 
-  if (!CurrentQuest::dialog_exists(dialog_id)) {
-    // No treasure dialog: keep brandishing the treasure for some delay
+  if (!CurrentQuest::dialog_exists(dialog_id) || game.is_dialog_enabled()) {
+    // Don't show a treasure dialog. Keep brandishing the treasure for some delay
     // and then execute the callback.
     TimerPtr timer = std::make_shared<Timer>(3000);
     push_map(current_l, hero.get_map());
@@ -3660,7 +3660,7 @@ void LuaContext::notify_hero_brandish_treasure(
     lua_pop(current_l, 1);
   }
   else {
-    // A treasure dialog exists. Show it and then execute the callback.
+    // Show the treasure dialog and then execute the callback.
     game.start_dialog(dialog_id, ScopedLuaRef(), treasure_callback_ref);
   }
 }
