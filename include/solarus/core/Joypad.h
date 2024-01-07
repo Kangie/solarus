@@ -86,7 +86,7 @@ class Joypad final : public ExportableToLua
 {
 public:
   // static information
-  static constexpr const char module_name[] = "sol.controls";
+  static constexpr const char module_name[] = "sol.joypad";
 
   Joypad(SDL_GameController* sdl_gc, SDL_Joystick* sdl_js);
   double get_axis(JoyPadAxis axis) const;
