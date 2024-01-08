@@ -165,9 +165,10 @@ static inline void push_any(lua_State * L, ExportableToLua& userdata) {
 }
 
 /// \copydoc push_any(lua_State*,bool)
-template<typename T>
-static inline void push_any(lua_State * L, const std::shared_ptr<T>& userdata) {
-  LuaContext::push_userdata(L, *userdata);
+template<typename E>
+static inline auto push_any(lua_State * L, E value)
+    -> decltype(EnumInfoTraits<E>::pretty_name, void()) {
+  push_any(L, enum_to_name<E>(value));
 }
 
 /// \copydoc push_any(lua_State*,bool)
@@ -181,10 +182,9 @@ static inline void push_any(lua_State * L, const std::optional<T>& option) {
 }
 
 /// \copydoc push_any(lua_State*,bool)
-template<typename E>
-static inline auto push_any(lua_State * L, E value)
-    -> decltype(EnumInfoTraits<E>::pretty_name, void()) {
-  push_any(L, enum_to_name<E>(value));
+template<typename T>
+static inline void push_any(lua_State * L, const std::shared_ptr<T>& userdata) {
+  LuaContext::push_userdata(L, *userdata);
 }
 
 /// \copydoc push_any(lua_State*,bool)
@@ -251,7 +251,6 @@ static inline void push_all(lua_State * L, Args&&... args) {
  */
 template<typename T>
 static int push_ret(lua_State * L, T && value) {
-  using LuaBind::Private::push_any;
   push_any(L, value);
   return 1;
 }
@@ -439,26 +438,17 @@ struct CheckArg<std::optional<T>> {
 };
 
 /**
- * \brief \ref CheckArg<T> specialization for optional primitive types.
+ * \brief \ref CheckArg<T> specialization for shared_ptr<T> types.
  *
- * If the value is of the correct type, returns it in the optional. If the
- * value is nil or none, returns an empty optional. Except for nil for
- * booleans, where it is a type error, as are all the remaining cases.
+ * If the value is of the correct type and exportable_to_lua, returns it in a shared_ptr
  */
 template<typename T>
 struct CheckArg<std::shared_ptr<T>> {
   static std::shared_ptr<T> call(lua_State * L, int index) {
-    // Handle Enumeration Types:
-    if constexpr (std::is_convertible_v<T&, ExportableToLua&>) {
-      using base_t = std::remove_reference_t<T>;
-      if (auto sptr = test_shared_exportable<base_t>(L, index)) {
-        return sptr;
-      }
-      LuaTools::type_error(L, index, get_type_name<base_t>());
-    // Handle Enumeration Types:
-    } else {
-      static_assert(std::is_convertible_v<T, ExportableToLua&>, "Shared_Ptr args are only available for Exportable userdata");
+    if (auto sptr = test_shared_exportable<T>(L, index)) {
+      return sptr;
     }
+    LuaTools::type_error(L, index, get_type_name<T>());
   }
 };
 
@@ -474,14 +464,11 @@ struct CheckArg<std::vector<T>> {
       LuaTools::type_error(L, index, "array");
     }
 
-    std::vector<T> vec; vec.reserve(lua_objlen(L, index));
+    auto len = lua_objlen(L, index);
+    std::vector<T> vec; vec.reserve(len);
 
-    for(int i = 1;;i++) {
+    for(size_t i = 1; i < len+1; i++) {
       lua_rawgeti(L, index, i);
-      if(lua_isnil(L, -1)) {
-        lua_pop(L, 1);
-        break; // nil element terminates array
-      }
       vec.push_back(CheckArg<T>::call(L, -1));
       lua_pop(L, 1);
     }
