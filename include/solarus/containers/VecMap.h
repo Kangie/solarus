@@ -89,7 +89,7 @@ class VecMap {
     }
 
     void set_vec_for(const Key& k, const Vec& v) {
-      map.insert({k,v});
+      map.insert_or_assign(k, v);
     }
 
     std::optional<Key> search_fronts_for(const T& v) const {
