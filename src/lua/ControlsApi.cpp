@@ -27,65 +27,86 @@ const std::string LuaContext::controls_module_name = "sol.controls";
 // Define marchaling for Commands
 namespace LuaBind {
 template<>
-struct Marshalling<Command>{
-    using actual_arg_type = std::optional<std::string>;
-    using actual_return_type = std::optional<std::string>;
-
-    static inline Command marshall_from_lua(const actual_arg_type& str) {
-      return str.has_value() ? Controls::get_command_by_name(*str) : Command(CommandId::NONE);
+struct Marshalling<Command> {
+  static inline Command check_arg(lua_State * L, int index) {
+    size_t length;
+    if (const char * data = LuaTools::islstring(L, index, &length)) {
+      return Controls::get_command_by_name(std::string(data, length));
     }
+    LuaTools::type_error(L, index, "command");
+  }
 
-    static inline actual_return_type marshall_to_lua(const Command& cmd) {
-      auto str = Controls::get_command_name(cmd);
-      return str.empty() ? std::nullopt : actual_return_type(str);
-    }
+  static inline void push(lua_State * L, Command value) {
+    const auto str = Controls::get_command_name(value);
+    lua_pushlstring(L, str.c_str(), str.size());
+  }
 };
+
 
 template<>
 struct Marshalling<Axis>{
-    using actual_arg_type = std::optional<std::string>;
-    using actual_return_type = std::optional<std::string>;
-
-    static inline Axis marshall_from_lua(const actual_arg_type& str) {
-      return str.has_value() ? Controls::get_axis_by_name(*str) : Axis(AxisId::NONE);
+    static inline Axis check_arg(lua_State* L, int index) {
+      if(lua_isnil(L, index)){
+        return Axis(AxisId::NONE);
+      }
+      size_t length;
+      if (const char * data = LuaTools::islstring(L, index, &length)) {
+        return Controls::get_axis_by_name(data);
+      }
+      LuaTools::type_error(L, index, "axis");
     }
 
-    static inline actual_return_type marshall_to_lua(const Axis& axis) {
+    static inline void push(lua_State* L, const Axis& axis) {
       auto str = Controls::get_axis_name(axis);
-      return str.empty() ? std::nullopt : actual_return_type(str);
+      if(str.empty())
+        lua_pushnil(L);
+      else
+        lua_pushstring(L, str.c_str());
     }
 };
 
 template<>
 struct Marshalling<Solarus::Controls::JoypadBinding>{
-    using actual_arg_type = std::optional<std::string>;
-    using actual_return_type = std::optional<std::string>;
 
-    static inline Controls::JoypadBinding marshall_from_lua(const actual_arg_type& str) {
-      return str.has_value() ? Controls::JoypadBinding(*str) : Controls::JoypadBinding(JoyPadButton::INVALID);
+    static inline Controls::JoypadBinding check_arg(lua_State* L, int index) {
+      if(lua_isnil(L, index)){
+        return Controls::JoypadBinding(JoyPadButton::INVALID);
+      }
+      size_t length;
+      if (const char * data = LuaTools::islstring(L, index, &length)) {
+        auto binding = Controls::JoypadBinding(data);
+        if(!binding.is_invalid()){
+          return binding;
+        }
+      }
+      LuaTools::type_error(L, index, "joypadbinding");
     }
 
-    static inline actual_return_type marshall_to_lua(const Controls::JoypadBinding& binding) {
-      return binding.is_invalid() ? std::nullopt : actual_return_type(binding.to_string());
+    static inline void push(lua_State* L, const Controls::JoypadBinding& binding) {
+      if(binding.is_invalid())
+        lua_pushnil(L);
+      else
+        lua_pushstring(L, binding.to_string().c_str());
     }
 };
 
 template<>
 struct Marshalling<Controls::ControlAxisBinding>{
-    using actual_arg_type = std::string;
-    using actual_return_type = std::optional<std::string>;
 
-    static inline Controls::ControlAxisBinding marshall_from_lua(const actual_arg_type& str) {
-      auto cab = Controls::ControlAxisBinding::from_string(str);
-      if(!cab){
-        //TODO error
+    static inline Controls::ControlAxisBinding check_arg(lua_State* L, int index) {
+      size_t length;
+      if (const char * data = LuaTools::islstring(L, index, &length)) {
+        auto cab = Controls::ControlAxisBinding::from_string(std::string(data, length));
+        if(cab){
+          return cab.value();
+        }
       }
-      return cab.value_or(Controls::ControlAxisBinding{});
+      LuaTools::type_error(L, index, "controlaxisbinding");
     }
 
-    static inline actual_return_type marshall_to_lua(const Controls::ControlAxisBinding& binding) {
+    static inline void push(lua_State* L, const Controls::ControlAxisBinding& binding) {
       auto str = binding.to_string();
-      return str.empty() ? std::nullopt : actual_return_type(str);
+      lua_pushlstring(L, str.c_str(), str.size());
     }
 };
 

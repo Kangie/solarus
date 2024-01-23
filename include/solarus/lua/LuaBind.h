@@ -43,12 +43,10 @@ struct Nil {};
  * @brief Metafunction used to specify the marchalling of types that need repetitive conversion from-to-lua but aren't exportable
  *
  * Implementers must provide:
- * typename ::actual_arg_type that will be asked as a lua argument
- * typename ::actual_return_type that will be used to push result back to lua
  *
- * Along with two static methods used for converting between T and actual_arg_type/actual_return_type :
- * - static T marshall_from_lua(const actual_arg_type& arg);
- * - static actual_return_type marshall_to_lua(const T& t);
+ * Two static methods to marchal the argument/return type from/to the lua stack
+ * - static T check_arg(lua_State * L, int index);
+ * - static void push(lua_State * L, const T& value);
  */
 template<typename T>
 struct Marshalling;

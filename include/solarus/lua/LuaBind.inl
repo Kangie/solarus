@@ -122,7 +122,7 @@ T * test_exportable(lua_State * L, int index) {
 /// Forward declaration because this wrapper can be used by other push_anys
 template<typename T>
 static inline auto push_any(lua_State * L, const T& v)
-  -> decltype(Marshalling<std::decay_t<T>>::marshall_to_lua, void());
+  -> decltype(Marshalling<std::decay_t<T>>::push, void());
 
 /**
  * \brief Push a value onto a Lua stack.
@@ -225,9 +225,9 @@ static inline void push_any(lua_State * L, const std::map<K, V>& map) {
 /// \copydoc push_any(lua_State*,bool)
 template<typename T>
 static inline auto push_any(lua_State * L, const T& v)
-  -> decltype(Marshalling<std::decay_t<T>>::marshall_to_lua, void()) {
+  -> decltype(Marshalling<std::decay_t<T>>::push, void()) {
   using M = Marshalling<std::decay_t<T>>;
-  push_any(L, M::marshall_to_lua(v));
+  M::push(L, v);
 }
 
 /**
@@ -502,10 +502,10 @@ struct CheckArg<T *> {
  * see \ref LuaBind::Marshalling<T>
  */
 template<typename T>
-struct CheckArg<T, decltype(void(Marshalling<T>::marshall_from_lua))>{
+struct CheckArg<T, decltype(void(Marshalling<T>::check_arg))>{
   static inline auto call(lua_State* L, int index) -> decltype(auto) {
     using M = LuaBind::Marshalling<T>;
-    return M::marshall_from_lua(CheckArg<typename M::actual_arg_type>::call(L, index));
+    return M::check_arg(L, index);
   }
 };
 
@@ -533,7 +533,6 @@ struct CheckArgs {
     if constexpr (0 != sizeof...(Inds)) {
       lua_State * L = context.get_internal_state();
       return ret_t(context, CheckArg<Args>::call(L, Inds + 1)...);
-      //return ret_t(context, ArgMarshall<Args>::call(L, Inds + 1)...);
     } else {
       return ret_t(context);
     }

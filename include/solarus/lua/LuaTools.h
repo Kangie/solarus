@@ -147,6 +147,8 @@ double opt_number_field(
 );
 
 // std::string
+const char * islstring(lua_State * L, int index, size_t * len);
+
 std::string check_string(
     lua_State* l,
     int index
