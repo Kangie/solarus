@@ -968,38 +968,37 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     return LuaContext::controls_module_name;
   }
 
-  const std::vector<Command>& Controls::get_keyboard_bindings(InputEvent::KeyboardKey key) const {
-    return keyboard_mapping.vec_for(key);
+  const Controls::KeyboardMappings::Map& Controls::get_keyboard_bindings() const {
+    return keyboard_mapping.underlying();
   }
 
-  void Controls::set_keyboard_bindings(InputEvent::KeyboardKey key, const std::vector<Command>& commands) {
-    keyboard_mapping.set_vec_for(key, commands);
+  void Controls::set_keyboard_bindings(const Controls::KeyboardMappings::Map& commands) {
+    keyboard_mapping.set_underlying(commands);
   }
 
-  const std::vector<Command>& Controls::get_joypad_bindings(const JoypadBinding& binding) const {
-    return joypad_mapping.vec_for(binding);
+  const Controls::JoypadMappings::Map& Controls::get_joypad_bindings() const {
+    return joypad_mapping.underlying();
   }
 
-  void Controls::set_joypad_bindings(const JoypadBinding& binding, const std::vector<Command>& commands) {
-    joypad_mapping.set_vec_for(binding, commands);
+  void Controls::set_joypad_bindings(const Controls::JoypadMappings::Map& commands) {
+    joypad_mapping.set_underlying(commands);
   }
 
-  const std::vector<Controls::ControlAxisBinding>& Controls::get_keyboard_axis_bindings(InputEvent::KeyboardKey key) const {
-    return keyboard_axis_mapping.vec_for(key);
+  const Controls::KeyboardAxisMappings::Map& Controls::get_keyboard_axis_bindings() const {
+    return keyboard_axis_mapping.underlying();
   }
 
-  void Controls::set_keyboard_axis_bindings(InputEvent::KeyboardKey key, const std::vector<ControlAxisBinding>& commands) {
-    keyboard_axis_mapping.set_vec_for(key, commands);
+  void Controls::set_keyboard_axis_bindings(const Controls::KeyboardAxisMappings::Map& commands) {
+    keyboard_axis_mapping.set_underlying(commands);
   }
 
-  const std::vector<Controls::ControlAxisBinding>& Controls::get_joypad_axis_bindings(JoyPadAxis axis) const {
-    return joypad_axis_mapping.vec_for(axis);
+  const Controls::JoypadAxisMappings::Map& Controls::get_joypad_axis_bindings() const {
+    return joypad_axis_mapping.underlying();
   }
 
-  void Controls::set_joypad_axis_bindings(JoyPadAxis axis, const std::vector<ControlAxisBinding>& bindings) {
-    joypad_axis_mapping.set_vec_for(axis, bindings);
+  void Controls::set_joypad_axis_bindings(const Controls::JoypadAxisMappings::Map& bindings) {
+    joypad_axis_mapping.set_underlying(bindings);
   }
-
 
   /**
  * @brief Parses a joypad binding from a string

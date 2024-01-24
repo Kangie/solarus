@@ -17,21 +17,44 @@ function map:on_started()
   -- map entities here.
 end
 
+local function check_bindings(ref, other)
+  for k,refv in pairs(ref) do
+    assert(other[k])
+    v = other[k]
+    for i, refcmd in ipairs(refv) do
+      assert_equal(v[i], refcmd)
+    end
+  end
+end
+
 -- Event called after the opening transition effect of the map,
 -- that is, when the player takes control of the hero.
 function map:on_opening_transition_finished()
   local controls = sol.controls.create_from_keyboard()
-  local cmds = {"1", "2", "3", "4"}
-  controls:set_keyboard_bindings("a", cmds)
-  controls:set_joypad_bindings("b", cmds)
+  local jpbindings = {
+    a = {"1", "2", "3", "4"},
+    b = {"5", "6", "7", "8"}
+  }
+  local kbbindings = {
+    c = {"1", "2", "3", "4"},
+    d = {"5", "6", "7", "8"}
+  }
+  controls:set_keyboard_bindings(kbbindings)
   
-  local joycmds = controls:get_joypad_bindings("b")
-  local keycmds = controls:get_keyboard_bindings("a")
+  
+  controls:set_joypad_bindings(jpbindings)
+  
+  local jpbindings2 = controls:get_joypad_bindings()
+  local kbbindings2 = controls:get_keyboard_bindings()
 
-  for i,cmd in ipairs(cmds) do
+  check_bindings(jpbindings, jpbindings2)
+  check_bindings(kbbindings, kbbindings2)
+  --[[for k,v in ipairs(cmds) do
     print(cmd, joycmds[i], keycmds[i])
     assert_equal(cmd, joycmds[i])
     assert_equal(cmd, keycmds[i])
   end
+  --]]
+
   sol.main.exit()
 end

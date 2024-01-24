@@ -42,7 +42,6 @@ struct Marshalling<Command> {
   }
 };
 
-
 template<>
 struct Marshalling<Axis>{
     static inline Axis check_arg(lua_State* L, int index) {
@@ -97,7 +96,7 @@ struct Marshalling<Controls::ControlAxisBinding>{
       size_t length;
       if (const char * data = LuaTools::islstring(L, index, &length)) {
         auto cab = Controls::ControlAxisBinding::from_string(std::string(data, length));
-        if(cab){
+        if(cab) {
           return cab.value();
         }
       }

@@ -391,6 +391,12 @@ struct CheckArg {
 };
 
 /**
+ * Forward declaration to be able to use it from others
+ */
+template<typename T>
+struct CheckArg<T, decltype(void(Marshalling<T>::check_arg))>;
+
+/**
  * \brief \ref CheckArg<T> specialization for optional primitive types.
  *
  * If the value is of the correct type, returns it in the optional. If the
@@ -474,6 +480,31 @@ struct CheckArg<std::vector<T>> {
     }
 
     return vec;
+  }
+};
+
+/**
+ * \brief \ref CheckArg<T> specialization for map types.
+ *
+ * Checks if value is a table and then recursively checks each non-nil K,V pair
+ */
+template<typename K, typename V>
+struct CheckArg<std::map<K, V>> {
+  static std::map<K, V> call(lua_State * L, int index) {
+    if(lua_type(L, index) != LUA_TTABLE) {
+      LuaTools::type_error(L, index, "map");
+    }
+
+    std::map<K, V> map;
+    lua_pushnil(L);
+    while(lua_next(L, index) != 0) {
+      auto k = CheckArg<K>::call(L,-2);
+      auto v = CheckArg<V>::call(L,-1);
+      map.insert({k,v});
+      lua_pop(L, 1);
+    }
+
+    return map;
   }
 };
 

@@ -35,6 +35,7 @@ class VecMap {
 
     using Vec = std::vector<T>;
     using Wrapped = std::map<Key, Vec, Compare, Allocator>;
+    using Map = Wrapped;
 
 
     VecMap() = default;
@@ -71,12 +72,13 @@ class VecMap {
     }
 
     // Get the underlying map of vec
-    /*auto underlying() const {
+    const auto& underlying() const {
         return map;
     }
-    auto underlying() {
-        return map;
-    }*/
+
+    auto set_underlying(const Map& map) {
+      this->map = map;
+    }
 
     // Actual way to access underlying vectors
     const auto& vec_for(const Key& k) const {
