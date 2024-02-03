@@ -54,7 +54,7 @@ and \ref lua_api_video_set_shader "sol.video.set_shader()"
 to control this.
 
 This defines how the quest surface (whose size is
-\ref lua_api_video_get_quest_size "sol.video.get_quest_size()"
+\ref lua_api_video_get_quest_size "sol.video.get_quest_size()")
 is drawn and scaled to fit to the window, which may be bigger.
 Thus, by default, the fragment shader works on an output texture of the size
 of the window.
@@ -109,7 +109,7 @@ in a vertex shader or in a fragment shader:
 - <tt>uniform vec2 sol_output_size</tt>: Size of the output area,
   including the black bars if any.
   In windowed mode, equal to
-  \ref lua_api_video_get_window_size "sol.video.get_window_size()"
+  \ref lua_api_video_get_window_size "sol.video.get_window_size()".
   In fullscreen mode, equal to
   the screen resolution.
 - <tt>uniform int sol_time</tt>: Simulated time elapsed since
