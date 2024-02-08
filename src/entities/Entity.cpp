@@ -3830,7 +3830,7 @@ void Entity::built_in_draw(Camera& camera) {
  * restricted. A flat rectangle means no restriction.
  */
 
-void Entity::draw_sprites(Camera& camera , const Rectangle& /*clipping_area*/) {
+void Entity::draw_sprites(Camera& camera , const Rectangle& clipping_area) {
   const Point& xy = get_displayed_xy();
   const Size& size = get_size();
 
@@ -3845,7 +3845,19 @@ void Entity::draw_sprites(Camera& camera , const Rectangle& /*clipping_area*/) {
 
     if (!is_tiled()) {
       //get_map().draw_visual(sprite, xy);
-      sprite.draw(surface, xy); //, clipping_area); TODO!
+      if(!clipping_area.is_flat()) {
+        const Rectangle region_in_frame(
+            clipping_area.get_xy() - xy,
+            clipping_area.get_size()
+        );
+        sprite.draw_region(
+            region_in_frame,
+            surface,
+            xy
+        );
+      } else {
+        sprite.draw(surface, xy);
+      }
     }
     else {
       // Repeat the sprite with tiling.
@@ -3857,8 +3869,7 @@ void Entity::draw_sprites(Camera& camera , const Rectangle& /*clipping_area*/) {
 
       for (int y = y1; y < y2; y += sprite_size.height) {
         for (int x = x1; x < x2; x += sprite_size.width) {
-          //get_map().draw_visual(sprite, x, y);
-          sprite.draw(surface, {x,y}); //TODO clipping area !
+          sprite.draw(surface, {x,y}); //TODO check if clipping can be ignored for repeated sprites
         }
       }
     }
