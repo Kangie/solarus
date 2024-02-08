@@ -158,59 +158,53 @@ Gets the joypad axis that is bound to the given axis
 
 - Return value (string) : Bound joypad axis
 
-\subsection lua_api_controls_set_keyboard_bindings controls:set_keyboard_bindings(key, commands)
+\subsection lua_api_controls_set_keyboard_bindings controls:set_keyboard_bindings(bindings)
 
-Sets the commands that given key will trigger
+Sets the commands bindings for the keyboard
 
-- \c key (string): A valid key code (see \ref lua_api_input)
-- \c commands ({string}): An array of valid command names
+- \c bindings ({string : {string}}): A table of key codes -> array of commands
 
-\subsection lua_api_controls_get_keyboard_bindings controls:get_keyboard_bindings(key)
+\subsection lua_api_controls_get_keyboard_bindings controls:get_keyboard_bindings()
 
-Gets the key that is bound to the given command
+Gets the command bindings for the keyboard
 
-- \c key (string): A valid keyboard keycode
-- Return value ({string}): An array of commands triggered by this key (see \ref lua_api_input)
+- Return value ({string : {string}}): A table of key codes -> array of commands (see \ref lua_api_input)
 
-\subsection lua_api_controls_set_joypad_bindings controls:set_joypad_bindings(button, commands)
+\subsection lua_api_controls_set_joypad_bindings controls:set_joypad_bindings(bindings)
 
-Sets the commands that given button will trigger
+Sets the command bindings for the joypad
 
-- \c button (string): A valid joypad binding code
-- \c commands ({string}): An array of valid command names
+- \c commands ({string : {string}}): A table of joypad command bindings -> array of commands
 
-\subsection lua_api_controls_get_joypad_bindings controls:get_joypad_bindings(button)
+\subsection lua_api_controls_get_joypad_bindings controls:get_joypad_bindings()
 
-Gets the joypad binding code bound to the given command
+Gets the joypad command bindings
 
-- \c button (string): Any valid joypad binding code
-- Return value ({string}): An array of command names
+- Return value ({string : {string}}): A table of joypad command bindings -> array of commands
 
-\subsection lua_api_controls_set_keyboard_axis_bindings controls:set_keyboard_axis_bindings(key, bindings)
+\subsection lua_api_controls_set_keyboard_axis_bindings controls:set_keyboard_axis_bindings(bindings)
 
-Sets axes that will be moved by the given key
+Sets keyboard's axes bindings
 
-- \c key (string): A valid keyboard key code
-- \c bindings ({string}): An array of valid axis codes
+- \c bindings ({string : {string}}): A table of key codes -> array of axes bindings
 
-\subsection lua_api_controls_get_keyboard_axis_bindings controls:get_keyboard_axis_bindings(key)
+\subsection lua_api_controls_get_keyboard_axis_bindings controls:get_keyboard_axis_bindings()
 
-Returns the axes moved by given key
+Gets the keyboard's axes bindings
 
-- Return values ({string}): An array of valid axis codes
+- Return values ({string : {string}}): A table of key codes -> array of axes bindings
 
-\subsection lua_api_controls_set_joypad_axis_bindings controls:set_joypad_axis_bindings(joypad_axis, bindings)
+\subsection lua_api_controls_set_joypad_axis_bindings controls:set_joypad_axis_bindings(bindings)
 
-Sets the virtual axes that given joypad axis will drive
+Sets the joypad axes bindings
 
-- \c joypad_axis (string): A valid joypad axis name
-- \c bindings ({string}): An array of valid axis codes
+- \c bindings ({string : {string}}): A table of joypad axis names -> array of axes bindings
 
-\subsection lua_api_controls_get_joypad_axis_bindings controls:get_joypad_axis_bindings(joypad_axis)
+\subsection lua_api_controls_get_joypad_axis_bindings controls:get_joypad_axis_bindings()
 
-Returns the virtual axes moved by given joypad axis
+Gets the joypad axes bindings
 
-- Return value ({string}) : An array of axis codes
+- Return value ({string : {string}}): A table of joypad axis names -> array of axes bindings
 
 \subsection lua_api_controls_get_effect controls:get_effect(command)
 
