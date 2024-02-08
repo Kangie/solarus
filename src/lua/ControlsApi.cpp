@@ -28,7 +28,7 @@ const std::string LuaContext::controls_module_name = "sol.controls";
 namespace LuaBind {
 template<>
 struct Marshalling<Command> {
-  static inline Command check_arg(lua_State * L, int index, const Context& context) {
+    static inline Command check_arg(lua_State * L, int index, const CheckContext& context) {
     size_t length;
     if (const char * data = LuaTools::islstring(L, index, &length)) {
       return Controls::get_command_by_name(std::string(data, length));
@@ -44,7 +44,7 @@ struct Marshalling<Command> {
 
 template<>
 struct Marshalling<Axis>{
-    static inline Axis check_arg(lua_State * L, int index, const Context& context) {
+    static inline Axis check_arg(lua_State * L, int index, const CheckContext& context) {
       if(lua_isnil(L, index)){
         return Axis(AxisId::NONE);
       }
@@ -66,7 +66,7 @@ struct Marshalling<Axis>{
 
 template<>
 struct Marshalling<Solarus::Controls::JoypadBinding>{
-    static inline Controls::JoypadBinding check_arg(lua_State * L, int index, const Context& context) {
+    static inline Controls::JoypadBinding check_arg(lua_State * L, int index, const CheckContext& context) {
       if(lua_isnil(L, index)){
         return Controls::JoypadBinding(JoyPadButton::INVALID);
       }
@@ -90,7 +90,7 @@ struct Marshalling<Solarus::Controls::JoypadBinding>{
 
 template<>
 struct Marshalling<Controls::ControlAxisBinding>{
-    static inline Controls::ControlAxisBinding check_arg(lua_State * L, int index, const Context& context) {
+    static inline Controls::ControlAxisBinding check_arg(lua_State * L, int index, const CheckContext& context) {
       size_t length;
       if (const char * data = LuaTools::islstring(L, index, &length)) {
         auto cab = Controls::ControlAxisBinding::from_string(std::string(data, length));

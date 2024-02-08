@@ -373,8 +373,13 @@ static inline std::string get_type_name() {
   return get_type_name<T>(0);
 }
 
+/**
+ * @brief Abstract lua marshalling Context class implementing basic error function for context
+ *
+ * Uses the curiously recursive pattern to access child class implementation
+ */
 template<typename C>
-struct AContext : public Context {
+struct CheckContextImpl : public CheckContext {
     [[noreturn]] void error(lua_State* L, int sindex, const std::string& message) const override {
       (void)sindex;
       std::ostringstream oss;
@@ -384,11 +389,16 @@ struct AContext : public Context {
     }
 
     [[noreturn]]void type_error(lua_State* L, int sindex, const std::string& type_name) const override {
-      AContext::error(L, sindex, type_name + " expected, got " + LuaTools::get_type_name(L, sindex));
+      CheckContextImpl::error(L, sindex, type_name + " expected, got " + LuaTools::get_type_name(L, sindex));
     }
 };
 
-struct ArgContext : public AContext<ArgContext> {
+/**
+ * @brief Argument parsing context
+ *
+ * Used to represent lua checking context for an argument
+ */
+struct ArgContext : public CheckContextImpl<ArgContext> {
     ArgContext(int index) : index(index) {}
 
     int index;
@@ -421,8 +431,13 @@ struct ArgContext : public AContext<ArgContext> {
     }
 };
 
+/**
+ * @brief Numeric field context class
+ *
+ * Used to hold context when checking an array value
+ */
 template<typename P>
-struct NumFieldContext : public AContext<NumFieldContext<P>> {
+struct NumFieldContext : public CheckContextImpl<NumFieldContext<P>> {
     int index;
     const P& parent;
     NumFieldContext(int index, const P& parent) : index(index), parent(parent) {}
@@ -433,8 +448,13 @@ struct NumFieldContext : public AContext<NumFieldContext<P>> {
     }
 };
 
+/**
+ * @brief Key value context class
+ *
+ * Used to hold context when checking a map key
+ */
 template<typename P>
-struct KeyContext : public AContext<KeyContext<P>> {
+struct KeyContext : public CheckContextImpl<KeyContext<P>> {
     const P& parent;
     KeyContext(const P& parent) : parent(parent) {}
 
@@ -444,8 +464,15 @@ struct KeyContext : public AContext<KeyContext<P>> {
     }
 };
 
+/**
+ * @brief Map value context class
+ *
+ * Used to hold context when checking a map value
+ *
+ * Note : Keytype K must be stringifiable to print proper error
+ */
 template<typename P, typename K>
-struct ValueContext : public AContext<ValueContext<P,K>> {
+struct ValueContext : public CheckContextImpl<ValueContext<P,K>> {
     const K& key;
     const P& parent;
     ValueContext(const K& key, const P& parent) : key(key), parent(parent) {}
@@ -462,6 +489,7 @@ struct ValueContext : public AContext<ValueContext<P,K>> {
     }
 };
 
+/// Forward declaration
 template<typename T, typename C>
 T check_arg(lua_State* L, int index, const C& context);
 
@@ -647,6 +675,13 @@ struct CheckArg<T, C, decltype(void(Marshalling<T>::check_arg))>{
   }
 };
 
+/**
+ * @brief template deduction helper for the CheckArg class
+ * @param L the lua state
+ * @param index lua stack index
+ * @param context a deduced checking context
+ * @return a checked value
+ */
 template<typename T, typename C>
 T check_arg(lua_State* L, int index, const C& context) {
   return CheckArg<T, C>::call(L, index, context);

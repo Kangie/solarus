@@ -45,19 +45,42 @@ struct Nil {};
  * Implementers must provide:
  *
  * Two static methods to marchal the argument/return type from/to the lua stack
- * - static T check_arg(lua_State * L, int index, const Context& c);
+ * - static T check_arg(lua_State * L, int index, const CheckContext& c);
  * - static void push(lua_State * L, const T& value);
  */
 template<typename T>
 struct Marshalling;
 
-struct Context{
+/**
+ * @brief Marshaling context interface
+ *
+ * allows to signal errors from the marshalling code
+ */
+struct CheckContext{
     [[noreturn]] virtual void error(lua_State* L, int sindex, const std::string& message) const = 0;
     [[noreturn]] virtual void type_error(lua_State* L, int sindex, const std::string& type_name) const = 0;
 };
 
+/**
+ * @brief error free function, work around [[noreturn]] being only for free functions
+ *
+ * Calls ctx.error
+ *
+ * @param ctx a Context
+ * @param L the lua state
+ * @param sindex the stack index of the marshalling error
+ * @param message the error message
+ */
 template<typename C>
 [[noreturn]] void error(const C& ctx, lua_State* L, int sindex, const std::string & message);
+
+/**
+ * @brief type_error free function, work around [[noreturn]] being only for free functions
+ * @param ctx a Context
+ * @param L the lua state
+ * @param sindex the stack index of the marshalling error
+ * @param type_name the name of the expected type
+ */
 template<typename C>
 [[noreturn]] void type_error(const C& ctx, lua_State* L, int sindex, const std::string& type_name);
 
