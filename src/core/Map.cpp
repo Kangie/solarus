@@ -656,18 +656,6 @@ void Map::draw_foreground(const SurfacePtr& dst_surface) {
  * \brief Draws a drawable object on the camera surface.
  * \param drawable The drawable object to draw.
  * \param xy Coordinates of the drawable's origin point in the map.
- * \param clipping_area Rectangle of the map where the drawing will be
- * restricted. A flat rectangle means no restriction.
- */
-void Map::draw_visual(Drawable& drawable, const Point &xy, const Rectangle& clipping_area) {
-
-  draw_visual(drawable, xy.x, xy.y, clipping_area);
-}
-
-/**
- * \brief Draws a drawable object on the camera surface.
- * \param drawable The drawable object to draw.
- * \param xy Coordinates of the drawable's origin point in the map.
  */
 void Map::draw_visual(Drawable& drawable, const Point &xy) {
 
@@ -692,46 +680,6 @@ void Map::draw_visual(Drawable& drawable, int x, int y) {
   drawable.draw(camera_surface,
       x,
       y
-  );
-}
-
-/**
- * \brief Draws a drawable object on a restricted area of the camera surface.
- * \param drawable The drawable object to draw.
- * \param x X coordinate of the drawable's origin point in the map.
- * \param y Y coordinate of the drawable's origin point in the map.
- * \param clipping_area Rectangle of the map where the drawing will be
- * restricted. A flat rectangle means no restriction.
- */
-void Map::draw_visual(Drawable& drawable, int x, int y,
-    const Rectangle& clipping_area) {
-
-  if (clipping_area.is_flat()) {
-    // No clipping area.
-    draw_visual(drawable, x, y);
-    return;
-  }
-
-  const CameraPtr& camera = get_camera();
-  if (camera == nullptr) {
-    return;
-  }
-  const SurfacePtr& camera_surface = camera->get_surface();
-
-  const Rectangle region_in_frame(
-      clipping_area.get_x() - x,
-      clipping_area.get_y() - y,
-      clipping_area.get_width(),
-      clipping_area.get_height()
-  );
-  const Point dst_position = {
-      x,
-      y
-  };
-  drawable.draw_region(
-      region_in_frame,
-      camera_surface,
-      dst_position
   );
 }
 
