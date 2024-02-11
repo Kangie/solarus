@@ -192,6 +192,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1600_map_loading_single_cam/map1"
   "bugs/1609_crash_save_lua_keyword"
   "bugs/1611_entity_overlaps_when_removed"
+  "bugs/1617_crash_disabled_chest"
 )
 
 # Test that should succeed when there are non-fatal errors

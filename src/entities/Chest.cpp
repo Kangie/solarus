@@ -94,10 +94,12 @@ void Chest::notify_enabled(bool enabled) {
 
   Entity::notify_enabled(enabled);
 
-  // Make sure the chest does not appear on the heroes
-  for(const HeroPtr& hero: get_heroes()) {
-    if (enabled && overlaps(*hero)) {
-      hero->avoid_collision(*this, 3);
+  if (enabled && is_on_map()) {
+    // Make sure the chest does not appear on the heroes
+    for(const HeroPtr& hero: get_heroes()) {
+      if (overlaps(*hero)) {
+        hero->avoid_collision(*this, 3);
+      }
     }
   }
 }
