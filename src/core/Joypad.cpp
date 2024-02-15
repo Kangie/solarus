@@ -38,6 +38,12 @@ const EnumInfo<JoyPadButton>::names_type EnumInfoTraits<JoyPadButton>::names = {
   {JoyPadButton::DPAD_DOWN, "dpad_down"},
   {JoyPadButton::DPAD_LEFT, "dpad_left"},
   {JoyPadButton::DPAD_RIGHT, "dpad_right"},
+  {JoyPadButton::MISC_1, "misc_1"},
+  {JoyPadButton::PADDLE_1, "paddle_1"},
+  {JoyPadButton::PADDLE_2, "paddle_2"},
+  {JoyPadButton::PADDLE_3, "paddle_3"},
+  {JoyPadButton::PADDLE_4, "paddle_4"},
+  {JoyPadButton::TOUCH_PAD, "touch_pad"},
 };
 
 const EnumInfo<JoyPadAxis>::names_type EnumInfoTraits<JoyPadAxis>::names = {
