@@ -30,7 +30,7 @@
         <file>quest_converter/1_5_to_1_6/quest_properties_converter_1_5.lua</file>
         <file>quest_converter/1_5_to_1_6/map_converter_1_5.lua</file>
         <file>quest_converter/1_5_to_1_6/quest_db_converter_1_5.lua</file>
-        <file>quest_converter/1_6_to_1_7/quest_properties_converter_1_6.lua</file>
-        <file>quest_converter/converter_1_6_to_1_7.lua</file>
+        <file>quest_converter/1_6_to_2_0/quest_properties_converter_1_6.lua</file>
+        <file>quest_converter/converter_1_6_to_2_0.lua</file>
     </qresource>
 </RCC>
