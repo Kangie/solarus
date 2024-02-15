@@ -79,7 +79,7 @@ void LuaContext::register_surface_module() {
     });
   }
 
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     methods.insert(methods.end(), {
       { "save", surface_api_save }
     });

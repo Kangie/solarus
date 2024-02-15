@@ -1952,9 +1952,9 @@ bool LuaContext::on_joypad_button_pressed(const InputEvent& event) {
   if (find_method("on_joypad_button_pressed")) {
     JoyPadButton button = event.get_joypad_button();
 
-    if(CurrentQuest::is_format_at_least({1,7}))
+    if(CurrentQuest::is_format_at_least({2, 0}))
       push_string(current_l, enum_to_name(button));
-    else //Emulate old behaviour if quest is not 1.7
+    else // Emulate old behaviour if quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(button));
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(3, 1, "on_joypad_button_pressed");
@@ -1982,9 +1982,9 @@ bool LuaContext::on_joypad_button_released(const InputEvent& event) {
   if (find_method("on_joypad_button_released")) {
     JoyPadButton button = event.get_joypad_button();
 
-    if(CurrentQuest::is_format_at_least({1,7}))
+    if(CurrentQuest::is_format_at_least({2, 0}))
       push_string(current_l, enum_to_name(button));
-    else //Emulate old behaviour if quest is not 1.7
+    else // Emulate old behaviour if quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(button));
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(3, 1, "on_joypad_button_released");
@@ -2013,9 +2013,9 @@ bool LuaContext::on_joypad_axis_moved(const InputEvent& event) {
     JoyPadAxis axis = event.get_joypad_axis();
     double state = event.get_joypad_axis_state();
 
-    if(CurrentQuest::is_format_at_least({1,7}))
+    if(CurrentQuest::is_format_at_least({2, 0}))
       push_string(current_l, enum_to_name(axis));
-    else //Emulate old behaviour if quest is not 1.7
+    else // Emulate old behaviour if quest is not 2.0
       lua_pushinteger(current_l, static_cast<int>(axis));
     lua_pushnumber(current_l, state);
     push_joypad(current_l, *event.get_joypad());
@@ -2038,7 +2038,7 @@ bool LuaContext::on_joypad_axis_moved(const InputEvent& event) {
  * \param event The corresponding input event.
  * \return \c true if the event was handled and should stop being propagated.
  *
- * \deprecated THIS SHOULD NOT BE CALLED ANYMORE IN 1.7
+ * \deprecated THIS SHOULD NOT BE CALLED ANYMORE IN 2.0
  */
 bool LuaContext::on_joypad_hat_moved(const InputEvent& event) {
   check_callback_thread();

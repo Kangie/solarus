@@ -165,7 +165,7 @@ void LuaContext::register_entity_module() {
         { "set_properties", entity_api_set_properties },
     });
   }
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
       common_methods.insert(common_methods.end(), {
         { "set_name", entity_api_set_name },
     });
@@ -228,43 +228,38 @@ void LuaContext::register_entity_module() {
         { "start_state", hero_api_start_state },
     });
   }
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     hero_methods.insert(hero_methods.end(), {
       { "get_push_delay", hero_api_get_push_delay},
       { "set_push_delay", hero_api_set_push_delay},
       { "get_carry_height", hero_api_get_carry_height},
       { "set_carry_height", hero_api_set_carry_height},
-    });
-  }
-
-  if (CurrentQuest::is_format_at_least({ 1, 6 })) { //TODO change to 1.7
-    hero_methods.insert(hero_methods.end(), {
-        { "get_life", hero_get_life },
-        { "set_life", hero_set_life },
-        { "add_life", hero_add_life },
-        { "remove_life", hero_remove_life },
-        { "get_max_life", hero_get_max_life },
-        { "set_max_life", hero_set_max_life },
-        { "add_max_life", hero_add_max_life },
-        { "get_money", hero_get_money },
-        { "set_money", hero_set_money },
-        { "add_money", hero_add_money },
-        { "remove_money", hero_remove_money },
-        { "get_max_money", hero_get_max_money },
-        { "set_max_money", hero_set_max_money },
-        { "get_magic", hero_get_magic },
-        { "set_magic", hero_set_magic },
-        { "add_magic", hero_add_magic },
-        { "remove_magic", hero_remove_magic },
-        { "get_max_magic", hero_get_max_magic },
-        { "set_max_magic", hero_set_max_magic },
-        { "has_ability", hero_has_ability },
-        { "get_abiltiy", hero_get_ability },
-        { "set_ability", hero_set_ability },
-        { "get_item", hero_get_item },
-        { "has_item", hero_has_item },
-        { "get_item_assigned", hero_get_item_assigned },
-        { "set_item_assigned", hero_set_item_assigned }
+      { "get_life", hero_get_life },
+      { "set_life", hero_set_life },
+      { "add_life", hero_add_life },
+      { "remove_life", hero_remove_life },
+      { "get_max_life", hero_get_max_life },
+      { "set_max_life", hero_set_max_life },
+      { "add_max_life", hero_add_max_life },
+      { "get_money", hero_get_money },
+      { "set_money", hero_set_money },
+      { "add_money", hero_add_money },
+      { "remove_money", hero_remove_money },
+      { "get_max_money", hero_get_max_money },
+      { "set_max_money", hero_set_max_money },
+      { "get_magic", hero_get_magic },
+      { "set_magic", hero_set_magic },
+      { "add_magic", hero_add_magic },
+      { "remove_magic", hero_remove_magic },
+      { "get_max_magic", hero_get_max_magic },
+      { "set_max_magic", hero_set_max_magic },
+      { "has_ability", hero_has_ability },
+      { "get_abiltiy", hero_get_ability },
+      { "set_ability", hero_set_ability },
+      { "get_item", hero_get_item },
+      { "has_item", hero_has_item },
+      { "get_item_assigned", hero_get_item_assigned },
+      { "set_item_assigned", hero_set_item_assigned }
     });
   }
 
@@ -370,7 +365,7 @@ void LuaContext::register_entity_module() {
       { "get_treasure", chest_api_get_treasure },
       { "set_treasure", chest_api_set_treasure },
   };
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     chest_methods.insert(chest_methods.end(), {
       { "get_opening_method", chest_api_get_opening_method},
       { "get_opening_condition", chest_api_get_opening_condition},
@@ -405,7 +400,7 @@ void LuaContext::register_entity_module() {
       { "set_max_moves", block_api_set_max_moves },
     });
   }
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     block_methods.insert(block_methods.end(), {
       { "get_direction", block_api_get_direction},
     });
@@ -428,7 +423,7 @@ void LuaContext::register_entity_module() {
       { "set_locked", switch_api_set_locked },
       { "is_walkable", switch_api_is_walkable },
   };
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     switch_methods.insert(switch_methods.end(), {
         { "get_inactivate_when_leaving", switch_api_get_inactivate_when_leaving},
         { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
@@ -479,7 +474,7 @@ void LuaContext::register_entity_module() {
         { "set_open", door_api_set_open },
     });
   }
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     door_methods.insert(door_methods.end(), {
       { "get_opening_method", door_api_get_opening_method},
       { "get_opening_condition", door_api_get_opening_condition},
@@ -581,7 +576,7 @@ void LuaContext::register_entity_module() {
         { "set_damage_on_enemies", carried_object_api_set_damage_on_enemies }
     });
   }
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     carried_object_methods.insert(carried_object_methods.end(), {
         { "get_object_height", carried_object_api_get_object_height},
         { "set_object_height", carried_object_api_set_object_height}
@@ -672,7 +667,7 @@ void LuaContext::register_entity_module() {
         { "set_attacking_collision_mode", enemy_api_set_attacking_collision_mode },
     });
   }
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     enemy_methods.insert(enemy_methods.end(), {
       { "get_savegame_variable", enemy_api_get_savegame_variable},
     });
@@ -689,7 +684,7 @@ void LuaContext::register_entity_module() {
   //Jumper.
   std::vector<luaL_Reg> jumper_methods = {};
 
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     jumper_methods.insert(jumper_methods.end(), {
       { "get_jump_length", jumper_api_get_jump_length},
       { "set_jump_length", jumper_api_set_jump_length},
