@@ -63,6 +63,10 @@ private slots:
   void change_min_size_requested();
   void update_max_size_field();
   void change_max_size_requested();
+  void update_subpixel_camera_field();
+  void change_subpixel_camera_requested();
+  void update_dynamic_timestep_field();
+  void change_dynamic_timestep_requested();
 
 private:
 
