@@ -540,6 +540,7 @@ void MainLoop::step(uint64_t timestep_ns) {
       game->stop();
     }
     set_game(nullptr);
+    resetting = false;
   }
 
   // Go to another game?
