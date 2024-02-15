@@ -642,7 +642,7 @@ static LuaBind::OnStack get_heroes(lua_State* l, Map& map) {
  */
 void LuaContext::register_map_module() {
 
-  const std::vector<luaL_Reg> methods = {
+  std::vector<luaL_Reg> methods = {
       { "get_id", LUA_TO_C_BIND(&Map::get_id) },
       { "get_game", LUA_TO_C_BIND(get_game) },
       { "get_world", LUA_TO_C_BIND(get_world) },
@@ -679,10 +679,15 @@ void LuaContext::register_map_module() {
       { "get_hero", LUA_TO_C_BIND(get_hero) },
       { "set_entities_enabled", LUA_TO_C_BIND(set_entities_enabled) },
       { "remove_entities", LUA_TO_C_BIND(remove_entities) },
-      //1.7 features
+  };
+
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    methods.insert(methods.end(), {
+      // 2.0 features
       { "get_cameras", LUA_TO_C_BIND(get_cameras) },
       { "get_heroes", LUA_TO_C_BIND(get_heroes) },
-  };
+    });
+  }
 
   const std::vector<luaL_Reg> metamethods = {
       { "__gc", userdata_meta_gc },

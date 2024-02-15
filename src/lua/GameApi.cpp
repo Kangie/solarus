@@ -47,7 +47,7 @@ void LuaContext::register_game_module() {
   };
 
   // Methods of the game type.
-  const std::vector<luaL_Reg> methods = {
+  std::vector<luaL_Reg> methods = {
       { "save", game_api_save },
       { "start", game_api_start },
       { "is_started", game_api_is_started },
@@ -107,8 +107,11 @@ void LuaContext::register_game_module() {
       { "capture_command_binding", game_api_capture_command_binding },
       { "simulate_command_pressed", game_api_simulate_command_pressed },
       { "simulate_command_released", game_api_simulate_command_released },
-      //1.7 methods
-      // FIXME only include them if the quest is >= 1.7
+  };
+
+  // 2.0 methods
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    methods.insert(methods.end(), {
       { "get_controls", game_api_get_controls },
       { "set_controls", game_api_set_controls },
       { "create_camera", game_api_create_camera },
@@ -116,7 +119,8 @@ void LuaContext::register_game_module() {
       { "get_cameras", game_api_get_cameras },
       { "get_maps", game_api_get_maps },
       { "get_values", game_api_get_values },
-  };
+    });
+  }
 
   const std::vector<luaL_Reg> metamethods = {
       { "__gc", userdata_meta_gc },

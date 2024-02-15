@@ -32,7 +32,7 @@ const std::string LuaContext::sound_module_name = "sol.sound";
  */
 void LuaContext::register_sound_module() {
 
-  if (!CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (!CurrentQuest::is_format_at_least({ 2, 0 })) {
     return;
   }
 
