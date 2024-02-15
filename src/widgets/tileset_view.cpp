@@ -992,7 +992,10 @@ void TilesetView::dragMoveEvent(QDragMoveEvent* event) {
     // Check overlapping existing patterns.
     QList<QGraphicsItem*> overlapping_item_list = scene->items(
         area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect);
-    QSet<QGraphicsItem*> overlapping_items(overlapping_item_list.begin(), overlapping_item_list.end());
+    QSet<QGraphicsItem*> overlapping_items;
+    for (QGraphicsItem* overlapping_item : overlapping_item_list) {
+        overlapping_items.insert(overlapping_item);
+    }
 
     // Filter out the patterns that are being moved,
     // that is, allow the destination to overlap the source.
