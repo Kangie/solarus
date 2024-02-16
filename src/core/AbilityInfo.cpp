@@ -23,6 +23,7 @@ const std::string EnumInfoTraits<Ability>::pretty_name = "ability";
 const EnumInfo<Ability>::names_type EnumInfoTraits<Ability>::names = {
     { Ability::TUNIC, "tunic" },
     { Ability::SWORD, "sword" },
+    { Ability::SWORD_SPIN_ATTACK, "sword_spin_attack" },
     { Ability::SWORD_KNOWLEDGE, "sword_knowledge" },
     { Ability::SHIELD, "shield" },
     { Ability::LIFT, "lift" },

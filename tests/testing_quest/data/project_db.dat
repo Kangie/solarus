@@ -135,6 +135,7 @@ map{ id = "bugs/748_entity_overlaps_collision_modes", description = "#748: entit
 map{ id = "bugs/754_entity_get_max_bounding_box", description = "#754: entity:get_max_bounding_box" }
 map{ id = "bugs/762_camera_entity", description = "#762: Camera as entity" }
 map{ id = "bugs/769_stuck_dynamic_tile_covered", description = "#769: Non-traversable dynamic tiles covered by traversable ones block the hero" }
+map{ id = "bugs/771_spin_attack_ability", description = "#1171: Spin attack ability" }
 map{ id = "bugs/779_get_entities_random_order", description = "#779: map:get_entities() returns entities in random order" }
 map{ id = "bugs/781_assert_teletransporter_same_map", description = "#781: Assertion error when a teletransporter leads to the same map" }
 map{ id = "bugs/794_custom_entity_set_can_traverse_ground", description = "#794: custom_entity:set_can_traverse_ground(\"traversable\", false) does not work" }
@@ -716,6 +717,8 @@ file{ path = "maps/bugs/762_camera_entity.dat", author = "Christopho", license =
 file{ path = "maps/bugs/762_camera_entity.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/769_stuck_dynamic_tile_covered.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/769_stuck_dynamic_tile_covered.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/771_spin_attack_ability.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/771_spin_attack_ability.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/779_get_entities_random_order.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/779_get_entities_random_order.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/781_assert_teletransporter_same_map.dat", author = "Christopho", license = "CC BY-SA 4.0" }

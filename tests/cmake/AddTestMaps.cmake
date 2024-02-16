@@ -45,6 +45,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/754_entity_get_max_bounding_box"
   "bugs/762_camera_entity"
   "bugs/769_stuck_dynamic_tile_covered"
+  "bugs/771_spin_attack_ability"
   "bugs/779_get_entities_random_order"
   "bugs/781_assert_teletransporter_same_map"
   "bugs/794_custom_entity_set_can_traverse_ground"

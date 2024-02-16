@@ -74,6 +74,7 @@ class SOLARUS_API Savegame: public ExportableToLua {
     static const std::string KEY_ITEM_SLOT_2;
     static const std::string KEY_ABILITY_TUNIC;
     static const std::string KEY_ABILITY_SWORD;
+    static const std::string KEY_ABILITY_SWORD_SPIN_ATTACK;
     static const std::string KEY_ABILITY_SWORD_KNOWLEDGE;
     static const std::string KEY_ABILITY_SHIELD;
     static const std::string KEY_ABILITY_LIFT;

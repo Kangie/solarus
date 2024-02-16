@@ -27,7 +27,10 @@ enum class Ability {
   TUNIC,                  /**< Tunic of the hero. Determines his sprite. */
   SWORD,                  /**< Sword of the hero. 0 means no sword, a
                            * greater values determine the sword sprite. */
-  SWORD_KNOWLEDGE,        /**< Allows to do the super spin attack. */
+  SWORD_SPIN_ATTACK,      /**< Allows to do the spin attack.
+                           * 1: normal (default), 2: super spin attack. */
+  SWORD_KNOWLEDGE,        /**< Allows to do the super spin attack
+                           * (deprecated, equivalent to SPIN_ATTACK 2). */
   SHIELD,                 /**< Allows to stop attacks from enemies. */
   LIFT,                   /**< Lifting destructible objects. */
   SWIM,                   /**< Swimming in deep water. */

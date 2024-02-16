@@ -1231,6 +1231,12 @@ int LuaContext::game_api_get_ability(lua_State* l) {
 
     int ability_level = savegame.get_equipment()->get_ability(ability);
 
+    if (ability == Ability::SWORD_KNOWLEDGE && CurrentQuest::is_format_at_least({2, 0})) {
+      Debug::warning("Ability 'sword_knowledge' is deprecated. Use the more general 'sword_spin_attack' instead");
+      const int spin_attack_level = savegame.get_equipment()->get_ability(Ability::SWORD_SPIN_ATTACK);
+      ability_level = (spin_attack_level == 2) ? 1 : 0;
+    }
+
     lua_pushinteger(l, ability_level);
     return 1;
   });
@@ -1247,6 +1253,12 @@ int LuaContext::game_api_set_ability(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     Ability ability = LuaTools::check_enum<Ability>(l, 2);
     int level = LuaTools::check_int(l, 3);
+
+    if (ability == Ability::SWORD_KNOWLEDGE && CurrentQuest::is_format_at_least({2, 0})) {
+      Debug::warning("Ability 'sword_knowledge' is deprecated. Use the more general 'sword_spin_attack' instead");
+      ability = Ability::SWORD_SPIN_ATTACK;
+      level = (level == 1) ? 2 : 1;
+    }
 
     savegame.get_equipment()->set_ability(ability, level);
 

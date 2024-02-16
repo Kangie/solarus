@@ -96,15 +96,17 @@ void Hero::SwordLoadingState::update() {
   if (!attack_pressed) {
     // the player has just released the sword key
 
-    // stop loading the sword, go to the normal state or make a spin attack
+    // stop charging the sword, go to the normal state or make a spin attack
     Hero& hero = get_entity();
     if (!sword_loaded) {
-      // the sword was not loaded yet: go to the normal state
-      hero.set_state(std::make_shared<FreeState>(hero));
+      // the sword was not charged yet: go to the normal state
+      hero.start_free();
     }
-    else {
-      // the sword is loaded: release a spin attack
+    else if (get_equipment().has_ability(Ability::SWORD_SPIN_ATTACK)) {
+      // the sword is charged: release a spin attack
       hero.set_state(std::make_shared<SpinAttackState>(hero));
+    } else {
+      hero.start_free();
     }
   }
 }
