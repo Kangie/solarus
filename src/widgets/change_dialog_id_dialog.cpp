@@ -28,7 +28,7 @@ namespace SolarusEditor {
  * @param parent Parent object or nullptr.
  */
 ChangeDialogIdDialog::ChangeDialogIdDialog(
-    DialogsModel* model, const QString &initial_id,
+    DialogsModel& model, const QString &initial_id,
     bool is_prefix, bool allow_prefix, QWidget* parent) :
   QDialog(parent),
   initial_id(initial_id),
@@ -105,12 +105,12 @@ void ChangeDialogIdDialog::done(int result) {
     if (id != initial_id) {
       if (get_prefix()) {
         QString error_id;
-        if (!model->can_set_dialog_id_prefix(initial_id, id, error_id)) {
+        if (!model.can_set_dialog_id_prefix(initial_id, id, error_id)) {
           GuiTools::error_dialog(
                 tr("The dialog '%1' already exists").arg(error_id));
           return;
         }
-      } else if (model->dialog_exists(id)) {
+      } else if (model.dialog_exists(id)) {
         GuiTools::error_dialog(
               tr("The dialog '%1' already exists").arg(id));
         return;

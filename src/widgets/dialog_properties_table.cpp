@@ -33,36 +33,36 @@ DialogPropertiesTable::DialogPropertiesTable(QWidget* parent) :
 
   create_action = new QAction(
         QIcon(":/images/icon_add.png"), tr("New property..."), this);
-  connect(create_action, SIGNAL(triggered()),
-          this, SIGNAL(create_property_requested()));
+  connect(create_action, &QAction::triggered,
+          this, &DialogPropertiesTable::create_property_requested);
   addAction(create_action);
 
   set_key_action = new QAction(
         QIcon(":/images/icon_rename.png"), tr("Change key..."), this);
   set_key_action->setShortcut(tr("F2"));
   set_key_action->setShortcutContext(Qt::WidgetShortcut);
-  connect(set_key_action, SIGNAL(triggered()),
-          this, SIGNAL(set_property_key_requested()));
+  connect(set_key_action, &QAction::triggered,
+          this, &DialogPropertiesTable::set_property_key_requested);
   addAction(set_key_action);
 
   delete_action = new QAction(
         QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
-  connect(delete_action, SIGNAL(triggered()),
-          this, SIGNAL(delete_property_requested()));
+  connect(delete_action, &QAction::triggered,
+          this, &DialogPropertiesTable::delete_property_requested);
   addAction(delete_action);
 
   set_action = new QAction(
         QIcon(":/images/icon_paste.png"), tr("Set from translation..."), this);
-  connect(set_action, SIGNAL(triggered()),
-          this, SIGNAL(set_from_translation_requested()));
+  connect(set_action, &QAction::triggered,
+          this, &DialogPropertiesTable::set_from_translation_requested);
   addAction(set_action);
 
-  connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
-          this, SLOT(on_item_double_clicked(QTreeWidgetItem*,int)));
-  connect(this, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
-          this, SLOT(on_item_changed(QTreeWidgetItem*,int)));
+  connect(this, &QTreeWidget::itemDoubleClicked,
+          this, &DialogPropertiesTable::on_item_double_clicked);
+  connect(this, &QTreeWidget::itemChanged,
+          this, &DialogPropertiesTable::on_item_changed);
 }
 
 /**
@@ -94,7 +94,7 @@ void DialogPropertiesTable::contextMenuEvent(QContextMenuEvent *event) {
 
 /**
  * @brief Sets the dialogs to represent in this view.
- * @param model The dialogs model.
+ * @param model The dialogs model or nullptr.
  */
 void DialogPropertiesTable::set_model(DialogsModel* model) {
 
@@ -106,16 +106,15 @@ void DialogPropertiesTable::set_model(DialogsModel* model) {
   this->model = model;
 
   if (this->model != nullptr) {
-
     connect(&model->get_selection_model(),
-            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            this, SLOT(update()));
-    connect(model, SIGNAL(dialog_property_created(QString,QString,QString)),
-            this, SLOT(dialog_property_created(QString,QString,QString)));
-    connect(model, SIGNAL(dialog_property_deleted(QString,QString)),
-            this, SLOT(dialog_property_deleted(QString,QString)));
-    connect(model, SIGNAL(dialog_property_changed(QString,QString,QString)),
-            this, SLOT(dialog_property_value_changed(QString,QString,QString)));
+            &QItemSelectionModel::selectionChanged,
+            this, &DialogPropertiesTable::update);
+    connect(model, &DialogsModel::dialog_property_created,
+            this, &DialogPropertiesTable::dialog_property_created);
+    connect(model, &DialogsModel::dialog_property_deleted,
+            this, &DialogPropertiesTable::dialog_property_deleted);
+    connect(model, &DialogsModel::dialog_property_changed,
+            this, &DialogPropertiesTable::dialog_property_value_changed);
   }
 
   update();

@@ -168,7 +168,7 @@ public:
 
   virtual void undo() override {
 
-    for (const auto& pair : edited_ids) {
+    for (const auto& pair : qAsConst(edited_ids)) {
       get_model().set_dialog_id(pair.second, pair.first);
     }
     if (!edited_ids.isEmpty()) {
@@ -237,7 +237,7 @@ public:
 
   virtual void undo() override {
 
-    for (const auto& pair : removed_dialogs) {
+    for (const auto& pair : qAsConst(removed_dialogs)) {
       get_model().create_dialog(pair.first, pair.second);
     }
     if (!removed_dialogs.isEmpty()) {
@@ -454,7 +454,7 @@ DialogsEditor::DialogsEditor(
   ui.setupUi(this);
 
   // Open the file.
-  model = new DialogsModel(quest, language_id, this);
+  model = std::make_unique<DialogsModel>(quest, language_id, this);
   get_undo_stack().setClean();
 
   // Editor properties.
@@ -464,8 +464,8 @@ DialogsEditor::DialogsEditor(
         tr("Dialogs '%1' have been modified. Save changes?").arg(language_id));
 
   // Prepare the gui.
-  ui.dialogs_tree_view->set_model(model);
-  ui.dialog_properties_table->set_model(model);
+  ui.dialogs_tree_view->set_model(*model);
+  ui.dialog_properties_table->set_model(model.get());
 
   ui.translation_field->set_resource_type(ResourceType::LANGUAGE);
   ui.translation_field->set_quest(quest);
@@ -508,10 +508,10 @@ DialogsEditor::DialogsEditor(
   connect(ui.dialog_properties_table, &QTreeWidget::itemSelectionChanged,
           this, &DialogsEditor::update_properties_buttons);
 
-  connect(model, &DialogsModel::dialog_id_changed,
+  connect(model.get(), &DialogsModel::dialog_id_changed,
           this, &DialogsEditor::update_dialog_id_field);
 
-  connect(model, &DialogsModel::dialog_text_changed,
+  connect(model.get(), &DialogsModel::dialog_text_changed,
           this, &DialogsEditor::update_dialog_text_field);
   connect(ui.dialog_text_field, &PlainTextEdit::editing_finished,
           this, &DialogsEditor::change_dialog_text_requested);
@@ -548,15 +548,6 @@ DialogsEditor::DialogsEditor(
           this, &DialogsEditor::translation_selector_activated);
   connect(ui.translation_refresh_button, &QAbstractButton::clicked,
           this, &DialogsEditor::translation_refresh_requested);
-}
-
-/**
- * @brief Destructor.
- */
-DialogsEditor::~DialogsEditor() {
-  if (model != nullptr) {
-    delete model;
-  }
 }
 
 /**
@@ -739,7 +730,7 @@ void DialogsEditor::change_dialog_id_requested() {
   }
 
   ChangeDialogIdDialog dialog(
-        model, old_id, is_prefix, is_prefix && exists, this);
+        *model, old_id, is_prefix, is_prefix && exists, this);
 
   int result = dialog.exec();
   if (result != QDialog::Accepted) {

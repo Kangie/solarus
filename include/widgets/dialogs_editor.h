@@ -34,7 +34,6 @@ public:
 
   DialogsEditor(
       Quest& quest, const QString& language_id, QWidget* parent = nullptr);
-  ~DialogsEditor();
 
   DialogsModel& get_model();
 
@@ -79,10 +78,10 @@ public slots:
 
 private:
 
-  Ui::DialogsEditor ui;      /**< The dialogs editor widgets. */
-  QString language_id;       /**< Id of the language of dialogs being edited. */
-  DialogsModel* model;       /**< Dialogs model being edited. */
-  Quest& quest;              /**< The quest. */
+  Ui::DialogsEditor ui;                 /**< The dialogs editor widgets. */
+  QString language_id;                  /**< Id of the language of dialogs being edited. */
+  std::unique_ptr<DialogsModel> model;  /**< Dialogs model being edited. */
+  Quest& quest;                         /**< The quest. */
 
 };
 
