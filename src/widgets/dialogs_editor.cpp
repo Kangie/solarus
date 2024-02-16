@@ -477,82 +477,82 @@ DialogsEditor::DialogsEditor(
 
   // Make connections.
   connect(&get_database(),
-          SIGNAL(element_description_changed(ResourceType, const QString&, const QString&)),
-          this, SLOT(update_description_to_gui()));
-  connect(ui.description_field, SIGNAL(editingFinished()),
-          this, SLOT(set_description_from_gui()));
+          &QuestDatabase::element_description_changed,
+          this, &DialogsEditor::update_description_to_gui);
+  connect(ui.description_field, &QLineEdit::editingFinished,
+          this, &DialogsEditor::set_description_from_gui);
 
-  connect(ui.create_button, SIGNAL(clicked()),
-          this, SLOT(create_dialog_requested()));
-  connect(ui.dialogs_tree_view, SIGNAL(create_dialog_requested()),
-          this, SLOT(create_dialog_requested()));
+  connect(ui.create_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::create_dialog_requested);
+  connect(ui.dialogs_tree_view, &DialogsTreeView::create_dialog_requested,
+          this, &DialogsEditor::create_dialog_requested);
 
-  connect(ui.duplicate_button, SIGNAL(clicked()),
-          this, SLOT(duplicate_requested()));
-  connect(ui.dialogs_tree_view, SIGNAL(duplicate_dialog_requested()),
-          this, SLOT(duplicate_requested()));
+  connect(ui.duplicate_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::duplicate_requested);
+  connect(ui.dialogs_tree_view, &DialogsTreeView::duplicate_dialog_requested,
+          this, &DialogsEditor::duplicate_requested);
 
-  connect(ui.set_id_button, SIGNAL(clicked()),
-          this, SLOT(change_dialog_id_requested()));
-  connect(ui.dialogs_tree_view, SIGNAL(set_dialog_id_requested()),
-          this, SLOT(change_dialog_id_requested()));
+  connect(ui.set_id_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::change_dialog_id_requested);
+  connect(ui.dialogs_tree_view, &DialogsTreeView::set_dialog_id_requested,
+          this, &DialogsEditor::change_dialog_id_requested);
 
-  connect(ui.delete_button, SIGNAL(clicked()),
-          this, SLOT(delete_dialog_requested()));
-  connect(ui.dialogs_tree_view, SIGNAL(delete_dialog_requested()),
-          this, SLOT(delete_dialog_requested()));
+  connect(ui.delete_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::delete_dialog_requested);
+  connect(ui.dialogs_tree_view, &DialogsTreeView::delete_dialog_requested,
+          this, &DialogsEditor::delete_dialog_requested);
 
   connect(&model->get_selection_model(),
-          SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_selection()));
-  connect(ui.dialog_properties_table, SIGNAL(itemSelectionChanged()),
-          this, SLOT(update_properties_buttons()));
+          &QItemSelectionModel::selectionChanged,
+          this, &DialogsEditor::update_selection);
+  connect(ui.dialog_properties_table, &QTreeWidget::itemSelectionChanged,
+          this, &DialogsEditor::update_properties_buttons);
 
-  connect(model, SIGNAL(dialog_id_changed(QString,QString)),
-          this, SLOT(update_dialog_id_field()));
+  connect(model, &DialogsModel::dialog_id_changed,
+          this, &DialogsEditor::update_dialog_id_field);
 
-  connect(model, SIGNAL(dialog_text_changed(QString,QString)),
-          this, SLOT(update_dialog_text_field()));
-  connect(ui.dialog_text_field, SIGNAL(editing_finished()),
-          this, SLOT(change_dialog_text_requested()));
-  connect(ui.dialog_text_field, SIGNAL(cursorPositionChanged()),
-          this, SLOT(update_dialog_cursor_position_label()));
-  connect(ui.dialog_text_field, SIGNAL(focus_in()),
-          this, SLOT(update_dialog_cursor_position_label()));
-  connect(ui.dialog_text_field, SIGNAL(focus_out()),
-          this, SLOT(update_dialog_cursor_position_label()));
+  connect(model, &DialogsModel::dialog_text_changed,
+          this, &DialogsEditor::update_dialog_text_field);
+  connect(ui.dialog_text_field, &PlainTextEdit::editing_finished,
+          this, &DialogsEditor::change_dialog_text_requested);
+  connect(ui.dialog_text_field, &QPlainTextEdit::cursorPositionChanged,
+          this, &DialogsEditor::update_dialog_cursor_position_label);
+  connect(ui.dialog_text_field, &PlainTextEdit::focus_in,
+          this, &DialogsEditor::update_dialog_cursor_position_label);
+  connect(ui.dialog_text_field, &PlainTextEdit::focus_out,
+          this, &DialogsEditor::update_dialog_cursor_position_label);
 
-  connect(ui.create_property_button, SIGNAL(clicked()),
-          this, SLOT(create_dialog_property_requested()));
-  connect(ui.dialog_properties_table, SIGNAL(create_property_requested()),
-          this, SLOT(create_dialog_property_requested()));
+  connect(ui.create_property_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::create_dialog_property_requested);
+  connect(ui.dialog_properties_table, &DialogPropertiesTable::create_property_requested,
+          this, &DialogsEditor::create_dialog_property_requested);
 
-  connect(ui.set_property_key_button, SIGNAL(clicked()),
-          this, SLOT(change_dialog_property_key_requested()));
-  connect(ui.dialog_properties_table, SIGNAL(set_property_key_requested()),
-          this, SLOT(change_dialog_property_key_requested()));
+  connect(ui.set_property_key_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::change_dialog_property_key_requested);
+  connect(ui.dialog_properties_table, &DialogPropertiesTable::set_property_key_requested,
+          this, &DialogsEditor::change_dialog_property_key_requested);
 
   connect(ui.dialog_properties_table,
-          SIGNAL(set_property_value_requested(QString,QString)),
-          this, SLOT(change_dialog_property_value_requested(QString,QString)));
+          &DialogPropertiesTable::set_property_value_requested,
+          this, &DialogsEditor::change_dialog_property_value_requested);
 
-  connect(ui.delete_property_button, SIGNAL(clicked()),
-          this, SLOT(delete_dialog_property_requested()));
-  connect(ui.dialog_properties_table, SIGNAL(delete_property_requested()),
-          this, SLOT(delete_dialog_property_requested()));
+  connect(ui.delete_property_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::delete_dialog_property_requested);
+  connect(ui.dialog_properties_table, &DialogPropertiesTable::delete_property_requested,
+          this, &DialogsEditor::delete_dialog_property_requested);
 
-  connect(ui.dialog_properties_table, SIGNAL(set_from_translation_requested()),
-          this, SLOT(set_dialog_property_from_translation_requested()));
+  connect(ui.dialog_properties_table, &DialogPropertiesTable::set_from_translation_requested,
+          this, &DialogsEditor::set_dialog_property_from_translation_requested);
 
-  connect(ui.translation_field, SIGNAL(activated(QString)),
-          this, SLOT(translation_selector_activated()));
-  connect(ui.translation_refresh_button, SIGNAL(clicked()),
-          this, SLOT(translation_refresh_requested()));
+  connect(ui.translation_field, &QComboBox::textActivated,
+          this, &DialogsEditor::translation_selector_activated);
+  connect(ui.translation_refresh_button, &QAbstractButton::clicked,
+          this, &DialogsEditor::translation_refresh_requested);
 
-  connect(ui.display_margin_check_box, SIGNAL(clicked()),
-          this, SLOT(update_display_margin()));
-  connect(ui.display_margin_field, SIGNAL(valueChanged(int)),
-          this, SLOT(update_display_margin()));
+  connect(ui.display_margin_check_box, &QAbstractButton::clicked,
+          this, &DialogsEditor::update_display_margin);
+  connect(ui.display_margin_field, &QSpinBox::textChanged,
+          this, &DialogsEditor::update_display_margin);
 }
 
 /**
