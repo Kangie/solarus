@@ -19,9 +19,7 @@
 #define SOLARUS_LUA_CONTEXT_H
 
 #include "solarus/audio/SoundPtr.h"
-#include "solarus/core/Common.h"
 #include "solarus/core/Ability.h"
-#include "solarus/core/Debug.h"
 #include "solarus/core/Controls.h"
 #include "solarus/core/InputEvent.h"
 #include "solarus/core/TimerPtr.h"
@@ -685,6 +683,7 @@ class LuaContext {
 
       // Surface API.
       surface_api_create,
+      surface_api_load,
       surface_api_save,
       surface_api_get_size,
       surface_api_clear,
