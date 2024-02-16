@@ -548,11 +548,6 @@ DialogsEditor::DialogsEditor(
           this, &DialogsEditor::translation_selector_activated);
   connect(ui.translation_refresh_button, &QAbstractButton::clicked,
           this, &DialogsEditor::translation_refresh_requested);
-
-  connect(ui.display_margin_check_box, &QAbstractButton::clicked,
-          this, &DialogsEditor::update_display_margin);
-  connect(ui.display_margin_field, &QSpinBox::textChanged,
-          this, &DialogsEditor::update_display_margin);
 }
 
 /**
@@ -1080,19 +1075,6 @@ void DialogsEditor::translation_refresh_requested() {
 
   update_translation_text_field();
   ui.dialog_properties_table->update();
-}
-
-/**
- * @brief Slot called when the user changes the displayed margin in text edit.
- */
-void DialogsEditor::update_display_margin() {
-
-  bool display_margin = ui.display_margin_check_box->isChecked();
-  int margin = ui.display_margin_field->value();
-
-  ui.display_margin_field->setEnabled(display_margin);
-  ui.dialog_text_field->set_show_margin(display_margin, margin);
-  ui.translation_text_field->set_show_margin(display_margin, margin);
 }
 
 }

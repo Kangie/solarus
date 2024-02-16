@@ -8,6 +8,7 @@
 * Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
 * Map editor: fix countour generation from other tilesets.
 * Map editor: fix origin lost when copy-pasting a custom entity (#432).
+* Dialogs editor: remove the margin display broken feature.
 * Fix zoom clamping in map, tileset, sprite and image views (#513).
 * Initial quest: fix item icon amount displaying.
 * Initial quest: fix item icon still showing unequiped items.
