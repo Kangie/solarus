@@ -205,7 +205,7 @@ int LuaContext::item_api_set_savegame_variable(lua_State* l) {
     }
 
     if (!savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(savegame_variable)) {
       LuaTools::arg_error(l, 2,
           std::string("savegame variable identifier expected, got '")
       + savegame_variable + "'");
@@ -253,7 +253,7 @@ int LuaContext::item_api_set_amount_savegame_variable(lua_State* l) {
     }
 
     if (!amount_savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(amount_savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(amount_savegame_variable)) {
       LuaTools::arg_error(l, 2,
           std::string("savegame variable identifier expected, got '")
       + amount_savegame_variable + "'");

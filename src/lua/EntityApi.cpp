@@ -2927,7 +2927,7 @@ int LuaContext::hero_api_start_treasure(lua_State* l) {
     const std::string& savegame_variable = LuaTools::opt_string(l, 4, "");
 
     if (!savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(savegame_variable)) {
       LuaTools::arg_error(l, 4, std::string(
           "savegame variable identifier expected, got '") +
           savegame_variable + "'");
@@ -4465,7 +4465,7 @@ int LuaContext::chest_api_set_treasure(lua_State* l) {
     }
 
     if (!savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(savegame_variable)) {
       LuaTools::arg_error(l, 4,
           std::string("savegame variable identifier expected, got '")
       + savegame_variable + "'");
@@ -5824,7 +5824,7 @@ int LuaContext::destructible_api_set_treasure(lua_State* l) {
     }
 
     if (!savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(savegame_variable)) {
       LuaTools::arg_error(l, 4,
           std::string("savegame variable identifier expected, got '")
       + savegame_variable + "'");
@@ -6997,7 +6997,7 @@ int LuaContext::enemy_api_set_treasure(lua_State* l) {
     }
 
     if (!savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(savegame_variable)) {
       LuaTools::arg_error(l, 4,
           std::string("savegame variable identifier expected, got '")
       + savegame_variable + "'");
@@ -7209,14 +7209,14 @@ int LuaContext::enemy_api_create_enemy(lua_State* l) {
     const std::string& treasure_savegame_variable = LuaTools::opt_string_field(l, 2, "treasure_savegame_variable", "");
 
     if (!savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(savegame_variable)) {
       LuaTools::arg_error(l, 2, std::string(
           "Bad field 'savegame_variable' (invalid savegame variable identifier '")
       + savegame_variable + "'");
     }
 
     if (!treasure_savegame_variable.empty()
-        && !LuaTools::is_valid_savegame_variable(treasure_savegame_variable)) {
+        && !LuaTools::is_valid_lua_identifier(treasure_savegame_variable)) {
       LuaTools::arg_error(l, 2, std::string(
           "Bad field 'treasure_savegame_variable' (invalid savegame variable identifier '")
       + treasure_savegame_variable + "'");

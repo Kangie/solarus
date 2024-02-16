@@ -445,8 +445,8 @@ std::string Savegame::get_string(const std::string& key) const {
  * \param value The string value to associate with this key.
  */
 void Savegame::set_string(const std::string& key, const std::string& value) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_STRING;
@@ -501,8 +501,8 @@ int Savegame::get_integer(const std::string& key) const {
  * \param value The integer value to associate with this key.
  */
 void Savegame::set_integer(const std::string& key, int value) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_INTEGER;
@@ -557,8 +557,8 @@ bool Savegame::get_boolean(const std::string& key) const {
  * \param value The boolean value to associate with this key.
  */
 void Savegame::set_boolean(const std::string& key, bool value) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_BOOLEAN;
@@ -580,8 +580,8 @@ bool Savegame::is_set(const std::string& key) const {
  * \param key Name of the value to unset.
  */
 void Savegame::unset(const std::string& key) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values.erase(key);

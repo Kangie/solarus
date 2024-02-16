@@ -645,8 +645,8 @@ int LuaContext::game_api_get_value(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
     const std::string& key = LuaTools::check_string(l, 2);
-
-    if (!LuaTools::is_valid_savegame_variable(key)) {
+    
+    if (!LuaTools::is_valid_lua_identifier(key)) {
       LuaTools::arg_error(l, 3,
                           std::string("Invalid savegame variable '") + key
                           + "': the name should only contain alphanumeric characters or '_',"
@@ -686,8 +686,8 @@ int LuaContext::game_api_set_value(lua_State* l) {
           std::string("Invalid savegame variable '") + key
           + "': names prefixed by '_' are reserved for built-in variables");
     }
-
-    if (!LuaTools::is_valid_savegame_variable(key)) {
+    
+    if (!LuaTools::is_valid_lua_identifier(key)) {
       LuaTools::arg_error(l, 3,
                           std::string("Invalid savegame variable '") + key
                           + "': the name should only contain alphanumeric characters or '_',"
