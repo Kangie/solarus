@@ -628,7 +628,10 @@ The initial value is \c 0 unless specified otherwise.
   Valid ability names are:
   - \c "sword": Using the sword when pressing the attack command.
     Determines the default sword sprite.
-  - \c "sword_knowledge": Ability to make the super spin-attack.
+  - \c "sword_spin_attack": Ability to make a spin attack. 1 is a normal spin
+    attack, 2 is a super spin attack where the hero makes circles.
+  - \c "sword_knowledge": Ability to make the super spin-attack. This is
+    deprecated and equivalent to a \c sword_spin_attack ability value of 2.
   - \c "tunic": Resistance level that reduces the damage received by the hero.
     Determines the default sprite used for the hero's body.
     The initial value is \c 1.
