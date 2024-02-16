@@ -34,6 +34,7 @@ This release adds new features but does not introduce any incompatibility.
 * Add methods `hero:get/set_push_delay()` (#1524).
 * Add methods `hero:get/set_carry_height()`.
 * Add a method `game:get_values()` (#1552).
+* Allow to disable the spin attack (#771).
 
 ### Solarus launcher GUI changes
 
