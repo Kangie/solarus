@@ -78,11 +78,12 @@ public slots:
 
 private:
 
+  bool validate_custom_property_key(const QString& key);
+
   Ui::DialogsEditor ui;                 /**< The dialogs editor widgets. */
   QString language_id;                  /**< Id of the language of dialogs being edited. */
   std::unique_ptr<DialogsModel> model;  /**< Dialogs model being edited. */
   Quest& quest;                         /**< The quest. */
-
 };
 
 }

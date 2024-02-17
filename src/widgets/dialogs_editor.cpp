@@ -20,14 +20,16 @@
 #include "editor_exception.h"
 #include "quest.h"
 #include "dialogs_model.h"
-#include <solarus/lua/LuaTools.h>
 #include <QUndoStack>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QValidator>
 
 namespace SolarusEditor {
 
 namespace {
+
+const QRegularExpression custom_property_key_regexp("^[a-zA-Z_][a-zA-Z0-9_]*$");
 
 /**
  * @brief Parent class of all undoable commands of the dialogs editor.
@@ -918,8 +920,7 @@ void DialogsEditor::create_dialog_property_requested() {
     return;
   }
 
-  if (!Solarus::LuaTools::is_valid_lua_identifier(key.toStdString())) {
-    GuiTools::error_dialog(tr("Invalid property key: it should be a valid Lua identifier"));
+  if (!validate_custom_property_key(key)) {
     return;
   }
 
@@ -982,8 +983,7 @@ void DialogsEditor::change_dialog_property_key_requested() {
     return;
   }
 
-  if (!Solarus::LuaTools::is_valid_lua_identifier(new_key.toStdString())) {
-    GuiTools::error_dialog(tr("Invalid property key: it should be a valid Lua identifier"));
+  if (!validate_custom_property_key(new_key)) {
     return;
   }
 
@@ -1082,6 +1082,24 @@ void DialogsEditor::translation_refresh_requested() {
 
   update_translation_text_field();
   ui.dialog_properties_table->update();
+}
+
+/**
+ * @brief Checks if a string is a valid custom property key.
+ *
+ * Shows an error dialog if the string is invalid.
+ *
+ * @param key The string to check.
+ * @return @c true if the key is valid.
+ */
+bool DialogsEditor::validate_custom_property_key(const QString& key) {
+
+  QRegularExpressionMatch match = custom_property_key_regexp.match(key);
+  if (!match.hasMatch()) {
+    GuiTools::error_dialog(tr("Invalid property key: it should be a valid Lua identifier"));
+    return false;
+  }
+  return true;
 }
 
 }
