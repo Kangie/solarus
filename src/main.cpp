@@ -106,11 +106,17 @@ int run_editor_gui(int argc, char* argv[]) {
       file_paths << cmd_file_path;
     }
   }
-  else if (settings.get_value_bool(EditorSettings::restore_last_files)) {
-    // Restore the default quest if any.
-    const QString& current_quest = settings.get_value_string(EditorSettings::current_quest);
-    if (!current_quest.isEmpty()) {
-      quest_path = current_quest;
+
+  if (settings.get_value_bool(EditorSettings::restore_last_files)) {
+    if (cmd_quest_path.isEmpty()) {
+      // No quest specified in the commands line: try to restore the last quest.
+      const QString& current_quest = settings.get_value_string(EditorSettings::current_quest);
+      if (!current_quest.isEmpty()) {
+        quest_path = current_quest;
+      }
+    }
+    if (cmd_file_path.isEmpty()) {
+      // No file specified in the command line: try to restore last opened files.
       file_paths = settings.get_value_string_list(EditorSettings::last_files);
       active_file_path = settings.get_value_string(EditorSettings::last_file);
     }

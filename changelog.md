@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus Quest Editor 1.7.0 (in progress)
+## Solarus Quest Editor 2.0.0 (in progress)
 
 * Quest tree: allow to set the author and license information of folders and GLSL files.
 * Quest tree: allow to set the author and license information of scripts (#501).
@@ -12,6 +12,7 @@
 * Dialogs editor: prevent invalid custom property keys (#352).
 * Dialogs editor: remove the margin display broken feature.
 * Fix zoom clamping in map, tileset, sprite and image views (#513).
+* Reopen last tabs also when a quest is given in the command line.
 * Initial quest: fix item icon amount displaying.
 * Initial quest: fix item icon still showing unequiped items.
 
