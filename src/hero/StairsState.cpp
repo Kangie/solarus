@@ -216,11 +216,13 @@ void Hero::StairsState::update() {
         sprites.set_clipping_rectangle();
       }
 
-      if (carried_object == nullptr) {
-        hero.set_state(std::make_shared<FreeState>(hero));
-      }
-      else {
-        hero.set_state(std::make_shared<CarryingState>(hero, carried_object));
+      if (is_current_state()) {  // Support the edge case of changing state in teletransporter:on_activated().
+        if (carried_object == nullptr) {
+          hero.set_state(std::make_shared<FreeState>(hero));
+        }
+        else {
+          hero.set_state(std::make_shared<CarryingState>(hero, carried_object));
+        }
       }
     }
     else { // movement not finished yet
@@ -306,6 +308,13 @@ bool Hero::StairsState::get_can_come_from_bad_ground() const {
  */
 bool Hero::StairsState::is_teletransporter_delayed() const {
   return true;
+}
+
+/**
+ * \copydoc Entity::State::get_can_be_hurt
+ */
+bool Hero::StairsState::get_can_be_hurt(Entity* /* attacker */) {
+  return false;
 }
 
 /**
