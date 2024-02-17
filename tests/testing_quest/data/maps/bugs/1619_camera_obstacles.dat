@@ -43,6 +43,15 @@ tile{
   pattern = "33",
 }
 
+tile{
+  layer = 2,
+  x = -8,
+  y = 232,
+  width = 16,
+  height = 16,
+  pattern = "33",
+}
+
 wall{
   layer = 2,
   x = 144,

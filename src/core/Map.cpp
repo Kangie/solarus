@@ -775,7 +775,8 @@ bool Map::test_collision_with_ground(int layer,
     int x,
     int y,
     const Entity& entity_to_check,
-    bool& found_diagonal_wall, const ConstEntityVector &entities_nearby) const {
+    bool& found_diagonal_wall,
+    const ConstEntityVector &entities_nearby) const {
 
   bool on_obstacle = false;
   int x_in_tile, y_in_tile;
@@ -810,7 +811,7 @@ bool Map::test_collision_with_ground(int layer,
     // so we have to test the position of the point in the square.
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile <= x_in_tile;
+    on_obstacle = y_in_tile <= x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 
@@ -819,7 +820,7 @@ bool Map::test_collision_with_ground(int layer,
     // Same thing.
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile <= 7 - x_in_tile;
+    on_obstacle = y_in_tile <= 7 - x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 
@@ -827,7 +828,7 @@ bool Map::test_collision_with_ground(int layer,
   case Ground::WALL_BOTTOM_LEFT_WATER:
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile >= x_in_tile;
+    on_obstacle = y_in_tile >= x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 
@@ -835,7 +836,7 @@ bool Map::test_collision_with_ground(int layer,
   case Ground::WALL_BOTTOM_RIGHT_WATER:
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile >= 7 - x_in_tile;
+    on_obstacle = y_in_tile >= 7 - x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 

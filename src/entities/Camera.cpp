@@ -328,6 +328,83 @@ void Camera::notify_size_changed() {
 }
 
 /**
+ * \copydoc Entity::is_traversable_obstacle
+ */
+bool Camera::is_traversable_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_wall_obstacle
+ */
+bool Camera::is_wall_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_low_wall_obstacle
+ */
+bool Camera::is_low_wall_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_grass_obstacle
+ */
+bool Camera::is_grass_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_shallow_water_obstacle
+ */
+bool Camera::is_shallow_water_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_deep_water_obstacle
+ */
+bool Camera::is_deep_water_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_hole_obstacle
+ */
+bool Camera::is_hole_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_ice_obstacle
+ */
+bool Camera::is_ice_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_lava_obstacle
+ */
+bool Camera::is_lava_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_prickle_obstacle
+ */
+bool Camera::is_prickle_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_ladder_obstacle
+ */
+bool Camera::is_ladder_obstacle() const {
+  return false;
+}
+
+/**
  * \copydoc Entity::is_block_obstacle
  */
 bool Camera::is_block_obstacle(Block&) {

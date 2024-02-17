@@ -61,6 +61,18 @@ class Camera : public Entity {
     void notify_movement_started() override;
     void notify_size_changed() override;
     void notify_being_removed() override;
+
+    bool is_traversable_obstacle() const override;
+    bool is_wall_obstacle() const override;
+    bool is_low_wall_obstacle() const override;
+    bool is_grass_obstacle() const override;
+    bool is_shallow_water_obstacle() const override;
+    bool is_deep_water_obstacle() const override;
+    bool is_hole_obstacle() const override;
+    bool is_ice_obstacle() const override;
+    bool is_lava_obstacle() const override;
+    bool is_prickle_obstacle() const override;
+    bool is_ladder_obstacle() const override;
     bool is_block_obstacle(Block& block) override;
     bool is_teletransporter_obstacle(Teletransporter& teletransporter) override;
     bool is_stream_obstacle(Stream& stream) override;
