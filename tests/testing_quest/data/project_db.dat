@@ -114,6 +114,7 @@ map{ id = "bugs/1600_map_loading_single_cam/map2" }
 map{ id = "bugs/1609_crash_save_lua_keyword", description = "#1609: Crash when loading a save file with a Lua keyword" }
 map{ id = "bugs/1611_entity_overlaps_when_removed", description = "#1611: entity:overlaps() returns true even when an entity was removed" }
 map{ id = "bugs/1617_crash_disabled_chest", description = "#1617: Crash when starting a map with a disabled chest" }
+map{ id = "bugs/1619_camera_obstacles", description = "#1619: Entities should not block the camera" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/526_get_entities_same_region", description = "#526: map:get_entities_in_same_region()" }
@@ -675,6 +676,8 @@ file{ path = "maps/bugs/1611_entity_overlaps_when_removed.dat", author = "Christ
 file{ path = "maps/bugs/1611_entity_overlaps_when_removed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1617_crash_disabled_chest.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1617_crash_disabled_chest.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1619_camera_obstacles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1619_camera_obstacles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }

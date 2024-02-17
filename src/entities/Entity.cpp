@@ -3063,10 +3063,21 @@ bool Entity::is_jumper_obstacle(Jumper& /* jumper */, const Rectangle& /* candid
  * By default, this function returns true.
  *
  * \param destructible a destructible item
- * \return true if the destructible item is currently an obstacle for this entity
+ * \return true if the destructible object is currently an obstacle for this entity
  */
 bool Entity::is_destructible_obstacle(Destructible& /* destructible */) {
+  return true;
+}
 
+/**
+ * \brief Returns whether a chet is currently considered as an obstacle by this entity.
+ *
+ * By default, this function returns \c true.
+ *
+ * \param chest A chest.
+ * \return \c true if the chest is currently an obstacle for this entity.
+ */
+bool Entity::is_chest_obstacle(Chest& /* chest */) {
   return true;
 }
 

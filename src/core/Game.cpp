@@ -529,6 +529,7 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
 
     //Go to the new map
     camera->place_on_map(*next_map);
+    camera->set_layer(next_map->get_max_layer());
   }
 
   if(tp.opt_hero) {

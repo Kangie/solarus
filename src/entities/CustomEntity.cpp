@@ -595,6 +595,18 @@ bool CustomEntity::is_destructible_obstacle(Destructible& destructible) {
 }
 
 /**
+ * \copydoc Entity::is_chest_obstacle
+ */
+bool CustomEntity::is_chest_obstacle(Chest& chest) {
+
+  const TraversableInfo& info = get_can_traverse_entity_info(chest.get_type());
+  if (!info.is_empty()) {
+    return !info.is_traversable(*this, chest);
+  }
+  return Entity::is_chest_obstacle(chest);
+}
+
+/**
  * \copydoc Entity::is_separator_obstacle
  */
 bool CustomEntity::is_separator_obstacle(Separator& separator, const Rectangle& candidate_position) {

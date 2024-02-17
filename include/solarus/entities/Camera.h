@@ -61,6 +61,18 @@ class Camera : public Entity {
     void notify_movement_started() override;
     void notify_size_changed() override;
     void notify_being_removed() override;
+    bool is_block_obstacle(Block& block) override;
+    bool is_teletransporter_obstacle(Teletransporter& teletransporter) override;
+    bool is_stream_obstacle(Stream& stream) override;
+    bool is_stairs_obstacle(Stairs& stairs) override;
+    bool is_switch_obstacle(Switch& sw) override;
+    bool is_raised_block_obstacle(CrystalBlock& raised_block) override;
+    bool is_crystal_obstacle(Crystal& crystal) override;
+    bool is_npc_obstacle(Npc& npc) override;
+    bool is_door_obstacle(Door& door) override;
+    bool is_jumper_obstacle(Jumper& jumper, const Rectangle& candidate_position) override;
+    bool is_destructible_obstacle(Destructible& destructible) override;
+    bool is_chest_obstacle(Chest& chest) override;
     bool is_separator_obstacle(Separator& separator, const Rectangle& candidate_position) override;
     static constexpr int margin = 1;
 
