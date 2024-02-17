@@ -6,8 +6,9 @@
 * Quest tree: allow to set the author and license information of scripts (#501).
 * Map editor: allow to run the current map for testing purposes (#517).
 * Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
-* Map editor: fix countour generation from other tilesets.
+* Map editor: fix contour generation from other tilesets.
 * Map editor: fix origin lost when copy-pasting a custom entity (#432).
+* Map editor: fix inconsistencies when editing an entity being resized or moved.
 * Dialogs editor: prevent invalid custom property keys (#352).
 * Dialogs editor: remove the margin display broken feature.
 * Fix zoom clamping in map, tileset, sprite and image views (#513).

@@ -20,7 +20,6 @@
 #include "ground_traits.h"
 #include "pattern_repeat_mode_traits.h"
 #include "pattern_scrolling_traits.h"
-#include "pattern_separation.h"
 #include <QGraphicsView>
 #include <QPointer>
 #include <QMenu>
