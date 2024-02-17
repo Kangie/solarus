@@ -32,7 +32,7 @@ PatternPickerDialog::PatternPickerDialog(
 
   ui.setupUi(this);
 
-  ui.tileset_view->set_model(&tileset);
+  ui.tileset_view->set_tileset(&tileset);
   ui.tileset_view->set_read_only(true);
   ui.tileset_view->set_multi_selection_enabled(false);
 }
@@ -43,7 +43,7 @@ PatternPickerDialog::PatternPickerDialog(
  */
 QString PatternPickerDialog::get_pattern_id() const {
 
-  TilesetModel* tileset = ui.tileset_view->get_model();
+  TilesetModel* tileset = ui.tileset_view->get_tileset();
   if (tileset == nullptr) {
     return QString();
   }

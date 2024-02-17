@@ -40,16 +40,58 @@ class TilesetView : public QGraphicsView {
 
 public:
 
-  TilesetView(QWidget* parent = nullptr);
+  /**
+   * @brief Indicates what the user is currently doing on the tileset view.
+   */
+  class State {
 
-  TilesetModel* get_model();
+  public:
+    explicit State(TilesetView& view);
+    virtual ~State() = default;
+
+    const TilesetView& get_view() const;
+    TilesetView& get_view();
+    const TilesetScene& get_scene() const;
+    TilesetScene& get_scene();
+    const TilesetModel& get_tileset() const;
+    TilesetModel& get_tileset();
+
+    virtual void start();
+    virtual void stop();
+
+    virtual void mouse_pressed(const QMouseEvent& event);
+    virtual void mouse_released(const QMouseEvent& event);
+    virtual void mouse_moved(const QMouseEvent& event);
+    virtual void drag_enter(QDragEnterEvent& event);
+    virtual void drag_move(QDragMoveEvent& event);
+    virtual void drop(QDropEvent& event);
+    virtual void context_menu_requested(const QPoint& where);
+
+  private:
+    TilesetView& view;
+  };
+
+  explicit TilesetView(QWidget* parent = nullptr);
+
+  TilesetModel* get_tileset();
   TilesetScene* get_scene();
-  void set_model(TilesetModel* tileset);
+  void set_tileset(TilesetModel* tileset);
+  const ViewSettings* get_view_settings() const;
   void set_view_settings(ViewSettings& view_settings);
+  double get_zoom() const;
   bool is_read_only() const;
   void set_read_only(bool read_only);
   bool is_multi_selection_enabled() const;
   void set_multi_selection_enabled(bool multi_selection_enabled);
+  QRect get_selection_bounding_box() const;
+  void create_pattern_with_auto_id(const QRect& frame, Ground ground);
+
+  QList<QGraphicsItem*> get_items_intersecting_areas(
+      const QList<QGraphicsRectItem*>& area_items,
+      bool ignore_selected) const;
+  void start_state_idle();
+  void start_state_drawing_rectangle(const QPoint& initial_point);
+  void start_state_moving_patterns(const QPoint& initial_point);
 
 signals:
 
@@ -88,17 +130,6 @@ protected:
 private:
 
   /**
-   * @brief Possible operation the user is doing on this view.
-   */
-  enum class State {
-      NORMAL,                   /**< Can click on patterns. */
-      DRAWING_RECTANGLE,        /**< Drawing a rectangle for a selection or
-                                 * a new pattern. */
-      MOVING_PATTERNS           /**< Moving existing patterns to another
-                                 * place in the PNG image. */
-  };
-
-  /**
    * @brief Stores the scrollbar position and zoom of recent tilesets.
    */
   struct ScrollSettings {
@@ -112,15 +143,8 @@ private:
   void build_context_menu_repeat_mode(QMenu& menu, const QList<int>& indexes);
   void build_context_menu_scrolling(QMenu& menu, const QList<int>& indexes);
 
-  void start_state_normal();
-  void start_state_drawing_rectangle(const QPoint& initial_point);
-  void end_state_drawing_rectangle();
-  void start_state_moving_patterns(const QPoint& initial_point);
-  void end_state_moving_patterns();
-  void update_current_areas(const QPoint& start_point, const QPoint& current_point);
-  void clear_current_areas();
-  QList<QGraphicsItem*> get_items_intersecting_current_areas(bool ignore_selected) const;
-  QRect get_selection_bounding_box() const;
+  // State of the view.
+  void set_state(std::unique_ptr<State> state);
 
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dragMoveEvent(QDragMoveEvent* event) override;
@@ -129,8 +153,13 @@ private:
 
   void notify_tileset_changed();
 
-  QPointer<TilesetModel> model;        /**< The tileset model. */
+  QPointer<TilesetModel> tileset;      /**< The tileset model. */
   TilesetScene* scene;                 /**< The scene viewed. */
+  QPointer<ViewSettings>
+      view_settings;                   /**< How the view is displayed. */
+  double zoom;                         /**< Zoom factor currently applied. */
+  std::unique_ptr<State> state;        /**< Current state of the view. */
+
   QAction* create_border_set_action;   /**< Action of creating a border set. */
   QAction* change_pattern_id_action;   /**< Action of changing a pattern id. */
   QAction* delete_patterns_action;     /**< Action of deleting the selected
@@ -139,24 +168,6 @@ private:
       set_repeat_mode_actions;         /**< Actions of changing the repeat
                                         * modes of patterns. */
   int last_integer_pattern_id;         /**< Last auto-generated pattern id. */
-  State state;                         /**< Current operation done by user. */
-  QPoint dragging_start_point;         /**< In states DRAWING_RECTANGLE and
-                                        * MOVING_PATTERN: point where the
-                                        * dragging started, in scene coordinates.*/
-  QPoint dragging_current_point;       /**< In states DRAWING_RECTANGLE and
-                                        * MOVING_PATTERN: point where the
-                                        * dragging is currently, in scene coordinates. */
-  QList<QGraphicsRectItem*>
-      current_area_items;              /**< In states DRAWING_RECTANGLE and
-                                        * MOVING_PATTERN: graphic item(s) of the
-                                        * rectangle(s) the user is drawing. */
-  QList<QGraphicsItem*>
-      initially_selected_items;        /**< In state DRAWING_RECTANGLE: items
-                                        * to keep selected if Ctrl or Shift was pressed. */
-  QPointer<ViewSettings>
-      view_settings;                   /**< How the view is displayed. */
-  double zoom;                         /**< Zoom factor currently applied. */
-
   bool read_only;                      /**< Whether the view forbids editing the tileset. */
   bool multi_selection_enabled;        /**< Whether it is allowed to select multiple patterns. */
   QMap<QString, ScrollSettings>

@@ -48,7 +48,7 @@ public:
 
   public:
 
-    State(MapView& view);
+    explicit State(MapView& view);
     virtual ~State() = default;
 
     const MapView& get_view() const;
