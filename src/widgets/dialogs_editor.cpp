@@ -20,6 +20,7 @@
 #include "editor_exception.h"
 #include "quest.h"
 #include "dialogs_model.h"
+#include <solarus/lua/LuaTools.h>
 #include <QUndoStack>
 #include <QMessageBox>
 #include <QInputDialog>
@@ -908,7 +909,17 @@ void DialogsEditor::create_dialog_property_requested() {
         tr("New property key:"), QLineEdit::Normal,
         ui.dialog_properties_table->get_selected_property(), &ok);
 
-  if (!ok || key.isEmpty()) {
+  if (!ok) {
+    return;
+  }
+
+  if (key.isEmpty()) {
+    GuiTools::error_dialog(tr("The property key cannot be empty"));
+    return;
+  }
+
+  if (!Solarus::LuaTools::is_valid_lua_identifier(key.toStdString())) {
+    GuiTools::error_dialog(tr("Invalid property key: it should be a valid Lua identifier"));
     return;
   }
 
@@ -968,6 +979,11 @@ void DialogsEditor::change_dialog_property_key_requested() {
 
   if (new_key.isEmpty()) {
     GuiTools::error_dialog(tr("The property key cannot be empty"));
+    return;
+  }
+
+  if (!Solarus::LuaTools::is_valid_lua_identifier(new_key.toStdString())) {
+    GuiTools::error_dialog(tr("Invalid property key: it should be a valid Lua identifier"));
     return;
   }
 
