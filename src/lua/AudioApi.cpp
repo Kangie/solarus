@@ -51,7 +51,7 @@ static void play_sound(LuaContext & context, const std::string & sound_id) {
  */
 static void preload_sounds(LuaContext & context) {
   context.warning_deprecated(
-      { 1, 7 },
+      { 2, 0 },
       "sol.audio.preload_sounds()",
       "Sounds are always preloaded now."
   );
