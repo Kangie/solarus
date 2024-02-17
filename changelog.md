@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus 1.7.0 (in progress)
+## Solarus 2.0.0 (in progress)
 
 ### Engine changes
 
