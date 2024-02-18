@@ -52,8 +52,8 @@ void BorderSetTreeView::set_tileset(TilesetModel& tileset) {
     resizeColumnToContents(0);
   }
 
-  connect(model, SIGNAL(change_border_set_patterns_requested(QString, QStringList)),
-          this, SIGNAL(change_border_set_patterns_requested(QString, QStringList)));
+  connect(model, &BorderSetModel::change_border_set_patterns_requested,
+          this, &BorderSetTreeView::change_border_set_patterns_requested);
 
   connect(&tileset, &TilesetModel::border_set_created,
           [this](const QString& border_set_id) {

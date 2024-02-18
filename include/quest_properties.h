@@ -62,6 +62,10 @@ public:
   void set_min_quest_size(const QSize& size);
   QSize get_max_quest_size() const;
   void set_max_quest_size(const QSize& size);
+  bool is_dynamic_timestep() const;
+  void set_dynamic_timestep(bool enable);
+  bool is_subpixel_camera() const;
+  void set_subpixel_camera(bool enable);
 
 signals:
 
@@ -76,6 +80,8 @@ signals:
   void normal_size_changed(const QSize& size);
   void min_size_changed(const QSize& size);
   void max_size_changed(const QSize& size);
+  void dynamic_timestep_changed(bool enable);
+  void subpixel_camera_changed(bool enable);
 
 private slots:
 

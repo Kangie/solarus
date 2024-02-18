@@ -29,18 +29,17 @@ namespace SolarusEditor {
  * @param parent The parent widget or nullptr.
  */
 BorderSetSelector::BorderSetSelector(QWidget* parent) :
-  QComboBox(parent),
-  quest(nullptr),
-  tileset_id() {
+  QComboBox(parent) {
 
+  setIconSize(QSize(24, 24));
 }
 
 /**
  * @brief Returns the id of the tileset where border sets come from.
  * @return The tileset id or an empty string if it is not set yet.
  */
-const QString& BorderSetSelector::get_tileset_id() const {
-  return tileset_id;
+QString BorderSetSelector::get_tileset_id() const {
+  return tileset != nullptr ? tileset->get_tileset_id() : QString();
 }
 
 /**
@@ -50,12 +49,18 @@ const QString& BorderSetSelector::get_tileset_id() const {
  */
 void BorderSetSelector::set_tileset_id(Quest& quest, const QString& tileset_id) {
 
-  this->quest = &quest;
-  this->tileset_id = tileset_id;
-  QString old_border_set_id = get_selected_border_set_id();
-  build();
-  if (!old_border_set_id.isEmpty()) {
-    set_selected_border_set_id(old_border_set_id);
+  try {
+    tileset = std::make_unique<TilesetModel>(quest, tileset_id);
+    connect(tileset.get(), &TilesetModel::tileset_data_file_changed,
+            this, &BorderSetSelector::build);
+    connect(tileset.get(), &TilesetModel::tileset_image_file_reloaded,
+            this, &BorderSetSelector::build);
+    build();
+  }
+  catch (const EditorException& ex) {
+    // The tileset file could not be opened: the tileset is probably
+    // unset or incorrect.
+    Q_UNUSED(ex);
   }
 }
 
@@ -88,31 +93,26 @@ void BorderSetSelector::set_selected_border_set_id(const QString& border_set_id)
  */
 void BorderSetSelector::build() {
 
+  QString old_border_set_id = get_selected_border_set_id();
   clear();
 
-  if (quest == nullptr || tileset_id.isEmpty()) {
+  if (tileset == nullptr) {
     return;
   }
 
-  try {
-    TilesetModel tileset(*quest, tileset_id);
+  // Add border sets.
+  const QStringList& border_set_ids = tileset->get_border_set_ids();
+  for (const QString& border_set_id : border_set_ids) {
+    addItem(tileset->get_border_set_icon(border_set_id), border_set_id, border_set_id);
+  }
 
-    // Add border sets.
-    const QStringList& border_set_ids = tileset.get_border_set_ids();
-    for (const QString& border_set_id : border_set_ids) {
-      addItem(tileset.get_border_set_icon(border_set_id), border_set_id, border_set_id);
-    }
-
+  if (!old_border_set_id.isEmpty()) {
+    set_selected_border_set_id(old_border_set_id);
+  } else {
     if (!border_set_ids.isEmpty()) {
       set_selected_border_set_id(border_set_ids.first());
     }
-    setIconSize(QSize(24, 24));
   }
-  catch (const EditorException& ex) {
-    // The tileset file could not be opened: the tileset is probably
-    // unset or incorrect.
-    Q_UNUSED(ex);
-  }
-  }
+}
 
 }

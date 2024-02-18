@@ -869,6 +869,14 @@ void MainWindow::on_action_close_quest_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Re-open closed tab" action.
+ */
+void MainWindow::on_action_reopen_closed_tab_triggered() {
+
+  ui.tab_widget->reopen_last_closed_editor(get_quest());
+}
+
+/**
  * @brief Slot called when the user triggers the "Save" action.
  */
 void MainWindow::on_action_save_triggered() {
@@ -897,6 +905,7 @@ void MainWindow::on_action_close_triggered() {
   if (index == -1) {
     return;
   }
+
   ui.tab_widget->close_file_requested(index);
 }
 
@@ -1339,6 +1348,7 @@ void MainWindow::current_editor_changed(int index) {
   ui.action_cut->setEnabled(has_editor);
   ui.action_copy->setEnabled(has_editor);
   ui.action_paste->setEnabled(has_editor);
+  ui.action_reopen_closed_tab->setEnabled(!ui.tab_widget->get_last_closed_file().isEmpty());
   ui.action_close->setEnabled(has_editor);
   ui.action_close_all->setEnabled(has_editor);
   ui.action_save->setEnabled(has_editor);

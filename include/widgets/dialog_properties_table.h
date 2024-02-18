@@ -17,6 +17,7 @@
 #ifndef SOLARUSEDITOR_DIALOG_PROPERTIES_TABLE_H
 #define SOLARUSEDITOR_DIALOG_PROPERTIES_TABLE_H
 
+#include <QPointer>
 #include <QTreeWidget>
 
 namespace SolarusEditor {
@@ -31,9 +32,9 @@ class DialogPropertiesTable : public QTreeWidget {
 
 public:
 
-  DialogPropertiesTable(QWidget* parent = nullptr);
+  explicit DialogPropertiesTable(QWidget* parent = nullptr);
 
-  void set_model(DialogsModel *model);
+  void set_model(DialogsModel* model);
 
   QString get_selected_property() const;
   void set_selected_property(const QString& key);
@@ -71,8 +72,7 @@ private:
   void clear_table();
   void add_translation_property(const QString& key, const QString& value);
 
-  DialogsModel*
-    model;          /**< The dialogs model. */
+  QPointer<DialogsModel> model;  /**< The dialogs model. */
   QString dialog_id;
 
   QMap<QString, QTreeWidgetItem*> items;

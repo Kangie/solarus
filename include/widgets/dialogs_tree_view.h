@@ -17,6 +17,7 @@
 #ifndef SOLARUSEDITOR_DIALOGS_TREE_VIEW_H
 #define SOLARUSEDITOR_DIALOGS_TREE_VIEW_H
 
+#include <QPointer>
 #include <QTreeView>
 
 namespace SolarusEditor {
@@ -35,7 +36,7 @@ public:
 
   explicit DialogsTreeView(QWidget* parent = nullptr);
 
-  void set_model(DialogsModel *model);
+  void set_model(DialogsModel &model);
 
 signals:
 
@@ -50,8 +51,7 @@ protected:
 
 private:
 
-  DialogsModel*
-    model;            /**< The dialogs model. */
+  QPointer<DialogsModel> model;  /**< The dialogs model. */
   QAction*
     create_action;    /**< Action of create a new dialog. */
   QAction*

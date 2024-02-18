@@ -18,11 +18,12 @@
 #define SOLARUSEDITOR_BORDER_SET_SELECTOR_H
 
 #include <QComboBox>
-#include <QPointer>
+#include <memory>
 
 namespace SolarusEditor {
 
 class Quest;
+class TilesetModel;
 
 /**
  * @brief A combo box that allows to choose a border set from a tileset.
@@ -34,7 +35,7 @@ public:
 
   explicit BorderSetSelector(QWidget* parent = nullptr);
 
-  const QString& get_tileset_id() const;
+  QString get_tileset_id() const;
   void set_tileset_id(Quest& quest, const QString& tileset_id);
 
   QString get_selected_border_set_id() const;
@@ -44,9 +45,7 @@ private:
 
   void build();
 
-  QPointer<Quest> quest;     /**< The quest or nullptr if it is not set yet. */
-  QString tileset_id;        /**< Id of the tileset from where to show border sets, or an empty string. */
-
+  std::unique_ptr<TilesetModel> tileset;  /** Tileset from where to show border sets. */
 };
 
 }

@@ -363,4 +363,48 @@ void QuestProperties::set_max_quest_size(const QSize& size) {
   emit max_size_changed(size);
 }
 
+/**
+ * @brief Returns wether the quest has dynamic timestep enabled.
+ * @return true if quest is dynamic timestep enabled
+ */
+bool QuestProperties::is_dynamic_timestep() const {
+  return properties.is_dynamic_timestep();
+}
+
+/**
+ * @brief Sets wether the quest has dynamic timestep
+ * @param enable true to enable dynamic timestep for the quest
+ */
+void QuestProperties::set_dynamic_timestep(bool enable) {
+  auto old = properties.is_dynamic_timestep();
+  if(old == enable) {
+    return;
+  }
+
+  properties.set_dynamic_timestep(enable);
+  emit dynamic_timestep_changed(enable);
+}
+
+/**
+ * @brief Returns wether the quest has subpixel camera enabled.
+ * @return true if quest is dynamic timestep enabled
+ */
+bool QuestProperties::is_subpixel_camera() const {
+  return properties.is_subpixel_camera();
+}
+
+/**
+ * @brief Sets wether the quest has subpixel camera
+ * @param enable true to enable subpixel camera for the quest
+ */
+void QuestProperties::set_subpixel_camera(bool enable) {
+  auto old = properties.is_subpixel_camera();
+  if(old == enable) {
+    return;
+  }
+
+  properties.set_subpixel_camera(enable);
+  emit subpixel_camera_changed(enable);
+}
+
 }

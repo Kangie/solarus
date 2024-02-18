@@ -48,7 +48,7 @@ public:
 
   public:
 
-    State(MapView& view);
+    explicit State(MapView& view);
     virtual ~State() = default;
 
     const MapView& get_view() const;
@@ -63,6 +63,8 @@ public:
     virtual void stop();
     virtual void cancel();
 
+    virtual void key_pressed(const QKeyEvent& event);
+    virtual void key_released(const QKeyEvent& event);
     virtual void mouse_pressed(const QMouseEvent& event);
     virtual void mouse_released(const QMouseEvent& event);
     virtual void mouse_moved(const QMouseEvent& event);
@@ -185,6 +187,7 @@ protected:
   void paintEvent(QPaintEvent* event) override;
 
   void keyPressEvent(QKeyEvent* event) override;
+  void keyReleaseEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
   void mouseMoveEvent(QMouseEvent* event) override;

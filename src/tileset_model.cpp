@@ -1618,8 +1618,16 @@ void TilesetModel::set_selected_indexes(const QList<int>& indexes) {
   }
   QModelIndexList selection = itemSelection.indexes();
 
-  if (QSet<QModelIndex>(selection.begin(), selection.end()) ==
-      QSet<QModelIndex>(current_selection.begin(), current_selection.end())) {
+  QSet<QModelIndex> selection_set;
+  for (const QModelIndex& index : selection) {
+    selection_set.insert(index);
+  }
+  QSet<QModelIndex> current_selection_set;
+  for (const QModelIndex& index : current_selection) {
+    current_selection_set.insert(index);
+  }
+
+  if (selection_set == current_selection_set) {
     // No change.
     return;
   }

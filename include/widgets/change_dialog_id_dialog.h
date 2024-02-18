@@ -33,8 +33,8 @@ class ChangeDialogIdDialog : public QDialog {
 public:
 
   ChangeDialogIdDialog(
-      DialogsModel* model, const QString& initial_id,
-      bool is_prefix = false, bool allow_prefix = false, QWidget* parent = 0);
+      DialogsModel& model, const QString& initial_id,
+      bool is_prefix = false, bool allow_prefix = false, QWidget* parent = nullptr);
 
   QString get_dialog_id() const;
   void set_dialog_id(const QString& id);
@@ -50,8 +50,7 @@ private:
 
   Ui::ChangeDialogIdDialog ui;   /**< The widgets. */
   QString initial_id;
-  DialogsModel* model;
-
+  DialogsModel& model;
 };
 
 }
