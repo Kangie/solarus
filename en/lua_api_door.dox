@@ -207,10 +207,10 @@ The following events are specific to doors.
 
 \subsection lua_api_door_on_opened door:on_opened()
 
-Called when this door starts being opened.
+Called when this door gets open, after the opening animation if any.
 
 \subsection lua_api_door_on_closed door:on_closed()
 
-Called when this door starts being closed.
+Called when this door gets closed, after the closing animation if any.
 
 */
