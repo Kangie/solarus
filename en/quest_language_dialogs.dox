@@ -23,13 +23,6 @@ You can either use it to edit a dialog file graphically, or you can edit
 We specify here its full syntax,
 with instructions for quest makers and translators.
 
-The sequence of characters \c \-\- (two dashes) marks
-the beginning of a comment.
-After them, the rest of the line is ignored by the engine.
-Empty lines are also ignored.
-Quest makers should put many comments to explain where each
-dialog is used and give instructions to translators if needed.
-
 The definition of a dialog starts with \c dialog{ and ends with
 \c }.
 Inside the braces, the properties of the dialog are specified.
