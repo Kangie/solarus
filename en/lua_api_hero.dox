@@ -265,86 +265,6 @@ animation. The ones that don't have such an animation are not displayed.
   If the animation loops, or is replaced by another animation before it ends,
   then the function will never be called.
 
-\subsection lua_api_hero_get_tunic_sprite_id hero:get_tunic_sprite_id()
-
-Returns the name of the sprite representing the hero's body.
-- Return value (string): The \ref lua_api_sprite "sprite" animation set id
-  of the hero's tunic.
-
-\subsection lua_api_hero_set_tunic_sprite_id hero:set_tunic_sprite_id(sprite_id)
-
-Changes the sprite representing the hero's body.
-
-By default, the sprite used for the body is
-\c "hero/tunicX",
-where X is the
-\ref lua_api_game_get_ability "tunic level".
-
-You can use this function if you want to use another sprite.
-- \c sprite_id (string): The \ref lua_api_sprite "sprite" animation set id
-  of the hero's tunic.
-
-\subsection lua_api_hero_get_sword_sprite_id hero:get_sword_sprite_id()
-
-Returns the name of the sprite representing the hero's sword.
-- Return value (string): The \ref lua_api_sprite "sprite" animation set id
-  of the hero's sword.
-
-\subsection lua_api_hero_set_sword_sprite_id hero:set_sword_sprite_id(sprite_id)
-
-Changes the sprite representing the hero's sword.
-
-By default, the sprite used for the sword is
-\c "hero/swordX",
-where X is the
-\ref lua_api_game_get_ability "sword level",
-or no sprite if the sword level is \c 0.
-
-You can use this function if you want to use another sprite.
-- \c sprite_id (string): The \ref lua_api_sprite "sprite" animation set id
-  of the hero's sword.
-  An empty string means no sword sprite.
-
-\subsection lua_api_hero_get_sword_sound_id hero:get_sword_sound_id()
-
-Returns the name of the sound played when the hero uses the sword.
-- Return value (string): The sound id of the hero's sword.
-
-\subsection lua_api_hero_set_sword_sound_id hero:set_sword_sound_id(sound_id)
-
-Changes the sound to play when the hero uses the sword.
-
-By default, the sound used for the sword is
-\c "swordX",
-where X is the
-\ref lua_api_game_get_ability "sword level",
-or no sound if the sword level is \c 0.
-
-You can use this function if you want another sound to be played.
-- \c sound_id (string): The sound id of the hero's sword.
-  An empty string means no sword sound.
-
-\subsection lua_api_hero_get_shield_sprite_id hero:get_shield_sprite_id()
-
-Returns the name of the sprite representing the hero's shield.
-- Return value (string): The \ref lua_api_sprite "sprite" animation set id
-  of the hero's shield.
-
-\subsection lua_api_hero_set_shield_sprite_id hero:set_shield_sprite_id(sprite_id)
-
-Changes the sprite representing the hero's shield.
-
-By default, the sprite used for the shield is
-\c "hero/shieldX",
-where X is the
-\ref lua_api_game_get_ability "shield level",
-or no sprite if the shield level is \c 0.
-
-You can use this function if you want to use another sprite.
-- \c sprite_id (string): The \ref lua_api_sprite "sprite" animation set id
-  of the hero's shield.
-  An empty string means no shield sprite.
-
 \subsection lua_api_hero_is_invincible hero:is_invincible()
 
 Returns whether the hero is currently invincible.
@@ -465,7 +385,7 @@ game command.
 
 If the player is not allowed to perform the attack now
 (because he does not have the sword
-\ref lua_api_game_get_ability "ability"
+\ref lua_api_hero_get_ability "ability"
 or because the hero is currently busy in another state that does not allow
 to use the sword), then nothing happens.
 
@@ -479,7 +399,7 @@ after using the sword.
 
 If the player is not allowed to perform this attack now
 (because he does not have the sword
-\ref lua_api_game_get_ability "ability"
+\ref lua_api_hero_get_ability "ability"
 or because the hero is currently busy in another state that does not allow
 to use the sword), then nothing happens.
 - \c spin_attack_delay (number, optional): Delay in milliseconds
@@ -607,7 +527,7 @@ he cannot be hurt (for example when he is brandishing a treasure).
   Used to push the hero away from that source.
 - \c damage (number): Base number of life points to remove (possibly \c 0).
   This number will be divided by the
-  \ref lua_api_game_get_ability "tunic" level of the player,
+  \ref lua_api_hero_get_ability "tunic" level of the player,
   unless you override this default calculation in
   \ref lua_api_hero_on_taking_damage "hero:on_taking_damage()".
 
@@ -633,7 +553,7 @@ and possibly its sprite.
   Most of the time, you don't need to set this parameter.
 - \c damage: Base number of life points to remove (possibly \c 0).
   This number will be divided by the
-  \ref lua_api_game_get_ability "tunic" level of the player,
+  \ref lua_api_hero_get_ability "tunic" level of the player,
   unless you override this default calculation in
   \ref lua_api_hero_on_taking_damage "hero:on_taking_damage()".
 
@@ -689,11 +609,6 @@ to get the actual custom state object.
 Returns the current custom state object of the hero, if any.
 - Return value (\ref lua_api_state "state") : The custom state,
   or \c nil if the current state is not a custom one.
-
-
-\section lua_api_hero_savegame_methods Savegame methods
-
-Those methods are targeting per-hero game attributes. They were before in game. 
 
 \subsection lua_api_hero_get_life hero:get_life()
 
@@ -847,7 +762,8 @@ The initial value is \c 0 unless specified otherwise.
   Valid ability names are:
   - \c "sword": Using the sword when pressing the attack command.
     Determines the default sword sprite.
-  - \c "sword_knowledge": Ability to make the super spin-attack.
+  - \c "sword_spin_attack": Ability to make a spin attack. 1 is a normal spin
+    attack, 2 is a super spin attack where the hero makes circles.
   - \c "tunic": Resistance level that reduces the damage received by the hero.
     Determines the default sprite used for the hero's body.
     The initial value is \c 1.
@@ -910,6 +826,85 @@ Assigns an equipment item to a slot.
 - \c item (\ref lua_api_item "item"): The equipment item to associate to this
   slot, or \c nil to make the slot empty.
 
+\subsection lua_api_hero_get_tunic_sprite_id hero:get_tunic_sprite_id()
+
+Returns the name of the sprite representing the hero's body.
+- Return value (string): The \ref lua_api_sprite "sprite" animation set id
+  of the hero's tunic.
+
+\subsection lua_api_hero_set_tunic_sprite_id hero:set_tunic_sprite_id(sprite_id)
+
+Changes the sprite representing the hero's body.
+
+By default, the sprite used for the body is
+\c "hero/tunicX",
+where X is the
+\ref lua_api_hero_get_ability "tunic level".
+
+You can use this function if you want to use another sprite.
+- \c sprite_id (string): The \ref lua_api_sprite "sprite" animation set id
+  of the hero's tunic.
+
+\subsection lua_api_hero_get_sword_sprite_id hero:get_sword_sprite_id()
+
+Returns the name of the sprite representing the hero's sword.
+- Return value (string): The \ref lua_api_sprite "sprite" animation set id
+  of the hero's sword.
+
+\subsection lua_api_hero_set_sword_sprite_id hero:set_sword_sprite_id(sprite_id)
+
+Changes the sprite representing the hero's sword.
+
+By default, the sprite used for the sword is
+\c "hero/swordX",
+where X is the
+\ref lua_api_hero_get_ability "sword level",
+or no sprite if the sword level is \c 0.
+
+You can use this function if you want to use another sprite.
+- \c sprite_id (string): The \ref lua_api_sprite "sprite" animation set id
+  of the hero's sword.
+  An empty string means no sword sprite.
+
+\subsection lua_api_hero_get_sword_sound_id hero:get_sword_sound_id()
+
+Returns the name of the sound played when the hero uses the sword.
+- Return value (string): The sound id of the hero's sword.
+
+\subsection lua_api_hero_set_sword_sound_id hero:set_sword_sound_id(sound_id)
+
+Changes the sound to play when the hero uses the sword.
+
+By default, the sound used for the sword is
+\c "swordX",
+where X is the
+\ref lua_api_hero_get_ability "sword level",
+or no sound if the sword level is \c 0.
+
+You can use this function if you want another sound to be played.
+- \c sound_id (string): The sound id of the hero's sword.
+  An empty string means no sword sound.
+
+\subsection lua_api_hero_get_shield_sprite_id hero:get_shield_sprite_id()
+
+Returns the name of the sprite representing the hero's shield.
+- Return value (string): The \ref lua_api_sprite "sprite" animation set id
+  of the hero's shield.
+
+\subsection lua_api_hero_set_shield_sprite_id hero:set_shield_sprite_id(sprite_id)
+
+Changes the sprite representing the hero's shield.
+
+By default, the sprite used for the shield is
+\c "hero/shieldX",
+where X is the
+\ref lua_api_hero_get_ability "shield level",
+or no sprite if the shield level is \c 0.
+
+You can use this function if you want to use another sprite.
+- \c sprite_id (string): The \ref lua_api_sprite "sprite" animation set id
+  of the hero's shield.
+  An empty string means no shield sprite.
 
 \section lua_api_hero_inherited_events Events inherited from map entity
 
