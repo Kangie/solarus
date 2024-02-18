@@ -257,6 +257,7 @@ it only tells whether the element is declared in the quest database.
 - \c resource_type (string): Name of a resource type.
   See \ref lua_api_main_get_resource_ids "sol.main.get_resource_ids()" for the
   possible values.
+- \c id (string): Id of the element to check.
 - Return value (boolean): \c true if such an element is declared in the quest
   database.
 
