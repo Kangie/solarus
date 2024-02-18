@@ -459,7 +459,7 @@ restarted.
   to this point.
   If this behavior is okay for your quest, you never need to call this function
   except the first time: when initializing a new savegame file.
-  This behavior can be changed by setting the "Save starting location"
+  This behavior can be changed by setting the "Update starting location"
   property of destinations, from the quest editor or from a script
   (with
   \ref lua_api_destination_set_starting_location_mode
