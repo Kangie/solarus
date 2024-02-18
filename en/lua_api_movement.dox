@@ -72,10 +72,23 @@ then available to get and set its properties.
 - Return value (movement): The movement created. See the sections below to
   know the get and set methods available for your movement type.
 
-
 \section lua_api_movement_methods Methods of all movement types
 
 These methods exist in all movement types.
+
+\subsection lua_api_movement_get_type movement:get_type()
+
+Returns the type of movement.
+- Return value (string): The type of this movement. Can be one of:
+  \c "straight_movement",
+  \c "random_movement",
+  \c "target_movement",
+  \c "path_movement",
+  \c "random_path_movement",
+  \c "path_finding_movement",
+  \c "circle_movement",
+  \c "jump_movement" or
+  \c "pixel_movement".
 
 \subsection lua_api_movement_start movement:start(object_to_move, [callback])
 
