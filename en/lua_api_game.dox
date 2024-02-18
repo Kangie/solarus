@@ -389,13 +389,15 @@ Returns one of the current maps.
 Returns one of the current
 \ref lua_api_hero "heroes".
 
-Heroes are \ref lua_api_entity "map entities" that can follow cameras from map to map.
+Heroes are \ref lua_api_entity "map entities" that can follow cameras from map
+to map.
 For this reason, they can be seen as belonging to the game more than to the
 current maps. That's why this function exists.
 - Return value (\ref lua_api_hero "hero"): The hero, or \c nil if the game
   is not running.
 
-\remark Equivalent to <tt>game:get_map():get_entity("hero")</tt> if there is only one map / one hero.
+\remark Equivalent to <tt>game:get_map():get_entity("hero")</tt> if there is
+  only one map / one hero.
 
 \subsection lua_api_game_get_value game:get_value(savegame_variable)
 
@@ -418,6 +420,16 @@ Values can be strings, integers or booleans.
 \remark This method changes a value, but remember that the change will be
   saved in the savegame file only when you call
   \ref lua_api_game_save "game:save()".
+
+\subsection lua_api_game_get_values game:get_values()
+
+Returns all saved values.
+
+This also include all built-in saved values, i.e. the ones
+starting with an underscore character \c '_'.
+- Return value (table): A table where every key-value pair is a savegame
+  variable (a string) and its associated value (a string, an integer or
+  a boolean).
 
 \subsection lua_api_game_get_starting_location game:get_starting_location()
 
