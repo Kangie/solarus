@@ -1322,8 +1322,8 @@ on the map.
   - \c sound (string, optional): Sound to play
     when the switch is activated.
     No value means no sound.
-  - \c need_blocks (boolean): Whether a \c lua_api_block "block"
-    is required to activate the switch (only for a walkable switch).
+  - \c needs_block (boolean): If \c true, the switch can only be activated by
+    a \ref lua_api_block "block" (only for a walkable switch).
   - \c inactivate_when_leaving (boolean): If \c true, the switch becomes
     inactivated when the \ref lua_api_hero "hero" or the \ref
     lua_api_block "block"
