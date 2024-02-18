@@ -130,10 +130,10 @@ Sets the current frame of this sprite.
 Returns the number of frames of this sprites in an animation and direction.
 - \c animation_name (string, optional): Name of an animation of the sprite.
   This animation must exist in the animation set.
-  No value means the current animation.
-- \c direction (number, optional): A direction of this animation,
+  No value means the current animation and the current direction.
+- \c direction (number): A direction of this animation,
   between \c 0 and <tt>sprite:get_num_directions(animation_name) - 1</tt>.
-  No value means the current direction.
+  This must be set only if \c animation_name is set.
 - Return value (number): The number of frames.
 
 \subsection lua_api_sprite_get_frame_delay sprite:get_frame_delay([animation_name])
