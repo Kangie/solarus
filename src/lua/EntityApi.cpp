@@ -3492,6 +3492,10 @@ int LuaContext::hero_get_ability(lua_State* l) {
     Hero& hero = *check_hero(l, 1);
     Ability ability = LuaTools::check_enum<Ability>(l, 2);
 
+    if (ability == Ability::SWORD_KNOWLEDGE) {
+      LuaTools::arg_error(l, 2, "Invalid ability name 'sword_knowledge': use 'sword_spin_attack' instead");
+    }
+
     int ability_level = hero.get_equipment().get_ability(ability);
 
     lua_pushinteger(l, ability_level);
@@ -3511,6 +3515,10 @@ int LuaContext::hero_set_ability(lua_State* l) {
     Hero& hero = *check_hero(l, 1);
     Ability ability = LuaTools::check_enum<Ability>(l, 2);
     int level = LuaTools::check_int(l, 3);
+
+    if (ability == Ability::SWORD_KNOWLEDGE) {
+      LuaTools::arg_error(l, 2, "Invalid ability name 'sword_knowledge': use 'sword_spin_attack' instead");
+    }
 
     hero.get_equipment().set_ability(ability, level);
 
