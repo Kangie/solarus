@@ -38,7 +38,7 @@ const std::string LuaContext::surface_module_name = "sol.surface";
  */
 void LuaContext::register_surface_module() {
 
-  const std::vector<luaL_Reg> functions = {
+  std::vector<luaL_Reg> functions = {
       { "create", surface_api_create }
   };
 
@@ -79,9 +79,12 @@ void LuaContext::register_surface_module() {
     });
   }
 
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     methods.insert(methods.end(), {
       { "save", surface_api_save }
+    });
+    functions.insert(functions.end(), {
+      { "load", surface_api_load }
     });
   }
 
@@ -134,6 +137,7 @@ void LuaContext::push_surface(lua_State* l, Surface& surface) {
 int LuaContext::surface_api_create(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
+
     SurfacePtr surface;
     if (lua_gettop(l) == 0) {
       // create an empty surface with the screen size
@@ -147,6 +151,12 @@ int LuaContext::surface_api_create(lua_State* l) {
     }
     else if (lua_type(l, 1) == LUA_TSTRING) {
       // load from a file
+      get().warning_deprecated(
+          { 2, 0 },
+          "sol.surface.create(file_name, [language_specific])",
+          "Use sol.surface.load() instead."
+          );
+
       const std::string& file_name = lua_tostring(l, 1);
       bool language_specific = LuaTools::opt_boolean(l, 2, false);
       surface = Surface::create(file_name, language_specific ?
@@ -164,6 +174,28 @@ int LuaContext::surface_api_create(lua_State* l) {
       get().add_drawable(surface);
       push_surface(l, *surface);
     }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of sol.surface.load().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::surface_api_load(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+
+    const std::string& file_name = lua_tostring(l, 1);
+    SurfacePtr surface = Surface::create(file_name, Surface::DIR_DATA);
+
+    if (surface == nullptr) {
+      // Image file not found or not valid.
+      LuaTools::error(l, std::string("Failed to load image '") + file_name + ("'"));
+    }
+    get().add_drawable(surface);
+    push_surface(l, *surface);
     return 1;
   });
 }

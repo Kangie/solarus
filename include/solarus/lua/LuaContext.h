@@ -19,9 +19,7 @@
 #define SOLARUS_LUA_CONTEXT_H
 
 #include "solarus/audio/SoundPtr.h"
-#include "solarus/core/Common.h"
 #include "solarus/core/Ability.h"
-#include "solarus/core/Debug.h"
 #include "solarus/core/Controls.h"
 #include "solarus/core/InputEvent.h"
 #include "solarus/core/TimerPtr.h"
@@ -577,23 +575,6 @@ class LuaContext {
     // All functions named <type>_api_<name> can be called by Lua.
     static FunctionExportedToLua
 
-      // Audio API.
-      audio_api_get_sound_volume,
-      audio_api_set_sound_volume,
-      audio_api_play_sound,
-      audio_api_preload_sounds,
-      audio_api_get_music_volume,
-      audio_api_set_music_volume,
-      audio_api_play_music,
-      audio_api_stop_music,
-      audio_api_get_music,
-      audio_api_get_music_format,
-      audio_api_get_music_num_channels,
-      audio_api_get_music_channel_volume,
-      audio_api_set_music_channel_volume,
-      audio_api_get_music_tempo,
-      audio_api_set_music_tempo,
-
       // Sound API.
       sound_api_create,
       sound_api_play,
@@ -700,6 +681,7 @@ class LuaContext {
 
       // Surface API.
       surface_api_create,
+      surface_api_load,
       surface_api_save,
       surface_api_get_size,
       surface_api_clear,
@@ -771,6 +753,7 @@ class LuaContext {
 
       // Movement API.
       movement_api_create,
+      movement_api_get_type,
       movement_api_get_xy,
       movement_api_set_xy,
       movement_api_is_suspended,
@@ -1327,7 +1310,6 @@ class LuaContext {
       state_api_set_jumper_delay,
       state_api_get_carried_object_action,
       state_api_set_carried_object_action,
-
 
       // available to all userdata types
       userdata_rawget_as_table,

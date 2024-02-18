@@ -20,10 +20,7 @@
 #include "solarus/core/EquipmentItem.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
-#include "solarus/core/QuestFiles.h"
-#include "solarus/core/Random.h"
 #include "solarus/core/Savegame.h"
-#include "solarus/core/System.h"
 #include "solarus/entities/Hero.h"
 #include <algorithm>
 #include <sstream>
@@ -56,6 +53,7 @@ void Equipment::set_initial_values() {
   set_ability(Ability::PUSH, 1);
   set_ability(Ability::GRAB, 1);
   set_ability(Ability::PULL, 1);
+  set_ability(Ability::SWORD_SPIN_ATTACK, 1);
 }
 
 /**
@@ -571,6 +569,9 @@ std::string Equipment::get_ability_savegame_variable(Ability ability) const {
   case Ability::SWORD:
     return Savegame::KEY_ABILITY_SWORD;
 
+  case Ability::SWORD_SPIN_ATTACK:
+    return Savegame::KEY_ABILITY_SWORD_SPIN_ATTACK;
+
   case Ability::SWORD_KNOWLEDGE:
     return Savegame::KEY_ABILITY_SWORD_KNOWLEDGE;
 
@@ -712,4 +713,3 @@ Hero* Equipment::get_hero(){
 }
 
 }
-

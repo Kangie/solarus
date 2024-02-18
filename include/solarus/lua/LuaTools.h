@@ -46,7 +46,7 @@ namespace LuaTools {
 int get_positive_index(lua_State* l, int index);
 void* test_userdata(lua_State* l, int index, const char* metatable_name);
 bool is_valid_identifier(const std::string& name);
-bool is_valid_savegame_variable(const std::string& name);
+bool is_valid_lua_identifier(const std::string& name);
 std::string get_type_name(lua_State*l, int index);
 std::string get_type_name(const std::string& module_name);
 

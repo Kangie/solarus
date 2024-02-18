@@ -367,7 +367,7 @@ void LuaContext::register_main_module() {
         { "get_game", LUA_TO_C_BIND(get_game) },
     });
   }
-  if (CurrentQuest::is_format_at_least({ 1, 7 })) {
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     functions.insert(functions.end(), {
         { "rawget", LUA_TO_C_BIND(rawget) },
         { "rawset", LUA_TO_C_BIND(rawset) },

@@ -2360,7 +2360,9 @@ void Hero::update_invincibility() {
  * \return \c true if the hero can be hurt.
  */
 bool Hero::can_be_hurt(Entity* attacker) const {
-  return !is_invincible() && !delayed_teletransporter && get_state()->get_can_be_hurt(attacker);
+  return !is_invincible() &&
+      !is_suspended() &&
+      get_state()->get_can_be_hurt(attacker);
 }
 
 /**

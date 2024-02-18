@@ -94,10 +94,12 @@ void Chest::notify_enabled(bool enabled) {
 
   Entity::notify_enabled(enabled);
 
-  // Make sure the chest does not appear on the heroes
-  for(const HeroPtr& hero: get_heroes()) {
-    if (enabled && overlaps(*hero)) {
-      hero->avoid_collision(*this, 3);
+  if (enabled && is_on_map()) {
+    // Make sure the chest does not appear on the heroes
+    for(const HeroPtr& hero: get_heroes()) {
+      if (overlaps(*hero)) {
+        hero->avoid_collision(*this, 3);
+      }
     }
   }
 }
@@ -355,8 +357,8 @@ void Chest::set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id) 
  * \param other Another entity.
  * \return \c true if this entity is an obstacle for the other one.
  */
-bool Chest::is_obstacle_for(Entity& /* other */) {
-  return true;
+bool Chest::is_obstacle_for(Entity& other) {
+  return other.is_chest_obstacle(*this);
 }
 
 /**

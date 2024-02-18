@@ -31,7 +31,6 @@
 
 #include <algorithm>
 #include <list>
-#include <iostream>
 
 namespace Solarus {
 
@@ -325,6 +324,167 @@ void Camera::notify_size_changed() {
      (surface == nullptr || get_size() != surface->get_size())) {
     create_surface(get_size());
   }
+}
+
+/**
+ * \copydoc Entity::is_traversable_obstacle
+ */
+bool Camera::is_traversable_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_wall_obstacle
+ */
+bool Camera::is_wall_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_low_wall_obstacle
+ */
+bool Camera::is_low_wall_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_grass_obstacle
+ */
+bool Camera::is_grass_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_shallow_water_obstacle
+ */
+bool Camera::is_shallow_water_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_deep_water_obstacle
+ */
+bool Camera::is_deep_water_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_hole_obstacle
+ */
+bool Camera::is_hole_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_ice_obstacle
+ */
+bool Camera::is_ice_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_lava_obstacle
+ */
+bool Camera::is_lava_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_prickle_obstacle
+ */
+bool Camera::is_prickle_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_ladder_obstacle
+ */
+bool Camera::is_ladder_obstacle() const {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_block_obstacle
+ */
+bool Camera::is_block_obstacle(Block&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_teletransporter_obstacle
+ */
+bool Camera::is_teletransporter_obstacle(Teletransporter&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_stream_obstacle
+ */
+bool Camera::is_stream_obstacle(Stream&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_stairs_obstacle
+ */
+bool Camera::is_stairs_obstacle(Stairs&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_switch_obstacle
+ */
+bool Camera::is_switch_obstacle(Switch&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_raised_block_obstacle
+ */
+bool Camera::is_raised_block_obstacle(CrystalBlock&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_crystal_obstacle
+ */
+bool Camera::is_crystal_obstacle(Crystal&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_npc_obstacle
+ */
+bool Camera::is_npc_obstacle(Npc&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_door_obstacle
+ */
+bool Camera::is_door_obstacle(Door&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_jumper_obstacle
+ */
+bool Camera::is_jumper_obstacle(Jumper&, const Rectangle&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_destructible_obstacle
+ */
+bool Camera::is_destructible_obstacle(Destructible&) {
+  return false;
+}
+
+/**
+ * \copydoc Entity::is_chest_obstacle
+ */
+bool Camera::is_chest_obstacle(Chest&) {
+  return false;
 }
 
 /**

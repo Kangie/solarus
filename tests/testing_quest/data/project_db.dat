@@ -57,6 +57,7 @@ map{ id = "bugs/1269_coroutines", description = "#1269: Coroutines make engine c
 map{ id = "bugs/1275_map_set_tileset", description = "#1275: map:set_tileset()" }
 map{ id = "bugs/1286_crash_state_set_can_traverse", description = "#1286: Crash in state:set_can_traverse()" }
 map{ id = "bugs/1291_hero_start_attack_loading", description = "#1291: hero:start_attack_loading" }
+map{ id = "bugs/1297_target_movement_speed", description = "#1297: Target movement wrong speed" }
 map{ id = "bugs/1299_crash_invalid_tile_pattern", description = "#1299: Crash when loading a map with an invalid tile pattern" }
 map{ id = "bugs/1301_state_set_can_be_hurt_function", description = "#1301: Allow to pass a function to state:set_can_be_hurt()" }
 map{ id = "bugs/1319_disabled_entity_timer_unsuspended", description = "#1319: Timers of disabled entity continue when the game is unsuspended" }
@@ -113,6 +114,8 @@ map{ id = "bugs/1600_map_loading_single_cam/map1" }
 map{ id = "bugs/1600_map_loading_single_cam/map2" }
 map{ id = "bugs/1609_crash_save_lua_keyword", description = "#1609: Crash when loading a save file with a Lua keyword" }
 map{ id = "bugs/1611_entity_overlaps_when_removed", description = "#1611: entity:overlaps() returns true even when an entity was removed" }
+map{ id = "bugs/1617_crash_disabled_chest", description = "#1617: Crash when starting a map with a disabled chest" }
+map{ id = "bugs/1619_camera_obstacles", description = "#1619: Entities should not block the camera" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/526_get_entities_same_region", description = "#526: map:get_entities_in_same_region()" }
@@ -134,6 +137,7 @@ map{ id = "bugs/748_entity_overlaps_collision_modes", description = "#748: entit
 map{ id = "bugs/754_entity_get_max_bounding_box", description = "#754: entity:get_max_bounding_box" }
 map{ id = "bugs/762_camera_entity", description = "#762: Camera as entity" }
 map{ id = "bugs/769_stuck_dynamic_tile_covered", description = "#769: Non-traversable dynamic tiles covered by traversable ones block the hero" }
+map{ id = "bugs/771_spin_attack_ability", description = "#1171: Spin attack ability" }
 map{ id = "bugs/779_get_entities_random_order", description = "#779: map:get_entities() returns entities in random order" }
 map{ id = "bugs/781_assert_teletransporter_same_map", description = "#781: Assertion error when a teletransporter leads to the same map" }
 map{ id = "bugs/794_custom_entity_set_can_traverse_ground", description = "#794: custom_entity:set_can_traverse_ground(\"traversable\", false) does not work" }
@@ -154,6 +158,7 @@ map{ id = "bugs/821_hero_start_attack", description = "#821: hero:start_attack()
 map{ id = "bugs/823_sprite_get_size_origin", description = "#823: sprite:get_size() and sprite:get_origin()" }
 map{ id = "bugs/827_ground_detection_after_unfreeze", description = "#827: Hero not falling in hole after unfreeze" }
 map{ id = "bugs/830_entity_get_ground_position", description = "#830: entity:get_ground_position() and entity:get_ground_below()" }
+map{ id = "bugs/840_movement_get_type", description = "#840: movement:get_type()" }
 map{ id = "bugs/844_camera_on_state_changed", description = "#844: camera:on_state_changed()" }
 map{ id = "bugs/845_game_set_suspended", description = "#845: game:set_suspended" }
 map{ id = "bugs/851_entity_get_sprites", description = "#851: entity:get_sprites()" }
@@ -184,6 +189,7 @@ map{ id = "bugs/955_enemy_get_set_dying_sprite_id", description = "#955: enemy:g
 map{ id = "bugs/967_blocks_max_moves", description = "#967: Allow to choose any maximum number of moves for blocks" }
 map{ id = "bugs/971_sol_file_list", description = "#971: sol.file.list()" }
 map{ id = "bugs/983_timer_delay", description = "#983: Allow to change the delay of timers" }
+map{ id = "bugs/988_crash_treasure_dialog", description = "#988: Crash when giving a treasure during a dialog" }
 map{ id = "custom_state/can_traverse", description = "state:set_can_traverse()" }
 map{ id = "custom_state/can_traverse_ground", description = "state:get/set_can_traverse_ground" }
 map{ id = "custom_state/carried_object", description = "State with carried object" }
@@ -558,6 +564,8 @@ file{ path = "maps/bugs/1286_crash_state_set_can_traverse.dat", author = "Christ
 file{ path = "maps/bugs/1286_crash_state_set_can_traverse.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1297_target_movement_speed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1297_target_movement_speed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1299_crash_invalid_tile_pattern.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1299_crash_invalid_tile_pattern.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1301_state_set_can_be_hurt_function.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -671,6 +679,10 @@ file{ path = "maps/bugs/1609_crash_save_lua_keyword.dat", author = "Christopho",
 file{ path = "maps/bugs/1609_crash_save_lua_keyword.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1611_entity_overlaps_when_removed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1611_entity_overlaps_when_removed.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1617_crash_disabled_chest.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1617_crash_disabled_chest.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1619_camera_obstacles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1619_camera_obstacles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -713,6 +725,8 @@ file{ path = "maps/bugs/762_camera_entity.dat", author = "Christopho", license =
 file{ path = "maps/bugs/762_camera_entity.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/769_stuck_dynamic_tile_covered.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/769_stuck_dynamic_tile_covered.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/771_spin_attack_ability.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/771_spin_attack_ability.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/779_get_entities_random_order.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/779_get_entities_random_order.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/781_assert_teletransporter_same_map.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -754,6 +768,8 @@ file{ path = "maps/bugs/827_ground_detection_after_unfreeze.dat", author = "Chri
 file{ path = "maps/bugs/827_ground_detection_after_unfreeze.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/830_entity_get_ground_position.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/830_entity_get_ground_position.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/840_movement_get_type.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/840_movement_get_type.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/844_camera_on_state_changed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/844_camera_on_state_changed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/845_game_set_suspended.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -814,6 +830,8 @@ file{ path = "maps/bugs/971_sol_file_list.dat", author = "Christopho", license =
 file{ path = "maps/bugs/971_sol_file_list.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/983_timer_delay.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/983_timer_delay.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/988_crash_treasure_dialog.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/988_crash_treasure_dialog.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/custom_state/can_traverse.dat", author = "std::gregwar", license = "CC BY-SA 4.0" }
 file{ path = "maps/custom_state/can_traverse.lua", author = "std::gregwar", license = "GPL v3" }
 file{ path = "maps/custom_state/can_traverse_ground.dat", author = "std::gregwar", license = "CC BY-SA 4.0" }

@@ -180,8 +180,11 @@ void TargetMovement::recompute_movement() {
     sign_x = (dxy.x >= 0) ? 1 : -1;
     sign_y = (dxy.y >= 0) ? 1 : -1;
 
-    if (std::abs(angle - get_angle()) > 1E-6 || get_speed() < 1E-6) {
-      // The angle has changed or the movement was stopped.
+    if (std::abs(angle - get_angle()) > 1E-6 ||
+        std::abs(moving_speed - get_speed()) > 1E-6 ||
+        get_speed() < 1E-6
+    ) {
+      // The angle or speed has changed or the movement was stopped.
       set_speed(moving_speed);
       set_angle(angle);
       set_max_distance((int) Geometry::get_distance(get_xy(), target));

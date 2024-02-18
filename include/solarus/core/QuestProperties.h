@@ -97,8 +97,8 @@ class SOLARUS_API QuestProperties : public LuaData {
     Size min_quest_size;               /**< Minimum quest size. */
     Size max_quest_size;               /**< Maximum quest size. */
 
-    bool use_dynamic_timestep;         /**< Quest requests engine in dynamic timestep */
-    bool use_subpixel_camera;          /**< Quest requests engine to do subpixel camera movement */
+    bool use_dynamic_timestep = false; /**< Quest requests engine in dynamic timestep */
+    bool use_subpixel_camera = false;  /**< Quest requests engine to do subpixel camera movement */
 };
 
 }

@@ -58,27 +58,27 @@ void check_version_compatibility(const std::pair<int, int>& quest_version) {
   const int quest_minor_version = quest_version.second;
 
   if (quest_version.first == 0) {
-    Debug::die("No Solarus version is specified in your quest.dat file!");
+    Debug::die("No Solarus version is specified in your quest.dat file");
   }
 
   // The third digit of the version (patch) is ignored because compatibility
   // is not broken by patches.
 
   bool compatible = true;
-  if (quest_major_version != SOLARUS_MAJOR_VERSION) {
-    // Assume that changes of major versions break compatibility.
+  if (quest_major_version > SOLARUS_MAJOR_VERSION) {
+    // The quest is too recent for this engine.
     compatible = false;
   }
   else {
-    if (quest_minor_version > SOLARUS_MINOR_VERSION) {
+    if (quest_major_version == SOLARUS_MAJOR_VERSION &&
+        quest_minor_version > SOLARUS_MINOR_VERSION) {
       // The quest is too recent for this engine.
       compatible = false;
     }
     else {
-      // 1.5 quests can be run by Solarus 1.5, 1.6 and 1.7.
-      // 1.6 quests can be run by Solarus 1.6 and 1.7.
-      if (quest_minor_version < SOLARUS_MINOR_VERSION &&
-          quest_major_version == 1 &&
+      // 1.5 quests can be run by Solarus 1.5, 1.6 and 2.0.
+      // 1.6 quests can be run by Solarus 1.6 and 2.0.
+      if (quest_major_version == 1 &&
           quest_minor_version < 5
       ) {
         compatible = false;
@@ -540,6 +540,7 @@ void MainLoop::step(uint64_t timestep_ns) {
       game->stop();
     }
     set_game(nullptr);
+    resetting = false;
   }
 
   // Go to another game?

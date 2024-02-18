@@ -37,19 +37,20 @@ class Hero::StairsState: public HeroState {
         Stairs::Way way
     );
 
-    virtual void start(const State* previous_state) override;
-    virtual void stop(const State* next_state) override;
-    virtual void set_map(Map& map) override;
-    virtual void update() override;
-    virtual void set_suspended(bool suspended) override;
+    void start(const State* previous_state) override;
+    void stop(const State* next_state) override;
+    void set_map(Map& map) override;
+    void update() override;
+    void set_suspended(bool suspended) override;
 
-    virtual bool is_touching_ground() const override;
-    virtual bool get_can_come_from_bad_ground() const override;
-    virtual bool is_teletransporter_delayed() const override;
-    virtual int get_wanted_movement_direction8() const override;
-    virtual std::shared_ptr<CarriedObject> get_carried_object() const override;
-    virtual CarriedObject::Behavior get_previous_carried_object_behavior() const override;
-    virtual void notify_layer_changed() override;
+    bool is_touching_ground() const override;
+    bool get_can_come_from_bad_ground() const override;
+    bool is_teletransporter_delayed() const override;
+    bool get_can_be_hurt(Entity* attacker) override;
+    int get_wanted_movement_direction8() const override;
+    std::shared_ptr<CarriedObject> get_carried_object() const override;
+    CarriedObject::Behavior get_previous_carried_object_behavior() const override;
+    void notify_layer_changed() override;
 
   private:
 

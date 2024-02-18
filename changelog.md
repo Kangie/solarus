@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus 1.7.0 (in progress)
+## Solarus 2.0.0 (in progress)
 
 ### Engine changes
 
@@ -18,7 +18,10 @@
 * Fix `hero.set_invincible` not suspended with the game (#1554).
 * Fix custom entity still interacting when moved or disabled (#1056, #1407).
 * Fix thrown objects destruction animation position (#1508).
+* Fix camera stuck on entities other than separators (#1619).
 * Fix crash when loading a save file with Lua keywords (#1609).
+* Fix crash when a dialog starts during another dialog (#988, #1582).
+* Fix speed of target movement outside a game (#1297).
 
 ### Lua API changes
 
@@ -26,6 +29,7 @@ This release adds new features but does not introduce any incompatibility.
 
 * Allow to stop or pause a sound effect (#1289).
 * Allow to change the volume of a sound effect (#1608).
+* Add a method `sol.surface.load()` to safely load from any directory (#1484).
 * Add a method `surface:save()` to save a surface to a PNG file (#1215).
 * Add functions `sol.main.rawget/rawset()` (#1424).
 * Add a method `destination:is_default()`.
@@ -33,6 +37,8 @@ This release adds new features but does not introduce any incompatibility.
 * Add methods `hero:get/set_push_delay()` (#1524).
 * Add methods `hero:get/set_carry_height()`.
 * Add a method `game:get_values()` (#1552).
+* Add a method `movement:get_type()` (#840).
+* Allow to disable the spin attack (#771).
 
 ### Solarus launcher GUI changes
 

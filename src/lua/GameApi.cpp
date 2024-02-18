@@ -47,7 +47,7 @@ void LuaContext::register_game_module() {
   };
 
   // Methods of the game type.
-  const std::vector<luaL_Reg> methods = {
+  std::vector<luaL_Reg> methods = {
       { "save", game_api_save },
       { "start", game_api_start },
       { "is_started", game_api_is_started },
@@ -107,8 +107,11 @@ void LuaContext::register_game_module() {
       { "capture_command_binding", game_api_capture_command_binding },
       { "simulate_command_pressed", game_api_simulate_command_pressed },
       { "simulate_command_released", game_api_simulate_command_released },
-      //1.7 methods
-      // FIXME only include them if the quest is >= 1.7
+  };
+
+  // 2.0 methods
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    methods.insert(methods.end(), {
       { "get_controls", game_api_get_controls },
       { "set_controls", game_api_set_controls },
       { "create_camera", game_api_create_camera },
@@ -116,7 +119,8 @@ void LuaContext::register_game_module() {
       { "get_cameras", game_api_get_cameras },
       { "get_maps", game_api_get_maps },
       { "get_values", game_api_get_values },
-  };
+    });
+  }
 
   const std::vector<luaL_Reg> metamethods = {
       { "__gc", userdata_meta_gc },
@@ -641,8 +645,8 @@ int LuaContext::game_api_get_value(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Savegame& savegame = *check_game(l, 1);
     const std::string& key = LuaTools::check_string(l, 2);
-
-    if (!LuaTools::is_valid_savegame_variable(key)) {
+    
+    if (!LuaTools::is_valid_lua_identifier(key)) {
       LuaTools::arg_error(l, 3,
                           std::string("Invalid savegame variable '") + key
                           + "': the name should only contain alphanumeric characters or '_',"
@@ -682,8 +686,8 @@ int LuaContext::game_api_set_value(lua_State* l) {
           std::string("Invalid savegame variable '") + key
           + "': names prefixed by '_' are reserved for built-in variables");
     }
-
-    if (!LuaTools::is_valid_savegame_variable(key)) {
+    
+    if (!LuaTools::is_valid_lua_identifier(key)) {
       LuaTools::arg_error(l, 3,
                           std::string("Invalid savegame variable '") + key
                           + "': the name should only contain alphanumeric characters or '_',"
@@ -1227,6 +1231,12 @@ int LuaContext::game_api_get_ability(lua_State* l) {
 
     int ability_level = savegame.get_equipment()->get_ability(ability);
 
+    if (ability == Ability::SWORD_KNOWLEDGE && CurrentQuest::is_format_at_least({2, 0})) {
+      Debug::warning("Ability 'sword_knowledge' is deprecated. Use the more general 'sword_spin_attack' instead");
+      const int spin_attack_level = savegame.get_equipment()->get_ability(Ability::SWORD_SPIN_ATTACK);
+      ability_level = (spin_attack_level == 2) ? 1 : 0;
+    }
+
     lua_pushinteger(l, ability_level);
     return 1;
   });
@@ -1243,6 +1253,12 @@ int LuaContext::game_api_set_ability(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
     Ability ability = LuaTools::check_enum<Ability>(l, 2);
     int level = LuaTools::check_int(l, 3);
+
+    if (ability == Ability::SWORD_KNOWLEDGE && CurrentQuest::is_format_at_least({2, 0})) {
+      Debug::warning("Ability 'sword_knowledge' is deprecated. Use the more general 'sword_spin_attack' instead");
+      ability = Ability::SWORD_SPIN_ATTACK;
+      level = (level == 1) ? 2 : 1;
+    }
 
     savegame.get_equipment()->set_ability(ability, level);
 

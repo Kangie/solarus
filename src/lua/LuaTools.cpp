@@ -146,7 +146,7 @@ bool is_valid_identifier(const std::string& name) {
  * \return \c true if the name only contains alphanumeric characters or '_',
  * does not start with a digit and is not a Lua keyword.
  */
-bool is_valid_savegame_variable(const std::string& name) {
+bool is_valid_lua_identifier(const std::string& name) {
 
   return is_valid_identifier(name) && !is_lua_keyword(name);
 }
@@ -159,7 +159,7 @@ bool is_valid_savegame_variable(const std::string& name) {
  * \param index An index in the stack.
  * \return The type name.
  */
-std::string get_type_name(lua_State*l, int index) {
+std::string get_type_name(lua_State* l, int index) {
 
   std::string module_name;
   if (!LuaContext::is_solarus_userdata(l, index, module_name)) {

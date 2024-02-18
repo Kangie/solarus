@@ -394,6 +394,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     virtual bool is_enemy_obstacle(Enemy& enemy);
     virtual bool is_jumper_obstacle(Jumper& jumper, const Rectangle& candidate_position);
     virtual bool is_destructible_obstacle(Destructible& destructible);
+    virtual bool is_chest_obstacle(Chest& chest);
     virtual bool is_separator_obstacle(Separator& separator, const Rectangle& candidate_position);
     virtual bool is_sword_ignored() const;
 

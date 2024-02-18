@@ -46,6 +46,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/754_entity_get_max_bounding_box"
   "bugs/762_camera_entity"
   "bugs/769_stuck_dynamic_tile_covered"
+  "bugs/771_spin_attack_ability"
   "bugs/779_get_entities_random_order"
   "bugs/781_assert_teletransporter_same_map"
   "bugs/794_custom_entity_set_can_traverse_ground"
@@ -63,6 +64,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/823_sprite_get_size_origin"
   "bugs/827_ground_detection_after_unfreeze"
   "bugs/830_entity_get_ground_position"
+  "bugs/840_movement_get_type"
   "bugs/844_camera_on_state_changed"
   "bugs/845_game_set_suspended"
   "bugs/851_entity_get_sprites"
@@ -90,6 +92,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/967_blocks_max_moves"
   "bugs/971_sol_file_list"
   "bugs/983_timer_delay"
+  "bugs/988_crash_treasure_dialog"
   "bugs/1007_door_open_close"
   "bugs/1024_custom_entity_set_origin"
   "bugs/1026_door_sprite_higher_than_16"
@@ -141,6 +144,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1275_map_set_tileset"
   "bugs/1286_crash_state_set_can_traverse"
   "bugs/1291_hero_start_attack_loading"
+  "bugs/1297_target_movement_speed"
   "bugs/1301_state_set_can_be_hurt_function"
   "bugs/1319_disabled_entity_timer_unsuspended"
   "bugs/1348_hero_sprite_stuck"
@@ -192,6 +196,8 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1600_map_loading_single_cam/map1"
   "bugs/1609_crash_save_lua_keyword"
   "bugs/1611_entity_overlaps_when_removed"
+  "bugs/1617_crash_disabled_chest"
+  "bugs/1619_camera_obstacles"
 )
 
 # Test that should succeed when there are non-fatal errors

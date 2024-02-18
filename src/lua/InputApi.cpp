@@ -50,8 +50,11 @@ void LuaContext::register_input_module() {
         { "get_finger_position", input_api_get_finger_position },
         { "get_finger_pressure", input_api_get_finger_pressure },
         { "simulate_key_pressed", input_api_simulate_key_pressed },
-        { "simulate_key_released", input_api_simulate_key_released },
-                       //TODO put in 1.7 functions
+        { "simulate_key_released", input_api_simulate_key_released }
+    });
+  }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    functions.insert(functions.end(), {
         { "get_joypad_count", input_api_get_joypad_count},
         { "get_joypads", input_api_get_joypads}
     });

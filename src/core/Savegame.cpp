@@ -61,8 +61,10 @@ const std::string Savegame::KEY_ITEM_SLOT_1 = "_item_slot_1";          /**< Name
 const std::string Savegame::KEY_ITEM_SLOT_2 = "_item_slot_2";          /**< Name of the equipment item in slot 2. */
 const std::string Savegame::KEY_ABILITY_TUNIC = "_ability_tunic";      /**< Resistance level. */
 const std::string Savegame::KEY_ABILITY_SWORD = "_ability_sword";      /**< Attack level. */
+const std::string Savegame::KEY_ABILITY_SWORD_SPIN_ATTACK =
+    "_ability_sword_spin_attack";                                      /**< Spin attack level. */
 const std::string Savegame::KEY_ABILITY_SWORD_KNOWLEDGE =
-    "_ability_sword_knowledge";                                        /**< Super spin attack ability level. */
+    "_ability_sword_knowledge";                                        /**< Super spin attack ability level (deprecated). */
 const std::string Savegame::KEY_ABILITY_SHIELD = "_ability_shield";    /**< Protection level. */
 const std::string Savegame::KEY_ABILITY_LIFT = "_ability_lift";        /**< Lift level. */
 const std::string Savegame::KEY_ABILITY_SWIM = "_ability_swim";        /**< Swim level. */
@@ -214,6 +216,13 @@ void Savegame::post_process_existing_savegame() {
 
   if (!is_set(Savegame::KEY_ABILITY_PULL)) {
     set_integer(Savegame::KEY_ABILITY_PULL, 1);
+  }
+
+  // Sword knowledge is replaced by the more general spin attack starting with Solarus 2.0.
+  if (!is_set(Savegame::KEY_ABILITY_SWORD_SPIN_ATTACK)) {
+    const int super_spin_attack_ability = get_integer(Savegame::KEY_ABILITY_SWORD_KNOWLEDGE);
+    set_integer(Savegame::KEY_ABILITY_SWORD_SPIN_ATTACK, super_spin_attack_ability == 1 ? 2 : 1);
+    unset(Savegame::KEY_ABILITY_SWORD_KNOWLEDGE);
   }
 }
 
@@ -387,7 +396,7 @@ void Savegame::set_game(Game* game) {
  */
 bool Savegame::is_string(const std::string& key) const {
 
-  SOLARUS_ASSERT(LuaTools::is_valid_savegame_variable(key),
+  SOLARUS_ASSERT(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   bool result = false;
@@ -422,7 +431,7 @@ void Savegame::set_default_transition_style(Transition::Style default_transition
  */
 std::string Savegame::get_string(const std::string& key) const {
 
-  SOLARUS_ASSERT(LuaTools::is_valid_savegame_variable(key),
+  SOLARUS_ASSERT(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   const auto& it = saved_values.find(key);
@@ -445,8 +454,8 @@ std::string Savegame::get_string(const std::string& key) const {
  * \param value The string value to associate with this key.
  */
 void Savegame::set_string(const std::string& key, const std::string& value) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_STRING;
@@ -460,7 +469,7 @@ void Savegame::set_string(const std::string& key, const std::string& value) {
  */
 bool Savegame::is_integer(const std::string& key) const {
 
-  SOLARUS_ASSERT(LuaTools::is_valid_savegame_variable(key),
+  SOLARUS_ASSERT(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   bool result = false;
@@ -479,7 +488,7 @@ bool Savegame::is_integer(const std::string& key) const {
  */
 int Savegame::get_integer(const std::string& key) const {
 
-  SOLARUS_ASSERT(LuaTools::is_valid_savegame_variable(key),
+  SOLARUS_ASSERT(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   const auto& it = saved_values.find(key);
@@ -501,8 +510,8 @@ int Savegame::get_integer(const std::string& key) const {
  * \param value The integer value to associate with this key.
  */
 void Savegame::set_integer(const std::string& key, int value) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_INTEGER;
@@ -516,7 +525,7 @@ void Savegame::set_integer(const std::string& key, int value) {
  */
 bool Savegame::is_boolean(const std::string& key) const {
 
-  SOLARUS_ASSERT(LuaTools::is_valid_savegame_variable(key),
+  SOLARUS_ASSERT(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   bool result = false;
@@ -535,7 +544,7 @@ bool Savegame::is_boolean(const std::string& key) const {
  */
 bool Savegame::get_boolean(const std::string& key) const {
 
-  SOLARUS_ASSERT(LuaTools::is_valid_savegame_variable(key),
+  SOLARUS_ASSERT(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   const auto& it = saved_values.find(key);
@@ -557,8 +566,8 @@ bool Savegame::get_boolean(const std::string& key) const {
  * \param value The boolean value to associate with this key.
  */
 void Savegame::set_boolean(const std::string& key, bool value) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_BOOLEAN;
@@ -580,8 +589,8 @@ bool Savegame::is_set(const std::string& key) const {
  * \param key Name of the value to unset.
  */
 void Savegame::unset(const std::string& key) {
-
-  SOLARUS_REQUIRE(LuaTools::is_valid_savegame_variable(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values.erase(key);
