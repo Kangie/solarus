@@ -63,6 +63,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/823_sprite_get_size_origin"
   "bugs/827_ground_detection_after_unfreeze"
   "bugs/830_entity_get_ground_position"
+  "bugs/840_movement_get_type"
   "bugs/844_camera_on_state_changed"
   "bugs/845_game_set_suspended"
   "bugs/851_entity_get_sprites"

@@ -159,7 +159,7 @@ bool is_valid_lua_identifier(const std::string& name) {
  * \param index An index in the stack.
  * \return The type name.
  */
-std::string get_type_name(lua_State*l, int index) {
+std::string get_type_name(lua_State* l, int index) {
 
   std::string module_name;
   if (!LuaContext::is_solarus_userdata(l, index, module_name)) {

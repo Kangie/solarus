@@ -406,7 +406,6 @@ void LuaContext::register_entity_module() {
     });
   }
 
-
   block_methods.insert(block_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
       get_entity_internal_type_name(EntityType::BLOCK),

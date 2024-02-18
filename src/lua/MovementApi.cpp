@@ -99,7 +99,7 @@ void LuaContext::register_movement_module() {
   };
 
   // Methods common to all movement types.
-  const std::vector<luaL_Reg> movement_common_methods = {
+  std::vector<luaL_Reg> movement_common_methods = {
       { "get_xy", movement_api_get_xy },
       { "set_xy", movement_api_set_xy },
       { "start", movement_api_start },
@@ -111,6 +111,11 @@ void LuaContext::register_movement_module() {
       { "set_ignore_obstacles", movement_api_set_ignore_obstacles },
       { "get_direction4", movement_api_get_direction4 }
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    movement_common_methods.insert(movement_common_methods.end(), {
+      { "get_type", movement_api_get_type},
+    });
+  }
 
   // Metamethods of all movement types.
   const std::vector<luaL_Reg> metamethods = {
@@ -599,6 +604,22 @@ int LuaContext::movement_api_create(lua_State* l) {
     }
 
     push_movement(l, *movement);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of movement:get_type().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::movement_api_get_type(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Movement& movement = *check_movement(l, 1);
+
+    const std::string& module_name = movement.get_lua_type_name();
+    push_string(l, LuaTools::get_type_name(module_name));  // Remove the "sol." prefix.
     return 1;
   });
 }

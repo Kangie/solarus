@@ -158,6 +158,7 @@ map{ id = "bugs/821_hero_start_attack", description = "#821: hero:start_attack()
 map{ id = "bugs/823_sprite_get_size_origin", description = "#823: sprite:get_size() and sprite:get_origin()" }
 map{ id = "bugs/827_ground_detection_after_unfreeze", description = "#827: Hero not falling in hole after unfreeze" }
 map{ id = "bugs/830_entity_get_ground_position", description = "#830: entity:get_ground_position() and entity:get_ground_below()" }
+map{ id = "bugs/840_movement_get_type", description = "#840: movement:get_type()" }
 map{ id = "bugs/844_camera_on_state_changed", description = "#844: camera:on_state_changed()" }
 map{ id = "bugs/845_game_set_suspended", description = "#845: game:set_suspended" }
 map{ id = "bugs/851_entity_get_sprites", description = "#851: entity:get_sprites()" }
@@ -766,6 +767,8 @@ file{ path = "maps/bugs/827_ground_detection_after_unfreeze.dat", author = "Chri
 file{ path = "maps/bugs/827_ground_detection_after_unfreeze.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/830_entity_get_ground_position.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/830_entity_get_ground_position.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/840_movement_get_type.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/840_movement_get_type.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/844_camera_on_state_changed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/844_camera_on_state_changed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/845_game_set_suspended.dat", author = "Christopho", license = "CC BY-SA 4.0" }

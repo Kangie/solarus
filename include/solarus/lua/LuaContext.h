@@ -755,6 +755,7 @@ class LuaContext {
 
       // Movement API.
       movement_api_create,
+      movement_api_get_type,
       movement_api_get_xy,
       movement_api_set_xy,
       movement_api_is_suspended,
@@ -1336,7 +1337,6 @@ class LuaContext {
       controls_api_set_joypad,
       controls_api_get_joypad,
       controls_api_remove,
-
 
       // available to all userdata types
       userdata_rawget_as_table,
