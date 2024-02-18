@@ -29,7 +29,6 @@
 #include "solarus/core/Profiler.h"
 
 #include <algorithm>
-#include <iostream>
 #include <mutex>
 #include <sstream>
 

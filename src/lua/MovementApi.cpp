@@ -554,7 +554,7 @@ int LuaContext::movement_api_create(lua_State* l) {
       if (game != nullptr) {
         // If we are on a map, the default target is the hero.
         movement = std::make_shared<TargetMovement>(
-            game->get_hero(), 0, 0, 96, false
+            game->get_hero(), 0, 0, 32, false
         );
       }
       else {

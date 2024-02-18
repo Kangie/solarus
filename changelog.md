@@ -21,6 +21,7 @@
 * Fix camera stuck on entities other than separators (#1619).
 * Fix crash when loading a save file with Lua keywords (#1609).
 * Fix crash when a dialog starts during another dialog (#988, #1582).
+* Fix speed of target movement outside a game (#1297).
 
 ### Lua API changes
 
