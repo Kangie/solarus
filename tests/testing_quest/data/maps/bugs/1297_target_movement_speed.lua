@@ -2,8 +2,6 @@ local map = ...
 
 function map:on_opening_transition_finished()
 
-  sol.menu.start(map, menu)
-
   local movement = sol.movement.create("target")
   local speed = 96
   movement:set_target(target_sensor:get_position())
@@ -14,6 +12,7 @@ function map:on_opening_transition_finished()
   movement:start(block, function()
     local duration = sol.main.get_elapsed_time() - initial_time
     assert_equal(duration, expected_duration)
+    sol.main.exit()
   end)
 
 end
