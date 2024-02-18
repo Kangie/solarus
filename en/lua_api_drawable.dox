@@ -190,6 +190,7 @@ and it gets canceled (that is, the callback is never executed)
 when the map entity is destroyed.
 - \c delay (number, optional): Delay in milliseconds between two
   frames of the fade-in animation (default \c 20).
+  The total number of frames of the animation is 32.
 - \c callback (function, optional): A function to call when the
   fade-in effect finishes.
 
@@ -220,6 +221,7 @@ and it gets canceled (that is, the callback is never executed)
 when the map entity is destroyed.
 - \c delay (number, optional): Delay in milliseconds between two
   frames of the fade-out animation (default \c 20).
+  The total number of frames of the animation is 32.
 - \c callback (function, optional): A function to call when the
   fade-out effect finishes.
 
