@@ -16,7 +16,8 @@ It can also be created dynamically with
 A door may have four states: open, closed, opening or closing.
 States opening and closing are transitional states used to play a
 door opening or closing animation on the door's sprite.
-The sprite of a door must define animations \c "open" and \c "closed".
+The sprite of a door must define at least an animation \c "closed".
+When the door is open, nothing is displayed.
 Animations \c "opening" and \c "closing" are optional: if they don't exist,
 the door won't use states opening and closing.
 If they exist, be aware that after you call a function like
