@@ -55,6 +55,7 @@ class DoingNothingState : public MapView::State {
 public:
   explicit DoingNothingState(MapView& view);
 
+  void key_pressed(const QKeyEvent& event) override;
   void mouse_pressed(const QMouseEvent& event) override;
   void mouse_moved(const QMouseEvent& event) override;
   void mouse_released(const QMouseEvent& event) override;
@@ -154,7 +155,7 @@ private:
   static bool is_vertically_resizable(
       ResizeMode resize_mode, bool horizontal_preferred);
 
-  EntityIndexes entities;         /**< Entities to resize. */
+  const EntityIndexes entities;    /**< Entities to resize. */
   QMap<EntityIndex, QRect>
       old_boxes;                  /**< Bounding rectangle of each entity before resizing. */
   EntityIndex leader_index;       /**< Entity whose resizing follows the cursor position.
@@ -268,7 +269,7 @@ void MapView::set_map(MapModel* map) {
     setScene(scene);
 
     // Initialize layers.
-    connect(map, &MapModel::layer_range_changed, [this]() {
+    connect(map, &MapModel::layer_range_changed, this, [this]() {
       build_context_menu_layer_actions();
     });
     build_context_menu_layer_actions();
@@ -561,7 +562,7 @@ void MapView::build_context_menu_actions() {
 
   change_pattern_action = new QAction(
         tr("Change pattern..."), this);
-  connect(change_pattern_action, &QAction::triggered, [this]() {
+  connect(change_pattern_action, &QAction::triggered, this, [this]() {
     emit change_tiles_pattern_requested(get_selected_entities());
   });
   addAction(change_pattern_action);
@@ -576,7 +577,8 @@ void MapView::build_context_menu_actions() {
         tr("Generate borders around selection"), this);
   add_border_action->setShortcut(tr("Ctrl+B"));
   add_border_action->setShortcutContext(Qt::WindowShortcut);
-  connect(add_border_action, &QAction::triggered, [this]() {
+  connect(add_border_action, &QAction::triggered, this, [this]() {
+    start_state_doing_nothing();
     emit generate_borders_requested(get_selected_entities());
   });
   addAction(add_border_action);
@@ -585,7 +587,8 @@ void MapView::build_context_menu_actions() {
         tr("One layer up"), this);
   up_one_layer_action->setShortcut(tr("+"));
   up_one_layer_action->setShortcutContext(Qt::WindowShortcut);
-  connect(up_one_layer_action, &QAction::triggered, [this]() {
+  connect(up_one_layer_action, &QAction::triggered, this, [this]() {
+    start_state_doing_nothing();
     emit increase_entities_layer_requested(get_selected_entities());
   });
   addAction(up_one_layer_action);
@@ -594,7 +597,8 @@ void MapView::build_context_menu_actions() {
         tr("One layer down"), this);
   down_one_layer_action->setShortcut(tr("-"));
   down_one_layer_action->setShortcutContext(Qt::WindowShortcut);
-  connect(down_one_layer_action, &QAction::triggered, [this]() {
+  connect(down_one_layer_action, &QAction::triggered, this, [this]() {
+    start_state_doing_nothing();
     emit decrease_entities_layer_requested(get_selected_entities());
   });
   addAction(down_one_layer_action);
@@ -603,7 +607,8 @@ void MapView::build_context_menu_actions() {
         tr("Bring to front"), this);
   bring_to_front_action->setShortcut(tr("T"));
   bring_to_front_action->setShortcutContext(Qt::WindowShortcut);
-  connect(bring_to_front_action, &QAction::triggered, [this]() {
+  connect(bring_to_front_action, &QAction::triggered, this, [this]() {
+    start_state_doing_nothing();
     emit bring_entities_to_front_requested(get_selected_entities());
   });
   addAction(bring_to_front_action);
@@ -612,7 +617,8 @@ void MapView::build_context_menu_actions() {
         tr("Bring to back"), this);
   bring_to_back_action->setShortcut(tr("B"));
   bring_to_back_action->setShortcutContext(Qt::WindowShortcut);
-  connect(bring_to_back_action, &QAction::triggered, [this]() {
+  connect(bring_to_back_action, &QAction::triggered, this, [this]() {
+    start_state_doing_nothing();
     emit bring_entities_to_back_requested(get_selected_entities());
   });
   addAction(bring_to_back_action);
@@ -656,7 +662,7 @@ void MapView::build_context_menu_layer_actions() {
   for (int layer = get_map()->get_min_layer(); layer <= get_map()->get_max_layer(); ++layer) {
     QAction* action = new QAction(tr("Layer %1").arg(layer), set_layer_actions_group);
     action->setCheckable(true);
-    connect(action, &QAction::triggered, [this, layer]() {
+    connect(action, &QAction::triggered, this, [this, layer]() {
       emit set_entities_layer_requested(get_selected_entities(), layer);
     });
     set_layer_actions.push_back(action);
@@ -853,7 +859,7 @@ QMenu* MapView::create_direction_context_menu(const EntityIndexes& indexes) {
     // Special no-direction value.
     QAction* action = new QAction(no_direction_text, menu);
     action->setCheckable(true);
-    connect(action, &QAction::triggered, [this, indexes]() {
+    connect(action, &QAction::triggered, this, [this, indexes]() {
       emit set_entities_direction_requested(indexes, -1);
     });
     menu->addAction(action);
@@ -862,7 +868,7 @@ QMenu* MapView::create_direction_context_menu(const EntityIndexes& indexes) {
     // Normal direction.
     QAction* action = new QAction(texts[i], menu);
     action->setCheckable(true);
-    connect(action, &QAction::triggered, [this, indexes, i]() {
+    connect(action, &QAction::triggered, this, [this, indexes, i]() {
       emit set_entities_direction_requested(indexes, i);
     });
     menu->addAction(action);
@@ -913,6 +919,7 @@ QImage MapView::export_to_image() {
  */
 void MapView::cut() {
 
+  state->cancel();
   if (is_selection_empty()) {
     return;
   }
@@ -993,6 +1000,7 @@ void MapView::paste() {
     return;
   }
 
+  state->cancel();
   const bool guess_layer = false;  // Paste entities on the same layer.
   start_state_adding_entities(std::move(entities), guess_layer);
 }
@@ -1257,28 +1265,16 @@ void MapView::paintEvent(QPaintEvent* event) {
  */
 void MapView::keyPressEvent(QKeyEvent* event) {
 
-  switch (event->key()) {
+  state->key_pressed(*event);
+}
 
-  case Qt::Key_Enter:
-    // Numpad enter key.
-    // For some reason, this particular key does not work as a QAction shortcut
-    // on all systems.
-    edit_selected_entity();
-    break;
+/**
+ * @brief Receives a key release event.
+ * @param event The event to handle.
+ */
+void MapView::keyReleaseEvent(QKeyEvent* event) {
 
-  case Qt::Key_Plus:
-    // Make sure that the numpad plus key works too.
-    emit increase_entities_layer_requested(get_selected_entities());
-    break;
-
-  case Qt::Key_Minus:
-    // Make sure that the numpad minus key works too.
-    emit decrease_entities_layer_requested(get_selected_entities());
-    break;
-
-  default:
-    break;
-  }
+  state->key_released(*event);
 }
 
 /**
@@ -1541,6 +1537,7 @@ void MapView::edit_selected_entity() {
     return;
   }
 
+  start_state_doing_nothing();
   EntityIndex index = indexes.first();
   EditEntityDialog dialog(map->get_entity(index));
   int result = dialog.exec();
@@ -1618,6 +1615,7 @@ void MapView::resize_entities(const QMap<EntityIndex, QRect>& boxes, bool allow_
  */
 void MapView::remove_selected_entities() {
 
+  start_state_doing_nothing();
   emit remove_entities_requested(get_selected_entities());
 }
 
@@ -1723,6 +1721,22 @@ void MapView::State::cancel() {
 }
 
 /**
+ * @brief Called when a keyboard key is pressed during this state.
+ * @param event The event to handle.
+ */
+void MapView::State::key_pressed(const QKeyEvent& event) {
+  Q_UNUSED(event);
+}
+
+/**
+ * @brief Called when a keyboard key is released during this state.
+ * @param event The event to handle.
+ */
+void MapView::State::key_released(const QKeyEvent& event) {
+  Q_UNUSED(event);
+}
+
+/**
  * @brief Called when the mouse is pressed in the map view during this state.
  *
  * Subclasses can reimplement this function to define what happens.
@@ -1788,6 +1802,35 @@ DoingNothingState::DoingNothingState(MapView& view) :
   MapView::State(view),
   clicked_with_control_or_shift(false) {
 
+}
+
+/**
+ * @copydoc MapView::State::key_pressed
+ */
+void DoingNothingState::key_pressed(const QKeyEvent& event) {
+
+  switch (event.key()) {
+
+  case Qt::Key_Enter:
+    // Numpad enter key.
+    // For some reason, this particular key does not work as a QAction shortcut
+    // on all systems.
+    get_view().edit_selected_entity();
+    break;
+
+  case Qt::Key_Plus:
+    // Make sure that the numpad plus key works too.
+    get_view().increase_entities_layer_requested(get_view().get_selected_entities());
+    break;
+
+  case Qt::Key_Minus:
+    // Make sure that the numpad minus key works too.
+    get_view().decrease_entities_layer_requested(get_view().get_selected_entities());
+    break;
+
+  default:
+    break;
+  }
 }
 
 /**

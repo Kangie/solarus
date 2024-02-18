@@ -361,18 +361,11 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="dialog_text_label">
-         <property name="text">
-          <string>Text:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QLabel" name="dialog_cursor_position_label">
+          <widget class="QLabel" name="dialog_text_label">
            <property name="text">
-            <string>1,1</string>
+            <string>Text:</string>
            </property>
           </widget>
          </item>
@@ -390,25 +383,9 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="display_margin_check_box">
+          <widget class="QLabel" name="dialog_cursor_position_label">
            <property name="text">
-            <string>Display right margin at column:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="display_margin_field">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>255</number>
-           </property>
-           <property name="value">
-            <number>23</number>
+            <string>1,1</string>
            </property>
           </widget>
          </item>

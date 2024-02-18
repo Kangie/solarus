@@ -1,5 +1,5 @@
 -- This module reads a quest properties file with the format of Solarus 1.6
--- (quest.dat) and converts it into the format of Solarus 1.7.
+-- (quest.dat) and converts it into the format of Solarus 2.0.
 
 -- Differences:
 -- - The value of solarus_version changes.
@@ -26,7 +26,7 @@ function converter.convert(quest_path)
   local output_file = io.open(quest_path .. "/data/quest.dat", "w")
 
   output_file:write("quest{\n")
-  output_file:write("  solarus_version = \"1.7\",\n")
+  output_file:write("  solarus_version = \"2.0\",\n")
 
   if properties.write_dir ~= nil then
     output_file:write("  write_dir = \"" .. properties.write_dir .. "\",\n")

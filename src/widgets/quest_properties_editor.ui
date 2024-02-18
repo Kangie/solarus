@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>952</width>
-    <height>1154</height>
+    <width>843</width>
+    <height>679</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,9 +32,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>934</width>
-        <height>1136</height>
+        <y>-517</y>
+        <width>804</width>
+        <height>1172</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -74,7 +74,6 @@
              <widget class="QLabel" name="solarus_version_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -97,7 +96,6 @@
              <widget class="QLabel" name="write_dir_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -128,7 +126,6 @@ Must identify your quest to avoid confusion with other quests.</string>
              <widget class="QLabel" name="title_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -155,7 +152,6 @@ Must identify your quest to avoid confusion with other quests.</string>
              <widget class="QLabel" name="short_description_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -182,7 +178,6 @@ Must identify your quest to avoid confusion with other quests.</string>
              <widget class="QLabel" name="long_description_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -191,11 +186,37 @@ Must identify your quest to avoid confusion with other quests.</string>
               </property>
              </widget>
             </item>
+            <item row="4" column="1">
+             <layout class="QVBoxLayout" name="long_description_layout">
+              <item>
+               <widget class="SolarusEditor::PlainTextEdit" name="long_description_field">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>100</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_12">
+                <property name="text">
+                 <string>A more detailed description of your quest.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
             <item row="5" column="0">
              <widget class="QLabel" name="author_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -222,7 +243,6 @@ Must identify your quest to avoid confusion with other quests.</string>
              <widget class="QLabel" name="quest_version_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -249,7 +269,6 @@ Must identify your quest to avoid confusion with other quests.</string>
              <widget class="QLabel" name="release_date_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -317,7 +336,6 @@ Must identify your quest to avoid confusion with other quests.</string>
              <widget class="QLabel" name="website_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -340,32 +358,8 @@ Must identify your quest to avoid confusion with other quests.</string>
               </item>
              </layout>
             </item>
-            <item row="4" column="1">
-             <layout class="QVBoxLayout" name="long_description_layout">
-              <item>
-               <widget class="SolarusEditor::PlainTextEdit" name="long_description_field">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>100</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_12">
-                <property name="text">
-                 <string>A more detailed description of your quest.</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+            <item row="9" column="1">
+             <layout class="QVBoxLayout" name="flags_vlayout"/>
             </item>
            </layout>
           </item>
@@ -381,7 +375,7 @@ Must identify your quest to avoid confusion with other quests.</string>
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Quest size</string>
+          <string>Video</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
@@ -390,10 +384,51 @@ Must identify your quest to avoid confusion with other quests.</string>
              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
             <item row="0" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Video options</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QCheckBox" name="subpixel_camera">
+                <property name="text">
+                 <string>Smooth camera scrolling</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_long_flags">
+                <property name="text">
+                 <string>Enables subpixel smoothing of camera scrolling movement.</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="dynamic_timestep">
+                <property name="text">
+                 <string>Synchronize update rate with video</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Keeps the main loop update rate the same as the video refresh rate.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
              <widget class="QLabel" name="normal_size_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -402,7 +437,7 @@ Must identify your quest to avoid confusion with other quests.</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="1" column="1">
              <layout class="QVBoxLayout" name="normal_quest_size_layout">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -479,11 +514,10 @@ This will be the visible space of the current map.</string>
               </item>
              </layout>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="min_size_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -492,7 +526,7 @@ This will be the visible space of the current map.</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="2" column="1">
              <layout class="QVBoxLayout" name="min_quest_size_layout">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -565,11 +599,10 @@ This will be the visible space of the current map.</string>
               </item>
              </layout>
             </item>
-            <item row="2" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="max_size_label">
               <property name="font">
                <font>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -578,7 +611,7 @@ This will be the visible space of the current map.</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="3" column="1">
              <layout class="QVBoxLayout" name="max_quest_size_layout">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">

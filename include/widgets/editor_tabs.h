@@ -64,6 +64,8 @@ public:
       Quest& quest, const QString& language_id);
   void open_strings_editor(
       Quest& quest, const QString& language_id);
+  QString get_last_closed_file() const;
+  void reopen_last_closed_editor(Quest& quest);
 
   int find_editor(const QString& path);
   bool show_editor(const QString& path);
@@ -94,7 +96,7 @@ public slots:
 
   bool save_file_requested(int index);
   bool save_all_files_requested();
-  void close_file_requested(int index);
+  bool close_file_requested(int index);
   void close_all_files_requested();
   void open_file_requested(Quest& quest, const QString& path);
   void reload_file_requested(int index);
@@ -120,6 +122,7 @@ private:
   std::map<QString, std::unique_ptr<Editor>> editors;      /**< All editors currently open,
                                                             * indexed by their file path. */
   QUndoGroup* undo_group;                                  /**< Undo/redo stacks of open files. */
+  QString last_closed_file;                                /**< Path to the file from the last closed tab. */
 };
 
 }

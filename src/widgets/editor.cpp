@@ -181,7 +181,7 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
 Editor::~Editor() {
 
   // Make sure QUndoStack will not send signals from its destructor.
-  disconnect(undo_stack, SIGNAL(cleanChanged(bool)),
+  disconnect(undo_stack, &QUndoStack::cleanChanged,
              nullptr, nullptr);
 }
 

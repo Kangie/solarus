@@ -74,6 +74,7 @@
     <addaction name="action_load_quest"/>
     <addaction name="action_close_quest"/>
     <addaction name="separator"/>
+    <addaction name="action_reopen_closed_tab"/>
     <addaction name="action_close"/>
     <addaction name="action_close_all"/>
     <addaction name="action_save"/>
@@ -498,6 +499,14 @@
    </property>
    <property name="shortcut">
     <string>Shift+F5</string>
+   </property>
+  </action>
+  <action name="action_reopen_closed_tab">
+   <property name="text">
+    <string>Re-open closed tab</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
    </property>
   </action>
  </widget>

@@ -464,7 +464,7 @@ int TilesetModel::create_pattern(const QString& pattern_id, const QRect& frame) 
   emit pattern_created(index, pattern_id);
 
   // Restore the selection.
-  for (QString selected_pattern_id : old_selection_ids) {
+  for (const QString& selected_pattern_id : qAsConst(old_selection_ids)) {
     int new_index = id_to_index(selected_pattern_id);
     add_to_selected(new_index);
   }
@@ -528,7 +528,7 @@ void TilesetModel::delete_pattern(int index) {
   emit pattern_deleted(index, pattern_id);
 
   // Restore the selection.
-  for (const QString& selected_pattern_id : old_selection_ids) {
+  for (const QString& selected_pattern_id : qAsConst(old_selection_ids)) {
 
     if (selected_pattern_id == pattern_id) {
       // Exclude the deleted one.
@@ -592,7 +592,7 @@ void TilesetModel::delete_patterns(const QList<int>& indexes) {
   endResetModel();
 
   // Restore the selection.
-  for (QString selected_pattern_id : old_selection_ids) {
+  for (const QString& selected_pattern_id : qAsConst(old_selection_ids)) {
     int new_index = id_to_index(selected_pattern_id);
     if (new_index == -1) {
       // This one was just deleted.
@@ -681,7 +681,7 @@ int TilesetModel::set_pattern_id(int index, const QString& new_id) {
   emit pattern_id_changed(index, old_id, new_index, new_id);
 
   // Restore the selection.
-  for (QString pattern_id : old_selection_ids) {
+  for (QString pattern_id : qAsConst(old_selection_ids)) {
     if (pattern_id == old_id) {
       pattern_id = new_id;
     }
@@ -1611,18 +1611,28 @@ void TilesetModel::set_selected_indexes(const QList<int>& indexes) {
 
   const QModelIndexList& current_selection = selection_model.selectedIndexes();
 
-  QItemSelection selection;
+  QItemSelection itemSelection;
   for (int index : indexes) {
     QModelIndex model_index = this->index(index);
-    selection.select(model_index, model_index);
+    itemSelection.select(model_index, model_index);
+  }
+  QModelIndexList selection = itemSelection.indexes();
+
+  QSet<QModelIndex> selection_set;
+  for (const QModelIndex& index : selection) {
+    selection_set.insert(index);
+  }
+  QSet<QModelIndex> current_selection_set;
+  for (const QModelIndex& index : current_selection) {
+    current_selection_set.insert(index);
   }
 
-  if (selection.indexes().toSet() == current_selection.toSet()) {
+  if (selection_set == current_selection_set) {
     // No change.
     return;
   }
 
-  selection_model.select(selection, QItemSelectionModel::ClearAndSelect);
+  selection_model.select(itemSelection, QItemSelectionModel::ClearAndSelect);
 }
 
 /**

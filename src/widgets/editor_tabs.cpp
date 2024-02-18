@@ -411,6 +411,26 @@ void EditorTabs::open_strings_editor(
 }
 
 /**
+ * @brief Returns the path to the file of the last closed tab.
+ */
+QString EditorTabs::get_last_closed_file() const {
+  return last_closed_file;
+}
+
+/**
+ * @brief Reopens the last closed tab.
+ * @param quest The quest.
+ */
+void EditorTabs::reopen_last_closed_editor(Quest& quest) {
+
+  if (!last_closed_file.isEmpty()) {
+    const QString file_path = last_closed_file;
+    last_closed_file.clear();
+    open_file_requested(quest, file_path);
+  }
+}
+
+/**
  * @brief Creates a new tab and shows it.
  * @param editor The editor to put in the new tab.
  */
@@ -629,13 +649,17 @@ void EditorTabs::open_file_requested(Quest& quest, const QString& path) {
 /**
  * @brief Slot called when the user attempts to close a tab.
  * @param index Index of the tab to close.
+ * @return @c true if the tab was closed.
  */
-void EditorTabs::close_file_requested(int index) {
+bool EditorTabs::close_file_requested(int index) {
 
   Editor* editor = get_editor(index);
   if (editor != nullptr && editor->confirm_before_closing()) {
+    last_closed_file = editor->get_file_path();
     remove_editor(index);
+    return true;
   }
+  return false;
 }
 
 /**

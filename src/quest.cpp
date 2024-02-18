@@ -1819,7 +1819,7 @@ bool Quest::create_dir_if_not_exists(const QString& parent_path, const QString& 
  * @param resource_type A type of resource.
  * @param element_id Id of the element to create.
  * @param description Description of the element to create.
- * @throws EditorException If an error occured.
+ * @throws EditorException If an error occurred.
  */
 void Quest::create_resource_element(ResourceType resource_type,
                                     const QString& element_id,
@@ -2035,7 +2035,7 @@ void Quest::rename_dir(const QString& old_path, const QString& new_path) {
  * @param resource_type A type of resource.
  * @param old_id Id of the element to rename.
  * @param new_id The new id to set.
- * @throws EditorException If an error occured.
+ * @throws EditorException If an error occurred.
  */
 void Quest::rename_resource_element(
     ResourceType resource_type, const QString& old_id, const QString& new_id) {
@@ -2257,7 +2257,7 @@ bool Quest::delete_dir_recursive_if_exists(const QString& path) {
  *
  * @param resource_type A type of resource.
  * @param id Id of the element to remove.
- * @throws EditorException If an error occured.
+ * @throws EditorException If an error occurred.
  */
 void Quest::delete_resource_element(
     ResourceType resource_type, const QString& element_id) {

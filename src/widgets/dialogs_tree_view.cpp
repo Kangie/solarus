@@ -91,12 +91,12 @@ void DialogsTreeView::contextMenuEvent(QContextMenuEvent *event) {
  * @brief Sets the dialogs to represent in this view.
  * @param model The dialogs model.
  */
-void DialogsTreeView::set_model(DialogsModel* model) {
+void DialogsTreeView::set_model(DialogsModel& model) {
 
-  this->model = model;
-  DialogsTreeView::setModel(model);
+  this->model = &model;
+  DialogsTreeView::setModel(&model);
   selectionModel()->deleteLater();
-  setSelectionModel(&model->get_selection_model());
+  setSelectionModel(&model.get_selection_model());
 }
 
 }
