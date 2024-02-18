@@ -71,8 +71,7 @@ struct CheckContext{
  * @param sindex the stack index of the marshalling error
  * @param message the error message
  */
-template<typename C>
-[[noreturn]] void error(const C& ctx, lua_State* L, int sindex, const std::string & message);
+[[noreturn]] void error(const CheckContext& ctx, lua_State* L, int sindex, const std::string & message);
 
 /**
  * @brief type_error free function, work around [[noreturn]] being only for free functions
@@ -81,8 +80,7 @@ template<typename C>
  * @param sindex the stack index of the marshalling error
  * @param type_name the name of the expected type
  */
-template<typename C>
-[[noreturn]] void type_error(const C& ctx, lua_State* L, int sindex, const std::string& type_name);
+[[noreturn]] void type_error(const CheckContext& ctx, lua_State* L, int sindex, const std::string& type_name);
 
 /**
  * @brief Strong type asking a callback as argument

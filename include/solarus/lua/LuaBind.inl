@@ -28,14 +28,12 @@ namespace Solarus {
 
 namespace LuaBind {
 
-template<typename C>
-[[noreturn]] void error(const C& ctx, lua_State* L, int sindex, const std::string & message) {
+[[noreturn]] void inline error(const CheckContext& ctx, lua_State* L, int sindex, const std::string & message) {
   ctx.error(L, sindex, message);
   std::abort(); // Convince GCC that this never returns
 }
 
-template<typename C>
-[[noreturn]] void type_error(const C& ctx, lua_State* L, int sindex, const std::string& type_name) {
+[[noreturn]] void inline type_error(const CheckContext& ctx, lua_State* L, int sindex, const std::string& type_name) {
   ctx.type_error(L, sindex, type_name);
   std::abort(); // Convince GCC that this never returns
 }
@@ -380,16 +378,12 @@ static inline std::string get_type_name() {
  */
 template<typename C>
 struct CheckContextImpl : public CheckContext {
-    [[noreturn]] void error(lua_State* L, int sindex, const std::string& message) const override {
-      (void)sindex;
-      std::ostringstream oss;
-      static_cast<const C*>(this)->print(L, oss);
-      oss << message;
-      LuaTools::error(L, oss.str());
+    [[noreturn]] void error(lua_State* L, int /*sindex*/, const std::string& message) const override {
+      throw LuaException(L, message);
     }
 
-    [[noreturn]]void type_error(lua_State* L, int sindex, const std::string& type_name) const override {
-      CheckContextImpl::error(L, sindex, type_name + " expected, got " + LuaTools::get_type_name(L, sindex));
+    [[noreturn]] void type_error(lua_State* L, int sindex, const std::string& type_name) const override {
+      LuaBind::error(*static_cast<const C*>(this), L, sindex, type_name + " expected, got " + LuaTools::get_type_name(L, sindex));
     }
 };
 
@@ -403,31 +397,33 @@ struct ArgContext : public CheckContextImpl<ArgContext> {
 
     int index;
 
-    void print(lua_State* l, std::ostream& oss) const {
-      int index = this->index;
+    // Copied from LuaTools::arg_error...
+    void error(lua_State* l, int sindex, const std::string& message) const override {
+      int arg_index = this->index;
+
+      std::ostringstream oss;
       lua_Debug info;
       if (!lua_getstack(l, 0, &info)) {
         // No stack frame.
-        oss << "bad argument #" << index << " : ";
-        return;
+        oss << "bad argument #" << arg_index << " (" << message << ")";
+        CheckContextImpl::error(l, sindex, oss.str());
       }
 
       lua_getinfo(l, "n", &info);
       if (std::string(info.namewhat) == "method") {
-         index--;  // Do not count self.
-         if (index == 0) {
+         arg_index--;  // Do not count self.
+         if (arg_index == 0) {
            // Error is in the self argument itself.
-           oss << "calling " << info.name << " on bad self  : ";
-           //error(l, oss.str());
-           return;
+           oss << "calling " << info.name << " on bad self (" << message << ")";
+           CheckContextImpl::error(l, sindex, oss.str());
          }
       }
 
       if (info.name == nullptr) {
         info.name = "?";
       }
-      oss << "bad argument #" << index << " to " << info.name << " : ";
-      return;
+      oss << "bad argument #" << arg_index << " to " << info.name << " (" << message << ")";
+      CheckContextImpl::error(l, sindex, oss.str());
     }
 };
 
@@ -442,9 +438,8 @@ struct NumFieldContext : public CheckContextImpl<NumFieldContext<P>> {
     const P& parent;
     NumFieldContext(int index, const P& parent) : index(index), parent(parent) {}
 
-    void print(lua_State* L, std::ostream& oss) const {
-      parent.print(L, oss);
-      oss << "bad field [" << index << "] : ";
+    void error(lua_State* l, int sindex, const std::string& message) const override {
+      parent.error(l, sindex, std::string("Bad field '[") + std::to_string(index) + "]': " + message);
     }
 };
 
@@ -458,9 +453,8 @@ struct KeyContext : public CheckContextImpl<KeyContext<P>> {
     const P& parent;
     KeyContext(const P& parent) : parent(parent) {}
 
-    void print(lua_State* L, std::ostream& oss) const {
-      parent.print(L, oss);
-      oss << "bad key : ";
+    void error(lua_State* l, int sindex, const std::string& message) const override {
+      parent.error(l, sindex, std::string("Bad key : ") + message);
     }
 };
 
@@ -477,21 +471,23 @@ struct ValueContext : public CheckContextImpl<ValueContext<P,K>> {
     const P& parent;
     ValueContext(const K& key, const P& parent) : key(key), parent(parent) {}
 
-    void print(lua_State* L, std::ostream& oss) const {
-      parent.print(L, oss);
-      oss << "bad field [\"";
-      if constexpr(std::is_enum_v<K>) {
-         oss << enum_to_name<K>(key);
-      } else {
-        oss << key.to_string();
-      }
-      oss << "\"] : ";
+    void error(lua_State* l, int sindex, const std::string& message) const override {
+
+      auto key_str = [this](){
+        if constexpr(std::is_enum_v<K>) {
+          return enum_to_name<K>(key);
+        } else {
+          return key.to_string();
+        }
+      }();
+
+      parent.error(l, sindex, std::string("Bad field '") + key_str + "': " + message);
     }
 };
 
 /// Forward declaration
-template<typename T, typename C>
-T check_arg(lua_State* L, int index, const C& context);
+template<typename T>
+T check_arg(lua_State* L, int index, const CheckContext& context);
 
 /**
  * \brief Check the type of the argument at index, return it if the type is
@@ -500,9 +496,9 @@ T check_arg(lua_State* L, int index, const C& context);
  * \param L The Lua stack.
  * \param index The index on the stack to check.
  */
-template<typename T, typename C, typename = void>
+template<typename T, typename = void>
 struct CheckArg {
-  static T call(lua_State * L, int index, const C& context) {
+  static T call(lua_State * L, int index, const CheckContext& context) {
     // Handle Userdata Types:
     if constexpr (std::is_convertible_v<T, ExportableToLua&>) {
       using base_t = std::remove_reference_t<T>;
@@ -527,8 +523,8 @@ struct CheckArg {
 /**
  * Forward declaration to be able to use it from others
  */
-template<typename T, typename C>
-struct CheckArg<T, C, decltype(void(Marshalling<T>::check_arg))>;
+template<typename T>
+struct CheckArg<T, decltype(void(Marshalling<T>::check_arg))>;
 
 /**
  * \brief \ref CheckArg<T> specialization for optional primitive types.
@@ -537,9 +533,9 @@ struct CheckArg<T, C, decltype(void(Marshalling<T>::check_arg))>;
  * value is nil or none, returns an empty optional. Except for nil for
  * booleans, where it is a type error, as are all the remaining cases.
  */
-template<typename T, typename C>
-struct CheckArg<std::optional<T>, C> {
-  static std::optional<T> call(lua_State * L, int index, const C& context) {
+template<typename T>
+struct CheckArg<std::optional<T>> {
+  static std::optional<T> call(lua_State * L, int index, const CheckContext& context) {
     // Handle Enumeration Types:
     if constexpr (std::is_enum_v<T>) {
       // Explicitely ask for a string before checking its value.
@@ -583,9 +579,9 @@ struct CheckArg<std::optional<T>, C> {
  *
  * If the value is of the correct type and exportable_to_lua, returns it in a shared_ptr
  */
-template<typename T, typename C>
-struct CheckArg<std::shared_ptr<T>, C> {
-  static std::shared_ptr<T> call(lua_State * L, int index, const C& context) {
+template<typename T>
+struct CheckArg<std::shared_ptr<T>> {
+  static std::shared_ptr<T> call(lua_State * L, int index, const CheckContext& context) {
     if (auto sptr = test_shared_exportable<T>(L, index)) {
       return sptr;
     }
@@ -598,9 +594,9 @@ struct CheckArg<std::shared_ptr<T>, C> {
  *
  * Checks if value is a table and then recursively checks each non-nil T element
  */
-template<typename T, typename C>
-struct CheckArg<std::vector<T>, C> {
-  static std::vector<T> call(lua_State * L, int index, const C& context) {
+template<typename T>
+struct CheckArg<std::vector<T>> {
+  static std::vector<T> call(lua_State * L, int index, const CheckContext& context) {
     if(lua_type(L, index) != LUA_TTABLE) {
       type_error(context, L, index, "array");
     }
@@ -623,9 +619,9 @@ struct CheckArg<std::vector<T>, C> {
  *
  * Checks if value is a table and then recursively checks each non-nil K,V pair
  */
-template<typename K, typename V, typename C>
-struct CheckArg<std::map<K, V>, C> {
-  static std::map<K, V> call(lua_State * L, int index, const C& context) {
+template<typename K, typename V>
+struct CheckArg<std::map<K, V>> {
+  static std::map<K, V> call(lua_State * L, int index, const CheckContext& context) {
     if(lua_type(L, index) != LUA_TTABLE) {
       context.type_error(L, index, "map");
     }
@@ -649,9 +645,9 @@ struct CheckArg<std::map<K, V>, C> {
  * If the value is of the correct type, returns a pointer to it. If the
  * value is nil or none, returns a null pointer.
  */
-template<typename T, typename C>
-struct CheckArg<T *, C> {
-  static T * call(lua_State * L, int index, const C& context) {
+template<typename T>
+struct CheckArg<T *> {
+  static T * call(lua_State * L, int index, const CheckContext& context) {
     if (T * ptr = test_exportable<T>(L, index)) {
       return ptr;
     } else if (lua_isnoneornil(L, index)) {
@@ -667,9 +663,9 @@ struct CheckArg<T *, C> {
  * This enables client code to specify how to convert checked lua args to C++ args
  * see \ref LuaBind::Marshalling<T>
  */
-template<typename T, typename C>
-struct CheckArg<T, C, decltype(void(Marshalling<T>::check_arg))>{
-  static inline auto call(lua_State* L, int index, const C& context) -> decltype(auto) {
+template<typename T>
+struct CheckArg<T, decltype(void(Marshalling<T>::check_arg))>{
+  static inline auto call(lua_State* L, int index, const CheckContext& context) -> decltype(auto) {
     using M = LuaBind::Marshalling<T>;
     return M::check_arg(L, index, context);
   }
@@ -682,9 +678,9 @@ struct CheckArg<T, C, decltype(void(Marshalling<T>::check_arg))>{
  * @param context a deduced checking context
  * @return a checked value
  */
-template<typename T, typename C>
-T check_arg(lua_State* L, int index, const C& context) {
-  return CheckArg<T, C>::call(L, index, context);
+template<typename T>
+T check_arg(lua_State* L, int index, const CheckContext& context) {
+  return CheckArg<T>::call(L, index, context);
 }
 
 /**
