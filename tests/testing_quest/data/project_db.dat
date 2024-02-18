@@ -57,6 +57,7 @@ map{ id = "bugs/1269_coroutines", description = "#1269: Coroutines make engine c
 map{ id = "bugs/1275_map_set_tileset", description = "#1275: map:set_tileset()" }
 map{ id = "bugs/1286_crash_state_set_can_traverse", description = "#1286: Crash in state:set_can_traverse()" }
 map{ id = "bugs/1291_hero_start_attack_loading", description = "#1291: hero:start_attack_loading" }
+map{ id = "bugs/1297_target_movement_speed", description = "#1297: Target movement wrong speed" }
 map{ id = "bugs/1299_crash_invalid_tile_pattern", description = "#1299: Crash when loading a map with an invalid tile pattern" }
 map{ id = "bugs/1301_state_set_can_be_hurt_function", description = "#1301: Allow to pass a function to state:set_can_be_hurt()" }
 map{ id = "bugs/1319_disabled_entity_timer_unsuspended", description = "#1319: Timers of disabled entity continue when the game is unsuspended" }
@@ -561,6 +562,8 @@ file{ path = "maps/bugs/1286_crash_state_set_can_traverse.dat", author = "Christ
 file{ path = "maps/bugs/1286_crash_state_set_can_traverse.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1297_target_movement_speed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1297_target_movement_speed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1299_crash_invalid_tile_pattern.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1299_crash_invalid_tile_pattern.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1301_state_set_can_be_hurt_function.dat", author = "Christopho", license = "CC BY-SA 4.0" }
