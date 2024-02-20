@@ -530,16 +530,6 @@ void TilesetView::paintEvent(QPaintEvent* event) {
 }
 
 /**
- * @brief Receives a focus out event.
- * @param event The event to handle.
- */
-void TilesetView::focusOutEvent(QFocusEvent* event) {
-
-  start_state_idle();
-  QGraphicsView::focusOutEvent(event);
-}
-
-/**
  * @brief Receives a key press event.
  * @param event The event to handle.
  */
