@@ -161,7 +161,7 @@ private:
   TilesetScene* scene;                 /**< The scene viewed. */
   QPointer<ViewSettings>
       view_settings;                   /**< How the view is displayed. */
-  double zoom;                         /**< Zoom factor currently applied. */
+  double zoom = 1.0;                   /**< Zoom factor currently applied. */
   std::unique_ptr<State> state;        /**< Current state of the view. */
 
   QAction* resize_pattern_action;      /**< Action of resizing a pattern. */
@@ -172,9 +172,9 @@ private:
   QList<QAction*>
       set_repeat_mode_actions;         /**< Actions of changing the repeat
                                         * modes of patterns. */
-  int last_integer_pattern_id;         /**< Last auto-generated pattern id. */
-  bool read_only;                      /**< Whether the view forbids editing the tileset. */
-  bool multi_selection_enabled;        /**< Whether it is allowed to select multiple patterns. */
+  int last_integer_pattern_id = 0;     /**< Last auto-generated pattern id. */
+  bool read_only = false;              /**< Whether the view forbids editing the tileset. */
+  bool multi_selection_enabled = true; /**< Whether it is allowed to select multiple patterns. */
   QMap<QString, ScrollSettings>
       recent_scroll_settings;          /**< Scroll bar positions and zoom of recent tilesets. */
 

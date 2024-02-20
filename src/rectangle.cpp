@@ -72,6 +72,75 @@ QRect from_two_points(const QPoint& p1, const QPoint& p2) {
   return result;
 }
 
+/**
+ * @brief Expands a rectangle with the given amount in given directions.
+ * @param old_box The rectangle to expand.
+ * @param fixed_corner Which corner of the rectangle is the fixed one
+ * (the opposite one will get expanded): -1 or +1,-1 or +1
+ * @param expansion How much to expand it in both directions, keeping the
+ * given fixed corner.
+ * @param base_size Minimum size, the fixed corner will keep a rectangle
+ * of that size and the rest will be expanded in multiples of that size.
+ * @return The corresponding new bounding box.
+ */
+QRect expand_rect(
+    const QRect& old_box,
+    const QPoint& fixed_corner,
+    const QPoint& expansion,
+    const QSize& base_size) {
+
+  QRect new_box = old_box;
+
+  if (fixed_corner.x() == -1) {
+    // Left side fixed, right side free.
+    int width = old_box.width() + expansion.x();
+    if (width > 0) {
+      new_box.setWidth(width);
+    }
+    else {
+      new_box.setWidth(-width + 2 * base_size.width());
+      new_box.translate(width - base_size.width(), 0);
+    }
+  }
+  else {
+    // Right side fixed, left side free.
+    int width = old_box.width() - expansion.x();
+    if (width > 0) {
+      new_box.setWidth(width);
+      new_box.translate(expansion.x(), 0);
+    }
+    else {
+      new_box.setWidth(-width + 2 * base_size.width());
+      new_box.translate(old_box.width() - base_size.width(), 0);
+    }
+  }
+  if (fixed_corner.y() == -1) {
+    // Top side fixed, bottom side free.
+    int height = old_box.height() + expansion.y();
+    if (height > 0) {
+      new_box.setHeight(height);
+    }
+    else {
+      new_box.setHeight(-height + 2 * base_size.height());
+      new_box.translate(0, height - base_size.height());
+    }
+  }
+  else {
+    // Bottom side fixed, top side free.
+    int height = old_box.height() - expansion.y();
+    if (height > 0) {
+      new_box.setHeight(height);
+      new_box.translate(0, expansion.y());
+    }
+    else {
+      new_box.setHeight(-height + 2 * base_size.height());
+      new_box.translate(0, old_box.height() - base_size.height());
+    }
+  }
+
+  return new_box;
+}
+
 }
 
 }

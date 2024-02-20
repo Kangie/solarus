@@ -33,6 +33,7 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QtMath>
 
 namespace SolarusEditor {
 
@@ -113,9 +114,17 @@ public:
   void start() override;
   void stop() override;
 
+  void mouse_moved(const QMouseEvent& event) override;
+
 private:
-  QGraphicsRectItem* current_area_item = nullptr;  /**< Graphic item of the rectangle the user is drawing
-                                                    * (belongs to the scene). */
+  void compute_fixed_corner();
+
+  QGraphicsRectItem* current_area_item =
+      nullptr;                  /**< Graphic item of the rectangle the user is drawing
+                                 * (belongs to the scene). */
+  QPoint fixed_corner;          /**< Which corner of the rectangle is fixed (+-1, +-1).
+                                 * The opposite one follows the mouse. */
+  QRect old_box;                /**< Position of the pattern before the change. */
 };
 
 }  // Anonymous namespace.
@@ -822,8 +831,9 @@ void TilesetView::tileset_selection_changed() {
     return;
   }
   const int selection_count = tileset->get_selection_count();
+  const int pattern_index = tileset->get_selected_index();
   if (selection_count == 1) {
-    resize_pattern_action->setEnabled(true);
+    resize_pattern_action->setEnabled(tileset->get_pattern_num_frames(pattern_index) == 1);
     change_pattern_id_action->setEnabled(true);
   } else {
     resize_pattern_action->setEnabled(false);
@@ -1563,27 +1573,128 @@ void MovingPatternsState::drop(QDropEvent& event) {
   apply_move();
 }
 
+/**
+ * @brief Constructor.
+ */
 ResizingPatternState::ResizingPatternState(TilesetView& view):
   TilesetView::State(view),
   current_area_item(nullptr) {
 
 }
 
+/**
+ * @copydoc TilesetView::State::start
+ */
 void ResizingPatternState::start() {
 
   const int selected_index = get_tileset().get_selected_index();
-  const QRect& box = get_tileset().get_pattern_frames_bounding_box(selected_index);
-  current_area_item = new QGraphicsRectItem(box);
+  old_box = get_tileset().get_pattern_frames_bounding_box(selected_index);
+  current_area_item = new QGraphicsRectItem(old_box);
   current_area_item->setPen(QPen(Qt::yellow));
   get_scene().addItem(current_area_item);
 
+  compute_fixed_corner();
 }
 
+/**
+ * @copydoc TilesetView::State::stop
+ */
 void ResizingPatternState::stop() {
 
   get_scene().removeItem(current_area_item);
   delete current_area_item;
   current_area_item = nullptr;
+}
+
+/**
+ * @copydoc TilesetView::State::mouse_moved
+ */
+void ResizingPatternState::mouse_moved(const QMouseEvent& event) {
+
+  QPointF tileset_point_f = get_view().mapToScene(event.pos());
+  QPoint current_point(qFloor(tileset_point_f.x()), qFloor(tileset_point_f.y()));
+
+  QPoint free_corner = old_box.topLeft();
+  if (fixed_corner.x() == -1) {
+    // The left side is fixed, the right side moves.
+    free_corner.rx() += old_box.width() - 8;
+  }
+  if (fixed_corner.y() == -1) {
+    // The top side is fixed, the bottom side moves.
+    free_corner.ry() += old_box.height() - 8;
+  }
+  const QSize base_size(8, 8);
+
+  QRect new_box = old_box;
+  const QPoint expansion = Point::round_down(current_point - free_corner, QSize(8, 8));
+  if (fixed_corner.x() == -1) {
+    // Left side fixed, right side free.
+    int width = old_box.width() + expansion.x();
+    if (width > 0) {
+      new_box.setWidth(width);
+    } else {
+      new_box.setWidth(-width + 2 * base_size.width());
+      new_box.translate(width - base_size.width(), 0);
+    }
+  } else {
+    // Right side fixed, left side free.
+    int width = old_box.width() - expansion.x();
+    if (width > 0) {
+      new_box.setWidth(width);
+      new_box.translate(expansion.x(), 0);
+    } else {
+      new_box.setWidth(-width + 2 * base_size.width());
+      new_box.translate(old_box.width() - base_size.width(), 0);
+    }
+  }
+  if (fixed_corner.y() == -1) {
+    // Top side fixed, bottom side free.
+    int height = old_box.height() + expansion.y();
+    if (height > 0) {
+      new_box.setHeight(height);
+    }
+    else {
+      new_box.setHeight(-height + 2 * base_size.height());
+      new_box.translate(0, height - base_size.height());
+    }
+  }
+  else {
+    // Bottom side fixed, top side free.
+    int height = old_box.height() - expansion.y();
+    if (height > 0) {
+      new_box.setHeight(height);
+      new_box.translate(0, expansion.y());
+    }
+    else {
+      new_box.setHeight(-height + 2 * base_size.height());
+      new_box.translate(0, old_box.height() - base_size.height());
+    }
+  }
+
+  current_area_item->setRect(new_box);
+}
+
+/**
+ * Determines which corner of the pattern should be fixed
+ * and which one should follow the mouse.
+ */
+void ResizingPatternState::compute_fixed_corner() {
+
+  // Decide the resizing directions depending
+  // on the mouse position relative to the pattern.
+  const int selected_index = get_tileset().get_selected_index();
+  if (selected_index == -1) {
+    return;
+  }
+
+  TilesetView& view = get_view();
+
+  const QPoint mouse_position_in_view = view.mapFromGlobal(QCursor::pos());
+  const QPoint mouse_position = view.mapToScene(mouse_position_in_view).toPoint();
+
+  const QPointF& pattern_center = current_area_item->rect().center();
+  fixed_corner.setX(mouse_position.x() >= pattern_center.x() ? -1 : 1);
+  fixed_corner.setY(mouse_position.y() >= pattern_center.y() ? -1 : 1);
 }
 
 }
