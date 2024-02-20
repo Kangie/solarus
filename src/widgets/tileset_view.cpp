@@ -521,6 +521,29 @@ void TilesetView::paintEvent(QPaintEvent* event) {
 }
 
 /**
+ * @brief Receives a focus out event.
+ * @param event The event to handle.
+ */
+void TilesetView::focusOutEvent(QFocusEvent* event) {
+
+  start_state_idle();
+  QGraphicsView::focusOutEvent(event);
+}
+
+/**
+ * @brief Receives a key press event.
+ * @param event The event to handle.
+ */
+void TilesetView::keyPressEvent(QKeyEvent* event) {
+
+  if (event->key() == Qt::Key_Escape) {
+    start_state_idle();
+    return;
+  }
+  QGraphicsView::keyPressEvent(event);
+}
+
+/**
  * @brief Receives a mouse press event.
  * @param event The event to handle.
  */
@@ -795,7 +818,7 @@ void TilesetView::build_context_menu_scrolling(
  */
 void TilesetView::tileset_selection_changed() {
 
-  if (tileset != nullptr) {
+  if (tileset == nullptr) {
     return;
   }
   const int selection_count = tileset->get_selection_count();

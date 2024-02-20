@@ -73,12 +73,12 @@ protected:
 
   void paintEvent(QPaintEvent* event) override;
 
-  virtual void focusOutEvent(QFocusEvent* event) override;
-  virtual void keyPressEvent(QKeyEvent* event) override;
-  virtual void mousePressEvent(QMouseEvent* event) override;
-  virtual void mouseReleaseEvent(QMouseEvent* event) override;
-  virtual void mouseMoveEvent(QMouseEvent* event) override;
-  virtual void contextMenuEvent(QContextMenuEvent* event) override;
+  void focusOutEvent(QFocusEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
+  void mouseMoveEvent(QMouseEvent* event) override;
+  void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
 
