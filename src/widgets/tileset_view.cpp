@@ -280,6 +280,7 @@ void TilesetView::set_tileset(TilesetModel* tileset) {
             this, qOverload<>(&TilesetView::update));
     connect(&tileset->get_selection_model(), &QItemSelectionModel::selectionChanged,
             this, &TilesetView::tileset_selection_changed);
+    tileset_selection_changed();
   }
 }
 
@@ -359,6 +360,13 @@ bool TilesetView::is_read_only() const {
  */
 void TilesetView::set_read_only(bool read_only) {
   this->read_only = read_only;
+
+  if (read_only) {
+    resize_pattern_action->setEnabled(false);
+    create_border_set_action->setEnabled(false);
+    delete_patterns_action->setEnabled(false);
+    change_pattern_id_action->setEnabled(false);
+  }
 }
 
 /**
@@ -820,22 +828,25 @@ void TilesetView::tileset_selection_changed() {
   if (tileset == nullptr) {
     return;
   }
-  const int selection_count = tileset->get_selection_count();
-  const int pattern_index = tileset->get_selected_index();
-  if (selection_count == 1) {
-    resize_pattern_action->setEnabled(tileset->get_pattern_num_frames(pattern_index) == 1);
-    change_pattern_id_action->setEnabled(true);
-  } else {
-    resize_pattern_action->setEnabled(false);
-    change_pattern_id_action->setEnabled(false);
-  }
 
-  if (selection_count == 0) {
-    create_border_set_action->setEnabled(false);
-    delete_patterns_action->setEnabled(false);
-  } else {
-    create_border_set_action->setEnabled(true);
-    delete_patterns_action->setEnabled(true);
+  if (!is_read_only()) {
+    const int selection_count = tileset->get_selection_count();
+    const int pattern_index = tileset->get_selected_index();
+    if (selection_count == 1) {
+      resize_pattern_action->setEnabled(tileset->get_pattern_num_frames(pattern_index) == 1);
+      change_pattern_id_action->setEnabled(true);
+    } else {
+      resize_pattern_action->setEnabled(false);
+      change_pattern_id_action->setEnabled(false);
+    }
+
+    if (selection_count == 0) {
+      create_border_set_action->setEnabled(false);
+      delete_patterns_action->setEnabled(false);
+    } else {
+      create_border_set_action->setEnabled(true);
+      delete_patterns_action->setEnabled(true);
+    }
   }
 }
 
