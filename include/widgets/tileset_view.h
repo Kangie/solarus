@@ -92,6 +92,7 @@ public:
   void start_state_idle();
   void start_state_drawing_rectangle(const QPoint& initial_point);
   void start_state_moving_patterns(const QPoint& initial_point);
+  void start_state_resizing_pattern();
 
 signals:
 
@@ -142,6 +143,7 @@ private:
   void build_context_menu_layer(QMenu& menu, const QList<int>& indexes);
   void build_context_menu_repeat_mode(QMenu& menu, const QList<int>& indexes);
   void build_context_menu_scrolling(QMenu& menu, const QList<int>& indexes);
+  void tileset_selection_changed();
 
   // State of the view.
   void set_state(std::unique_ptr<State> state);
@@ -160,6 +162,7 @@ private:
   double zoom;                         /**< Zoom factor currently applied. */
   std::unique_ptr<State> state;        /**< Current state of the view. */
 
+  QAction* resize_pattern_action;      /**< Action of resizing a pattern. */
   QAction* create_border_set_action;   /**< Action of creating a border set. */
   QAction* change_pattern_id_action;   /**< Action of changing a pattern id. */
   QAction* delete_patterns_action;     /**< Action of deleting the selected
