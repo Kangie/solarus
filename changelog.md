@@ -12,6 +12,7 @@
 * Map editor: fix origin lost when copy-pasting a custom entity (#432).
 * Map editor: fix inconsistencies when editing an entity being resized or moved.
 * Map editor: update contour selector when the tileset file has changed.
+* Tileset editor: allow to resize tile patterns (#159).
 * Dialogs editor: prevent invalid custom property keys (#352).
 * Dialogs editor: remove the margin display broken feature.
 * Fix zoom clamping in map, tileset, sprite and image views (#513).

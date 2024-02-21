@@ -102,6 +102,7 @@ signals:
   void delete_selected_patterns_requested();
   void change_selected_pattern_id_requested();
   void change_selected_patterns_position_requested(const QPoint& delta);
+  void resize_selected_pattern_requested(const QRect& box);
   void change_selected_patterns_ground_requested(Ground ground);
   void change_selected_patterns_default_layer_requested(int layer);
   void change_selected_patterns_repeat_mode_requested(PatternRepeatMode repeat_mode);

@@ -94,6 +94,7 @@ public:
   QList<QRect> get_pattern_frames(int index) const;
   QRect get_pattern_frames_bounding_box(int index) const;
   void set_pattern_position(int index, const QPoint& position);
+  void set_pattern_box(int index, const QRect& box);
   Ground get_pattern_ground(int index) const;
   bool is_common_pattern_ground(const QList<int>& indexes, Ground& ground) const;
   void set_pattern_ground(int index, Ground ground);
@@ -167,7 +168,7 @@ signals:
   void pattern_deleted(int old_index, const QString& old_id);
   void pattern_id_changed(int old_index, const QString& old_id,
                           int new_index, const QString& new_id);
-  void pattern_position_changed(int index, const QPoint& position);
+  void pattern_position_changed(int index);
   void pattern_ground_changed(int index, Ground ground);
   void pattern_default_layer_changed(int index, int default_layer);
   void pattern_repeat_mode_changed(int index, PatternRepeatMode repeat_mode);

@@ -908,7 +908,37 @@ void TilesetModel::set_pattern_position(int index, const QPoint& position) {
   patterns[index].set_image_dirty();
 
   // Notify people.
-  emit pattern_position_changed(index, position);
+  emit pattern_position_changed(index);
+
+  QModelIndex model_index = this->index(index);
+  emit dataChanged(model_index, model_index);
+}
+
+/**
+ * @brief Sets the rectangle containing of a pattern in the tileset image.
+ *
+ * This makes the pattern single frame if it was not.
+ * Emits pattern_position_changed() if there is a change.
+ *
+ * @param index A pattern index.
+ * @param box The new rectangle to set.
+ */
+void TilesetModel::set_pattern_box(int index, const QRect& box) {
+
+  if (box == get_pattern_frame(index)) {
+    // No change.
+    return;
+  }
+
+  const std::string& pattern_id = index_to_id(index).toStdString();
+
+  tileset.get_pattern(pattern_id)->set_frame(Rectangle::to_solarus_rect(box));
+
+  // The icon has changed.
+  patterns[index].set_image_dirty();
+
+  // Notify people.
+  emit pattern_position_changed(index);
 
   QModelIndex model_index = this->index(index);
   emit dataChanged(model_index, model_index);
