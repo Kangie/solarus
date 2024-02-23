@@ -452,9 +452,23 @@ QVariant QuestFilesModel::data(const QModelIndex& index, int role) const {
     return QVariant();  // No icon in other columns.
 
   case Qt::ToolTipRole:
-    // Tooltip.
-    if (index.column() == FILE_COLUMN) {
+    // Tooltip of each file item.
+    switch (index.column()) {
+
+    case FILE_COLUMN:
       return get_quest_file_tooltip(index);
+
+    case DESCRIPTION_COLUMN:
+      if (quest.is_resource_element(path, resource_type, element_id)) {
+        return database.get_description(resource_type, element_id);
+      }
+      return QVariant();
+
+    case AUTHOR_COLUMN:
+      return database.get_file_author(quest_relative_path);
+
+    case LICENSE_COLUMN:
+      return database.get_file_license(quest_relative_path);
     }
     return QVariant();  // No tooltip in other columns.
 
