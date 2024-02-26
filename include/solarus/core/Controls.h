@@ -22,7 +22,7 @@
 #include "solarus/core/InputEvent.h"
 #include "solarus/lua/ScopedLuaRef.h"
 #include "solarus/core/CommandsEffects.h"
-#include <unordered_map>
+#include "solarus/containers/VecMap.h"
 #include <set>
 #include <string>
 #include <variant>
@@ -46,14 +46,16 @@ class Game;
  * The corresponding low-level input event can be a keyboard event or a
  * joypad event.
  */
-class Controls : public ExportableToLua {
+class Controls final: public ExportableToLua {
 
   public:
+    // static information
+    static constexpr const char module_name[] = "sol.controls";
 
-  enum class AxisDirection{
-      PLUS,
-      MINUS
-  };
+    enum class AxisDirection{
+        PLUS,
+        MINUS
+    };
 
     /**
      * @brief Represent an axis binding used as a key in joypad bindings
@@ -80,6 +82,9 @@ class Controls : public ExportableToLua {
     struct ControlAxisBinding{
       Axis axis = AxisId::NONE;
       AxisDirection direction = AxisDirection::PLUS;
+
+      static std::optional<ControlAxisBinding> from_string(const std::string& str);
+      std::string to_string() const;
     };
 
   private:
@@ -112,6 +117,11 @@ class Controls : public ExportableToLua {
         }
     };
 
+    using KeyboardMappings = VecMap<InputEvent::KeyboardKey, Command>;
+    using JoypadMappings = VecMap<JoypadBinding, Command>;
+    using JoypadAxisMappings = VecMap<JoyPadAxis, ControlAxisBinding>;
+    using KeyboardAxisMappings = VecMap<InputEvent::KeyboardKey, ControlAxisBinding>;
+
     explicit Controls(MainLoop& main_loop);
     explicit Controls(MainLoop& main_loop, Game& game);
 
@@ -120,10 +130,20 @@ class Controls : public ExportableToLua {
     std::optional<JoypadBinding> get_joypad_binding(const Command& command) const;
     void set_joypad_binding(const Command& command, const JoypadBinding& joypad_binding);
 
-    std::pair<InputEvent::KeyboardKey, InputEvent::KeyboardKey> get_keyboard_axis_binding(const Axis& command_axis) const;
+    const KeyboardMappings::Map& get_keyboard_bindings() const;
+    void set_keyboard_bindings(const KeyboardMappings::Map& commands);
+    const JoypadMappings::Map& get_joypad_bindings() const;
+    void set_joypad_bindings(const JoypadMappings::Map& commands);
+
+    std::tuple<InputEvent::KeyboardKey, InputEvent::KeyboardKey> get_keyboard_axis_binding(const Axis& command_axis) const;
     void set_keyboard_axis_binding(const Axis& command_axis, InputEvent::KeyboardKey minus, InputEvent::KeyboardKey plus);
     JoyPadAxis get_joypad_axis_binding(const Axis& command_axis) const;
     void set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis);
+
+    const KeyboardAxisMappings::Map& get_keyboard_axis_bindings() const;
+    void set_keyboard_axis_bindings(const KeyboardAxisMappings::Map& commands);
+    const JoypadAxisMappings::Map& get_joypad_axis_bindings() const;
+    void set_joypad_axis_bindings(const JoypadAxisMappings::Map& bindings);
 
     void set_joypad(const JoypadPtr& joypad);
     const JoypadPtr& get_joypad();
@@ -191,16 +211,16 @@ class Controls : public ExportableToLua {
     void do_customization_callback();
 
     MainLoop& main_loop;                          /**< The game we are controlling. */
-    std::map<InputEvent::KeyboardKey, Command>
+    KeyboardMappings
         keyboard_mapping;                /**< Associates each game command to the
                                           * keyboard key that triggers it. */
-    std::map<JoypadBinding, Command>
+    JoypadMappings
         joypad_mapping;                  /**< Associates each game command to the
                                           * joypad action that triggers it. */
-    std::map<JoyPadAxis, ControlAxisBinding>
+    JoypadAxisMappings
         joypad_axis_mapping;             /**< Associates command axises to the joypad axis
                                           * that move it. */
-    std::map<InputEvent::KeyboardKey, ControlAxisBinding>
+    KeyboardAxisMappings
         keyboard_axis_mapping;           /**< Associates command axises to the keyboad keys
                                           * that move it. */
     std::set<Command>

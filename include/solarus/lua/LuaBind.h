@@ -40,6 +40,62 @@ struct OnStack {
 struct Nil {};
 
 /**
+ * @brief Metafunction used to specify the marchalling of types that need repetitive conversion from-to-lua but aren't exportable
+ *
+ * Implementers must provide:
+ *
+ * Two static methods to marchal the argument/return type from/to the lua stack
+ * - static T check_arg(lua_State * L, int index, const CheckContext& c);
+ * - static void push(lua_State * L, const T& value);
+ */
+template<typename T>
+struct Marshalling;
+
+/**
+ * @brief Marshaling context interface
+ *
+ * allows to signal errors from the marshalling code
+ */
+struct CheckContext{
+    [[noreturn]] virtual void error(lua_State* L, int sindex, const std::string& message) const = 0;
+    [[noreturn]] virtual void type_error(lua_State* L, int sindex, const std::string& type_name) const = 0;
+};
+
+/**
+ * @brief error free function, work around [[noreturn]] being only for free functions
+ *
+ * Calls ctx.error
+ *
+ * @param ctx a Context
+ * @param L the lua state
+ * @param sindex the stack index of the marshalling error
+ * @param message the error message
+ */
+[[noreturn]] void error(const CheckContext& ctx, lua_State* L, int sindex, const std::string & message);
+
+/**
+ * @brief type_error free function, work around [[noreturn]] being only for free functions
+ * @param ctx a Context
+ * @param L the lua state
+ * @param sindex the stack index of the marshalling error
+ * @param type_name the name of the expected type
+ */
+[[noreturn]] void type_error(const CheckContext& ctx, lua_State* L, int sindex, const std::string& type_name);
+
+/**
+ * @brief Strong type asking a callback as argument
+ *
+ * Will use LuaTools::check_function
+ */
+struct Callback : public ScopedLuaRef{
+    Callback(const ScopedLuaRef& ref) : ScopedLuaRef(ref) {}
+    Callback(ScopedLuaRef&& ref) : ScopedLuaRef(std::move(ref)){}
+    Callback() = default;
+    Callback(Callback&&) = default;
+    Callback(const Callback&) = default;
+};
+
+/**
  * \brief Wraps a C function so that it can be called from Lua.
  *
  * This is not a generic wrapper and is tied to the engine. The wrapping

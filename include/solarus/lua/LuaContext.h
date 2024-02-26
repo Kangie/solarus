@@ -393,8 +393,6 @@ class LuaContext {
     void menus_on_draw(int context_index, const SurfacePtr& dst_surface);
     bool menus_on_input(int context_index, const InputEvent& event);
     bool menus_on_command(int context_index, const ControlEvent& command);
-    //bool menus_on_command_pressed(int context_index, Command command);
-    //bool menus_on_command_released(int context_index, Command command);
 
     // Sprite events.
     void sprite_on_animation_finished(
@@ -1313,31 +1311,6 @@ class LuaContext {
       state_api_get_carried_object_action,
       state_api_set_carried_object_action,
 
-      // Commands API
-      controls_api_create_from_keyboard,
-      controls_api_create_from_joypad,
-      controls_api_set_analog_commands_enabled,
-      controls_api_are_analog_commands_enabled,
-      controls_api_is_pressed,
-      controls_api_get_axis_state,
-      controls_api_get_direction,
-      controls_api_set_keyboard_binding,
-      controls_api_get_keyboard_binding,
-      controls_api_set_joypad_binding,
-      controls_api_get_joypad_binding,
-      controls_api_set_joypad_axis_binding,
-      controls_api_get_joypad_axis_binding,
-      controls_api_set_keyboard_axis_binding,
-      controls_api_get_keyboard_axis_binding,
-      controls_api_capture_bindings,
-      commands_api_get_effect,
-      controls_api_simulate_pressed,
-      controls_api_simulate_released,
-      controls_api_simulate_axis_moved,
-      controls_api_set_joypad,
-      controls_api_get_joypad,
-      controls_api_remove,
-
       // available to all userdata types
       userdata_rawget_as_table,
       userdata_meta_gc,
@@ -1503,9 +1476,6 @@ public:
     static void push_custom_entity(lua_State* current_l, CustomEntity& entity);
     static void push_joypad(lua_State* current_l, Joypad& joypad);
     static void push_controls(lua_State* current_l, Controls& commands);
-    static void push_command(lua_State* current_l, const Command& command);
-    static void push_axis(lua_State* current_l, const Axis& command_axis);
-    static void push_player(lua_State* current_l, Player& commands);
 
     // Getting objects from Lua.
     static bool is_main(lua_State* current_l, int index);
@@ -1606,7 +1576,6 @@ public:
     static bool is_player(lua_State* current_l, int index);
     static std::shared_ptr<Player> check_player(lua_State* current_l, int index);
     static Command check_command(lua_State* l, int index);
-    static Axis check_axis(lua_State* l, int index);
 
 private:
     // Events.

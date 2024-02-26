@@ -598,6 +598,21 @@ double opt_number_field(
 }
 
 /**
+ * @brief LuaTools::islstring
+ * @param L A lua state.
+ * @param index INdex of a value in the stack
+ * @param len lenght output parameter
+ * @return The C-string value or nullptr if value is not a string
+ */
+const char * islstring(
+    lua_State * L,
+    int index,
+    size_t * len
+) {
+  return (lua_isstring(L, index)) ? lua_tolstring(L, index, len) : nullptr;
+}
+
+/**
  * \brief Checks that a value is a string and returns it.
  *
  * This function acts like luaL_checkstring() except that it throws a
