@@ -541,7 +541,6 @@ struct CheckArg<std::optional<T>> {
       // Explicitely ask for a string before checking its value.
       const auto& opt_name =
           check_arg<std::optional<std::string>>(L, index, context);
-          //CheckArg<std::optional<std::string>>::call(L, index);
       if (!opt_name.has_value()) return std::nullopt;
       const std::string& name = opt_name.value();
 

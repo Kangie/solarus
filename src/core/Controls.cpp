@@ -266,7 +266,6 @@ void Controls::keyboard_key_pressed(InputEvent::KeyboardKey keyboard_key_pressed
       command_pressed(command);
     }
 
-    //ControlAxisBinding cab = get_axis_from_keyboard(keyboard_key_pressed);
     for(const auto& cab : keyboard_axis_mapping.vec_for(keyboard_key_pressed)) {
         if(cab.axis != Axis(AxisId::NONE)) {
           command_axis_moved(cab.axis, get_axis_state(cab.axis)+(cab.direction == AxisDirection::PLUS ? 1.0 : -1.0));
