@@ -103,6 +103,17 @@ class VecMap {
       return {};
     }
 
+    std::optional<Key> search_all_for(const T& v) const {
+      for(const auto& kvp : map) {
+        for(const auto& av : kvp.second) {
+          if(av == v) {
+            return kvp.first;
+          }
+        }
+      }
+      return {};
+    }
+
     std::optional<T> find_front(const Key& k) const {
       const auto& it = map.find(k);
       if (it != map.end() && it->second.size()) {

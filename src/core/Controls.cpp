@@ -447,7 +447,7 @@ void Controls::command_axis_moved(const Axis& axis, double state) {
  * if the command is not mapped to a keyboard key.
  */
 InputEvent::KeyboardKey Controls::get_keyboard_binding(const Command &command) const {
-  return keyboard_mapping.search_fronts_for(command).value_or(InputEvent::KeyboardKey::NONE);
+  return keyboard_mapping.search_all_for(command).value_or(InputEvent::KeyboardKey::NONE);
 }
 
 /**
@@ -491,7 +491,7 @@ void Controls::set_keyboard_binding(const Command &command, InputEvent::Keyboard
  * this game command is not mapped to a joypad action.
  */
 std::optional<Controls::JoypadBinding> Controls::get_joypad_binding(const Command &command) const {
-  return joypad_mapping.search_fronts_for(command);
+  return joypad_mapping.search_all_for(command);
 }
 
 /**

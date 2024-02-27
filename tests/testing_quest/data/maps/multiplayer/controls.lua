@@ -35,6 +35,7 @@ function map:on_opening_transition_finished()
     a = {"1", "2", "3", "4"},
     b = {"5", "6", "7", "8"}
   }
+
   local kbbindings = {
     c = {"1", "2", "3", "4"},
     d = {"5", "6", "7", "8"}
@@ -43,7 +44,9 @@ function map:on_opening_transition_finished()
   
   
   controls:set_joypad_bindings(jpbindings)
-  
+
+  assert_equal(controls:get_joypad_binding("4"), "a")  
+
   local jpbindings2 = controls:get_joypad_bindings()
   local kbbindings2 = controls:get_keyboard_bindings()
 
