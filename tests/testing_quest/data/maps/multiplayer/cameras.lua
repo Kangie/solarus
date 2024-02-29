@@ -10,6 +10,7 @@
 local map = ...
 local game = map:get_game()
 local camera = map:get_camera()
+local main_hero = map:get_hero()
 
 
 -- Event called at initialization time, as soon as this map is loaded.
@@ -76,12 +77,24 @@ function map:on_opening_transition_finished()
     
     game:remove_camera(camera)
     
-    wait(3000)
+    wait(1000)
     
     check_iter(game:get_maps(), {other_map})
     check_iter(game:get_cameras(), {alter_camera})
     check_iter(other_map:get_cameras(), {alter_camera})
+
+    --assert(other_map:get_hero() == main_hero, "")
+
+    main_hero:teleport("multiplayer/cameras2")
+
+    wait(1000)
     
+    main_hero:teleport("multiplayer/cameras3_1607")
+
+    wait(1000)
+
+    assert(alter_camera:get_map() == main_hero:get_map(), "camera should be on hero's map")    
+
     sol.main.exit()
   end)
 end
