@@ -49,6 +49,8 @@ void LuaContext::register_sound_module() {
       { "set_paused", sound_api_set_paused },
       { "get_volume", sound_api_get_volume },
       { "set_volume", sound_api_set_volume },
+      { "get_pan", sound_api_get_pan },
+      { "set_pan", sound_api_set_pan }
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -197,6 +199,38 @@ int LuaContext::sound_api_set_volume(lua_State* l) {
     Sound& sound = *check_sound(l, 1);
     const int volume = LuaTools::check_int(l, 2);
     sound.set_volume(volume);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of sound:get_pan().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_get_pan(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Sound& sound = *check_sound(l, 1);
+
+    const float pan = sound.get_pan();
+    lua_pushnumber(l, pan);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of sound:set_pan().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_set_pan(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Sound& sound = *check_sound(l, 1);
+    const float pan = LuaTools::check_number(l, 2);
+    sound.set_pan(pan);
     return 0;
   });
 }

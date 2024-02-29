@@ -583,6 +583,8 @@ class LuaContext {
       sound_api_set_paused,
       sound_api_get_volume,
       sound_api_set_volume,
+      sound_api_get_pan,
+      sound_api_set_pan,
 
       // Video API.
       video_api_get_window_title,
