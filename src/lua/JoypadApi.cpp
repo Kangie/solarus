@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "solarus/lua/LuaBind.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 
@@ -21,15 +22,28 @@ namespace Solarus {
 
 const std::string LuaContext::joypad_module_name = "sol.joypad";
 
+/**
+ * \brief Implementation of joypad:rumble(intensity,duration).
+ * \param joypad The joypad to rumble.
+ * \param intensity Strength of rumble, in range 0-1.
+ * \param duration Length of rumble in milliseconds.
+ */
+static void rumble(Joypad& joypad, double intensity, int duration) {
+  if (duration < 0) {
+    Debug::error("negative rumble duration");
+  }
+  joypad.rumble(intensity, duration);
+}
+
 void LuaContext::register_joypad_module() {
 
   const std::vector<luaL_Reg> methods = {
-    {"get_axis", joypad_api_get_axis},
-    {"is_button_pressed", joypad_api_is_button_pressed},
-    {"get_name", joypad_api_get_name},
-    {"rumble", joypad_api_rumble},
-    {"has_rumble", joypad_api_has_rumble},
-    {"is_attached", joypad_api_is_attached}
+    {"get_axis", LUA_TO_C_BIND(&Joypad::get_axis)},
+    {"is_button_pressed", LUA_TO_C_BIND(&Joypad::is_button_pressed)},
+    {"get_name", LUA_TO_C_BIND(&Joypad::get_name)},
+    {"rumble", LUA_TO_C_BIND(rumble)},
+    {"has_rumble", LUA_TO_C_BIND(&Joypad::has_rumble)},
+    {"is_attached", LUA_TO_C_BIND(&Joypad::is_attached)}
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -70,95 +84,6 @@ std::shared_ptr<Joypad> LuaContext::check_joypad(lua_State* current_l, int index
   return std::static_pointer_cast<Joypad>(check_userdata(
     current_l,index,joypad_module_name)
   );
-}
-
-// Implementations
-
-/**
- * \brief Implementation of joypad:get_axis(axis).
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::joypad_api_get_axis(lua_State* l) {
-  return state_boundary_handle(l,[&](){
-    auto joy = check_joypad(l,1);
-    JoyPadAxis axis = LuaTools::check_enum<JoyPadAxis>(l, 2);
-    double val = joy->get_axis(axis);
-    lua_pushnumber(l,val);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of joypad:is_button_pressed(button).
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::joypad_api_is_button_pressed(lua_State* l) {
-  return state_boundary_handle(l,[&](){
-    auto joy = check_joypad(l,1);
-    JoyPadButton button = LuaTools::check_enum<JoyPadButton>(l,2);
-    lua_pushboolean(l,joy->is_button_pressed(button));
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of joypad:get_name().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::joypad_api_get_name(lua_State* l) {
-  return state_boundary_handle(l,[&](){
-    auto joy = check_joypad(l,1);
-    lua_pushstring(l,joy->get_name().c_str());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of joypad:rumble(intensity,duration).
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::joypad_api_rumble(lua_State* l) {
-  return state_boundary_handle(l,[&](){
-    auto joy = check_joypad(l,1);
-    double intensity = LuaTools::check_number(l,2);
-    int duration = LuaTools::check_int(l,3);
-    if(duration < 0) {
-      Debug::error("negative rumble duration");
-      return 0;
-    }
-    joy->rumble(intensity, duration);
-    return 0;
-  });
-}
-
-/**
- * \brief Implementation of joypad:has_rumble().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::joypad_api_has_rumble(lua_State* l) {
-  return state_boundary_handle(l,[&](){
-    auto joy = check_joypad(l,1);
-    lua_pushboolean(l,joy->has_rumble());
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of joypad:is_attached().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::joypad_api_is_attached(lua_State* l) {
-  return state_boundary_handle(l,[&](){
-    auto joy = check_joypad(l,1);
-    lua_pushboolean(l,joy->is_attached());
-    return 1;
-  });
 }
 
 // Events
