@@ -74,6 +74,12 @@ class Controls final: public ExportableToLua {
         bool operator<(const JoypadAxisBinding& ib) const {
             return std::tie(axis, direction) < std::tie(ib.axis, ib.direction);
         }
+
+        std::string to_string() const;
+
+        inline bool invalid() const {
+          return axis == JoyPadAxis::INVALID;
+        }
     };
 
     /**
@@ -137,7 +143,7 @@ class Controls final: public ExportableToLua {
 
     std::tuple<InputEvent::KeyboardKey, InputEvent::KeyboardKey> get_keyboard_axis_binding(const Axis& command_axis) const;
     void set_keyboard_axis_binding(const Axis& command_axis, InputEvent::KeyboardKey minus, InputEvent::KeyboardKey plus);
-    JoyPadAxis get_joypad_axis_binding(const Axis& command_axis) const;
+    JoypadAxisBinding get_joypad_axis_binding(const Axis& command_axis) const;
     void set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis);
 
     const KeyboardAxisMappings::Map& get_keyboard_axis_bindings() const;

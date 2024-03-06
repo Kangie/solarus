@@ -532,7 +532,7 @@ void Controls::set_joypad_binding(const Command &command, const JoypadBinding& j
  */
 std::tuple<InputEvent::KeyboardKey, InputEvent::KeyboardKey> Controls::get_keyboard_axis_binding(const Axis& command_axis) const {
   InputEvent::KeyboardKey plus = InputEvent::KeyboardKey::NONE, minus = InputEvent::KeyboardKey::NONE;
-  keyboard_axis_mapping.foreach_front([&](const auto& key, const auto& binding){
+  keyboard_axis_mapping.for_each([&](const auto& key, const auto& binding){
       if(binding.axis == command_axis) {
           (binding.direction == AxisDirection::PLUS ? plus : minus) = key;
       }
@@ -575,14 +575,14 @@ void Controls::set_keyboard_axis_binding(const Axis& command_axis, InputEvent::K
  * @param command_axis the axis
  * @return
  */
-JoyPadAxis Controls::get_joypad_axis_binding(const Axis& command_axis) const {
-  JoyPadAxis jaxis = JoyPadAxis::INVALID;
-  joypad_axis_mapping.foreach_front([&](const auto& axis, const auto& binding){
+Controls::JoypadAxisBinding Controls::get_joypad_axis_binding(const Axis& command_axis) const {
+  JoypadAxisBinding jaxisb = {JoyPadAxis::INVALID, AxisDirection::PLUS};
+  joypad_axis_mapping.for_each([&](const auto& axis, const auto& binding){
       if(binding.axis == command_axis){
-          jaxis = axis;
+          jaxisb = {axis, binding.direction};
       }
   });
-  return jaxis;
+  return jaxisb;
 }
 
 /**
@@ -598,11 +598,11 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
   auto previous_binding = get_joypad_axis_binding(command_axis);
   auto previous_command_axis = get_axis_from_joypad(axis);
 
-  if(previous_binding != JoyPadAxis::INVALID){
+  if(previous_binding.invalid()){
     if(previous_command_axis.axis != Axis(AxisId::NONE)){
-      joypad_axis_mapping[previous_binding] = previous_command_axis;
+      joypad_axis_mapping[previous_binding.axis] = previous_command_axis;
     } else {
-      joypad_axis_mapping.erase(previous_binding);
+      joypad_axis_mapping.erase(previous_binding.axis);
     }
   }
 
@@ -999,6 +999,11 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     joypad_axis_mapping.set_underlying(bindings);
   }
 
+  std::string Controls::JoypadAxisBinding::to_string() const {
+    auto dir = direction == AxisDirection::PLUS ? " +" : " -";
+    return enum_to_name(axis) + dir;
+  }
+
   /**
  * @brief Parses a joypad binding from a string
  *
@@ -1048,8 +1053,7 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
                           return enum_to_name(bt);
                         },
                         [](const JoypadAxisBinding& ab){
-                          auto dir = ab.direction == AxisDirection::PLUS ? " +" : " -";
-                          return enum_to_name(ab.axis) + dir;
+                          return ab.to_string();
                         }
                       },static_cast<const _JoypadBinding&>(*this));
   }

@@ -41,8 +41,6 @@ function map:on_opening_transition_finished()
     d = {"5", "6", "7", "8"}
   }
   controls:set_keyboard_bindings(kbbindings)
-  
-  
   controls:set_joypad_bindings(jpbindings)
 
   assert_equal(controls:get_joypad_binding("4"), "a")  
@@ -52,12 +50,14 @@ function map:on_opening_transition_finished()
 
   check_bindings(jpbindings, jpbindings2)
   check_bindings(kbbindings, kbbindings2)
-  --[[for k,v in ipairs(cmds) do
-    print(cmd, joycmds[i], keycmds[i])
-    assert_equal(cmd, joycmds[i])
-    assert_equal(cmd, keycmds[i])
-  end
-  --]]
+
+  local axis_bindings = {
+    left_x = {"X +", "x2 +", "prout -"}
+  };
+
+  controls:set_joypad_axis_bindings(axis_bindings)
+
+  assert_equal(controls:get_joypad_axis_binding("x2"), "left_x +")
 
   sol.main.exit()
 end

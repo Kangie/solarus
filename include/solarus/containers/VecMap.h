@@ -123,10 +123,19 @@ class VecMap {
     }
 
     template<class F>
-    void foreach_front(F&& f) const {
+    void for_each_front(F&& f) const {
       for(const auto& kvp : map) {
         if(kvp.second.size()) {
           f(kvp.first, kvp.second.front());
+        }
+      }
+    }
+
+    template<class F>
+    void for_each(F&& f) const {
+      for(const auto& [k, vec] : map) {
+        for(const auto& v : vec) {
+          f(k, v);
         }
       }
     }

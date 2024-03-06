@@ -485,6 +485,23 @@ struct ValueContext : public CheckContextImpl<ValueContext<P,K>> {
     }
 };
 
+/**
+ * @brief Map value context class
+ *
+ * Used to hold context when checking a map value
+ *
+ * Note : Keytype K must be stringifiable to print proper error
+ */
+template<typename P>
+struct OptionalContext : public CheckContextImpl<OptionalContext<P>> {
+    const P& parent;
+    OptionalContext(const P& parent) : parent(parent) {}
+
+    void error(lua_State* l, int sindex, const std::string& message) const override {
+      parent.error(l, sindex, std::string("Bad optional : ") + message);
+    }
+};
+
 /// Forward declaration
 template<typename T>
 T check_arg(lua_State* L, int index, const CheckContext& context);
@@ -508,7 +525,18 @@ struct CheckArg {
       type_error(context, L, index, get_type_name<base_t>());
     // Handle Enumeration Types:
     } else if constexpr (std::is_enum_v<T>) {
-      return LuaTools::check_enum<T>(L, index);
+      //return LuaTools::check_enum<T>(L, index);
+      size_t length;
+      if (const char * name = LuaTools::islstring(L, index, &length)) {
+        const std::map<T, std::string>& names = EnumInfoTraits<T>::names;
+        for (const auto& kvp : names) {
+          if (kvp.second == name) {
+            return kvp.first;
+          }
+        }
+        error(context, L, index, LuaTools::check_enum_error_message(name, names));
+      }
+      type_error(context, L, index, EnumInfoTraits<T>::pretty_name);
     // Handle Primitive Types:
     } else {
       if (LuaTypeId<T>::value == lua_type(L, index)) {
@@ -536,40 +564,18 @@ struct CheckArg<T, decltype(void(Marshalling<T>::check_arg))>;
 template<typename T>
 struct CheckArg<std::optional<T>> {
   static std::optional<T> call(lua_State * L, int index, const CheckContext& context) {
-    // Handle Enumeration Types:
-    if constexpr (std::is_enum_v<T>) {
-      // Explicitely ask for a string before checking its value.
-      const auto& opt_name =
-          check_arg<std::optional<std::string>>(L, index, context);
-      if (!opt_name.has_value()) return std::nullopt;
-      const std::string& name = opt_name.value();
-
-      const std::map<T, std::string>& names = EnumInfoTraits<T>::names;
-      for (const auto& kvp : names) {
-        if (kvp.second == name) {
-          return std::make_optional(kvp.first);
-        }
+    // This case makes the handling of bool consistent with opt_boolean.
+    if constexpr (std::is_same_v<bool, T>) {
+      if (lua_isnone(L, index)) {
+        return std::nullopt;
       }
-      // This error message doesn't mention that the value is optional.
-      error(context, L, index, check_enum_error_message(name, names));
-    // Handle Primitive Types:
     } else {
-      if (LuaTypeId<T>::value == lua_type(L, index)) {
-        return std::optional<T>(to_type<T>(L, index));
+      if (lua_isnoneornil(L, index)) {
+        return std::nullopt;
       }
-      // This case makes the handling of bool consistent with opt_boolean.
-      if constexpr (std::is_same_v<bool, T>) {
-        if (lua_isnone(L, index)) {
-          return std::nullopt;
-        }
-      } else {
-        if (lua_isnoneornil(L, index)) {
-          return std::nullopt;
-        }
-      }
-      std::string name = lua_typename(L, LuaTypeId<T>::value);
-      type_error(context, L, index, "optional " + name);
     }
+
+    return check_arg<T>(L, index, OptionalContext(context));
   }
 };
 
