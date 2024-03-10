@@ -28,6 +28,7 @@ LOCAL_SRC_FILES := \
 	$(wildcard $(LOCAL_PATH)/src/third_party/hqx/*.c))
 
 #LOCAL_CFLAGS += -DGL_GLEXT_PROTOTYPES
+LOCAL_CFLAGS += -DGLM_ENABLE_EXPERIMENTAL
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_image SDL2_ttf modplug openal  PhysicsFS libvorbis lua
 LOCAL_LDLIBS := -ldl -lGLESv1_CM -lGLESv2 -llog -landroid
 
