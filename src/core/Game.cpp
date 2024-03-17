@@ -750,7 +750,29 @@ void Game::teleport_hero(
     MapPtr next_map = prepare_map(map_id);
     hero->place_on_destination(*next_map, current_map->get_location(), a_destination_name);
   } else {
-    Debug::error("Teleporting a hero without camera to unloaded map \"" + map_id + "\"");
+    // Do back-compat hero relinking with camera on teleportation
+    if(!hero->is_on_map()) {
+      Debug::error("Teleporting a hero without camera from no map to \"" + map_id + "\"");
+    }
+
+    auto& map = hero->get_map();
+
+    if(map.get_entities().get_cameras().size() != 1){
+       Debug::error("Ambiguous teleportation of a hero without camera from a map with "
+                    + std::to_string(map.get_entities().get_cameras().size())
+                    + " cameras.");
+    }
+
+    Debug::warning("Deprecated : Teleporting not tracked hero to unloaded map. Consider using camera:teleport or track hero.");
+
+    // Relink unique camera to hero before teleportation
+    auto cam = map.get_camera();
+    hero->set_linked_camera(cam);
+    teleport_camera(cam,
+                    map_id,
+                    a_destination_name,
+                    transition_style,
+                    hero);
   }
 }
 
