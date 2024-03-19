@@ -110,6 +110,17 @@ struct Marshalling<Controls::ControlAxisBinding>{
 
 template<>
 struct Marshalling<Controls::JoypadAxisBinding>{
+    static inline Controls::JoypadAxisBinding check_arg(lua_State * L, int index, const CheckContext& context) {
+      size_t length;
+      if (const char * data = LuaTools::islstring(L, index, &length)) {
+        auto cab = Controls::JoypadAxisBinding::from_string(std::string(data, length));
+        if(cab) {
+          return cab.value();
+        }
+        error(context, L, index, std::string("invalid joypadaxisbinding : '") + data + "'");
+      }
+      type_error(context, L, index, "joypadaxisbinding");
+    }
 
     static inline void push(lua_State* L, const Controls::JoypadAxisBinding& binding) {
       if(binding.invalid()) {

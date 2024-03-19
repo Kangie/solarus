@@ -454,7 +454,7 @@ struct KeyContext : public CheckContextImpl<KeyContext<P>> {
     KeyContext(const P& parent) : parent(parent) {}
 
     void error(lua_State* l, int sindex, const std::string& message) const override {
-      parent.error(l, sindex, std::string("Bad key : ") + message);
+      parent.error(l, sindex, std::string("Bad key: ") + message);
     }
 };
 
@@ -498,7 +498,7 @@ struct OptionalContext : public CheckContextImpl<OptionalContext<P>> {
     OptionalContext(const P& parent) : parent(parent) {}
 
     void error(lua_State* l, int sindex, const std::string& message) const override {
-      parent.error(l, sindex, std::string("Bad optional : ") + message);
+      parent.error(l, sindex, std::string("Bad optional: ") + message);
     }
 };
 
@@ -525,7 +525,6 @@ struct CheckArg {
       type_error(context, L, index, get_type_name<base_t>());
     // Handle Enumeration Types:
     } else if constexpr (std::is_enum_v<T>) {
-      //return LuaTools::check_enum<T>(L, index);
       size_t length;
       if (const char * name = LuaTools::islstring(L, index, &length)) {
         const std::map<T, std::string>& names = EnumInfoTraits<T>::names;

@@ -33,7 +33,8 @@ function map:on_opening_transition_finished()
   local controls = sol.controls.create_from_keyboard()
   local jpbindings = {
     a = {"1", "2", "3", "4"},
-    b = {"5", "6", "7", "8"}
+    b = {"5", "6", "7", "8"},
+    ["left_x +"] = {"right"}
   }
 
   local kbbindings = {
@@ -52,12 +53,23 @@ function map:on_opening_transition_finished()
   check_bindings(kbbindings, kbbindings2)
 
   local axis_bindings = {
-    left_x = {"X +", "x2 +", "prout -"}
+    left_x = {"X +", "x2 +", "smth -"}
   };
-
+  
   controls:set_joypad_axis_bindings(axis_bindings)
 
+  -- check that the singular methods get the first binding
   assert_equal(controls:get_joypad_axis_binding("x2"), "left_x +")
+
+  -- should modify just first binding
+  controls:set_joypad_axis_binding("X", "left_x -")
+
+  -- reflect the change on our local copy
+  axis_bindings.left_x[1] = "X -"  
+
+  -- check we are on the same page
+  local jabindings = controls:get_joypad_axis_bindings()
+  check_bindings(axis_bindings, jabindings)
 
   sol.main.exit()
 end

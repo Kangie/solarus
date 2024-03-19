@@ -74,6 +74,11 @@ Controls::Controls(MainLoop &main_loop):
   customize_callback_ref() {
 }
 
+/**
+ * @brief Controls binding constructor that load values from the savegame
+ * @param main_loop the mainloop
+ * @param game savegame from where to load bindings
+ */
 Controls::Controls(MainLoop& main_loop, Game& game):
   main_loop(main_loop),
   customizing(false),
@@ -198,6 +203,10 @@ int Controls::get_wanted_direction8() const {
   return masks_to_directions8[direction_mask];
 }
 
+/**
+ * @brief Gets the polar coordinates direction wanted by those controls
+ * @return a (norm, angle) pair
+ */
 std::pair<double, double> Controls::get_wanted_polar() const {
   double x = 0.0;
   double y = 0.0;
@@ -594,9 +603,9 @@ Controls::JoypadAxisBinding Controls::get_joypad_axis_binding(const Axis& comman
  * \param axis A joypad axis
  * game command, or an empty string to unmap the command.
  */
-void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis) {
+void Controls::set_joypad_axis_binding(const Axis& command_axis, JoypadAxisBinding binding) {
   auto previous_binding = get_joypad_axis_binding(command_axis);
-  auto previous_command_axis = get_axis_from_joypad(axis);
+  auto previous_command_axis = get_axis_from_joypad(binding.axis);
 
   if(previous_binding.invalid()){
     if(previous_command_axis.axis != Axis(AxisId::NONE)){
@@ -606,8 +615,8 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     }
   }
 
-  if(axis != JoyPadAxis::INVALID) {
-    joypad_axis_mapping[axis] = ControlAxisBinding{command_axis, AxisDirection::PLUS};
+  if(!binding.invalid()) {
+    joypad_axis_mapping[binding.axis] = ControlAxisBinding{command_axis, binding.direction};
   }
 }
 
@@ -753,14 +762,25 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     save.set_string(savegame_variable, joypad_binding.to_string());
   }
 
+  /**
+   * @brief Sets the joypad linked with those controls
+   * @param joypad a joypad or null
+   */
   void Controls::set_joypad(const JoypadPtr& joypad) {
     this->joypad = joypad;
   }
 
+  /**
+   * @brief Gets the joypad linked to those controls
+   * @return joypad, could be null
+   */
   const JoypadPtr& Controls::get_joypad() {
     return joypad;
   }
 
+  /**
+   * @brief Loads the engine hard-coded default joypad bindings
+   */
   void Controls::load_default_joypad_bindings() {
     joypad_mapping[JoypadBinding(JoyPadAxis::LEFT_X, AxisDirection::PLUS)] = CommandId::RIGHT;
     joypad_mapping[JoypadBinding(JoyPadAxis::LEFT_X, AxisDirection::MINUS)] = CommandId::LEFT;
@@ -777,6 +797,9 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     joypad_axis_mapping[JoyPadAxis::LEFT_Y] = ControlAxisBinding{AxisId::Y, AxisDirection::PLUS};
   }
 
+  /**
+   * @brief Loads the engine hard-coded default keyboard bindings
+   */
   void Controls::load_default_keyboard_bindings() {
     keyboard_mapping[InputEvent::KeyboardKey::UP] = CommandId::UP;
     keyboard_mapping[InputEvent::KeyboardKey::DOWN] = CommandId::DOWN;
@@ -935,10 +958,18 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     return id != AxisId::NONE ? Axis(id) : CustomId{command_name};
   }
 
+  /**
+   * @brief Sets wether analog commmands are enabled
+   * @param enabled
+   */
   void Controls::set_analog_commands_enabled(bool enabled) {
     analog_commands_enabled = enabled;
   }
 
+  /**
+   * @brief Gets wether analog commands are enabled
+   * @return
+   */
   bool Controls::are_analog_commands_enabled() {
     return analog_commands_enabled;
   }
@@ -967,38 +998,74 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
     return LuaContext::controls_module_name;
   }
 
+  /**
+   * @brief Gets the keyboard commands binding map
+   * @return binding map
+   */
   const Controls::KeyboardMappings::Map& Controls::get_keyboard_bindings() const {
     return keyboard_mapping.underlying();
   }
 
+  /**
+   * @brief Sets the keyboard command binding map
+   * @param commands binding map
+   */
   void Controls::set_keyboard_bindings(const Controls::KeyboardMappings::Map& commands) {
     keyboard_mapping.set_underlying(commands);
   }
 
+  /**
+   * @brief Gets the joypad command binding map
+   * @return binding map
+   */
   const Controls::JoypadMappings::Map& Controls::get_joypad_bindings() const {
     return joypad_mapping.underlying();
   }
 
+  /**
+   * @brief Sets the command bindings for the joypad
+   * @param commands joypad command bindings map
+   */
   void Controls::set_joypad_bindings(const Controls::JoypadMappings::Map& commands) {
     joypad_mapping.set_underlying(commands);
   }
 
+  /**
+   * @brief Gets the axis binding map for the keyboard
+   * @return map of axis bindings
+   */
   const Controls::KeyboardAxisMappings::Map& Controls::get_keyboard_axis_bindings() const {
     return keyboard_axis_mapping.underlying();
   }
 
-  void Controls::set_keyboard_axis_bindings(const Controls::KeyboardAxisMappings::Map& commands) {
-    keyboard_axis_mapping.set_underlying(commands);
+  /**
+   * @brief Sets the axis binding map for the keyboard
+   * @param bindings keyboard bindings
+   */
+  void Controls::set_keyboard_axis_bindings(const Controls::KeyboardAxisMappings::Map& bindings) {
+    keyboard_axis_mapping.set_underlying(bindings);
   }
 
+  /**
+   * @brief Gets the axis binding map for the joypad
+   * @return map of axis bindings
+   */
   const Controls::JoypadAxisMappings::Map& Controls::get_joypad_axis_bindings() const {
     return joypad_axis_mapping.underlying();
   }
 
+  /**
+   * @brief Sets the axis binding map for the joypad
+   * @param bindings axis binding map
+   */
   void Controls::set_joypad_axis_bindings(const Controls::JoypadAxisMappings::Map& bindings) {
     joypad_axis_mapping.set_underlying(bindings);
   }
 
+  /**
+   * @brief Serializes a joypadaxisbinding to a string
+   * @return
+   */
   std::string Controls::JoypadAxisBinding::to_string() const {
     auto dir = direction == AxisDirection::PLUS ? " +" : " -";
     return enum_to_name(axis) + dir;
@@ -1058,6 +1125,10 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
                       },static_cast<const _JoypadBinding&>(*this));
   }
 
+  /**
+   * @brief Tells wether this joypadbinding is invalid
+   * @return
+   */
   bool Controls::JoypadBinding::is_invalid() const {
     return std::visit(overloaded{
                         [](const JoyPadButton& button){
@@ -1068,6 +1139,28 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoyPadAxis axis
                         }
                       },
                       static_cast<const _JoypadBinding&>(*this));
+  }
+
+  /**
+   * @brief Contructs a JoypadAxisBinding from a string or fails with nullopt
+   * @param str a potentially wrong binding string
+   * @return some valid binding or nullopt
+   */
+  std::optional<Controls::JoypadAxisBinding> Controls::JoypadAxisBinding::from_string(const std::string& str) {
+    //Unserialize the binding
+    size_t spos = str.find(' ');
+    if(spos != std::string::npos) {
+      //There is a space ! Its an axis binding
+      auto axis = name_to_enum<JoyPadAxis>(str.substr(0,spos), JoyPadAxis::INVALID);//Controls::get_axis_by_name(str.substr(0, spos));
+      if(axis == JoyPadAxis::INVALID) {
+        return {};
+      }
+      auto sdir = str[spos+1];
+      auto dir = sdir == '+' ? AxisDirection::PLUS : AxisDirection::MINUS;
+      return JoypadAxisBinding{axis, dir};
+    } else {
+      return {}; //Binding is invalid
+    }
   }
 
   /**
