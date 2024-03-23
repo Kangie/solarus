@@ -55,8 +55,8 @@ class SOLARUS_API Sound: public ExportableToLua {
     bool is_paused_by_script() const;
     void set_paused_by_script(bool paused_by_script);
     void update_paused();
-    std::optional<int> get_volume() const;
-    void set_volume(const std::optional<int>& volume);
+    int get_volume() const;
+    void set_volume(int volume);
 
     static bool exists(const std::string& sound_id);
     static void play(const std::string& sound_id);
@@ -69,8 +69,8 @@ class SOLARUS_API Sound: public ExportableToLua {
     static void update();
     static bool check_openal_clean_state(const std::string& function_name);
 
-    static int get_default_volume();
-    static void set_default_volume(int default_volume);
+    static int get_global_volume();
+    static void set_global_volume(int global_volume);
 
     const std::string& get_lua_type_name() const override;
 
@@ -84,9 +84,10 @@ class SOLARUS_API Sound: public ExportableToLua {
     void notify_device_disconnected();
 
     const SoundBuffer& data;                     /**< The loaded sound data. */
-    ALuint source;                               /**< The source currently playing this sound. */
-    bool paused_by_script;                       /**< Whether the sound is paused by a Lua script. */
-    std::optional<float> volume;                 /**< Volume of this sound effect (0.0 to 1.0, no value means default. */
+    ALuint source = 0;                           /**< The source currently playing this sound. */
+    bool paused_by_script = false;               /**< Whether the sound is paused by a Lua script. */
+    float volume = 1.0;                          /**< Volume of this sound effect
+                                                  * (0.0 to 1.0, relative to the global volume). */
     static bool paused_by_system;                /**< Whether sounds are currently paused by the main loop,
                                                   * e.g. when losing focus */
 
@@ -96,7 +97,7 @@ class SOLARUS_API Sound: public ExportableToLua {
     static std::list<SoundPtr>
         current_sounds;                          /**< The sounds currently playing. */
 
-    static float default_volume;                 /**< Default volume of sound effects (0.0 to 1.0). */
+    static float global_volume;                  /**< Global volume of sound effects (0.0 to 1.0). */
     static uint32_t next_device_detection_date;  /**< Date of the next attempt to detect an audio device. */
     static bool pc_play;                         /**< Whether playing performance counter is used. */
     static ResourceProvider* resource_provider;  /**< The main loop resource cache. */

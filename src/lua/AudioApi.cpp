@@ -207,8 +207,8 @@ void LuaContext::register_audio_module() {
 
   // Functions of sol.audio.
   const std::vector<luaL_Reg> functions = {
-      { "get_sound_volume", LUA_TO_C_BIND(Sound::get_default_volume) },
-      { "set_sound_volume", LUA_TO_C_BIND(Sound::set_default_volume) },
+      { "get_sound_volume", LUA_TO_C_BIND(Sound::get_global_volume) },
+      { "set_sound_volume", LUA_TO_C_BIND(Sound::set_global_volume) },
       { "play_sound", LUA_TO_C_BIND(play_sound) },
       { "preload_sounds", LUA_TO_C_BIND(preload_sounds) },
       { "get_music_volume", LUA_TO_C_BIND(Music::get_volume) },

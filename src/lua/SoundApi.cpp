@@ -181,12 +181,7 @@ int LuaContext::sound_api_get_volume(lua_State* l) {
   return state_boundary_handle(l, [&] {
     const Sound& sound = *check_sound(l, 1);
 
-    std::optional<int> volume = sound.get_volume();
-    if (!volume.has_value()) {
-      lua_pushnil(l);
-    } else {
-      lua_pushinteger(l, volume.value());
-    }
+    lua_pushinteger(l, sound.get_volume());
     return 1;
   });
 }
@@ -200,14 +195,7 @@ int LuaContext::sound_api_set_volume(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Sound& sound = *check_sound(l, 1);
-    if (!lua_isnumber(l, 2) && !lua_isnil(l, 2)) {
-      LuaTools::type_error(l, 2, "number or nil");
-    }
-    std::optional<int> volume;
-    if (!lua_isnil(l, 2)) {
-      volume = LuaTools::check_int(l, 2);
-    }
-
+    const int volume = LuaTools::check_int(l, 2);
     sound.set_volume(volume);
     return 0;
   });

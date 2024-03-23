@@ -17,12 +17,10 @@
 #include "solarus/audio/Music.h"
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Arguments.h"
-#include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/PerfCounter.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/core/ResourceProvider.h"
-#include "solarus/core/String.h"
 #include "solarus/lua/LuaContext.h"
 #include <algorithm>
 #ifdef SOLARUS_OPENAL_EXTENSIONS_RECONNECT
@@ -36,7 +34,7 @@ namespace Solarus {
 bool Sound::audio_enabled = false;
 ALCdevice* Sound::device = nullptr;
 ALCcontext* Sound::context = nullptr;
-float Sound::default_volume = 1.0;
+float Sound::global_volume = 1.0;
 bool Sound::pc_play = false;
 std::list<SoundPtr> Sound::current_sounds;
 uint32_t Sound::next_device_detection_date = 0;
@@ -51,7 +49,7 @@ Sound::Sound(const SoundBuffer& data):
   data(data),
   source(AL_NONE),
   paused_by_script(false),
-  volume() {
+  volume(1.0) {
 }
 
 /**
@@ -105,8 +103,6 @@ void Sound::initialize(const Arguments& args, ResourceProvider* resource_provide
 
   alGenBuffers(0, nullptr);  // Necessary on some systems to avoid errors with the first sound loaded.
 
-  set_default_volume(100);
-
   // initialize the music system
   Music::initialize();
 }
@@ -131,7 +127,7 @@ void Sound::quit() {
   context = nullptr;
   alcCloseDevice(device);
   device = nullptr;
-  default_volume = 1.0;
+  global_volume = 1.0;
   audio_enabled = false;
   resource_provider = nullptr;
 }
@@ -291,44 +287,42 @@ void Sound::play(const std::string& sound_id) {
  * \brief Returns the default volume of sound effects.
  * \return The volume (0 to 100).
  */
-int Sound::get_default_volume() {
+int Sound::get_global_volume() {
 
-  return (int) (default_volume * 100.0 + 0.5);
+  return static_cast<int>(global_volume * 100.0 + 0.5);
 }
 
 /**
- * \brief Sets the default volume of sound effects.
+ * \brief Sets the global volume of sound effects.
  * \param volume The new volume (0 to 100).
  */
-void Sound::set_default_volume(int default_volume) {
+void Sound::set_global_volume(int global_volume) {
 
-  default_volume = std::min(100, std::max(0, default_volume));
-  Sound::default_volume = default_volume / 100.0;
+  Sound::global_volume = std::min(100, std::max(0, global_volume)) / 100.0;
 }
 
 /**
- * \brief Returns the volume of this sound effect.
- * \return The volume (0 to 100), or no value to mean default.
+ * \brief Returns the relative volume of this sound effect.
+ *
+ * This is relative to the global volume.
+ *
+ * \return The volume (0 to 100).
  */
-std::optional<int> Sound::get_volume() const {
+int Sound::get_volume() const {
 
-  if (volume.has_value()) {
-    return (int) (volume.value() * 100.0 + 0.5);
-  }
-  return {};
+  return static_cast<int>(volume * 100.0 + 0.5);
 }
 
 /**
- * \brief Sets the volume of this sound effect.
- * \return The volume (0 to 100), or no value to mean default.
+ * \brief Sets the relative volume of this sound effect.
+ *
+ * This is relative to the global volume.
+ *
+ * \return The volume (0 to 100).
  */
-void Sound::set_volume(const std::optional<int>& volume) {
+void Sound::set_volume(int volume) {
 
-  if (volume.has_value()) {
-    this->volume = std::min(100, std::max(0, volume.value())) / 100.0;
-  } else {
-    this->volume = std::nullopt;
-  }
+  this->volume = std::min(100, std::max(0, volume)) / 100.0;
 
   if (source != AL_NONE) {
     alSourcef(source, AL_GAIN, get_actual_volume());
@@ -338,16 +332,13 @@ void Sound::set_volume(const std::optional<int>& volume) {
 /**
  * \brief Returns the actual volume of this sound.
  *
- * It may either be the default one or the one specific to this sound if any.
+ * This is <tt>get_volume() * get_global_volume()</tt>.
  *
  * \return The actual volume between 0.0 and 1.0.
  */
 float Sound::get_actual_volume() const {
 
-  if (volume.has_value()) {
-    return volume.value();
-  }
-  return default_volume;
+  return volume * global_volume;
 }
 
 /**
