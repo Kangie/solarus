@@ -263,7 +263,6 @@ ALuint SoundBuffer::decode_file(const std::string& file_name) {
       std::vector<char> samples;
       int bitstream;
       long bytes_read;
-      long total_bytes_read = 0;
       const int buffer_size = 16384;
       char samples_buffer[buffer_size];
       do {
@@ -275,20 +274,7 @@ ALuint SoundBuffer::decode_file(const std::string& file_name) {
           Debug::error(oss.str());
         }
         else {
-          total_bytes_read += bytes_read;
-          if (format == AL_FORMAT_STEREO16) {
-            samples.insert(samples.end(), samples_buffer, samples_buffer + bytes_read);
-          }
-          else {
-            // mono sound files make no sound on some machines
-            // workaround: convert them on-the-fly into stereo sounds
-            // TODO find a better solution
-            for (int i = 0; i < bytes_read; i += 2) {
-              samples.insert(samples.end(), samples_buffer + i, samples_buffer + i + 2);
-              samples.insert(samples.end(), samples_buffer + i, samples_buffer + i + 2);
-            }
-            total_bytes_read += bytes_read;
-          }
+          samples.insert(samples.end(), samples_buffer, samples_buffer + bytes_read);
         }
       }
       while (bytes_read > 0);
@@ -302,9 +288,9 @@ ALuint SoundBuffer::decode_file(const std::string& file_name) {
         Debug::error(oss.str());
       }
       alBufferData(buffer,
-          AL_FORMAT_STEREO16,
+          format,
           reinterpret_cast<ALshort*>(samples.data()),
-          ALsizei(total_bytes_read),
+          ALsizei(samples.size()),
           sample_rate);
       if (error != AL_NO_ERROR) {
         std::ostringstream oss;
