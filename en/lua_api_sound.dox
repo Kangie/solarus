@@ -18,7 +18,7 @@ Creates a new sound effect but does not play it.
 
 Generates a Lua error if the sound file does not exist.
 
-Unlike musics, sound files are entirely read before being played.
+Unlike music files, sound files are entirely read before being played.
 - \c sound_id (string): Name of the sound file to read, relative to
   the \c sounds directory and without extension.
   Currently, only OGG Vorbis (<tt>.ogg</tt>) sound files are supported.
@@ -47,17 +47,18 @@ Pauses or resumes the sound effect.
 \subsection lua_api_sound_get_volume sound:get_volume()
 
 Returns the volume of this sound effect.
-- Return value (number or nil): The current volume of this sound effect,
+
+This is relative to the global
+\ref lua_api_audio_get_sound_volumne "sound volume".
+- Return value (number): The current volume of this sound effect,
   as an integer between \c 0 (mute) and \c 100 (full volume).
-  \c nil means the
-  \ref lua_api_audio_get_sound_volume "default sound volume".
 
 \subsection lua_api_sound_set_volume sound:set_volume(volume)
 
 Sets the volume of this sound effect.
-- \c volume (number ornil): The new volume of this sound effect,
-  as an integer between \c 0 (mute) and \c 100 (full volume).
-  \c nil means the
-  \ref lua_api_audio_get_sound_volume "default sound volume".
 
+This is relative to the global
+\ref lua_api_audio_set_sound_volumne "sound volume".
+- \c volume (number): The new volume of this sound effect,
+  as an integer between \c 0 (mute) and \c 100 (full volume).
 */

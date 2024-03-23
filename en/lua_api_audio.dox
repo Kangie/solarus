@@ -94,16 +94,16 @@ This function has no effect if no music was playing.
 
 \subsection lua_api_audio_get_sound_volume sol.audio.get_sound_volume()
 
-Returns the default volume of sound effects.
-- Return value (number): The default volume of sound effects,
+Returns the global volume of sound effects.
+- Return value (number): The global volume of sound effects,
   as an integer between \c 0 (mute) and \c 100 (full volume).
 
 \subsection lua_api_audio_set_sound_volume sol.audio.set_sound_volume(volume)
 
 Sets the default volume of sound effects.
 
-Note that individual sound effects can override this volume with
-\ref lua_api_sound_set_volume "sound:set_volume()".
+Note that individual sound effects have their own volume relative to this
+global sound volume.
 - \c volume (number): The new default volume of sound effects, as an integer
   between \c 0 (mute) and \c 100 (full volume).
 
