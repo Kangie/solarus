@@ -49,7 +49,7 @@ Pauses or resumes the sound effect.
 Returns the volume of this sound effect.
 
 This is relative to the global
-\ref lua_api_audio_get_sound_volumne "sound volume".
+\ref lua_api_audio_get_sound_volume "sound volume".
 - Return value (number): The current volume of this sound effect,
   as an integer between \c 0 (mute) and \c 100 (full volume).
 
@@ -58,7 +58,36 @@ This is relative to the global
 Sets the volume of this sound effect.
 
 This is relative to the global
-\ref lua_api_audio_set_sound_volumne "sound volume".
+\ref lua_api_audio_set_sound_volume "sound volume".
 - \c volume (number): The new volume of this sound effect,
   as an integer between \c 0 (mute) and \c 100 (full volume).
+
+\subsection lua_api_sound_get_pan sound:get_pan()
+
+Returns the pan value of this sound effect.
+- Return value (number): The current pan of this sound effect,
+  as a number between \c -1.0 (left) and \c 1.0 (right).
+
+\subsection lua_api_sound_set_pan sound:set_pan(pan)
+
+Sets the pan of this sound effect.
+
+This has no effect on stereo sounds.
+- \c pan (number): The new pan of this sound effect,
+  as a number between \c -1.0 (left) and \c 1.0 (right).
+
+\subsection lua_api_sound_get_pitch sound:get_pitch()
+
+Returns the pitch value of this sound effect.
+- Return value (number): The current pitch of this sound effect,
+  as a number between \c 0.5 and \c 2.0.
+
+\subsection lua_api_sound_set_pitch sound:set_pitch(pitch)
+
+Sets the pitch of this sound effect.
+
+The value acts as a sample rate multiplier.
+- \c pitch (number): The new pitch of this sound effect,
+  as a number between \c 0.5 and \c 2.0.
+
 */
