@@ -342,6 +342,53 @@ float Sound::get_actual_volume() const {
 }
 
 /**
+ * \brief Returns the current pan value of this sound.
+ * 
+ * 0.0 is the default value for center.
+ * -1.0 is totally to the left.
+ * 1.0 is totally to the right.
+ * 
+ * \return The pan value between -1.0 and 1.0.
+ */
+float Sound::get_pan() const {
+
+  return pan;
+}
+
+/**
+ * \brief Sets the pan value of this sound effect.
+ *
+ * This has no effect on stereo sounds.
+ * 0.0 is the default value for center.
+ * -1.0 is totally to the left.
+ * 1.0 is totally to the right.
+ *
+ * \return The pan (-1.0 to 1.0).
+ */
+void Sound::set_pan(float pan) {
+  this->pan = pan;
+
+  if (source != AL_NONE) {
+    alSourcef(source, AL_ROLLOFF_FACTOR, 0.0f);
+    alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
+    alSource3f(
+      source,
+      AL_POSITION,
+      pan,
+      0,
+      -sqrtf(1.0f - pan * pan)
+    );
+
+    ALenum pan_error = alGetError();
+    if (pan_error != AL_NO_ERROR) {
+      std::ostringstream oss;
+      oss << "Cannot set pan to sound '" << get_id() << "': error " << std::hex << pan_error;
+      Debug::error(oss.str());
+    }
+  }
+}
+
+/**
  * \brief Updates the audio (music and sound) system.
  *
  * This function is called repeatedly by the game.
@@ -423,6 +470,9 @@ bool Sound::start() {
     alGenSources(1, &source);
     alSourcei(source, AL_BUFFER, buffer);
     alSourcef(source, AL_GAIN, get_actual_volume());
+
+    // update pan parameters
+    set_pan(pan);
 
     // play the sound
     ALenum error = alGetError();

@@ -57,6 +57,8 @@ class SOLARUS_API Sound: public ExportableToLua {
     void update_paused();
     int get_volume() const;
     void set_volume(int volume);
+    float get_pan() const;
+    void set_pan(float pan);
 
     static bool exists(const std::string& sound_id);
     static void play(const std::string& sound_id);
@@ -88,6 +90,7 @@ class SOLARUS_API Sound: public ExportableToLua {
     bool paused_by_script = false;               /**< Whether the sound is paused by a Lua script. */
     float volume = 1.0;                          /**< Volume of this sound effect
                                                   * (0.0 to 1.0, relative to the global volume). */
+    float pan = 0.0;                             /**< Pan of this sound effect (-1.0 to 1.0, default is 0.0). */
     static bool paused_by_system;                /**< Whether sounds are currently paused by the main loop,
                                                   * e.g. when losing focus */
 
