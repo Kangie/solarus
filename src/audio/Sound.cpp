@@ -389,6 +389,40 @@ void Sound::set_pan(float pan) {
 }
 
 /**
+ * \brief Returns the current pitch value of this sound.
+ * 
+ * 1.0 is the default value for normal speed.
+ * 
+ * \return The pitch value between 0.5 and 2.0.
+ */
+float Sound::get_pitch() const {
+
+  return pitch;
+}
+
+/**
+ * \brief Sets the pitch value of this sound effect.
+ * 
+ * The value acts as a sample rate multiplier.
+ *
+ * \return The pitch (0.5 to 2.0).
+ */
+void Sound::set_pitch(float pitch) {
+  this->pitch = pitch;
+
+  if (source != AL_NONE) {
+    alSourcef(source, AL_PITCH, pitch);
+
+    ALenum pitch_error = alGetError();
+    if (pitch_error != AL_NO_ERROR) {
+      std::ostringstream oss;
+      oss << "Cannot set pitch to sound '" << get_id() << "': error " << std::hex << pitch_error;
+      Debug::error(oss.str());
+    }
+  }
+}
+
+/**
  * \brief Updates the audio (music and sound) system.
  *
  * This function is called repeatedly by the game.
@@ -471,8 +505,9 @@ bool Sound::start() {
     alSourcei(source, AL_BUFFER, buffer);
     alSourcef(source, AL_GAIN, get_actual_volume());
 
-    // update pan parameters
+    // update initial parameters
     set_pan(pan);
+    set_pitch(pitch);
 
     // play the sound
     ALenum error = alGetError();
