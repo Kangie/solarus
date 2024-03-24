@@ -27,8 +27,11 @@
 
 This release adds new features but does not introduce any incompatibility.
 
+* Add support for multiple maps, cameras, heroes and game controllers.
+* New game controller API with better support and customization features.
 * Allow to stop or pause a sound effect (#1289).
 * Allow to change the volume of a sound effect (#1608).
+* Allow to change the pan and pitch of a sound effect.
 * Add a method `sol.surface.load()` to safely load from any directory (#1484).
 * Add a method `surface:save()` to save a surface to a PNG file (#1215).
 * Add functions `sol.main.rawget/rawset()` (#1424).
