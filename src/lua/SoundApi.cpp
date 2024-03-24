@@ -50,7 +50,9 @@ void LuaContext::register_sound_module() {
       { "get_volume", sound_api_get_volume },
       { "set_volume", sound_api_set_volume },
       { "get_pan", sound_api_get_pan },
-      { "set_pan", sound_api_set_pan }
+      { "set_pan", sound_api_set_pan },
+      { "get_pitch", sound_api_get_pitch },
+      { "set_pitch", sound_api_set_pitch },
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -231,6 +233,38 @@ int LuaContext::sound_api_set_pan(lua_State* l) {
     Sound& sound = *check_sound(l, 1);
     const float pan = LuaTools::check_number(l, 2);
     sound.set_pan(pan);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of sound:get_pitch().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_get_pitch(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Sound& sound = *check_sound(l, 1);
+
+    const float pitch = sound.get_pitch();
+    lua_pushnumber(l, pitch);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of sound:set_pitch().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_set_pitch(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Sound& sound = *check_sound(l, 1);
+    const float pitch = LuaTools::check_number(l, 2);
+    sound.set_pitch(pitch);
     return 0;
   });
 }
