@@ -781,14 +781,7 @@ Returns the joypad input that triggers the specified game command.
   Valid commands are
   \c "action", \c "attack", \c "pause", \c "item_1", \c "item_2",
   \c "right", \c "up", \c "left" and \c "down".
-- Return value (string): A string describing what joypad input triggers this
-  game command, or \c nil if no joypad input is mapped to this game command.
-  This string can have one of the following forms:
-  - <tt>"button X"</tt> where X is the index of a joypad button (first is \c 0),
-  - <tt>"axis X +"</tt> where X is the index of a joypad axis (first is \c 0),
-  - <tt>"axis X -"</tt> where X is the index of a joypad axis (first is \c 0),
-  - <tt>"hat X Y"</tt> where X is the index of a joypad hat (first is \c 0)
-  and Y is a direction (\c 0 to \c 7).
+- Return value (string): Joypad binding code (see \ref lua_api_controls_set_joypad_binding)
 
 \remark equivalent to <tt>game:get_controls():get_joypad_binding(command)</tt>.
 
@@ -799,14 +792,8 @@ Sets the joypad input that should trigger the specified game command.
   Valid commands are
   \c "action", \c "attack", \c "pause", \c "item_1", \c "item_2",
   \c "right", \c "up", \c "left" and \c "down".
-- joypad_string (string): A string describing what joypad input should trigger
-  this game command (\c nil means none).
-  This string must have one of the following forms:
-  - <tt>"button X"</tt> where X is the index of a joypad button (first is \c 0),
-  - <tt>"axis X +"</tt> where X is the index of a joypad axis (first is \c 0),
-  - <tt>"axis X -"</tt> where X is the index of a joypad axis (first is \c 0),
-  - <tt>"hat X Y"</tt> where X is the index of a joypad hat (first is \c 0)
-    and Y is a direction (\c 0 to \c 7).
+- joypad_string (string): Joypad binding code (see \ref lua_api_controls_set_joypad_binding)
+
 
 \note If this joypad input was already mapped to a command, joypad inputs of
 both commands are switched.

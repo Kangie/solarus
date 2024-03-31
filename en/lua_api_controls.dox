@@ -124,6 +124,10 @@ Gets the key that is bound to the given command
 - \c command (string): Any valid command name
 - \c button (string): A valid joypad binding code
 
+Binding codes must be one of the following : 
+- A valid joypad button string (see \ref lua_joypad_api).
+- An axis binding formed like this : <tt>"<axis_name> {+/-}"</tt> where axis_name is a valid joypad axis string (see \ref lua_joypad_api)
+
 \subsection lua_api_controls_get_joypad_binding controls:get_joypad_binding(command)
 
 Gets the joypad binding code bound to the given command
@@ -145,18 +149,18 @@ Returns the keys bound to move the given axis
 
 - Return values (string, string): The positive and negative key codes
 
-\subsection lua_api_controls_set_joypad_axis_binding controls:set_joypad_axis_binding(axis, joypad_axis)
+\subsection lua_api_controls_set_joypad_axis_binding controls:set_joypad_axis_binding(axis, joypad_axis_binding)
 
 Sets the joypad axis that will drive the given virtual axis
 
-- \c axis (string): Any valid axis name
-- \c joypad_axis (string): A valid joypad axis name
+- \c axis (string): Any valid control axis name
+- \c joypad_axis (string): A valid joypad axis binding (see \ref lua_api_controls_set_keyboard_axis_binding)
 
 \subsection lua_api_controls_get_joypad_axis_binding controls:get_joypad_axis_binding(axis)
 
 Gets the joypad axis that is bound to the given axis
 
-- Return value (string) : Bound joypad axis
+- Return value (string) : Joypad axis binding
 
 \subsection lua_api_controls_set_keyboard_bindings controls:set_keyboard_bindings(bindings)
 
