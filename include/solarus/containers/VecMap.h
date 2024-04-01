@@ -103,6 +103,17 @@ class VecMap {
       return {};
     }
 
+    std::optional<Key> search_all_for(const T& v) const {
+      for(const auto& kvp : map) {
+        for(const auto& av : kvp.second) {
+          if(av == v) {
+            return kvp.first;
+          }
+        }
+      }
+      return {};
+    }
+
     std::optional<T> find_front(const Key& k) const {
       const auto& it = map.find(k);
       if (it != map.end() && it->second.size()) {
@@ -112,10 +123,19 @@ class VecMap {
     }
 
     template<class F>
-    void foreach_front(F&& f) const {
+    void for_each_front(F&& f) const {
       for(const auto& kvp : map) {
         if(kvp.second.size()) {
           f(kvp.first, kvp.second.front());
+        }
+      }
+    }
+
+    template<class F>
+    void for_each(F&& f) const {
+      for(const auto& [k, vec] : map) {
+        for(const auto& v : vec) {
+          f(k, v);
         }
       }
     }

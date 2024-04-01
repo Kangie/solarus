@@ -97,11 +97,36 @@ struct Marshalling<Controls::ControlAxisBinding>{
         if(cab) {
           return cab.value();
         }
+        error(context, L, index, std::string("invalid controlaxis binding : '") + data + "'");
       }
       type_error(context, L, index, "controlaxisbinding");
     }
 
     static inline void push(lua_State* L, const Controls::ControlAxisBinding& binding) {
+      auto str = binding.to_string();
+      lua_pushlstring(L, str.c_str(), str.size());
+    }
+};
+
+template<>
+struct Marshalling<Controls::JoypadAxisBinding>{
+    static inline Controls::JoypadAxisBinding check_arg(lua_State * L, int index, const CheckContext& context) {
+      size_t length;
+      if (const char * data = LuaTools::islstring(L, index, &length)) {
+        auto cab = Controls::JoypadAxisBinding::from_string(std::string(data, length));
+        if(cab) {
+          return cab.value();
+        }
+        error(context, L, index, std::string("invalid joypadaxisbinding : '") + data + "'");
+      }
+      type_error(context, L, index, "joypadaxisbinding");
+    }
+
+    static inline void push(lua_State* L, const Controls::JoypadAxisBinding& binding) {
+      if(binding.invalid()) {
+        lua_pushnil(L);
+      }
+
       auto str = binding.to_string();
       lua_pushlstring(L, str.c_str(), str.size());
     }
