@@ -196,7 +196,11 @@ static inline void push_any(lua_State * L, const std::optional<T>& option) {
 /// \copydoc push_any(lua_State*,bool)
 template<typename T>
 static inline void push_any(lua_State * L, const std::shared_ptr<T>& userdata) {
-  LuaContext::push_userdata(L, *userdata);
+  if(userdata) {
+    LuaContext::push_userdata(L, *userdata);
+  } else {
+    lua_pushnil(L);
+  }
 }
 
 /// \copydoc push_any(lua_State*,bool)
