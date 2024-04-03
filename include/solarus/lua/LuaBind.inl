@@ -196,7 +196,7 @@ static inline void push_any(lua_State * L, const std::optional<T>& option) {
 /// \copydoc push_any(lua_State*,bool)
 template<typename T>
 static inline void push_any(lua_State * L, const std::shared_ptr<T>& userdata) {
-  if(userdata) {
+  if (userdata) {
     LuaContext::push_userdata(L, *userdata);
   } else {
     lua_pushnil(L);
@@ -591,7 +591,7 @@ template<typename T>
 struct CheckArg<std::shared_ptr<T>> {
   static std::shared_ptr<T> call(lua_State * L, int index, const CheckContext& context) {
     // Pointer can be null
-    if(lua_isnil(L, index)) return nullptr;
+    if (lua_isnil(L, index)) return nullptr;
     if (auto sptr = test_shared_exportable<T>(L, index)) {
       return sptr;
     }
