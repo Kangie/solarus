@@ -71,5 +71,9 @@ function map:on_opening_transition_finished()
   local jabindings = controls:get_joypad_axis_bindings()
   check_bindings(axis_bindings, jabindings)
 
+  -- Check that setting and getting nil joypad works
+  controls:set_joypad(nil)
+  assert_equal(controls:get_joypad(), nil)
+
   sol.main.exit()
 end

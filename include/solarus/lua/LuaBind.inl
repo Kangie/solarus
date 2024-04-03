@@ -585,11 +585,13 @@ struct CheckArg<std::optional<T>> {
 /**
  * \brief \ref CheckArg<T> specialization for shared_ptr<T> types.
  *
- * If the value is of the correct type and exportable_to_lua, returns it in a shared_ptr
+ * If the value is nil or of the correct type and exportable_to_lua, returns it in a shared_ptr
  */
 template<typename T>
 struct CheckArg<std::shared_ptr<T>> {
   static std::shared_ptr<T> call(lua_State * L, int index, const CheckContext& context) {
+    // Pointer can be null
+    if(lua_isnil(L, index)) return nullptr;
     if (auto sptr = test_shared_exportable<T>(L, index)) {
       return sptr;
     }
