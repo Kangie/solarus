@@ -196,7 +196,11 @@ static inline void push_any(lua_State * L, const std::optional<T>& option) {
 /// \copydoc push_any(lua_State*,bool)
 template<typename T>
 static inline void push_any(lua_State * L, const std::shared_ptr<T>& userdata) {
-  LuaContext::push_userdata(L, *userdata);
+  if (userdata) {
+    LuaContext::push_userdata(L, *userdata);
+  } else {
+    lua_pushnil(L);
+  }
 }
 
 /// \copydoc push_any(lua_State*,bool)
@@ -581,11 +585,13 @@ struct CheckArg<std::optional<T>> {
 /**
  * \brief \ref CheckArg<T> specialization for shared_ptr<T> types.
  *
- * If the value is of the correct type and exportable_to_lua, returns it in a shared_ptr
+ * If the value is nil (or not passed) or of the correct type and exportable_to_lua, returns it in a shared_ptr
  */
 template<typename T>
 struct CheckArg<std::shared_ptr<T>> {
   static std::shared_ptr<T> call(lua_State * L, int index, const CheckContext& context) {
+    // Pointer can be null
+    if (lua_isnoneornil(L, index)) return nullptr;
     if (auto sptr = test_shared_exportable<T>(L, index)) {
       return sptr;
     }
