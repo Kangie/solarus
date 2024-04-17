@@ -111,8 +111,17 @@ void PackageDialog::process_finished(int code, QProcess::ExitStatus status) {
 void PackageDialog::start_file_selection() {
 
   const QString& path = QFileDialog::getSaveFileName(
-        this, tr("Quest package location:"), save_path,
-        tr("Solarus Packages (*.solarus)"));
+        this,
+        tr("Quest package location:"),
+        save_path,
+        tr("Solarus Packages (*.solarus)"),
+        nullptr,
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+        QFileDialog::DontUseNativeDialog
+#else
+        QFileDialog::Options()
+#endif
+  );
   if (!path.isEmpty()) {
     set_save_path(path);
   }
