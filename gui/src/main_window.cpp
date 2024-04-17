@@ -288,7 +288,15 @@ void MainWindow::on_action_add_quest_triggered() {
 
   QString quest_path = QFileDialog::getOpenFileName(
         this,
-        tr("Select archive or quest.dat")
+        tr("Select archive or quest.dat"),
+        QString(),
+        QString(),
+        nullptr,
+#ifdef SOLARUS_GUI_NO_NATIVE_DIALOGS
+        QFileDialog::DontUseNativeDialog
+#else
+        QFileDialog::Options()
+#endif
   );
 
   if (quest_path.isEmpty()) {
