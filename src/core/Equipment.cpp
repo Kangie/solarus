@@ -47,8 +47,8 @@ Equipment::Equipment(const SavegamePtr &savegame, const std::string& prefix):
  */
 void Equipment::set_initial_values() {
   // Set the initial equipment.
-  set_max_life(1);
-  set_life(1);
+  set_max_life(12);
+  set_life(get_max_life());
   set_ability(Ability::TUNIC, 1);  // Mandatory to have a valid hero sprite.
   set_ability(Ability::PUSH, 1);
   set_ability(Ability::GRAB, 1);
