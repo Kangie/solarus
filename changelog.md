@@ -18,6 +18,8 @@
 * Fix zoom clamping in map, tileset, sprite and image views (#513).
 * Initial quest: fix item icon amount displaying.
 * Initial quest: fix item icon still showing unequiped items.
+* Initial quest: fix missing heart falling animation error.
+* Initial quest: fix missing broken vase sprite.
 
 ## Solarus Quest Editor 1.6.5 (2021-04-06)
 
