@@ -198,6 +198,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1611_entity_overlaps_when_removed"
   "bugs/1617_crash_disabled_chest"
   "bugs/1619_camera_obstacles"
+  "bugs/1628_hero_set_direction_crash"
 )
 
 # Test that should succeed when there are non-fatal errors

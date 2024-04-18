@@ -2278,6 +2278,12 @@ int LuaContext::hero_api_set_direction(lua_State* l) {
     Hero& hero = *check_hero(l, 1);
     int direction = LuaTools::check_int(l, 2);
 
+    if (direction < 0 || direction >= 4) {
+      std::ostringstream oss;
+      oss << "Invalid hero direction " << direction
+          << ": should be between 0 and 3";
+      LuaTools::arg_error(l, 2, oss.str());
+    }
     hero.set_animation_direction(direction);
 
     return 0;

@@ -9,6 +9,7 @@ The multiplayer update!
 * Fix crash when teletransporting to a map without the same layer (#1419).
 * Fix crash when a moving custom entity activates a stream (#1562).
 * Fix crash when a sprite is synchronized to a sprite with more frames (#1117).
+* Fix crash when calling `hero:set_direction()` with an invalid value (#1628).
 * Fix crash when entering a map with tileset-specific sprites nearby.
 * Fix crash when resetting the game from the update step (#1583).
 * Fix return of invalid sprite object with bad sprite id (#1423).
