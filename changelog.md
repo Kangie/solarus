@@ -2,6 +2,8 @@
 
 ## Solarus 2.0.0 (in progress)
 
+The multiplayer update!
+
 ### Engine changes
 
 * Fix crash when teletransporting to a map without the same layer (#1419).
@@ -25,7 +27,12 @@
 
 ### Lua API changes
 
-This release adds new features but does not introduce any incompatibility.
+#### Changes that introduce incompatibilities
+
+* Joypad input events now provide button names instead of numbers.
+* `hero:teleport()` now also teleports the camera insetad of recreating one.
+
+#### Changes that do not introduce incompatibilities
 
 * Add support for multiple maps, cameras, heroes and game controllers.
 * New game controller API with better support and customization features.
