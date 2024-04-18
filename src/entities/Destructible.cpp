@@ -77,7 +77,9 @@ Destructible::Destructible(
   is_regenerating(false) {
 
   set_origin(8, 13);
-  create_sprite(get_animation_set_id());
+  if (!get_animation_set_id().empty()) {
+    create_sprite(get_animation_set_id());
+  }
   set_weight(0);
 
   update_collision_modes();

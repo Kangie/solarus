@@ -19,6 +19,7 @@ The multiplayer update!
 * Fix missing equipement for second heroes (#1576).
 * Fix `hero.set_invincible` not suspended with the game (#1554).
 * Fix custom entity still interacting when moved or disabled (#1056, #1407).
+* Fix unhelpful error when a destructible has no sprite.
 * Fix thrown objects destruction animation position (#1508).
 * Fix camera stuck on entities other than separators (#1619).
 * Fix crash when loading a save file with Lua keywords (#1609).
