@@ -67,7 +67,7 @@ struct Marshalling<Axis>{
 template<>
 struct Marshalling<Solarus::Controls::JoypadBinding>{
     static inline Controls::JoypadBinding check_arg(lua_State * L, int index, const CheckContext& context) {
-      if(lua_isnil(L, index)){
+      if(lua_isnoneornil(L, index)){
         return Controls::JoypadBinding(JoyPadButton::INVALID);
       }
       size_t length;
@@ -176,6 +176,17 @@ static void capture_bindings(Controls& cmds, Command cmd, std::optional<LuaBind:
   cmds.customize(cmd, callback.value_or(LuaBind::Callback()));
 }
 
+
+/**
+ * \brief Implementation of sol.controls:set_keyboard_binding
+ * \param cmds the control object
+ * \param cmd the command to capture
+ * \param a valid key code or nil to unbind
+ */
+static void set_keyboard_binding(Controls& cmds, Command cmd, std::optional<InputEvent::KeyboardKey> key) {
+  cmds.set_keyboard_binding(cmd, key.value_or(InputEvent::KeyboardKey::NONE));
+}
+
 /**
  * \brief Implementation of sol.controls:simulate_pressed.
  * \param cmds the control object
@@ -225,7 +236,7 @@ void LuaContext::register_controls_module() {
     { "is_pressed", LUA_TO_C_BIND(&Controls::is_command_pressed)},
     { "get_axis_state", LUA_TO_C_BIND(&Controls::get_axis_state)},
     { "get_direction", LUA_TO_C_BIND(get_direction)},
-    { "set_keyboard_binding", LUA_TO_C_BIND(&Controls::set_keyboard_binding)},
+    { "set_keyboard_binding", LUA_TO_C_BIND(set_keyboard_binding)},
     { "get_keyboard_binding", LUA_TO_C_BIND(&Controls::get_keyboard_binding)},
     { "set_joypad_binding", LUA_TO_C_BIND(&Controls::set_joypad_binding)},
     { "get_joypad_binding", LUA_TO_C_BIND(&Controls::get_joypad_binding)},

@@ -75,6 +75,7 @@ ControlsPtr ControlsDispatcher::create_commands_from_joypad(const JoypadPtr& joy
 
 void ControlsDispatcher::add_commands(const ControlsPtr& cmds) {
   commands.insert(std::weak_ptr<Controls>(cmds));
+  to_remove.erase(cmds);
 }
 
 void ControlsDispatcher::remove_commands(const std::weak_ptr<Controls>& cmds) {
