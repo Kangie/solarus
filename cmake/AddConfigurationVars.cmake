@@ -11,3 +11,6 @@ set(CMAKE_AUTOMOC ON)
 
 # Assets directory (autodetect if empty).
 set(SOLARUSEDITOR_ASSETS_DIR "" CACHE PATH "Assets directory (autodetect if empty).")
+
+# Disable GUI native dialogs.
+set(SOLARUSEDITOR_NO_NATIVE_DIALOGS "OFF" CACHE BOOL "Disable native dialogs in the Solarus Editor GUI.")

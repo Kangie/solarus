@@ -1367,7 +1367,14 @@ void MapEditor::export_to_image() {
         this,
         tr("Save map as PNG file"),
         QString("%1/%2.png").arg(get_quest().get_root_path(), map_id_without_dirs),
-        tr("PNG image (*.png)"));
+        tr("PNG image (*.png)"),
+        nullptr,
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+        QFileDialog::DontUseNativeDialog
+#else
+        QFileDialog::Options()
+#endif
+  );
 
   if (!file_name.isEmpty()) {
     QImage image = ui.map_view->export_to_image();

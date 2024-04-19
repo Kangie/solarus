@@ -104,7 +104,18 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   connect(ui.map_tileset_zoom_field, SIGNAL(currentIndexChanged(int)),
           this, SLOT(change_map_tileset_zoom()));
   connect(ui.editor_browse_button,&QPushButton::pressed,[&]{
-     QString path = QFileDialog::getOpenFileName(this,tr("Select external editor"));
+     QString path = QFileDialog::getOpenFileName(
+         this,
+         tr("Select external editor"),
+         QString(),
+         QString(),
+         nullptr,
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+         QFileDialog::DontUseNativeDialog
+#else
+         QFileDialog::Options()
+#endif
+     );
      ui.editor_cmd_field->setText(path);
      emit ui.editor_cmd_field->textChanged(path);
   });
@@ -314,8 +325,15 @@ void SettingsDialog::change_working_directory() {
 void SettingsDialog::browse_working_directory() {
 
   QString new_working_directory = QFileDialog::getExistingDirectory(
-    this, tr("Working directory"),
-    ui.working_directory_field->text());
+    this,
+    tr("Working directory"),
+    ui.working_directory_field->text(),
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+    QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog
+#else
+    QFileDialog::ShowDirsOnly
+#endif
+  );
 
   if (new_working_directory.isEmpty()) {
     return; // Canceled.
