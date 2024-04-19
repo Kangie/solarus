@@ -119,7 +119,11 @@ void ImportDialog::browse_source_quest() {
         this,
         tr("Select a quest where to import from"),
         initial_value,
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+        QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog
+#else
         QFileDialog::ShowDirsOnly
+#endif
   );
 
   if (src_quest_path.isEmpty()) {

@@ -29,6 +29,12 @@ Solarus::Rectangle to_solarus_rect(const QRect& qt_rect);
 
 QRect from_two_points(const QPoint& p1, const QPoint& p2);
 
+QRect expand_rect(
+    const QRect& old_box,
+    const QPoint& fixed_corner,
+    const QPoint& expansion,
+    const QSize& base_size);
+
 }
 
 }

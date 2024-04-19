@@ -147,7 +147,11 @@ void NewQuestDialogDirectoryPage::browse_directories() {
       this,
       tr("Select quest directory"),
       ui.quest_directory_edit->text(),
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+      QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
+#else
       QFileDialog::ShowDirsOnly);
+#endif
 
   if (quest_path.isEmpty()) {
     return;

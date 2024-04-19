@@ -844,7 +844,12 @@ void MainWindow::on_action_load_quest_triggered() {
         this,
         tr("Select quest directory"),
         settings.get_value_string(EditorSettings::working_directory),
-        QFileDialog::ShowDirsOnly);
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+        QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog
+#else
+        QFileDialog::ShowDirsOnly
+#endif
+  );
 
   if (quest_path.isEmpty()) {
     // Canceled.

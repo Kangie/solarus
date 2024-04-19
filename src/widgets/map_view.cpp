@@ -2551,55 +2551,7 @@ QRect ResizingEntitiesState::get_box_from_expansion_and_translation(
   EntityModel& entity = map.get_entity(index);
   const QSize& base_size = entity.get_base_size();
   const QRect& old_box = old_boxes.value(index);
-  QRect new_box = old_box;
-
-  // Expansion.
-  if (fixed_corner.x() == -1) {
-    // Left side fixed, right side free.
-    int width = old_box.width() + expansion.x();
-    if (width > 0) {
-      new_box.setWidth(width);
-    }
-    else {
-      new_box.setWidth(-width + 2 * base_size.width());
-      new_box.translate(width - base_size.width(), 0);
-    }
-  }
-  else {
-    // Right side fixed, left side free.
-    int width = old_box.width() - expansion.x();
-    if (width > 0) {
-      new_box.setWidth(width);
-      new_box.translate(expansion.x(), 0);
-    }
-    else {
-      new_box.setWidth(-width + 2 * base_size.width());
-      new_box.translate(old_box.width() - base_size.width(), 0);
-    }
-  }
-  if (fixed_corner.y() == -1) {
-    // Top side fixed, bottom side free.
-    int height = old_box.height() + expansion.y();
-    if (height > 0) {
-      new_box.setHeight(height);
-    }
-    else {
-      new_box.setHeight(-height + 2 * base_size.height());
-      new_box.translate(0, height - base_size.height());
-    }
-  }
-  else {
-    // Bottom side fixed, top side free.
-    int height = old_box.height() - expansion.y();
-    if (height > 0) {
-      new_box.setHeight(height);
-      new_box.translate(0, expansion.y());
-    }
-    else {
-      new_box.setHeight(-height + 2 * base_size.height());
-      new_box.translate(0, old_box.height() - base_size.height());
-    }
-  }
+  QRect new_box = Rectangle::expand_rect(old_box, fixed_corner, expansion, base_size);
 
   // Translation.
   if (!translation.isNull()) {

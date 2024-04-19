@@ -687,7 +687,13 @@ void ShaderEditor::browse_source_file(WhichGlslEditor which) {
           this,
           tr("Open a GLSL file"),
           directory,
-          tr("GLSL shader file (*.glsl)")
+          tr("GLSL shader file (*.glsl)"),
+          nullptr,
+#ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
+          QFileDialog::DontUseNativeDialog
+#else
+          QFileDialog::Options()
+#endif
       );
 
       if (!file_name.isEmpty()) {

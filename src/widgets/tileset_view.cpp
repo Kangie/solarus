@@ -33,6 +33,7 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QtMath>
 
 namespace SolarusEditor {
 
@@ -102,6 +103,33 @@ private:
       current_area_items;    /**< Graphic items of the rectangles of target positions. */
 };
 
+/**
+ * @brief Changing the size of the selected pattern.
+ */
+class ResizingPatternState : public TilesetView::State {
+
+public:
+  ResizingPatternState(TilesetView& view);
+
+  void start() override;
+  void stop() override;
+
+  void mouse_moved(const QMouseEvent& event) override;
+  void mouse_pressed(const QMouseEvent& event) override;
+
+private:
+  void compute_fixed_corner();
+  void apply_resize();
+
+  QGraphicsRectItem* current_area_item =
+      nullptr;                  /**< Graphic item of the rectangle the user is drawing
+                                 * (belongs to the scene). */
+  QPoint fixed_corner;          /**< Which corner of the rectangle is fixed (+-1, +-1).
+                                 * The opposite one follows the mouse. */
+  QRect old_box;                /**< Position of the pattern before the change. */
+  QRect current_box;            /**< Modified position of the pattern. */
+};
+
 }  // Anonymous namespace.
 
 /**
@@ -114,6 +142,7 @@ TilesetView::TilesetView(QWidget* parent) :
   view_settings(nullptr),
   zoom(1.0),
   state(),
+  resize_pattern_action(nullptr),
   create_border_set_action(nullptr),
   change_pattern_id_action(nullptr),
   delete_patterns_action(nullptr),
@@ -123,6 +152,16 @@ TilesetView::TilesetView(QWidget* parent) :
 
   setAcceptDrops(true);
   setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+  resize_pattern_action = new QAction(
+      tr("Resize"),
+      this
+  );
+  resize_pattern_action->setShortcut(tr("R"));
+  resize_pattern_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  connect(resize_pattern_action, &QAction::triggered,
+          this, &TilesetView::start_state_resizing_pattern);
+  addAction(resize_pattern_action);
 
   create_border_set_action = new QAction(
       QIcon(":/images/border_kind_5.png"),
@@ -242,6 +281,9 @@ void TilesetView::set_tileset(TilesetModel* tileset) {
             this, &TilesetView::notify_tileset_changed);
     connect(tileset, &TilesetModel::tileset_image_file_reloaded,
             this, qOverload<>(&TilesetView::update));
+    connect(&tileset->get_selection_model(), &QItemSelectionModel::selectionChanged,
+            this, &TilesetView::tileset_selection_changed);
+    tileset_selection_changed();
   }
 }
 
@@ -321,6 +363,13 @@ bool TilesetView::is_read_only() const {
  */
 void TilesetView::set_read_only(bool read_only) {
   this->read_only = read_only;
+
+  if (read_only) {
+    resize_pattern_action->setEnabled(false);
+    create_border_set_action->setEnabled(false);
+    delete_patterns_action->setEnabled(false);
+    change_pattern_id_action->setEnabled(false);
+  }
 }
 
 /**
@@ -492,6 +541,19 @@ void TilesetView::paintEvent(QPaintEvent* event) {
 }
 
 /**
+ * @brief Receives a key press event.
+ * @param event The event to handle.
+ */
+void TilesetView::keyPressEvent(QKeyEvent* event) {
+
+  if (event->key() == Qt::Key_Escape) {
+    start_state_idle();
+    return;
+  }
+  QGraphicsView::keyPressEvent(event);
+}
+
+/**
  * @brief Receives a mouse press event.
  * @param event The event to handle.
  */
@@ -598,13 +660,17 @@ void TilesetView::show_context_menu(const QPoint& where) {
 
   QMenu* menu = new QMenu(this);
 
+  // Resize.
+  menu->addAction(resize_pattern_action);
+
   // Ground.
-  build_context_menu_ground(*menu, selected_indexes);
+  QMenu* ground_menu = new QMenu(tr("Ground"), this);
+  build_context_menu_ground(*ground_menu, selected_indexes);
+  menu->addMenu(ground_menu);
 
   // Default layer.
   QMenu* layer_menu = new QMenu(tr("Default layer"), this);
   build_context_menu_layer(*layer_menu, selected_indexes);
-  menu->addSeparator();
   menu->addMenu(layer_menu);
 
   // Repeat mode.
@@ -624,7 +690,6 @@ void TilesetView::show_context_menu(const QPoint& where) {
 
   // Change pattern id.
   menu->addSeparator();
-  change_pattern_id_action->setEnabled(tileset->get_selected_index() != -1);
   menu->addAction(change_pattern_id_action);
 
   // Delete patterns.
@@ -759,6 +824,36 @@ void TilesetView::build_context_menu_scrolling(
 }
 
 /**
+ * @brief Called when the selection has changed.
+ */
+void TilesetView::tileset_selection_changed() {
+
+  if (tileset == nullptr) {
+    return;
+  }
+
+  if (!is_read_only()) {
+    const int selection_count = tileset->get_selection_count();
+    const int pattern_index = tileset->get_selected_index();
+    if (selection_count == 1) {
+      resize_pattern_action->setEnabled(tileset->get_pattern_num_frames(pattern_index) == 1);
+      change_pattern_id_action->setEnabled(true);
+    } else {
+      resize_pattern_action->setEnabled(false);
+      change_pattern_id_action->setEnabled(false);
+    }
+
+    if (selection_count == 0) {
+      create_border_set_action->setEnabled(false);
+      delete_patterns_action->setEnabled(false);
+    } else {
+      create_border_set_action->setEnabled(true);
+      delete_patterns_action->setEnabled(true);
+    }
+  }
+}
+
+/**
  * @brief Changes the state of the view.
  *
  * The previous state if any is destroyed.
@@ -798,8 +893,8 @@ void TilesetView::start_state_drawing_rectangle(const QPoint& initial_point) {
 }
 
 /**
- * @brief Moves to the state of moving the selected pattern.
- * @param initial_point Where the user starts dragging the pattern,
+ * @brief Moves to the state of moving the selected patterns.
+ * @param initial_point Where the user starts dragging the patterns,
  * in view coordinates.
  */
 void TilesetView::start_state_moving_patterns(const QPoint& initial_point) {
@@ -809,6 +904,18 @@ void TilesetView::start_state_moving_patterns(const QPoint& initial_point) {
   }
 
   set_state(std::unique_ptr<State>(new MovingPatternsState(*this, initial_point)));
+}
+
+/**
+ * @brief Moves to the state of resizing the selected pattern.
+ */
+void TilesetView::start_state_resizing_pattern() {
+
+  if (tileset->get_selected_index() == -1) {
+    return;
+  }
+
+  set_state(std::unique_ptr<State>(new ResizingPatternState(*this)));
 }
 
 void TilesetView::dragEnterEvent(QDragEnterEvent* event) {
@@ -1468,6 +1575,112 @@ void MovingPatternsState::drop(QDropEvent& event) {
     event.acceptProposedAction();
   }
   apply_move();
+}
+
+/**
+ * @brief Constructor.
+ */
+ResizingPatternState::ResizingPatternState(TilesetView& view):
+  TilesetView::State(view),
+  current_area_item(nullptr) {
+
+}
+
+/**
+ * @copydoc TilesetView::State::start
+ */
+void ResizingPatternState::start() {
+
+  const int selected_index = get_tileset().get_selected_index();
+  old_box = get_tileset().get_pattern_frames_bounding_box(selected_index);
+  current_area_item = new QGraphicsRectItem(old_box);
+  current_area_item->setPen(QPen(Qt::yellow));
+  get_scene().addItem(current_area_item);
+
+  compute_fixed_corner();
+}
+
+/**
+ * @copydoc TilesetView::State::stop
+ */
+void ResizingPatternState::stop() {
+
+  get_scene().removeItem(current_area_item);
+  delete current_area_item;
+  current_area_item = nullptr;
+}
+
+/**
+ * Determines which corner of the pattern should be fixed
+ * and which one should follow the mouse.
+ */
+void ResizingPatternState::compute_fixed_corner() {
+
+  // Decide the resizing directions depending
+  // on the mouse position relative to the pattern.
+  const int selected_index = get_tileset().get_selected_index();
+  if (selected_index == -1) {
+    return;
+  }
+
+  TilesetView& view = get_view();
+
+  const QPoint mouse_position_in_view = view.mapFromGlobal(QCursor::pos());
+  const QPoint mouse_position = view.mapToScene(mouse_position_in_view).toPoint();
+
+  const QPointF& pattern_center = current_area_item->rect().center();
+  fixed_corner.setX(mouse_position.x() >= pattern_center.x() ? -1 : 1);
+  fixed_corner.setY(mouse_position.y() >= pattern_center.y() ? -1 : 1);
+}
+
+/**
+ * @copydoc TilesetView::State::mouse_moved
+ */
+void ResizingPatternState::mouse_moved(const QMouseEvent& event) {
+
+  QPointF tileset_point_f = get_view().mapToScene(event.pos());
+  QPoint current_point(qFloor(tileset_point_f.x()), qFloor(tileset_point_f.y()));
+
+  QPoint free_corner = old_box.topLeft();
+  if (fixed_corner.x() == -1) {
+    // The left side is fixed, the right side moves.
+    free_corner.rx() += old_box.width() - 8;
+  }
+  if (fixed_corner.y() == -1) {
+    // The top side is fixed, the bottom side moves.
+    free_corner.ry() += old_box.height() - 8;
+  }
+  const QSize base_size(8, 8);
+  const QPoint expansion = Point::round_down(current_point - free_corner, base_size);
+  current_box = Rectangle::expand_rect(old_box, fixed_corner, expansion, base_size);
+
+  current_area_item->setRect(current_box);
+
+  const bool valid = get_view().get_items_intersecting_areas({ current_area_item }, true).isEmpty();
+  current_area_item->setPen(valid ? QPen(Qt::yellow) : QPen(Qt::red));
+}
+
+/**
+ * @copydoc TilesetView::State::mouse_pressed
+ */
+void ResizingPatternState::mouse_pressed(const QMouseEvent& /* event */) {
+  apply_resize();
+}
+
+/**
+ * @brief Applies the new size to the selected pattern.
+ */
+void ResizingPatternState::apply_resize() {
+
+  if (current_area_item != nullptr &&
+      !current_box.isEmpty() &&
+      get_view().get_items_intersecting_areas({ current_area_item }, true).isEmpty() &&
+      get_tileset().get_selection_count() == 1 &&
+      !get_view().is_read_only() &&
+      current_box != old_box) {
+    get_view().resize_selected_pattern_requested(current_box);
+  }
+  get_view().start_state_idle();
 }
 
 }

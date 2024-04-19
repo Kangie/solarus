@@ -127,6 +127,40 @@ private:
 };
 
 /**
+ * @brief Resizing a tile pattern.
+ */
+class ResizePatternCommand : public TilesetEditorCommand {
+
+public:
+
+  ResizePatternCommand(
+      TilesetEditor& editor, int index, const QRect& box) :
+    TilesetEditorCommand(editor, TilesetEditor::tr("Resize pattern")),
+    index(index),
+    box_before(get_model().get_pattern_frame(index)),
+    box_after(box) {
+  }
+
+  virtual void undo() override {
+
+    get_model().set_pattern_box(index, box_before);
+    get_model().set_selected_index(index);
+  }
+
+  virtual void redo() override {
+
+    get_model().set_pattern_box(index, box_after);
+    get_model().set_selected_index(index);
+  }
+
+private:
+
+  int index;
+  QRect box_before;
+  QRect box_after;
+};
+
+/**
  * @brief Moving several tile patterns.
  */
 class SetPatternsPositionCommand : public TilesetEditorCommand {
@@ -979,7 +1013,9 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
           this, &TilesetEditor::update_pattern_id_field);
 
   connect(ui.tileset_view, &TilesetView::change_selected_patterns_position_requested,
-          this, &TilesetEditor::change_selected_patterns_position_requested);
+          this, &TilesetEditor::change_selected_patterns_position_requested);  
+  connect(ui.tileset_view, &TilesetView::resize_selected_pattern_requested,
+          this, &TilesetEditor::resize_selected_pattern_requested);
 
   connect(ui.ground_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
           this, &TilesetEditor::ground_selector_activated);
@@ -1275,6 +1311,19 @@ void TilesetEditor::change_selected_patterns_position_requested(const QPoint& de
   } else {
     try_command(new SetPatternsPositionCommand(*this, indexes, delta));
   }
+}
+
+/**
+ * @brief Slot called when the user wants to resize a tile pattern.
+ */
+void TilesetEditor::resize_selected_pattern_requested(const QRect& box) {
+
+  int index = model->get_selected_index();
+  if (index == -1) {
+    // No pattern or multiple patterns selected.
+    return;
+  }
+  try_command(new ResizePatternCommand(*this, index, box));
 }
 
 /**

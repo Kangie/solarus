@@ -78,7 +78,7 @@ QList<QAction*> EnumMenus<E>::create_actions(
 
     // Connect to the provided callback if any.
     if (on_triggered) {
-      QObject::connect(action, &QAction::triggered, [on_triggered, value] {
+      QObject::connect(action, &QAction::triggered, action, [on_triggered, value] {
         on_triggered(value);
       });
     }

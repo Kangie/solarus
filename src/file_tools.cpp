@@ -39,6 +39,9 @@ namespace {
 /**
  * @brief Determines the path to the Solarus Quest Editor assets directory.
  *
+ * If the macro SOLARUSEDITOR_ASSETS_DIR is defined, it is used as the only
+ * path for searching. Otherwise, the strategy below is used instead.
+ *
  * The directory "assets" is searched in the following paths in this order:
  * - The directory containing the executable.
  * - The source path (macro SOLARUSEDITOR_SOURCE_PATH)
@@ -46,9 +49,12 @@ namespace {
  * - The install path (macro SOLARUSEDITOR_DATADIR_PATH).
  */
 void initialize_assets() {
-
-  const QString& executable_path = QCoreApplication::applicationDirPath();
   QStringList potential_paths;
+
+#ifdef SOLARUSEDITOR_ASSETS_DIR
+  potential_paths << SOLARUSEDITOR_ASSETS_DIR;
+#else
+  const QString& executable_path = QCoreApplication::applicationDirPath();
 
   // Try the current directory first.
   potential_paths << executable_path + "/assets";
@@ -66,6 +72,7 @@ void initialize_assets() {
   if (running_installed_executable) {
     potential_paths << SOLARUSEDITOR_DATADIR_PATH "/assets";
   }
+#endif
 #endif
 
   assets_path_initialized = true;
