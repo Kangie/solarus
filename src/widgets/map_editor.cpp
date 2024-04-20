@@ -1113,7 +1113,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   get_undo_stack().setClean();
 
   // Prepare the gui.
-  const int side_width = ui.map_properties_view->minimumSizeHint().width();
+  const int side_width = 300;
   ui.splitter->setSizes({ side_width, width() - side_width });
   ui.map_side_splitter->setStretchFactor(0, 0);  // Don't expand the map properties view
   ui.map_side_splitter->setStretchFactor(1, 1);  // but only the tileset view.

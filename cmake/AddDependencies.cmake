@@ -28,3 +28,11 @@ find_library(DL_LIBRARY dl)
 if("${DL_LIBRARY}" MATCHES DL_LIBRARY-NOTFOUND)
   set(DL_LIBRARY "")
 endif()
+
+include(FetchContent)
+FetchContent_Declare(
+  qlementine
+  GIT_REPOSITORY https://github.com/oclero/qlementine.git
+  GIT_TAG        674ad82e21efa7c44d96538a5025ae7e312323a9 # master
+)
+FetchContent_MakeAvailable(qlementine   )
