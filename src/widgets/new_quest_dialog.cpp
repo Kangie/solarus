@@ -168,7 +168,7 @@ void NewQuestDialogDirectoryPage::update_is_complete() {
   QDir quest_dir(ui.quest_directory_edit->text());
   if (quest_dir.exists()) {
     if (quest_dir.exists(QStringLiteral("data"))) {
-      ui.error_label->setText("Cannot create an existing quest.");
+      ui.error_label->setText("A quest already exists in this directory.");
     } else {
       ui.error_label->setText("");
     }

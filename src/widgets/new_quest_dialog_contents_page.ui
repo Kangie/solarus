@@ -17,7 +17,7 @@
    <string>Initial Quest Contents</string>
   </property>
   <property name="subTitle">
-   <string>Choose the set of files to be the quest's initial contents.</string>
+   <string>Choose the initial set of files for your quest.</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -29,7 +29,7 @@
        </property>
        <property name="icon">
         <iconset resource="../../resources/images.qrc">
-         <normaloff>:/images/icon_copy.png</normaloff>:/images/icon_copy.png</iconset>
+         <normaloff>:/images/icon_eldran.png</normaloff>:/images/icon_eldran.png</iconset>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -64,7 +64,7 @@
      <item row="1" column="1">
       <widget class="QLabel" name="cr_description">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start with enough resources and scripts to make it run immediately. Uses GPL, CC BY and CC BY-SA licenses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start with default free resources and scripts.&lt;br/&gt;Uses GPL and Creative Commons licenses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -74,7 +74,7 @@
      <item row="3" column="1">
       <widget class="QLabel" name="bq_description">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start from nothing. You must add everything the quest needs. No licenses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start from no quest data.&lt;br/&gt;You will have to create data files from scratch.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
