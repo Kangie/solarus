@@ -1465,19 +1465,6 @@ void MapEditor::reload_settings() {
 
   EditorSettings settings;
 
-  MapScene* main_scene = ui.map_view->get_scene();
-  if (main_scene != nullptr) {
-    QBrush brush(settings.get_value_color(EditorSettings::map_main_background));
-    main_scene->setBackgroundBrush(brush);
-  }
-
-  TilesetScene* tileset_scene = ui.tileset_view->get_scene();
-  if (tileset_scene != nullptr) {
-    QBrush brush(
-      settings.get_value_color(EditorSettings::map_tileset_background));
-    tileset_scene->setBackgroundBrush(brush);
-  }
-
   get_view_settings().set_grid_style(static_cast<GridStyle>(
     settings.get_value_int(EditorSettings::map_grid_style)));
   get_view_settings().set_grid_color(

@@ -59,30 +59,25 @@ public:
   static const QString external_text_editor_cmd;
 
   // Map editor keys.
-  static const QString map_main_background;
   static const QString map_main_zoom;
   static const QString map_grid_show_at_opening;
   static const QString map_grid_size;
   static const QString map_grid_style;
   static const QString map_grid_color;
-  static const QString map_tileset_background;
   static const QString map_tileset_zoom;
 
   // Sprite editor keys.
-  static const QString sprite_main_background;
   static const QString sprite_main_zoom;
   static const QString sprite_grid_show_at_opening;
   static const QString sprite_grid_size;
   static const QString sprite_grid_style;
   static const QString sprite_grid_color;
   static const QString sprite_auto_detect_grid;
-  static const QString sprite_previewer_background;
   static const QString sprite_previewer_zoom;
   static const QString sprite_origin_show_at_opening;
   static const QString sprite_origin_color;
 
   // Tileset editor keys.
-  static const QString tileset_background;
   static const QString tileset_zoom;
   static const QString tileset_grid_show_at_opening;
   static const QString tileset_grid_size;
@@ -99,8 +94,6 @@ public:
   static const QString shader_preview_sprite_direction;
 
   EditorSettings();
-
-  static void load_default_application_settings();
 
   QVariant get_value(const QString& key);
   bool get_value_bool(const QString& key);

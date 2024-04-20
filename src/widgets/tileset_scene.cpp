@@ -73,6 +73,7 @@ TilesetScene::TilesetScene(TilesetModel& model, QObject* parent) :
   QGraphicsScene(parent),
   model(model) {
 
+  setBackgroundBrush(GuiTools::get_checkered_brush());
   build();
 
   // Synchronize the scene selection with the tileset selection model.

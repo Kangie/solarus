@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "widgets/gui_tools.h"
 #include "widgets/sprite_previewer.h"
 #include <QMenu>
 
@@ -44,7 +45,7 @@ SpritePreviewer::SpritePreviewer(QWidget *parent) :
   ui.frame_view->scene()->addItem(origin_h);
   ui.frame_view->scene()->addItem(origin_v);
   ui.frame_view->scene()->setBackgroundBrush(
-        ui.frame_view->scene()->palette().base());
+        GuiTools::get_checkered_brush());
 
   // Zoom.
   ui.zoom_button->setMenu(create_zoom_menu());
@@ -109,14 +110,6 @@ void SpritePreviewer::set_model(SpriteModel* model) {
     connect(model, &SpriteModel::direction_origin_changed,
             this, &SpritePreviewer::update_origin);
   }
-}
-
-/**
- * @brief Changes the background color.
- * @param color The color to set.
- */
-void SpritePreviewer::set_background_color(const QColor& color) {
-  ui.frame_view->scene()->setBackgroundBrush(QBrush(color));
 }
 
 /**

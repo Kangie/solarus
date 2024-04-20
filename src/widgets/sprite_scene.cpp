@@ -76,6 +76,7 @@ SpriteScene::SpriteScene(SpriteModel& model, QObject* parent) :
   QGraphicsScene(parent),
   model(model) {
 
+  setBackgroundBrush(GuiTools::get_checkered_brush());
   missing_text = addText("");
   missing_text->setZValue(10);
   rebuild();

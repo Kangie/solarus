@@ -935,19 +935,11 @@ void SpriteEditor::reload_settings() {
 
   EditorSettings settings;
 
-  SpriteScene* scene = ui.sprite_view->get_scene();
-  if (scene != nullptr) {
-    QBrush brush(settings.get_value_color(EditorSettings::sprite_main_background));
-    scene->setBackgroundBrush(brush);
-  }
-
   get_view_settings().set_grid_style(static_cast<GridStyle>(
     settings.get_value_int(EditorSettings::sprite_grid_style)));
   get_view_settings().set_grid_color(
     settings.get_value_color(EditorSettings::sprite_grid_color));
 
-  ui.sprite_previewer->set_background_color(
-    settings.get_value_color(EditorSettings::sprite_previewer_background));
   ui.sprite_previewer->set_origin_color(
     settings.get_value_color(EditorSettings::sprite_origin_color));
 

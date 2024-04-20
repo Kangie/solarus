@@ -177,6 +177,35 @@ void draw_grid_point(
   painter.drawPoints(points.data(), points.size());
 }
 
+/**
+ * @brief Returns a brush appropriate for a checkered background.
+ * @return The checkered bakcground brush.
+ */
+QBrush get_checkered_brush() {
+
+  static const QBrush brush = [](){
+      int checkSize = 8;
+      int numChecks = 2;  // Number of checks in each direction.
+      QColor lightColor(216, 216, 216);
+      QColor darkColor(184, 184, 184);
+//      QColor darkColor(152, 152, 152);
+
+      QPixmap pixmap(numChecks * checkSize, numChecks * checkSize);
+      pixmap.fill(Qt::transparent);
+      QPainter painter(&pixmap);
+
+      for (int x = 0; x < numChecks; ++x) {
+        for (int y = 0; y < numChecks; ++y) {
+          QColor color = ((x + y) % 2 == 0) ? lightColor : darkColor;
+          painter.fillRect(x * checkSize, y * checkSize, checkSize, checkSize, color);
+        }
+      }
+      return QBrush(pixmap);
+  }();
+
+  return brush;
+}
+
 }
 
 }

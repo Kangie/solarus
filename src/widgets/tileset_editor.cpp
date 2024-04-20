@@ -1178,12 +1178,6 @@ void TilesetEditor::reload_settings() {
 
   EditorSettings settings;
 
-  TilesetScene* scene = ui.tileset_view->get_scene();
-  if (scene != nullptr) {
-    QBrush brush(settings.get_value_color(EditorSettings::tileset_background));
-    scene->setBackgroundBrush(brush);
-  }
-
   get_view_settings().set_grid_style(static_cast<GridStyle>(
     settings.get_value_int(EditorSettings::tileset_grid_style)));
   get_view_settings().set_grid_color(

@@ -87,8 +87,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_external_editor_cmd()));
 
   // Map editor.
-  connect(ui.map_main_background_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_map_main_background()));
   connect(ui.map_main_zoom_field, SIGNAL(currentIndexChanged(int)),
           this, SLOT(change_map_main_zoom()));
   connect(ui.map_grid_show_at_opening_field, SIGNAL(clicked()),
@@ -99,8 +97,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_map_grid_style()));
   connect(ui.map_grid_color_field, SIGNAL(color_changed(QColor)),
           this, SLOT(change_map_grid_color()));
-  connect(ui.map_tileset_background_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_map_tileset_background()));
   connect(ui.map_tileset_zoom_field, SIGNAL(currentIndexChanged(int)),
           this, SLOT(change_map_tileset_zoom()));
   connect(ui.editor_browse_button,&QPushButton::pressed,[&]{
@@ -121,8 +117,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   });
 
   // Sprite editor.
-  connect(ui.sprite_main_background_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_sprite_main_background()));
   connect(ui.sprite_main_zoom_field, SIGNAL(currentIndexChanged(int)),
           this, SLOT(change_sprite_main_zoom()));
   connect(ui.sprite_grid_show_at_opening_field, SIGNAL(clicked()),
@@ -135,8 +129,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_sprite_grid_color()));
   connect(ui.sprite_auto_detect_grid_field, SIGNAL(clicked()),
           this, SLOT(change_sprite_auto_detect_grid()));
-  connect(ui.sprite_previewer_background_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_sprite_previewer_background()));
   connect(ui.sprite_previewer_zoom_field, SIGNAL(currentIndexChanged(int)),
           this, SLOT(change_sprite_previewer_zoom()));
   connect(ui.sprite_origin_show_at_opening_field, SIGNAL(clicked()),
@@ -145,8 +137,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, SLOT(change_sprite_origin_color()));
 
   // Tileset editor.
-  connect(ui.tileset_background_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_tileset_background()));
   connect(ui.tileset_zoom_field, SIGNAL(currentIndexChanged(int)),
           this, SLOT(change_tileset_zoom()));
   connect(ui.tileset_grid_show_at_opening_field, SIGNAL(clicked()),
@@ -237,30 +227,25 @@ void SettingsDialog::update() {
   update_external_editor_cmd();
 
   // Map editor.
-  update_map_main_background();
   update_map_main_zoom();
   update_map_grid_show_at_opening();
   update_map_grid_size();
   update_map_grid_style();
   update_map_grid_color();
-  update_map_tileset_background();
   update_map_tileset_zoom();
 
   // Sprite editor.
-  update_sprite_main_background();
   update_sprite_main_zoom();
   update_sprite_grid_show_at_opening();
   update_sprite_grid_size();
   update_sprite_grid_style();
   update_sprite_grid_color();
   update_sprite_auto_detect_grid();
-  update_sprite_previewer_background();
   update_sprite_previewer_zoom();
   update_sprite_origin_show_at_opening();
   update_sprite_origin_color();
 
   // Tileset editor.
-  update_tileset_background();
   update_tileset_zoom();
   update_tileset_grid_show_at_opening();
   update_tileset_grid_size();
@@ -578,25 +563,6 @@ void SettingsDialog::change_external_editor_cmd() {
 }
 
 /**
- * @brief Updates the map main background field.
- */
-void SettingsDialog::update_map_main_background() {
-
-  ui.map_main_background_field->set_color(
-    settings.get_value_color(EditorSettings::map_main_background));
-}
-
-/**
- * @brief Slot called when the user changes the map main background.
- */
-void SettingsDialog::change_map_main_background() {
-
-  edited_settings[EditorSettings::map_main_background] =
-    ui.map_main_background_field->get_color().name();
-  update_buttons();
-}
-
-/**
  * @brief Updates the map main zoom field.
  */
 void SettingsDialog::update_map_main_zoom() {
@@ -691,25 +657,6 @@ void SettingsDialog::change_map_grid_color() {
 }
 
 /**
- * @brief Updates the map tileset background field.
- */
-void SettingsDialog::update_map_tileset_background() {
-
-  ui.map_tileset_background_field->set_color(
-    settings.get_value_color(EditorSettings::map_tileset_background));
-}
-
-/**
- * @brief Slot called when the user changes the map tileset background.
- */
-void SettingsDialog::change_map_tileset_background() {
-
-  edited_settings[EditorSettings::map_tileset_background] =
-    ui.map_tileset_background_field->get_color().name();
-  update_buttons();
-}
-
-/**
  * @brief Updates the map tileset zoom field.
  */
 void SettingsDialog::update_map_tileset_zoom() {
@@ -726,25 +673,6 @@ void SettingsDialog::change_map_tileset_zoom() {
 
   edited_settings[EditorSettings::map_tileset_zoom] =
     ui.map_tileset_zoom_field->currentData().toDouble();
-  update_buttons();
-}
-
-/**
- * @brief Updates the sprite main background field.
- */
-void SettingsDialog::update_sprite_main_background() {
-
-  ui.sprite_main_background_field->set_color(
-    settings.get_value_color(EditorSettings::sprite_main_background));
-}
-
-/**
- * @brief Slot called when the user changes the sprite main background.
- */
-void SettingsDialog::change_sprite_main_background() {
-
-  edited_settings[EditorSettings::sprite_main_background] =
-    ui.sprite_main_background_field->get_color().name();
   update_buttons();
 }
 
@@ -864,25 +792,6 @@ void SettingsDialog::change_sprite_auto_detect_grid() {
 }
 
 /**
- * @brief Updates the sprite previewer background field.
- */
-void SettingsDialog::update_sprite_previewer_background() {
-
-  ui.sprite_previewer_background_field->set_color(
-    settings.get_value_color(EditorSettings::sprite_previewer_background));
-}
-
-/**
- * @brief Slot called when the user changes the sprite previewer background.
- */
-void SettingsDialog::change_sprite_previewer_background() {
-
-  edited_settings[EditorSettings::sprite_previewer_background] =
-    ui.sprite_previewer_background_field->get_color().name();
-  update_buttons();
-}
-
-/**
  * @brief Updates the sprite previewer zoom field.
  */
 void SettingsDialog::update_sprite_previewer_zoom() {
@@ -937,25 +846,6 @@ void SettingsDialog::change_sprite_origin_color() {
 
   edited_settings[EditorSettings::sprite_origin_color] =
     ui.sprite_origin_color_field->get_color().name();
-  update_buttons();
-}
-
-/**
- * @brief Updates the tileset background field.
- */
-void SettingsDialog::update_tileset_background() {
-
-  ui.tileset_background_field->set_color(
-    settings.get_value_color(EditorSettings::tileset_background));
-}
-
-/**
- * @brief Slot called when the user changes the tileset background.
- */
-void SettingsDialog::change_tileset_background() {
-
-  edited_settings[EditorSettings::tileset_background] =
-    ui.tileset_background_field->get_color().name();
   update_buttons();
 }
 

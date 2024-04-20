@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/entity_item.h"
+#include "widgets/gui_tools.h"
 #include "widgets/map_scene.h"
 #include "map_model.h"
 #include "tileset_model.h"
@@ -100,7 +101,7 @@ QSize MapScene::get_margin_size() {
 void MapScene::build() {
 
   update_scene_size();
-  setBackgroundBrush(Qt::gray);
+  setBackgroundBrush(GuiTools::get_checkered_brush());
 
   entity_items.clear();
   for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {

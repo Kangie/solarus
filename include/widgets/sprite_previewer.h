@@ -40,7 +40,6 @@ public:
   void set_model(SpriteModel* model);
 
   void set_zoom(double zoom);
-  void set_background_color(const QColor& color);
   void set_show_origin(bool show_origin);
   void set_origin_color(const QColor& color);
 

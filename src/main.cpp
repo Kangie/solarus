@@ -64,8 +64,6 @@ int run_editor_gui(int argc, char* argv[]) {
   application.setApplicationVersion(SOLARUSEDITOR_VERSION);
   application.setOrganizationName("solarus");
 
-  EditorSettings::load_default_application_settings();
-
   // Get current system locale.
   const QLocale locale = QLocale::system();
 

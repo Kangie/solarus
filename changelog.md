@@ -3,6 +3,7 @@
 ## Solarus Quest Editor 2.0.0 (in progress)
 
 * New quest creation wizard (#460).
+* Graphics view now show a checkered background to represent transparency.
 * Quest tree: allow to set the author and license information of folders and GLSL files.
 * Quest tree: allow to set the author and license information of scripts (#501).
 * Reopen last tabs also when a quest is given in the command line.

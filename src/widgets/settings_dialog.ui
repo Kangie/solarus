@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>655</width>
-    <height>480</height>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -224,7 +224,6 @@
              <font>
               <family>DejaVu Sans Mono</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -375,36 +374,6 @@
           <item>
            <layout class="QHBoxLayout" name="map_main_layout">
             <item>
-             <widget class="QLabel" name="map_main_background_label">
-              <property name="text">
-               <string>Background color:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="SolarusEditor::ColorChooser" name="map_main_background_field">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="map_main_background_spacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLabel" name="map_main_zoom_label">
               <property name="text">
                <string>Default zoom:</string>
@@ -543,36 +512,6 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QLabel" name="map_tileset_background_label">
-            <property name="text">
-             <string>Background color:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="SolarusEditor::ColorChooser" name="map_tileset_background_field">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="map_tileset_background_spacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <widget class="QLabel" name="map_tileset_zoom_label">
             <property name="text">
              <string>Default zoom:</string>
@@ -626,36 +565,6 @@
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <layout class="QHBoxLayout" name="sprite_main_background_layout">
-            <item>
-             <widget class="QLabel" name="sprite_main_background_label">
-              <property name="text">
-               <string>Background color:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="SolarusEditor::ColorChooser" name="sprite_main_background_field">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="sprite_main_background_spacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item>
              <widget class="QLabel" name="sprite_main_zoom_label">
               <property name="text">
@@ -804,36 +713,6 @@
           <item>
            <layout class="QHBoxLayout" name="sprite_previewer_layout">
             <item>
-             <widget class="QLabel" name="sprite_previewer_background_label">
-              <property name="text">
-               <string>Background color:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="SolarusEditor::ColorChooser" name="sprite_previewer_background_field">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="sprite_previewer_background_spacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLabel" name="sprite_previewer_zoom_label">
               <property name="text">
                <string>Default zoom:</string>
@@ -973,36 +852,6 @@
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
            <layout class="QHBoxLayout" name="tileset_layout">
-            <item>
-             <widget class="QLabel" name="tileset_background_label">
-              <property name="text">
-               <string>Background color:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="SolarusEditor::ColorChooser" name="tileset_background_field">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="tileset_background_spacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item>
              <widget class="QLabel" name="tileset_zoom_label">
               <property name="text">

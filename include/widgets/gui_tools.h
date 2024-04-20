@@ -53,6 +53,8 @@ void draw_grid_point(QPainter& painter,
                const QSize& size,
                const QColor& color = Qt::black);
 
+QBrush get_checkered_brush();
+
 }
 
 }

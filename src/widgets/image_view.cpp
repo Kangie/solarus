@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "widgets/gui_tools.h"
 #include "widgets/image_view.h"
 #include "widgets/pan_tool.h"
 #include "widgets/zoom_tool.h"
@@ -44,8 +45,8 @@ ImageView::ImageView(const QString& file_path, QWidget* parent) :
   new PanTool(this);
   new ZoomTool(this);
 
-  setBackgroundBrush(palette().background());
-  scene->addRect(QRect(QPoint(), pixmap.size()), Qt::NoPen, Qt::white);
+  scene->setBackgroundBrush(palette().base());
+  scene->addRect(QRect(QPoint(), pixmap.size()), Qt::NoPen, GuiTools::get_checkered_brush());
   scene->addPixmap(pixmap);
   setScene(scene);
 }

@@ -55,21 +55,15 @@ const QString EditorSettings::external_text_editor_cmd =
   "text_editor/external_text_editor_cmd";
 
 // Map editor keys.
-const QString EditorSettings::map_main_background =
-  "map_editor/main_background";
 const QString EditorSettings::map_main_zoom = "map_editor/main_zoom";
 const QString EditorSettings::map_grid_show_at_opening =
   "map_editor/grid_show_at_opening";
 const QString EditorSettings::map_grid_size = "map_editor/grid_size";
 const QString EditorSettings::map_grid_style = "map_editor/grid_style";
 const QString EditorSettings::map_grid_color = "map_editor/grid_color";
-const QString EditorSettings::map_tileset_background =
-  "map_editor/tileset_background";
 const QString EditorSettings::map_tileset_zoom = "map_editor/tileset_zoom";
 
 // Sprite editor keys.
-const QString EditorSettings::sprite_main_background =
-  "sprite_editor/main_background";
 const QString EditorSettings::sprite_main_zoom = "sprite_editor/main_zoom";
 const QString EditorSettings::sprite_grid_show_at_opening =
   "sprite_editor/grid_show_at_opening";
@@ -78,8 +72,6 @@ const QString EditorSettings::sprite_grid_style = "sprite_editor/grid_style";
 const QString EditorSettings::sprite_grid_color = "sprite_editor/grid_color";
 const QString EditorSettings::sprite_auto_detect_grid =
   "sprite_editor/auto_detect_grid";
-const QString EditorSettings::sprite_previewer_background =
-  "sprite_editor/previewer_background";
 const QString EditorSettings::sprite_previewer_zoom =
   "sprite_editor/previewer_zoom";
 const QString EditorSettings::sprite_origin_show_at_opening =
@@ -87,7 +79,6 @@ const QString EditorSettings::sprite_origin_show_at_opening =
 const QString EditorSettings::sprite_origin_color = "sprite_editor/origin_color";
 
 // Tileset editor keys.
-const QString EditorSettings::tileset_background = "tileset_editor/background";
 const QString EditorSettings::tileset_zoom = "tileset_editor/zoom";
 const QString EditorSettings::tileset_grid_show_at_opening =
   "tileset_editor/grid_show_at_opening";
@@ -136,30 +127,25 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::external_text_editor_cmd, ""},
 
   // Map editor.
-  { EditorSettings::map_main_background, "#888888" },
   { EditorSettings::map_main_zoom, 2.0 },
   { EditorSettings::map_grid_show_at_opening, false },
   { EditorSettings::map_grid_size, QSize(16, 16) },
   { EditorSettings::map_grid_style, static_cast<int>(GridStyle::DASHED) },
   { EditorSettings::map_grid_color, "#000000" },
-  { EditorSettings::map_tileset_background, "#888888" },
   { EditorSettings::map_tileset_zoom, 2.0 },
 
   // Sprite editor.
-  { EditorSettings::sprite_main_background, "#888888" },
   { EditorSettings::sprite_main_zoom, 2.0 },
   { EditorSettings::sprite_grid_show_at_opening, false },
   { EditorSettings::sprite_grid_size, QSize(16, 16) },
   { EditorSettings::sprite_grid_style, static_cast<int>(GridStyle::DASHED) },
   { EditorSettings::sprite_grid_color, "#000000" },
   { EditorSettings::sprite_auto_detect_grid, false },
-  { EditorSettings::sprite_previewer_background, "#888888" },
   { EditorSettings::sprite_previewer_zoom, 2.0 },
   { EditorSettings::sprite_origin_show_at_opening, false },
   { EditorSettings::sprite_origin_color, "#0000ff" },
 
   // Tileset editor.
-  { EditorSettings::tileset_background, "#888888" },
   { EditorSettings::tileset_zoom, 2.0 },
   { EditorSettings::tileset_grid_show_at_opening, false },
   { EditorSettings::tileset_grid_size, QSize(16, 16) },
@@ -181,27 +167,6 @@ QMap<QString, QVariant> EditorSettings::default_values = {
  */
 EditorSettings::EditorSettings() :
   settings() {
-}
-
-/**
- * @brief Loads the default application settings.
- */
-void EditorSettings::load_default_application_settings() {
-
-  QPalette palette;
-  QString alternate_color = palette.alternateBase().color().name();
-  QString base_color = palette.base().color().name();
-
-  // Map editor.
-  default_values[map_main_background] = alternate_color;
-  default_values[map_tileset_background] = base_color;
-
-  // Sprite editor.
-  default_values[sprite_main_background] = base_color;
-  default_values[sprite_previewer_background] = base_color;
-
-  // Tileset editor.
-  default_values[tileset_background] = base_color;
 }
 
 /**

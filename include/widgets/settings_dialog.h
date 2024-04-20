@@ -77,8 +77,6 @@ public slots:
   void change_external_editor_cmd();
 
   // Map editor.
-  void update_map_main_background();
-  void change_map_main_background();
   void update_map_main_zoom();
   void change_map_main_zoom();
   void update_map_grid_show_at_opening();
@@ -89,14 +87,10 @@ public slots:
   void change_map_grid_style();
   void update_map_grid_color();
   void change_map_grid_color();
-  void update_map_tileset_background();
-  void change_map_tileset_background();
   void update_map_tileset_zoom();
   void change_map_tileset_zoom();
 
   // Sprite editor.
-  void update_sprite_main_background();
-  void change_sprite_main_background();
   void update_sprite_main_zoom();
   void change_sprite_main_zoom();
   void update_sprite_grid_show_at_opening();
@@ -109,8 +103,6 @@ public slots:
   void change_sprite_grid_color();
   void update_sprite_auto_detect_grid();
   void change_sprite_auto_detect_grid();
-  void update_sprite_previewer_background();
-  void change_sprite_previewer_background();
   void update_sprite_previewer_zoom();
   void change_sprite_previewer_zoom();
   void update_sprite_origin_show_at_opening();
@@ -119,8 +111,6 @@ public slots:
   void change_sprite_origin_color();
 
   // Tileset editor.
-  void update_tileset_background();
-  void change_tileset_background();
   void update_tileset_zoom();
   void change_tileset_zoom();
   void update_tileset_grid_show_at_opening();
