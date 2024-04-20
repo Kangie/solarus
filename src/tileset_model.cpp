@@ -1569,7 +1569,7 @@ bool TilesetModel::is_selection_empty() const {
  */
 int TilesetModel::get_selection_count() const {
 
-  return selection_model.selection().count();
+  return selection_model.selectedIndexes().count();
 }
 
 /**
