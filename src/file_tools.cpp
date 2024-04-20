@@ -273,6 +273,24 @@ bool replace_in_file(
   return true;
 }
 
+/**
+ * @brief Modify a string so it is a safe file name on most platforms.
+ * @param name The unformated name.
+ * @return A string containing a safe file name.
+ */
+QString to_file_name(const QString& name) {
+  // Characters that could cause problems in Linux, Mac and Windows.
+  static const QString forbidden_characters =
+      QStringLiteral("()<>\\/\"\'|&:;.?");
+  QString path = name;
+  for (QChar & ch : path) {
+    ch = forbidden_characters.contains(ch) ? QChar(' ') : ch.toLower();
+  }
+  path = path.simplified();
+  path = path.replace(QChar(' '), QChar('-'));
+  return path;
+}
+
 }  // namespace FileTools
 
 }  // namespace SolarusEditor

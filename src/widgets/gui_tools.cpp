@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2021 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 #include "widgets/gui_tools.h"
 #include <solarus/gui/gui_tools.h>
+#include <QLabel>
 #include <QMessageBox>
 #include <QPainter>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Christopho, Solarus - http://www.solarus-games.org
+ * Copyright (C) 2014-2021 Christopho, Solarus - http://www.solarus-games.org
  *
  * Solarus Quest Editor is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,13 @@ namespace SolarusEditor {
 
 namespace NewQuestBuilder {
 
-void create_initial_quest_files(const QString& quest_path);
+enum NewQuestMode {
+  COPY_INITIAL_QUEST,
+  BLANK_QUEST,
+};
+
+void create_initial_quest_files(NewQuestMode mode,
+    const QString& quest_path, const QString& quest_name);
 
 }
 

@@ -44,6 +44,8 @@ bool replace_in_file(
 void initialize_assets();
 QString get_assets_path();
 
+QString to_file_name(const QString& name);
+
 }
 
 }
