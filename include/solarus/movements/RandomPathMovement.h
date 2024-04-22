@@ -30,11 +30,14 @@ namespace Solarus {
  * random move goes to one of the 4 main directions
  * and with a length that is a multiple of 8 pixels.
  */
-class SOLARUS_API RandomPathMovement: public PathMovement {
+class SOLARUS_API RandomPathMovement final: public PathMovement {
 
   public:
 
     explicit RandomPathMovement(int speed);
+
+    // static information
+    static constexpr const char module_name[] = "sol.random_path_movement";
 
     virtual void update() override;
     virtual bool is_finished() const override;

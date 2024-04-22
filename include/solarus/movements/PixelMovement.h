@@ -36,6 +36,9 @@ class SOLARUS_API PixelMovement: public Movement {
     // creation and destruction
     PixelMovement(const std::string& trajectory_string, uint32_t delay, bool loop, bool ignore_obstacles);
 
+    // static information
+    static constexpr const char module_name[] = "sol.pixel_movement";
+
     // properties
     const std::list<Point>& get_trajectory() const;
     void set_trajectory(const std::list<Point>& trajectory);

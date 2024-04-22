@@ -33,11 +33,14 @@ namespace Solarus {
  * To this end, the PathFinding class (i.e. an implementation of the A* algorithm) is used.
  * If the target entity is too far or not reachable, the movement is a random walk.
  */
-class SOLARUS_API PathFindingMovement: public PathMovement {
+class SOLARUS_API PathFindingMovement final: public PathMovement {
 
   public:
 
     explicit PathFindingMovement(int speed);
+
+    // static information
+    static constexpr const char module_name[] = "sol.path_finding_movement";
 
     void set_target(const EntityPtr& target);
     virtual bool is_finished() const override;

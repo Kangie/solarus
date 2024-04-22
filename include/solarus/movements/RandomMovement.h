@@ -29,12 +29,15 @@ namespace Solarus {
  * \brief A movement that makes successive steps of random directions
  * and (possibly) stays inside a limited rectangle.
  */
-class RandomMovement: public StraightMovement {
+class RandomMovement final: public StraightMovement {
 
   public:
 
     explicit RandomMovement(int speed);
     RandomMovement(int speed, int max_radius);
+
+    // static information
+    static constexpr const char module_name[] = "sol.random_movement";
 
     virtual void notify_object_controlled() override;
     virtual void update() override;

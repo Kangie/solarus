@@ -29,13 +29,13 @@ namespace Solarus {
 namespace LuaBind {
 
 [[noreturn]] void inline error(const CheckContext& ctx, lua_State* L, int sindex, const std::string & message) {
-  ctx.error(L, sindex, message);
+  (void)sindex;
+  ctx.error(L, message);
   std::abort(); // Convince GCC that this never returns
 }
 
 [[noreturn]] void inline type_error(const CheckContext& ctx, lua_State* L, int sindex, const std::string& type_name) {
-  ctx.type_error(L, sindex, type_name);
-  std::abort(); // Convince GCC that this never returns
+  error(ctx, L, sindex, type_name + " expected, got " + LuaTools::get_type_name(L, sindex));
 }
 
 namespace Private {
@@ -95,8 +95,12 @@ static inline T to_type(lua_State * L, int index) {
  */
 template<typename T>
 std::shared_ptr<T> test_shared_exportable(lua_State * L, int index) {
+  // Override: A few types are not leaves but must be treated as such.
+  constexpr bool override_as_leaf = std::is_same_v<T, PixelMovement>
+    || std::is_same_v<T, PathMovement> || std::is_same_v<T, StraightMovement>;
+
   // Leaf types can be handled with a standard metatable test.
-  if constexpr (std::is_final_v<T>) {
+  if constexpr (std::is_final_v<T> || override_as_leaf) {
     void * data = LuaTools::test_userdata(L, index, T::module_name);
     return (data) ? *static_cast<std::shared_ptr<T> *>(data) : std::shared_ptr<T>();
   // Super-types are several types on Lua's side, this checks for them all.
@@ -332,7 +336,7 @@ struct LuaTypeId<Nil> :
  */
 template<typename T>
 struct AsReturn {
-  using is_exportable = std::is_convertible<T, ExportableToLua&>;
+  using is_exportable = std::is_convertible<T, const ExportableToLua&>;
   using base_t = std::remove_cv_t<std::remove_reference_t<T>>;
   using type = std::conditional_t<is_exportable::value, base_t &, base_t>;
 };
@@ -376,58 +380,18 @@ static inline std::string get_type_name() {
 }
 
 /**
- * @brief Abstract lua marshalling Context class implementing basic error function for context
- *
- * Uses the curiously recursive pattern to access child class implementation
- */
-template<typename C>
-struct CheckContextImpl : public CheckContext {
-    [[noreturn]] void error(lua_State* L, int /*sindex*/, const std::string& message) const override {
-      throw LuaException(L, message);
-    }
-
-    [[noreturn]] void type_error(lua_State* L, int sindex, const std::string& type_name) const override {
-      LuaBind::error(*static_cast<const C*>(this), L, sindex, type_name + " expected, got " + LuaTools::get_type_name(L, sindex));
-    }
-};
-
-/**
  * @brief Argument parsing context
  *
  * Used to represent lua checking context for an argument
  */
-struct ArgContext : public CheckContextImpl<ArgContext> {
+struct ArgContext final : public CheckContext {
     ArgContext(int index) : index(index) {}
 
     int index;
 
     // Copied from LuaTools::arg_error...
-    void error(lua_State* l, int sindex, const std::string& message) const override {
-      int arg_index = this->index;
-
-      std::ostringstream oss;
-      lua_Debug info;
-      if (!lua_getstack(l, 0, &info)) {
-        // No stack frame.
-        oss << "bad argument #" << arg_index << " (" << message << ")";
-        CheckContextImpl::error(l, sindex, oss.str());
-      }
-
-      lua_getinfo(l, "n", &info);
-      if (std::string(info.namewhat) == "method") {
-         arg_index--;  // Do not count self.
-         if (arg_index == 0) {
-           // Error is in the self argument itself.
-           oss << "calling " << info.name << " on bad self (" << message << ")";
-           CheckContextImpl::error(l, sindex, oss.str());
-         }
-      }
-
-      if (info.name == nullptr) {
-        info.name = "?";
-      }
-      oss << "bad argument #" << arg_index << " to " << info.name << " (" << message << ")";
-      CheckContextImpl::error(l, sindex, oss.str());
+    void error(lua_State* l, const std::string& message) const override {
+      LuaTools::arg_error(l, index, message);
     }
 };
 
@@ -436,14 +400,13 @@ struct ArgContext : public CheckContextImpl<ArgContext> {
  *
  * Used to hold context when checking an array value
  */
-template<typename P>
-struct NumFieldContext : public CheckContextImpl<NumFieldContext<P>> {
+struct NumFieldContext final : public CheckContext {
     int index;
-    const P& parent;
-    NumFieldContext(int index, const P& parent) : index(index), parent(parent) {}
+    const CheckContext& parent;
+    NumFieldContext(int index, const CheckContext& parent) : index(index), parent(parent) {}
 
-    void error(lua_State* l, int sindex, const std::string& message) const override {
-      parent.error(l, sindex, std::string("Bad field '[") + std::to_string(index) + "]': " + message);
+    void error(lua_State* l, const std::string& message) const override {
+      parent.error(l, std::string("Bad field '[") + std::to_string(index) + "]': " + message);
     }
 };
 
@@ -452,13 +415,12 @@ struct NumFieldContext : public CheckContextImpl<NumFieldContext<P>> {
  *
  * Used to hold context when checking a map key
  */
-template<typename P>
-struct KeyContext : public CheckContextImpl<KeyContext<P>> {
-    const P& parent;
-    KeyContext(const P& parent) : parent(parent) {}
+struct KeyContext final : public CheckContext {
+    const CheckContext& parent;
+    KeyContext(const CheckContext& parent) : parent(parent) {}
 
-    void error(lua_State* l, int sindex, const std::string& message) const override {
-      parent.error(l, sindex, std::string("Bad key: ") + message);
+    void error(lua_State* l, const std::string& message) const override {
+      parent.error(l, std::string("Bad key: ") + message);
     }
 };
 
@@ -469,13 +431,13 @@ struct KeyContext : public CheckContextImpl<KeyContext<P>> {
  *
  * Note : Keytype K must be stringifiable to print proper error
  */
-template<typename P, typename K>
-struct ValueContext : public CheckContextImpl<ValueContext<P,K>> {
+template<typename K>
+struct ValueContext final : public CheckContext {
     const K& key;
-    const P& parent;
-    ValueContext(const K& key, const P& parent) : key(key), parent(parent) {}
+    const CheckContext& parent;
+    ValueContext(const K& key, const CheckContext& parent) : key(key), parent(parent) {}
 
-    void error(lua_State* l, int sindex, const std::string& message) const override {
+    void error(lua_State* l, const std::string& message) const override {
 
       auto key_str = [this](){
         if constexpr(std::is_enum_v<K>) {
@@ -485,24 +447,19 @@ struct ValueContext : public CheckContextImpl<ValueContext<P,K>> {
         }
       }();
 
-      parent.error(l, sindex, std::string("Bad field '") + key_str + "': " + message);
+      parent.error(l, std::string("Bad field '") + key_str + "': " + message);
     }
 };
 
 /**
- * @brief Map value context class
- *
- * Used to hold context when checking a map value
- *
- * Note : Keytype K must be stringifiable to print proper error
+ * \brief Optional context class.
  */
-template<typename P>
-struct OptionalContext : public CheckContextImpl<OptionalContext<P>> {
-    const P& parent;
-    OptionalContext(const P& parent) : parent(parent) {}
+struct OptionalContext final : public CheckContext {
+    const CheckContext& parent;
+    OptionalContext(const CheckContext& parent) : parent(parent) {}
 
-    void error(lua_State* l, int sindex, const std::string& message) const override {
-      parent.error(l, sindex, std::string("Bad optional: ") + message);
+    void error(lua_State* l, const std::string& message) const override {
+      parent.error(l, std::string("Bad optional: ") + message);
     }
 };
 
@@ -633,7 +590,7 @@ template<typename K, typename V>
 struct CheckArg<std::map<K, V>> {
   static std::map<K, V> call(lua_State * L, int index, const CheckContext& context) {
     if(lua_type(L, index) != LUA_TTABLE) {
-      context.type_error(L, index, "map");
+      type_error(context, L, index, "map");
     }
 
     std::map<K, V> map;
@@ -663,7 +620,7 @@ struct CheckArg<T *> {
     } else if (lua_isnoneornil(L, index)) {
       return nullptr;
     }
-    context.type_error(L, index, "optional " + get_type_name<T>());
+    type_error(context, L, index, "optional " + get_type_name<T>());
   }
 };
 

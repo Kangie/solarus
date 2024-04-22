@@ -45,6 +45,9 @@ class SOLARUS_API Movement: public ExportableToLua {
 
     virtual ~Movement();
 
+    // static information
+    static constexpr const char module_name[] = "sol.movement";
+
     // object controlled
     Entity* get_entity() const;
     void set_entity(Entity* entity);

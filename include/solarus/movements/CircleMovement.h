@@ -30,12 +30,15 @@ namespace Solarus {
  *
  * This movement is used by entities that makes a circle around a center point or another entity.
  */
-class CircleMovement: public Movement {
+class CircleMovement final: public Movement {
 
   public:
 
     // Creation and destruction.
     CircleMovement();
+
+    // static information
+    static constexpr const char module_name[] = "sol.circle_movement";
 
     // State.
     void update() override;

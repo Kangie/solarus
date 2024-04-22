@@ -35,6 +35,9 @@ class StraightMovement: public Movement {
 
     StraightMovement(bool ignore_obstacles, bool smooth);
 
+    // static information
+    static constexpr const char module_name[] = "sol.straight_movement";
+
     void notify_object_controlled() override;
     void update() override;
     void set_suspended(bool suspended) override;
