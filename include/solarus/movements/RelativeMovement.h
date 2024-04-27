@@ -31,7 +31,7 @@ namespace Solarus {
  * If the movement is sensible to obstacles, it becomes finished as
  * soon as the entity cannot be placed at the requested position.
  */
-class RelativeMovement: public Movement {
+class RelativeMovement final: public Movement {
 
   public:
 
@@ -50,6 +50,7 @@ class RelativeMovement: public Movement {
 
     virtual bool is_finished() const override;
     virtual Point get_displayed_xy() const override;
+    virtual const std::string& get_lua_type_name() const override;
 
   protected:
 

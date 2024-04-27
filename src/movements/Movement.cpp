@@ -620,13 +620,5 @@ void Movement::set_lua_notifications_enabled(bool notify) {
   this->lua_notifications_enabled = notify;
 }
 
-/**
- * \brief Returns the name identifying this type in Lua.
- * \return the name identifying this type in Lua
- */
-const std::string& Movement::get_lua_type_name() const {
-  return LuaContext::movement_module_name;
-}
-
 }
 

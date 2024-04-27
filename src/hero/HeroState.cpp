@@ -230,5 +230,15 @@ const CommandsEffects& HeroState::get_commands_effects() const {
   return get_entity().get_commands_effects();
 }
 
+/**
+ * \brief Returns the name identifying this type in Lua.
+ * \return The name identifying this type in Lua.
+ * An empty string means that this type is not exported to Lua.
+ */
+const std::string& HeroState::get_lua_type_name() const {
+  static std::string empty;
+  return empty;
+}
+
 }
 

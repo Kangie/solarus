@@ -53,6 +53,7 @@ public:
   void undo_hero_linking() const;
 
   const EntityPtr& get_tracked_entity() const;
+  const std::string& get_lua_type_name() const override;
 
 private:
 
@@ -235,6 +236,16 @@ void TrackingState::start(const State* previous) {
     }
 }
 
+/**
+ * \brief Returns the name identifying this type in Lua.
+ * \return The name identifying this type in Lua.
+ * An empty string means that this type is not exported to Lua.
+ */
+const std::string& TrackingState::get_lua_type_name() const {
+  static std::string empty;
+  return empty;
+}
+
 
 /**
  * \brief State of the camera when controlled by scripts.
@@ -245,6 +256,7 @@ public:
 
   explicit ManualState(Camera& camera);
   void start(const State* previous) override;
+  const std::string& get_lua_type_name() const override;
 
 };
 
@@ -267,6 +279,16 @@ void ManualState::start(const State* previous) {
     if (previous && previous->get_name() == "tracking") {
         static_cast<const TrackingState*>(previous)->undo_hero_linking();
     }
+}
+
+/**
+ * \brief Returns the name identifying this type in Lua.
+ * \return The name identifying this type in Lua.
+ * An empty string means that this type is not exported to Lua.
+ */
+const std::string& ManualState::get_lua_type_name() const {
+  static std::string empty;
+  return empty;
 }
 
 }  // Anonymous namespace.

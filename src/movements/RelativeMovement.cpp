@@ -16,6 +16,7 @@
  */
 #include "solarus/core/Debug.h"
 #include "solarus/entities/Entity.h"
+#include "solarus/lua/LuaContext.h"
 #include "solarus/movements/RelativeMovement.h"
 
 namespace Solarus {
@@ -117,6 +118,14 @@ Point RelativeMovement::get_displayed_xy() const {
   Point dxy = followed_displayed_xy - followed_xy;
 
   return get_xy() + dxy;
+}
+
+/**
+ * \brief Returns the name identifying this type in Lua.
+ * \return The name identifying this type in Lua.
+ */
+const std::string& RelativeMovement::get_lua_type_name() const {
+  return LuaContext::movement_module_name;
 }
 
 }

@@ -150,6 +150,7 @@ static LuaBind::OnStack create(LuaContext& lua_context,
         "'pixel'");
   }
 
+  // Exported manually due to lifetime issues.
   LuaContext::push_userdata(L, *movement);
   return {1};
 }

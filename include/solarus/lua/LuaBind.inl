@@ -95,25 +95,21 @@ static inline T to_type(lua_State * L, int index) {
  */
 template<typename T>
 std::shared_ptr<T> test_shared_exportable(lua_State * L, int index) {
-  // Override: A few types are not leaves but must be treated as such.
-  constexpr bool override_as_leaf = std::is_same_v<T, PixelMovement>
-    || std::is_same_v<T, PathMovement> || std::is_same_v<T, StraightMovement>;
-
-  // Leaf types can be handled with a standard metatable test.
-  if constexpr (std::is_final_v<T> || override_as_leaf) {
-    void * data = LuaTools::test_userdata(L, index, T::module_name);
-    return (data) ? *static_cast<std::shared_ptr<T> *>(data) : std::shared_ptr<T>();
-  // Super-types are several types on Lua's side, this checks for them all.
-  } else {
+  // Abstract types can be any of their child types that are exported to Lua.
+  if constexpr (std::is_abstract_v<T>) {
     std::string module_name;
     void * data = lua_touserdata(L, index);
-    // Make sure this is a solarus userdata, with a known underlying type.
+    // Check for a Solarus userdata (which are shared_ptrs).
     if (data && LuaContext::is_solarus_userdata(L, index, module_name)) {
       auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
-      // Now we can rely on C++'s type infomation for the check.
+      // Now we can rely on C++'s type information for the check.
       return std::dynamic_pointer_cast<T>(*ptr);
     }
-    return {};
+    return nullptr;
+  // Concrete types can be handled with a standard metatable test.
+  } else {
+    void * data = LuaTools::test_userdata(L, index, T::module_name);
+    return (data) ? *static_cast<std::shared_ptr<T> *>(data) : nullptr;
   }
 }
 
