@@ -1377,6 +1377,21 @@ bool Quest::is_image(const QString& path) const {
 }
 
 /**
+ * @brief Checks that a path of this quest corresponds to an image file.
+ *
+ * It is okay if the file does not exist yet.
+ *
+ * @throws EditorException If the path does not end with ".png".
+ */
+void Quest::check_is_image(const QString& path) const {
+
+  if (!is_image(path)) {
+    QString file_name(QFileInfo(path).fileName());
+    throw EditorException(tr("Wrong image file name: '%1' (should end with '.png')").arg(file_name));
+  }
+}
+
+/**
  * @brief Attempts to create an empty file in this quest.
  * @param path Path of the file to create. It must not exist.
  * @throws EditorException In case of error.
@@ -1720,6 +1735,34 @@ bool Quest::create_entity_script_if_not_exists(const QString& entity_id) {
 
   create_entity_script(entity_id);
   return true;
+}
+
+/**
+ * @brief Attempts to create or update a sprite data file from a PNG image.
+ * @param image_path Path of the PNG image.
+ * @param sprite_id Id of the sprite to create.
+ * @throws EditorException In case of error.
+ */
+void Quest::create_sprite_from_image(const QString& image_path, const QString& sprite_id) {
+
+  check_is_in_root_path(image_path);
+  check_exists(image_path);
+  const QImage image(image_path);
+  const QSize size = image.size();
+  if (size.isEmpty()) {
+    throw EditorException(tr("Cannot load image file: '%1'").arg(image_path));
+  }
+
+  SpriteModel sprite(*this, sprite_id);
+  if (sprite.rowCount() != 0) {
+    throw EditorException(tr("This sprite already exists: '%1'").arg(sprite_id));
+  }
+  const QString animation_name = "normal";
+  sprite.create_animation(animation_name);
+  const SpriteModel::Index index(animation_name, 1);
+  sprite.set_animation_source_image(index, get_path_relative_to_sprites_path(image_path));
+  sprite.add_direction(index, QRect({0, 0}, size), 1, 1);
+  sprite.save();
 }
 
 /**

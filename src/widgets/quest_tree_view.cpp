@@ -416,6 +416,19 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
           QIcon(":/images/icon_resource_" + resource_type_lua_name + ".png"),
           resource_type_create_friendly_name,
           this);
+  } else if (quest.is_image(path)) {
+    // Image file: let the user create a sprite from it, unless it already exists.
+    const QRegularExpression pngExtension("\\.png$");
+    QString sprite_path = path;
+    sprite_path.replace(pngExtension, ".dat");
+    if (quest.is_potential_resource_element(sprite_path, resource_type, element_id) &&
+        resource_type == ResourceType::SPRITE &&
+        !quest.exists(sprite_path)) {
+      new_resource_element_action = new QAction(
+            QIcon(":/images/icon_resource_sprite.png"),
+            tr("New sprite from image..."),
+            this);
+    }
   }
 
   if (new_resource_element_action != nullptr) {
@@ -710,7 +723,7 @@ void QuestTreeView::build_context_menu_delete(QMenu& menu, const QStringList& pa
  */
 void QuestTreeView::new_element_action_triggered() {
 
-  QString path = get_selected_path();
+  const QString path = get_selected_path();
   if (path.isEmpty()) {
     return;
   }
@@ -733,6 +746,17 @@ void QuestTreeView::new_element_action_triggered() {
         return;
       }
       initial_description_value = initial_id_value;
+    }
+    else if (quest.is_image(path)) {
+      // Creating a sprite from an image.
+      const QRegularExpression pngExtension("\\.png$");
+      QString sprite_path = path;
+      sprite_path.replace(pngExtension, ".dat");
+      if (quest.is_potential_resource_element(sprite_path, resource_type, initial_id_value) &&
+          resource_type == ResourceType::SPRITE) {
+        const QRegularExpression datExtension("\\.dat$");
+        initial_description_value = QFileInfo(sprite_path).fileName().replace(datExtension, "");
+      }
     }
     else {
       if (!quest.is_resource_path(path, resource_type) &&
@@ -764,8 +788,12 @@ void QuestTreeView::new_element_action_triggered() {
     QString description = dialog.get_element_description();
     QuestDatabase::FileInfo file_info = dialog.get_file_info();
 
-    model->get_quest().create_resource_element(
+    quest.create_resource_element(
           resource_type, element_id, description, file_info);
+
+    if (quest.is_image(path)) {
+      quest.create_sprite_from_image(path, element_id);
+    }
 
     QString created_path = quest.get_resource_element_path(resource_type, element_id);
     if (quest.exists(created_path)) {

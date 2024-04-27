@@ -109,6 +109,7 @@ public:
   void check_is_shader_code_file(const QString& path) const;
   bool is_data_file(const QString& path) const;
   bool is_image(const QString& path) const;
+  void check_is_image(const QString& path) const;
   bool is_properties_path(const QString& path) const;
   bool is_resource_list_path(const QString& path) const;
   bool is_resource_path(const QString& path, ResourceType& resource_type) const;
@@ -155,6 +156,7 @@ public:
   bool create_enemy_script_if_not_exists(const QString& enemy_id);
   void create_entity_script(const QString& entity_id);
   bool create_entity_script_if_not_exists(const QString& entity_id);
+  void create_sprite_from_image(const QString& image_path, const QString& sprite_path);
 
   void create_dir(const QString& path);
   bool create_dir_if_not_exists(const QString& path);
