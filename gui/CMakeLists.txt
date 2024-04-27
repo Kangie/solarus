@@ -5,6 +5,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Tell CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
 
+include(cmake/AddOptions.cmake)
 include(cmake/AddDependencies.cmake)
 include(cmake/AddIncludeDirectories.cmake)
 include(cmake/AddSolarusGuiLibrary.cmake)
