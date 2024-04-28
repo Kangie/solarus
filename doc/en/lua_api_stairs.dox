@@ -1,0 +1,104 @@
+/**
+\page lua_api_stairs Stairs
+
+\tableofcontents
+
+Stairs make fancy animations, movements and sounds when the
+\ref lua_api_hero "hero" takes them.
+
+This type of \ref lua_api_entity "map entity" can be declared in the
+\ref lua_api_map_overview_files "map data file".
+It can also be created dynamically with
+\ref lua_api_map_create_stairs "map:create_stairs()".
+
+\remark Stairs entities provide very specific behavior for historical reasons
+  and are not very customizable.
+  If you need more flexibility, we recommend to use
+  \ref lua_api_custom_entity "custom entities" instead
+  and to script the behavior you want.
+
+\section lua_api_stairs_overview Overview
+
+Stairs provide nice transitions between two
+\ref lua_api_map "maps" or two
+\ref lua_api_map_overview_position "layers" on the same map.
+
+They don't bring any fundamental feature: you can already use
+\ref lua_api_teletransporter "teletransporters"
+and
+\ref lua_api_destination "destinations"
+to make the \ref lua_api_hero "hero" go to another place.
+And you can use
+\ref lua_api_sensor "sensors"
+to make him go from a layer to another on the same map.
+But they add fanciness to these transitions:
+the sound of climbing or going down stairs,
+a special movement and appropriate sprite animations.
+
+For stairs that teleport the hero to a different place,
+you still have to use a
+\ref lua_api_teletransporter "teletransporter"
+and a
+\ref lua_api_destination "destination"
+(stairs don't replace teletransporters and
+destinations).
+You just have put all three entities
+(the stairs, a teletransporter and a destination) at the same coordinates
+and the engine will activate the teletransporter when the stairs animation
+ends.
+
+Stairs that move from a layer to another layer
+inside the same map are called inner stairs
+and automatically change the layer of the hero.
+They must be placed on the lowest one of those two layers.
+Their direction property corresponds to the direction when going upwards.
+
+Stairs are invisible: it is up to you to place appropriate tiles where you
+make stairs.
+
+\section lua_api_stairs_inherited_methods Methods inherited from map entity
+
+Stairs are particular \ref lua_api_entity "map entities".
+Therefore, they inherit all methods from the type map entity.
+
+See \ref lua_api_entity_methods to know these methods.
+
+\section lua_api_stairs_methods Methods of the type stairs
+
+The following methods are specific to stairs.
+
+\subsection lua_api_stairs_get_direction stairs:get_direction()
+
+Returns the direction of these stairs.
+
+Stairs can be taken in two opposite directions.
+The one returned here is the main one, which is:
+for stairs that teleport the hero,
+the direction when leaving the place using the stairs
+(and not the one when arriving from the stairs),
+and for inner stairs,
+the direction when going upwards.
+- Return value (number): The stairs direction
+  between \c 0 (East) and \c 3 (South).
+
+\subsection lua_api_stairs_is_inner stairs:is_inner()
+
+Returns whether these stairs go from a layer to another layer on the same map
+or go to another place.
+- Return value (number): The direction between \c 0 (East) and \c 3 (South).
+
+\section lua_api_stairs_inherited_events Events inherited from map entity
+
+Events are callback methods automatically called by the engine if you define
+them.
+
+Stairs are particular \ref lua_api_entity "map entities".
+Therefore, they inherit all events from the type map entity.
+
+See \ref lua_api_entity_events to know these events.
+
+\section lua_api_stairs_events Events of the type stairs
+
+None.
+
+*/
