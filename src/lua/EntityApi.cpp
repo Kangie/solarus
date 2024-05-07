@@ -2054,10 +2054,23 @@ int LuaContext::entity_api_is_in_same_region(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     const Entity& entity = *check_entity(l, 1);
-    const Entity& other_entity = *check_entity(l, 2);
+    switch (lua_type(l, 2)) {
+    case LUA_TNUMBER: {
+      int x = LuaTools::check_int(l, 2);
+      int y = LuaTools::check_int(l, 3);
 
-    lua_pushboolean(l, entity.is_in_same_region(other_entity));
-    return 1;
+      lua_pushboolean(l, entity.is_in_same_region(Point(x, y)));
+      return 1;
+    }
+    case LUA_TUSERDATA: {
+      const Entity& other_entity = *check_entity(l, 2);
+
+      lua_pushboolean(l, entity.is_in_same_region(other_entity));
+      return 1;
+    }
+    default:
+      LuaTools::type_error(l, 2, "integer or userdata");
+    }
   });
 }
 

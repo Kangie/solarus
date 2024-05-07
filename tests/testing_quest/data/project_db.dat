@@ -119,6 +119,7 @@ map{ id = "bugs/1619_camera_obstacles", description = "#1619: Entities should no
 map{ id = "bugs/1628_hero_set_direction_crash", description = "#1628: Crash when hero:set_direction() has an invalid parameter" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
+map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
 map{ id = "bugs/526_get_entities_same_region", description = "#526: map:get_entities_in_same_region()" }
 map{ id = "bugs/630_change_resources", description = "#630: Allow to change the resource list dynamically" }
 map{ id = "bugs/633_straight_movement_speed_zero", description = "#633: Straight movements resets speed to zero when reaching an obstacle" }
@@ -691,6 +692,8 @@ file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", 
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/496_stream_speed_0.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/514_allow_x_y_parameters_to_entity_is_in_same_region.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/514_allow_x_y_parameters_to_entity_is_in_same_region.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
 file{ path = "maps/bugs/526_get_entities_same_region.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/526_get_entities_same_region.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/630_change_resources.dat", author = "Christopho", license = "CC BY-SA 4.0" }
