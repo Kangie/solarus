@@ -19,10 +19,7 @@ especially if you want to pause or stop it,
 you can use the more powerful \ref lua_api_sound "sol.sound module"
 instead of this function.
 
-Unlike musics, sound files are entirely read before being played.
-A file access is made only the first time you play each sound.
-You can use \ref lua_api_audio_preload_sounds if you want to also avoid this
-initial file access.
+Unlike music files, sound files are entirely read before being played.
 - \c sound_id (string): Name of the sound file to play, relative to the
   \c sounds directory and without extension.
   Currently, only OGG Vorbis (<tt>.ogg</tt>) sound files are supported.
@@ -33,7 +30,7 @@ initial file access.
 
 Loads all sounds effects into memory for faster future access.
 
-\warning This method is deprecated since Solarus 1.7 and has no effect anymore.
+\warning This method is deprecated since Solarus 2.0 and has no effect anymore.
   Sound effects are always automatically preloaded now.
 
 \subsection lua_api_audio_play_music sol.audio.play_music(music_id, [action])
@@ -75,6 +72,10 @@ to know how Solarus supports internal loop information for each format.
   It will be called when the music finishes.
   This allows you to perform an action of your choice, like playing
   another music.
+  Note however that there might be some small delay between the exact
+  end of the music and the time when your function is called,
+  because the music can end between simulation frames
+  but your function will be called the frame after that.
 
 \subsection lua_api_audio_get_music sol.audio.get_music()
 

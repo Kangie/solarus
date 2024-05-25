@@ -38,10 +38,6 @@ class SpcDecoder;
  * Only one music can be played at the same time.
  * Before using this class, the audio system should have been
  * initialized, by calling Sound::initialize().
- * Sound and Music are the only classes that depends on audio libraries.
- *
- * TODO move the non-static parts to an internal private class.
- * TODO make a subclass for each format?
  */
 class SOLARUS_API Music {
 
@@ -57,8 +53,8 @@ class SOLARUS_API Music {
       OGG               /**< Ogg Vorbis. */
     };
 
-    static const std::string none;               /**< special id indicating that there is no music */
-    static const std::string unchanged;          /**< special id indicating that the music is the same as before */
+    static const std::string none;               /**< Special id indicating that there is no music. */
+    static const std::string unchanged;          /**< Special id indicating that the music is the same as before. */
     static const std::vector<std::string>
         format_names;                            /**< Name of each format. */
 
