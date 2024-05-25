@@ -1,0 +1,384 @@
+/**
+\page lua_api_custom_entity Custom entity
+
+\tableofcontents
+
+A custom entity is a map entity entirely defined by your Lua scripts.
+
+This type of \ref lua_api_entity "map entity" can be declared in the
+\ref lua_api_map_overview_files "map data file".
+It can also be created dynamically with
+\ref lua_api_map_create_custom_entity "map:create_custom_entity()".
+
+\section lua_api_custom_entity_overview Overview
+
+Custom entities have no special properties or behavior.
+You can define them entirely in your scripts.
+
+Optionally, a custom entity may be managed by a model.
+The model is the name of a Lua script that will be applied to all custom
+entities refering to it.
+This works exactly like the
+\ref lua_api_enemy_get_breed "breed" of enemies,
+except that it is optional.
+The model is useful if you have a lot of identical (or very similar)
+custom entities in your game, like for example torches.
+
+If you make an entity that is unique in your game, like for example,
+a big rock that blocks the entrance of a dungeon and that requires some
+special action from the player, you don't need a model.
+You can just program the behavior of your custom entity in the
+script of its map.
+Similarly, to define a customized weapon of the hero, like a hammer,
+you don't need a model.
+Just create a custom entity from the item script of the hammer and define
+its behavior there.
+
+\section lua_api_custom_entity_inherited_methods Methods inherited from map entity
+
+Custom entities are particular \ref lua_api_entity "map entities".
+Therefore, they inherit all methods from the type map entity.
+
+See \ref lua_api_entity_methods to know these methods.
+
+\section lua_api_custom_entity_methods Methods of the type custom entity
+
+The following methods are specific to custom entities.
+
+\subsection lua_api_custom_entity_get_model custom_entity:get_model()
+
+Returns the model of this custom entity.
+
+The model is the name of a Lua script in the \c "entities" directory that
+manages this custom entity.
+This works exactly like the breed of
+\ref lua_api_enemy "enemies",
+except that it is optional.
+- Return value (string): The model of custom entity, or \c nil if the custom
+  entity has no model script.
+
+\subsection lua_api_custom_entity_get_direction custom_entity:get_direction()
+
+Returns the direction of this custom entity.
+
+This direction is set at creation time or when you can call
+\ref lua_api_custom_entity_set_direction "custom_entity:set_direction()".
+- Return value 1 (number): The direction.
+
+\subsection lua_api_custom_entity_set_direction custom_entity:set_direction(direction)
+
+Sets the direction of this custom entity.
+
+Sprites of your custom entity that have such a direction automatically take it.
+- Return value 1 (number): The direction.
+
+\subsection lua_api_custom_entity_is_tiled custom_entity:is_tiled()
+
+Returns whether the sprite is repeated with
+tiling to fit the size of the custom entity
+when the size is bigger than the sprite.
+- Return value (boolean): \c true if the sprite is tiled.
+
+\subsection lua_api_custom_entity_set_tiled custom_entity:set_tiled([tiled])
+
+Sets whether the sprite should be repeated with
+tiling to fit the size of the custom entity
+when the size is bigger than the sprite.
+- \c tiled (boolean, optional): \c true to make the sprite tiled.
+  No value means \c true.
+
+\subsection lua_api_custom_entity_set_traversable_by custom_entity:set_traversable_by([entity_type], traversable)
+
+Sets whether this custom entity can be traversed by other entities.
+
+By default, a custom entity can be traversed.
+- \c entity_type (string, optional): A type of entity.
+  See \ref lua_api_entity_get_type "entity:get_type()" for the possible values.
+  If not specified, the setting will be applied to all entity types that do
+  not override it.
+- \c traversable (boolean, function or \c nil): Whether this entity type can
+  traverse your custom entity. This can be:
+  - A boolean: \c true to make your custom entity traversable by this entity
+    type, \c false to make it obstacle.
+  - A function: Custom test.
+    This allows you to decide dynamically.
+    The function takes your custom entity
+    and then the other entity as parameters, and should return \c true if you
+    allow the other entity to traverse your custom entity.
+    This function will be called every time a \ref lua_api_movement "moving"
+    entity of the specified type is about to overlap your custom entity.
+  - \c nil: Clears any previous setting for this entity type and therefore
+    restores the default value.
+
+\subsection lua_api_custom_entity_set_can_traverse custom_entity:set_can_traverse([entity_type], traversable)
+
+Sets whether this custom entity can traverse other entities.
+
+This is important only if your custom entity can
+\ref lua_api_movement "move".
+
+By default, this depends on the other entities: for example,
+\ref lua_api_sensor "sensors" can be traversed by default
+while \ref lua_api_door "doors" cannot unless they are open.
+- \c entity_type (string, optional): A type of entity.
+  See \ref lua_api_entity_get_type "entity:get_type()" for the possible values.
+  If not specified, the setting will be applied to all entity types for which
+  you don't override this setting.
+- \c traversable (boolean, function or \c nil): Whether your custom entity can
+  traverse the other entity type. This can be:
+  - A boolean: \c true to allow your custom entity to traverse entities of the
+    specified type, \c false otherwise.
+  - A function: Custom test.
+    This allows you to decide dynamically.
+    The function takes your custom entity
+    and then the other entity as parameters, and should return \c true if you
+    allow your custom entity to traverse the other entity.
+    When your custom entity has a \ref lua_api_movement "movement",
+    this function will be called every time it is about to overlap an entity
+    of the specified type.
+  - \c nil: Clears any previous setting for this entity type and therefore
+    restores the default value.
+
+\subsection lua_api_custom_entity_can_traverse_ground custom_entity:can_traverse_ground(ground)
+
+Returns whether this custom entity can traverse a kind of ground.
+
+This is important only if your custom entity can
+\ref lua_api_movement "move".
+
+The \ref lua_api_map_get_ground "ground" is the terrain property of the
+\ref lua_api_map "map".
+It is defined by \ref lua_api_tile "tiles" and by other entities that may
+change it dynamically.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- Return value (boolean): \c true if your custom entity can traverse this
+  kind of ground.
+
+\subsection lua_api_custom_entity_set_can_traverse_ground custom_entity:set_can_traverse_ground(ground, traversable)
+
+Sets whether this custom entity can traverse a kind of ground.
+
+This is important only if your custom entity can
+\ref lua_api_movement "move".
+
+The \ref lua_api_map_get_ground "ground" is the terrain property of the
+\ref lua_api_map "map".
+It is defined by \ref lua_api_tile "tiles" and by other entities that may
+change it dynamically.
+
+By default, this depends on the the ground: for example,
+the \c "grass" ground can be traversed by default
+while the \c "low wall" ground cannot.
+- \c ground (string): A kind of ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the possible values.
+- \c traversable (boolean): Whether your custom entity can
+  traverse this kind of ground.
+
+\subsection lua_api_custom_entity_add_collision_test custom_entity:add_collision_test(collision_mode, callback)
+
+Registers a function to be called when your custom entity detects a collision
+when another entity.
+- \c collision_mode (string or function): Specifies what kind of collision you
+  want to test. This may be one of:
+  - \c "overlapping": Collision if the
+    \ref lua_api_entity_get_bounding_box "bounding box"
+    of both entities overlap.
+    This is often used when the other entity can traverse your custom entity.
+  - \c "containing": Collision if the bounding box of the other entity is
+    fully inside the bounding box of your custom entity.
+  - \c "origin": Collision if the \ref lua_api_entity_get_origin "origin point"
+    or the other entity is inside the bounding box of your custom entity.
+  - \c "center": Collision if the \ref lua_api_entity_get_center_position
+    "center point" of the other entity is inside the bounding box of your
+    custom entity.
+  - \c "facing": Collision if the
+    \ref lua_api_entity_get_facing_position "facing position" of the other
+    entity's bounding box is touching your custom entity's bounding box.
+    Bounding boxes don't necessarily overlap, but they are in
+    contact: there is no space between them.
+    When you consider the bounding box of an entity,
+    which is a rectangle with four sides,
+    the facing point is the middle point of the side the entity is oriented to.
+    This \c "facing" collision test is useful when the other entity cannot
+    traverse your custom entity.
+    For instance, if the other entity has direction "east", there is a
+    collision if the middle of the east side of its bounding box touches
+    (but does not necessarily overlap) your custom entity's bounding box.
+    This is very often what you need, typically to let the hero interact with
+    your entity when he is looking at it.
+  - \c "touching": Like \c "facing", but accepts all four sides of the other
+    entity's bounding box, no matter its direction.
+  - \c "sprite": Collision if a sprite of the other entity overlaps a sprite of
+    your custom entity.
+    The collision test is pixel precise.
+  - A function: Custom collision test. The function takes your custom entity
+    and then the other entity as parameters and should return \c true if there
+    is a collision between them.
+    This function will be called every time the engine needs to check
+    collisions between your custom entity and any other entity.
+- \c callback (function): A function that will be called when the collision
+  test detects a collision with another entity.
+  This allows you to decide dynamically.
+  This function takes your custom entity and then the other entity as
+  parameters.
+  If the collision test was \c "sprite", both involved sprites are also passed
+  as third and fourth parameters: the third parameter is the sprite of your
+  custom entity, and the fourth parameter is the sprite of the other entity.
+  This may be useful when your entities have several sprites, otherwise you can
+  just ignore these additional sprite parameters.
+
+\remark See also
+  \ref lua_api_entity_overlaps_entity "entity:overlaps()"
+  to directly test a collision rather than registering a callback.
+
+\subsection lua_api_custom_entity_clear_collision_tests custom_entity:clear_collision_tests()
+
+Disables any collision test previously registered with
+\ref lua_api_custom_entity_add_collision_test
+"custom_entity:add_collision_test()".
+
+\subsection lua_api_custom_entity_has_layer_independent_collisions custom_entity:has_layer_independent_collisions()
+
+Returns whether this custom entity can detect collisions with entities
+even if they are not on the same layer.
+
+By default, custom entities can only have collisions with entities on the
+same layer.
+- Return value (boolean): \c true if this entity can
+  detect collisions even with entities on other layers.
+
+\subsection lua_api_custom_entity_set_layer_independent_collisions custom_entity:set_layer_independent_collisions([independent])
+
+Sets whether this custom entity can detect collisions with entities
+even if they are not on the same layer.
+
+By default, custom entities can only have collisions with entities on the
+same layer.
+If you set this property to \c true, the
+\ref lua_api_custom_entity_add_collision_test "collision tests"
+will be performed even with entities that are
+on a different layer.
+- \c independent (boolean, optional): \c true to make this entity detect
+  collisions even
+  with entities on other layers. No value means \c true.
+
+\subsection lua_api_custom_entity_get_modified_ground custom_entity:get_modified_ground()
+
+Returns the kind of
+\ref lua_api_map_get_ground "ground"
+(terrain) defined by this custom entity on the map.
+- Return value (string): The ground defined by this custom entity, or \c nil
+  if this custom entity does not modify the ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the list of possible grounds.
+
+\subsection lua_api_custom_entity_set_modified_ground custom_entity:set_modified_ground(modified_ground)
+
+Sets the kind of
+\ref lua_api_map_get_ground "ground"
+(terrain) defined by this custom entity on the map.
+
+The ground of the map is normally defined by tiles, but other entities
+may modify it dynamically.
+
+This property allows you to make a custom entity that
+modifies the ground of the map, for example a hole with a special sprite
+or ice with particular
+\ref lua_api_custom_entity_add_collision_test "collision callbacks".
+The modified ground will be applied on the map in the rectangle of this custom
+entity's
+\ref lua_api_entity_get_bounding_box "bounding box".
+Your custom entity can move: the ground will still be correctly applied.
+- \c modified_ground (string): The ground defined by this custom entity,
+  or \c nil (or \c "empty") to make this custom entity stop modifying the
+  ground.
+  See \ref lua_api_map_get_ground "map:get_ground()" for the list of possible grounds.
+
+\remark If you only need to modify the ground of the map dynamically,
+for example to make a moving platform over holes, a
+\ref lua_api_dynamic_tile "dynamic tile"
+with a
+\ref lua_api_movement "movement"
+may be enough.
+
+\subsection lua_api_custom_entity_get_follow_streams custom_entity:get_follow_streams()
+
+Returns whether this custom entity follows
+\ref lua_api_stream "streams".
+
+By default, custom entities are not affected by streams and ignore them.
+- Return value (boolean): \c true if this custom entity follows streams,
+  \c false if it ignores them.
+
+\subsection lua_api_custom_entity_set_follow_streams custom_entity:set_follow_streams([follow_streams])
+
+Sets whether this custom entity should follow
+\ref lua_api_stream "streams".
+
+By default, custom entities are not affected by streams and ignore them.
+- \c follow_streams (boolean, optional): \c true to make this custom entity follow
+  streams, \c false to ignore them.
+  No value means \c true.
+
+\section lua_api_custom_entity_inherited_events Events inherited from map entity
+
+Events are callback methods automatically called by the engine if you define
+them.
+
+Custom entities are particular \ref lua_api_entity "map entities".
+Therefore, they inherit all events from the type map entity.
+
+See \ref lua_api_entity_events to know these events.
+
+\section lua_api_custom_entity_events Events of the type custom entity
+
+The following events are specific to custom entities.
+
+\subsection lua_api_custom_entity_on_update custom_entity:on_update()
+
+Called at each cycle while this custom entity lives on the map.
+
+\remark As this function is called at each cycle, it is recommended to use other
+solutions when possible, like \ref lua_api_timer "timers" and other events.
+
+\subsection lua_api_custom_entity_on_ground_below_changed custom_entity:on_ground_below_changed(ground_below)
+
+Called when the kind of
+\ref lua_api_map_get_ground "ground" on the map below this
+custom entity has changed.
+It may change because this custom entity is moving,
+or when because another entity changes it.
+- \c ground_below (string): The kind of ground at the
+  \ref lua_api_entity_get_ground_position "ground point"
+  of this custom entity.
+  \c nil means empty, that is, there is no ground at this point on the
+  current layer.
+
+\subsection lua_api_custom_entity_on_interaction custom_entity:on_interaction()
+
+Called when the \ref lua_api_hero "hero" interacts
+with this custom entity, that is,
+when the player presses the \ref lua_api_game_overview_commands "action command"
+while facing this custom entity.
+
+\remark This event is also available with
+  \ref lua_api_npc_on_interaction "NPCs".
+
+\subsection lua_api_custom_entity_on_interaction_item custom_entity:on_interaction_item(item_used)
+
+Called when the \ref lua_api_hero "hero" uses any
+\ref lua_api_item "equipment item"
+(the player pressed an \ref lua_api_game_overview_commands "item command") while
+facing this custom entity.
+- \c item_used (\ref lua_api_item "item"): The item currently used by
+  the player.
+- Return value (boolean): \c true if an interaction happened.
+  If you return \c false or nothing,
+  then \ref lua_api_item_on_using
+  "item_used:on_using()" will be called
+  (just like if there was no custom entity in front of the hero).
+
+\remark This event is also available with
+  \ref lua_api_npc_on_interaction_item "NPCs".
+
+*/
