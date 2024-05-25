@@ -1,0 +1,271 @@
+/**
+\page lua_api_drawable Drawable objects
+
+\tableofcontents
+
+%Drawable objects are things that can be drawn on a destination surface.
+They include the following types:
+\subpage lua_api_surface "surface",
+\subpage lua_api_text_surface "text surface" and
+\subpage lua_api_sprite "sprite".
+This page describes the methods common to those types.
+
+\section lua_api_drawable_methods Methods of all drawable types
+
+These methods exist in all drawable types.
+
+\subsection lua_api_drawable_draw drawable:draw(dst_surface, [x, y])
+
+Draws this object on a destination surface.
+- \c dst_surface (\ref lua_api_surface "surface"): The destination surface.
+- \c x (number, optional): X coordinate of where to draw this object
+  (default \c 0).
+- \c y (number, optional): Y coordinate of where to draw this object.
+  (default \c 0).
+
+\subsection lua_api_drawable_draw_region drawable:draw_region(region_x, region_y, region_width, region_height, dst_surface, [x, y])
+
+Draws a subrectangle of this object on a destination surface.
+- \c region_x (number): X coordinate of the subrectangle to draw.
+- \c region_y (number): Y coordinate of the subrectangle to draw.
+- \c region_width (number): Width of the subrectangle to draw.
+- \c region_height (number): Height of the subrectangle to draw.
+- \c dst_surface (\ref lua_api_surface "surface"): The destination surface.
+- \c x (number, optional): X coordinate of where to draw this rectangle
+  on the destination surface (default \c 0).
+- \c y (number, optional): Y coordinate of where to draw this rectangle.
+  on the destination surface (default \c 0).
+
+\subsection lua_api_drawable_get_rotation drawable:get_rotation()
+
+Returns the rotation angle of this object around its
+\ref lua_api_drawable_set_transformation_origin "transformation origin".
+The rotation angle is in radians and goes in trigonometric direction.
+- Return value (number): The rotation angle in radians around the
+  transformation origin.
+  \c 0 means no rotation.
+
+\subsection lua_api_drawable_set_rotation drawable:set_rotation(rotation)
+
+Sets the rotation angle of this object around its
+\ref lua_api_drawable_set_transformation_origin "transformation origin".
+The rotation angle is in radians and goes in trigonometric direction.
+- \c rotation (number): The rotation angle in radians around the
+  transformation origin.
+  \c 0 means no rotation.
+
+\subsection lua_api_drawable_get_scale drawable:get_scale()
+
+Returns the scaling factors of this drawable object.
+- Return value 1 (number): Scale factor in the X dimension.
+- Return value 2 (number): Scale factor in the Y dimension.
+
+\subsection lua_api_drawable_set_scale drawable:set_scale(x, y)
+
+Set the scale factors for this drawable object.
+A scale of \c 1 corresponds to a normal size.
+A negative scale will flip the drawable in the corresponding axis.
+Scaling is performed around the
+\ref lua_api_drawable_set_transformation_origin "transformation origin".
+- \c x (number) : Scale factor in the X dimension.
+- \c y (number) : Scale factor in the Y dimension.
+
+\subsection lua_api_drawable_get_transformation_origin drawable:get_transformation_origin()
+
+Returns the transformation origin of this drawable object.
+The tranformation origin point is the pivot point used for rotation and scaling.
+
+The transformation point is relative to the origin point of the drawable object,
+which is always the upper-left corner for
+\ref lua_api_surface "surfaces" and
+\ref lua_api_text_surface "text surfaces", and the
+sprite origin point for \ref lua_api_sprite "sprites".
+- Return value 1 (number): X coordinate of the transform point.
+- Return value 2 (number): Y coordinate of the transform point.
+
+\subsection lua_api_drawable_set_transformation_origin drawable:set_transformation_origin(x, y)
+
+Set the transformation origin point of this drawable object.
+The tranformation origin point is the pivot point used for rotation and scaling.
+
+The transformation point is relative to the origin point of the drawable object,
+which is always the upper-left corner for
+\ref lua_api_surface "surfaces" and
+\ref lua_api_text_surface "text surfaces", and the
+sprite origin point for \ref lua_api_sprite "sprites".
+- \c x (number): X coordinate of the transformation origin.
+- \c y (number): Y coordinate of the transformation origin.
+
+\subsection lua_api_drawable_get_blend_mode drawable:get_blend_mode()
+
+Returns the blend mode of this drawable object.
+
+The blend mode defines how this drawable object will be drawn on other surfaces
+when you call
+\ref lua_api_drawable_draw "drawable:draw()" or
+\ref lua_api_drawable_draw_region "drawable:draw_region()".
+- Return value (string): The blend mode.
+  See \ref lua_api_drawable_set_blend_mode "drawable:set_blend_mode()"
+  for the possible values.
+
+\subsection lua_api_drawable_set_blend_mode drawable:set_blend_mode(blend_mode)
+
+Sets the blend mode of this drawable object.
+
+The blend mode defines how this drawable object will be drawn on other surfaces
+when you call
+\ref lua_api_drawable_draw "drawable:draw()" or
+\ref lua_api_drawable_draw_region "drawable:draw_region()".
+- \c blend_mode (string): The blend mode. Can be one of:
+  - \c "none": No blending. The destination surface is replaced by the pixels
+    of this drawable object.<br>
+    <tt>dstRGBA = srcRGBA</tt>
+  - \c "blend" (default): This drawable object is alpha-blended onto
+    the destination surface.<br>
+    <tt>dstRGB = (srcRGB * srcA) + (dstRGB * (1 - srcA))</tt><br>
+    <tt>dstA = srcA + (dstA * (1 - srcA))</tt>
+  - \c "add": This drawable object is drawn onto the destination
+    surface with additive blending.
+    The clarity of the destination surface is kept.
+    Useful to color and lighten the destination surface.<br>
+    <tt>dstRGB = (srcRGB * srcA) + dstRGB</tt>
+  - \c "multiply": Color modulation.
+    Can be used to darken the destination surface
+    without degrading its content.<br>
+    <tt>dstRGB = srcRGB * dstRGB</tt>
+
+\subsection lua_api_drawable_get_shader drawable:get_shader()
+
+Returns the shader applied to this object.
+
+- Return value (\ref lua_api_shader "shader"): The shader,
+  or \c nil if no shader is set.
+
+\subsection lua_api_drawable_set_shader drawable:set_shader(shader)
+
+Sets the shader used to draw this object.
+
+Default drawing is done with no shader.
+- \c shader (\ref lua_api_shader "shader"): The shader to set,
+  or \c nil to reset drawing to normal.
+
+\subsection lua_api_drawable_get_opacity drawable:get_opacity()
+
+Returns the opacity of this drawable.
+- Return value (integer): The opacity: \c 0 (transparent) to \c 255 (opaque).
+
+\subsection lua_api_drawable_set_opacity drawable:set_opacity(opacity)
+
+Sets the opacity of this drawable.
+
+All drawables are initially opaque.
+- \c opacity (integer): The opacity: \c 0 (transparent) to \c 255 (opaque).
+
+\subsection lua_api_drawable_get_color_modulation drawable:get_color_modulation()
+
+Returns the color multiplier of this drawable.
+- Return value (table): The color as an array of RGBA values
+
+\subsection lua_api_drawable_set_color_modulation drawable:set_color_modulation(color)
+
+Sets the color modulator of this drawable, default is plain white {255,255,255,255}.
+When the drawable is draw, all the pixels are multiplied by this color (white as no effect).
+Alpha channel and drawable opacity are multiplied together.
+
+- \c color (table): The color multiplier, as an array of RGBA values.
+
+\subsection lua_api_drawable_fade_in drawable:fade_in([delay], [callback])
+
+Starts a fade-in effect on this object.
+
+You can specify a callback function to be executed when the fade-in effect
+finishes.
+
+If the drawable object is a
+\ref lua_api_sprite "sprite" attached to a \ref lua_api_entity "map entity"
+during a game, the fade-in effect gets the lifetime of that entity.
+The behavior is probably what you expect:
+the fade-in effect gets suspended when the entity gets suspended,
+and it gets canceled (that is, the callback is never executed)
+when the map entity is destroyed.
+- \c delay (number, optional): Delay in milliseconds between two
+  frames of the fade-in animation (default \c 20).
+  The total number of frames of the animation is 32.
+- \c callback (function, optional): A function to call when the
+  fade-in effect finishes.
+
+\note When your drawable object does not belong to a
+  \ref lua_api_entity "map entity" (typically in a title screen
+  before a game is started, or in your pause menu),
+  the fade-in effect continues until the drawable object is
+  garbage-collected.
+  In other words, the callback can be executed even if you have stopped
+  using the drawable object in the meantime.
+  Therefore, you should use the \c callback parameter with care.
+  In these situations, using a \ref lua_api_timer "timer" for your callback
+  is easier because timers have an explicit lifetime.
+
+\subsection lua_api_drawable_fade_out drawable:fade_out([delay], [callback])
+
+Starts a fade-out effect on this object.
+
+You can specify a callback function to be executed when the fade-out effect
+finishes.
+
+If the drawable object is a
+\ref lua_api_sprite "sprite" attached to a \ref lua_api_entity "map entity"
+during a game, the fade-out effect gets the lifetime of that entity.
+The behavior is probably what you expect:
+the fade-out effect gets suspended when the entity gets suspended,
+and it gets canceled (that is, the callback is never executed)
+when the map entity is destroyed.
+- \c delay (number, optional): Delay in milliseconds between two
+  frames of the fade-out animation (default \c 20).
+  The total number of frames of the animation is 32.
+- \c callback (function, optional): A function to call when the
+  fade-out effect finishes.
+
+\note When your drawable object does not belong to a
+  \ref lua_api_entity "map entity" (typically in a title screen
+  before a game is started, or in your pause menu),
+  the fade-out effect continues until the drawable object is
+  garbage-collected.
+  In other words, the callback can be executed even if you have stopped
+  using the drawable object in the meantime.
+  Therefore, you should use the \c callback parameter with care.
+  In these situations, using a \ref lua_api_timer "timer" for your callback
+  is easier because timers have an explicit lifetime.
+
+\subsection lua_api_drawable_get_xy drawable:get_xy()
+
+Returns the offset added where this drawable object is drawn.
+
+This value is initially <tt>0,0</tt>.
+It is added to whatever coordinates the object is drawn at.
+
+They can be modified by a \ref lua_api_movement "movement"
+or by \ref lua_api_drawable_set_xy "drawable:set_xy()".
+- Return value 1 (number): X offset of the drawable object.
+- Return value 2 (number): Y offset of the drawable object.
+
+\subsection lua_api_drawable_set_xy drawable:set_xy(x, y)
+
+Sets the offset added where this drawable object is drawn.
+
+This value is initially <tt>0,0</tt>.
+It is added to whatever coordinates the object is drawn at.
+
+- \c x (number): X offset to set.
+- \c y (number): Y offset to set.
+
+\subsection lua_api_drawable_get_movement drawable:get_movement()
+
+Returns the current movement of this drawable object.
+- Return value (\ref lua_api_movement "movement"): The current movement,
+  or \c nil if the drawable object is not moving.
+
+\subsection lua_api_drawable_stop_movement drawable:stop_movement()
+
+Stops the current movement of this drawable object if any.
+
+*/

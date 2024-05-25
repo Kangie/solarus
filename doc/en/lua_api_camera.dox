@@ -1,0 +1,258 @@
+/**
+\page lua_api_camera Camera
+
+\tableofcontents
+
+The camera is a rectangular shape that determines the visible part of the
+\ref lua_api_map "map".
+There is always exactly one camera on the current map.
+The camera is automatically created by the engine when loading a map.
+You cannot create or remove it.
+To access the camera of the map from one of your scripts, you can use
+\ref lua_api_map_get_camera "map:get_camera()".
+
+\section lua_api_camera_overview Overview
+
+The camera can work in two states.
+It can be either centered on an
+\ref lua_api_entity "entity" and track it automatically,
+or it can be controlled manually by your scripts or by the engine.
+
+When a map starts, its camera is initially set to track the
+\ref lua_api_hero "hero".
+
+Use \ref lua_api_camera_start_manual "camera:start_manual()"
+to switch to manual state, and
+\ref lua_api_camera_start_tracking "camera:start_tracking()"
+to switch to tracking state.
+Starting a
+\ref lua_api_movement "movement" on the camera
+also switches it to manual state.
+
+\subsection lua_api_camera_constraints Movements and constraints
+
+\ref lua_api_separator "Separators" and map limits are obstacles for the
+camera.
+
+It means that if the camera is close to a separator or to a limit of the map,
+its movement stops as you would expect, independently of its state.
+
+Remember however that obstacles can be explicitly ignored with
+\ref lua_api_movement_set_ignore_obstacles
+"movement:set_ignore_obstacles(true)".
+For a camera, it means that you can ignore separators and even map limits
+if you want.
+Parts of the camera that are outside the map are displayed with the background
+color of the tileset.
+
+\subsection lua_api_camera_overview_size Camera size
+
+By default, the size of the camera is the
+\ref lua_api_video_get_quest_size "quest size",
+meaning that the camera occupies the whole screen.
+
+It is possible to set a smaller size to the camera, in order to show the
+map only on a subpart of the screen.
+You can then use the rest of the screen to display some information like a HUD.
+Use
+\ref lua_api_entity_set_size "camera:set_size()"
+and \ref lua_api_camera_set_position_on_screen "camera:set_position_on_screen()"
+to indicate the exact subpart of the screen where you want
+the camera to be displayed.
+
+\subsection lua_api_camera_suspending Suspending the game
+
+Moving the camera does not automatically suspends the game,
+except when it is scrolling on a
+\ref lua_api_separator "separator" in tracking state.
+You can call
+\ref lua_api_game_set_suspended "game:set_suspended()"
+if you want the game to be suspended during your camera sequence.
+Note that unlike most entities, the camera can still move when the game
+is suspended.
+
+\section lua_api_camera_inherited_methods Methods inherited from map entity
+
+A camera is a particular \ref lua_api_entity "map entity".
+Therefore, it inherits all methods from the type map entity.
+
+See \ref lua_api_entity_methods to know these methods.
+
+\section lua_api_camera_methods Methods of the type camera
+
+The following methods are specific to cameras.
+
+\subsection lua_api_camera_get_position_on_screen camera:get_position_on_screen()
+
+Returns where the camera is displayed on the quest screen.
+
+The default position is <tt>0, 0</tt>, meaning that the upper left corner of
+the camera is displayed on the upper left corner of the screen.
+- Return value 1 (number): X coordinate of the camera on the screen,
+  in quest screen coordinates.
+- Return value 2 (number): Y coordinate of the camera on the screen,
+  in quest screen coordinates.
+
+\subsection lua_api_camera_set_position_on_screen camera:set_position_on_screen(x, y)
+
+Sets where the camera is displayed on the quest screen.
+
+You can use this function in conjunction with
+\ref lua_api_entity_set_size "camera:set_size()"
+to display the camera only on a subpart of the screen and for example
+keep the rest of the space for the HUD.
+
+The default position is <tt>0,0</tt>, meaning that the upper left corner of
+the camera is displayed on the upper left corner of the screen.
+- \c x (number): X coordinate of the camera on the screen,
+  in quest screen coordinates.
+- \c y (number): Y coordinate of the camera on the screen,
+  in quest screen coordinates.
+
+\subsection lua_api_camera_get_position_to_track camera:get_position_to_track(entity), camera:get_position_to_track(x, y)
+
+Returns the coordinates this camera should have in order to track the given
+entity or point,
+respecting constraints of map limits and separators.
+
+The returned coordinates make their best to have the entity or point
+centered in the camera, but make sure that the camera does not cross
+\ref lua_api_separator "separators" or map limits.
+This function can be used to compute legal coordinates for the camera,
+and for example pass them to
+\ref lua_api_entity_set_position "camera:set_position()"
+or start a
+\ref lua_api_movement_start "movement".
+
+To get coordinates that center the camera on a map entity:
+- \c entity (\ref lua_api_entity "entity") The entity to center the camera on.
+
+To get coordinates that center the camera on a point:
+- \c x (number): X coordinate of the point to center the camera on.
+- \c y (number): Y coordinate of the point to center the camera on.
+
+\subsection lua_api_camera_get_state camera:get_state()
+
+Returns the name of the current state of the camera.
+- Return value (string): The current camera state:
+  \c "tracking" or \c "manual".
+
+\subsection lua_api_camera_start_tracking camera:start_tracking(entity)
+
+Switches the camera to tracking state.
+
+The camera will be focused on an entity to track, and follow it when it moves.
+
+When the tracked entity crosses a separator,
+the engine automatically starts a scrolling movement on the camera.
+The game is automatically suspended during the scrolling.
+After the scrolling, the camera continues to normally track the entity
+on the other side of the separator.
+- \c entity (entity): The entity to track.
+
+\subsection lua_api_camera_get_tracked_entity camera:get_tracked_entity()
+
+Returns the entity currently tracked by this camera, if any.
+- Return value (entity): The tracked entity if the camera is in tracking state,
+  or \c nil if the camera is not in tracking state.
+
+\subsection lua_api_camera_start_manual camera:start_manual()
+
+Switches the camera to manual state.
+
+\remark The camera automatically switches to manual state if you start
+  a \ref lua_api_movement_start "movement" on it.
+
+\subsection lua_api_camera_get_surface camera:get_surface()
+
+Returns the \ref lua_api_surface "surface" this camera draws its content to.
+
+The size of this surface is the size of the camera.
+- Return value (\ref lua_api_surface "surface"): The camera's surface.
+
+\subsection lua_api_camera_set_viewport camera:set_viewport(x, y, w, h)
+
+Sets the viewport of the camera, only has an effect if \ref lua_api_video_set_geometry_mode is set to "dynamic_quest_size" or "dynamic_absolute".
+
+- \c x (nomber): relative horizontal position of the viewport on screen [0, 1]
+- \c y (number): relative vertical position of the viewport on screen [0, 1]
+- \c w (number): relative width of the viewport on screen [0,1]
+- \c h (number): relative height of the viewport on screen [0,1]
+
+\subsection lua_api_camera_get_viewport camera:get_viewport(0)
+
+Returns the viewport of the camera
+
+- Return value 1 (nomber): relative horizontal position of the viewport on screen [0, 1]
+- Return value 2 (number): relative vertical position of the viewport on screen [0, 1]
+- Return value 3 (number): relative width of the viewport on screen [0,1]
+- Return value 4 (number): relative height of the viewport on screen [0,1]
+
+\subsection lua_api_camera_set_zoom camera:set_zoom(zoomx, zoomy)
+
+Sets the zoom factors of the camera, values larger than 1 zoom in.
+
+- \c zoomx (number): scaling of the camera along x axis
+- \c zoomy (number): scaling of the camera along y axis
+
+\subsection lua_api_camera_get_zoom camera:get_zoom()
+
+Gets the zoom factors of the camera.
+
+- Return value 1 (number): scaling of the camera along x axis
+- Return value 2 (number): scaling of the camera along y axis
+
+\subsection lua_api_camera_set_rotation camera:set_rotation(angle)
+
+Sets the camera rotation around its center.
+
+- \c angle (number): rotation angle, positive is counter-clockwise.
+
+\subsection lua_api_camera_get_rotation camera:get_rotation(angle)
+
+Gets the camera rotation around its center.
+
+- Return value (number): rotation angle, positive is counter-clockwise.
+
+\subsection lua_api_camera_teleport(map_id, destination_id)
+
+Teleports the camera to another map and destination.
+
+- \c map_id (string): Id of the map to teleport the camera into.
+- \c destination_id (string): Id of the destination to place the camera on on arrival.
+
+\section lua_api_camera_inherited_events Events inherited from map entity
+
+Events are callback methods automatically called by the engine if you define
+them.
+
+A camera is a particular \ref lua_api_entity "map entity".
+Therefore, it inherits all events from the type map entity.
+
+See \ref lua_api_entity_events to know these events.
+
+\section lua_api_camera_events Events of the type camera
+
+The following events are specific to cameras.
+
+\subsection lua_api_camera_on_state_changing camera:on_state_changing(state_name, next_state_name)
+
+Called when the state of the camera is about to change.
+- \c state_name (string): Name of the current state. See
+  \ref lua_api_camera_get_state "camera:get_state()" for the list of possible
+  state names.
+- \c next_state_name (string): Name of the state about to start. See
+  \ref lua_api_camera_get_state "camera:get_state()" for the list of possible
+  state names.
+
+\subsection lua_api_camera_on_state_changed camera:on_state_changed(new_state_name)
+
+Called when the state of the camera has just changed.
+- \c new_state_name (string): Name of the new state. See
+  \ref lua_api_camera_get_state "camera:get_state()" for the list of possible
+  state names.
+
+\remark When the map starts, the initial state of the camera always
+  \c "tracking", because the camera initially tracks the hero.
+
+*/
