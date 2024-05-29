@@ -503,7 +503,8 @@ int CustomState::get_wanted_movement_direction8() const {
       }
       return -1;
     }
-    return static_cast<int>((movement->get_angle() + Geometry::PI / 8.0) * 8.0 / Geometry::TWO_PI);
+
+    return static_cast<int>((Geometry::radians_to_degrees(movement->get_angle()) % 360) * 8.0 / 360.0);
   }
 
   if (get_entity().has_stream_action() &&
