@@ -71,7 +71,7 @@ void Tile::built_in_draw(Camera& camera) {
   // Note that the tiles are also optimized for drawing.
   // This function is called at each frame only if the tile is in an
   // animated region. Otherwise, tiles are drawn once when loading the map.
-  draw_on_surface(camera.get_surface(), Point());
+  draw_on_surface(camera.get_surface(), camera.get_top_left_xy());
 }
 
 /**
@@ -87,8 +87,8 @@ void Tile::draw_on_surface(const SurfacePtr& dst_surface, const Point& viewport)
   }
 
   Rectangle dst_position(
-      get_top_left_x() - viewport.x,
-      get_top_left_y() - viewport.y,
+      get_top_left_x(),
+      get_top_left_y(),
       get_width(),
       get_height()
   );
