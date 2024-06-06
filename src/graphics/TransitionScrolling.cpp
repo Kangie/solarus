@@ -18,6 +18,8 @@
 #include "solarus/core/System.h"
 #include "solarus/graphics/Surface.h"
 #include "solarus/graphics/TransitionScrolling.h"
+#include "solarus/graphics/Video.h"
+
 #include <memory>
 
 namespace Solarus {
@@ -214,8 +216,9 @@ void TransitionScrolling::draw(Surface& dst_surface, const Surface &src_surface,
 
   dst_surface.set_viewport(dst);
 
-  // draw the old map
-  infos.proxy.draw(dst_surface,*previous_surface,
+
+  // draw the old map, without shader because surface contains shader result already
+  Video::get_renderer().default_terminal().draw(dst_surface, *previous_surface,
                    DrawInfos(infos,
                              Rectangle(Point(),previous_surface->get_size()),
                              previous_map_dst_position.get_xy()-current_scrolling_position.get_xy()));
