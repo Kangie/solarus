@@ -43,30 +43,28 @@ void SelfScrollingTilePattern::draw(
     const SurfacePtr& dst_surface,
     const Point& dst_position,
     const Tileset& tileset,
-    const Point& /* viewport */) const {
+    const Point& viewport) const {
 
   Rectangle src = position_in_tileset;
   Point dst = dst_position;
+  Point vp = -viewport / 2; // apply a scrolling ratio
 
   // draw the tile with an offset that depends on its position modulo its size
   Point offset;
 
-  if (dst.x >= 0) {
-    offset.x = dst.x % src.get_width();
+  if (vp.x >= 0) {
+    offset.x = vp.x % src.get_width();
   }
   else { // the modulo operation does not like negative numbers
-    offset.x = src.get_width() - (-dst.x % src.get_width());
+    offset.x = src.get_width() - (-vp.x % src.get_width());
   }
 
-  if (dst.y >= 0) {
-    offset.y = dst.y % src.get_height();
+  if (vp.y >= 0) {
+    offset.y = vp.y % src.get_height();
   }
   else {
-    offset.y = src.get_height() - (-dst.y % src.get_height());
+    offset.y = src.get_height() - (-vp.y % src.get_height());
   }
-
-  // apply a scrolling ratio
-  offset /= 2;
 
   // draw the pattern in four steps
   const SurfacePtr& tileset_image = tileset.get_tiles_image();
