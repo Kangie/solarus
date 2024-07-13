@@ -29,3 +29,6 @@ else()
     INTERFACE_INCLUDE_DIRECTORIES "${LUA_INCLUDE_DIR}"
   )
 endif()
+if(SOLARUS_PROFILING)
+  find_package(easy_profiler REQUIRED)
+endif()
