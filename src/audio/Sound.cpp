@@ -118,6 +118,11 @@ void Sound::quit() {
     return;
   }
 
+  check_openal_clean_state("Sound::quit");
+
+  // stop all currently playing sounds
+  stop_all();
+
   // uninitialize the music subsystem
   Music::quit();
 
@@ -128,6 +133,8 @@ void Sound::quit() {
   alcCloseDevice(device);
   device = nullptr;
   global_volume = 1.0;
+  current_sounds.clear();
+  next_device_detection_date = 0;
   audio_enabled = false;
   resource_provider = nullptr;
 }
@@ -573,7 +580,7 @@ void Sound::stop_source() {
   alSourcei(source, AL_BUFFER, 0);
   alDeleteSources(1, &source);
 
-  int error = alGetError();
+  ALenum error = alGetError();
   if (error != AL_NO_ERROR) {
     std::ostringstream oss;
     oss << "Failed to delete AL source " << source
@@ -669,6 +676,16 @@ void Sound::resume_all() {
 }
 
 /**
+ * \brief Stops all currently playing sounds.
+ */
+void Sound::stop_all() {
+
+  for (const SoundPtr& sound: current_sounds) {
+    sound->stop();
+  }
+}
+
+/**
  * \brief Pauses or resumes the sound depending on the current pause state.
  */
 void Sound::update_paused() {
@@ -684,7 +701,7 @@ void Sound::update_paused() {
 bool Sound::check_openal_clean_state(const std::string& function_name) {
 
   ALenum error = alGetError();
-  if (error != AL_NONE) {
+  if (error != AL_NO_ERROR) {
     std::ostringstream oss;
     oss << "Previous audio error not cleaned in " << function_name << ": " << std::hex << error;
     Debug::error(oss.str());

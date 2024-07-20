@@ -66,6 +66,7 @@ class SOLARUS_API Sound: public ExportableToLua {
     static void play(const std::string& sound_id);
     static void pause_all();
     static void resume_all();
+    static void stop_all();
 
     static void initialize(const Arguments& args, ResourceProvider* resource_provider);
     static void quit();

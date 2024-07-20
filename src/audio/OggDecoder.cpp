@@ -194,7 +194,7 @@ void OggDecoder::decode(ALuint destination_buffer, ALsizei nb_samples) {
   // Put this decoded data into the buffer.
   alBufferData(destination_buffer, al_format, raw_data.data(), ALsizei(total_bytes_read), sample_rate);
 
-  int error = alGetError();
+  ALenum error = alGetError();
   if (error != AL_NO_ERROR) {
     std::ostringstream oss;
     oss << "Failed to fill the audio buffer with decoded OGG data: error " << std::hex << error;

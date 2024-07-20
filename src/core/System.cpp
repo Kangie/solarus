@@ -119,6 +119,9 @@ void System::quit() {
   Video::quit();
 
   SDL_Quit();
+
+  initial_time = Clock::time_point();
+  ticks = 0;
 }
 
 /**

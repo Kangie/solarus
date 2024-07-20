@@ -244,6 +244,10 @@ MainLoop::~MainLoop() {
     game.reset();  // While deleting the game, the Lua world must still exist.
   }
 
+  // The resource provider holds sound buffers that may be still in-use.
+  // Therefore, all sounds need to be stopped before clearing the resource provider.
+  Sound::stop_all();
+
   resource_provider.clear();
 
   // Clear the surface while Lua still exists,
