@@ -134,6 +134,12 @@ SoundBuffer::~SoundBuffer() {
 
   if (buffer != AL_NONE) {
     alDeleteBuffers(1, &buffer);
+    ALenum error = alGetError();
+    if (error != AL_NO_ERROR) {
+      std::ostringstream oss;
+      oss << "Failed to delete audio buffer for sound '" << id << "': error " << std::hex << error;
+      Debug::error(oss.str());
+    }
   }
 }
 
@@ -173,10 +179,11 @@ void SoundBuffer::load() {
     return;
   }
 
-  if (alGetError() != AL_NONE) {
+  ALenum error = alGetError();
+  if (error != AL_NO_ERROR) {
     std::ostringstream oss;
-    oss << std::hex << alGetError();
-    Debug::error("Previous audio error not cleaned in SoundBuffer::load(): " + oss.str());
+    oss << "Previous audio error not cleaned in SoundBuffer::load(): " << std::hex << error;
+    Debug::error(oss.str());
   }
 
   std::string file_name = std::string("sounds/" + id);

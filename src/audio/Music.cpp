@@ -109,9 +109,14 @@ void Music::initialize() {
 void Music::quit() {
 
   if (is_initialized()) {
+    if (current_music != nullptr) {
+      current_music->stop();
+    }
+
     current_music = nullptr;
     spc_decoder = nullptr;
     it_decoder = nullptr;
+    ogg_decoder = nullptr;
     volume = 1.0;
   }
 }
@@ -539,7 +544,7 @@ void Music::decode_spc(ALuint destination_buffer, ALsizei nb_samples) {
   // put this decoded data into the buffer
   alBufferData(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), nb_samples * 2, 32000);
 
-  int error = alGetError();
+  ALenum error = alGetError();
   if (error != AL_NO_ERROR) {
     std::ostringstream oss;
     oss << "Failed to fill the audio buffer with decoded SPC data for music file '"
@@ -567,7 +572,7 @@ void Music::decode_it(ALuint destination_buffer, ALsizei nb_samples) {
     // Put this decoded data into the buffer.
     alBufferData(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), nb_samples, 44100);
   }
-  int error = alGetError();
+  ALenum error = alGetError();
   if (error != AL_NO_ERROR) {
     std::ostringstream oss;
     oss << "Failed to fill the audio buffer with decoded IT data for music file '"
@@ -670,7 +675,7 @@ bool Music::start() {
 
   // start the streaming
   alSourceQueueBuffers(source, nb_buffers, buffers);
-  int error = alGetError();
+  ALenum error = alGetError();
   if (error != AL_NO_ERROR) {
     std::ostringstream oss;
     oss << "Cannot initialize buffers for music '"
