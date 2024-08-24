@@ -45,8 +45,6 @@ class ItDecoder {
     void set_channel_volume(int channel, int volume);
     int get_tempo() const;
     void set_tempo(int tempo);
-    bool loops() const;
-    void set_loops(bool loops);
 
   private:
 

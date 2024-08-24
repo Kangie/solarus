@@ -142,27 +142,5 @@ void ItDecoder::set_tempo(int tempo) {
   reinterpret_cast<CSoundFile*>(modplug_file.get())->SetTempo(tempo);
 }
 
-/**
- * \brief Returns whether the decoder loops when reaching the end.
- */
-bool ItDecoder::loops() const {
-
-  ModPlug_Settings settings;
-  ModPlug_GetSettings(&settings);
-  return settings.mLoopCount == -1;  // -1 means looping forever.
-}
-
-/**
- * \brief Sets whether the decoder should loop when reaching the end.
- * \param loops \c true to make the decoder loop.
- */
-void ItDecoder::set_loops(bool loops) {
-
-  ModPlug_Settings settings;
-  ModPlug_GetSettings(&settings);
-  settings.mLoopCount = loops ? -1 : 0;
-  ModPlug_SetSettings(&settings);
-}
-
 }
 
