@@ -92,7 +92,7 @@ class SOLARUS_API Savegame: public ExportableToLua {
 
     // file state
     bool is_empty() const;
-    void initialize();
+    bool initialize();
     void save();
     const std::string& get_file_name() const;
 
@@ -153,7 +153,7 @@ class SOLARUS_API Savegame: public ExportableToLua {
     Transition::Style
         default_transition_style;  /**< Transition style to use by default. */
 
-    void import_from_file();
+    bool import_from_file();
     static int l_newindex(lua_State* l);
 };
 

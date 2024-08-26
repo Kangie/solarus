@@ -12,6 +12,7 @@ The multiplayer update!
 * Fix crash when calling `hero:set_direction()` with an invalid value (#1628).
 * Fix crash when entering a map with tileset-specific sprites nearby.
 * Fix crash when resetting the game from the update step (#1583).
+* Fix crash when loading an invalid savegame file (#1503).
 * Fix return of invalid sprite object with bad sprite id (#1423).
 * Fix separator region detection corner cases (#1425).
 * Fix error reporting when creating entities with a non-existent model (#1494).

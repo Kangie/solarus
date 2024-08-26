@@ -222,7 +222,9 @@ int LuaContext::game_api_load(lua_State* l) {
     std::shared_ptr<Savegame> savegame = std::make_shared<Savegame>(
         get().get_main_loop(), file_name
     );
-    savegame->initialize();
+    if (!savegame->initialize()) {
+      LuaTools::arg_error(l, 1, "Invalid savegame file: '" + file_name + "'");
+    }
 
     push_game(l, *savegame);
     return 1;

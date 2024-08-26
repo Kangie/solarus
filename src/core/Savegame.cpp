@@ -104,8 +104,9 @@ Savegame::Savegame(MainLoop& main_loop, const std::string& file_name):
  * This function should be called before using the object.
  * The constructor does not call it because it involves Lua calls to initialize
  * the equipment.
+ * \return \c true in case of success.
  */
-void Savegame::initialize() {
+bool Savegame::initialize() {
   const std::string& quest_write_dir = QuestFiles::get_quest_write_dir();
   SOLARUS_REQUIRE(!quest_write_dir.empty(),
       "The quest write directory for savegames was not set in quest.dat");
@@ -119,16 +120,19 @@ void Savegame::initialize() {
   {
     // A save already exists, let's load it.
     empty = false;
-    import_from_file();
+    if (!import_from_file()) {
+      return false;
+    }
   }
 
   // This is a main savegame ! Lets inflate an equipement
   equipment = std::make_shared<Equipment>(shared_from_this_cast<Savegame>(), "");
   equipment->load_items();
-  if(empty) {
+  if (empty) {
     equipment->set_initial_values();
   }
   //get_equipment().load_items(); //TODO load equipement elsewhere
+  return true;
 }
 
 /**
@@ -228,13 +232,15 @@ void Savegame::post_process_existing_savegame() {
 
 /**
  * \brief Import the savegame data from the file.
+ * \return \c true in case of success.
  */
-void Savegame::import_from_file() {
+bool Savegame::import_from_file() {
 
   // Try to parse as Lua first.
   lua_State* l = luaL_newstate();
   const std::string& buffer = QuestFiles::data_file_read(file_name);
   const int load_result = luaL_loadbuffer(l, buffer.data(), buffer.size(), file_name.c_str());
+  bool success = true;
 
   // Call the Lua savegame file.
   if (load_result == 0) {
@@ -258,21 +264,19 @@ void Savegame::import_from_file() {
     lua_setfenv(l, -2);
                                     // fun
 
-    if (lua_pcall(l, 0, 0, 0) != 0) {
-      Debug::die(std::string("Failed to load savegame file '")
-          + file_name + "': " + lua_tostring(l, -1));
-    }
+    success = (lua_pcall(l, 0, 0, 0) == 0);
   }
   else if (load_result == LUA_ERRSYNTAX) {
     // Apparently it was not a Lua file.
     // Let's try the obsolete format of Solarus 0.9.
     SavegameConverterV1 converter(file_name);
-    converter.convert_to_v2(*this);
+    success = converter.convert_to_v2(*this);
   }
 
   lua_close(l);
 
   post_process_existing_savegame();
+  return success;
 }
 
 /**

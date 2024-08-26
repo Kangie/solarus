@@ -29,20 +29,8 @@ namespace Solarus {
  * \param file_name Name of the savegame file (must exist),
  * relative to the savegames directory of the quest.
  */
-SavegameConverterV1::SavegameConverterV1(const std::string& file_name) {
-
-  SOLARUS_REQUIRE(QuestFiles::data_file_exists(file_name),
-      std::string("Cannot convert savegame '") + file_name
-      + "': file does not exist"
-  );
-
-  // Let's load this obsolete savegame.
-  const std::string& buffer = QuestFiles::data_file_read(file_name);
-  SOLARUS_REQUIRE(buffer.size() == sizeof(SavedData),
-      std::string("Cannot read savegame file version 1 '")
-      + file_name + "': invalid file size"
-  );
-  std::memcpy(&saved_data, buffer.data(), sizeof(SavedData));
+SavegameConverterV1::SavegameConverterV1(const std::string& file_name):
+  file_name(file_name) {
 }
 
 /**
@@ -82,8 +70,21 @@ bool SavegameConverterV1::get_boolean(int index) {
 /**
  * \brief Converts this savegame v1 into a savegame v2.
  * \param savegame_v2 The savegame to fill.
+ * \return \c true in case of success.
  */
-void SavegameConverterV1::convert_to_v2(Savegame& savegame_v2) {
+bool SavegameConverterV1::convert_to_v2(Savegame& savegame_v2) {
+
+  if (!QuestFiles::data_file_exists(file_name)) {
+    return false;
+  }
+
+  // Let's load this obsolete savegame.
+  const std::string& buffer = QuestFiles::data_file_read(file_name);
+  if (buffer.size() != sizeof(SavedData)) {
+    // Not a valid savegame V1 file.
+    return false;
+  }
+  std::memcpy(&saved_data, buffer.data(), sizeof(SavedData));
 
   // 1. Built-in values.
   savegame_v2.set_string(Savegame::KEY_STARTING_POINT, get_string(STARTING_POINT));
@@ -201,6 +202,8 @@ void SavegameConverterV1::convert_to_v2(Savegame& savegame_v2) {
       savegame_v2.set_boolean(oss.str(), value);
     }
   }
+
+  return true;
 }
 
 }
