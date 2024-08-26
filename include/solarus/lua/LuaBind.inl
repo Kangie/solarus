@@ -66,6 +66,8 @@ static inline T to_type(lua_State * L, int index) {
     return lua_tonumber(L, index);
   } else if constexpr (std::is_same_v<int, T>) {
     return lua_tointeger(L, index);
+  } else if constexpr (std::is_same_v<unsigned int, T>) {
+    return lua_tointeger(L, index);
   } else if constexpr (std::is_same_v<const char *, T>) {
     return lua_tostring(L, index);
   } else if constexpr (std::is_same_v<std::string, T>) {
@@ -304,6 +306,11 @@ struct LuaTypeId<double> :
 /// \brief \ref LuaTypeId<T> specialization for int.
 template<>
 struct LuaTypeId<int> :
+  public std::integral_constant<int, LUA_TNUMBER> {};
+
+/// \brief \ref LuaTypeId<T> specialization for unsigned int.
+template<>
+struct LuaTypeId<unsigned int> :
   public std::integral_constant<int, LUA_TNUMBER> {};
 
 /// \brief \ref LuaTypeId<T> specialization for C-style strings.

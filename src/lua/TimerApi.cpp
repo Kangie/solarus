@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/MainLoop.h"
@@ -201,7 +202,7 @@ static void set_suspended_with_map(LuaContext& context,
  */
 static int get_remaining_time(LuaContext& context, Timer& timer) {
   TimerPtr timer_ptr = timer.shared_from_this_cast<Timer>();
-  if (context.is_timer_active(timer_ptr)) {
+  if (!context.is_timer_active(timer_ptr)) {
     return 0;
   } else {
     const uint32_t end = timer.get_expiration_date();
@@ -246,7 +247,7 @@ void LuaContext::register_timer_module() {
   };
 
   // Methods of the timer type.
-  const std::vector<luaL_Reg> methods = {
+  std::vector<luaL_Reg> methods = {
       { "stop", LUA_TO_C_BIND(stop) },
       { "is_with_sound", LUA_TO_C_BIND(&Timer::is_with_sound) },
       { "set_with_sound", LUA_TO_C_BIND(set_with_sound) },
@@ -257,6 +258,12 @@ void LuaContext::register_timer_module() {
       { "get_remaining_time", LUA_TO_C_BIND(get_remaining_time) },
       { "set_remaining_time", LUA_TO_C_BIND(set_remaining_time) }
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    methods.insert(methods.end(), {
+      { "get_delay", LUA_TO_C_BIND(&Timer::get_duration) },
+      { "set_delay", LUA_TO_C_BIND(&Timer::set_duration) }
+    });
+  }
 
   const std::vector<luaL_Reg> metamethods = {
       { "__gc", userdata_meta_gc },
@@ -380,7 +387,7 @@ void LuaContext::add_timer(
  */
 bool LuaContext::is_timer_active(const TimerPtr& timer) {
   const auto it = timers.find(timer);
-  return it != timers.end() && it->second.callback_ref.is_empty();
+  return it != timers.end() && !it->second.callback_ref.is_empty();
 }
 
 /**
@@ -524,12 +531,12 @@ void LuaContext::do_timer_callback(const TimerPtr& timer) {
   if (it != timers.end() &&
       !it->second.callback_ref.is_empty()) {
     ScopedLuaRef& callback_ref = it->second.callback_ref;
-    run_on_main([&,timer](lua_State* l){ //Here l shadow previous l on purpose, capture timer by value to increase ref count
-      if(callback_ref.is_empty()) {
-        return; //Ref might be cleared meanwhile
+    run_on_main([&, timer](lua_State* l) { // Capture timer by value to increase ref count
+      if (callback_ref.is_empty()) {
+        return; // Ref might be cleared meanwhile.
       }
       callback_ref.push(l);
-      const bool success = LuaTools::call_function(l,0,1,"timer callback");
+      const bool success = LuaTools::call_function(l, 0, 1, "timer callback");
 
       bool repeat = false;
       int interval = timer->get_duration();

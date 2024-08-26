@@ -117,6 +117,7 @@ map{ id = "bugs/1611_entity_overlaps_when_removed", description = "#1611: entity
 map{ id = "bugs/1617_crash_disabled_chest", description = "#1617: Crash when starting a map with a disabled chest" }
 map{ id = "bugs/1619_camera_obstacles", description = "#1619: Entities should not block the camera" }
 map{ id = "bugs/1628_hero_set_direction_crash", description = "#1628: Crash when hero:set_direction() has an invalid parameter" }
+map{ id = "bugs/1635_timer_set_remaining_time", description = "#1635: timer:set_remaining_time()" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/526_get_entities_same_region", description = "#526: map:get_entities_in_same_region()" }
@@ -687,6 +688,8 @@ file{ path = "maps/bugs/1619_camera_obstacles.dat", author = "Christopho", licen
 file{ path = "maps/bugs/1619_camera_obstacles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1628_hero_set_direction_crash.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1628_hero_set_direction_crash.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1635_timer_set_remaining_time.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1635_timer_set_remaining_time.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }

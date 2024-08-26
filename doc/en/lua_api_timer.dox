@@ -240,27 +240,52 @@ map.
   \c false to continue (no value means \c true).
 
 \remark When this setting is \c true,
-entity timers also get automatically suspended when the entity is
-\ref lua_api_entity_set_enabled "disabled".
+  entity timers also get automatically suspended when the entity is
+  \ref lua_api_entity_set_enabled "disabled".
+
+\subsection lua_api_timer_get_delay timer:get_delay()
+
+Returns the duration of this timer.
+- Return value (number): The duration of this timer in milliseconds.
+
+\remark This returns the full duration of the timer,
+  independently of its current progress.
+  If you want to know its current progress, use
+  \ref lua_api_timer_get_remaining_time "timer:get_remaining_time()" instead.
+
+\subsection lua_api_timer_set_delay timer:set_delay(delay)
+
+Sets the duration of this timer.
+
+This is equivalent to returning the new delay from the timer's callback.
+- \c delay (number): The new duration is milliseconds.
+
+\remark This only acts on subsequent iterations of the timer and only has an
+  effect if the timer is repeated.
+  To modify the remaining time of the current iteration, use
+  \ref lua_api_timer_set_remaining_time "timer:set_remaining_time()" instead.
 
 \subsection lua_api_timer_get_remaining_time timer:get_remaining_time()
 
-Returns the remaining time of this timer.
+Returns the remaining time of the current iteration of this timer.
 - Return value (number): The time remaining in milliseconds.
-  \c 0 means that the timer is finished (or will finish in the current cycle)
+  \c 0 means that the timer is finished
+  (or will finish in the current cycle)
   or was canceled.
 
 \subsection lua_api_timer_set_remaining_time timer:set_remaining_time(remaining_time)
 
-Changes the remaining time of this timer.
+Changes the remaining time of the current iteration of this timer.
 
 This function has no effect if the timer is already finished.
 - \c remaining_time (number): The time remaining in milliseconds.
   \c 0 makes the timer finish now and immediately executes its callback.
 
-\remark When a timer is repeated
-  (that is, if its callback returns \c true or a number),
-  the timer gets rescheduled with its full delay again, no matter if you
-  called this function in the meantime.
+\remark This function only acts on the current iteration of the timer.
+  When the timer is repeated,
+  the timer gets rescheduled with its full delay again.
+  To change the delay of subsequent iterations of a repeated timer,
+  you can either return the new delay in the timer's callback or call
+  \ref lua_api_timer_set_delay "timer:set_delay()".
 
 */
