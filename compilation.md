@@ -3,7 +3,6 @@
 * [Overview](#overview)
 * [External dependencies](#external-dependencies)
   * [Linux](#linux)
-  * [Windows](#windows)
   * [macOS](#macos)
 * [Compilation instructions](#compilation-instructions)
   * [Configuring](#configuring)
@@ -115,27 +114,6 @@ For example, in Ubuntu or Debian:
 build-essential cmake pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libvorbis-dev libmodplug-dev qtbase5-dev qttools5-dev qttools5-dev-tools libglm-dev
 ```
 
-### Windows
-
-Install a C++ compiler, Git and CMake.
-Solarus compiles fine with the [MinGW compiler](http://www.mingw.org/) and
-probably with other compilers too.
-
-We recommend [QtCreator](https://www.qt.io/developers/), which includes the Qt
-libraries, MinGW, as well as Git and CMake integration.
-
-The directory `libraries/win32/mingw32` in the Solarus repository contains
-headers and compiled binaries of all required libraries that Solarus needs
-besides Qt, all of which working at least with the MinGW32 compiler.
-
-If you want other versions of these dependencies of if you don't use the
-MinGW32 toolchain, you can download the header files and the binaries of all
-libraries listed above, on their official websites.
-For some of them you have to compile the binary libraries yourself.
-
-In any case, you will then need to tell CMake the location of these
-dependencies.
-
 ### macOS users
 
 The directory `libraries/macOS` in the Solarus repository contains some
@@ -153,6 +131,8 @@ architecture and backward compatibility if you want to deploy your application.
 ## Compilation instructions
 
 The following are the instructions for configuring and building Solarus.
+
+Instructions for building for Windows using MSYS2 are in [`compilation.MSYS2.md`](compilation.MSYS2.md).
 
 ### Configuring
 
