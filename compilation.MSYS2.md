@@ -18,7 +18,7 @@ From <https://www.msys2.org/>:
 
 Follow the official [Installation](https://www.msys2.org/#installation) documentation to
 setup and prepare MSYS2. The MSYS2 installer will create a shortcut for each available
-[environment](https://www.msys2.org/docs/updating/) in your Start Menu.
+[environment](https://www.msys2.org/docs/environments/) in your Start Menu.
 
 The recommended environment to use for building Solarus is **UCRT64**.
 
@@ -107,8 +107,10 @@ solarus-run.exe /path/to/quest
 gui/solarus-launcher.exe
 ```
 
-If you configured the build for debugging, you can use the standard GDB debugger:
+If you configured the build for debugging, you can use the standard
+[GDB debugger](https://sourceware.org/gdb/download/onlinedocs/gdb.html/index.html):
 ```
 cd build
 gdb --args solarus-run.exe /path/to/quest
 ```
+> **Tip:** To obtain a complete stack trace after a crash, type `bt full` in `gdb`.
