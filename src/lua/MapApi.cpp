@@ -353,6 +353,9 @@ static void change_crystal_state(Map & map) {
  */
 static void open_doors(Map& map, const std::string& prefix) {
   bool any_opened = false;
+  if (!map.is_loaded()) {
+    return;
+  }
   Entities& entities = map.get_entities();
   const std::vector<EntityPtr>& doors =
       entities.get_entities_with_prefix(EntityType::DOOR, prefix);
@@ -379,6 +382,9 @@ static void open_doors(Map& map, const std::string& prefix) {
  */
 static void close_doors(Map& map, const std::string& prefix) {
   bool any_closed = false;
+  if (!map.is_loaded()) {
+    return;
+  }
   Entities& entities = map.get_entities();
   const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
   for (const EntityPtr& entity: doors) {
@@ -404,6 +410,9 @@ static void close_doors(Map& map, const std::string& prefix) {
  */
 static void set_doors_open(
     Map& map, const std::string& prefix, std::optional<bool> open_arg) {
+  if (!map.is_loaded()) {
+    return;
+  }
   bool open = open_arg.value_or(true);
   Entities& entities = map.get_entities();
   const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
@@ -419,7 +428,11 @@ static void set_doors_open(
  * \param name The map entity name to look-up.
  * \return Pointer to the entity if it was found, nullptr otherwise.
  */
-static Entity * get_entity(Map& map, const std::string& name) {
+static Entity* get_entity(Map& map, const std::string& name) {
+
+  if (!map.is_loaded()) {
+    return nullptr;
+  }
   const EntityPtr& entity = map.get_entities().find_entity(name);
   if (entity != nullptr && !entity->is_being_removed()) {
     return entity.get();
@@ -434,6 +447,9 @@ static Entity * get_entity(Map& map, const std::string& name) {
  * \return True if the entity was found, nullptr otherwise.
  */
 static bool has_entity(Map& map, const std::string& name) {
+  if (!map.is_loaded()) {
+    return false;
+  }
   const EntityPtr& entity = map.get_entities().find_entity(name);
   return (entity != nullptr);
 }
@@ -447,9 +463,12 @@ static bool has_entity(Map& map, const std::string& name) {
  */
 static LuaBind::OnStack get_entities(lua_State * l,
     Map& map, std::optional<std::string> prefix_arg) {
+
   std::string prefix = prefix_arg.value_or("");
-  const EntityVector& entities =
-      map.get_entities().get_entities_with_prefix_z_sorted(prefix);
+  EntityVector entities;
+  if (map.is_loaded()) {
+    entities = map.get_entities().get_entities_with_prefix_z_sorted(prefix);
+  }
   LuaContext::push_userdata_iterator(l, entities);
   return {1};
 }
@@ -461,6 +480,9 @@ static LuaBind::OnStack get_entities(lua_State * l,
  * \return Number of matching entities found.
  */
 static int get_entities_count(Map& map, const std::string& prefix) {
+  if (!map.is_loaded()) {
+    return 0;
+  }
   const EntityVector& entities =
       map.get_entities().get_entities_with_prefix(prefix);
   return entities.size();
@@ -473,6 +495,9 @@ static int get_entities_count(Map& map, const std::string& prefix) {
  * \return True if a matching entity was found, false otherwise.
  */
 static bool has_entities(Map& map, const std::string& prefix) {
+  if (!map.is_loaded()) {
+    return false;
+  }
   return map.get_entities().has_entity_with_prefix(prefix);
 }
 
@@ -486,8 +511,10 @@ static bool has_entities(Map& map, const std::string& prefix) {
 static LuaBind::OnStack get_entities_by_type(lua_State* l,
     Map& map, EntityType type) {
 
-  const EntityVector& entities =
-      map.get_entities().get_entities_by_type_z_sorted(type);
+  EntityVector entities;
+  if (map.is_loaded()) {
+    entities = map.get_entities().get_entities_by_type_z_sorted(type);
+  }
 
   LuaContext::push_userdata_iterator(l, entities);
   return {1};
@@ -506,9 +533,11 @@ static LuaBind::OnStack get_entities_by_type(lua_State* l,
 static LuaBind::OnStack get_entities_in_rectangle(lua_State* l,
     Map& map, int x, int y, int width, int height) {
   EntityVector entities;
-  map.get_entities().get_entities_in_rectangle_z_sorted(
+  if (map.is_loaded()) {
+    map.get_entities().get_entities_in_rectangle_z_sorted(
       Rectangle(x, y, width, height), entities
-  );
+    );
+  }
 
   LuaContext::push_userdata_iterator(l, entities);
   return {1};
@@ -537,9 +566,11 @@ static LuaBind::OnStack get_entities_in_region(lua_State* l, Map& map) {
   }
 
   EntityVector entities;
-  map.get_entities().get_entities_in_region_z_sorted(
-      xy, entities
-  );
+  if (map.is_loaded()) {
+    map.get_entities().get_entities_in_region_z_sorted(
+        xy, entities
+    );
+  }
 
   if (entity != nullptr) {
     // Entity variant: remove the entity itself.
@@ -577,8 +608,10 @@ static void set_entities_enabled(
     Map& map, const std::string& prefix, std::optional<bool> enabled_arg) {
   bool enabled = enabled_arg.value_or(true);
 
-  std::vector<EntityPtr> entities =
-      map.get_entities().get_entities_with_prefix(prefix);
+  std::vector<EntityPtr> entities;
+  if (map.is_loaded()) {
+    entities = map.get_entities().get_entities_with_prefix(prefix);
+  }
   for (const EntityPtr& entity: entities) {
     entity->set_enabled(enabled);
   }
@@ -590,7 +623,9 @@ static void set_entities_enabled(
  * \param prefix Prefix of the name of entities to remove.
  */
 static void remove_entities(Map& map, const std::string& prefix) {
-  map.get_entities().remove_entities_with_prefix(prefix);
+  if (map.is_loaded()) {
+    map.get_entities().remove_entities_with_prefix(prefix);
+  }
 }
 
 /**
@@ -620,7 +655,11 @@ static LuaBind::OnStack create_entity(LuaContext& context, Map& map) {
  * \return Number of values to return to Lua.
  */
 static LuaBind::OnStack get_cameras(lua_State* l, Map& map) {
-  LuaContext::push_userdata_iterator(l, map.get_entities().get_cameras());
+  Cameras cameras;
+  if (map.is_loaded()) {
+    cameras = map.get_entities().get_cameras();
+  }
+  LuaContext::push_userdata_iterator(l, cameras);
   return {1};
 }
 
@@ -631,7 +670,10 @@ static LuaBind::OnStack get_cameras(lua_State* l, Map& map) {
  * \return Number of values to return to Lua.
  */
 static LuaBind::OnStack get_heroes(lua_State* l, Map& map) {
-  LuaContext::push_userdata_iterator(l, map.get_entities().get_heroes());
+  Heroes heroes = map.get_entities().get_heroes();
+  if (map.is_loaded()) {
+    LuaContext::push_userdata_iterator(l, heroes);
+  }
   return {1};
 }
 
@@ -932,6 +974,9 @@ int LuaContext::l_create_tile(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create tile: this map is not initialized");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
     const int layer = entity_creation_check_layer(l, 1, data, map);
     const int x = data.get_xy().x;
@@ -992,6 +1037,9 @@ int LuaContext::l_create_destination(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create destination: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     std::shared_ptr<Destination> entity = std::make_shared<Destination>(
@@ -1026,6 +1074,9 @@ int LuaContext::l_create_teletransporter(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create teletransporter: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Teletransporter>(
@@ -1060,6 +1111,9 @@ int LuaContext::l_create_pickable(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create pickable: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     Game& game = map.get_game();
@@ -1112,6 +1166,9 @@ int LuaContext::l_create_destructible(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create destructible: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     std::shared_ptr<Destructible> destructible = std::make_shared<Destructible>(
@@ -1153,6 +1210,9 @@ int LuaContext::l_create_chest(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create chest: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     Chest::OpeningMethod opening_method = entity_creation_check_enum<Chest::OpeningMethod>(
@@ -1217,6 +1277,9 @@ int LuaContext::l_create_jumper(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create jumper: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Jumper>(
@@ -1247,6 +1310,9 @@ int LuaContext::l_create_enemy(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create enemy: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     const std::string& breed = data.get_string("breed");
@@ -1295,6 +1361,9 @@ int LuaContext::l_create_npc(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create NPC: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     Game& game = map.get_game();
@@ -1328,6 +1397,9 @@ int LuaContext::l_create_block(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create block: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     int max_moves = data.get_integer("max_moves");
@@ -1385,6 +1457,9 @@ int LuaContext::l_create_dynamic_tile(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create dynamic tile: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     const std::string& pattern_id = data.get_string("pattern");
@@ -1435,6 +1510,9 @@ int LuaContext::l_create_switch(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create switch: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Switch>(
@@ -1467,6 +1545,9 @@ int LuaContext::l_create_wall(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create wall: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Wall>(
@@ -1500,6 +1581,9 @@ int LuaContext::l_create_sensor(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create sensor: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Sensor>(
@@ -1528,6 +1612,9 @@ int LuaContext::l_create_crystal(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create crystal: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Crystal>(
@@ -1555,6 +1642,9 @@ int LuaContext::l_create_crystal_block(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create crystal block: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     Game& game = map.get_game();
@@ -1586,6 +1676,9 @@ int LuaContext::l_create_shop_treasure(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create shop treasure: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     Game& game = map.get_game();
@@ -1629,6 +1722,9 @@ int LuaContext::l_create_stream(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create stream: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     std::shared_ptr<Stream> stream = std::make_shared<Stream>(
@@ -1662,6 +1758,9 @@ int LuaContext::l_create_door(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create door: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     Door::OpeningMethod opening_method = entity_creation_check_enum<Door::OpeningMethod>(
@@ -1722,6 +1821,9 @@ int LuaContext::l_create_stairs(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create stairs: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Stairs>(
@@ -1751,6 +1853,9 @@ int LuaContext::l_create_separator(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create separator: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Separator>(
@@ -1779,6 +1884,9 @@ int LuaContext::l_create_custom_entity(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create custom entity: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     const std::string& model = data.get_string("model");
@@ -1820,6 +1928,9 @@ int LuaContext::l_create_bomb(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create bomb: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     EntityPtr entity = std::make_shared<Bomb>(
@@ -1847,6 +1958,9 @@ int LuaContext::l_create_explosion(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Map& map = *check_map(l, 1);
+    if (!map.is_loaded() && !map.is_loading()) {
+      LuaTools::arg_error(l, 1, "Cannot create explosion: this map is not loaded");
+    }
     EntityData& data = *(static_cast<EntityData*>(lua_touserdata(l, 2)));
 
     const bool with_damage = true;
@@ -1926,7 +2040,7 @@ int LuaContext::l_create_hero(lua_State* l) {
     entity->set_user_properties(data.get_user_properties());
     entity->set_enabled(data.is_enabled_at_start());
 
-    if(map.is_started()) {
+    if (map.is_started()) {
       push_entity(l, *entity);
       return 1;
     }

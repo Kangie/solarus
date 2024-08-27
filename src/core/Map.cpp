@@ -18,7 +18,6 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/core/ResourceProvider.h"
 #include "solarus/core/Savegame.h"
 #include "solarus/entities/Destination.h"
@@ -88,7 +87,9 @@ void Map::set_tileset(const std::string& tileset_id) {
   SOLARUS_REQUIRE(is_game_running(), "The game of this map does not exist");
   ResourceProvider& resource_provider = get_game().get_resource_provider();
   tileset = &resource_provider.get_tileset(tileset_id);
-  get_entities().notify_tileset_changed();
+  if (is_loaded()) {
+    get_entities().notify_tileset_changed();
+  }
   this->tileset_id = tileset_id;
 }
 
@@ -244,10 +245,18 @@ bool Map::is_valid_layer(int layer) const {
 
 /**
  * \brief Returns whether the map is loaded.
- * \return true if the map is loaded, false otherwise
+ * \return true if the map is loaded, false otherwise.
  */
 bool Map::is_loaded() const {
   return loaded;
+}
+
+/**
+ * \brief Returns whether the map is loading, that is if its entities are being added.
+ * \return true if the map is loading, false otherwise.
+ */
+bool Map::is_loading() const {
+  return !is_loaded() && entities != nullptr;
 }
 
 /**
@@ -262,7 +271,6 @@ void Map::unload() {
     tileset = nullptr;
     foreground_surface = nullptr;
     entities = nullptr;
-
     loaded = false;
   }
 }
@@ -272,7 +280,7 @@ void Map::unload() {
  * @return
  */
 bool Map::has_cameras() const {
-  return get_entities().get_cameras().size() > 0;
+  return is_loaded() && get_entities().get_cameras().size() > 0;
 }
 
 /**
@@ -280,7 +288,7 @@ bool Map::has_cameras() const {
  * @return
  */
 Hero& Map::get_default_hero() {
-  if(not is_loaded()) {
+  if (not is_loaded()) {
     return *get_game().get_hero();
   } else {
     return get_entities().get_default_hero();
@@ -321,7 +329,6 @@ void Map::load(Game& game) {
   tileset = &resource_provider.get_tileset(tileset_id);
   entities = std::unique_ptr<Entities>(new Entities(game, *this));
   entities->create_entities(data);
-
   loaded = true;
 }
 
@@ -475,8 +482,10 @@ void Map::set_suspended(bool suspended) {
 
   this->suspended = suspended;
 
-  get_entities().set_suspended(suspended);
-  get_lua_context().notify_map_suspended(*this, suspended);
+  if (is_loaded()) {
+    get_entities().set_suspended(suspended);
+    get_lua_context().notify_map_suspended(*this, suspended);
+  }
 }
 
 /**
@@ -485,13 +494,17 @@ void Map::set_suspended(bool suspended) {
  * \return \c true if the event was handled and should stop being propagated.
  */
 bool Map::notify_input(const InputEvent& event) {
+
+  if (!is_loaded()) {
+    return false;
+  }
   //Check if map could swallow the input
   bool handled = get_lua_context().map_on_input(*this, event);
 
   // Forward to heroes
-  if(!handled) {
-    for(const HeroPtr& hero : get_entities().get_heroes()) {
-      if(hero->notify_input(event)) {
+  if (!handled) {
+    for (const HeroPtr& hero : get_entities().get_heroes()) {
+      if (hero->notify_input(event)) {
         handled = true;
         break; //Only one hero can handle the input
       }
@@ -502,7 +515,7 @@ bool Map::notify_input(const InputEvent& event) {
 
 bool Map::notify_control(const ControlEvent& event) {
 
-  if (!is_game_running()) {
+  if (!is_game_running() || !is_loaded()) {
     return false;
   }
 
@@ -523,6 +536,11 @@ bool Map::notify_control(const ControlEvent& event) {
  */
 void Map::update() {
   SOL_PFUN(profiler::colors::Red);
+
+  if (!is_loaded()) {
+    return;
+  }
+
   // Detect whether the game has just been suspended or resumed.
   check_suspended();
 
@@ -693,11 +711,13 @@ void Map::start(const std::string& destination_name) {
 
   this->started = true;
 
-  Music::play(music_id, true);
-  std::shared_ptr<Destination> destination = get_destination(destination_name);
-  get_entities().notify_map_starting(*this, destination);
-  get_lua_context().run_map(*this, destination);
-  get_entities().notify_map_started(*this, destination);
+  if (is_loaded()) {
+    Music::play(music_id, true);
+    std::shared_ptr<Destination> destination = get_destination(destination_name);
+    get_entities().notify_map_starting(*this, destination);
+    get_lua_context().run_map(*this, destination);
+    get_entities().notify_map_started(*this, destination);
+  }
 }
 
 /**
@@ -707,8 +727,10 @@ void Map::start(const std::string& destination_name) {
  */
 void Map::leave() {
   started = false;
-  get_lua_context().map_on_finished(*this);
-  this->get_entities().notify_map_finished();
+  if (is_loaded()) {
+    get_lua_context().map_on_finished(*this);
+    this->get_entities().notify_map_finished();
+  }
 }
 
 /**
@@ -733,6 +755,10 @@ void Map::notify_opening_transition_finished(const std::string& destination_name
     const SurfacePtr& camera_surface = camera->get_surface();
     camera_surface->set_opacity(255); // because the transition effect may have changed the opacity
   }*/
+
+  if (!is_loaded()) {
+    return;
+  }
 
   check_suspended();
   std::shared_ptr<Destination> destination = get_destination(destination_name);
@@ -920,7 +946,13 @@ bool Map::test_collision_with_obstacles(
     int layer,
     const Rectangle& collision_box,
     Entity& entity_to_check) {
+
   SOL_PFUN();
+
+  if (!is_loaded()) {
+    return false;
+  }
+
   // This function is called very often.
   // For performance reasons, we only check the border of the of the collision box.
 
@@ -1141,6 +1173,11 @@ Ground Map::get_ground(
     const ConstEntityVector& entities_nearby
 ) const {
   SOL_PFUN();
+
+  if (!is_loaded()) {
+    return Ground::EMPTY;
+  }
+
   const auto& rend = entities_nearby.rend();
   for (auto it = entities_nearby.rbegin(); it != rend; ++it) {
     const Entity& entity_nearby = *(*it);
@@ -1322,6 +1359,10 @@ Ground Map::get_ground_from_entity(const Entity& entity, const Point& xy) const 
  */
 void Map::check_collision_with_detectors(Entity& entity) {
 
+  if (!is_loaded()) {
+    return;
+  }
+
   if (suspended) {
     return;
   }
@@ -1382,6 +1423,11 @@ void Map::check_collision_with_detectors(Entity& entity, EntityVector& entities_
  */
 void Map::check_collision_from_detector(Entity& detector) {
   SOL_PFUN();
+
+  if (!is_loaded()) {
+    return;
+  }
+
   if (suspended) {
     return;
   }
@@ -1409,6 +1455,11 @@ void Map::check_collision_from_detector(Entity& detector) {
  * \param entities_nearby Entities surrounding this detector
  */
 void Map::check_collision_from_detector(Entity& detector, EntityVector& entities_nearby) {
+
+  if (!is_loaded()) {
+    return;
+  }
+
   for (const EntityPtr& entity_nearby: entities_nearby) {
 
     if (detector.is_being_removed()) {
@@ -1445,6 +1496,10 @@ void Map::check_collision_from_detector(Entity& detector, EntityVector& entities
  * \param detector_sprite The detector's sprite to check.
  */
 void Map::check_collision_from_detector(Entity& detector, Sprite& detector_sprite) {
+
+  if (!is_loaded()) {
+    return;
+  }
 
   if (suspended) {
     return;
@@ -1497,6 +1552,10 @@ void Map::check_collision_from_detector(Entity& detector, Sprite& detector_sprit
  */
 void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite) {
 
+  if (!is_loaded()) {
+    return;
+  }
+
   if (suspended) {
     return;
   }
@@ -1525,6 +1584,11 @@ void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite) {
  * @param entities_nearby Entities that surround the checked entity
  */
 void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite, EntityVector& entities_nearby) {
+
+  if (!is_loaded()) {
+    return;
+  }
+
   for (const EntityPtr& entity_nearby: entities_nearby) {
 
     if (entity.is_being_removed()) {
@@ -1551,7 +1615,12 @@ void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite, EntityV
  * @param new_size
  */
 void Map::notify_window_size_changed(const Size& new_size) {
-  for(const CameraPtr& cam : get_entities().get_cameras()) {
+
+  if (!is_loaded()) {
+    return;
+  }
+
+  for (const CameraPtr& cam : get_entities().get_cameras()) {
     cam->notify_window_size_changed(new_size);
   }
 }

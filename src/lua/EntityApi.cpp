@@ -1207,9 +1207,13 @@ int LuaContext::entity_api_set_position(lua_State* l) {
     int y = LuaTools::check_int(l, 3);
     int layer = LuaTools::opt_layer(l, 4, entity.get_map(), entity.get_layer());
 
-    Entities& entities = entity.get_map().get_entities();
     entity.set_xy(x, y);
-    entities.set_entity_layer(entity, layer);
+    if (entity.is_on_map()) {
+      Entities& entities = entity.get_map().get_entities();
+      entities.set_entity_layer(entity, layer);
+    } else {
+      entity.set_layer(layer);
+    }
     entity.notify_position_changed();
 
     return 0;
@@ -1372,8 +1376,12 @@ int LuaContext::entity_api_set_layer(lua_State* l) {
     Entity& entity = *check_entity(l, 1);
     int layer = LuaTools::check_layer(l, 2, entity.get_map());
 
-    Entities& entities = entity.get_map().get_entities();
-    entities.set_entity_layer(entity, layer);
+    if (entity.is_on_map()) {
+      Entities& entities = entity.get_map().get_entities();
+      entities.set_entity_layer(entity, layer);
+    } else {
+      entity.set_layer(layer);
+    }
     entity.notify_position_changed();
 
     return 0;
@@ -1587,7 +1595,9 @@ int LuaContext::entity_api_bring_to_front(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
 
-    entity.get_map().get_entities().bring_to_front(entity);
+    if (entity.is_on_map()) {
+      entity.get_map().get_entities().bring_to_front(entity);
+    }
 
     return 0;
   });
@@ -1603,7 +1613,9 @@ int LuaContext::entity_api_bring_to_back(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
 
-    entity.get_map().get_entities().bring_to_back(entity);
+    if (entity.is_on_map()) {
+      entity.get_map().get_entities().bring_to_back(entity);
+    }
 
     return 0;
   });

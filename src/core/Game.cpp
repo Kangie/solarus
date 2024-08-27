@@ -751,13 +751,13 @@ void Game::teleport_hero(
     hero->place_on_destination(*next_map, current_map->get_location(), a_destination_name);
   } else {
     // Do back-compat hero relinking with camera on teleportation
-    if(!hero->is_on_map()) {
+    if (!hero->is_on_map()) {
       Debug::error("Teleporting a hero without camera from no map to \"" + map_id + "\"");
     }
 
     auto& map = hero->get_map();
 
-    if(map.get_entities().get_cameras().size() != 1){
+    if (map.get_entities().get_cameras().size() != 1){
        Debug::error("Ambiguous teleportation of a hero without camera from a map with "
                     + std::to_string(map.get_entities().get_cameras().size())
                     + " cameras.");
@@ -944,6 +944,10 @@ const MapPtr& Game::prepare_map(const std::string& map_id) {
  * @param map the map
  */
 void Game::leave_map(const EntityPtr &leaving, const MapPtr& map) {
+
+  if (!map->is_loaded()) {
+    return;
+  }
 
   //Remove the hero from the map
   map->get_entities().remove_entity(*leaving);
@@ -1193,10 +1197,12 @@ bool Game::is_suspended_by_camera() const {
   }
 
   // The game is suspended when any camera is scrolling on a separator. //TODO avoid this
-  for(const MapPtr& map : current_maps) {
-    for(const CameraPtr& cam : map->get_entities().get_cameras()) {
-      if(cam->is_traversing_separator()) {
-        return true;
+  for (const MapPtr& map : current_maps) {
+    if (map->is_loaded()) {
+      for (const CameraPtr& cam : map->get_entities().get_cameras()) {
+        if (cam->is_traversing_separator()) {
+          return true;
+        }
       }
     }
   }
@@ -1266,20 +1272,20 @@ void Game::start_game_over(const HeroPtr& hero) {
   if (!get_lua_context().game_on_game_over_started(*this, hero)) {
     // The script does not define a game-over sequence:
     // then, the built-in behavior is to restart the game.
-    if(hero && hero->is_on_map()) {
+    if (hero && hero->is_on_map() && hero->get_map().is_loaded()) {
       hero->get_map().get_entities().remove_entity(*hero); //Remove the dead hero from the map
 
       //Remove linked camera if any
       auto cam = hero->get_linked_camera();
-      if(cam) {
+      if (cam) {
         remove_camera(cam, get_default_transition_style());
       }
     }
 
     //Check for remaining heroes
     auto still_some_heroes = false;
-    for(const MapPtr& current_map : current_maps) {
-      if(current_map->get_entities().get_heroes().size() != 0){
+    for (const MapPtr& current_map : current_maps) {
+      if (current_map->is_loaded() && current_map->get_entities().get_heroes().size() != 0){
         still_some_heroes = true;
         break;
       }
@@ -1306,13 +1312,15 @@ void Game::stop_game_over(const HeroPtr& hero) {
   showing_game_over = false;
   if (!restarting && !get_main_loop().is_resetting()) {
     // If hero was given, notify only this one that game_over is finished
-    if(hero) {
+    if (hero) {
       hero->notify_game_over_finished();
     } else { //else notify each heroes
-      for(const MapPtr& current_map : current_maps) {
-        current_map->check_suspended();  // To unsuspend the heroes before making them blink.
-        for(const HeroPtr& hero : current_map->get_entities().get_heroes()) {
-          hero->notify_game_over_finished();
+      for (const MapPtr& current_map : current_maps) {
+        if (current_map->is_loaded()) {
+          current_map->check_suspended();  // To unsuspend the heroes before making them blink.
+          for (const HeroPtr& hero : current_map->get_entities().get_heroes()) {
+            hero->notify_game_over_finished();
+          }
         }
       }
     }

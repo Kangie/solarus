@@ -159,6 +159,10 @@ bool NonAnimatedRegions::overlaps_animated_tile(const TileInfo& tile) const {
  */
 void NonAnimatedRegions::update() {
 
+  if (!map.is_loaded()) {
+    return;
+  }
+
   // Limit the size of the cache to avoid growing the memory usage.
   if (optimized_tiles_surfaces.size() < 25) {
     return;

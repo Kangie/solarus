@@ -301,6 +301,10 @@ void Entity::set_map(Map& map) {
  */
 void Entity::place_on_map(Map& map) {
 
+  if (!map.is_loaded()) {
+    return;
+  }
+
   if (is_on_map() &&
       &get_map() == &map
   ) {
@@ -1871,6 +1875,11 @@ void Entity::notify_obstacle_reached() {
  */
 void Entity::notify_position_changed() {
   SOL_PFUN();
+
+  if (!is_on_map()) {
+    return;
+  }
+
   // Notify the quadtree.
   notify_bounding_box_changed();
 

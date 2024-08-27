@@ -59,7 +59,8 @@ void Hero::BoomerangState::start(const State* previous_state) {
 
   HeroState::start(previous_state);
 
-  const bool boomerang_exists = !get_map().get_entities().get_entities_by_type<Boomerang>().empty();
+  const bool boomerang_exists =
+      get_map().is_loaded() && !get_map().get_entities().get_entities_by_type<Boomerang>().empty();
   if (boomerang_exists) {
     Hero& hero = get_entity();
     hero.set_state(std::make_shared<FreeState>(hero));

@@ -100,8 +100,10 @@ void Hero::JumpingState::stop(const State* next_state) {
     switch (next_state->get_previous_carried_object_behavior()) {
 
     case CarriedObject::Behavior::THROW:
-      carried_object->throw_item(get_sprites().get_animation_direction());
-      get_entities().add_entity(carried_object);
+      if (get_map().is_loaded()) {
+        carried_object->throw_item(get_sprites().get_animation_direction());
+        get_entities().add_entity(carried_object);
+      }
       carried_object = nullptr;
       get_sprites().set_lifted_item(nullptr);
       break;

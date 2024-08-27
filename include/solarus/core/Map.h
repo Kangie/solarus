@@ -88,6 +88,7 @@ class SOLARUS_API Map final: public ExportableToLua {
 
     // loading
     bool is_loaded() const;
+    bool is_loading() const;
     void load(Game& game);
     void unload();
     Game& get_game();
