@@ -52,7 +52,7 @@ The multiplayer update!
 * Add a method `game:get_values()` (#1552).
 * Add a method `movement:get_type()` (#840).
 * Allow to disable the spin attack (#771).
-* Add methods `timer:get/set_delay()`.
+* Add methods `timer:get/set_duration()`.
 
 ### Solarus launcher GUI changes
 

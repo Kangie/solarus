@@ -31,7 +31,7 @@ You can repeat a timer by returning \c true from your function:
 -- Call a function every second.
 sol.timer.start(1000, function()
   sol.audio.play_sound("danger")
-  return true  -- To call the timer again (with the same delay).
+  return true  -- To call the timer again (with the same duration).
 end)
 \endverbatim
 
@@ -67,11 +67,11 @@ created even if the enemy is killed in the meantime.
 
 \section lua_api_timer_functions Functions of sol.timer
 
-\subsection lua_api_timer_start sol.timer.start([context], delay, callback)
+\subsection lua_api_timer_start sol.timer.start([context], duration, callback)
 
 Sets a function to be called after a delay.
 
-If the delay is set to zero, the function is called immediately.
+If the duration is set to zero, the function is called immediately.
 - \c context (\ref lua_api_map "map",
   \ref lua_api_game "game",
   \ref lua_api_item "item",
@@ -124,21 +124,20 @@ If the delay is set to zero, the function is called immediately.
   - If you don't specify a context, then a default context is set for you:
     the current \ref lua_api_map "map" during a \ref lua_api_game "game",
     and \ref lua_api_main "sol.main" if no game is running.
-- \c delay (number): Delay before calling the function in milliseconds.
+- \c duration (number): Delay before calling the function in milliseconds.
 - \c callback (function): The function to be called when the timer finishes.
   - If this callback function returns \c true, then the timer automatically
-  repeats itself with the same delay.
+  repeats itself with the same duration.
   - If the callback function returns a positive integer value,
-  then the timer automatically repeats itself after this specified delay
+  then the timer automatically repeats itself after this specified duration
   in milliseconds.
   - Otherwise, the timer does not repeats.
-  If the repeating delay is shorter than the time of a cycle of the main
+  If the repeating duration is shorter than the time of a cycle of the main
   loop, then the callback may be executed several times in
   the same cycle in order to catch up.
 - Return value (timer): The timer created.
-  Most of the time, you don't need to store the returned timer.
-  Indeed, there is no problem if it gets garbage-collected: the timer persists
-  in the engine side until its completion or the end of its context.
+  Most of the time, you don't need to store the returned timer:
+  the timer persists until its completion or the end of its context.
   Usually, you will store the return value only if you need to stop the timer
   explicitly later or to call another method on it.
 
@@ -167,11 +166,6 @@ Cancels all timers that are currently running in a context.
 This function is equivalent to calling \ref lua_api_timer_stop on each timer
 of the context.
 It may allow you to avoid to store explicitly all your timers.
-
-\remark Canceling timers by hand may be tedious and error-prone.
-  In lots of cases, you can simply pass a context parameter to
-  \ref lua_api_timer_start "sol.timer.start()" in order to restrict the
-  lifetime of your timer to some other object.
 
 \section lua_api_timer_methods Methods of the type timer
 
@@ -243,7 +237,7 @@ map.
   entity timers also get automatically suspended when the entity is
   \ref lua_api_entity_set_enabled "disabled".
 
-\subsection lua_api_timer_get_delay timer:get_delay()
+\subsection lua_api_timer_get_duration timer:get_duration()
 
 Returns the duration of this timer.
 - Return value (number): The duration of this timer in milliseconds.
@@ -253,12 +247,12 @@ Returns the duration of this timer.
   If you want to know its current progress, use
   \ref lua_api_timer_get_remaining_time "timer:get_remaining_time()" instead.
 
-\subsection lua_api_timer_set_delay timer:set_delay(delay)
+\subsection lua_api_timer_set_duration timer:set_duration(duration)
 
 Sets the duration of this timer.
 
-This is equivalent to returning the new delay from the timer's callback.
-- \c delay (number): The new duration is milliseconds.
+This is equivalent to returning a new duration from the timer's callback.
+- \c duration (number): The new duration is milliseconds.
 
 \remark This only acts on subsequent iterations of the timer and only has an
   effect if the timer is repeated.
@@ -283,9 +277,9 @@ This function has no effect if the timer is already finished.
 
 \remark This function only acts on the current iteration of the timer.
   When the timer is repeated,
-  the timer gets rescheduled with its full delay again.
-  To change the delay of subsequent iterations of a repeated timer,
-  you can either return the new delay in the timer's callback or call
-  \ref lua_api_timer_set_delay "timer:set_delay()".
+  the timer gets rescheduled with its full duration again.
+  To change the duration of subsequent iterations of a repeated timer,
+  you can either return the new duration in the timer's callback or call
+  \ref lua_api_timer_set_duration "timer:set_duration()".
 
 */

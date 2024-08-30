@@ -23,7 +23,6 @@
 #include "solarus/core/Timer.h"
 #include "solarus/entities/Entity.h"
 #include "solarus/hero/CustomState.h"
-#include "solarus/lua/ExportableToLuaPtr.h"
 #include "solarus/lua/LuaBind.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
@@ -62,7 +61,7 @@ static bool is_timer_context(lua_State* l, int index) {
  * \return Reference to the newly created Timer.
  */
 static Timer& start(LuaContext& lua_context) {
-  // Parameters: [context] delay callback.
+  // Parameters: [context] duration callback.
   lua_State* l = lua_context.get_internal_state();
 
   bool use_default_context = false;
@@ -114,15 +113,15 @@ static Timer& start(LuaContext& lua_context) {
     }
   }
 
-  uint32_t delay = uint32_t(LuaTools::check_int(l, 2));
+  const uint32_t duration = uint32_t(LuaTools::check_int(l, 2));
   const ScopedLuaRef& callback_ref = LuaTools::check_function(l, 3);
 
   // Create the timer.
-  TimerPtr timer = std::make_shared<Timer>(delay);
+  TimerPtr timer = std::make_shared<Timer>(duration);
   lua_context.add_timer(timer, 1, callback_ref);
 
-  if (delay == 0) {
-    // The delay is zero: call the function right now.
+  if (duration == 0) {
+    // The duration is zero: call the function right now.
     lua_context.do_timer_callback(timer);
   }
 
@@ -260,8 +259,8 @@ void LuaContext::register_timer_module() {
   };
   if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     methods.insert(methods.end(), {
-      { "get_delay", LUA_TO_C_BIND(&Timer::get_duration) },
-      { "set_delay", LUA_TO_C_BIND(&Timer::set_duration) }
+      { "get_duration", LUA_TO_C_BIND(&Timer::get_duration) },
+      { "set_duration", LUA_TO_C_BIND(&Timer::set_duration) }
     });
   }
 
@@ -546,7 +545,7 @@ void LuaContext::do_timer_callback(const TimerPtr& timer) {
           interval = lua_tointeger(l, -1);
           if (interval < 0) {
             std::ostringstream oss;
-            oss << "Invalid timer delay: " + oss.str();
+            oss << "Invalid timer duration: " + oss.str();
             Debug::error(oss.str());
           }
           else {

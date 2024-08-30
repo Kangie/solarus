@@ -5,8 +5,8 @@ function map:on_opening_transition_finished()
   local timer
   timer = sol.timer.start(map, 100, function()
     assert_equal(timer:get_remaining_time(), 0)
-    assert_equal(timer:get_delay(), first_time and 100 or 200)
-    timer:set_delay(200)
+    assert_equal(timer:get_duration(), first_time and 100 or 200)
+    timer:set_duration(200)
     if not first_time then
       sol.main.exit()
     end
@@ -15,14 +15,14 @@ function map:on_opening_transition_finished()
   end)
 
   assert_equal(timer:get_remaining_time(), 100)
-  assert_equal(timer:get_delay(), 100)
+  assert_equal(timer:get_duration(), 100)
 
   sol.timer.start(map, 10, function()
     assert_equal(timer:get_remaining_time(), 90)
-    assert_equal(timer:get_delay(), 100)
+    assert_equal(timer:get_duration(), 100)
 
     timer:set_remaining_time(40)
     assert_equal(timer:get_remaining_time(), 40)
-    assert_equal(timer:get_delay(), 100)
+    assert_equal(timer:get_duration(), 100)
   end)
 end
