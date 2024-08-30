@@ -2,6 +2,7 @@
 
 ## Solarus Quest Editor 2.0.0 (in progress)
 
+* Dark mode support and more modern style.
 * New quest creation wizard (#460).
 * Graphics view now show a checkered background to represent transparency.
 * Quest tree: allow to set the author and license information of folders and GLSL files.

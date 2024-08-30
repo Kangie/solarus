@@ -46,6 +46,7 @@ set(solarus_quest_editor_RESOURCES
   resources/images.qrc
   resources/initial_files.qrc
   resources/quest_converter.qrc
+  resources/themes.qrc
 )
 
 # Compile resource files.

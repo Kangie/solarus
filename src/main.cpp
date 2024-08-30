@@ -16,6 +16,7 @@
  */
 #include "widgets/main_window.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "version.h"
 #include <solarus/core/Arguments.h>
 #include <solarus/core/Debug.h>
@@ -24,14 +25,12 @@
 #include <solarus/core/Savegame.h>
 #include <solarus/core/System.h>
 #include <solarus/lua/LuaContext.h>
-#include <oclero/qlementine.hpp>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QLibraryInfo>
 #include <QStyleFactory>
 #include <QTranslator>
 
-using oclero::qlementine::QlementineStyle;
 
 // SDLmain is required in some platforms, i.e. Windows, for proper initialization.
 // For instance, in Windows, SDLmain encodes argv in main() using UTF-8 by default.
@@ -88,7 +87,7 @@ int run_editor_gui(int argc, char* argv[]) {
   }
   application.installTranslator(&app_translator);
 
-  application.setStyle(new QlementineStyle());
+  application.setStyle(new EditorStyle());
 
   MainWindow window(nullptr);
 

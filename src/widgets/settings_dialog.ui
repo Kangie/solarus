@@ -25,6 +25,60 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <widget class="QGroupBox" name="theme_group_box">
+         <property name="title">
+          <string>Appaerance</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="theme_label">
+            <property name="text">
+             <string>Theme:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="theme_field">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <item>
+             <property name="text">
+              <string>Automatic</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Light mode</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Dark mode</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="theme_spacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>392</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="files_group_box">
          <property name="title">
           <string>Files</string>
