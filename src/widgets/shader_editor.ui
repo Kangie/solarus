@@ -28,6 +28,9 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="handleWidth">
+      <number>7</number>
+     </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="vertical_layout">
        <item>
@@ -395,6 +398,9 @@
      <widget class="QSplitter" name="right_splitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="handleWidth">
+       <number>7</number>
       </property>
       <widget class="SolarusEditor::ShaderPreviewer" name="shader_previewer" native="true">
        <property name="sizePolicy">

@@ -37,6 +37,9 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="handleWidth">
+      <number>7</number>
+     </property>
      <widget class="QWidget" name="sprite_side_view" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
@@ -67,8 +70,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>588</width>
-            <height>717</height>
+            <width>579</width>
+            <height>692</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -643,6 +646,9 @@
      <widget class="QSplitter" name="vertical_splitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="handleWidth">
+       <number>7</number>
       </property>
       <widget class="SolarusEditor::SpriteView" name="sprite_view">
        <property name="sizePolicy">
