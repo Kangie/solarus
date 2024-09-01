@@ -23,9 +23,9 @@ using oclero::qlementine::QlementineStyle;
 namespace SolarusEditor {
 
 /**
- * @brief Possible theme choices for the editor.
+ * @brief Possible mode choices for the editor.
  */
-enum class Theme {
+enum class Mode {
   AUTOMATIC,  /**< Detect automatically from OS settings. */
   LIGHT,      /**< Light mode. */
   DARK        /**< Dark mode. */
@@ -34,8 +34,8 @@ enum class Theme {
 /**
  * @brief A Qlementine theme plus some Solarus Editor specific info.
  */
-struct ThemeInfo {
-  Theme theme;                  /**< A theme. */
+struct ModeInfo {
+  Mode mode;                    /**< A mode choice. */
   QString path;                 /**< Path of the JSON file for this theme. */
 
   // Text editor colors.
@@ -54,22 +54,25 @@ class EditorStyle: public QlementineStyle {
 
 public:
   using AutoIconColor = oclero::qlementine::AutoIconColor;
+  using MouseState = oclero::qlementine::MouseState;
+  using ColorRole = oclero::qlementine::ColorRole;
+  using Status = oclero::qlementine::Status;
 
   explicit EditorStyle(QObject* parent = nullptr);
 
-  Theme get_theme() const;
-  void set_theme(Theme theme);
-  Theme get_actual_theme() const;
-  static const ThemeInfo& get_theme_info();
+  Mode get_mode() const;
+  void set_mode(Mode mode);
+  Mode get_actual_mode() const;
+  static const ModeInfo& get_mode_info();
 
-  static Theme get_os_theme();
+  static Mode get_os_mode();
 
 signals:
-  void actual_theme_changed(Theme theme);
+  void actual_mode_changed(Mode mode);
 
 private:
-  Theme theme = Theme::AUTOMATIC;         /**< Theme selected by the user. */
-  Theme actual_theme = Theme::AUTOMATIC;  /**< Automatic replaced by the final one. */
+  Mode mode = Mode::AUTOMATIC;         /**< Theme selected by the user. */
+  Mode actual_mode = Mode::AUTOMATIC;  /**< Automatic replaced by the final one. */
 };
 
 }  // namespace Solarus Editor

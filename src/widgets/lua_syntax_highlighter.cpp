@@ -30,7 +30,7 @@ LuaSyntaxHighlighter::LuaSyntaxHighlighter(QTextDocument* document) :
 
   const EditorStyle* style = qobject_cast<const EditorStyle*>(qApp->style());
   if (style != nullptr) {
-    connect(style, &EditorStyle::actual_theme_changed,
+    connect(style, &EditorStyle::actual_mode_changed,
             this, &LuaSyntaxHighlighter::create_rules);
   }
   create_rules();
@@ -41,7 +41,7 @@ LuaSyntaxHighlighter::LuaSyntaxHighlighter(QTextDocument* document) :
  */
 void LuaSyntaxHighlighter::create_rules() {
 
-  const ThemeInfo& theme_info = EditorStyle::get_theme_info();
+  const ModeInfo& mode_info = EditorStyle::get_mode_info();
 
   rules.clear();
   HighlightingRule rule;
@@ -54,7 +54,7 @@ void LuaSyntaxHighlighter::create_rules() {
 
   // Keywords.
   QTextCharFormat keyword_format;
-  keyword_format.setForeground(theme_info.lua_keyword_color);
+  keyword_format.setForeground(mode_info.lua_keyword_color);
   keyword_format.setFontWeight(QFont::Bold);
   const QStringList keyword_patterns = {
     "\\band\\b",
@@ -88,7 +88,7 @@ void LuaSyntaxHighlighter::create_rules() {
 
   // Strings.
   QTextCharFormat string_format;
-  string_format.setForeground(theme_info.literal_string_color);
+  string_format.setForeground(mode_info.literal_string_color);
   rule.pattern = QRegExp("\"[^\"]*\"");
   rule.format = string_format;
   rules.append(rule);
@@ -99,7 +99,7 @@ void LuaSyntaxHighlighter::create_rules() {
 
   // Comments.
   QTextCharFormat single_line_comment_format;
-  single_line_comment_format.setForeground(theme_info.comment_color);
+  single_line_comment_format.setForeground(mode_info.comment_color);
   // Avoid to highlight comments in strings,
   // and don't match --[[ or --]] markers.
   rule.pattern = QRegExp(
@@ -112,7 +112,7 @@ void LuaSyntaxHighlighter::create_rules() {
   comment_start_pattern = QRegExp("--\\[\\[");
   comment_end_pattern = QRegExp("--\\]\\]");
   QTextCharFormat multi_line_comment_format;
-  multi_line_comment_format.setForeground(theme_info.comment_color);
+  multi_line_comment_format.setForeground(mode_info.comment_color);
 
   rehighlight();
 }
@@ -157,7 +157,7 @@ void LuaSyntaxHighlighter::highlightBlock(const QString& text) {
           + comment_end_pattern.matchedLength();
     }
     QTextCharFormat multi_line_comment_format;
-    multi_line_comment_format.setForeground(EditorStyle::get_theme_info().comment_color);
+    multi_line_comment_format.setForeground(EditorStyle::get_mode_info().comment_color);
     setFormat(start_index, comment_length, multi_line_comment_format);
     start_index = comment_start_pattern.indexIn(text, start_index + comment_length);
   }

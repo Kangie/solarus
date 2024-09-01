@@ -102,7 +102,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, &SettingsDialog::change_map_grid_color);
   connect(ui.map_tileset_zoom_field, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &SettingsDialog::change_map_tileset_zoom);
-  connect(ui.editor_browse_button,&QPushButton::pressed,[&]{
+  connect(ui.editor_browse_button,&QPushButton::pressed, this, [&]{
      QString path = QFileDialog::getOpenFileName(
          this,
          tr("Select external editor"),
@@ -321,7 +321,7 @@ void SettingsDialog::change_theme() {
 
   EditorStyle* style = qobject_cast<EditorStyle*>(qApp->style());
   if (style != nullptr) {
-    style->set_theme(static_cast<Theme>(index));
+    style->set_mode(static_cast<Mode>(index));
   }
   update_buttons();
 }

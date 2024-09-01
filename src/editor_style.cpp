@@ -7,11 +7,11 @@ namespace SolarusEditor {
 
 namespace {
 
-const std::map<Theme, ThemeInfo> theme_info = {
+const std::map<Mode, ModeInfo> mode_info = {
     {
-        Theme::LIGHT,
+        Mode::LIGHT,
         {
-            Theme::LIGHT,
+            Mode::LIGHT,
             ":/themes/light.json",
             Qt::darkRed,                     // Lua keyword.
             Qt::blue,                        // Literal string.
@@ -20,9 +20,9 @@ const std::map<Theme, ThemeInfo> theme_info = {
         }
     },
     {
-        Theme::DARK,
+        Mode::DARK,
         {
-            Theme::DARK,
+            Mode::DARK,
             ":/themes/dark.json",
             QColor(255, 128, 128),  // Lua keyword.
             Qt::cyan,               // Literal string.
@@ -43,66 +43,65 @@ EditorStyle::EditorStyle(QObject *parent):
 
   EditorSettings settings;
   const QString& theme_name = settings.get_value_string(EditorSettings::theme);
-  Theme theme = Theme::AUTOMATIC;
+  Mode mode = Mode::AUTOMATIC;
   if (theme_name == "light") {
-    theme = Theme::LIGHT;
+    mode = Mode::LIGHT;
   } else if (theme_name == "dark") {
-    theme = Theme::DARK;
+    mode = Mode::DARK;
   }
-  set_theme(theme);
+  set_mode(mode);
 }
 
 /**
- * @brief Returns the current theme of the editor.
- * @return The current theme (possibly @c Theme::AUTOMATIC).
+ * @brief Returns the current mode of the editor.
+ * @return The current mode (possibly @c Mode::AUTOMATIC).
  */
-Theme EditorStyle::get_theme() const {
-  return theme;
+Mode EditorStyle::get_mode() const {
+  return mode;
 }
 
 /**
- * @brief Sets the theme of the editor.
- * @param theme The theme to set (possibly @c Theme::AUTOMATIC).
+ * @brief Sets the mode of the editor.
+ * @param mode The mode to set (possibly @c Mode::AUTOMATIC).
  */
-void EditorStyle::set_theme(Theme theme) {
-  this->theme = theme;
+void EditorStyle::set_mode(Mode mode) {
+  this->mode = mode;
 
-  Theme actual_theme = (theme == Theme::AUTOMATIC) ? get_os_theme() : theme;
-  if (actual_theme != this->actual_theme) {
-    this->actual_theme = actual_theme;
-    setThemeJsonPath(theme_info.at(actual_theme).path);
-    emit actual_theme_changed(theme);
+  Mode actual_mode = (mode == Mode::AUTOMATIC) ? get_os_mode() : mode;
+  if (actual_mode != this->actual_mode) {
+    this->actual_mode = actual_mode;
+    setThemeJsonPath(mode_info.at(actual_mode).path);
+    emit actual_mode_changed(actual_mode);
   }
 }
 
 /**
- * @brief Returns the final theme, i.e. with automatic replaced by the actual one.
- * @return The actual theme.
+ * @brief Returns the final mode, i.e. with automatic replaced by the actual one.
+ * @return The actual mode.
  */
-Theme EditorStyle::get_actual_theme() const {
-  return actual_theme;
+Mode EditorStyle::get_actual_mode() const {
+  return actual_mode;
 }
 
 /**
- * @brief Returns details of the actual current theme.
+ * @brief Returns details of the actual current mode.
  */
-const ThemeInfo& EditorStyle::get_theme_info() {
+const ModeInfo& EditorStyle::get_mode_info() {
   const EditorStyle* style = qobject_cast<const EditorStyle*>(qApp->style());
   if (style == nullptr) {
-    return theme_info.at(Theme::LIGHT);
+    return mode_info.at(Mode::LIGHT);
   }
-  return theme_info.at(style->get_actual_theme());
+  return mode_info.at(style->get_actual_mode());
 }
 
 /**
  * @brief Returns the light or dark mode setting from the operating system.
- * @return @c Theme::LIGHT or @c Theme::DARK.
+ * @return @c Mode::LIGHT or @c Mode::DARK.
  */
-Theme EditorStyle::get_os_theme() {
+Mode EditorStyle::get_os_mode() {
 
   // TODO Qt6 return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark ? Theme::DARK : Theme::LIGHT;
-  return Theme::DARK;
+  return Mode::DARK;
 }
-
 
 }  // namespace Solarus Editor

@@ -150,7 +150,7 @@ TextEditorWidget::TextEditorWidget(const QString& file_path, TextEditor& editor)
 
   const EditorStyle* style = qobject_cast<const EditorStyle*>(qApp->style());
   if (style != nullptr) {
-    connect(style, &EditorStyle::actual_theme_changed,
+    connect(style, &EditorStyle::actual_mode_changed,
             this, &TextEditorWidget::highlight_current_line);
   }
 
@@ -289,7 +289,7 @@ void TextEditorWidget::highlight_current_line() {
   if (!isReadOnly()) {
     QTextEdit::ExtraSelection selection;
 
-    QColor line_color = EditorStyle::get_theme_info().current_line_background_color;
+    QColor line_color = EditorStyle::get_mode_info().current_line_background_color;
 
     selection.format.setBackground(line_color);
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
