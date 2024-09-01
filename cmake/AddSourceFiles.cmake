@@ -103,6 +103,7 @@ set(solarus_quest_editor_SOURCES
   include/dialogs_model.h
   include/editor_exception.h
   include/editor_settings.h
+  include/editor_style.h
   include/enum_traits.h
   include/file_tools.h
   include/grid_style.h
@@ -235,6 +236,7 @@ set(solarus_quest_editor_SOURCES
   src/dialogs_model.cpp
   src/editor_exception.cpp
   src/editor_settings.cpp
+  src/editor_style.cpp
   src/file_tools.cpp
   src/grid_style.cpp
   src/ground_traits.cpp

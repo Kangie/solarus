@@ -175,7 +175,7 @@ int ExternalScriptDialog::exec() {
   // but the timer solution is enough for us.
   QTimer* timer = new QTimer(this);
   timer->setSingleShot(true);
-  connect(timer, SIGNAL(timeout()), this, SLOT(run_script()));
+  connect(timer, &QTimer::timeout, this, &ExternalScriptDialog::run_script);
   timer->start();
 
   return QDialog::exec();

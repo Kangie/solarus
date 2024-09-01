@@ -28,6 +28,7 @@ To build Solarus Quest Editor, you need:
     - qtbase5-dev
     - qttools5-dev
     - qttools5-dev-tools
+    - libqt5svg5-dev
 - Solarus and its dependencies:
   - SDL2 (2.0.6 or greater)
   - SDL2main

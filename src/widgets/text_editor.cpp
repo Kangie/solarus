@@ -64,15 +64,15 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   } else {
     map_id.clear();
   }
-  connect(open_map_action, SIGNAL(triggered(bool)),
-          this, SLOT(open_map_requested()));
+  connect(open_map_action, &QAction::triggered,
+          this, &TextEditor::open_map_requested);
 
-  connect(text_widget, SIGNAL(copyAvailable(bool)),
-          this, SIGNAL(can_cut_changed(bool)));
-  connect(text_widget, SIGNAL(copyAvailable(bool)),
-          this, SIGNAL(can_copy_changed(bool)));
+  connect(text_widget, &QPlainTextEdit::copyAvailable,
+          this, &Editor::can_cut_changed);
+  connect(text_widget, &QPlainTextEdit::copyAvailable,
+          this, &Editor::can_copy_changed);
 
-  reload_settings();
+  settings_changed();  // Non virtual call because from the constructor.
 
   // Activate syntax coloring for Lua scripts.
   if (quest.is_script(file_path)) {
@@ -202,11 +202,11 @@ void TextEditor::find() {
 
   FindTextDialog* dialog = new FindTextDialog(this);
 
-  connect(dialog, SIGNAL(find_text_requested(QString)),
-          this, SLOT(find_text_requested(QString)));
+  connect(dialog, &FindTextDialog::find_text_requested,
+          this, &TextEditor::find_text_requested);
 
-  connect(dialog, SIGNAL(replace_text_requested(QString, QString)),
-          this, SLOT(replace_text_requested(QString, QString)));
+  connect(dialog, &FindTextDialog::replace_text_requested,
+          this, &TextEditor::replace_text_requested);
 
   dialog->show();
   dialog->raise();  // Put the dialog on top.
@@ -226,6 +226,13 @@ void TextEditor::run_map() {
  */
 void TextEditor::reload_settings() {
 
+  settings_changed();
+}
+
+/**
+ * @brief Updates the editor with updated settings.
+ */
+void TextEditor::settings_changed() {
   EditorSettings settings;
 
   // Font.
@@ -235,7 +242,7 @@ void TextEditor::reload_settings() {
   setFont(font);
   text_widget->set_tab_length(settings.get_value_int(EditorSettings::tab_length));
   text_widget->set_replace_tab_by_spaces(
-    settings.get_value_bool(EditorSettings::replace_tab_by_spaces));
+      settings.get_value_bool(EditorSettings::replace_tab_by_spaces));
 }
 
 /**

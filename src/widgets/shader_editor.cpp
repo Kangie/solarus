@@ -233,11 +233,11 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::update_scaling_factor_field);
   connect(ui.scaling_factor_check_box, &QCheckBox::clicked,
           this, &ShaderEditor::scaling_factor_check_box_changed);
-  connect(ui.scaling_factor_field, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+  connect(ui.scaling_factor_field, qOverload<double>(&QDoubleSpinBox::valueChanged),
           this, &ShaderEditor::scaling_factor_field_changed);
 
-  connect(ui.preview_mode_selector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          [this]() {
+  connect(ui.preview_mode_selector, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, [this]() {
     ui.shader_previewer->set_preview_mode(ui.preview_mode_selector->get_selected_value());
   });
 
@@ -247,63 +247,63 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::browse_preview_picture);
   connect(ui.preview_map_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
-  connect(ui.preview_map_field, static_cast<void (QComboBox::*)(int)>(&ResourceSelector::currentIndexChanged),
+  connect(ui.preview_map_field, qOverload<int>(&ResourceSelector::currentIndexChanged),
           this, &ShaderEditor::update_preview_image);
   connect(ui.preview_sprite_radio, &QRadioButton::clicked,
           this, &ShaderEditor::preview_radio_changed);
-  connect(ui.preview_sprite_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+  connect(ui.preview_sprite_field, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &ShaderEditor::preview_selected_sprite_changed);
-  connect(ui.preview_sprite_animation_field, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+  connect(ui.preview_sprite_animation_field, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &ShaderEditor::preview_sprite_animation_changed);
-  connect(ui.preview_sprite_direction_field, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+  connect(ui.preview_sprite_direction_field, qOverload<int>(&QSpinBox::valueChanged),
           this, &ShaderEditor::update_preview_image);
 
-  connect(ui.vertex_file_check_box, &QCheckBox::clicked, [this]() {
+  connect(ui.vertex_file_check_box, &QCheckBox::clicked, this, [this]() {
     source_file_check_box_changed(WhichGlslEditor::VERTEX_EDITOR);
   });
-  connect(ui.vertex_file_new_button, &QToolButton::clicked, [this]() {
+  connect(ui.vertex_file_new_button, &QToolButton::clicked, this, [this]() {
     new_source_file(WhichGlslEditor::VERTEX_EDITOR);
   });
-  connect(ui.vertex_file_browse_button, &QToolButton::clicked, [this]() {
+  connect(ui.vertex_file_browse_button, &QToolButton::clicked, this, [this]() {
     browse_source_file(WhichGlslEditor::VERTEX_EDITOR);
   });
-  connect(ui.vertex_file_save_button, &QToolButton::clicked, [this]() {
+  connect(ui.vertex_file_save_button, &QToolButton::clicked, this, [this]() {
     save_source_file(WhichGlslEditor::VERTEX_EDITOR);
   });
-  connect(shader.get(), &ShaderModel::vertex_file_changed, [this]() {
+  connect(shader.get(), &ShaderModel::vertex_file_changed, this, [this]() {
     update_source_editor_tab(WhichGlslEditor::VERTEX_EDITOR);
   });
-  connect(&vertex_editor->get_undo_stack(), &QUndoStack::cleanChanged, [this](bool clean) {
+  connect(&vertex_editor->get_undo_stack(), &QUndoStack::cleanChanged, this, [this](bool clean) {
     source_editor_modification_state_changed(WhichGlslEditor::VERTEX_EDITOR, clean);
   });
 
-  connect(ui.fragment_file_check_box, &QCheckBox::clicked, [this]() {
+  connect(ui.fragment_file_check_box, &QCheckBox::clicked, this, [this]() {
     source_file_check_box_changed(WhichGlslEditor::FRAGMENT_EDITOR);
   });
-  connect(ui.fragment_file_new_button, &QToolButton::clicked, [this]() {
+  connect(ui.fragment_file_new_button, &QToolButton::clicked, this, [this]() {
     new_source_file(WhichGlslEditor::FRAGMENT_EDITOR);
   });
-  connect(ui.fragment_file_browse_button, &QToolButton::clicked, [this]() {
+  connect(ui.fragment_file_browse_button, &QToolButton::clicked, this, [this]() {
     browse_source_file(WhichGlslEditor::FRAGMENT_EDITOR);
   });
-  connect(ui.fragment_file_save_button, &QToolButton::clicked, [this]() {
+  connect(ui.fragment_file_save_button, &QToolButton::clicked, this, [this]() {
     save_source_file(WhichGlslEditor::FRAGMENT_EDITOR);
   });
-  connect(shader.get(), &ShaderModel::fragment_file_changed, [this]() {
+  connect(shader.get(), &ShaderModel::fragment_file_changed, this, [this]() {
     update_source_editor_tab(WhichGlslEditor::FRAGMENT_EDITOR);
   });
-  connect(&fragment_editor->get_undo_stack(), &QUndoStack::cleanChanged, [this](bool clean) {
+  connect(&fragment_editor->get_undo_stack(), &QUndoStack::cleanChanged, this, [this](bool clean) {
     source_editor_modification_state_changed(WhichGlslEditor::FRAGMENT_EDITOR, clean);
   });
 
   connect(ui.shader_previewer, &ShaderPreviewer::shader_compilation_started,
           this, &ShaderEditor::clear_console);
   connect(ui.shader_previewer, &ShaderPreviewer::shader_error,
-        [this](const QString& message) {
+        this, [this](const QString& message) {
     emit log_message_to_console("Error", message);
   });
   connect(ui.shader_previewer, &ShaderPreviewer::shader_warning,
-          [this](const QString& message) {
+          this, [this](const QString& message) {
     emit log_message_to_console("Warning", message);
   });
 }

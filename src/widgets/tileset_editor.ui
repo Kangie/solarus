@@ -31,6 +31,12 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="handleWidth">
+      <number>8</number>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QScrollArea" name="tileset_side_view_scroll_area">
       <property name="widgetResizable">
        <bool>true</bool>
@@ -40,7 +46,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>597</width>
+         <width>596</width>
          <height>725</height>
         </rect>
        </property>
@@ -434,16 +440,7 @@
             <item>
              <layout class="QHBoxLayout" name="border_sets_layout">
               <item>
-               <widget class="SolarusEditor::BorderSetTreeView" name="border_sets_tree_view">
-                <property name="styleSheet">
-                 <string notr="true">QTreeView::item
-{
-    padding-top: 2px;
-    padding-bottom: 2px;
-}
-</string>
-                </property>
-               </widget>
+               <widget class="SolarusEditor::BorderSetTreeView" name="border_sets_tree_view"/>
               </item>
               <item>
                <layout class="QVBoxLayout" name="border_sets_buttons_layout">
@@ -677,14 +674,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SolarusEditor::EnumSelector&lt;SolarusEditor::Ground&gt;</class>
-   <extends>QComboBox</extends>
-   <header>ground_traits.h</header>
+   <class>SolarusEditor::ColorChooser</class>
+   <extends>QPushButton</extends>
+   <header>widgets/color_chooser.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::TilesetView</class>
    <extends>QGraphicsView</extends>
    <header>widgets/tileset_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SolarusEditor::EnumSelector&lt;SolarusEditor::Ground&gt;</class>
+   <extends>QComboBox</extends>
+   <header>ground_traits.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::TilePatternsListView</class>
@@ -700,11 +702,6 @@
    <class>SolarusEditor::EnumSelector&lt;SolarusEditor::PatternSeparation&gt;</class>
    <extends>QComboBox</extends>
    <header>pattern_separation_traits.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SolarusEditor::ColorChooser</class>
-   <extends>QPushButton</extends>
-   <header>widgets/color_chooser.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::EnumSelector&lt;SolarusEditor::PatternRepeatMode&gt;</class>

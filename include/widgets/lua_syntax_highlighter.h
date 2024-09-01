@@ -35,11 +35,25 @@ class LuaSyntaxHighlighter : public QSyntaxHighlighter {
 
 public:
 
+  /**
+   * @brief List of colors for Lua syntax highlighting depending on the theme.
+   */
+  struct SyntaxColors {
+    QColor keyword_color;  /**< Color for Lua keywords. */
+    QColor string_color;   /**< Color for literal strings. */
+    QColor comment_color;  /**< Color for comments. */
+  };
+
   explicit LuaSyntaxHighlighter(QTextDocument* document = nullptr);
 
 protected:
 
-  virtual void highlightBlock(const QString& text) override;
+  void highlightBlock(const QString& text) override;
+
+private:
+
+  void update_colors();
+  void create_rules();
 
   /**
    * @brief A single-line highlighting rule.
@@ -51,15 +65,8 @@ protected:
   };
 
   QVector<HighlightingRule> rules;               /**< The rule set. */
-
   QRegExp comment_start_pattern;                 /**< Regexp of multi-line comments start. */
   QRegExp comment_end_pattern;                   /**< Regexp of multi-line comments end. */
-
-  QTextCharFormat keyword_format;                /**< Format applied to Lua keywords. */
-  QTextCharFormat single_line_comment_format;    /**< Format applied to single-line comments. */
-  QTextCharFormat multi_line_comment_format;     /**< Format applied to multi-line comments. */
-  QTextCharFormat string_format;                 /**< Format applied to strings litterals. */
-
 };
 
 }

@@ -1113,7 +1113,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   get_undo_stack().setClean();
 
   // Prepare the gui.
-  const int side_width = ui.map_properties_view->minimumSizeHint().width();
+  const int side_width = 300;
   ui.splitter->setSizes({ side_width, width() - side_width });
   ui.map_side_splitter->setStretchFactor(0, 0);  // Don't expand the map properties view
   ui.map_side_splitter->setStretchFactor(1, 1);  // but only the tileset view.
@@ -1279,9 +1279,8 @@ MapView& MapEditor::get_map_view() {
 /**
  * @brief Initializes the entity creation toolbar.
  *
- * The entity creation toolbar is not made with Qt designer because
- * - one cannot create QToolBar widgets with Qt designer,
- * - we iterate on entity types to build all of them more easily.
+ * The entity creation toolbar is made from code because
+ * we iterate on entity types to build all of them more easily.
  */
 void MapEditor::build_entity_creation_toolbar() {
 
@@ -1289,7 +1288,8 @@ void MapEditor::build_entity_creation_toolbar() {
 
   // List of types proposed in the toolbar.
   // The list is specified here manually because we want to control the order
-  // and all types are not included (dynamic tiles are omitted).
+  // and all types are not included
+  // (e.g. heroes, cameras and dynamic tiles are omitted).
   const std::vector<std::pair<EntityType, QString>> types_in_toolbar = {
     { EntityType::TILE, tr("Add tile") },
     { EntityType::DESTINATION, tr("Add destination") },
@@ -1327,7 +1327,6 @@ void MapEditor::build_entity_creation_toolbar() {
     });
   }
   entity_creation_toolbar->setIconSize(QSize(32, 32));
-  entity_creation_toolbar->setStyleSheet("spacing: 0");
 
   ui.entity_creation_layout->insertWidget(0, entity_creation_toolbar);
 }

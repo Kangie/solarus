@@ -46,6 +46,8 @@ public slots:
   void update_buttons();
 
   // General.
+  void update_theme();
+  void change_theme();
   void update_working_directory();
   void change_working_directory();
   void browse_working_directory();

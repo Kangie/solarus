@@ -47,7 +47,6 @@ PatternChooser::PatternChooser(QWidget *parent) :
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   setIconSize(QSize(32, 32));
   update_icon();
-  update_style_sheet();
 
   connect(this, SIGNAL(clicked()), this, SLOT(pick_pattern_requested()));
 }
@@ -60,7 +59,6 @@ void PatternChooser::set_tileset(TilesetModel* tileset) {
 
   this->tileset = tileset;
   update_icon();
-  update_style_sheet();
 }
 
 /**
@@ -87,7 +85,6 @@ void PatternChooser::set_pattern_id(const QString& pattern_id) {
 
   setText(pattern_id);
   update_icon();
-  update_style_sheet();
 
   emit pattern_id_changed(pattern_id);
 }
@@ -111,16 +108,6 @@ void PatternChooser::update_icon() {
   }
 
   setIcon(tileset->get_pattern_icon(pattern_index));
-}
-
-/**
- * @brief Updates the stylesheet of the chooser.
- */
-void PatternChooser::update_style_sheet() {
-
-  const bool valid = (tileset != nullptr && tileset->pattern_exists(get_pattern_id()));
-  QString text_color = valid ? "black" : "red";
-  setStyleSheet(style_sheet.arg(text_color));
 }
 
 /**

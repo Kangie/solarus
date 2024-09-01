@@ -16,6 +16,7 @@
  */
 #include "widgets/main_window.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "version.h"
 #include <solarus/core/Arguments.h>
 #include <solarus/core/Debug.h>
@@ -29,6 +30,7 @@
 #include <QLibraryInfo>
 #include <QStyleFactory>
 #include <QTranslator>
+
 
 // SDLmain is required in some platforms, i.e. Windows, for proper initialization.
 // For instance, in Windows, SDLmain encodes argv in main() using UTF-8 by default.
@@ -84,6 +86,8 @@ int run_editor_gui(int argc, char* argv[]) {
     }
   }
   application.installTranslator(&app_translator);
+
+  application.setStyle(new EditorStyle());
 
   MainWindow window(nullptr);
 

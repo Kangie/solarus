@@ -16,6 +16,7 @@
  */
 #include "widgets/settings_dialog.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -45,61 +46,63 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   reset();
 
-  connect(ui.button_box->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
-          this, SLOT(reset()));
+  connect(ui.button_box->button(QDialogButtonBox::Reset), &QAbstractButton::clicked,
+          this, &SettingsDialog::reset);
   connect(ui.button_box->button(QDialogButtonBox::RestoreDefaults),
-          SIGNAL(clicked()), this, SLOT(restore_default()));
-  connect(ui.button_box->button(QDialogButtonBox::Apply), SIGNAL(clicked()),
-          this, SLOT(apply()));
+          &QAbstractButton::clicked, this, &SettingsDialog::restore_default);
+  connect(ui.button_box->button(QDialogButtonBox::Apply), &QAbstractButton::clicked,
+          this, &SettingsDialog::apply);
 
   // General.
-  connect(ui.working_directory_field, SIGNAL(textChanged(QString)),
-          this, SLOT(change_working_directory()));
-  connect(ui.working_directory_button, SIGNAL(clicked()),
-          this, SLOT(browse_working_directory()));
-  connect(ui.restore_last_files_field, SIGNAL(toggled(bool)),
-          this, SLOT(change_restore_last_files()));
-  connect(ui.save_files_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_save_files()));
-  connect(ui.no_audio_field, SIGNAL(toggled(bool)),
-          this, SLOT(change_no_audio()));
-  connect(ui.quest_size_check_box, SIGNAL(toggled(bool)),
-          this, SLOT(change_quest_size()));
-  connect(ui.quest_size_field, SIGNAL(value_changed(int,int)),
-          this, SLOT(change_quest_size()));
-  connect(ui.force_software_rendering_field, SIGNAL(toggled(bool)),
-          this, SLOT(change_force_software()));
-  connect(ui.suspend_unfocused_field, SIGNAL(toggled(bool)),
-          this, SLOT(change_suspend_unfocused()));
+  connect(ui.theme_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_theme);
+  connect(ui.working_directory_field, &QLineEdit::textChanged,
+          this, &SettingsDialog::change_working_directory);
+  connect(ui.working_directory_button, &QAbstractButton::clicked,
+          this, &SettingsDialog::browse_working_directory);
+  connect(ui.restore_last_files_field, &QAbstractButton::toggled,
+          this, &SettingsDialog::change_restore_last_files);
+  connect(ui.save_files_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_save_files);
+  connect(ui.no_audio_field, &QAbstractButton::toggled,
+          this, &SettingsDialog::change_no_audio);
+  connect(ui.quest_size_check_box, &QAbstractButton::toggled,
+          this, &SettingsDialog::change_quest_size);
+  connect(ui.quest_size_field, &PairSpinBox::value_changed,
+          this, &SettingsDialog::change_quest_size);
+  connect(ui.force_software_rendering_field, &QAbstractButton::toggled,
+          this, &SettingsDialog::change_force_software);
+  connect(ui.suspend_unfocused_field, &QAbstractButton::toggled,
+          this, &SettingsDialog::change_suspend_unfocused);
 
   // Text editor.
-  connect(ui.font_family_field, SIGNAL(currentTextChanged(QString)),
-          this, SLOT(change_font_family()));
-  connect(ui.font_size_field, SIGNAL(valueChanged(int)),
-          this, SLOT(change_font_size()));
-  connect(ui.tab_length_field, SIGNAL(valueChanged(int)),
-          this, SLOT(change_tab_length()));
-  connect(ui.replace_tab_by_spaces, SIGNAL(toggled(bool)),
-          this, SLOT(change_replace_tab_by_spaces()));
-  connect(ui.editor_group_box,SIGNAL(toggled(bool)),
-          this, SLOT(change_external_editor_enabled()));
-  connect(ui.editor_cmd_field,SIGNAL(textChanged(QString)),
-          this, SLOT(change_external_editor_cmd()));
+  connect(ui.font_family_field, &QComboBox::currentTextChanged,
+          this, &SettingsDialog::change_font_family);
+  connect(ui.font_size_field, qOverload<int>(&QSpinBox::valueChanged),
+          this, &SettingsDialog::change_font_size);
+  connect(ui.tab_length_field, qOverload<int>(&QSpinBox::valueChanged),
+          this, &SettingsDialog::change_tab_length);
+  connect(ui.replace_tab_by_spaces, &QAbstractButton::toggled,
+          this, &SettingsDialog::change_replace_tab_by_spaces);
+  connect(ui.editor_group_box,&QGroupBox::toggled,
+          this, &SettingsDialog::change_external_editor_enabled);
+  connect(ui.editor_cmd_field,&QLineEdit::textChanged,
+          this, &SettingsDialog::change_external_editor_cmd);
 
   // Map editor.
-  connect(ui.map_main_zoom_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_map_main_zoom()));
-  connect(ui.map_grid_show_at_opening_field, SIGNAL(clicked()),
-          this, SLOT(change_map_grid_show_at_opening()));
-  connect(ui.map_grid_size_field, SIGNAL(value_changed(int,int)),
-          this, SLOT(change_map_grid_size()));
-  connect(ui.map_grid_style_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_map_grid_style()));
-  connect(ui.map_grid_color_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_map_grid_color()));
-  connect(ui.map_tileset_zoom_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_map_tileset_zoom()));
-  connect(ui.editor_browse_button,&QPushButton::pressed,[&]{
+  connect(ui.map_main_zoom_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_map_main_zoom);
+  connect(ui.map_grid_show_at_opening_field, &QAbstractButton::clicked,
+          this, &SettingsDialog::change_map_grid_show_at_opening);
+  connect(ui.map_grid_size_field, &PairSpinBox::value_changed,
+          this, &SettingsDialog::change_map_grid_size);
+  connect(ui.map_grid_style_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_map_grid_style);
+  connect(ui.map_grid_color_field, &ColorChooser::color_changed,
+          this, &SettingsDialog::change_map_grid_color);
+  connect(ui.map_tileset_zoom_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_map_tileset_zoom);
+  connect(ui.editor_browse_button,&QPushButton::pressed, this, [&]{
      QString path = QFileDialog::getOpenFileName(
          this,
          tr("Select external editor"),
@@ -117,36 +120,36 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   });
 
   // Sprite editor.
-  connect(ui.sprite_main_zoom_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_sprite_main_zoom()));
-  connect(ui.sprite_grid_show_at_opening_field, SIGNAL(clicked()),
-          this, SLOT(change_sprite_grid_show_at_opening()));
-  connect(ui.sprite_grid_size_field, SIGNAL(value_changed(int,int)),
-          this, SLOT(change_sprite_grid_size()));
-  connect(ui.sprite_grid_style_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_sprite_grid_style()));
-  connect(ui.sprite_grid_color_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_sprite_grid_color()));
-  connect(ui.sprite_auto_detect_grid_field, SIGNAL(clicked()),
-          this, SLOT(change_sprite_auto_detect_grid()));
-  connect(ui.sprite_previewer_zoom_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_sprite_previewer_zoom()));
-  connect(ui.sprite_origin_show_at_opening_field, SIGNAL(clicked()),
-          this, SLOT(change_sprite_origin_show_at_opening()));
-  connect(ui.sprite_origin_color_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_sprite_origin_color()));
+  connect(ui.sprite_main_zoom_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_sprite_main_zoom);
+  connect(ui.sprite_grid_show_at_opening_field, &QAbstractButton::clicked,
+          this, &SettingsDialog::change_sprite_grid_show_at_opening);
+  connect(ui.sprite_grid_size_field, &PairSpinBox::value_changed,
+          this, &SettingsDialog::change_sprite_grid_size);
+  connect(ui.sprite_grid_style_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_sprite_grid_style);
+  connect(ui.sprite_grid_color_field, &ColorChooser::color_changed,
+          this, &SettingsDialog::change_sprite_grid_color);
+  connect(ui.sprite_auto_detect_grid_field, &QAbstractButton::clicked,
+          this, &SettingsDialog::change_sprite_auto_detect_grid);
+  connect(ui.sprite_previewer_zoom_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_sprite_previewer_zoom);
+  connect(ui.sprite_origin_show_at_opening_field, &QAbstractButton::clicked,
+          this, &SettingsDialog::change_sprite_origin_show_at_opening);
+  connect(ui.sprite_origin_color_field, &ColorChooser::color_changed,
+          this, &SettingsDialog::change_sprite_origin_color);
 
   // Tileset editor.
-  connect(ui.tileset_zoom_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_tileset_zoom()));
-  connect(ui.tileset_grid_show_at_opening_field, SIGNAL(clicked()),
-          this, SLOT(change_tileset_grid_show_at_opening()));
-  connect(ui.tileset_grid_size_field, SIGNAL(value_changed(int,int)),
-          this, SLOT(change_tileset_grid_size()));
-  connect(ui.tileset_grid_style_field, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(change_tileset_grid_style()));
-  connect(ui.tileset_grid_color_field, SIGNAL(color_changed(QColor)),
-          this, SLOT(change_tileset_grid_color()));
+  connect(ui.tileset_zoom_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_tileset_zoom);
+  connect(ui.tileset_grid_show_at_opening_field, &QAbstractButton::clicked,
+          this, &SettingsDialog::change_tileset_grid_show_at_opening);
+  connect(ui.tileset_grid_size_field, &PairSpinBox::value_changed,
+          this, &SettingsDialog::change_tileset_grid_size);
+  connect(ui.tileset_grid_style_field, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &SettingsDialog::change_tileset_grid_style);
+  connect(ui.tileset_grid_color_field, &ColorChooser::color_changed,
+          this, &SettingsDialog::change_tileset_grid_color);
 }
 
 /**
@@ -210,6 +213,7 @@ void SettingsDialog::apply() {
 void SettingsDialog::update() {
 
   // General.
+  update_theme();
   update_working_directory();
   update_restore_last_files();
   update_save_files();
@@ -283,6 +287,43 @@ void SettingsDialog::update_buttons() {
   // Update the state of buttons.
   apply_button->setEnabled(changed);
   reset_button->setEnabled(changed);
+}
+
+/**
+ * @brief Updates the theme field.
+ */
+void SettingsDialog::update_theme() {
+
+  const QString& value = settings.get_value_string(EditorSettings::theme);
+  int index = 0;
+  if (value == "automatic") {
+    index = 0;
+  }
+  else if (value == "light") {
+    index = 1;
+  }
+  else if (value == "yes") {
+    index = 2;
+  }
+  ui.theme_field->setCurrentIndex(index);
+}
+
+/**
+ * @brief Slot called when the user changes the theme combobox.
+ */
+void SettingsDialog::change_theme() {
+
+  int index = ui.theme_field->currentIndex();
+  const QStringList themes =
+      { "automatic", "light", "dark" };
+  Q_ASSERT(index >= 0 && index < themes.size());
+  edited_settings[EditorSettings::theme] = themes[index];
+
+  EditorStyle* style = qobject_cast<EditorStyle*>(qApp->style());
+  if (style != nullptr) {
+    style->set_mode(static_cast<Mode>(index));
+  }
+  update_buttons();
 }
 
 /**

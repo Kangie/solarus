@@ -16,12 +16,14 @@
  */
 #include "grid_style.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include <QPalette>
 #include <QSize>
 
 namespace SolarusEditor {
 
 // General keys.
+const QString EditorSettings::theme = "theme";
 const QString EditorSettings::working_directory = "working_directory";
 const QString EditorSettings::current_quest = "current_quest";
 const QString EditorSettings::last_quests = "last_quests";
@@ -98,6 +100,7 @@ const QString EditorSettings::shader_preview_sprite_direction = "shader_editor/p
 QMap<QString, QVariant> EditorSettings::default_values = {
 
   // General.
+  { EditorSettings::theme, "automatic" },
   { EditorSettings::working_directory, "" },
   { EditorSettings::last_quests, QStringList() },
   { EditorSettings::last_files, QStringList() },

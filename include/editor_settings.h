@@ -29,6 +29,7 @@ class EditorSettings {
 public:
 
   // General keys.
+  static const QString theme;
   static const QString working_directory;
   static const QString current_quest;
   static const QString last_quests;

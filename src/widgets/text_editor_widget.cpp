@@ -16,6 +16,8 @@
  */
 #include "widgets/text_editor.h"
 #include "widgets/text_editor_widget.h"
+#include "editor_style.h"
+#include <QApplication>
 #include <QDebug>
 #include <QMenu>
 #include <QPainter>
@@ -135,16 +137,22 @@ TextEditorWidget::TextEditorWidget(const QString& file_path, TextEditor& editor)
   replace_tab_by_spaces(false) {
 
   // Undo/redo system.
-  connect(document(), SIGNAL(undoCommandAdded()),
-          this, SLOT(undo_command_added()));
+  connect(document(), &QTextDocument::undoCommandAdded,
+          this, &TextEditorWidget::undo_command_added);
 
   // Line number displaying.
-  connect(this, SIGNAL(blockCountChanged(int)),
-          this, SLOT(update_line_number_area_width(int)));
-  connect(this, SIGNAL(updateRequest(const QRect&, int)),
-          this, SLOT(update_line_number_area(const QRect&, int)));
-  connect(this, SIGNAL(cursorPositionChanged()),
-          this, SLOT(highlight_current_line()));
+  connect(this, &QPlainTextEdit::blockCountChanged,
+          this, &TextEditorWidget::update_line_number_area_width);
+  connect(this, &QPlainTextEdit::updateRequest,
+          this, &TextEditorWidget::update_line_number_area);
+  connect(this, &QPlainTextEdit::cursorPositionChanged,
+          this, &TextEditorWidget::highlight_current_line);
+
+  const EditorStyle* style = qobject_cast<const EditorStyle*>(qApp->style());
+  if (style != nullptr) {
+    connect(style, &EditorStyle::actual_mode_changed,
+            this, &TextEditorWidget::highlight_current_line);
+  }
 
   update_line_number_area_width(0);
   highlight_current_line();
@@ -281,7 +289,7 @@ void TextEditorWidget::highlight_current_line() {
   if (!isReadOnly()) {
     QTextEdit::ExtraSelection selection;
 
-    QColor line_color = QColor(Qt::yellow).lighter(160);
+    QColor line_color = EditorStyle::get_mode_info().current_line_background_color;
 
     selection.format.setBackground(line_color);
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -303,20 +311,19 @@ void TextEditorWidget::line_number_area_paint_event(QPaintEvent* event) {
 
   QTextBlock block = firstVisibleBlock();
   int block_number = block.blockNumber();
-  int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
-  int bottom = top + (int) blockBoundingRect(block).height();
+  int top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top());
+  int bottom = top + static_cast<int>(blockBoundingRect(block).height());
 
   while (block.isValid() && top <= event->rect().bottom()) {
     if (block.isVisible() && bottom >= event->rect().top()) {
       QString number = QString::number(block_number + 1) + " ";
-      painter.setPen(Qt::black);
       painter.drawText(0, top, line_number_area->width(), fontMetrics().height(),
                        Qt::AlignRight, number);
     }
 
     block = block.next();
     top = bottom;
-    bottom = top + (int) blockBoundingRect(block).height();
+    bottom = top + static_cast<int>(blockBoundingRect(block).height());
     ++block_number;
   }
 }

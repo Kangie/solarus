@@ -38,6 +38,9 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="handleWidth">
+       <number>7</number>
+      </property>
       <widget class="SolarusEditor::QuestTreeView" name="quest_tree_view">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -49,6 +52,9 @@
       <widget class="QSplitter" name="console_splitter">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
+       </property>
+       <property name="handleWidth">
+        <number>7</number>
        </property>
        <widget class="SolarusEditor::EditorTabs" name="tab_widget"/>
        <widget class="SolarusGui::Console" name="console_widget" native="true"/>
@@ -63,7 +69,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>22</height>
+     <height>37</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_quest">

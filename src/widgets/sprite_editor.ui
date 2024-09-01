@@ -37,6 +37,12 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="handleWidth">
+      <number>7</number>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QWidget" name="sprite_side_view" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
@@ -67,17 +73,38 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>588</width>
-            <height>717</height>
+            <width>584</width>
+            <height>692</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="leftMargin">
+            <number>6</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>6</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
-            <widget class="QGroupBox" name="sprite_properties_group_box">
-             <property name="title">
-              <string>Sprite properties</string>
-             </property>
+            <widget class="QWidget" name="sprite_properties_group_box" native="true">
              <layout class="QFormLayout" name="formLayout">
+              <property name="leftMargin">
+               <number>6</number>
+              </property>
+              <property name="topMargin">
+               <number>6</number>
+              </property>
+              <property name="rightMargin">
+               <number>6</number>
+              </property>
+              <property name="bottomMargin">
+               <number>6</number>
+              </property>
               <item row="0" column="0">
                <widget class="QLabel" name="sprite_id_label">
                 <property name="toolTip">
@@ -643,6 +670,12 @@
      <widget class="QSplitter" name="vertical_splitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="handleWidth">
+       <number>7</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="SolarusEditor::SpriteView" name="sprite_view">
        <property name="sizePolicy">
