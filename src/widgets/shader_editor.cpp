@@ -237,7 +237,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::scaling_factor_field_changed);
 
   connect(ui.preview_mode_selector, qOverload<int>(&QComboBox::currentIndexChanged),
-          [this]() {
+          this, [this]() {
     ui.shader_previewer->set_preview_mode(ui.preview_mode_selector->get_selected_value());
   });
 
