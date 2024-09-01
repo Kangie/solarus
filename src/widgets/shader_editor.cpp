@@ -233,10 +233,10 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &ShaderEditor::update_scaling_factor_field);
   connect(ui.scaling_factor_check_box, &QCheckBox::clicked,
           this, &ShaderEditor::scaling_factor_check_box_changed);
-  connect(ui.scaling_factor_field, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+  connect(ui.scaling_factor_field, qOverload<double>(&QDoubleSpinBox::valueChanged),
           this, &ShaderEditor::scaling_factor_field_changed);
 
-  connect(ui.preview_mode_selector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+  connect(ui.preview_mode_selector, qOverload<int>(&QComboBox::currentIndexChanged),
           [this]() {
     ui.shader_previewer->set_preview_mode(ui.preview_mode_selector->get_selected_value());
   });
