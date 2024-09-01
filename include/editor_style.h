@@ -23,7 +23,7 @@ using oclero::qlementine::QlementineStyle;
 namespace SolarusEditor {
 
 /**
- * Qlementine theme for the editor.
+ * @brief Possible theme choices for the editor.
  */
 enum class Theme {
   AUTOMATIC,  /**< Detect automatically from OS settings. */
@@ -32,7 +32,22 @@ enum class Theme {
 };
 
 /**
- * \brief Qt style of Solarus Editor.
+ * @brief A Qlementine theme plus some Solarus Editor specific info.
+ */
+struct ThemeInfo {
+  Theme theme;                  /**< A theme. */
+  QString path;                 /**< Path of the JSON file for this theme. */
+
+  // Text editor colors.
+  QColor lua_keyword_color;     /**< Syntax color for Lua keywords. */
+  QColor literal_string_color;  /**< Syntax color for literal strings. */
+  QColor comment_color;         /**< Syntax color for comments. */
+  QColor current_line_background_color;
+                                /**< Color for the current line background. */
+};
+
+/**
+ * @brief Qt style of Solarus Editor.
  */
 class EditorStyle: public QlementineStyle {
   Q_OBJECT
@@ -40,16 +55,21 @@ class EditorStyle: public QlementineStyle {
 public:
   using AutoIconColor = oclero::qlementine::AutoIconColor;
 
-  explicit EditorStyle(QObject *parent = nullptr);
+  explicit EditorStyle(QObject* parent = nullptr);
 
   Theme get_theme() const;
   void set_theme(Theme theme);
+  Theme get_actual_theme() const;
+  static const ThemeInfo& get_theme_info();
 
   static Theme get_os_theme();
 
+signals:
+  void actual_theme_changed(Theme theme);
+
 private:
-  Theme theme = Theme::AUTOMATIC;  /**< Theme selected by the user. */
-  Theme actual_theme = Theme::AUTOMATIC;  /**< Actual: automatic replaced by the real one. */
+  Theme theme = Theme::AUTOMATIC;         /**< Theme selected by the user. */
+  Theme actual_theme = Theme::AUTOMATIC;  /**< Automatic replaced by the final one. */
 };
 
 }  // namespace Solarus Editor

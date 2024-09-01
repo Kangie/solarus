@@ -19,6 +19,8 @@
 
 #include <QPlainTextEdit>
 
+class QUndoStack;
+
 namespace SolarusEditor {
 
 class TextEditor;
@@ -50,9 +52,9 @@ public:
   void line_number_area_paint_event(QPaintEvent* event);
   int get_line_number_area_width();
 
-  virtual void contextMenuEvent(QContextMenuEvent* event) override;
-  virtual void keyPressEvent(QKeyEvent* event) override;
-  virtual void resizeEvent(QResizeEvent* event) override;
+  void contextMenuEvent(QContextMenuEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void resizeEvent(QResizeEvent* event) override;
 
   int get_tab_length() const;
   void set_tab_length(int length);

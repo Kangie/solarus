@@ -59,6 +59,8 @@ private slots:
 
 private:
 
+  void settings_changed();
+
   TextEditorWidget*
     text_widget;    /**< The text editing area contained. */
   QString map_id;   /**< The map id of this script (if it is a map script). */
