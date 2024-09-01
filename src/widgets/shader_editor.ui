@@ -31,6 +31,9 @@
      <property name="handleWidth">
       <number>7</number>
      </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="vertical_layout">
        <item>
@@ -401,6 +404,9 @@
       </property>
       <property name="handleWidth">
        <number>7</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="SolarusEditor::ShaderPreviewer" name="shader_previewer" native="true">
        <property name="sizePolicy">

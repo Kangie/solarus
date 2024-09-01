@@ -40,6 +40,9 @@
      <property name="handleWidth">
       <number>7</number>
      </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QWidget" name="sprite_side_view" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
@@ -70,7 +73,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>579</width>
+            <width>584</width>
             <height>692</height>
            </rect>
           </property>
@@ -649,6 +652,9 @@
       </property>
       <property name="handleWidth">
        <number>7</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="SolarusEditor::SpriteView" name="sprite_view">
        <property name="sizePolicy">
