@@ -33,6 +33,6 @@ include(FetchContent)
 FetchContent_Declare(
   qlementine
   GIT_REPOSITORY https://github.com/oclero/qlementine.git
-  GIT_TAG        fb09a08d8ef29967cf76accc1f2301e71dcd6db9 # master
+  GIT_TAG        59860afd2de0079761e2ed15512791ca8d230dbe
 )
 FetchContent_MakeAvailable(qlementine)
