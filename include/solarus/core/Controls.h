@@ -95,6 +95,8 @@ class Controls final: public ExportableToLua {
       std::string to_string() const;
     };
 
+
+
   private:
     /**
      * Private joypad binding variant
@@ -187,6 +189,8 @@ class Controls final: public ExportableToLua {
 
     const CommandsEffects& get_effects() const;
     CommandsEffects& get_effects();
+
+    std::optional<std::string> get_effect_string(Command command) const;
 
     const std::string& get_lua_type_name() const override;
 

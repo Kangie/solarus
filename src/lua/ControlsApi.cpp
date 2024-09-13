@@ -254,6 +254,8 @@ void LuaContext::register_controls_module() {
     { "set_joypad_axis_bindings", LUA_TO_C_BIND(&Controls::set_joypad_axis_bindings)},
     { "get_joypad_axis_bindings", LUA_TO_C_BIND(&Controls::get_joypad_axis_bindings)},
 
+    { "get_effect", LUA_TO_C_BIND(&Controls::get_effect_string)},
+
     { "capture_bindings", LUA_TO_C_BIND(capture_bindings)},
     { "simulate_pressed", LUA_TO_C_BIND(simulate_pressed)},
     { "simulate_released", LUA_TO_C_BIND(simulate_released)},

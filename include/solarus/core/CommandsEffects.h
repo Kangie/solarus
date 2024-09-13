@@ -22,6 +22,7 @@
 #include <stack>
 #include <string>
 #include <vector>
+#include <variant>
 
 namespace Solarus {
 
@@ -76,6 +77,8 @@ class CommandsEffects {
       PAUSE_KEY_PAUSE,     /**< open the pause menu */
       PAUSE_KEY_RETURN     /**< close the pause menu */
     };
+
+    using KeyEffect = std::variant<ActionKeyEffect, AttackKeyEffect, PauseKeyEffect, std::monostate>;
 
     CommandsEffects();
 

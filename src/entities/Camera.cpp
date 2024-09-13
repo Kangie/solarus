@@ -816,8 +816,9 @@ void Camera::update_view(const Size& viewport_size) {
     set_size({icw, ich});
     break;
   }
-  default:
+  default:{
     break;
+  }
   }
 }
 

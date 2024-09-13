@@ -990,6 +990,84 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoypadAxisBindi
     return effects;
   }
 
+  std::optional<std::string> Controls::get_effect_string(Command command) const {
+    if (std::holds_alternative<CustomId>(command)) {
+      return {};
+    }
+    else {
+      std::string effect_name;
+      switch (ControlEvent::command_to_id(command)) {
+
+      case CommandId::ACTION:
+      {
+        CommandsEffects::ActionKeyEffect effect = get_effects().get_action_key_effect();
+        effect_name = enum_to_name(effect);
+        break;
+      }
+
+      case CommandId::ATTACK:
+      {
+        CommandsEffects::AttackKeyEffect effect = get_effects().get_sword_key_effect();
+        effect_name = enum_to_name(effect);
+        break;
+      }
+
+      case CommandId::ITEM_1:
+      {
+        effect_name = "use_item_1";
+        break;
+      }
+
+      case CommandId::ITEM_2:
+      {
+        effect_name = "use_item_2";
+        break;
+      }
+
+      case CommandId::PAUSE:
+      {
+        CommandsEffects::PauseKeyEffect effect = get_effects().get_pause_key_effect();
+        effect_name = enum_to_name(effect);
+        break;
+      }
+
+      case CommandId::RIGHT:
+      {
+        effect_name = "move_right";
+        break;
+      }
+
+      case CommandId::UP:
+      {
+        effect_name = "move_up";
+        break;
+      }
+
+      case CommandId::LEFT:
+      {
+        effect_name = "move_left";
+        break;
+      }
+
+      case CommandId::DOWN:
+      {
+        effect_name = "move_down";
+        break;
+      }
+
+      default:
+        Debug::die("Invalid game command");
+      }
+
+      if (effect_name.empty()) {
+        return {};
+      }
+      else {
+        return effect_name;
+      }
+    }
+  }
+
   /**
  * \brief Returns the name identifying this type in Lua.
  * \return The name identifying this type in Lua.
