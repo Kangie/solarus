@@ -1382,67 +1382,23 @@ int LuaContext::game_api_get_command_effect(lua_State* l) {
     }
     else {
       std::string effect_name;
+      auto string = game->get_controls().get_effect_string(command).value_or("");
       switch (ControlEvent::command_to_id(command)) {
-
-      case CommandId::ACTION:
-      {
-        CommandsEffects::ActionKeyEffect effect = game->get_commands_effects().get_action_key_effect();
-        effect_name = enum_to_name(effect);
-        break;
-      }
-
-      case CommandId::ATTACK:
-      {
-        CommandsEffects::AttackKeyEffect effect = game->get_commands_effects().get_sword_key_effect();
-        effect_name = enum_to_name(effect);
-        break;
-      }
-
-      case CommandId::ITEM_1:
-      {
-        effect_name = game->is_suspended() ? "" : "use_item_1";
-        break;
-      }
-
-      case CommandId::ITEM_2:
-      {
-        effect_name = game->is_suspended() ? "" : "use_item_2";
-        break;
-      }
-
-      case CommandId::PAUSE:
-      {
-        CommandsEffects::PauseKeyEffect effect = game->get_commands_effects().get_pause_key_effect();
-        effect_name = enum_to_name(effect);
-        break;
-      }
-
-      case CommandId::RIGHT:
-      {
-        effect_name = game->is_suspended() ? "" : "move_right";
-        break;
-      }
-
-      case CommandId::UP:
-      {
-        effect_name = game->is_suspended() ? "" : "move_up";
-        break;
-      }
-
-      case CommandId::LEFT:
-      {
-        effect_name = game->is_suspended() ? "" : "move_left";
-        break;
-      }
-
-      case CommandId::DOWN:
-      {
-        effect_name = game->is_suspended() ? "" : "move_down";
-        break;
-      }
-
-      default:
-        Debug::die("Invalid game command");
+        case CommandId::ACTION:
+        case CommandId::ATTACK:
+        case CommandId::PAUSE:
+          effect_name = string;
+          break;
+        case CommandId::ITEM_1:
+        case CommandId::ITEM_2:
+        case CommandId::RIGHT:
+        case CommandId::UP:
+        case CommandId::LEFT:
+        case CommandId::DOWN:
+          effect_name = game->is_suspended() ? "" : string;
+          break;
+        default:
+          Debug::die("Invalid game command");
       }
 
       if (effect_name.empty()) {
