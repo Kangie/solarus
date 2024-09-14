@@ -1382,7 +1382,7 @@ int LuaContext::game_api_get_command_effect(lua_State* l) {
     }
     else {
       std::string effect_name;
-      auto string = game->get_controls().get_effect_string(command).value(); // optional unchecked because command is checked first
+      auto string = game->get_controls().get_effect_string(command).value_or("");
       switch (ControlEvent::command_to_id(command)) {
         case CommandId::ACTION:
         case CommandId::ATTACK:
