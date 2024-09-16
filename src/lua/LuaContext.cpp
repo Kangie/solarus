@@ -2408,7 +2408,7 @@ void LuaContext::on_obtaining_treasure(const Treasure& treasure, Hero& hero) {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
     push_hero(current_l, hero);
-    call_function(4, 0, "on_obtaining_treasure");
+    call_function(5, 0, "on_obtaining_treasure");
   }
 }
 
@@ -2428,7 +2428,7 @@ void LuaContext::on_obtained_treasure(const Treasure& treasure, Hero& hero) {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
     push_hero(current_l, hero);
-    call_function(4, 0, "on_obtained_treasure");
+    call_function(5, 0, "on_obtained_treasure");
   }
 }
 
@@ -2715,7 +2715,7 @@ void LuaContext::on_opened() {
  * \param treasure A treasure being obtained when opening.
  * \return \c true if the method is defined.
  */
-bool LuaContext::on_opened(const Treasure& treasure, Equipment& equipment) {
+bool LuaContext::on_opened(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_opened")) {
 
@@ -2724,7 +2724,7 @@ bool LuaContext::on_opened(const Treasure& treasure, Equipment& equipment) {
       lua_pushnil(current_l);
     }
     else {
-      push_item(current_l, treasure.get_item(equipment));
+      push_item(current_l, treasure.get_item(hero.get_equipment()));
       lua_pushinteger(current_l, treasure.get_variant());
     }
 
@@ -2735,7 +2735,8 @@ bool LuaContext::on_opened(const Treasure& treasure, Equipment& equipment) {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
 
-    call_function(4, 0, "on_opened");
+    push_hero(current_l, hero);
+    call_function(5, 0, "on_opened");
     return true;
   }
 

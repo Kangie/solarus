@@ -1672,7 +1672,7 @@ private:
     bool on_buying();
     void on_bought();
     void on_opened();
-    bool on_opened(const Treasure& treasure, Solarus::Equipment &equipment);
+    bool on_opened(const Treasure& treasure, Solarus::Hero &equipment);
     void on_closed();
     void on_entered();
     void on_exited();

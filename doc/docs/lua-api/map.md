@@ -1698,7 +1698,7 @@ When the map begins, called when the opening transition effect finishes.
 `destination` ([destination](./map-entities/destination.md))
 : The destination entity from where the [hero](./map-entities/hero.md) arrived on the map, or `nil` if he used another way than a destination entity (like the side of the map or direct coordinates).
 
-### `map:on_obtaining_treasure(treasure_item, treasure_variant, treasure_savegame_variable)`
+### `map:on_obtaining_treasure(treasure_item, treasure_variant, treasure_savegame_variable, hero)`
 
 Called when the [hero](./map-entities/hero.md) is obtaining a treasure on this map, before the treasure's dialog (if any).
 
@@ -1711,7 +1711,10 @@ Called when the [hero](./map-entities/hero.md) is obtaining a treasure on this m
 `treasure_savegame_variable` (string)
 : Name of the boolean value that stores in the [savegame](./game.md) whether this treasure is found, or `nil` if this treasure is not saved.
 
-### `map:on_obtained_treasure(treasure_item, treasure_variant, treasure_savegame_variable)`
+`hero` ([hero](hero.md))
+: The hero who is obtaining this treasure.
+
+### `map:on_obtained_treasure(treasure_item, treasure_variant, treasure_savegame_variable, hero)`
 
 Called after the [hero](./map-entities/hero.md) has obtained a treasure on this map.
 
@@ -1725,6 +1728,9 @@ In the case of a brandished treasure, this event is called once the treasure's d
 
 `treasure_savegame_variable` (string)
 : Name of the boolean value that stores in the [savegame](./game.md) whether this treasure is found, or `nil` if this treasure is not saved.
+
+`hero` ([hero](hero.md))
+: The hero who obtained the treasure. 
 
 ### `map:on_command_pressed(command)`
 

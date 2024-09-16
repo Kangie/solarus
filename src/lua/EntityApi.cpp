@@ -10188,7 +10188,7 @@ bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure, Hero& h
   check_callback_thread();
 
   push_chest(current_l, chest);
-  bool exists = on_opened(treasure, hero.get_equipment());
+  bool exists = on_opened(treasure, hero);
   lua_pop(current_l, 1);
   return exists;
 }

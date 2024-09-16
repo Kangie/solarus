@@ -171,9 +171,9 @@ See [entity](./overview.md#events-of-all-entity-types) to know these events.
 
 The following events are specific to chests.
 
-### `chest:on_opened(treasure_item, treasure_variant, treasure_savegame_variable)`
+### `chest:on_opened(treasure_item, treasure_variant, treasure_savegame_variable, hero)`
 
-Called when the hero opens this chest.
+Called when a hero opens this chest.
 
 At this point, if the chest is saved, then the engine has already set the corresponding savegame value to `true` (`treasure_savegame_variable`),no matter if this event is defined.
 
@@ -191,3 +191,6 @@ The hero is automatically frozen during the whole process of opening a chest. If
 
 `treasure_savegame_variable` (string)
 : Name of the boolean value that stores in the [savegame](../game.md) whether this chest is open, or `nil` if this chest is not saved.
+
+`hero` ([hero](hero.md))
+: The hero who opened the chest. 
