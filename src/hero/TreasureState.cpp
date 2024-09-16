@@ -43,7 +43,7 @@ Hero::TreasureState::TreasureState(
   treasure_sprite(),
   callback_ref(callback_ref) {
 
-  treasure.check_obtainable();
+  treasure.check_obtainable(hero.get_equipment());
   treasure_sprite = treasure.create_sprite();
 }
 
@@ -60,13 +60,13 @@ void Hero::TreasureState::start(const State* previous_state) {
   get_sprites().set_animation_brandish();
 
   // Play the sound.
-  const std::string& sound_id = treasure.get_item().get_sound_when_brandished();
+  const std::string& sound_id = treasure.get_item(get_entity().get_equipment()).get_sound_when_brandished();
   if (!sound_id.empty()) {
     Sound::play(sound_id);
   }
 
   // Give the treasure.
-  treasure.give_to_player();
+  treasure.give_to_player(get_entity());
 
   // Show a dialog (Lua does the job after this).
   ScopedLuaRef callback_ref = this->callback_ref;

@@ -43,6 +43,7 @@ const std::map<Chest::OpeningMethod, std::string> Chest::opening_method_names = 
 
 /**
  * \brief Creates a new chest with the specified treasure.
+ * \param game Current game.
  * \param name Name identifying this chest.
  * \param layer Layer of the chest to create on the map.
  * \param xy Coordinates of the chest to create.
@@ -51,6 +52,7 @@ const std::map<Chest::OpeningMethod, std::string> Chest::opening_method_names = 
  * \param treasure The treasure in the chest.
  */
 Chest::Chest(
+    Game& game,
     const std::string& name,
     int layer,
     const Point& xy,
@@ -59,7 +61,7 @@ Chest::Chest(
 
   Entity(name, 0, layer, xy, Size(16, 16)),
   treasure(treasure),
-  open(treasure.is_found()),
+  open(treasure.is_found(game.get_equipment())), //TODO find a way to make treasure empty if they were looted by other heroes than main
   treasure_given(open),
   treasure_date(0),
   opening_method(OpeningMethod::BY_INTERACTION),
@@ -435,10 +437,10 @@ void Chest::update() {
       }
 
       // Notify scripts.
-      bool done = get_lua_context()->chest_on_opened(*this, treasure);
+      bool done = get_lua_context()->chest_on_opened(*this, treasure, *opening_hero);
       if (!done) {
         if (treasure.is_empty() ||
-            !treasure.is_obtainable()
+            !treasure.is_obtainable(opening_hero->get_equipment())
         ) {
           // No treasure and the script does not define any behavior:
           // unfreeze the hero.

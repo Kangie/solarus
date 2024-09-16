@@ -1129,7 +1129,6 @@ int LuaContext::l_create_pickable(lua_State* l) {
         entity_creation_check_layer(l, 1, data, map),
         data.get_xy(),
         Treasure(
-            game,
             data.get_string("treasure_name"),
             data.get_integer("treasure_variant"),
             entity_creation_check_savegame_variable_optional(l, 1, data, "treasure_savegame_variable")
@@ -1175,7 +1174,6 @@ int LuaContext::l_create_destructible(lua_State* l) {
         data.get_xy(),
         data.get_string("sprite"),
         Treasure(
-            map.get_game(),
             data.get_string("treasure_name"),
             data.get_integer("treasure_variant"),
             entity_creation_check_savegame_variable_optional(l, 1, data, "treasure_savegame_variable")
@@ -1240,12 +1238,12 @@ int LuaContext::l_create_chest(lua_State* l) {
     }
 
     std::shared_ptr<Chest> chest = std::make_shared<Chest>(
+        map.get_game(),
         data.get_name(),
         entity_creation_check_layer(l, 1, data, map),
         data.get_xy(),
         data.get_string("sprite"),
         Treasure(
-            game,
             data.get_string("treasure_name"),
             data.get_integer("treasure_variant"),
             entity_creation_check_savegame_variable_optional(l, 1, data, "treasure_savegame_variable")
@@ -1329,7 +1327,6 @@ int LuaContext::l_create_enemy(lua_State* l) {
         data.get_xy(),
         data.get_integer("direction"),
         Treasure(
-            game,
             data.get_string("treasure_name"),
             data.get_integer("treasure_variant"),
             entity_creation_check_savegame_variable_optional(l, 1, data, "treasure_savegame_variable")
@@ -1686,7 +1683,6 @@ int LuaContext::l_create_shop_treasure(lua_State* l) {
         entity_creation_check_layer(l, 1, data, map),
         data.get_xy(),
         Treasure(
-            game,
             data.get_string("treasure_name"),
             data.get_integer("treasure_variant"),
             entity_creation_check_savegame_variable_optional(l, 1, data, "treasure_savegame_variable")
@@ -2020,6 +2016,8 @@ int LuaContext::l_create_hero(lua_State* l) {
 
     //Create new volatile savegame (no file name) to hold hero equipement
     SavegamePtr save = std::make_shared<Savegame>(game.get_savegame().get_main_loop(), "");
+    // Save information is different but shares the same game
+    save->set_game(&game);
 
     //Initialize the save and equipment in-place
     save->initialize();
@@ -2472,14 +2470,14 @@ void LuaContext::map_on_opening_transition_finished(Map& map,
  * \param map A map.
  * \param treasure A treasure the hero is about to obtain on that map.
  */
-void LuaContext::map_on_obtaining_treasure(Map& map, const Treasure& treasure) {
+void LuaContext::map_on_obtaining_treasure(Map& map, const Treasure& treasure, Hero& hero) {
 
   if (!userdata_has_field(map, "on_obtaining_treasure")) {
     return;
   }
 
   push_map(current_l, map);
-  on_obtaining_treasure(treasure);
+  on_obtaining_treasure(treasure, hero);
   lua_pop(current_l, 1);
 }
 
@@ -2491,14 +2489,14 @@ void LuaContext::map_on_obtaining_treasure(Map& map, const Treasure& treasure) {
  * \param map A map.
  * \param treasure The treasure just obtained.
  */
-void LuaContext::map_on_obtained_treasure(Map& map, const Treasure& treasure) {
+void LuaContext::map_on_obtained_treasure(Map& map, const Treasure& treasure, Hero& hero) {
 
   if (!userdata_has_field(map, "on_obtained_treasure")) {
     return;
   }
 
   push_map(current_l, map);
-  on_obtained_treasure(treasure);
+  on_obtained_treasure(treasure, hero);
   lua_pop(current_l, 1);
 }
 

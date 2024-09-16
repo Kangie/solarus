@@ -92,7 +92,7 @@ class Pickable: public Entity {
   private:
 
     // initialization
-    bool initialize_sprites();
+    bool initialize_sprites(Equipment &equipment);
     void initialize_movement();
 
     // item

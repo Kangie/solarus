@@ -466,8 +466,8 @@ class LuaContext {
     void map_on_suspended(Map& map, bool suspended);
     void map_on_opening_transition_finished(Map& map,
         const std::shared_ptr<Destination>& destination);
-    void map_on_obtaining_treasure(Map& map, const Treasure& treasure);
-    void map_on_obtained_treasure(Map& map, const Treasure& treasure);
+    void map_on_obtaining_treasure(Map& map, const Treasure& treasure, Hero& hero);
+    void map_on_obtained_treasure(Map& map, const Treasure& treasure, Hero& hero);
     bool map_on_input(Map& map, const InputEvent& event);
     bool map_on_control(Map& map, const ControlEvent& command);
 
@@ -503,7 +503,7 @@ class LuaContext {
     void carried_object_on_lifted(CarriedObject& carried_object);
     void carried_object_on_thrown(CarriedObject& carried_object);
     void carried_object_on_breaking(CarriedObject& carried_object);
-    bool chest_on_opened(Chest& chest, const Treasure& treasure);
+    bool chest_on_opened(Chest& chest, const Treasure& treasure, Solarus::Hero &hero);
     void block_on_moving(Block& block);
     void block_on_moved(Block& block);
     void switch_on_activated(Switch& sw, Entity* opt_entity);
@@ -1646,8 +1646,8 @@ private:
     void on_changed();
     void on_started(const std::shared_ptr<Destination>& destination);
     void on_opening_transition_finished(const std::shared_ptr<Destination>& destination);
-    void on_obtaining_treasure(const Treasure& treasure);
-    void on_obtained_treasure(const Treasure& treasure);
+    void on_obtaining_treasure(const Treasure& treasure, Hero& hero);
+    void on_obtained_treasure(const Treasure& treasure, Hero& hero);
     void on_state_changing(const std::string& state_name, const std::string& next_state_name);
     void on_state_changed(const std::string& new_state_name);
     bool on_taking_damage(int damage);
@@ -1672,7 +1672,7 @@ private:
     bool on_buying();
     void on_bought();
     void on_opened();
-    bool on_opened(const Treasure& treasure);
+    bool on_opened(const Treasure& treasure, Solarus::Equipment &equipment);
     void on_closed();
     void on_entered();
     void on_exited();

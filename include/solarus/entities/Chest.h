@@ -45,12 +45,12 @@ class Chest: public Entity {
       BY_INTERACTION_IF_ITEM,               /**< Can be opened by pressing the action command, provided that the player has a specific equipment item. */
     };
 
-    Chest(
-        const std::string& name,
-        int layer,
-        const Point& xy,
-        const std::string& sprite_name,
-        const Treasure& treasure);
+    Chest(Game &game,
+          const std::string& name,
+          int layer,
+          const Point& xy,
+          const std::string& sprite_name,
+          const Treasure& treasure);
 
     virtual EntityType get_type() const override;
 

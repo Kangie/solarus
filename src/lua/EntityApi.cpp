@@ -3669,15 +3669,15 @@ int LuaContext::hero_api_start_treasure(lua_State* l) {
           savegame_variable + "'");
     }
 
-    if (!hero.get_game().get_equipment().item_exists(item_name)) {
+    if (!hero.get_equipment().item_exists(item_name)) {
       LuaTools::arg_error(l, 2, std::string("No such item: '") + item_name + "'");
     }
 
-    Treasure treasure(hero.get_game(), item_name, variant, savegame_variable);
-    if (treasure.is_found()) {
+    Treasure treasure(item_name, variant, savegame_variable);
+    if (treasure.is_found(hero.get_equipment())) {
       LuaTools::arg_error(l, 4, "This treasure is already found");
     }
-    if (!treasure.is_obtainable()) {
+    if (!treasure.is_obtainable(hero.get_equipment())) {
       LuaTools::arg_error(l, 4, "This treasure is not obtainable");
     }
 
@@ -4392,9 +4392,9 @@ void LuaContext::notify_hero_brandish_treasure(
   std::ostringstream oss;
   oss << "_treasure." << treasure.get_item_name() << "." << treasure.get_variant();
   const std::string& dialog_id = oss.str();
-  Game& game = treasure.get_game();
+  Game& game = hero.get_game();
 
-  push_item(current_l, treasure.get_item());
+  push_item(current_l, treasure.get_item(hero.get_equipment()));
   lua_pushinteger(current_l, treasure.get_variant());
   push_string(current_l, treasure.get_savegame_variable());
   push_ref(current_l, callback_ref);
@@ -4446,8 +4446,7 @@ int LuaContext::l_treasure_brandish_finished(lua_State* l) {
     SOLARUS_REQUIRE(lua_isnil(l, -1) || lua_isfunction(l, -1),
         "Expected function or nil for treasure callback");
 
-    Game& game = *item.get_game();
-    const Treasure treasure(game, item.get_name(), treasure_variant, treasure_savegame_variable);
+    const Treasure treasure(item.get_name(), treasure_variant, treasure_savegame_variable);
 
     // Notify the Lua item and the Lua map.
     if (!lua_isnil(l, -1)) {
@@ -4455,7 +4454,7 @@ int LuaContext::l_treasure_brandish_finished(lua_State* l) {
       lua_context.call_function(0, 0, "treasure callback");
     }
     lua_context.item_on_obtained(item, treasure);
-    lua_context.map_on_obtained_treasure(hero.get_map(), treasure);
+    lua_context.map_on_obtained_treasure(hero.get_map(), treasure, hero);
 
     if (hero.is_brandishing_treasure()) {
       // The script may have changed the hero's state.
@@ -5288,7 +5287,7 @@ int LuaContext::chest_api_set_treasure(lua_State* l) {
       + savegame_variable + "'");
     }
 
-    Treasure treasure(chest.get_game(), item_name, variant, savegame_variable);
+    Treasure treasure(item_name, variant, savegame_variable);
     chest.set_treasure(treasure);
 
     return 0;
@@ -6837,9 +6836,9 @@ int LuaContext::l_shop_treasure_question_dialog_finished(lua_State* l) {
       // The player wants to buy the item.
       Equipment& equipment = game.get_equipment();
       const Treasure& treasure = shop_treasure.get_treasure();
-      EquipmentItem& item = treasure.get_item();
+      EquipmentItem& item = treasure.get_item(equipment);
 
-      if (!treasure.is_obtainable()) {
+      if (!treasure.is_obtainable(equipment)) {
         // This treasure is not allowed.
         if (!shop_treasure.get_cannot_buy_sound_id().empty()) {
           Sound::play(shop_treasure.get_cannot_buy_sound_id());
@@ -6997,10 +6996,10 @@ int LuaContext::pickable_api_get_falling_height(lua_State* l) {
 int LuaContext::pickable_api_get_treasure(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
-    const Pickable& pickable = *check_pickable(l, 1);
+    Pickable& pickable = *check_pickable(l, 1);
     const Treasure& treasure = pickable.get_treasure();
 
-    push_item(l, treasure.get_item());
+    push_item(l, treasure.get_item(pickable.get_game().get_equipment()));
     lua_pushinteger(l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(l);
@@ -7178,7 +7177,7 @@ int LuaContext::destructible_api_set_treasure(lua_State* l) {
       + savegame_variable + "'");
     }
 
-    Treasure treasure(destructible.get_game(), item_name, variant, savegame_variable);
+    Treasure treasure(item_name, variant, savegame_variable);
     destructible.set_treasure(treasure);
 
     return 0;
@@ -8536,7 +8535,7 @@ int LuaContext::enemy_api_set_treasure(lua_State* l) {
       + savegame_variable + "'");
     }
 
-    Treasure treasure(enemy.get_game(), item_name, variant, savegame_variable);
+    Treasure treasure(item_name, variant, savegame_variable);
     enemy.set_treasure(treasure);
 
     return 0;
@@ -9021,7 +9020,7 @@ int LuaContext::enemy_api_create_enemy(lua_State* l) {
         layer,
         { x, y },
         direction,
-        Treasure(game, treasure_name, treasure_variant, treasure_savegame_variable)
+        Treasure(treasure_name, treasure_variant, treasure_savegame_variable)
     );
 
     if (entity == nullptr) {
@@ -10179,7 +10178,7 @@ void LuaContext::block_on_moved(Block& block) {
  * \param treasure The treasure obtained.
  * \return \c true if the on_opened() method is defined.
  */
-bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure) {
+bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure, Hero& hero) {
 
   if (!userdata_has_field(chest, "on_opened")) {
     return false;
@@ -10189,7 +10188,7 @@ bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure) {
   check_callback_thread();
 
   push_chest(current_l, chest);
-  bool exists = on_opened(treasure);
+  bool exists = on_opened(treasure, hero.get_equipment());
   lua_pop(current_l, 1);
   return exists;
 }

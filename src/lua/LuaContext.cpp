@@ -40,6 +40,7 @@
 #include "solarus/entities/ShopTreasure.h"
 #include "solarus/entities/Switch.h"
 #include "solarus/entities/Tileset.h"
+#include "solarus/entities/Hero.h"
 #include "solarus/lua/ExportableToLuaPtr.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
@@ -2395,10 +2396,10 @@ void LuaContext::on_opening_transition_finished(const std::shared_ptr<Destinatio
  * \brief Calls the on_obtaining_treasure() method of the object on top of the stack.
  * \param treasure The treasure being obtained.
  */
-void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
+void LuaContext::on_obtaining_treasure(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_obtaining_treasure")) {
-    push_item(current_l, treasure.get_item());
+    push_item(current_l, treasure.get_item(hero.get_equipment()));
     lua_pushinteger(current_l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(current_l);
@@ -2406,6 +2407,7 @@ void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
     else {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
+    push_hero(current_l, hero);
     call_function(4, 0, "on_obtaining_treasure");
   }
 }
@@ -2414,10 +2416,10 @@ void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
  * \brief Calls the on_obtained_treasure() method of the object on top of the stack.
  * \param treasure The treasure just obtained.
  */
-void LuaContext::on_obtained_treasure(const Treasure& treasure) {
+void LuaContext::on_obtained_treasure(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_obtained_treasure")) {
-    push_item(current_l, treasure.get_item());
+    push_item(current_l, treasure.get_item(hero.get_equipment()));
     lua_pushinteger(current_l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(current_l);
@@ -2425,6 +2427,7 @@ void LuaContext::on_obtained_treasure(const Treasure& treasure) {
     else {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
+    push_hero(current_l, hero);
     call_function(4, 0, "on_obtained_treasure");
   }
 }
@@ -2712,7 +2715,7 @@ void LuaContext::on_opened() {
  * \param treasure A treasure being obtained when opening.
  * \return \c true if the method is defined.
  */
-bool LuaContext::on_opened(const Treasure& treasure) {
+bool LuaContext::on_opened(const Treasure& treasure, Equipment& equipment) {
   check_callback_thread();
   if (find_method("on_opened")) {
 
@@ -2721,7 +2724,7 @@ bool LuaContext::on_opened(const Treasure& treasure) {
       lua_pushnil(current_l);
     }
     else {
-      push_item(current_l, treasure.get_item());
+      push_item(current_l, treasure.get_item(equipment));
       lua_pushinteger(current_l, treasure.get_variant());
     }
 

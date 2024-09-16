@@ -86,7 +86,7 @@ ShopTreasure::ShopTreasure(
  * is not obtainable.
  */
 std::shared_ptr<ShopTreasure> ShopTreasure::create(
-    Game& /* game */,
+    Game& game,
     const std::string& name,
     int layer,
     const Point& xy,
@@ -96,7 +96,7 @@ std::shared_ptr<ShopTreasure> ShopTreasure::create(
     const std::string& dialog_id
 ) {
   // See if the item is not already bought and is obtainable.
-  if (treasure.is_found() || !treasure.is_obtainable()) {
+  if (treasure.is_found(game.get_equipment()) || !treasure.is_obtainable(game.get_equipment())) {
     return nullptr;
   }
 

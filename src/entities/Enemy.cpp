@@ -1552,7 +1552,7 @@ void Enemy::set_treasure(const Treasure& treasure) {
  * \brief Sets the treasure dropped by this enemy to nothing.
  */
 void Enemy::clear_treasure() {
-  this->treasure = Treasure(get_game(), "", 1, "");
+  this->treasure = Treasure("", 1, "");
 }
 
 /**

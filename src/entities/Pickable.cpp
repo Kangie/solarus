@@ -102,7 +102,7 @@ EntityType Pickable::get_type() const {
  * \return the pickable item created, or nullptr
  */
 std::shared_ptr<Pickable> Pickable::create(
-    Game& /* game */,
+    Game& game,
     const std::string& name,
     int layer,
     const Point& xy,
@@ -110,10 +110,10 @@ std::shared_ptr<Pickable> Pickable::create(
     FallingHeight falling_height,
     bool force_persistent
 ) {
-  treasure.ensure_obtainable();
+  treasure.ensure_obtainable(game.get_equipment()); // Should be okay to test in main equipment
 
   // Don't create anything if there is no treasure to give.
-  if (treasure.is_found() || treasure.is_empty()) {
+  if (treasure.is_found(game.get_equipment()) || treasure.is_empty()) {
     return nullptr;
   }
 
@@ -123,10 +123,10 @@ std::shared_ptr<Pickable> Pickable::create(
 
   // Set the item properties.
   pickable->falling_height = falling_height;
-  pickable->will_disappear = !force_persistent && treasure.get_item().get_can_disappear();
+  pickable->will_disappear = !force_persistent && treasure.get_item(game.get_equipment()).get_can_disappear();
 
   // Initialize the pickable item.
-  if (!pickable->initialize_sprites()) {
+  if (!pickable->initialize_sprites(game.get_equipment())) {
     return nullptr;  // No valid sprite: don't create the pickable.
   }
   pickable->initialize_movement();
@@ -146,13 +146,13 @@ bool Pickable::is_ground_observer() const {
  *
  * Pickable treasures are represented with two sprites:
  * the treasure itself and, for some items, a shadow.
- *
+ * \param equipment Reference equipment for the sprites
  * \return \c true in case of success, \c false if the animation corresponding
  * to the treasure is missing.
  */
-bool Pickable::initialize_sprites() {
+bool Pickable::initialize_sprites(Equipment& equipment) {
 
-  EquipmentItem& item = treasure.get_item();
+  EquipmentItem& item = treasure.get_item(equipment);
 
   // Shadow sprite first, because below the treasure sprite.
   shadow_sprite = nullptr;
@@ -452,7 +452,7 @@ void Pickable::check_bad_ground() {
  */
 void Pickable::try_give_item_to_player(Hero& hero) {
 
-  EquipmentItem& item = treasure.get_item();
+  EquipmentItem& item = treasure.get_item(hero.get_equipment());
 
   if (!can_be_picked
       || given_to_player
@@ -478,11 +478,11 @@ void Pickable::try_give_item_to_player(Hero& hero) {
     hero.start_treasure(treasure, ScopedLuaRef());
   }
   else {
-    treasure.give_to_player();
+    treasure.give_to_player(hero);
 
     // Call on_obtained() immediately since the treasure is not brandished.
     get_lua_context()->item_on_obtained(item, treasure);
-    get_lua_context()->map_on_obtained_treasure(get_map(), treasure);
+    get_lua_context()->map_on_obtained_treasure(get_map(), treasure, hero);
   }
 }
 
