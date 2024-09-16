@@ -39,6 +39,7 @@ The multiplayer update!
 
 * Add support for multiple maps, cameras, heroes and game controllers.
 * New game controller API with better support and customization features.
+* Add overload to `entity:is_in_same_region()`, pass position (#514).
 * Allow to stop or pause a sound effect (#1289).
 * Allow to change the volume of a sound effect (#1608).
 * Allow to change the pan and pitch of a sound effect.

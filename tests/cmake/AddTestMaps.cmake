@@ -27,6 +27,7 @@ list(APPEND LUA_TEST_MAPS
   "event_order"
   "bugs/486_diagonal_dynamic_tiles"
   "bugs/496_stream_speed_0"
+  "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region"
   "bugs/526_get_entities_same_region"
   "bugs/630_change_resources"
   "bugs/633_straight_movement_speed_zero"
