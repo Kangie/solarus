@@ -15,5 +15,11 @@ function map:on_started()
   local hero = self:get_hero()
   assert_error{self.draw_visual, self, hero, x, y}
 
+  -- Double checking type checks on some related types.
+  local straight = sol.movement.create'straight'
+  local random = sol.movement.create'random'
+  assert_error{straight.get_speed, random}
+  assert_error{random.get_speed, straight}
+
   sol.main.exit()
 end

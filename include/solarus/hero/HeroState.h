@@ -47,6 +47,8 @@ class HeroState: public Entity::State {
     CommandsEffects& get_commands_effects();
     const CommandsEffects& get_commands_effects() const;
 
+    const std::string& get_lua_type_name() const override;
+
   protected:
 
     HeroState(Hero& hero, const std::string& state_name);

@@ -52,13 +52,10 @@ template<typename T>
 struct Marshalling;
 
 /**
- * @brief Marshaling context interface
- *
- * allows to signal errors from the marshalling code
+ * \brief Class for constructing complex context information for error message.
  */
-struct CheckContext{
-    [[noreturn]] virtual void error(lua_State* L, int sindex, const std::string& message) const = 0;
-    [[noreturn]] virtual void type_error(lua_State* L, int sindex, const std::string& type_name) const = 0;
+struct CheckContext {
+  [[noreturn]] virtual void error(lua_State* L, const std::string& message) const = 0;
 };
 
 /**
@@ -149,6 +146,15 @@ struct Callback : public ScopedLuaRef{
  */
 #define LUA_TO_C_BIND(func_name) \
   ::Solarus::LuaBind::Private::LuaToC<decltype(func_name)>::call<func_name>
+
+/**
+ * \brief Wraps an overloaded C function so that it can be called from Lua.
+ * \param func_type A callable type acceptable to LUA_TO_C_BIND.
+ * \param func_name A callable of func_type.
+ * \return A lua_CFunction, that runs the provided function from Lua.
+ */
+#define LUA_TO_C_BIND_AS(func_type, func_name) \
+  ::Solarus::LuaBind::Private::LuaToC<func_type>::call<func_name>
 
 }
 

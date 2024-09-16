@@ -64,7 +64,7 @@ class ExportableToLua:
       return std::static_pointer_cast<T>(shared_from_this());
     }
 
-    virtual const std::string& get_lua_type_name() const;
+    virtual const std::string& get_lua_type_name() const = 0;
   private:
 
     LuaContext* lua_context;     /**< The Solarus Lua API, or nullptr if

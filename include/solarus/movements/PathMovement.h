@@ -48,6 +48,9 @@ class SOLARUS_API PathMovement: public PixelMovement {
 
     PathMovement(const std::string& path, int speed, bool loop, bool ignore_obstacles, bool snap_to_grid);
 
+    // static information
+    static constexpr const char module_name[] = "sol.path_movement";
+
     virtual void notify_object_controlled() override;
     virtual void update() override;
     virtual void set_suspended(bool suspended) override;

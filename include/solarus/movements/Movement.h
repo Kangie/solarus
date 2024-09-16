@@ -45,6 +45,9 @@ class SOLARUS_API Movement: public ExportableToLua {
 
     virtual ~Movement();
 
+    // static information
+    static constexpr const char module_name[] = "sol.movement";
+
     // object controlled
     Entity* get_entity() const;
     void set_entity(Entity* entity);
@@ -102,7 +105,6 @@ class SOLARUS_API Movement: public ExportableToLua {
     void set_finished_callback(const ScopedLuaRef& finished_callback_ref);
     bool are_lua_notifications_enabled() const;
     void set_lua_notifications_enabled(bool lua_notifications_enabled);
-    virtual const std::string& get_lua_type_name() const override;
 
   protected:
 

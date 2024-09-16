@@ -90,6 +90,9 @@ class SOLARUS_API Entity: public ExportableToLua {
 
   public:
 
+    // static information
+    static constexpr const char type_name[] = "entity";
+
     using UserProperty = std::pair<std::string, std::string>;
 
     struct NamedSprite {
