@@ -22,8 +22,8 @@ target_link_libraries(solarus
     GLM::GLM
     OpenAL::OpenAL
     PhysFS::PhysFS
-    Vorbis::Vorbis
     Vorbis::File
+    Vorbis::Vorbis
     Ogg::Ogg
     ModPlug::ModPlug
 )
