@@ -313,10 +313,15 @@ void TextEditorWidget::line_number_area_paint_event(QPaintEvent* event) {
   int block_number = block.blockNumber();
   int top = static_cast<int>(blockBoundingGeometry(block).translated(contentOffset()).top());
   int bottom = top + static_cast<int>(blockBoundingRect(block).height());
+  const EditorStyle* style = qobject_cast<const EditorStyle*>(qApp->style());
 
   while (block.isValid() && top <= event->rect().bottom()) {
     if (block.isVisible() && bottom >= event->rect().top()) {
       QString number = QString::number(block_number + 1) + " ";
+      if (style != nullptr) {
+        // Make line number color less flashy than the main text.
+        painter.setPen(style->theme().secondaryAlternativeColor);
+      }
       painter.drawText(0, top, line_number_area->width(), fontMetrics().height(),
                        Qt::AlignRight, number);
     }
