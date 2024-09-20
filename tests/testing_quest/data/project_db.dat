@@ -119,6 +119,7 @@ map{ id = "bugs/1617_crash_disabled_chest", description = "#1617: Crash when sta
 map{ id = "bugs/1619_camera_obstacles", description = "#1619: Entities should not block the camera" }
 map{ id = "bugs/1628_hero_set_direction_crash", description = "#1628: Crash when hero:set_direction() has an invalid parameter" }
 map{ id = "bugs/1635_timer_set_remaining_time", description = "#1635: timer:set_remaining_time()" }
+map{ id = "bugs/1641_crash_assign_item", description = "#1641: Crash when assigning an item the player does not have" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
@@ -409,6 +410,7 @@ sound{ id = "wrong2", description = "wrong2" }
 sound{ id = "wrong3", description = "wrong3" }
 
 item{ id = "bomb", description = "Bomb" }
+item{ id = "bombs_assignable", description = "Assignable bombs" }
 item{ id = "coroutine_handle", description = "coroutine_handle" }
 item{ id = "item_dialog_no_sprite", description = "Item with a dialog and no sprite" }
 item{ id = "item_dialog_sprite", description = "Item with a dialog and a sprite" }
@@ -439,6 +441,7 @@ file{ path = "enemies/test_flying_enemy.lua", author = "Christopho", license = "
 file{ path = "fonts/8_bit.png", author = "usr_share, Christopho", license = "Public domain" }
 file{ path = "fonts/enter_command.ttf", author = "Jeti", license = "CC BY 4.0" }
 file{ path = "items/bomb.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "items/bombs_assignable.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "items/coroutine_handle.lua", author = "std::gregwar", license = "GPL v3" }
 file{ path = "items/item_dialog_no_sprite.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "items/item_dialog_sprite.lua", author = "Christopho", license = "GPL v3" }
@@ -694,6 +697,8 @@ file{ path = "maps/bugs/1628_hero_set_direction_crash.dat", author = "Christopho
 file{ path = "maps/bugs/1628_hero_set_direction_crash.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1635_timer_set_remaining_time.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1635_timer_set_remaining_time.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1641_crash_assign_item.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1641_crash_assign_item.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }

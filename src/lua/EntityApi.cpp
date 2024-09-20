@@ -3648,6 +3648,18 @@ int LuaContext::hero_set_item_assigned(lua_State* l) {
       LuaTools::arg_error(l, 2, "The item slot should be 1 or 2");
     }
 
+    if (item != nullptr) {
+      if (!item->is_assignable()) {
+        LuaTools::arg_error(l, 3, "Item '" + item->get_name() + "' is not assignable");
+      }
+      if (!item->is_saved()) {
+        LuaTools::arg_error(l, 3, "Item '" + item->get_name() + "' is not saved");
+      }
+      if (item->get_variant() == 0) {
+        LuaTools::arg_error(l, 3, "The player does not have the item '" + item->get_name() + "'");
+      }
+    }
+
     hero.get_equipment().set_item_assigned(slot, item);
 
     return 0;
