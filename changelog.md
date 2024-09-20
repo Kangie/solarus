@@ -34,7 +34,7 @@ The multiplayer update!
 #### Changes that introduce incompatibilities
 
 * Joypad input events now provide button names instead of numbers.
-* `hero:teleport()` now also teleports the camera insetad of recreating one.
+* `hero:teleport()` now also teleports the camera instead of recreating one.
 
 #### Changes that do not introduce incompatibilities
 
