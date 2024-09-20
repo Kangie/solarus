@@ -16,6 +16,7 @@
  */
 #include "widgets/gui_tools.h"
 #include "widgets/new_resource_element_dialog.h"
+#include "editor_settings.h"
 #include "quest.h"
 
 namespace SolarusEditor {
@@ -37,11 +38,13 @@ NewResourceElementDialog::NewResourceElementDialog(
   // forget resource types, and to also handle translations correctly.
   QString title;
   QString id_text;
+  bool supports_default_script = false;
   switch (resource_type) {
 
   case ResourceType::MAP:
     title = tr("New map");
     id_text = tr("Map id (filename):");
+    supports_default_script = true;
     break;
 
   case ResourceType::TILESET:
@@ -67,16 +70,19 @@ NewResourceElementDialog::NewResourceElementDialog(
   case ResourceType::ITEM:
     title = tr("New item");
     id_text = tr("Item id (filename):");
+    supports_default_script = true;
     break;
 
   case ResourceType::ENEMY:
     title = tr("New enemy");
     id_text = tr("Enemy id (filename):");
+    supports_default_script = true;
     break;
 
   case ResourceType::ENTITY:
     title = tr("New custom entity");
     id_text = tr("Custom entity id (filename):");
+    supports_default_script = true;
     break;
 
   case ResourceType::LANGUAGE:
@@ -94,6 +100,14 @@ NewResourceElementDialog::NewResourceElementDialog(
     id_text = tr("Shader id (filename):");
     break;
 
+  }
+
+  if (supports_default_script) {
+    EditorSettings settings;
+    ui.create_with_default_code_check_box->setChecked(
+        settings.get_value_bool(EditorSettings::create_scripts_with_default_code));
+  } else {
+    delete ui.create_with_default_code_check_box;
   }
 
   ui.id_label->setText(id_text);
@@ -163,7 +177,6 @@ QuestDatabase::FileInfo NewResourceElementDialog::get_file_info() const {
   };
 }
 
-
 /**
  * @brief Closes the dialog unless the user tries to set invalid data.
  * @param result Result code of the dialog.
@@ -171,6 +184,10 @@ QuestDatabase::FileInfo NewResourceElementDialog::get_file_info() const {
 void NewResourceElementDialog::done(int result) {
 
   if (result == QDialog::Accepted) {
+
+    EditorSettings settings;
+    settings.set_value(EditorSettings::create_scripts_with_default_code,
+                       ui.create_with_default_code_check_box->isChecked());
 
     if (get_element_id().isEmpty()) {
       GuiTools::error_dialog("Empty resource id");

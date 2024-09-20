@@ -4,6 +4,7 @@
 
 * Dark mode support and more modern style.
 * New quest creation wizard (#460).
+* New option to not generate default code when creating scripts (#528).
 * Graphics view now show a checkered background to represent transparency.
 * Quest tree: allow to set the author and license information of folders and GLSL files.
 * Quest tree: allow to set the author and license information of scripts (#501).

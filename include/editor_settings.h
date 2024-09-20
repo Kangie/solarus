@@ -58,6 +58,7 @@ public:
   static const QString replace_tab_by_spaces;
   static const QString external_text_editor_enabled;
   static const QString external_text_editor_cmd;
+  static const QString create_scripts_with_default_code;
 
   // Map editor keys.
   static const QString map_main_zoom;

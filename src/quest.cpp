@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "editor_settings.h"
 #include "map_model.h"
 #include "obsolete_editor_exception.h"
 #include "obsolete_quest_exception.h"
@@ -1602,12 +1603,18 @@ void Quest::create_map_script(const QString& map_id) {
 
   QString path = get_map_script_path(map_id);
   check_is_script(path);
-  create_file_from_template(
-        path,
-        ":/initial_files/map_script_template.lua",
-        QRegularExpression("\\$map_id"),
-        map_id
-  );
+
+  EditorSettings settings;
+  if (settings.get_value_bool(EditorSettings::create_scripts_with_default_code)) {
+    create_file_from_template(
+          path,
+          ":/initial_files/map_script_template.lua",
+          QRegularExpression("\\$map_id"),
+          map_id
+    );
+  } else {
+    create_file(path);
+  }
 }
 
 /**
@@ -1638,12 +1645,18 @@ void Quest::create_item_script(const QString& item_id) {
 
   QString path = get_item_script_path(item_id);
   check_is_script(path);
-  create_file_from_template(
-        path,
-        ":/initial_files/item_script_template.lua",
-        QRegularExpression("\\$item_id"),
-        item_id
-  );
+
+  EditorSettings settings;
+  if (settings.get_value_bool(EditorSettings::create_scripts_with_default_code)) {
+    create_file_from_template(
+          path,
+          ":/initial_files/item_script_template.lua",
+          QRegularExpression("\\$item_id"),
+          item_id
+    );
+  } else {
+    create_file(path);
+  }
 }
 
 /**
@@ -1674,12 +1687,18 @@ void Quest::create_enemy_script(const QString& enemy_id) {
 
   QString path = get_enemy_script_path(enemy_id);
   check_is_script(path);
-  create_file_from_template(
-        path,
-        ":/initial_files/enemy_script_template.lua",
-        QRegularExpression("\\$enemy_id"),
-        enemy_id
-  );
+
+  EditorSettings settings;
+  if (settings.get_value_bool(EditorSettings::create_scripts_with_default_code)) {
+    create_file_from_template(
+          path,
+          ":/initial_files/enemy_script_template.lua",
+          QRegularExpression("\\$enemy_id"),
+          enemy_id
+    );
+  } else {
+    create_file(path);
+  }
 }
 
 /**
@@ -1710,12 +1729,18 @@ void Quest::create_entity_script(const QString& entity_id) {
 
   QString path = get_entity_script_path(entity_id);
   check_is_script(path);
-  create_file_from_template(
-        path,
-        ":/initial_files/entity_script_template.lua",
-        QRegularExpression("\\$entity_id"),
-        entity_id
-  );
+
+  EditorSettings settings;
+  if (settings.get_value_bool(EditorSettings::create_scripts_with_default_code)) {
+    create_file_from_template(
+          path,
+          ":/initial_files/entity_script_template.lua",
+          QRegularExpression("\\$entity_id"),
+          entity_id
+    );
+  } else {
+    create_file(path);
+  }
 }
 
 /**

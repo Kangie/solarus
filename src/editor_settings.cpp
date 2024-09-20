@@ -16,7 +16,6 @@
  */
 #include "grid_style.h"
 #include "editor_settings.h"
-#include "editor_style.h"
 #include <QPalette>
 #include <QSize>
 
@@ -55,6 +54,8 @@ const QString EditorSettings::external_text_editor_enabled =
   "text_editor/external_text_editor_enabled";
 const QString EditorSettings::external_text_editor_cmd =
   "text_editor/external_text_editor_cmd";
+const QString EditorSettings::create_scripts_with_default_code =
+  "text_editor/create_scripts_with_default_code";
 
 // Map editor keys.
 const QString EditorSettings::map_main_zoom = "map_editor/main_zoom";
