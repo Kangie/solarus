@@ -17,9 +17,9 @@
    <item row="0" column="0">
     <layout class="QGridLayout" name="grid_layout">
      <item row="2" column="0">
-      <widget class="QLabel" name="licence_label">
+      <widget class="QLabel" name="license_label">
        <property name="text">
-        <string>Licence:</string>
+        <string>License:</string>
        </property>
       </widget>
      </item>
@@ -44,7 +44,7 @@
       <widget class="QLineEdit" name="author_line_edit"/>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="licence_line_edit"/>
+      <widget class="QLineEdit" name="license_line_edit"/>
      </item>
     </layout>
    </item>

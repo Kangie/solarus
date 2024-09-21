@@ -41,6 +41,9 @@ public:
   static const QString quest_size;
   static const QString force_software_rendering;
   static const QString suspend_unfocused;
+  static const QString last_author;
+  static const QString last_license_data;
+  static const QString last_license_script;
 
   // Console keys.
   static const QString console_history;
