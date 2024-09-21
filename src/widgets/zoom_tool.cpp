@@ -50,7 +50,7 @@ bool ZoomTool::eventFilter(QObject* object, QEvent* event) {
 
     if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
       // Control + wheel: zoom in or out.
-      const char* method = wheel_event->delta() > 0 ? "zoom_in" : "zoom_out";
+      const char* method = wheel_event->angleDelta().y() > 0 ? "zoom_in" : "zoom_out";
       QMetaObject::invokeMethod(
             scroll_area,
             method,

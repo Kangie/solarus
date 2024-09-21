@@ -23,7 +23,7 @@ elseif(WIN32)
   )
 endif()
 
-include(cmake/AddQt5Files.cmake)
+include(cmake/AddQtFiles.cmake)
 include(cmake/AddEditorExecutable.cmake)
 include(cmake/AddInstallTargets.cmake)
 include(cmake/AddUninstallTargets.cmake)

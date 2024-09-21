@@ -590,7 +590,7 @@ EntityIndexes MapScene::get_selected_entities() {
     result.append(index);
   }
 
-  qSort(result);
+  std::sort(result.begin(), result.end());
   return result;
 }
 

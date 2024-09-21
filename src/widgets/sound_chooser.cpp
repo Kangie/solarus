@@ -37,7 +37,7 @@ SoundChooser::SoundChooser(QWidget* parent) :
   play_sound_button.setToolTip(tr("Play sound"));
 
   QHBoxLayout* layout = new QHBoxLayout(this);
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
 
   layout->addWidget(&sound_selector);
   layout->addWidget(&play_sound_button);

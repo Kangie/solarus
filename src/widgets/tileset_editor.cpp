@@ -32,7 +32,6 @@
 #include <QInputDialog>
 #include <QItemSelectionModel>
 #include <QMessageBox>
-#include <QRegExp>
 #include <QTextStream>
 #include <QUndoStack>
 
@@ -1437,7 +1436,7 @@ bool TilesetEditor::change_pattern_id_in_map(
     throw EditorException(tr("Cannot open map file '%1'").arg(file_name));
   }
   QTextStream in(&file);
-  in.setCodec("UTF-8");
+  in.setEncoding(QStringConverter::Utf8);
   QString old_content = in.readAll();
   file.close();
   Solarus::MapData map;
@@ -1478,7 +1477,7 @@ bool TilesetEditor::change_pattern_id_in_map(
     throw EditorException(tr("Cannot open map file '%1' for writing").arg(file.fileName()));
   }
   QTextStream out(&file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   out << content;
   file.close();
   return true;

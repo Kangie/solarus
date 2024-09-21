@@ -7,7 +7,9 @@ add_executable(solarus-quest-editor
 )
 
 target_link_libraries(solarus-quest-editor
-  Qt5::Widgets
+  Qt6::Widgets
+  Qt6::OpenGL
+  Qt6::OpenGLWidgets
   "${SOLARUS_LIBRARIES}"
   "${SOLARUS_GUI_LIBRARIES}"
   "${SDL2_LIBRARY}"

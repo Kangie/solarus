@@ -16,6 +16,7 @@
  */
 #include "widgets/gui_tools.h"
 #include "widgets/sprite_previewer.h"
+#include <QActionGroup>
 #include <QMenu>
 
 namespace SolarusEditor {

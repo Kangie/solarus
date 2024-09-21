@@ -26,7 +26,6 @@
 #include <solarus/core/System.h>
 #include <solarus/lua/LuaContext.h>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QLibraryInfo>
 #include <QStyleFactory>
 #include <QTranslator>
@@ -71,8 +70,11 @@ int run_editor_gui(int argc, char* argv[]) {
 
   // Set up Qt translations.
   QTranslator qt_translator;
-  qt_translator.load(locale, "qt", "_",
-                     QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  const bool success = qt_translator.load(
+      locale, "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+  if (!success) {
+    qWarning() << "Failed to load translations";
+  }
   application.installTranslator(&qt_translator);
 
   // Set up application translations.

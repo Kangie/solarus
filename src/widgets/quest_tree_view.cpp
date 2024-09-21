@@ -112,7 +112,7 @@ void QuestTreeView::set_quest(Quest& quest) {
     setRootIndex(model->get_quest_root_index());
 
     if (model->hasChildren(rootIndex())) {
-      expand(rootIndex().child(0, 0));  // Expand the data directory.
+      expand(model->index(0, 0, rootIndex()));  // Expand the data directory.
     }
 
     sortByColumn(0, Qt::AscendingOrder);

@@ -4,9 +4,11 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/modules/
 # Wheither LuaJIT should be used instead of vanilla Lua.
 option(SOLARUS_USE_LUAJIT "Use LuaJIT instead of default Lua (recommended)" ON)
 
-find_package(Qt5Core "5.7" REQUIRED)
-find_package(Qt5Widgets "5.7" REQUIRED)
-find_package(Qt5LinguistTools "5.7" REQUIRED)
+find_package(Qt6Core "6.5" REQUIRED)
+find_package(Qt6Widgets "6.5" REQUIRED)
+find_package(Qt6LinguistTools "6.5" REQUIRED)
+find_package(Qt6OpenGL "6.5" REQUIRED)
+find_package(Qt6OpenGLWidgets "6.5" REQUIRED)
 find_package(SDL2 "2.0.6" REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)

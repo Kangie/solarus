@@ -25,10 +25,8 @@ namespace SolarusEditor {
  * @return The existing values.
  */
 QList<EntityType> EnumTraits<EntityType>::get_values() {
-
-  return QList<EntityType>::fromStdList(
-      Solarus::EnumInfo<EntityType>::enums()
-  );
+  const std::list<EntityType>& values = Solarus::EnumInfo<EntityType>::enums();
+  return QList<EntityType>(values.begin(), values.end());
 }
 
 /**

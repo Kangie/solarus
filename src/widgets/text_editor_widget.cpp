@@ -187,7 +187,7 @@ int TextEditorWidget::get_line_number_area_width() {
 
   ++digits;  // Add space equivalent to an extra digit to the right.
 
-  int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
+  int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
 
   return space;
 }
@@ -258,7 +258,7 @@ int TextEditorWidget::get_tab_length() const {
 void TextEditorWidget::set_tab_length(int length) {
 
   tab_length = length;
-  setTabStopWidth(fontMetrics().width(" ") * tab_length);
+  setTabStopDistance(fontMetrics().horizontalAdvance(" ") * tab_length);
 }
 
 /**

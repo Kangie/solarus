@@ -1,4 +1,4 @@
-# Add the three types of Qt5 files.
+# Add the three types of Qt6 files.
 
 # UI files.
 set(solarus_quest_editor_FORMS
@@ -37,7 +37,7 @@ set(solarus_quest_editor_FORMS
 )
 
 # Generate .h from .ui.
-qt5_wrap_ui(solarus_quest_editor_FORMS_HEADERS
+qt6_wrap_ui(solarus_quest_editor_FORMS_HEADERS
   ${solarus_quest_editor_FORMS}
 )
 
@@ -50,7 +50,7 @@ set(solarus_quest_editor_RESOURCES
 )
 
 # Compile resource files.
-qt5_add_resources(solarus_quest_editor_RESOURCES_RCC
+qt6_add_resources(solarus_quest_editor_RESOURCES_RCC
   ${solarus_quest_editor_RESOURCES}
 )
 
@@ -59,6 +59,6 @@ set(solarus_quest_editor_TRANSLATIONS
   translations/solarus_editor_es.ts
   translations/solarus_editor_fr.ts
 )
-qt5_add_translation(solarus_quest_editor_TRANSLATIONS_QM
+qt6_add_translation(solarus_quest_editor_TRANSLATIONS_QM
   ${solarus_quest_editor_TRANSLATIONS}
 )

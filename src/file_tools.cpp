@@ -244,7 +244,7 @@ bool replace_in_file(
     throw EditorException(QApplication::tr("Cannot open file '%1'").arg(file.fileName()));
   }
   QTextStream in(&file);
-  in.setCodec("UTF-8");
+  in.setEncoding(QStringConverter::Utf8);
   QString content = in.readAll();
   file.close();
 
@@ -267,7 +267,7 @@ bool replace_in_file(
     throw EditorException(QApplication::tr("Cannot open file '%1' for writing").arg(file.fileName()));
   }
   QTextStream out(&file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   out << content;
   file.close();
   return true;

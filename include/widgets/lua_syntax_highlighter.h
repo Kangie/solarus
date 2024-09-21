@@ -17,7 +17,7 @@
 #ifndef SOLARUSEDITOR_LUA_SYNTAX_HIGHLIGHTER_H
 #define SOLARUSEDITOR_LUA_SYNTAX_HIGHLIGHTER_H
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
 #include <QVector>
@@ -59,14 +59,14 @@ private:
    * @brief A single-line highlighting rule.
    */
   struct HighlightingRule {
-    QRegExp pattern;                             /**< A regexp. If it contains a capture, only the
+    QRegularExpression pattern;                             /**< A regexp. If it contains a capture, only the
                                                   * captured text will be highlighted. */
     QTextCharFormat format;                      /**< Format to apply to text matching the regexp. */
   };
 
   QVector<HighlightingRule> rules;               /**< The rule set. */
-  QRegExp comment_start_pattern;                 /**< Regexp of multi-line comments start. */
-  QRegExp comment_end_pattern;                   /**< Regexp of multi-line comments end. */
+  QRegularExpression comment_start_pattern;                 /**< Regexp of multi-line comments start. */
+  QRegularExpression comment_end_pattern;                   /**< Regexp of multi-line comments end. */
 };
 
 }

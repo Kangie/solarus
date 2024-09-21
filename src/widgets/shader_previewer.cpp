@@ -30,6 +30,7 @@
 #include <solarus/graphics/DefaultShaders.h>
 #include <solarus/graphics/Shader.h>
 
+#include <QFile>
 #include <QMatrix3x3>
 #include <QMouseEvent>
 #include <QOpenGLContext>
@@ -156,10 +157,10 @@ ShaderPreviewer::ShaderPreviewer(QWidget *parent) :
 void ShaderPreviewer::mouseMoveEvent(QMouseEvent* event) {
   Q_UNUSED(event);
   if (grabbing) {
-    QPointF d = event->localPos() - last_mouse_pos;
+    QPointF d = event->position().toPoint() - last_mouse_pos;
     d.setY(-d.y());
     translation += QVector2D(d) / (zoom*pixelFactor());
-    last_mouse_pos = event->localPos();
+    last_mouse_pos = event->position().toPoint();
     event->accept();
   }
   update();
@@ -174,7 +175,7 @@ void ShaderPreviewer::mousePressEvent(QMouseEvent* event) {
   if (event->button() == Qt::LeftButton ||
       event->button() == Qt::MiddleButton) {
     grabbing = true;
-    last_mouse_pos = event->localPos();
+    last_mouse_pos = event->position().toPoint();
     setCursor(grab_cursor);
     event->accept();
   }
@@ -236,13 +237,13 @@ void ShaderPreviewer::wheelEvent(QWheelEvent* event) {
   if (event->angleDelta().y() > 0) {
     zoom_in();
     if (zoom != old_zoom) {
-        translation += to_frame_center(event->pos() / zoom) / pixelFactor();
+        translation += to_frame_center(event->position().toPoint() / zoom) / pixelFactor();
     }
   }
   else {
     zoom_out();
     if (zoom != old_zoom) {
-      translation -= 0.5 * to_frame_center(event->pos() / zoom) / pixelFactor();
+      translation -= 0.5 * to_frame_center(event->position().toPoint() / zoom) / pixelFactor();
     }
   }
 

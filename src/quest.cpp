@@ -1426,7 +1426,7 @@ void Quest::create_file_from_string(
     throw EditorException(tr("Cannot write file '%1'").arg(path));
   }
   QTextStream out(&file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   out << content;
   file.close();
 
@@ -1463,7 +1463,7 @@ void Quest::create_file_from_template(
     throw EditorException(tr("Cannot write file '%1'").arg(output_file_path));
   }
   QTextStream out(&output_file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   out << content;
   output_file.close();
 
