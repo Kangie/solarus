@@ -50,7 +50,7 @@ Only \c solarus_version and \c title are mandatory, but
 - \c author (string, optional): Person or team who created the quest.
 - \c quest_version (string, optional): Current version of your quest.
 - \c release_date (string, optional): Date of your last quest release
-  (YYYY-MM-DD).
+  (YYYYMMDD).
 - \c website (string, optional): URL of your website.
 - \c write_dir (string, optional): Directory where Solarus will write
   savegames and setting files for your quest. It will be a subdirectory of
@@ -70,7 +70,7 @@ Only \c solarus_version and \c title are mandatory, but
 - \c min_quest_size (string, optional): Minimum size of the logical screen in
   pixels. Example: \c "320x200".
   No value means the same value as \c normal_quest_size.
-- \c max_quest_size (table, optional): Maximum size of the logical screen in
+- \c max_quest_size (string, optional): Maximum size of the logical screen in
   pixels. Example: \c "400x240".
   No value means the same value as \c normal_quest_size.
   Note: For the vast majority of quests,
