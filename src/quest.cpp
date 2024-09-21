@@ -226,7 +226,7 @@ QString Quest::get_data_path() const {
  * @return The path relative to the quest data directory, or an empty string
  * if it is not in the quest data directory.
  */
-QString Quest::get_path_relative_to_data_path(const QString& path) {
+QString Quest::get_path_relative_to_data_path(const QString& path) const {
 
   const QString& data_path = get_data_path();
   if (!path.startsWith(data_path)) {

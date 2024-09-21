@@ -18,6 +18,7 @@
 #define SOLARUSEDITOR_QUEST_FILES_MODEL_H
 
 #include "quest_database.h"
+#include <QPointer>
 #include <QSet>
 #include <QSortFilterProxyModel>
 #include <array>
@@ -57,6 +58,7 @@ public:
   explicit QuestFilesModel(Quest& quest, QObject* parent = nullptr);
 
   Quest& get_quest();
+  const Quest& get_quest() const;
   QModelIndex get_quest_root_index() const;
   QString get_file_path(const QModelIndex& index) const;
   QModelIndex get_file_index(const QString& path) const;
@@ -146,7 +148,7 @@ private:
   void remove_extra_path(const QModelIndex& parent, const QString& path);
   void rebuild_extra_path_indexes_cache(const QModelIndex& parent);
 
-  Quest& quest;                        /**< The quest represented by this model. */
+  QPointer<Quest> quest;               /**< The quest represented by this model. */
   QFileSystemModel* source_model;      /**< The underlying file model. */
 
   mutable QMap<QString, ExtraPaths>
