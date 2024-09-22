@@ -20,6 +20,6 @@ endif()
 
 configure_file(
   cmake/config.h.in
-  include/solarus/core/config.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/solarus/core/config.h
   @ONLY
 )
