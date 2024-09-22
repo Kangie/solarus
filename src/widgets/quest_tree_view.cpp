@@ -786,10 +786,11 @@ void QuestTreeView::new_element_action_triggered() {
 
     QString element_id = dialog.get_element_id();
     QString description = dialog.get_element_description();
-    QuestDatabase::FileInfo file_info = dialog.get_file_info();
+    const QuestDatabase::FileInfo& data_file_info = dialog.get_data_file_info();
+    const QuestDatabase::FileInfo& script_file_info = dialog.get_script_file_info();
 
     quest.create_resource_element(
-          resource_type, element_id, description, file_info);
+          resource_type, element_id, description, data_file_info, script_file_info);
 
     if (quest.is_image(path)) {
       quest.create_sprite_from_image(path, element_id);
@@ -801,7 +802,7 @@ void QuestTreeView::new_element_action_triggered() {
       set_selected_path(created_path);
 
       // Open it.
-      open_file_requested(quest, created_path);
+      emit open_file_requested(quest, created_path);
     }
   }
 
