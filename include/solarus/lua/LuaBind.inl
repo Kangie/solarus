@@ -470,7 +470,7 @@ template<typename T>
 T check_arg(lua_State* L, int index, const CheckContext& context);
 
 /**
- * \brief Check the type of the argument at index, return it if the type is
+ * \brief Check the type of the value at index, return it if the type is
  *   correct, otherwise raise a type error.
  * \tparam T C/C++ type to return, should be from AsReturn.
  * \param L The Lua stack.
@@ -538,7 +538,8 @@ struct CheckStack<std::optional<T>> {
 /**
  * \brief \ref CheckArg<T> specialization for shared_ptr<T> types.
  *
- * If the value is nil (or not passed) or of the correct type and exportable_to_lua, returns it in a shared_ptr
+ * If the value is nil (or none) or of the correct type and
+ * exportable_to_lua, returns it in a shared_ptr
  */
 template<typename T>
 struct CheckStack<std::shared_ptr<T>> {
@@ -555,7 +556,8 @@ struct CheckStack<std::shared_ptr<T>> {
 /**
  * \brief \ref CheckArg<T> specialization for vector types.
  *
- * Checks if value is a table and then recursively checks each non-nil T element
+ * Checks if value is a table and then recursively checks each element. Will
+ * get the size of the vector from Lua.
  */
 template<typename T>
 struct CheckStack<std::vector<T>> {
@@ -621,10 +623,11 @@ struct CheckStack<T *> {
 };
 
 /**
- * \brief \ref CheckArg<T> specialization for types that have a Marshalling<T> specialization
+ * \brief \ref CheckArg<T> specialization for types that have a
+ *   Marshalling specialization.
  *
- * This enables client code to specify how to convert checked lua args to C++ args
- * see \ref LuaBind::Marshalling<T>
+ * This enables client code to specify how to check and convert new types
+ * from Lua to C++, see \ref LuaBind::Marshalling<T>.
  */
 template<typename T>
 struct CheckStack<T, decltype(void(Marshalling<T>::check_arg))>{
