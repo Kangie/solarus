@@ -206,6 +206,7 @@ void Hero::StairsState::update() {
             !teletransporter->is_enabled() ||
             teletransporter->is_being_removed()) {
           Logger::error("Teletransporter expected with the stairs");
+          sprites.set_clipping_rectangle();
         }
         else {
           teletransporter->transport_hero(hero);
@@ -360,4 +361,3 @@ void Hero::StairsState::notify_layer_changed() {
 }
 
 }
-
