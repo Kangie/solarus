@@ -218,17 +218,17 @@ void ShopTreasure::built_in_draw(Camera& camera) {
 
   // draw the treasure
   treasure_sprite->draw(camera_surface,
-      x + 16 - camera.get_top_left_x(),
-      y + 13 - camera.get_top_left_y()
+      x + 16,
+      y + 13
   );
 
   // also draw the price
   price_digits.draw(camera_surface,
-      x + 12 - camera.get_top_left_x(),
-      y + 21 - camera.get_top_left_y());
+      x + 12,
+      y + 21);
   rupee_icon_sprite->draw(camera_surface,
-      x - camera.get_top_left_x(),
-      y + 22 - camera.get_top_left_y());
+      x,
+      y + 22);
 
   Entity::built_in_draw(camera);
 }
