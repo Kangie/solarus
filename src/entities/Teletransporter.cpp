@@ -346,6 +346,12 @@ void Teletransporter::transport_hero(Hero& hero) {
   if(hero.get_linked_camera()) {
     hero.set_suspended(true); //Suspend the traveling hero so that it does not trigger more tp
     get_game().teleport_hero(hero_ptr, destination_map_id, name, transition_style);
+  } else {
+    // Handle edge case of StairsState Stairs::NORMAL_WAY
+    // trying to transport a hero without a camera,
+    // leaving the clipping rectangle indefinitely.
+    HeroSprites& sprites = hero.get_hero_sprites();
+    sprites.set_clipping_rectangle();
   }
 
   transporting_hero = false;
@@ -355,4 +361,3 @@ void Teletransporter::transport_hero(Hero& hero) {
 }
 
 }
-
