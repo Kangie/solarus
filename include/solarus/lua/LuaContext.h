@@ -161,7 +161,7 @@ class LuaContext {
     MainLoop& get_main_loop();
 
     // Main loop from C++.
-    void initialize(const Arguments &args);
+    void initialize(const std::string &arg_script);
     void exit();
     void update();
     bool notify_input(const InputEvent& event);
@@ -1694,4 +1694,3 @@ private:
 }
 
 #endif
-

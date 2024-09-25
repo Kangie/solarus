@@ -105,7 +105,7 @@ MainLoop& LuaContext::get_main_loop() {
 /**
  * \brief Initializes Lua.
  */
-void LuaContext::initialize(const Arguments& args) {
+void LuaContext::initialize(const std::string& arg_script) {
 
   // Create an execution context.
   main_l = current_l = luaL_newstate();
@@ -179,7 +179,6 @@ void LuaContext::initialize(const Arguments& args) {
 
 
   //Do the script passed as arg
-  std::string arg_script = args.get_argument_value("-s");
   if(!arg_script.empty()) {
     Debug::warning("Running script arg \"" + arg_script + "\"");
     do_string(arg_script,"script argument (-s)");
@@ -3404,4 +3403,3 @@ int LuaContext::l_backtrace(lua_State* l) {
 }
 
 }
-

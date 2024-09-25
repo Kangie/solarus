@@ -110,9 +110,9 @@ class SOLARUS_API MainLoop {
     int num_lua_commands_done;    /**< Counter of Lua commands executed. */
     ControlsDispatcher
         commands_dispatcher;      /**< Commands mappings disptatcher. */
+    std::string lua_script_arg;   /**< LuaContext initialization script arg. */
 };
 
 }
 
 #endif
-
