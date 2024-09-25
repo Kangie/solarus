@@ -164,6 +164,7 @@ MainLoop::MainLoop(const Arguments& args):
   suspend_unfocused = suspend_unfocused_arg.empty() || suspend_unfocused_arg == "yes";
   const std::string& lua_console_arg = args.get_argument_value("-lua-console");
   lua_console_enabled = lua_console_arg.empty() || lua_console_arg == "yes";
+  lua_script_arg = args.get_argument_value("-s");
 
   // Try to open the quest.
   const std::string& quest_path = get_quest_path(args);
@@ -191,10 +192,10 @@ MainLoop::MainLoop(const Arguments& args):
 
   if(Video::get_renderer().needs_window_workaround()) {
     Video::show_window();
-    lua_context->initialize(args);
+    lua_context->initialize(lua_script_arg);
     Video::hide_window();
   } else {
-    lua_context->initialize(args);
+    lua_context->initialize(lua_script_arg);
   }
 
   if (lua_console_enabled) {
@@ -558,7 +559,7 @@ void MainLoop::step(uint64_t timestep_ns) {
     else {
       // Reset
       lua_context->exit();
-      lua_context->initialize(Arguments());
+      lua_context->initialize(lua_script_arg);
       Music::stop_playing();
     }
   }
