@@ -134,7 +134,7 @@ static void set_fullscreen(std::optional<bool> fullscreen_arg) {
 }
 
 /**
- * \brief Implementation of sol.video.set_fullscreen().
+ * \brief Implementation of sol.video.set_cursor_visible().
  * \param visible_cursor_arg The new value, true if absent.
  */
 static void set_cursor_visible(std::optional<bool> visible_cursor_arg) {
