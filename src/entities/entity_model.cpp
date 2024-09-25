@@ -1557,10 +1557,13 @@ void EntityModel::notify_field_changed(const QString& key, const QVariant& value
 /**
  * @brief This function is called when this is a new entity.
  *
- * Field values are initially set to their default value as specified by
- * the file format, which are simple for compatability.
+ * Field values were initially set to their default value as specified by
+ * the map file format.
  * Subclasses can reimplement this function to set more appropriate initial
  * values for the user.
+ *
+ * Note that the entity's position on the map is not yet known at this point.
+ * Use \c notify_being_added to initialize values that depend on the position.
  */
 void EntityModel::set_initial_values() {
 
@@ -1569,12 +1572,12 @@ void EntityModel::set_initial_values() {
 }
 
 /**
- * @brief This function is called when this new entity is placed on the map.
+ * @brief Called when this new entity is about to be added on the map.
  *
- * Used to further refine the initial values once the entity's context within
+ * Used to further refine the initial values once the entity's position
  * the map is known.
  */
-void EntityModel::set_context_values() {
+void EntityModel::notify_being_added() {
 
   // Nothing done by default.
 }

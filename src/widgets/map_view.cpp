@@ -1820,12 +1820,12 @@ void DoingNothingState::key_pressed(const QKeyEvent& event) {
 
   case Qt::Key_Plus:
     // Make sure that the numpad plus key works too.
-    get_view().increase_entities_layer_requested(get_view().get_selected_entities());
+    emit get_view().increase_entities_layer_requested(get_view().get_selected_entities());
     break;
 
   case Qt::Key_Minus:
     // Make sure that the numpad minus key works too.
-    get_view().decrease_entities_layer_requested(get_view().get_selected_entities());
+    emit get_view().decrease_entities_layer_requested(get_view().get_selected_entities());
     break;
 
   default:
@@ -2952,14 +2952,14 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
     previous_index = index;
 
     // Once we know where it is going, do context initialization and add it.
-    entity->set_context_values();
+    entity->notify_being_added();
     addable_entities.emplace_back(std::move(entity), index);
   }
 
   // Add them.
   const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
   const bool keep_selection = control_or_shift;
-  view.add_entities_requested(addable_entities, !keep_selection);
+  emit view.add_entities_requested(addable_entities, !keep_selection);
 
   // Decide what to do next: resize them, add new ones or do nothing.
   if (view.are_entities_resizable(view.get_selected_entities()) &&

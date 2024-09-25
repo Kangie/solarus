@@ -51,17 +51,19 @@ void Teletransporter::set_initial_values() {
 }
 
 /**
- * @copydoc EntityModel::set_context_values
+ * @copydoc EntityModel::notify_being_added
  */
-void Teletransporter::set_context_values() {
+void Teletransporter::notify_being_added() {
 
-  EntityModel::set_context_values();
+  EntityModel::notify_being_added();
 
-  // The default values guess we want a transition for a door. If the
-  // teletransporter is off of the map, instead guess a scrolling transition.
-  const MapModel& map = get_map();
-  QRect map_bounds(QPoint(0, 0), map.get_size());
-  if (!map_bounds.intersects(get_bounding_box())) {
+  // The default values guess we want a transition for a door.
+  // If the teletransporter is touching the edge of the map and it outside,
+  // instead guess a scrolling transition.
+  if (get_xy().x() + get_width() == 0 ||
+      get_xy().x() == get_map().get_size().width() ||
+      get_xy().y() + get_height() == 0 ||
+      get_xy().y() == get_map().get_size().height()) {
     set_field("transition", "scrolling");
     set_field("destination", "_side");
   }
