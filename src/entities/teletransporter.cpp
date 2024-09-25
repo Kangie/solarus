@@ -50,4 +50,23 @@ void Teletransporter::set_initial_values() {
   set_size({ 16, 16 });
 }
 
+/**
+ * @copydoc EntityModel::notify_being_added
+ */
+void Teletransporter::notify_being_added() {
+
+  EntityModel::notify_being_added();
+
+  // The default values guess we want a transition for a door.
+  // If the teletransporter is touching the edge of the map and it outside,
+  // instead guess a scrolling transition.
+  if (get_xy().x() + get_width() == 0 ||
+      get_xy().x() == get_map().get_size().width() ||
+      get_xy().y() + get_height() == 0 ||
+      get_xy().y() == get_map().get_size().height()) {
+    set_field("transition", "scrolling");
+    set_field("destination", "_side");
+  }
+}
+
 }

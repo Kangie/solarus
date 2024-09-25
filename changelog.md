@@ -10,12 +10,14 @@
 * Quest tree: allow to set the author and license information of scripts (#501).
 * Reopen last tabs also when a quest is given in the command line.
 * Allow to reopen the last closed tab (#165).
+* Map editor: Teletransporter uses location to decide starting values (#473).
 * Map editor: allow to run the current map for testing purposes (#517).
 * Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
 * Map editor: fix contour generation from other tilesets.
 * Map editor: fix origin lost when copy-pasting a custom entity (#432).
 * Map editor: fix inconsistencies when editing an entity being resized or moved.
 * Map editor: update contour selector when the tileset file has changed.
+* Map editor: make teletransporters initially scrolling when placed on the edge (#473).
 * Map editor: show two license fields when creating a new map.
 * Tileset editor: allow to resize tile patterns (#159).
 * Sprite editor: allow to create a sprite from an image (#527).
