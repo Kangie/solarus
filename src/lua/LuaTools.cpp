@@ -21,6 +21,7 @@
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/ScopedLuaRef.h"
 #include "solarus/core/Profiler.h"
+#include "solarus/core/CurrentQuest.h"
 #include <cctype>
 #include <sstream>
 #include <unordered_set>
@@ -769,7 +770,9 @@ bool opt_boolean(
     int index,
     bool default_value
 ) {
-  if (lua_isnone(l, index)) {
+  if (lua_isnone(l, index)
+    || (CurrentQuest::is_format_at_most({1, 7}) && lua_isnoneornil(l, index))
+  ) {
     return default_value;
   }
   return check_boolean(l, index);
