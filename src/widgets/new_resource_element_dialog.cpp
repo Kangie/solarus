@@ -252,8 +252,10 @@ void NewResourceElementDialog::done(int result) {
   if (result == QDialog::Accepted) {
 
     EditorSettings settings;
-    settings.set_value(EditorSettings::create_scripts_with_default_code,
-                       ui.create_with_default_code_check_box->isChecked());
+    if (ui.create_with_default_code_check_box != nullptr) {
+      settings.set_value(EditorSettings::create_scripts_with_default_code,
+                         ui.create_with_default_code_check_box->isChecked());
+    }
     if (ui.data_file_license_line_edit != nullptr) {
       settings.set_value(EditorSettings::last_license_data,
                          ui.data_file_license_line_edit->text());
