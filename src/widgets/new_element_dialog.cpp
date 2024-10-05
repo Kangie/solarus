@@ -42,11 +42,9 @@ NewElementDialog::NewElementDialog(
   // Fill in retained author/license.
   bool is_file = !get_file_type().isEmpty();
 
+  ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
   if (is_file) {
-    ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
     ui.license_line_edit->setText(settings.get_value_string(EditorSettings::last_license_script));
-  } else {
-    ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
   }
 
   // Check if new element created is a script by file type.
@@ -116,11 +114,9 @@ void NewElementDialog::done(int result) {
     bool is_file = !get_file_type().isEmpty();
 
     // Store previous author/license when dialog finished.
+    settings.set_value(EditorSettings::last_author, ui.author_line_edit->text());
     if (is_file) {
-      settings.set_value(EditorSettings::last_author, ui.author_line_edit->text());
       settings.set_value(EditorSettings::last_license_script, ui.license_line_edit->text());
-    } else {
-      settings.set_value(EditorSettings::last_author, ui.author_line_edit->text());
     }
 
     if (get_element_id().isEmpty()) {

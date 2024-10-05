@@ -881,14 +881,12 @@ void QuestTreeView::create_new_file(const QString& file_type) {
 
     // Create file based on type.
     // A directory is created when no file type is available.
-    if (is_file) {
-      if (file_type == "glsl") {
-        quest.create_shader_code_file(path);
-      } else {
-        quest.create_script(path);
-      }
-    } else {
+    if (!is_file) {
       quest.create_dir(parent_path, file_name);
+    } else if (file_type == "glsl") {
+      quest.create_shader_code_file(path);
+    } else {
+      quest.create_script(path);
     }
 
     // Add file info to database.
