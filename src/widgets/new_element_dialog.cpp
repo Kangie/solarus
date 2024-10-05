@@ -22,13 +22,6 @@
 namespace SolarusEditor {
 
 /**
- * @brief Creates a dialog for a new directory.
- * @param parent parent The parent widget or nullptr.
- */
-NewElementDialog::NewElementDialog(QWidget *parent) :
-    NewElementDialog("", parent) {}
-
-/**
  * @brief Creates a dialog for a new file or directory.
  * @param file_type Extension of the file to be created.
  * An empty string means a directory.
@@ -46,22 +39,27 @@ NewElementDialog::NewElementDialog(
   QString id_text;
   EditorSettings settings;
 
+  // Fill in retained author/license.
+  bool is_file = !get_file_type().isEmpty();
+
+  if (is_file) {
+    ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
+    ui.license_line_edit->setText(settings.get_value_string(EditorSettings::last_license_script));
+  } else {
+    ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
+  }
+
   // Check if new element created is a script by file type.
   // If not, it's a directory.
   if (get_file_type() == "glsl") {
     title = tr("New GLSL file");
     id_text = tr("GLSL file name:");
-    ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
-    ui.license_line_edit->setText(settings.get_value_string(EditorSettings::last_license_script));
   } else if (get_file_type() == "lua") {
     title = tr("New Lua script");
     id_text = tr("Script name:");
-    ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
-    ui.license_line_edit->setText(settings.get_value_string(EditorSettings::last_license_script));
   } else {
     title = tr("New folder");
     id_text = tr("Folder name:");
-    ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
   }
 
   ui.id_label->setText(id_text);
@@ -115,15 +113,16 @@ void NewElementDialog::done(int result) {
   if (result == QDialog::Accepted) {
 
     EditorSettings settings;
-    if (get_file_type() == "glsl") {
-      settings.set_value(EditorSettings::last_author, ui.author_line_edit->text());
-      settings.set_value(EditorSettings::last_license_script, ui.license_line_edit->text());
-    } else if (get_file_type() == "lua") {
+    bool is_file = !get_file_type().isEmpty();
+
+    // Store previous author/license when dialog finished.
+    if (is_file) {
       settings.set_value(EditorSettings::last_author, ui.author_line_edit->text());
       settings.set_value(EditorSettings::last_license_script, ui.license_line_edit->text());
     } else {
       settings.set_value(EditorSettings::last_author, ui.author_line_edit->text());
     }
+
     if (get_element_id().isEmpty()) {
       if (get_file_type() == "glsl") {
         GuiTools::error_dialog("Empty GLSL file name");
@@ -136,10 +135,10 @@ void NewElementDialog::done(int result) {
     }
 
     if (!Quest::is_valid_file_name(get_element_id())) {
-      if (get_file_type().isEmpty()) {
-        GuiTools::error_dialog("Invalid folder name");
-      } else {
+      if (is_file) {
         GuiTools::error_dialog("Invalid file name");
+      } else {
+        GuiTools::error_dialog("Invalid folder name");
       }
       return;
     }
