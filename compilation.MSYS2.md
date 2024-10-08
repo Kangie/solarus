@@ -52,7 +52,7 @@ pacman --noconfirm --needed -S \
 The following additional dependency packages are required to be installed if building the GUI:
 ```
 pacman --noconfirm --needed -S \
-    mingw-w64-ucrt-x86_64-qt5-base
+    mingw-w64-ucrt-x86_64-qt5-base \
     mingw-w64-ucrt-x86_64-qt5-tools
 ```
 > **Note:** The GUI components include the Solarus Launcher and the Solarus Quest Editor.
