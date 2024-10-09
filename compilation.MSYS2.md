@@ -116,5 +116,7 @@ gdb --args solarus-run.exe /path/to/quest
 ```
 
 > **Tips:** To stop the program execution at any time, use <kbd>CTRL-c</kbd> in the `gdb` console.
-> To resume execution after a stop, type `continue` or `c`. To get a complete stack trace, type `bt`.
+> To resume execution after a stop, type `continue` or `c`. To get a stack trace for the currently
+> running thread, type `bt`, or for all running threads, `thread apply all bt` (long output!).
+> To exit `gdb` and stop the program, type `quit` or `q`.
 > A cheat sheet for `gdb` can be found [here](https://github.com/nicolasventer/GDB-cheat-sheet).
