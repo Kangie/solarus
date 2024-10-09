@@ -112,5 +112,9 @@ If you configured the build for debugging, you can use the standard
 ```
 cd build
 gdb --args solarus-run.exe /path/to/quest
+(gdb) run
 ```
-> **Tip:** To obtain a complete stack trace after a crash, type `bt full` in `gdb`.
+
+> **Tips:** To stop the program execution at any time, use <kbd>CTRL-c</kbd> in the `gdb` console.
+> To resume execution after a stop, type `continue` or `c`. To get a complete stack trace, type `bt`.
+> A cheat sheet for `gdb` can be found [here](https://github.com/nicolasventer/GDB-cheat-sheet).
