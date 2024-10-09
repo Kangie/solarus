@@ -175,6 +175,11 @@ Ground Entity::get_modified_ground() const {
  */
 void Entity::update_ground_observers() {
   SOL_PFUN();
+
+  if (!is_on_map()) {
+    return;
+  }
+
   // Update overlapping entities that are sensible to their ground.
   const Rectangle& box = get_bounding_box();
   std::vector<EntityPtr> entities_nearby;
@@ -545,6 +550,9 @@ const Heroes& Entity::get_heroes() const {
  */
 void Entity::remove_from_map() {
 
+  if (!is_on_map()) {
+    return;
+  }
   get_entities().remove_entity(*this);
 }
 
@@ -3310,6 +3318,10 @@ bool Entity::is_in_same_region(const Entity& other) const {
  * \return \c true if this entity and the point are in the same region.
  */
 bool Entity::is_in_same_region(const Point& xy) const {
+
+  if (!is_on_map()) {
+    return false;
+  }
 
   return get_entities().are_in_same_region(get_center_point(), xy);
 }
