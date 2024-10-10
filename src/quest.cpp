@@ -1166,6 +1166,7 @@ bool Quest::is_valid_file_name(const QString& name) {
       name == ".." ||                  // Don't go up in the file hierarchy.
       name.startsWith("../") ||
       name.endsWith("/..") ||
+      name.endsWith("/") ||
       name.contains("/../") ||
       name.trimmed() != name           // The file name should not begin or
                                        // end with whitespaces.
