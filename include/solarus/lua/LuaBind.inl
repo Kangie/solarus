@@ -97,22 +97,27 @@ static inline T to_type(lua_State * L, int index) {
  */
 template<typename T>
 std::shared_ptr<T> test_shared_exportable(lua_State * L, int index) {
-  // Abstract types can be any of their child types that are exported to Lua.
-  if constexpr (std::is_abstract_v<T>) {
-    std::string module_name;
-    void * data = lua_touserdata(L, index);
-    // Check for a Solarus userdata (which are shared_ptrs).
-    if (data && LuaContext::is_solarus_userdata(L, index, module_name)) {
-      auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
-      // Now we can rely on C++'s type information for the check.
-      return std::dynamic_pointer_cast<T>(*ptr);
+
+  void* data = nullptr;
+
+  if constexpr(!std::is_abstract_v<T>) {
+    // See if the metatable is exactly the expected type.
+    LuaTools::test_userdata(L, index, T::module_name);
+    if (data != nullptr) {
+      return *static_cast<std::shared_ptr<T> *>(data);
     }
-    return nullptr;
-  // Concrete types can be handled with a standard metatable test.
-  } else {
-    void * data = LuaTools::test_userdata(L, index, T::module_name);
-    return (data) ? *static_cast<std::shared_ptr<T> *>(data) : nullptr;
   }
+
+  // Maybe it is a child type.
+  std::string module_name;
+  data = lua_touserdata(L, index);
+  // Check for a Solarus userdata (which are shared_ptrs).
+  if (data != nullptr && LuaContext::is_solarus_userdata(L, index, module_name)) {
+    auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
+    // Now we can rely on C++'s type information for the check.
+    return std::dynamic_pointer_cast<T>(*ptr);
+  }
+  return nullptr;
 }
 
 /**
