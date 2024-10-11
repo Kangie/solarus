@@ -20,12 +20,10 @@
 #include "solarus/core/Point.h"
 #include "solarus/entities/EnemyAttack.h"
 #include "solarus/entities/Entity.h"
-#include "solarus/entities/Ground.h"
 #include "solarus/hero/HeroSprites.h"
 #include "solarus/core/ControlsPtr.h"
 #include "solarus/entities/CameraPtr.h"
 #include "solarus/core/Equipment.h"
-#include "solarus/core/SavegamePtr.h"
 
 #include <memory>
 #include <string>
@@ -321,12 +319,15 @@ class Hero: public Entity {
     void start_state_from_ground();
     void start_custom_state(const std::shared_ptr<CustomState>& custom_state);
 
-    const ControlsPtr &get_controls() const;
+    std::string get_falling_sound_id() const;
+    void set_falling_sound_id(const std::string& falling_sound_id);
+    std::string get_respawn_sound_id() const;
+    void set_respawn_sound_id(const std::string& respawn_sound_id);
+
+    const ControlsPtr& get_controls() const;
+    void set_controls(const ControlsPtr& controls);
     const CommandsEffects& get_commands_effects() const;
     CommandsEffects& get_commands_effects();
-
-    void set_controls(const ControlsPtr& controls);
-
 
     Equipment& get_equipment();
     const Equipment& get_equipment() const;
@@ -334,6 +335,7 @@ class Hero: public Entity {
     void place_on_map(Map& map);
     const CameraPtr& get_linked_camera() const;
     void set_linked_camera(const CameraPtr& camera);
+
   private:
 
     // state
@@ -410,6 +412,8 @@ class Hero: public Entity {
                                             * a special behavior, such as falling into a hole or walking on stairs */
     bool on_raised_blocks;                 /**< indicates that the hero is currently on
                                             * raised crystal blocks */
+    std::string falling_sound_id;          /**< Sound to play when the hero is falling in bad ground. */
+    std::string respawn_sound_id;          /**< Sound to play when the hero gets back from bad ground. */
 
     // ground
     Point last_solid_ground_coords;        /**< coordinates of the last hero position on a ground

@@ -269,12 +269,16 @@ bool Sound::exists(const std::string& sound_id) {
 
 /**
  * \brief Starts playing the specified sound.
- * \param sound_id Id of the sound to play.
+ * \param sound_id Id of the sound to play. An empty string does nothing.
  */
 void Sound::play(const std::string& sound_id) {
 
   if (device == nullptr) {
     // Sound might be disabled.
+    return;
+  }
+
+  if (sound_id.empty()) {
     return;
   }
 

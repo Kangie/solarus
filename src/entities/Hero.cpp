@@ -24,7 +24,6 @@
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
 #include "solarus/entities/Block.h"
-#include "solarus/entities/Bomb.h"
 #include "solarus/entities/Boomerang.h"
 #include "solarus/entities/Chest.h"
 #include "solarus/entities/Crystal.h"
@@ -32,7 +31,6 @@
 #include "solarus/entities/Destructible.h"
 #include "solarus/entities/Enemy.h"
 #include "solarus/entities/Entities.h"
-#include "solarus/entities/GroundInfo.h"
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Jumper.h"
 #include "solarus/entities/Sensor.h"
@@ -75,7 +73,6 @@
 #include <lua.hpp>
 #include <algorithm>
 #include <sstream>
-#include <utility>
 
 namespace Solarus {
 
@@ -115,6 +112,8 @@ Hero::Hero(const EquipmentPtr &equipment, const std::string& name):
   carry_height(18),
   delayed_teletransporter(nullptr),
   on_raised_blocks(false),
+  falling_sound_id("hero_falls"),
+  respawn_sound_id("message_end"),
   last_solid_ground_coords(0, 0),
   last_solid_ground_layer(0),
   target_solid_ground_callback(),
@@ -3073,13 +3072,45 @@ void Hero::start_state_from_ground() {
 }
 
 /**
- * @brief Starts the given custom Lua state.
- * @param custom_state The Lua state object.
+ * \brief Starts the given custom Lua state.
+ * \param custom_state The Lua state object.
  */
 void Hero::start_custom_state(const std::shared_ptr<CustomState>& custom_state) {
 
   custom_state->set_entity(*this);
   set_state(custom_state);
+}
+
+/**
+ * \brief Returns the sound to play when the hero is falling.
+ * \return The falling sound or an empty string.
+ */
+std::string Hero::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is falling.
+ * \param falling_sound_id The falling sound or an empty string.
+ */
+void Hero::set_falling_sound_id(const std::string& falling_sound_id) {
+  this->falling_sound_id = falling_sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero respawns from bad grounds.
+ * \return The respawning sound or an empty string.
+ */
+std::string Hero::get_respawn_sound_id() const {
+  return respawn_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero respawns from bad grounds.
+ * \param respawn_sound_id The respawning sound or an empty string.
+ */
+void Hero::set_respawn_sound_id(const std::string& respawn_sound_id) {
+  this->respawn_sound_id = respawn_sound_id;
 }
 
 /**

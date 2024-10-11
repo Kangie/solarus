@@ -198,6 +198,10 @@ void LuaContext::register_entity_module() {
       { "set_sword_sound_id", hero_api_set_sword_sound_id },
       { "get_shield_sprite_id", hero_api_get_shield_sprite_id },
       { "set_shield_sprite_id", hero_api_set_shield_sprite_id },
+      { "get_falling_sound_id", hero_api_get_falling_sound_id },
+      { "set_falling_sound_id", hero_api_set_falling_sound_id },
+      { "get_respawn_sound_id", hero_api_get_respawn_sound_id },
+      { "set_respawn_sound_id", hero_api_set_respawn_sound_id },
       { "is_blinking", hero_api_is_blinking },
       { "set_blinking", hero_api_set_blinking },
       { "is_invincible", hero_api_is_invincible },
@@ -2647,7 +2651,11 @@ int LuaContext::hero_api_get_sword_sound_id(lua_State* l) {
 
     const std::string& sound_id = hero.get_hero_sprites().get_sword_sound_id();
 
-    push_string(l, sound_id);
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
     return 1;
   });
 }
@@ -2661,7 +2669,7 @@ int LuaContext::hero_api_set_sword_sound_id(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Hero& hero = *check_hero(l, 1);
-    const std::string& sound_id = LuaTools::check_string(l, 2);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
 
     hero.get_hero_sprites().set_sword_sound_id(sound_id);
 
@@ -2698,6 +2706,82 @@ int LuaContext::hero_api_set_shield_sprite_id(lua_State* l) {
     const std::string& sprite_id = LuaTools::check_string(l, 2);
 
     hero.get_hero_sprites().set_shield_sprite_id(sprite_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_falling_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_falling_sound_id(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_falling_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_falling_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_falling_sound_id(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_falling_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_respawn_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_respawn_sound_id(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_respawn_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_respawn_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_respawn_sound_id(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_respawn_sound_id(sound_id);
 
     return 0;
   });

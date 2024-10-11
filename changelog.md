@@ -35,6 +35,7 @@ The multiplayer update!
 
 * Joypad input events now provide button names instead of numbers.
 * `hero:teleport()` now also teleports the camera instead of recreating one.
+* `hero:get_sword_sound_id()` now returns `nil` if there is no sword sound.
 
 #### Changes that do not introduce incompatibilities
 
@@ -51,6 +52,7 @@ The multiplayer update!
 * Add a method `entity:set_name()` (#1527).
 * Add methods `hero:get/set_push_delay()` (#1524).
 * Add methods `hero:get/set_carry_height()`.
+* Add methods to customize hero falling and respawning sounds (#1645).
 * Add a method `game:get_values()` (#1552).
 * Add a method `movement:get_type()` (#840).
 * Allow to disable the spin attack (#771).
