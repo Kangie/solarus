@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/console.h"
+#include "editor_settings.h"
 #include "quest_runner.h"
 #include <QDebug>
 #include <QFont>
@@ -57,9 +58,9 @@ Console::Console(QWidget* parent) :
   ui.setupUi(this);
 
   // Font.
-  QFont font("DejaVu Sans Mono");
-  font.setPointSize(9);
-  font.setStyleHint(QFont::Monospace);
+  EditorSettings settings;
+  QFont font(settings.get_value_string(EditorSettings::font_family));
+  font.setPointSize(settings.get_value_int(EditorSettings::font_size));
   ui.log_view->setFont(font);
   ui.command_field->setFont(font);
 }
@@ -91,8 +92,7 @@ void Console::add_message(const QString& log_level, const QString& message) {
  */
 void Console::add_html(const QString& html) {
 
-  const QString &wrapped = QString(
-    "<pre style=\"font-family: 'DejaVu Sans Mono', monospace\">%1</pre>").arg(html);
+  const QString &wrapped = QString("<pre>%1</pre>").arg(html);
   ui.log_view->appendHtml(wrapped);
 }
 

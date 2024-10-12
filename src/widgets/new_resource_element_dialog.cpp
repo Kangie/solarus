@@ -256,6 +256,8 @@ void NewResourceElementDialog::done(int result) {
       settings.set_value(EditorSettings::create_scripts_with_default_code,
                          ui.create_with_default_code_check_box->isChecked());
     }
+    settings.set_value(EditorSettings::last_author,
+                       ui.author_line_edit->text());
     if (ui.data_file_license_line_edit != nullptr) {
       settings.set_value(EditorSettings::last_license_data,
                          ui.data_file_license_line_edit->text());
