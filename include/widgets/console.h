@@ -67,9 +67,6 @@ private:
   QString colorize_output(const QString& log_level, const QString& message);
   void add_html(const QString& html);
 
-  QStringList get_quest_lua_commands_from_settings() const;
-  bool apply_settings();
-
   Ui::Console ui;                      /**< The widgets. */
   QPointer<QuestRunner> quest_runner;  /**< The quest execution. */
   QMap<int, QString> pending_commands; /**< Commands for which we are waiting a result. */

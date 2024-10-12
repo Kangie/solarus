@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "editor_settings.h"
 #include "quest_runner.h"
-#include "settings.h"
 #include <QApplication>
 #include <QSize>
 #include <QTimer>
@@ -82,32 +82,33 @@ QStringList QuestRunner::create_arguments(
 
   QStringList arguments;
 
-  Settings settings;
+  EditorSettings settings;
 
-  // -run quest_path
+  // Tell that we want to run the quest.
   arguments << "-run";
 
+  // Run a specific map if any.
   if (!map_id.isEmpty()) {
     arguments << QString("-map=%1").arg(map_id);
   }
 
-  // no-audio
-  if (settings.value("no_audio", false).toBool()) {
+  // Enable or disable audio.
+  if (settings.get_value_bool(EditorSettings::no_audio)) {
     arguments << "-no-audio";
   }
 
-  // force-software-rendering
-  if (settings.value("force_software_rendering", false).toBool()) {
+  // Software rendering.
+  if (settings.get_value_bool(EditorSettings::force_software_rendering)) {
     arguments << "-force-software-rendering";
   }
 
-  // suspend-unfocused
-  if (!settings.value("suspend_unfocused", true).toBool()) {
+  // Suspend the game when the window is unfocused.
+  if (!settings.get_value_bool(EditorSettings::suspend_unfocused)) {
     arguments << "-suspend-unfocused=no";
   }
 
-  // quest-size
-  const QSize size = settings.value("quest_size").toSize();
+  // Quest size override.
+  const QSize size = settings.get_value_size(EditorSettings::quest_size);
   if (size.isValid()) {
     QString size_str = QString::number(size.width()) + "x" +
         QString::number(size.height());

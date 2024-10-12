@@ -15,7 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/console_line_edit.h"
-#include "settings.h"
+#include "editor_settings.h"
 #include <lua.hpp>
 #include <QCompleter>
 #include <QKeyEvent>
@@ -69,8 +69,8 @@ ConsoleLineEdit::ConsoleLineEdit(QWidget* parent) :
   history_position(0),
   current_command() {
 
-  Settings settings;
-  history = settings.value("console_history").toStringList();
+  EditorSettings settings;
+  history = settings.get_value_string_list(EditorSettings::console_history);
 
   set_history_position(history.size());  // Start after the history.
 
@@ -189,8 +189,8 @@ void ConsoleLineEdit::command_executed(const QString& command) {
     }
 
     // Save the modified history.
-    Settings settings;
-    settings.setValue("console_history", history);
+    EditorSettings settings;
+    settings.set_value(EditorSettings::console_history, history);
   }
 
   // Update the history position.
