@@ -39,6 +39,7 @@ public:
 
   void clear();
   void add_message(const QString& log_level, const QString& message);
+  void add_line(const QString& line);
 
   void set_quest_runner(QuestRunner& quest_runner);
 
@@ -64,11 +65,14 @@ private:
   void parse_output(const QString& line);
   bool detect_command_result(const QString& log_level, const QString& message);
   void detect_setting_change(const QString& log_level, const QString& message);
-  QString colorize_output(const QString& log_level, const QString& message);
-  void add_html(const QString& html);
+  QString colorize_line(const QString& line);
+  void update_ui_with_new_messages();
 
   Ui::Console ui;                      /**< The widgets. */
   QPointer<QuestRunner> quest_runner;  /**< The quest execution. */
+  QStringList raw_content;             /**< Raw text before colorization. */
+  int last_new_message_index;          /**< Index of the last string from raw content that
+                                        * was formatted and added to the console. */
   QMap<int, QString> pending_commands; /**< Commands for which we are waiting a result. */
   int output_command_id;               /**< Id of the command we are reading the result of
                                         * (-1 if none). */

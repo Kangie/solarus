@@ -35,8 +35,9 @@
 * Move old Solarus Launcher to this repository.
 * Use monospaced font consistently across platforms in the GUI console.
 * Wrap lines with `<pre/>` tags to preserve spaces in the GUI console.
+* Add support of ANSI color codes to the GUI console.
 * Preserve empty lines from the engine in the GUI console.
-* Only remove _trailing_ '\n' characters in the GUI console.
+* Only remove trailing '\n' characters in the GUI console.
 
 ## Solarus Quest Editor 1.6.5 (2021-04-06)
 

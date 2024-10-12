@@ -16,6 +16,7 @@
  */
 #include "widgets/console.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "quest_runner.h"
 #include <QDebug>
 #include <QFont>
@@ -32,17 +33,70 @@ namespace {
  * @return The HTML colorized line.
  */
 QString colorize(const QString& line, const QString& color) {
-
   return QString("<span style=\"color: %1\">%2</span>").arg(color, line.toHtmlEscaped());
 }
 
-const QRegularExpression output_regexp("^\\[Solarus\\] \\[(\\d+)\\] (\\w*): (.+)$");
-const QRegularExpression output_command_result_begin_regexp("^====== Begin Lua command #(\\d+) ======$");
-const QRegularExpression output_command_result_end_regexp("^====== End Lua command #(\\d+): (\\w+) ======$");
-const QRegularExpression output_simplify_console_error_regexp("In Lua command: \\[string \".*\"\\]:\\d+: ");
-const QRegularExpression output_setting_fullscreen_regexp("^Fullscreen: (\\w+)$");
+/**
+ * @brief Replaces ANSI color codes by HTML color tags.
+ * @param line A line of output.
+ * @return The line with ANSI color codes replaced.
+ */
+QString ansi_to_html(const QString& text) {
 
+  static const QMap<int, QString> ansi_to_html_colors = {
+      {30, "#000000"},  // Black.
+      {31, "#ff0000"},  // Red.
+      {32, "#00ff00"},  // Green.
+      {33, "#ffff00"},  // Yellow.
+      {34, "#0000ff"},  // Blue.
+      {35, "#ff00ff"},  // Magenta.
+      {36, "#00ffff"},  // Cyan.
+      {37, "#d3d3d3"},  // Light Gray.
+      {90, "#808080"},  // Dark Gray.
+      {91, "#ff8080"},  // Light Red.
+      {92, "#80ff80"},  // Light Green.
+      {93, "#ffff80"},  // Light Yellow.
+      {94, "#8080ff"},  // Light Blue.
+      {95, "#ff80ff"},  // Light Magenta.
+      {96, "#80ffff"},  // Light Cyan.
+      {97, "#ffffff"}   // White.
+  };
+
+  static const QRegularExpression regex("\\033\\[(\\d+)m");
+  QRegularExpressionMatchIterator i = regex.globalMatch(text);
+
+  QString result;
+  int last_position = 0;
+  bool in_span = false;
+
+  while (i.hasNext()) {
+    QRegularExpressionMatch match = i.next();
+    const int color_code = match.captured(1).toInt();
+
+    // Append the text before the ANSI code.
+    result += text.mid(last_position, match.capturedStart() - last_position).toHtmlEscaped();
+
+    // Insert the HTML <span> tag with the corresponding color.
+    if (ansi_to_html_colors.contains(color_code)) {
+      if (in_span) {
+        result += "</span>";
+      }
+      result += QString("<span style=\"color:%1;\">").arg(ansi_to_html_colors[color_code]);
+      in_span = true;
+    }
+    last_position = match.capturedEnd();
+  }
+
+  // Append the remaining text after the last escape code.
+  result += text.mid(last_position);
+  if (in_span) {
+    result += "</span>";
+  }
+
+  return result;
 }
+
+}  // Anonymous namespace.
 
 /**
  * @brief Creates a console view.
@@ -51,6 +105,8 @@ const QRegularExpression output_setting_fullscreen_regexp("^Fullscreen: (\\w+)$"
 Console::Console(QWidget* parent) :
   QWidget(parent),
   quest_runner(),
+  raw_content(),
+  last_new_message_index(-1),
   pending_commands(),
   output_command_id(-1),
   command_enabled(true) {
@@ -63,6 +119,16 @@ Console::Console(QWidget* parent) :
   font.setPointSize(settings.get_value_int(EditorSettings::font_size));
   ui.log_view->setFont(font);
   ui.command_field->setFont(font);
+
+  const EditorStyle* style = qobject_cast<EditorStyle*>(qApp->style());
+  if (style != nullptr) {
+    connect(style, &EditorStyle::actual_mode_changed, this, [this]() {
+      // Recompute all colorization.
+      ui.log_view->clear();
+      last_new_message_index = -1;
+      update_ui_with_new_messages();
+    });
+  }
 }
 
 /**
@@ -71,29 +137,46 @@ Console::Console(QWidget* parent) :
 void Console::clear() {
 
   ui.log_view->clear();
+  raw_content.clear();
+  last_new_message_index = -1;
 }
 
 /**
- * @brief Adds a message to the console.
+ * @brief Adds a message to the console with a log level.
  * @param log_level Log level of the message.
- * @param message The text to add.
+ * @param message The text to add, possibly with multiple lines.
  */
 void Console::add_message(const QString& log_level, const QString& message) {
 
   QStringList lines = message.split("\n");
-  for (const QString& line : lines) {
-    add_html(colorize_output(log_level, line));
+  for (QString line : lines) {
+    if (!line.isEmpty()) {
+      line = log_level + ": " + line;
+    }
+    raw_content.append(line);
   }
+  update_ui_with_new_messages();
 }
 
 /**
- * @brief Adds some HTML pre-formatted text to the console wrapped in a <pre/> tag.
- * @param html The content to add.
+ * @brief Adds a line of text to the console.
  */
-void Console::add_html(const QString& html) {
+void Console::add_line(const QString& line) {
+  raw_content.append(line);
+  update_ui_with_new_messages();
+}
 
-  const QString &wrapped = QString("<pre>%1</pre>").arg(html);
-  ui.log_view->appendHtml(wrapped);
+/**
+ * @brief Formats and shows lines that are not yet in the console.
+ */
+void Console::update_ui_with_new_messages() {
+
+  while (raw_content.size() > last_new_message_index + 1) {
+    ++last_new_message_index;
+    QString raw_line = raw_content.at(last_new_message_index);
+    const QString &wrapped = QString("<pre>%1</pre>").arg(colorize_line(raw_line));
+    ui.log_view->appendHtml(wrapped);
+  }
 }
 
 /**
@@ -247,8 +330,11 @@ int Console::execute_command(const QString& command) {
  */
 void Console::parse_output(const QString& line) {
 
+  static const QRegularExpression output_regexp("^\\[Solarus\\] \\[(\\d+)\\] (\\w*): (.+)$");
+  static const QRegularExpression output_simplify_console_error_regexp("In Lua command: \\[string \".*\"\\]:\\d+: ");
+
   if (line.isEmpty()) {
-    add_html("");
+    add_line("");
     return;
   }
 
@@ -260,7 +346,7 @@ void Console::parse_output(const QString& line) {
     // 4 captures expected: full line, time, log level, message.
     QStringList captures = match_result.capturedTexts();
     if (captures.size() != 4) {
-      add_html(line.toHtmlEscaped());
+      add_line(line.toHtmlEscaped());
       return;
     }
 
@@ -280,7 +366,7 @@ void Console::parse_output(const QString& line) {
 
   if (log_level.isEmpty()) {
     // Not a line from Solarus, probably one from the quest.
-    add_html(line.toHtmlEscaped());
+    add_line(line.toHtmlEscaped());
     return;
   }
 
@@ -293,12 +379,10 @@ void Console::parse_output(const QString& line) {
   }
 
   // Add color.
-  QString line_html = colorize_output(log_level, message);
-  if (line_html.isEmpty()) {
+  if (message.isEmpty()) {
     return;
   }
-
-  add_html(line_html);
+  add_line(log_level + ": " + message);
 }
 
 /**
@@ -311,6 +395,9 @@ void Console::parse_output(const QString& line) {
 bool Console::detect_command_result(
     const QString& log_level,
     const QString& message) {
+
+  static const QRegularExpression output_command_result_begin_regexp("^====== Begin Lua command #(\\d+) ======$");
+  static const QRegularExpression output_command_result_end_regexp("^====== End Lua command #(\\d+): (\\w+) ======$");
 
   QRegularExpressionMatch match_result;
 
@@ -329,7 +416,7 @@ bool Console::detect_command_result(
     // We show the command only when receiving its results,
     // to make sure it is displayed just before its results.
     QString command = pending_commands.take(output_command_id);
-    add_html(QString("&gt; %1").arg(command.toHtmlEscaped()));
+    add_line(QString("&gt; %1").arg(command.toHtmlEscaped()));
 
     return true;
   }
@@ -380,6 +467,8 @@ void Console::detect_setting_change(
     const QString& log_level,
     const QString& message) {
 
+  static const QRegularExpression output_setting_fullscreen_regexp("^Fullscreen: (\\w+)$");
+
   if (log_level != "Info") {
     return;
   }
@@ -397,40 +486,40 @@ void Console::detect_setting_change(
 /**
  * @brief Returns a colorized version of a Solarus output line.
  *
- * Colors may be added.
+ * Colors may be added if a log level or ANSI sequences are detected.
  *
- * @param log_level The Solarus log level of the line.
- * @param message The rest of the message.
+ * @param line An output line.
  * @return The HTML decorated line.
  */
-QString Console::colorize_output(const QString& log_level, const QString& message) {
+QString Console::colorize_line(const QString& message) {
 
   if (message.isEmpty()) {
     return message;
   }
 
-  QString decorated_line = log_level + ": " + message;
-
   // Colorize warnings and errors.
-  if (log_level == "Debug") {
-    decorated_line = colorize(decorated_line, "#808080");
+  QString decorated_line = message;
+  const EditorStyle* style = qobject_cast<EditorStyle*>(qApp->style());
+  if (style != nullptr) {
+    if (message.startsWith("Debug: ")) {
+      decorated_line = colorize(decorated_line, style->get_mode_info().log_debug_color.name());
+    }
+    else if (message.startsWith("Info: ")) {
+      decorated_line = colorize(decorated_line, style->get_mode_info().log_info_color.name());
+    }
+    else if (message.startsWith("Warning: ")) {
+      decorated_line = colorize(decorated_line, style->get_mode_info().log_warning_color.name());
+    }
+    else if (message.startsWith("Error: ")) {
+      decorated_line = colorize(decorated_line, style->get_mode_info().log_error_color.name());
+    }
+    else if (message.startsWith("Fatal: ")) {
+      decorated_line = colorize(decorated_line, style->get_mode_info().log_error_color.name());
+    }
   }
-  else if (log_level == "Info") {
-    decorated_line = colorize(decorated_line, "#0000ff");
-  }
-  else if (log_level == "Warning") {
-    decorated_line = colorize(decorated_line, "#b05000");
-  }
-  else if (log_level == "Error") {
-    decorated_line = colorize(decorated_line, "#ff0000");
-  }
-  else if (log_level == "Fatal") {
-    decorated_line = colorize(decorated_line, "#ff0000");
-  }
-  else {
-    // Unknown log level.
-    decorated_line = message;
-  }
+
+  // Also replace ANSI color codes if any.
+  decorated_line = ansi_to_html(decorated_line);
 
   return decorated_line;
 }

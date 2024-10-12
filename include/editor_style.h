@@ -44,6 +44,10 @@ struct ModeInfo {
   QColor comment_color;         /**< Syntax color for comments. */
   QColor current_line_background_color;
                                 /**< Color for the current line background. */
+  QColor log_debug_color;       /**< Text color for debug log level. */
+  QColor log_info_color;        /**< Text color for info log level. */
+  QColor log_warning_color;     /**< Text color for warning log level. */
+  QColor log_error_color;       /**< Text color for error log level. */
 };
 
 /**

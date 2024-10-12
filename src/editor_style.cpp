@@ -13,10 +13,14 @@ const std::map<Mode, ModeInfo> mode_info = {
         {
             Mode::LIGHT,
             ":/themes/light.json",
-            Qt::darkRed,                     // Lua keyword.
-            Qt::blue,                        // Literal string.
-            Qt::darkGreen,                   // Comment.
-            QColor(Qt::yellow).lighter(160)  // Current line.
+            Qt::darkRed,                      // Lua keyword.
+            Qt::blue,                         // Literal string.
+            Qt::darkGreen,                    // Comment.
+            QColor(Qt::yellow).lighter(160),  // Current line.
+            QColor("#909090"),                // Debug log text.
+            QColor("#0000ff"),                // Info log text.
+            QColor("#b05000"),                // Warning log text.
+            Qt::red,                          // Error log text.
         }
     },
     {
@@ -27,7 +31,11 @@ const std::map<Mode, ModeInfo> mode_info = {
             QColor(255, 128, 128),  // Lua keyword.
             Qt::cyan,               // Literal string.
             QColor(128, 255, 128),  // Comment.
-            QColor(64, 64, 0)       // Current line.
+            QColor(64, 64, 0),      // Current line.
+            QColor("#909090"),      // Debug log text.
+            QColor("#4ab9e9"),      // Info log text.
+            QColor("#ffcd1e"),      // Warning log text.
+            QColor("#ef5151"),      // Error log text.
         }
     },
 };
