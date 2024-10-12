@@ -36,7 +36,7 @@
 #include "quest.h"
 #include "refactoring.h"
 #include "version.h"
-#include <solarus/gui/quest_runner.h>
+#include "quest_runner.h"
 #include <QActionGroup>
 #include <QCloseEvent>
 #include <QDebug>
@@ -236,7 +236,7 @@ MainWindow::MainWindow(QWidget* parent) :
   connect(ui.tab_widget, &EditorTabs::refactoring_requested,
           this, &MainWindow::refactoring_requested);
   connect(ui.tab_widget, &EditorTabs::clear_console,
-          ui.console_widget, &SolarusGui::Console::clear);
+          ui.console_widget, &SolarusEditor::Console::clear);
   connect(ui.tab_widget, &EditorTabs::log_message_to_console,
           this, &MainWindow::log_message_to_console);
   connect(ui.tab_widget, &EditorTabs::run_map_requested,
@@ -245,9 +245,9 @@ MainWindow::MainWindow(QWidget* parent) :
   connect(grid_size, &PairSpinBox::value_changed,
           this, &MainWindow::change_grid_size);
 
-  connect(&quest_runner, &SolarusGui::QuestRunner::running,
+  connect(&quest_runner, &SolarusEditor::QuestRunner::running,
           this, &MainWindow::quest_running);
-  connect(&quest_runner, &SolarusGui::QuestRunner::finished,
+  connect(&quest_runner, &SolarusEditor::QuestRunner::finished,
           this, &MainWindow::quest_finished);
 
   connect(&quest, &Quest::current_music_changed,

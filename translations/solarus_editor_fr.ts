@@ -7331,14 +7331,14 @@ Voulez-vous recharger l&apos;image ?</translation>
     </message>
 </context>
 <context>
-    <name>SolarusGui::Console</name>
+    <name>SolarusEditor::Console</name>
     <message>
         <source>Run Lua code to the quest</source>
         <translation type="vanished">Exécuter du code Lua dans la quête</translation>
     </message>
 </context>
 <context>
-    <name>SolarusGui::QuestRunner</name>
+    <name>SolarusEditor::QuestRunner</name>
     <message>
         <source>Failed to run quest</source>
         <translation type="vanished">Impossible d&apos;exécuter la quête</translation>
