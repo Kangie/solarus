@@ -317,8 +317,13 @@ void LuaContext::register_entity_module() {
   std::vector<luaL_Reg> destination_methods = {
       { "get_starting_location_mode", destination_api_get_starting_location_mode },
       { "set_starting_location_mode", destination_api_set_starting_location_mode },
-      { "is_default", destination_api_is_default },
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    destination_methods.insert(destination_methods.end(), {
+      { "is_default", destination_api_is_default },
+      { "get_direction", destination_api_get_direction},
+    });
+  }
 
   destination_methods.insert(destination_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -4237,6 +4242,26 @@ int LuaContext::destination_api_is_default(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of destination:get_direction().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::destination_api_get_direction(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Destination& destination = *check_destination(l, 1);
+
+    const int direction = destination.get_direction();
+    if (direction == -1) {
+      lua_pushnil(l);
+    } else {
+      lua_pushinteger(l, direction);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Returns whether a value is a userdata of type teletransporter.
  * \param l A Lua context.
  * \param index An index in the stack.
@@ -4907,7 +4932,7 @@ int LuaContext::block_api_get_direction(lua_State* l) {
     const int direction = block.get_direction();
 
     if (direction == -1) {
-      // -1 means no direction, can be pushed//pulled towards any direction.
+      // -1 means no direction, can be pushed/pulled towards any direction.
       lua_pushnil(l);
     }
     else {
@@ -7626,7 +7651,7 @@ int LuaContext::custom_entity_api_get_direction(lua_State* l) {
   return state_boundary_handle(l, [&] {
     const CustomEntity& entity = *check_custom_entity(l, 1);
 
-    lua_pushinteger(l, entity.get_sprites_direction());
+    lua_pushinteger(l, entity.get_direction());
     return 1;
   });
 }

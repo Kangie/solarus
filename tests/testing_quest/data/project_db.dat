@@ -119,6 +119,7 @@ map{ id = "bugs/1617_crash_disabled_chest", description = "#1617: Crash when sta
 map{ id = "bugs/1619_camera_obstacles", description = "#1619: Entities should not block the camera" }
 map{ id = "bugs/1628_hero_set_direction_crash", description = "#1628: Crash when hero:set_direction() has an invalid parameter" }
 map{ id = "bugs/1635_timer_set_remaining_time", description = "#1635: timer:set_remaining_time()" }
+map{ id = "bugs/1639_destination_get_direction", description = "#1639: destination:get_direction()" }
 map{ id = "bugs/1641_crash_assign_item", description = "#1641: Crash when assigning an item the player does not have" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
@@ -697,6 +698,8 @@ file{ path = "maps/bugs/1628_hero_set_direction_crash.dat", author = "Christopho
 file{ path = "maps/bugs/1628_hero_set_direction_crash.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1635_timer_set_remaining_time.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1635_timer_set_remaining_time.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1639_destination_get_direction.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1639_destination_get_direction.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1641_crash_assign_item.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1641_crash_assign_item.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }

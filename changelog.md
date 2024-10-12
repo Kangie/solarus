@@ -49,6 +49,7 @@ The multiplayer update!
 * Add a method `surface:save()` to save a surface to a PNG file (#1215).
 * Add functions `sol.main.rawget/rawset()` (#1424).
 * Add a method `destination:is_default()`.
+* Add a methode `destination:get_direction()` (#1639).
 * Add a method `entity:set_name()` (#1527).
 * Add methods `hero:get/set_push_delay()` (#1524).
 * Add methods `hero:get/set_carry_height()`.

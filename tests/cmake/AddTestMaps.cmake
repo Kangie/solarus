@@ -202,6 +202,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1619_camera_obstacles"
   "bugs/1628_hero_set_direction_crash"
   "bugs/1635_timer_set_remaining_time"
+  "bugs/1639_destination_get_direction"
   "bugs/1641_crash_assign_item"
 )
 

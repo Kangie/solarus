@@ -1021,6 +1021,7 @@ class LuaContext {
       destination_api_get_starting_location_mode,
       destination_api_set_starting_location_mode,
       destination_api_is_default,
+      destination_api_get_direction,
       teletransporter_api_get_sound,
       teletransporter_api_set_sound,
       teletransporter_api_get_transition,

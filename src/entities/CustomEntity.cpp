@@ -102,19 +102,6 @@ const std::string& CustomEntity::get_model() const {
 }
 
 /**
- * \brief Returns the direction of this custom entity.
- *
- * This is the direction applied to the sprites unless it is overridden
- * for particular sprites.
- *
- * \return The direction.
- */
-int CustomEntity::get_sprites_direction() const {
-
-  return get_direction();
-}
-
-/**
  * \brief Sets the direction of this custom entity.
  *
  * It will be applied to sprites that have such a direction.
