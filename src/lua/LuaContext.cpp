@@ -2594,22 +2594,23 @@ bool LuaContext::on_npc_interaction_item(Npc& npc, EquipmentItem& item_used) {
 
 /**
  * \brief Calls the on_interaction() method of the object on top of the stack.
- * \return true if an interaction occurred.
+ * \param hero The hero who triggers the interaction.
+ * \return \c true if an interaction occurred.
  */
-bool LuaContext::on_interaction() {
+bool LuaContext::on_interaction(Hero& hero) {
   check_callback_thread();
   if (find_method("on_interaction")) {
-    call_function(1, 0, "on_interaction");
+    push_hero(current_l, hero);
+    call_function(2, 0, "on_interaction");
     return true;
   }
-
   return false;
 }
 
 /**
  * \brief Calls the on_interaction_item() method of the object on top of the stack.
  * \param item_used The equipment item used.
- * \return true if an interaction occurred.
+ * \return \c true if an interaction occurred.
  */
 bool LuaContext::on_interaction_item(EquipmentItem& item) {
   check_callback_thread();

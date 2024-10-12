@@ -354,12 +354,13 @@ or when because another entity changes it.
   \c nil means empty, that is, there is no ground at this point on the
   current layer.
 
-\subsection lua_api_custom_entity_on_interaction custom_entity:on_interaction()
+\subsection lua_api_custom_entity_on_interaction custom_entity:on_interaction(hero)
 
 Called when the \ref lua_api_hero "hero" interacts
 with this custom entity, that is,
 when the player presses the \ref lua_api_game_overview_commands "action command"
 while facing this custom entity.
+- \c hero (\ref lua_api_hero "hero"): The hero who is triggering the interaction.
 
 \remark This event is also available with
   \ref lua_api_npc_on_interaction "NPCs".

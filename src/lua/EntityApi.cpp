@@ -8262,7 +8262,7 @@ void LuaContext::entity_on_movement_finished(Entity& entity) {
  * \param entity A map entity.
  * \return \c true if an interaction occurred.
  */
-bool LuaContext::entity_on_interaction(Entity& entity, Hero& /*hero*/) {
+bool LuaContext::entity_on_interaction(Entity& entity, Hero& hero) {
 
   if (!userdata_has_field(entity, "on_interaction")) {
     return false;
@@ -8272,7 +8272,7 @@ bool LuaContext::entity_on_interaction(Entity& entity, Hero& /*hero*/) {
   check_callback_thread();
 
   push_entity(current_l, entity);
-  bool exists = on_interaction();
+  bool exists = on_interaction(hero);
   lua_pop(current_l, 1);
 
 

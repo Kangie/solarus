@@ -1553,7 +1553,7 @@ private:
     void on_activated_repeat(Entity& entity);
     void on_inactivated(Entity *opt_entity);
     void on_left(Entity* opt_entity);
-    bool on_interaction();
+    bool on_interaction(Hero& hero);
     bool on_interaction_item(EquipmentItem& item_used);
     void on_npc_interaction(Npc& npc);
     bool on_npc_interaction_item(Npc& npc, EquipmentItem& item_used);

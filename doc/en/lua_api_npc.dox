@@ -134,6 +134,7 @@ Called when the \ref lua_api_hero "hero" interacts
 (the player pressed the \ref lua_api_game_overview_commands "action command")
 in front of this %NPC,
 if the %NPC has the property to notify its own Lua script.
+- \c hero (\ref lua_api_hero "hero"): The hero who is triggering the interaction.
 
 \subsection lua_api_npc_on_interaction_item npc:on_interaction_item(item_used)
 

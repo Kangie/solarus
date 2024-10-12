@@ -10,7 +10,9 @@ function map:on_opening_transition_finished()
   game:simulate_command_pressed("action")
 end
 
-function sign:on_interaction()
+function sign:on_interaction(hero)
+  assert_equal(hero, map:get_hero())
+  assert_equal(hero, game:get_hero())
   game:simulate_command_pressed("right")
   sol.timer.start(map, 200, function()
     assert_equal(game:get_command_effect("action"), "swim")
