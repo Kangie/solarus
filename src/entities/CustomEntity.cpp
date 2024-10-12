@@ -1266,6 +1266,7 @@ bool CustomEntity::get_follow_streams() const {
  */
 void CustomEntity::set_follow_streams(bool follow_streams) {
   this->follow_streams = follow_streams;
+  check_collision_with_detectors();
 }
 
 /**
