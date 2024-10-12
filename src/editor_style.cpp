@@ -2,6 +2,7 @@
 #include "editor_style.h"
 #include <map>
 #include <QApplication>
+#include <QWidget>
 
 namespace SolarusEditor {
 
@@ -110,6 +111,30 @@ Mode EditorStyle::get_os_mode() {
 
   // TODO Qt6 return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark ? Theme::DARK : Theme::LIGHT;
   return Mode::DARK;
+}
+
+EditorStyle::Status EditorStyle::widgetStatus(QWidget const* widget) const {
+
+  if (widget == nullptr) {
+    return Status::Default;
+  }
+  const QVariant& status = widget->property("status");
+  return status.isValid() ? status.value<Status>() : Status::Default;
+}
+
+QColor const& EditorStyle::textFieldBackgroundColor(MouseState const mouse, Status const status) const {
+
+  switch (status) {
+  case Status::Error:
+    return theme().statusColorError;
+  case Status::Warning:
+    return get_mode_info().current_line_background_color;
+  case Status::Success:
+  case Status::Info:
+  case Status::Default:
+  default:
+    return QlementineStyle::textFieldBackgroundColor(mouse, status);
+  }
 }
 
 }  // namespace Solarus Editor

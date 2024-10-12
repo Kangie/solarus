@@ -74,6 +74,10 @@ public:
 signals:
   void actual_mode_changed(Mode mode);
 
+protected:
+  Status widgetStatus(QWidget const* widget) const override;
+  QColor const& textFieldBackgroundColor(MouseState const mouse, Status const status) const override;
+
 private:
   Mode mode = Mode::AUTOMATIC;         /**< Theme selected by the user. */
   Mode actual_mode = Mode::AUTOMATIC;  /**< Automatic replaced by the final one. */

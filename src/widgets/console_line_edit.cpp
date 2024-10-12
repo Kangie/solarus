@@ -16,6 +16,7 @@
  */
 #include "widgets/console_line_edit.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include <lua.hpp>
 #include <QCompleter>
 #include <QKeyEvent>
@@ -80,10 +81,10 @@ ConsoleLineEdit::ConsoleLineEdit(QWidget* parent) :
     QString text_copy = text;
     int cursor_position = cursorPosition();
     if (validator()->validate(text_copy, cursor_position) == QValidator::Acceptable) {
-      setStyleSheet("");
+      setProperty("status", {});
     }
     else {
-      setStyleSheet("background-color: #ffffc0");
+      setProperty("status", QVariant::fromValue(EditorStyle::Status::Warning));
     }
   });
 
