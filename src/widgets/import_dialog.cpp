@@ -270,8 +270,8 @@ void ImportDialog::update_import_button() {
 
   import_button->setEnabled(count > 0);
   import_button->setText(tr("Import 1 item"));
-  if (count <= 1) {
-  } else {
+
+  if (count > 1) {
     import_button->setText(tr("Import %1 items").arg(count));
   }
 }
@@ -437,18 +437,7 @@ bool ImportDialog::import_file(const QFileInfo& source_info, bool multiple) {
   }
 
   // Handle declared resources.
-  ResourceType resource_type;
-  QString element_id;
-  if (source_quest.is_resource_element(source_path, resource_type, element_id)) {
-    const QString& description = source_quest.get_database().get_description(resource_type, element_id);
-    ResourceType destination_resource_type;
-    QString destination_element_id;
-    if (destination_quest.is_potential_resource_element(destination_path, destination_resource_type, destination_element_id) &&
-        destination_resource_type == resource_type) {
-      QuestDatabase& destination_database = destination_quest.get_database();
-      destination_database.add(destination_resource_type, destination_element_id, description);
-    }
-  }
+  import_resource_element(source_path, destination_path);
 
   paths_to_select << destination_path;
   return true;
@@ -521,6 +510,9 @@ bool ImportDialog::import_dir(const QFileInfo& source_info, bool multiple) {
   // Create the directory itself.
   FileTools::create_directories(destination_path);
 
+  // Check if directory is a declared resource.
+  import_resource_element(source_path, destination_path);
+
   // Copy children.
   const QStringList& source_children_file_names = QDir(source_path).entryList(
         QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
@@ -558,6 +550,28 @@ void ImportDialog::import_path_meta_information(
     source_info = source_database.get_file_info(source_relative_path);
   }
   destination_database.set_file_info(destination_relative_path, source_info);
+}
+
+/**
+ * @brief Handles declared resource imported from a source file or directory.
+ * @param source_path File or directory in the source quest.
+ * @param destination_path File or directory in the destination quest.
+ */
+void ImportDialog::import_resource_element(
+    const QString& source_path, const QString& destination_path) {
+
+  ResourceType resource_type;
+  QString element_id;
+  if (source_quest.is_resource_element(source_path, resource_type, element_id)) {
+    const QString& description = source_quest.get_database().get_description(resource_type, element_id);
+    ResourceType destination_resource_type;
+    QString destination_element_id;
+    if (destination_quest.is_potential_resource_element(destination_path, destination_resource_type, destination_element_id) &&
+        destination_resource_type == resource_type) {
+      QuestDatabase& destination_database = destination_quest.get_database();
+      destination_database.add(destination_resource_type, destination_element_id, description);
+    }
+  }
 }
 
 /**
