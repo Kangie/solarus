@@ -44,6 +44,10 @@ struct ModeInfo {
   QColor comment_color;         /**< Syntax color for comments. */
   QColor current_line_background_color;
                                 /**< Color for the current line background. */
+  QColor log_debug_color;       /**< Text color for debug log level. */
+  QColor log_info_color;        /**< Text color for info log level. */
+  QColor log_warning_color;     /**< Text color for warning log level. */
+  QColor log_error_color;       /**< Text color for error log level. */
 };
 
 /**
@@ -69,6 +73,10 @@ public:
 
 signals:
   void actual_mode_changed(Mode mode);
+
+protected:
+  Status widgetStatus(QWidget const* widget) const override;
+  QColor const& textFieldBackgroundColor(MouseState const mouse, Status const status) const override;
 
 private:
   Mode mode = Mode::AUTOMATIC;         /**< Theme selected by the user. */

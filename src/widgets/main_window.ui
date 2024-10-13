@@ -57,7 +57,7 @@
         <number>7</number>
        </property>
        <widget class="SolarusEditor::EditorTabs" name="tab_widget"/>
-       <widget class="SolarusGui::Console" name="console_widget" native="true"/>
+       <widget class="SolarusEditor::Console" name="console_widget" native="true"/>
       </widget>
      </widget>
     </item>
@@ -519,9 +519,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>SolarusGui::Console</class>
+   <class>SolarusEditor::Console</class>
    <extends>QWidget</extends>
-   <header>solarus/gui/console.h</header>
+   <header>widgets/console.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

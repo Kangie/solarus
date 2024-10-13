@@ -2,6 +2,7 @@
 #include "editor_style.h"
 #include <map>
 #include <QApplication>
+#include <QWidget>
 
 namespace SolarusEditor {
 
@@ -13,10 +14,14 @@ const std::map<Mode, ModeInfo> mode_info = {
         {
             Mode::LIGHT,
             ":/themes/light.json",
-            Qt::darkRed,                     // Lua keyword.
-            Qt::blue,                        // Literal string.
-            Qt::darkGreen,                   // Comment.
-            QColor(Qt::yellow).lighter(160)  // Current line.
+            Qt::darkRed,                      // Lua keyword.
+            Qt::blue,                         // Literal string.
+            Qt::darkGreen,                    // Comment.
+            QColor(Qt::yellow).lighter(160),  // Current line.
+            QColor("#909090"),                // Debug log text.
+            QColor("#0000ff"),                // Info log text.
+            QColor("#b05000"),                // Warning log text.
+            Qt::red,                          // Error log text.
         }
     },
     {
@@ -27,7 +32,11 @@ const std::map<Mode, ModeInfo> mode_info = {
             QColor(255, 128, 128),  // Lua keyword.
             Qt::cyan,               // Literal string.
             QColor(128, 255, 128),  // Comment.
-            QColor(64, 64, 0)       // Current line.
+            QColor(64, 64, 0),      // Current line.
+            QColor("#909090"),      // Debug log text.
+            QColor("#4ab9e9"),      // Info log text.
+            QColor("#ffcd1e"),      // Warning log text.
+            QColor("#ef5151"),      // Error log text.
         }
     },
 };
@@ -102,6 +111,30 @@ Mode EditorStyle::get_os_mode() {
 
   // TODO Qt6 return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark ? Theme::DARK : Theme::LIGHT;
   return Mode::DARK;
+}
+
+EditorStyle::Status EditorStyle::widgetStatus(QWidget const* widget) const {
+
+  if (widget == nullptr) {
+    return Status::Default;
+  }
+  const QVariant& status = widget->property("status");
+  return status.isValid() ? status.value<Status>() : Status::Default;
+}
+
+QColor const& EditorStyle::textFieldBackgroundColor(MouseState const mouse, Status const status) const {
+
+  switch (status) {
+  case Status::Error:
+    return theme().statusColorError;
+  case Status::Warning:
+    return get_mode_info().current_line_background_color;
+  case Status::Success:
+  case Status::Info:
+  case Status::Default:
+  default:
+    return QlementineStyle::textFieldBackgroundColor(mouse, status);
+  }
 }
 
 }  // namespace Solarus Editor

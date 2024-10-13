@@ -67,5 +67,8 @@
   "statusColorWarning": "#fbc064",
   "statusColorWarningDisabled": "#feefd8",
   "statusColorWarningHovered": "#ffcf6c",
-  "statusColorWarningPressed": "#ffd880"
+  "statusColorWarningPressed": "#ffd880",
+  "scrollBarThicknessFull": 12,
+  "scrollBarThicknessSmall": 12,
+  "scrollbarMargin": 12
 }

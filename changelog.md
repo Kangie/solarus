@@ -5,6 +5,7 @@
 * Dark mode support and more modern style.
 * New quest creation wizard (#460).
 * New option to not generate default code when creating scripts (#528).
+* Prevent from creating a resource file with no name before the extension.
 * Graphics view now show a checkered background to represent transparency.
 * Quest tree: allow to set the author and license information of folders and GLSL files.
 * Quest tree: allow to set the author and license information of scripts (#501).
@@ -28,6 +29,15 @@
 * Initial quest: fix item icon still showing unequiped items.
 * Initial quest: fix missing heart falling animation error.
 * Initial quest: fix missing broken vase sprite.
+* Import widgets and utilities from old launcher from solarus/gui source code.
+* Fix Quest Runner not working on Windows when binaries are under Unicode paths.
+* Add error reporting to the Quest Runner process manager.
+* Move old Solarus Launcher to this repository.
+* Use monospaced font consistently across platforms in the GUI console.
+* Wrap lines with `<pre/>` tags to preserve spaces in the GUI console.
+* Add support of ANSI color codes to the GUI console.
+* Preserve empty lines from the engine in the GUI console.
+* Only remove trailing '\n' characters in the GUI console.
 
 ## Solarus Quest Editor 1.6.5 (2021-04-06)
 
