@@ -1348,13 +1348,13 @@ void DrawingRectangleState::valid_rectangle_clicked(const QMouseEvent& /* event 
     });
 
     // Put most actions in a submenu to make the context menu smaller.
-    QMenu sub_menu(get_view().tr("New pattern (more options)"));
+    QMenu sub_menu(TilesetView::tr("New pattern (more options)"));
     const QList<QAction*> actions = menu.actions();
     for (QAction* action : actions) {
       Ground ground = static_cast<Ground>(action->data().toInt());
       if (ground == Ground::TRAVERSABLE ||
           ground == Ground::WALL) {
-        action->setText(get_view().tr("New pattern (%1)").arg(GroundTraits::get_friendly_name(ground)));
+        action->setText(TilesetView::tr("New pattern (%1)").arg(GroundTraits::get_friendly_name(ground)));
       }
       else {
         menu.removeAction(action);
@@ -1364,7 +1364,7 @@ void DrawingRectangleState::valid_rectangle_clicked(const QMouseEvent& /* event 
     menu.addMenu(&sub_menu);
 
     menu.addSeparator();
-    menu.addAction(get_view().tr("Cancel"));
+    menu.addAction(TilesetView::tr("Cancel"));
     menu.exec(get_view().cursor().pos() + QPoint(1, 1));
   }
 }
@@ -1485,13 +1485,13 @@ void MovingPatternsState::apply_move() {
     // Context menu to move the patterns.
     TilesetView* view = &get_view();
     QMenu menu;
-    QAction* move_pattern_action = new QAction(view->tr("Move here"), view);
+    QAction* move_pattern_action = new QAction(TilesetView::tr("Move here"), view);
     view->connect(move_pattern_action, &QAction::triggered, view, [view, delta]() {
       view->change_selected_patterns_position_requested(delta);
     });
     menu.addAction(move_pattern_action);
     QAction* duplicate_pattern_action = new QAction(
-      QIcon(":/images/icon_copy.png"), view->tr("Duplicate here"), view);
+        QIcon(":/images/icon_copy.png"), TilesetView::tr("Duplicate here"), view);
     duplicate_pattern_action->setEnabled(
       view->get_items_intersecting_areas(current_area_items, false).isEmpty());
     view->connect(duplicate_pattern_action, &QAction::triggered, view, [view, delta]() {
@@ -1499,7 +1499,7 @@ void MovingPatternsState::apply_move() {
     });
     menu.addAction(duplicate_pattern_action);
     menu.addSeparator();
-    menu.addAction(get_view().tr("Cancel"));
+    menu.addAction(TilesetView::tr("Cancel"));
     menu.exec(get_view().cursor().pos() + QPoint(1, 1));
   }
 

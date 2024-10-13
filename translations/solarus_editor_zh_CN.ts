@@ -392,64 +392,64 @@
         <translation>垂直</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="103"/>
+        <location filename="../src/file_tools.cpp" line="110"/>
         <source>Source and destination are the same: &apos;%1&apos;</source>
         <translation>来源和目的地相同: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="114"/>
-        <location filename="../src/widgets/import_dialog.cpp" line="371"/>
+        <location filename="../src/file_tools.cpp" line="121"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="375"/>
         <source>Source file cannot be read: &apos;%1&apos;</source>
         <translation>无法读取原始档: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="118"/>
+        <location filename="../src/file_tools.cpp" line="125"/>
         <source>Destination already exists: &apos;%1&apos;</source>
         <translation>目的地已存在: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="110"/>
+        <location filename="../src/file_tools.cpp" line="117"/>
         <source>No such file or folder: &apos;%1&apos;</source>
         <translation>无此文件或资料夹: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="127"/>
+        <location filename="../src/file_tools.cpp" line="134"/>
         <source>No such folder: &apos;%1&apos;</source>
         <translation>无此资料夹: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="134"/>
+        <location filename="../src/file_tools.cpp" line="141"/>
         <source>Cannot copy folder &apos;%1&apos; to one of its own subfolders: &apos;%2&apos;</source>
         <translation>无法将资料夹 &apos;%1&apos; 复制到自己的子资料夹: &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="138"/>
-        <location filename="../src/file_tools.cpp" line="214"/>
+        <location filename="../src/file_tools.cpp" line="145"/>
+        <location filename="../src/file_tools.cpp" line="221"/>
         <source>Cannot create folder &apos;%1&apos;</source>
         <translation>无法建立资料夹 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="183"/>
+        <location filename="../src/file_tools.cpp" line="190"/>
         <source>Failed to delete file &apos;%1&apos;</source>
         <translation>删除档案 &apos;%1&apos;失败</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="197"/>
+        <location filename="../src/file_tools.cpp" line="204"/>
         <source>Failed to delete folder &apos;%1&apos;</source>
         <translation>删除资料夹 &apos;%1&apos;失败</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="237"/>
+        <location filename="../src/file_tools.cpp" line="244"/>
         <source>Cannot open file &apos;%1&apos;</source>
         <translation>无法开启档案 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="260"/>
+        <location filename="../src/file_tools.cpp" line="267"/>
         <source>Cannot open file &apos;%1&apos; for writing</source>
         <translation>无法开启档案 &apos;%1&apos; 并写入</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="152"/>
+        <location filename="../src/file_tools.cpp" line="159"/>
         <source>Cannot copy file &apos;%1&apos; to &apos;%2&apos;</source>
         <translation>无法从 &apos;%1&apos; 到 &apos;%2&apos;复制档案</translation>
     </message>
@@ -538,7 +538,22 @@ Please upgrade your quest  data files to Solarus %2.</source>
         <translation>从不</translation>
     </message>
     <message>
-        <location filename="../src/new_quest_builder.cpp" line="40"/>
+        <location filename="../src/new_quest_builder.cpp" line="45"/>
+        <source>Could not create data directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/new_quest_builder.cpp" line="56"/>
+        <source>Untitled Quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/new_quest_builder.cpp" line="59"/>
+        <source>Could not create quest properties.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/new_quest_builder.cpp" line="101"/>
         <source>Could not find the assets directory.
 Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>找不到资料目录。
@@ -610,32 +625,32 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>右下角(凹陷)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="359"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="363"/>
         <source>Source file does not exist: &apos;%1&apos;</source>
         <translation>来源档案不存在: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="363"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="367"/>
         <source>Source path is a folder: &apos;%1&apos;</source>
         <translation>来源路径是资料夹: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="463"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="456"/>
         <source>Source folder does not exist: &apos;%1&apos;</source>
         <translation>来源资料夹不存在: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="467"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="460"/>
         <source>Source path is not a folder: &apos;%1&apos;</source>
         <translation>来源路径不是资料夹: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="471"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="464"/>
         <source>Source folder cannot be read: &apos;%1&apos;</source>
         <translation>来源资料夹无法被读取: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="367"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="371"/>
         <source>Source file is a symbolic link: &apos;%1&apos;</source>
         <translation>来源档案为符号连结: &apos;%1</translation>
     </message>
@@ -658,6 +673,24 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <location filename="../src/shader_preview_mode_traits.cpp" line="55"/>
         <source>Swipe</source>
         <translation>Swipe</translation>
+    </message>
+</context>
+<context>
+    <name>QMessageBox</name>
+    <message>
+        <location filename="../src/widgets/gui_tools.cpp" line="35"/>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/gui_tools.cpp" line="48"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/gui_tools.cpp" line="61"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -892,6 +925,34 @@ Make sure that Solarus Quest Editor is properly installed.</source>
     </message>
 </context>
 <context>
+    <name>SolarusEditor::Console</name>
+    <message>
+        <location filename="../src/widgets/console.ui" line="42"/>
+        <source>Run Lua code to the quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="259"/>
+        <source>The quest process failed to start.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="262"/>
+        <source>The quest process crashed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="265"/>
+        <source>The quest process timed out.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="273"/>
+        <source>An unknown error occurred to the quest process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SolarusEditor::DialogPropertiesTable</name>
     <message>
         <location filename="../src/widgets/dialog_properties_table.cpp" line="35"/>
@@ -952,226 +1013,231 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>在编辑器中显示对使用者友好的描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="96"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="99"/>
         <source>Compare to language</source>
         <translation>比较语言</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="109"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="112"/>
         <source>Refresh language</source>
         <translation>重新整理语言</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="112"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="115"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="161"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="164"/>
         <source>Add dialog</source>
         <translation>新增对话</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="199"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="131"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="202"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="134"/>
         <source>Change dialog id</source>
         <translation>修改对话 id</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="237"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="240"/>
         <source>Duplicate dialog(s)</source>
         <translation>重复的对话</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="275"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="202"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="278"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="205"/>
         <source>Delete dialog</source>
         <translation>删除对话</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="313"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="316"/>
         <source>Dialog properties</source>
         <translation>对话属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="321"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="324"/>
         <source>Dialog id:</source>
         <translation>对话 id:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="366"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="371"/>
         <source>Text:</source>
         <translation>文本:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="375"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="391"/>
         <source>1,1</source>
         <translation>1,1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="395"/>
         <source>Display right margin at column:</source>
-        <translation>在列显示右边距:</translation>
+        <translation type="vanished">在列显示右边距:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="436"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="416"/>
         <source>Translation:</source>
         <translation>翻译:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="465"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="445"/>
         <source>Properties :</source>
         <translation>属性:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="495"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="475"/>
         <source>Value</source>
         <translation>值</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="500"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="480"/>
         <source>Translation</source>
         <translation>翻译</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="516"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="496"/>
         <source>Add property</source>
         <translation>新增属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="554"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="534"/>
         <source>Change property key</source>
         <translation>修改属性键</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="592"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="572"/>
         <source>Delete property</source>
         <translation>删除属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="67"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="70"/>
         <source>Create dialog</source>
         <translation>新增对话</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="100"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="103"/>
         <source>Duplicate dialogs</source>
         <translation>复制对话</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="164"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="167"/>
         <source>Change dialog id prefix</source>
         <translation>更改对话 ID 前缀</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="234"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="237"/>
         <source>Delete dialogs</source>
         <translation>删除对话</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="268"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="271"/>
         <source>Change dialog text</source>
         <translation>更改对话文本</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="303"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="306"/>
         <source>Create dialog property</source>
         <translation>建立对话属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="337"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="340"/>
         <source>Delete dialog property</source>
         <translation>删除对话框属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="372"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="975"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="375"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="973"/>
         <source>Change dialog property key</source>
         <translation>更改对话属性键</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="411"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="414"/>
         <source>Change dialog property</source>
         <translation>更改对话属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="461"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="464"/>
         <source>Dialogs %1</source>
         <translation>对话 %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="464"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="467"/>
         <source>Dialogs &apos;%1&apos; have been modified. Save changes?</source>
         <translation>对话 %1 被修改了，是否继续?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="473"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="476"/>
         <source>&lt;No language&gt;</source>
         <translation>&lt;没有语言&gt;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="639"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="628"/>
         <source>Invalid description</source>
         <translation>描述无效</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="684"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="673"/>
         <source>New dialog</source>
         <translation>新对话</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="684"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="673"/>
         <source>New dialog id:</source>
         <translation>新对话 id:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="692"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="681"/>
         <source>Invalid dialog id: %1</source>
         <translation>无效对话 id: %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="697"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="714"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="686"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="703"/>
         <source>Dialog &apos;%1&apos; already exists</source>
         <translation>对话 &apos;%1&apos; 已存在</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="710"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="699"/>
         <source>_copy</source>
         <translation>_copy</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="788"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="777"/>
         <source>Delete confirmation</source>
         <translation>删除确认</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="789"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="778"/>
         <source>Do you really want to delete all dialogs prefixed by &apos;%1&apos;?</source>
         <translation>您确实要删除所有以&apos;%1&apos;为前缀的对话框吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="921"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="910"/>
         <source>New dialog property</source>
         <translation>新对话属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="922"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="911"/>
         <source>New property key:</source>
         <translation>新属性键:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="932"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="930"/>
         <source>The property &apos;%1&apos; already exists in the dialog &apos;%2&apos;</source>
         <translation>对话&apos;%2&apos;中已存在属性&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="976"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="974"/>
         <source>Change the key of the property &apos;%1&apos;:</source>
         <translation>更改属性&apos;%1&apos;的键:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="984"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="1099"/>
+        <source>Invalid property key: it should be a valid Lua identifier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="919"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="982"/>
         <source>The property key cannot be empty</source>
         <translation>属性键不能为空</translation>
     </message>
@@ -1240,6 +1306,21 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <location filename="../src/widgets/dialogs_tree_view.cpp" line="57"/>
         <source>Delete...</source>
         <translation>删除...</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::DrawingRectangleState</name>
+    <message>
+        <source>New pattern (more options)</source>
+        <translation type="obsolete">新图案(更多选项)</translation>
+    </message>
+    <message>
+        <source>New pattern (%1)</source>
+        <translation type="obsolete">新图案 (%1)</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">取消</translation>
     </message>
 </context>
 <context>
@@ -1835,12 +1916,12 @@ Make sure that Solarus Quest Editor is properly installed.</source>
 <context>
     <name>SolarusEditor::Editor</name>
     <message>
-        <location filename="../src/widgets/editor.cpp" line="171"/>
+        <location filename="../src/widgets/editor.cpp" line="172"/>
         <source>File &apos;%1&apos; has been modified. Save changes?</source>
         <translation>文件&apos;%1&apos;已被修改。 储存变更?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/editor.cpp" line="465"/>
+        <location filename="../src/widgets/editor.cpp" line="466"/>
         <source>Save changes</source>
         <translation>储存变更</translation>
     </message>
@@ -1940,7 +2021,7 @@ Make sure that Solarus Quest Editor is properly installed.</source>
 <context>
     <name>SolarusEditor::ImageView</name>
     <message>
-        <location filename="../src/widgets/image_view.cpp" line="40"/>
+        <location filename="../src/widgets/image_view.cpp" line="41"/>
         <source>Failed to load image &apos;%1&apos;</source>
         <translation>无法载入图片&apos;%1&apos;</translation>
     </message>
@@ -1953,27 +2034,27 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>从另一个任务汇入文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="33"/>
+        <location filename="../src/widgets/import_dialog.ui" line="36"/>
         <source>Source quest</source>
         <translation>来源任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="49"/>
+        <location filename="../src/widgets/import_dialog.ui" line="52"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="88"/>
+        <location filename="../src/widgets/import_dialog.ui" line="91"/>
         <source>Identify missing</source>
         <translation>遗失识别</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="99"/>
+        <location filename="../src/widgets/import_dialog.ui" line="102"/>
         <source>No missing files found</source>
         <translation>未发现遗失文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="65"/>
+        <location filename="../src/widgets/import_dialog.ui" line="68"/>
         <source>Destination quest</source>
         <translation>目标任务</translation>
     </message>
@@ -1988,74 +2069,74 @@ Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>选择从哪里汇入的任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="132"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="136"/>
         <source>Source and destination quest are the same</source>
         <translation>来源和目的地任务相同</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="205"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="209"/>
         <source>No candidates found</source>
         <translation>没有发现候选</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="206"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="210"/>
         <source>%1 candidates found</source>
         <translation>发现候选%1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="268"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="272"/>
         <source>Import 1 item</source>
         <translation>导入 1 件物品</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="271"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="275"/>
         <source>Import %1 items</source>
         <translation>导入 %1 件物品</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="305"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="309"/>
         <source>Import confirmation</source>
         <translation>导入确认</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="306"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="310"/>
         <source>%1 items will be imported to your quest.</source>
         <translation>%1 个物品将会导入您的任务。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="340"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="344"/>
         <source>Cannot import symbolic link &apos;%1&apos;</source>
         <translation>无法导入符号连结&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="378"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="382"/>
         <source>Destination path already exists and is a folder: &apos;%1&apos;</source>
         <translation>目标路径已存在并且是资料夹:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="490"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="483"/>
         <source>The destination directory &apos;%1&apos; already exists.
 Do you want to overwrite its content?</source>
         <translation>目标目录&apos;%1&apos;已存在。
 您想覆盖其内容吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="491"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="484"/>
         <source>Apply this choice for remaining directories</source>
         <translation>将此选择套用至其余目录</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="583"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="601"/>
         <source>Rename</source>
         <translation>重新命名</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="586"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="604"/>
         <source>Overwrite</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="588"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="606"/>
         <source>Skip</source>
         <translation>跳过</translation>
     </message>
@@ -2066,40 +2147,40 @@ Do you want to merge it with the contents from the source folder?</source>
 Voulez-vous le fusionner avec le contenu du dossier source ?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="139"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="143"/>
         <source>No source quest was not found in folder &apos;%1&apos;</source>
         <translation>在资料夹&apos;%1&apos;中未找到来源任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="387"/>
-        <location filename="../src/widgets/import_dialog.cpp" line="489"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="391"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="482"/>
         <source>Destination already exists</source>
         <translation>目的地已存在</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="388"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="392"/>
         <source>The destination file &apos;%1&apos; already exists.
 Do you want to overwrite it?</source>
         <translation>目标档案&apos;%1&apos;已存在。
 您想覆盖它吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="389"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="393"/>
         <source>Apply this choice for remaining files</source>
         <translation>将此选择用于剩余文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="416"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="420"/>
         <source>Failed to remove existing file &apos;%1&apos;</source>
         <translation>无法删除现有档案&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="432"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="436"/>
         <source>Failed to copy file &apos;%1&apos; to &apos;%2&apos;</source>
         <translation>无法将档案&apos;%1&apos;复制到&apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="478"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="471"/>
         <source>Destination path already exists and is not a directory: &apos;%1&apos;</source>
         <translation>目标路径已存在且不是目录:&apos;%1&apos;</translation>
     </message>
@@ -2120,275 +2201,295 @@ Do you want to overwrite it?</source>
         <translation>Solarus 任务编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="71"/>
+        <location filename="../src/widgets/main_window.ui" line="77"/>
         <source>File</source>
         <translation>档案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="89"/>
+        <location filename="../src/widgets/main_window.ui" line="96"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="103"/>
+        <location filename="../src/widgets/main_window.ui" line="110"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="109"/>
+        <location filename="../src/widgets/main_window.ui" line="117"/>
         <source>View</source>
         <translation>检视</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="122"/>
+        <location filename="../src/widgets/main_window.ui" line="130"/>
         <source>Help</source>
         <translation>说明</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="131"/>
+        <location filename="../src/widgets/main_window.ui" line="139"/>
         <source>Tools</source>
         <translation>工具</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="138"/>
+        <location filename="../src/widgets/main_window.ui" line="146"/>
         <source>Audio</source>
         <translation>音效</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="179"/>
+        <location filename="../src/widgets/main_window.ui" line="188"/>
         <source>New quest...</source>
         <translation>新任务...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="184"/>
+        <location filename="../src/widgets/main_window.ui" line="193"/>
         <source>Load quest...</source>
         <translation>开启任务...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="187"/>
+        <location filename="../src/widgets/main_window.ui" line="196"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="192"/>
+        <location filename="../src/widgets/main_window.ui" line="201"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="201"/>
-        <location filename="../src/widgets/main_window.cpp" line="1671"/>
+        <location filename="../src/widgets/main_window.ui" line="210"/>
+        <location filename="../src/widgets/main_window.cpp" line="1736"/>
         <source>Run quest</source>
         <translation>运行任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="204"/>
+        <location filename="../src/widgets/main_window.ui" line="213"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="275"/>
-        <location filename="../src/widgets/main_window.ui" line="278"/>
+        <location filename="../src/widgets/main_window.ui" line="284"/>
+        <location filename="../src/widgets/main_window.ui" line="287"/>
         <source>Show layer 0</source>
         <translation>显示第 0 层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="281"/>
+        <location filename="../src/widgets/main_window.ui" line="290"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="296"/>
-        <location filename="../src/widgets/main_window.ui" line="299"/>
+        <location filename="../src/widgets/main_window.ui" line="305"/>
+        <location filename="../src/widgets/main_window.ui" line="308"/>
         <source>Show layer 1</source>
         <translation>显示第 1 层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="302"/>
+        <location filename="../src/widgets/main_window.ui" line="311"/>
         <source>1</source>
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="317"/>
-        <location filename="../src/widgets/main_window.ui" line="320"/>
+        <location filename="../src/widgets/main_window.ui" line="326"/>
+        <location filename="../src/widgets/main_window.ui" line="329"/>
         <source>Show layer 2</source>
         <translation>显示第 2 层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="323"/>
+        <location filename="../src/widgets/main_window.ui" line="332"/>
         <source>2</source>
         <translation>2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="349"/>
+        <location filename="../src/widgets/main_window.ui" line="358"/>
         <source>Find / Replace</source>
         <translation>寻找 / 取代</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="363"/>
+        <location filename="../src/widgets/main_window.ui" line="372"/>
         <source>Select all</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="368"/>
+        <location filename="../src/widgets/main_window.ui" line="377"/>
         <source>Save all</source>
         <translation>全部储存</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="371"/>
+        <location filename="../src/widgets/main_window.ui" line="380"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="376"/>
+        <location filename="../src/widgets/main_window.ui" line="385"/>
         <source>Close all</source>
         <translation>全部关闭</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="379"/>
+        <location filename="../src/widgets/main_window.ui" line="388"/>
         <source>Ctrl+Shift+W</source>
         <translation>Ctrl+Shift+W</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="387"/>
+        <location filename="../src/widgets/main_window.ui" line="396"/>
         <source>Show console</source>
         <translation>显示控制台</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="390"/>
+        <location filename="../src/widgets/main_window.ui" line="399"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="398"/>
+        <location filename="../src/widgets/main_window.ui" line="407"/>
         <source>Unselect all</source>
         <translation>全部取消选择</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="403"/>
+        <location filename="../src/widgets/main_window.ui" line="412"/>
         <source>Close quest</source>
         <translation>关闭任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="412"/>
-        <location filename="../src/widgets/main_window.cpp" line="1720"/>
-        <location filename="../src/widgets/main_window.cpp" line="1727"/>
+        <location filename="../src/widgets/main_window.ui" line="421"/>
+        <location filename="../src/widgets/main_window.cpp" line="1785"/>
+        <location filename="../src/widgets/main_window.cpp" line="1792"/>
         <source>Pause music</source>
         <translation>暂停音乐</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="421"/>
-        <location filename="../src/widgets/main_window.cpp" line="1716"/>
+        <location filename="../src/widgets/main_window.ui" line="430"/>
+        <location filename="../src/widgets/main_window.cpp" line="1781"/>
         <source>Stop music</source>
         <translation>停止音乐</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="433"/>
+        <location filename="../src/widgets/main_window.ui" line="442"/>
         <source>Show traversable entities</source>
         <translation>显示可遍历实体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="445"/>
+        <location filename="../src/widgets/main_window.ui" line="454"/>
         <source>Show obstacle entities</source>
         <translation>显示障碍物实体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="450"/>
+        <location filename="../src/widgets/main_window.ui" line="459"/>
         <source>Quest properties</source>
         <translation>任务属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="453"/>
+        <location filename="../src/widgets/main_window.ui" line="462"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="458"/>
+        <location filename="../src/widgets/main_window.ui" line="467"/>
         <source>Import from a quest...</source>
         <translation>从任务导入...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="461"/>
+        <location filename="../src/widgets/main_window.ui" line="470"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="466"/>
+        <location filename="../src/widgets/main_window.ui" line="475"/>
         <source>Build quest package...</source>
         <translation>建置Solarus任务...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="475"/>
+        <location filename="../src/widgets/main_window.ui" line="484"/>
         <source>Export to image...</source>
         <translation>汇出到图像...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="478"/>
+        <location filename="../src/widgets/main_window.ui" line="487"/>
         <source>F10</source>
         <translation>F10</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="483"/>
+        <location filename="../src/widgets/main_window.ui" line="492"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="354"/>
+        <location filename="../src/widgets/main_window.ui" line="501"/>
+        <location filename="../src/widgets/main_window.ui" line="504"/>
+        <source>Run current map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="507"/>
+        <source>Shift+F5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="512"/>
+        <source>Re-open closed tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="515"/>
+        <source>Ctrl+Shift+T</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="363"/>
         <source>Options</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="213"/>
+        <location filename="../src/widgets/main_window.ui" line="222"/>
         <source>Cut</source>
         <translation>剪下</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="222"/>
+        <location filename="../src/widgets/main_window.ui" line="231"/>
         <source>Copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="231"/>
+        <location filename="../src/widgets/main_window.ui" line="240"/>
         <source>Paste</source>
         <translation>贴上</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="236"/>
+        <location filename="../src/widgets/main_window.ui" line="245"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="245"/>
+        <location filename="../src/widgets/main_window.ui" line="254"/>
         <source>Save</source>
         <translation>储存</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="257"/>
+        <location filename="../src/widgets/main_window.ui" line="266"/>
         <source>Show grid</source>
         <translation>显示网格</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="260"/>
+        <location filename="../src/widgets/main_window.ui" line="269"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="332"/>
+        <location filename="../src/widgets/main_window.ui" line="341"/>
         <source>Documentation</source>
         <translation>官方文档</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="335"/>
+        <location filename="../src/widgets/main_window.ui" line="344"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="344"/>
+        <location filename="../src/widgets/main_window.ui" line="353"/>
         <source>Website</source>
         <translation>官方网站</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="778"/>
-        <location filename="../src/widgets/main_window.cpp" line="816"/>
+        <location filename="../src/widgets/main_window.cpp" line="845"/>
         <source>Select quest directory</source>
         <translation>选择任务目录</translation>
     </message>
@@ -2402,66 +2503,66 @@ La prochaine étape est de modifier manuellement les propriétés de votre quêt
 (désolé, l&apos;éditeur ne sait pas encore le faire interactivement).</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="609"/>
+        <location filename="../src/widgets/main_window.cpp" line="615"/>
         <source>No quest was found in directory
 &apos;%1&apos;</source>
         <translation>目录中找不到任务
 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="126"/>
-        <location filename="../src/widgets/main_window.cpp" line="326"/>
+        <location filename="../src/widgets/main_window.cpp" line="130"/>
+        <location filename="../src/widgets/main_window.cpp" line="331"/>
         <source>Zoom</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="328"/>
+        <location filename="../src/widgets/main_window.cpp" line="333"/>
         <source>25 %</source>
         <translation>25 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="329"/>
+        <location filename="../src/widgets/main_window.cpp" line="334"/>
         <source>50 %</source>
         <translation>50 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="330"/>
+        <location filename="../src/widgets/main_window.cpp" line="335"/>
         <source>100 %</source>
         <translation>100 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="331"/>
+        <location filename="../src/widgets/main_window.cpp" line="336"/>
         <source>200 %</source>
         <translation>200 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="332"/>
+        <location filename="../src/widgets/main_window.cpp" line="337"/>
         <source>400 %</source>
         <translation>400 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="102"/>
+        <location filename="../src/widgets/main_window.cpp" line="104"/>
         <source>Recent quests</source>
         <translation>最近的任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="146"/>
+        <location filename="../src/widgets/main_window.cpp" line="150"/>
         <source>Show/hide more layers</source>
         <translation>显示/隐藏更多层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="150"/>
+        <location filename="../src/widgets/main_window.cpp" line="154"/>
         <source>Lock/unlock layers</source>
         <translation>锁定/解锁图层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="158"/>
-        <location filename="../src/widgets/main_window.cpp" line="476"/>
+        <location filename="../src/widgets/main_window.cpp" line="162"/>
+        <location filename="../src/widgets/main_window.cpp" line="481"/>
         <source>Show/hide entity types</source>
         <translation>显示/隐藏实体类型</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="260"/>
+        <location filename="../src/widgets/main_window.cpp" line="265"/>
         <source>Could not locate the assets directory.
 Some features like creating a new quest will not be available.
 Please make sure that Solarus Quest Editor is correctly installed.</source>
@@ -2470,144 +2571,160 @@ Please make sure that Solarus Quest Editor is correctly installed.</source>
 请确保 Solarus Quest Editor 已正确安装。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="368"/>
+        <location filename="../src/widgets/main_window.cpp" line="373"/>
         <source>Show all layers</source>
         <translation>显示所有图层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="378"/>
+        <location filename="../src/widgets/main_window.cpp" line="383"/>
         <source>Hide all layers</source>
         <translation>隐藏所有图层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="397"/>
+        <location filename="../src/widgets/main_window.cpp" line="402"/>
         <source>Show layer %1</source>
         <translation>显示图层 %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="448"/>
+        <location filename="../src/widgets/main_window.cpp" line="453"/>
         <source>Lock layer %1</source>
         <translation>锁定图层 %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="453"/>
+        <location filename="../src/widgets/main_window.cpp" line="458"/>
         <source>Ctrl+%1</source>
         <translation>Ctrl+%1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="505"/>
+        <location filename="../src/widgets/main_window.cpp" line="510"/>
         <source>Show all entities</source>
         <translation>显示所有实体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="515"/>
+        <location filename="../src/widgets/main_window.cpp" line="520"/>
         <source>Hide all entities</source>
         <translation>隐藏所有实体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="643"/>
+        <location filename="../src/widgets/main_window.cpp" line="688"/>
         <source>Obsolete quest</source>
         <translation>过时的任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="644"/>
         <source>The format of this quest (%1) is outdated.
 Your data files will be automatically updated to Solarus %2.</source>
-        <translation>此任务 (%1) 的格式已过时。
+        <translation type="vanished">此任务 (%1) 的格式已过时。
 您的资料档案将自动更新到 Solarus %2。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="699"/>
+        <location filename="../src/widgets/main_window.cpp" line="720"/>
         <source>Upgrading quest data files</source>
         <translation>升级任务资料档案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="716"/>
         <source>An error occured while upgrading the quest.
 Your quest was kept unchanged in format %1.</source>
-        <translation>升级任务时发生错误。
+        <translation type="vanished">升级任务时发生错误。
 您的任务在格式 %1 中保持不变。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="764"/>
+        <location filename="../src/widgets/main_window.cpp" line="785"/>
         <source>Could not find the assets directory.
 Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>找不到资料目录。
 请确保 Solarus Quest Editor 已正确安装。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1021"/>
+        <location filename="../src/widgets/main_window.cpp" line="1082"/>
         <source>Files are modified</source>
         <translation>文件已修改</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1022"/>
+        <location filename="../src/widgets/main_window.cpp" line="1083"/>
         <source>Do you want to save modifications before running the quest?</source>
         <translation>您想在运行任务之前储存修改吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1252"/>
+        <location filename="../src/widgets/main_window.cpp" line="1313"/>
         <source>Local Documentation Not Found</source>
         <translation>未找到本地文档</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1253"/>
+        <location filename="../src/widgets/main_window.cpp" line="1314"/>
         <source>The local copy of Solarus Documentation could not be found. Would you like to try going on line to find the documentaion?</source>
         <translation>无法找到 Solarus 文档的本机副本。 您想尝试在线查找文档吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1668"/>
+        <location filename="../src/widgets/main_window.cpp" line="1733"/>
         <source>Stop quest</source>
         <translation>停止任务</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1902"/>
+        <location filename="../src/widgets/main_window.cpp" line="1967"/>
         <source>Update existing sprites using this image</source>
         <translation>使用此图像更新现有精灵图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1969"/>
+        <location filename="../src/widgets/main_window.cpp" line="2034"/>
         <source>Unsaved changes</source>
         <translation>未储存的更改</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1970"/>
+        <location filename="../src/widgets/main_window.cpp" line="2035"/>
         <source>All files must be saved before this operation.
 Do you want to save them now?</source>
         <translation>执行此操作之前必须储存所有档案。
 你现在想储存他们吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1835"/>
+        <location filename="../src/widgets/main_window.cpp" line="1900"/>
         <source>File modified</source>
         <translation>文件已修改</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1836"/>
+        <location filename="../src/widgets/main_window.cpp" line="689"/>
+        <source>The format of this quest (%1) is outdated.
+Your data files will be automatically updated to Solarus %2.
+Would you like to update this quest?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.cpp" line="696"/>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.cpp" line="737"/>
+        <source>An error occurred while upgrading the quest.
+Your quest was kept unchanged in format %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.cpp" line="1901"/>
         <source>This file is open and has unsaved changes.
 Please save it or close it before renaming.</source>
         <translation>该文件已开启并且有未储存的变更。
 重新命名之前请储存或关闭它。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1900"/>
-        <location filename="../src/widgets/main_window.cpp" line="1926"/>
+        <location filename="../src/widgets/main_window.cpp" line="1965"/>
+        <location filename="../src/widgets/main_window.cpp" line="1991"/>
         <source>Rename file</source>
         <translation>重新命名文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1901"/>
-        <location filename="../src/widgets/main_window.cpp" line="1927"/>
+        <location filename="../src/widgets/main_window.cpp" line="1966"/>
+        <location filename="../src/widgets/main_window.cpp" line="1992"/>
         <source>New name for file &apos;%1&apos;:</source>
         <translation>档案&apos;%1&apos;的新名称:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1651"/>
+        <location filename="../src/widgets/main_window.cpp" line="1716"/>
         <source>Missing show entity type action</source>
         <translation>缺少显示实体类型操作</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1724"/>
+        <location filename="../src/widgets/main_window.cpp" line="1789"/>
         <source>Play selected music</source>
         <translation>播放选定的音乐</translation>
     </message>
@@ -2620,152 +2737,152 @@ Please save it or close it before renaming.</source>
         <translation>地图编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="85"/>
+        <location filename="../src/widgets/map_editor.ui" line="103"/>
         <source>Map id</source>
         <translation>地图ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="100"/>
+        <location filename="../src/widgets/map_editor.ui" line="118"/>
         <source>Filename of the map (without extension)</source>
         <translation>地图的档案名称(不含后缀名)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="113"/>
+        <location filename="../src/widgets/map_editor.ui" line="131"/>
         <source>Open map script (F4)</source>
         <translation>开启地图脚本(F4)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="138"/>
+        <location filename="../src/widgets/map_editor.ui" line="156"/>
         <source>Description</source>
         <translation>描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="151"/>
+        <location filename="../src/widgets/map_editor.ui" line="169"/>
         <source>User-friendly description to show in the editor</source>
         <translation>在编辑器中显示对使用者友好的描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="158"/>
+        <location filename="../src/widgets/map_editor.ui" line="176"/>
         <source>Size</source>
         <translation>尺寸</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="368"/>
+        <location filename="../src/widgets/map_editor.ui" line="386"/>
         <source>Patterns</source>
         <translation>图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="407"/>
-        <location filename="../src/widgets/map_editor.ui" line="477"/>
+        <location filename="../src/widgets/map_editor.ui" line="425"/>
+        <location filename="../src/widgets/map_editor.ui" line="495"/>
         <source>Edit tileset (Ctrl-T)</source>
         <translation>编辑图块集 (Ctrl-T)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="423"/>
-        <location filename="../src/widgets/map_editor.ui" line="493"/>
+        <location filename="../src/widgets/map_editor.ui" line="441"/>
+        <location filename="../src/widgets/map_editor.ui" line="511"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="447"/>
+        <location filename="../src/widgets/map_editor.ui" line="465"/>
         <source>Contour generator</source>
         <translation>轮廓产生器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="453"/>
+        <location filename="../src/widgets/map_editor.ui" line="471"/>
         <source>Generate contour tiles around the selection</source>
         <translation>围绕选择区域产生轮廓图块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="502"/>
+        <location filename="../src/widgets/map_editor.ui" line="520"/>
         <source>Contour</source>
         <translation>轮廓</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="552"/>
+        <location filename="../src/widgets/map_editor.ui" line="570"/>
         <source>Generate contour tiles around the selection (Ctrl+B)</source>
         <translation>围绕选择区域产生轮廓图块 (Ctrl+B)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="555"/>
+        <location filename="../src/widgets/map_editor.ui" line="573"/>
         <source>Generate tiles</source>
         <translation>产生图块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1139"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1140"/>
         <source>Width of the map in pixels</source>
         <translation>地图的宽度(以像素为单位)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1140"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1141"/>
         <source>Height of the map in pixels</source>
         <translation>地图的高度(以像素为单位)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="240"/>
+        <location filename="../src/widgets/map_editor.ui" line="258"/>
         <source>Set a world</source>
         <translation>设定世界</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="247"/>
+        <location filename="../src/widgets/map_editor.ui" line="265"/>
         <source>A name to group maps together</source>
         <translation>将地图分组在一起的名称</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="254"/>
+        <location filename="../src/widgets/map_editor.ui" line="272"/>
         <source>Set a floor</source>
         <translation>设置楼层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="275"/>
+        <location filename="../src/widgets/map_editor.ui" line="293"/>
         <source>Floor number of the map</source>
         <translation>地图楼层数</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="303"/>
+        <location filename="../src/widgets/map_editor.ui" line="321"/>
         <source>Location in its world</source>
         <translation>在其世界中的位置</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1144"/>
         <location filename="../src/widgets/map_editor.cpp" line="1145"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1146"/>
         <source>Coordinates of the map in its world (useful to make adjacent scrolling maps)</source>
         <translation>地图在其世界中的座标(用于制作相邻的滚动地图)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="323"/>
-        <location filename="../src/widgets/map_editor.ui" line="461"/>
+        <location filename="../src/widgets/map_editor.ui" line="341"/>
+        <location filename="../src/widgets/map_editor.ui" line="479"/>
         <location filename="../src/widgets/map_editor.cpp" line="241"/>
         <source>Tileset</source>
         <translation>图块集</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="332"/>
-        <location filename="../src/widgets/map_editor.ui" line="400"/>
-        <location filename="../src/widgets/map_editor.ui" line="470"/>
+        <location filename="../src/widgets/map_editor.ui" line="350"/>
+        <location filename="../src/widgets/map_editor.ui" line="418"/>
+        <location filename="../src/widgets/map_editor.ui" line="488"/>
         <source>Tileset of the map</source>
         <translation>地图的图块集</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="116"/>
-        <location filename="../src/widgets/map_editor.ui" line="339"/>
-        <location filename="../src/widgets/map_editor.ui" line="410"/>
-        <location filename="../src/widgets/map_editor.ui" line="480"/>
+        <location filename="../src/widgets/map_editor.ui" line="134"/>
+        <location filename="../src/widgets/map_editor.ui" line="357"/>
+        <location filename="../src/widgets/map_editor.ui" line="428"/>
+        <location filename="../src/widgets/map_editor.ui" line="498"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="168"/>
+        <location filename="../src/widgets/map_editor.ui" line="186"/>
         <source>Layers</source>
         <translation>层级</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="199"/>
+        <location filename="../src/widgets/map_editor.ui" line="217"/>
         <source>to</source>
         <translation>至</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="313"/>
+        <location filename="../src/widgets/map_editor.ui" line="331"/>
         <location filename="../src/widgets/map_editor.cpp" line="259"/>
         <source>Music</source>
         <translation>音乐</translation>
@@ -2882,128 +2999,128 @@ Please save it or close it before renaming.</source>
         <translation>地图&apos;%1&apos;已被修改。 储存变更?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1104"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1105"/>
         <source>F4</source>
         <translation>F4</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1120"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1121"/>
         <source>&lt;No music&gt;</source>
         <translation>&lt;无音乐&gt;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1121"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1122"/>
         <source>&lt;Same as before&gt;</source>
         <translation>&lt;与之前相同&gt;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1126"/>
-        <location filename="../src/widgets/map_editor.cpp" line="1130"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1127"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1131"/>
         <source>(Tileset of the map)</source>
         <translation>(地图的图块集)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1293"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1294"/>
         <source>Add tile</source>
         <translation>增加图块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1294"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1295"/>
         <source>Add destination</source>
         <translation>增加目的地</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1295"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1296"/>
         <source>Add teletransporter</source>
         <translation>增加传送门</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1296"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1297"/>
         <source>Add pickable</source>
         <translation>增加可拾取物</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1297"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1298"/>
         <source>Add destructible</source>
         <translation>增加可破坏物件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1298"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1299"/>
         <source>Add chest</source>
         <translation>增加宝箱</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1299"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1300"/>
         <source>Add jumper</source>
         <translation>增加弹跳器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1300"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1301"/>
         <source>Add enemy</source>
         <translation>增加敌人</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1301"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1302"/>
         <source>Add non-playing character</source>
         <translation>增加NPC</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1302"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1303"/>
         <source>Add block</source>
         <translation>增加方块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1303"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1304"/>
         <source>Add switch</source>
         <translation>增加机关按钮</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1304"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1305"/>
         <source>Add wall</source>
         <translation>增加墙壁</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1305"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1306"/>
         <source>Add sensor</source>
         <translation>增加感测器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1306"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1307"/>
         <source>Add crystal</source>
         <translation>增加水晶</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1307"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1308"/>
         <source>Add crystal block</source>
         <translation>增加水晶块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1308"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1309"/>
         <source>Add shop treasure</source>
         <translation>增加商店物品</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1309"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1310"/>
         <source>Add stream</source>
         <translation>增加流体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1310"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1311"/>
         <source>Add door</source>
         <translation>增加门</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1311"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1312"/>
         <source>Add stairs</source>
         <translation>增加阶梯</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1312"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1313"/>
         <source>Add separator</source>
         <translation>增加间隔物</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1313"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1314"/>
         <source>Add custom entity</source>
         <translation>增加自订实体</translation>
     </message>
@@ -3018,41 +3135,41 @@ Please save it or close it before renaming.</source>
         <translation>PNG档 (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1604"/>
-        <location filename="../src/widgets/map_editor.cpp" line="1675"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1606"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1677"/>
         <source>Layer not empty</source>
         <translation>图层不为空</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1605"/>
-        <location filename="../src/widgets/map_editor.cpp" line="1676"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1607"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1678"/>
         <source>This layer is not empty: %1 entities will be destroyed.</source>
         <translation>该层不为空:%1 个实体将被销毁。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="2149"/>
+        <location filename="../src/widgets/map_editor.cpp" line="2151"/>
         <source>%1,%2,%3 </source>
         <translation>%1,%2,%3 </translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="2453"/>
+        <location filename="../src/widgets/map_editor.cpp" line="2459"/>
         <source>Cannot generate tiles: some patterns of the contour &apos;%1&apos; are missing.
 Please fix it in the tileset.</source>
         <translation>无法产生图块:轮廓&apos;%1&apos;的某些图案遗失。
 请在图块集中修复它。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="2136"/>
+        <location filename="../src/widgets/map_editor.cpp" line="2138"/>
         <source> - %1</source>
         <translation> - %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="2138"/>
+        <location filename="../src/widgets/map_editor.cpp" line="2140"/>
         <source>: %1</source>
         <translation>: %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1533"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1535"/>
         <source>Invalid description</source>
         <translation>描述无效</translation>
     </message>
@@ -3154,164 +3271,171 @@ Please fix it in the tileset.</source>
 <context>
     <name>SolarusEditor::MapView</name>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="541"/>
+        <location filename="../src/widgets/map_view.cpp" line="542"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="549"/>
+        <location filename="../src/widgets/map_view.cpp" line="550"/>
         <source>Resize</source>
         <translation>调整大小</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="550"/>
+        <location filename="../src/widgets/map_view.cpp" line="551"/>
         <source>R</source>
         <translation>R</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="557"/>
-        <location filename="../src/widgets/map_view.cpp" line="709"/>
+        <location filename="../src/widgets/map_view.cpp" line="558"/>
+        <location filename="../src/widgets/map_view.cpp" line="715"/>
         <source>Convert to dynamic tile</source>
         <translation>转换为动态图块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="563"/>
+        <location filename="../src/widgets/map_view.cpp" line="564"/>
         <source>Change pattern...</source>
         <translation>改变模式...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="570"/>
+        <location filename="../src/widgets/map_view.cpp" line="571"/>
         <source>Change pattern of similar tiles...</source>
         <translation>改变类似图块的图案...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="576"/>
+        <location filename="../src/widgets/map_view.cpp" line="577"/>
         <source>Generate borders around selection</source>
         <translation>围绕选择区域产生边界</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="577"/>
+        <location filename="../src/widgets/map_view.cpp" line="578"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="585"/>
+        <location filename="../src/widgets/map_view.cpp" line="587"/>
         <source>One layer up</source>
         <translation>向上一层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="586"/>
+        <location filename="../src/widgets/map_view.cpp" line="588"/>
         <source>+</source>
         <translation>+</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="594"/>
+        <location filename="../src/widgets/map_view.cpp" line="597"/>
         <source>One layer down</source>
         <translation>往下一层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="595"/>
+        <location filename="../src/widgets/map_view.cpp" line="598"/>
         <source>-</source>
         <translation>-</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="603"/>
+        <location filename="../src/widgets/map_view.cpp" line="607"/>
         <source>Bring to front</source>
         <translation>移到前面</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="604"/>
+        <location filename="../src/widgets/map_view.cpp" line="608"/>
         <source>T</source>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="612"/>
+        <location filename="../src/widgets/map_view.cpp" line="617"/>
         <source>Bring to back</source>
         <translation>移到后面</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="613"/>
+        <location filename="../src/widgets/map_view.cpp" line="618"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="621"/>
+        <location filename="../src/widgets/map_view.cpp" line="627"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="628"/>
+        <location filename="../src/widgets/map_view.cpp" line="634"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="657"/>
+        <location filename="../src/widgets/map_view.cpp" line="663"/>
         <source>Layer %1</source>
         <translation>层级 %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="709"/>
+        <location filename="../src/widgets/map_view.cpp" line="715"/>
         <source>Convert to dynamic tiles</source>
         <translation>转换为动态图块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="712"/>
+        <location filename="../src/widgets/map_view.cpp" line="718"/>
         <source>Convert to static tile</source>
         <translation>转换为固定图块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="712"/>
+        <location filename="../src/widgets/map_view.cpp" line="718"/>
         <source>Convert to static tiles</source>
         <translation>转换为固定图块</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="808"/>
+        <location filename="../src/widgets/map_view.cpp" line="814"/>
         <source>Direction</source>
         <translation>方向</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="827"/>
-        <location filename="../src/widgets/map_view.cpp" line="835"/>
+        <location filename="../src/widgets/map_view.cpp" line="833"/>
+        <location filename="../src/widgets/map_view.cpp" line="841"/>
         <source>Right</source>
         <translation>右</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="828"/>
-        <location filename="../src/widgets/map_view.cpp" line="837"/>
+        <location filename="../src/widgets/map_view.cpp" line="834"/>
+        <location filename="../src/widgets/map_view.cpp" line="843"/>
         <source>Up</source>
         <translation>上</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="829"/>
-        <location filename="../src/widgets/map_view.cpp" line="839"/>
+        <location filename="../src/widgets/map_view.cpp" line="835"/>
+        <location filename="../src/widgets/map_view.cpp" line="845"/>
         <source>Left</source>
         <translation>左</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="830"/>
-        <location filename="../src/widgets/map_view.cpp" line="841"/>
+        <location filename="../src/widgets/map_view.cpp" line="836"/>
+        <location filename="../src/widgets/map_view.cpp" line="847"/>
         <source>Down</source>
         <translation>下</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="836"/>
+        <location filename="../src/widgets/map_view.cpp" line="842"/>
         <source>Right-up</source>
         <translation>右上</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="838"/>
+        <location filename="../src/widgets/map_view.cpp" line="844"/>
         <source>Left-up</source>
         <translation>左上</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="840"/>
+        <location filename="../src/widgets/map_view.cpp" line="846"/>
         <source>Left-down</source>
         <translation>左下</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="842"/>
+        <location filename="../src/widgets/map_view.cpp" line="848"/>
         <source>Right-down</source>
         <translation>右下</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::MovingPatternsState</name>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">取消</translation>
     </message>
 </context>
 <context>
@@ -3325,6 +3449,55 @@ Please fix it in the tileset.</source>
         <location filename="../src/widgets/music_chooser.cpp" line="182"/>
         <source>Stop music</source>
         <translation>停止音乐</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewElementDialog</name>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="14"/>
+        <source>New element</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="22"/>
+        <source>License:</source>
+        <translation type="unfinished">授权许可证:</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="29"/>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="57"/>
+        <source>Script name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="36"/>
+        <source>Author:</source>
+        <translation type="unfinished">作者:</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="53"/>
+        <source>New GLSL file</source>
+        <translation type="unfinished">新的 GLSL 档案</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="54"/>
+        <source>GLSL file name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="56"/>
+        <source>New Lua script</source>
+        <translation type="unfinished">新Lua脚本</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="59"/>
+        <source>New folder</source>
+        <translation type="unfinished">新的资料夹</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="60"/>
+        <source>Folder name:</source>
+        <translation type="unfinished">资料夹名称:</translation>
     </message>
 </context>
 <context>
@@ -3346,141 +3519,308 @@ Please fix it in the tileset.</source>
     </message>
 </context>
 <context>
+    <name>SolarusEditor::NewQuestDialog</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.ui" line="14"/>
+        <source>Create New Quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewQuestDialogContentsPage</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="14"/>
+        <source>WizardPage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="17"/>
+        <source>Initial Quest Contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="20"/>
+        <source>Choose the initial set of files for your quest.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="42"/>
+        <source>Community Resources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="60"/>
+        <source>Empty Quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="67"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start with default free resources and scripts.&lt;br/&gt;Uses GPL and Creative Commons licenses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="77"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start from no quest data.&lt;br/&gt;You will have to create data files from scratch.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewQuestDialogDirectoryPage</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="14"/>
+        <source>WizardPage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="17"/>
+        <source>Quest Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="20"/>
+        <source>Choose a location on disk for the new quest.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="31"/>
+        <source>Browse</source>
+        <translation type="unfinished">浏览</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="40"/>
+        <source>Error Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="122"/>
+        <source>Directory not empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="123"/>
+        <source>The quest directory is not empty, are you sure you wish to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="148"/>
+        <source>Select quest directory</source>
+        <translation type="unfinished">选择任务目录</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="171"/>
+        <source>A quest already exists in this directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="177"/>
+        <source>Parent directory does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewQuestDialogTitlePage</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_title_page.ui" line="14"/>
+        <source>WizardPage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_title_page.ui" line="17"/>
+        <source>Quest Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_title_page.ui" line="20"/>
+        <source>Enter the title of the new quest.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SolarusEditor::NewResourceElementDialog</name>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="14"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="20"/>
         <source>Create resource</source>
         <translation>建立资源</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="32"/>
-        <source>Resource id (filename):</source>
-        <translation>资源 ID(档案名称):</translation>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="31"/>
+        <source>Resource id (filename)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="41"/>
+        <source>[required]</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/widgets/new_resource_element_dialog.ui" line="48"/>
-        <source>Licence:</source>
-        <translation>授权许可证:</translation>
+        <source>Description</source>
+        <translation type="unfinished">描述</translation>
     </message>
     <message>
         <location filename="../src/widgets/new_resource_element_dialog.ui" line="55"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="90"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="104"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="118"/>
+        <source>[optional]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="62"/>
+        <source>Create with default code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="74"/>
+        <source>Ownership</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="83"/>
+        <source>Author</source>
+        <translation type="unfinished">作者</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="97"/>
+        <source>License (data file)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="111"/>
+        <source>License (script file)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resource id (filename):</source>
+        <translation type="vanished">资源 ID(档案名称):</translation>
+    </message>
+    <message>
+        <source>Licence:</source>
+        <translation type="vanished">授权许可证:</translation>
+    </message>
+    <message>
         <source>Author:</source>
-        <translation>作者:</translation>
+        <translation type="vanished">作者:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="22"/>
         <source>Description:</source>
-        <translation>描述:</translation>
+        <translation type="vanished">描述:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="43"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="48"/>
         <source>New map</source>
         <translation>新地图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="44"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="49"/>
         <source>Map id (filename):</source>
         <translation>地图 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="48"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="56"/>
         <source>New tileset</source>
         <translation>新图块集</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="49"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="57"/>
         <source>Tileset id (filename):</source>
         <translation>图块集 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="53"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="62"/>
         <source>New sprite</source>
         <translation>新精灵图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="54"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="63"/>
         <source>Sprite id (filename):</source>
         <translation>精灵图 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="58"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="68"/>
         <source>New music</source>
         <translation>新音乐</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="59"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="69"/>
         <source>Music id (filename):</source>
         <translation>音乐 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="63"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="74"/>
         <source>New sound</source>
         <translation>新音效</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="64"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="75"/>
         <source>Sound id (filename):</source>
         <translation>音效 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="68"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="80"/>
         <source>New item</source>
         <translation>新物品</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="69"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="81"/>
         <source>Item id (filename):</source>
         <translation>物品 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="73"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="87"/>
         <source>New enemy</source>
         <translation>新敌人</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="74"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="88"/>
         <source>Enemy id (filename):</source>
         <translation>敌人 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="78"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="94"/>
         <source>New custom entity</source>
         <translation>新自订实体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="79"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="95"/>
         <source>Custom entity id (filename):</source>
         <translation>自订实体 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="83"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="101"/>
         <source>New language</source>
         <translation>新语言</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="84"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="102"/>
         <source>Language id (filename):</source>
         <translation>语言 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="88"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="107"/>
         <source>New font</source>
         <translation>新字体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="89"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="108"/>
         <source>Font id (filename):</source>
         <translation>字体 ID(档案名称):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="93"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="113"/>
         <source>New shader</source>
         <translation>新的着色器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="94"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="114"/>
         <source>Shader id (filename):</source>
         <translation>着色器 ID(档案名称):</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="129"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="140"/>
+        <source>License</source>
+        <translation type="unfinished">授权许可证</translation>
     </message>
 </context>
 <context>
@@ -3561,12 +3901,12 @@ Please fix it in the tileset.</source>
         <translation>崩溃</translation>
     </message>
     <message>
-        <location filename="../src/widgets/package_dialog.cpp" line="114"/>
+        <location filename="../src/widgets/package_dialog.cpp" line="115"/>
         <source>Quest package location:</source>
         <translation>任务包位置:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/package_dialog.cpp" line="115"/>
+        <location filename="../src/widgets/package_dialog.cpp" line="117"/>
         <source>Solarus Packages (*.solarus)</source>
         <translation>Solarus 软件包 (*.solarus)</translation>
     </message>
@@ -3582,136 +3922,151 @@ Please fix it in the tileset.</source>
 <context>
     <name>SolarusEditor::Quest</name>
     <message>
-        <location filename="../src/quest.cpp" line="288"/>
+        <location filename="../src/quest.cpp" line="289"/>
         <source>Unknown resource type</source>
         <translation>未知资源类型</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1197"/>
+        <location filename="../src/quest.cpp" line="1199"/>
         <source>Invalid file name: &apos;%1&apos;</source>
         <translation>档案名称无效:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1255"/>
+        <location filename="../src/quest.cpp" line="1257"/>
         <source>File &apos;%1&apos; does not exist</source>
         <translation>文件&apos;%1&apos;不存在</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1268"/>
+        <location filename="../src/quest.cpp" line="1270"/>
         <source>File &apos;%1&apos; already exists</source>
         <translation>文件&apos;%1&apos;已存在</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1329"/>
+        <location filename="../src/quest.cpp" line="1331"/>
         <source>Wrong script name: &apos;%1&apos; (should end with &apos;.lua&apos;)</source>
         <translation>错误的脚本名称:&apos;%1&apos;(应以&apos;.lua&apos;结尾)</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1390"/>
+        <location filename="../src/quest.cpp" line="1407"/>
         <source>Cannot create file &apos;%1&apos;</source>
         <translation>无法建立档案&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1194"/>
+        <location filename="../src/quest.cpp" line="1196"/>
         <source>Empty file name</source>
         <translation>档案名为空</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="139"/>
+        <location filename="../src/quest.cpp" line="140"/>
         <source>No quest</source>
         <translation>没有任务</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="144"/>
+        <location filename="../src/quest.cpp" line="145"/>
         <source>Missing Solarus version in quest.dat</source>
         <translation>quest.dat 中缺少 Solarus 版本</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1291"/>
+        <location filename="../src/quest.cpp" line="1293"/>
         <source>File &apos;%1&apos; is not a folder</source>
         <translation>档案&apos;%1&apos;不是资料夹</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1304"/>
+        <location filename="../src/quest.cpp" line="1306"/>
         <source>File &apos;%1&apos; is a folder</source>
         <translation>档案&apos;%1&apos;是资料夹</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1439"/>
+        <location filename="../src/quest.cpp" line="1456"/>
         <source>Cannot read file &apos;%1&apos;</source>
         <translation>无法读取档案&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1410"/>
-        <location filename="../src/quest.cpp" line="1447"/>
+        <location filename="../src/quest.cpp" line="1427"/>
+        <location filename="../src/quest.cpp" line="1464"/>
         <source>Cannot write file &apos;%1&apos;</source>
         <translation>无法写入档案&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1355"/>
+        <location filename="../src/quest.cpp" line="1357"/>
         <source>Wrong GLSL shader file name: &apos;%1&apos; (should end with &apos;.glsl&apos;)</source>
         <translation>GLSL 着色器档案名称错误:&apos;%1&apos;(应以&apos;.glsl&apos;结尾)</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1737"/>
+        <location filename="../src/quest.cpp" line="1392"/>
+        <source>Wrong image file name: &apos;%1&apos; (should end with &apos;.png&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/quest.cpp" line="1779"/>
+        <source>Cannot load image file: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/quest.cpp" line="1784"/>
+        <source>This sprite already exists: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/quest.cpp" line="1806"/>
         <source>Cannot create folder &apos;%1&apos;: parent folder does not exist</source>
         <translation>无法建立资料夹&apos;%1&apos;:父资料夹不存在</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1743"/>
-        <location filename="../src/quest.cpp" line="1780"/>
+        <location filename="../src/quest.cpp" line="1812"/>
+        <location filename="../src/quest.cpp" line="1849"/>
         <source>Cannot create folder &apos;%1&apos;</source>
         <translation>无法建立资料夹 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1906"/>
+        <location filename="../src/quest.cpp" line="1982"/>
         <source>Resource &apos;%1&apos; already exists</source>
         <translation>资源&apos;%1&apos;已存在</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1923"/>
-        <location filename="../src/quest.cpp" line="1977"/>
+        <location filename="../src/quest.cpp" line="1999"/>
+        <location filename="../src/quest.cpp" line="2053"/>
         <source>Cannot rename file &apos;%1&apos;</source>
         <translation>无法重新命名档案&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2115"/>
+        <location filename="../src/quest.cpp" line="2191"/>
         <source>Cannot delete file &apos;%1&apos;</source>
         <translation>无法删除档案&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2155"/>
+        <location filename="../src/quest.cpp" line="2231"/>
         <source>Cannot delete folder &apos;%1&apos;</source>
         <translation>无法删除资料夹&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2192"/>
+        <location filename="../src/quest.cpp" line="2268"/>
         <source>Failed to delete file &apos;%1&apos;</source>
         <translation>删除档案 &apos;%1&apos;失败</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2198"/>
+        <location filename="../src/quest.cpp" line="2274"/>
         <source>Failed to delete folder &apos;%1&apos;</source>
         <translation>删除资料夹 &apos;%1&apos;失败</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2045"/>
+        <location filename="../src/quest.cpp" line="2121"/>
         <source>Same source and destination id</source>
         <translation>相同的来源和目标 ID</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2052"/>
+        <location filename="../src/quest.cpp" line="2128"/>
         <source>A resource with id &apos;%1&apos; already exists</source>
         <translation>ID 为&apos;%1&apos;的资源已存在</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2057"/>
-        <location filename="../src/quest.cpp" line="2101"/>
+        <location filename="../src/quest.cpp" line="2133"/>
+        <location filename="../src/quest.cpp" line="2177"/>
         <source>No such resource: &apos;%1&apos;</source>
         <translation>没有这样的资源:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1232"/>
+        <location filename="../src/quest.cpp" line="1234"/>
         <source>File &apos;%1&apos; is not in this quest</source>
         <translation>文件&apos;%1&apos;不在此任务中</translation>
     </message>
@@ -4001,67 +4356,67 @@ Please fix it in the tileset.</source>
         <translation>授权许可证</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="577"/>
+        <location filename="../src/quest_files_model.cpp" line="591"/>
         <source>Quest</source>
         <translation>任务</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="582"/>
+        <location filename="../src/quest_files_model.cpp" line="596"/>
         <source>Main Lua script</source>
         <translation>主要Lua脚本</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="596"/>
+        <location filename="../src/quest_files_model.cpp" line="610"/>
         <source>Dialogs file</source>
         <translation>对话文件</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="600"/>
+        <location filename="../src/quest_files_model.cpp" line="614"/>
         <source>Strings file</source>
         <translation>字串文件</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="608"/>
+        <location filename="../src/quest_files_model.cpp" line="622"/>
         <source>Map script</source>
         <translation>地图脚本</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="611"/>
+        <location filename="../src/quest_files_model.cpp" line="625"/>
         <source>Script</source>
         <translation>脚本</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="615"/>
+        <location filename="../src/quest_files_model.cpp" line="629"/>
         <source>GLSL shader code</source>
         <translation>GLSL 着色器程序</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="623"/>
+        <location filename="../src/quest_files_model.cpp" line="637"/>
         <source>Tileset tiles image</source>
         <translation>图块集图块影像</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="627"/>
+        <location filename="../src/quest_files_model.cpp" line="641"/>
         <source>Tileset sprites image</source>
         <translation>图块集精灵图影像</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="630"/>
+        <location filename="../src/quest_files_model.cpp" line="644"/>
         <source>Image</source>
         <translation>图像</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="635"/>
+        <location filename="../src/quest_files_model.cpp" line="649"/>
         <source>Data file</source>
         <translation>资料档案</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="764"/>
+        <location filename="../src/quest_files_model.cpp" line="778"/>
         <source>%1 (file not found)</source>
         <translation>%1(未找到文件)</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="774"/>
+        <location filename="../src/quest_files_model.cpp" line="788"/>
         <source>%1 (not in the quest)</source>
         <translation>%1(不在任务中)</translation>
     </message>
@@ -4092,114 +4447,143 @@ Please fix it in the tileset.</source>
         <translation>任务资讯</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="82"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="81"/>
         <source>Solarus version</source>
         <translation>Solarus 版本</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="89"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="88"/>
         <source>Version of the engine your data files are compatible with</source>
         <translation>您的资料档案相容的引擎版本</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="105"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="103"/>
         <source>Write directory</source>
         <translation>写入目录</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="117"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="115"/>
         <source>Folder where to write savegames, relative to &quot;$HOME/.solarus/&quot;.
 Must identify your quest to avoid confusion with other quests.</source>
         <translation>写入保存游戏的资料夹，相对于&quot;$HOME/.solarus/&quot;。
 必须明确标示您的任务以避免与其他任务混淆。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="136"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="133"/>
         <source>Quest title</source>
         <translation>任务标题</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="148"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="145"/>
         <source>The name of your quest.</source>
         <translation>任务的名称。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="163"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="159"/>
         <source>Summary</source>
         <translation>大纲</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="175"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="171"/>
         <source>One line describing your quest.</source>
         <translation>简短地描述你做的任务。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="190"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="185"/>
         <source>Description</source>
         <translation>描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="203"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="224"/>
         <source>Author</source>
         <translation>作者</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="215"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="236"/>
         <source>People who develop this quest.</source>
         <translation>开发此任务的人。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="230"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="250"/>
         <source>Quest version</source>
         <translation>任务版本</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="242"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="262"/>
         <source>Current release of your quest.</source>
         <translation>您的任务目前的版本。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="257"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="276"/>
         <source>Release date</source>
         <translation>发布日期</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="268"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="287"/>
         <source>In progress</source>
         <translation>开发进行中</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="275"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="294"/>
         <source>Released</source>
         <translation>已发布</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="310"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="329"/>
         <source>Status and date of the current release.</source>
         <translation>目前发布版本的状态和日期。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="325"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="343"/>
         <source>Website</source>
         <translation>网站</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="337"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="355"/>
         <source>Official website of the quest.</source>
         <translation>任务的官方网站。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="364"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="378"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="389"/>
+        <source>Video options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="398"/>
+        <source>Smooth camera scrolling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="405"/>
+        <source>Enables subpixel smoothing of camera scrolling movement.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="415"/>
+        <source>Synchronize update rate with video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="422"/>
+        <source>Keeps the main loop update rate the same as the video refresh rate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="210"/>
         <source>A more detailed description of your quest.</source>
         <translation>更加详细描述您的任务。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="384"/>
         <source>Quest size</source>
-        <translation>任务大小</translation>
+        <translation type="vanished">任务大小</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="472"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="507"/>
         <source>Size of the logical game area (before any scaling).
 This will be the visible space of the current map.</source>
         <translation>游戏区域的大小(在任何缩放之前)。
@@ -4212,30 +4596,30 @@ Should identify your quest to avoid confusion with other quests.</source>
 Permet d&apos;identifier votre quête pour éviter toute confusion avec d&apos;autres quêtes.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="401"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="436"/>
         <source>Normal quest size</source>
         <translation>正常任务大小</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="491"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="525"/>
         <source>Minimum quest size</source>
         <translation>最小任务大小</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="562"/>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="648"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="596"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="681"/>
         <source>Only useful to support a range of logical sizes.</source>
         <translation>仅适用于支援范围内的逻辑大小。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="577"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="610"/>
         <source>Maximum quest size</source>
         <translation>最大任务大小</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="431"/>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="521"/>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="607"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="466"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="555"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="640"/>
         <source>x</source>
         <translation>x</translation>
     </message>
@@ -4315,12 +4699,22 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>改变最大尺寸</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.cpp" line="409"/>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="397"/>
+        <source>Set subpixel camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="424"/>
+        <source>Set dynamic timestep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="463"/>
         <source>Quest properties</source>
         <translation>任务属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.cpp" line="412"/>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="466"/>
         <source>Quest properties have been modified. Save changes?</source>
         <translation>任务属性已被修改。 储存变更?</translation>
     </message>
@@ -4328,156 +4722,155 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
 <context>
     <name>SolarusEditor::QuestTreeView</name>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="444"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="458"/>
         <source>New folder...</source>
         <translation>新的资料夹...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="452"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="466"/>
         <source>New script...</source>
         <translation>新脚本...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="64"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="530"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="65"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="544"/>
         <source>Open</source>
         <translation>开启</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="58"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="489"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="497"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="59"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="503"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="511"/>
         <source>Play</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="551"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="565"/>
         <source>Open Script</source>
         <translation>开启脚本</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="562"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="576"/>
         <source>Open Dialogs</source>
         <translation>开启对话框</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="568"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="582"/>
         <source>Open Strings</source>
         <translation>开启字串</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="71"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="72"/>
         <source>Rename...</source>
         <translation>重新命名...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="666"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="680"/>
         <source>Change description...</source>
         <translation>更改说明...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="79"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="80"/>
         <source>Delete...</source>
         <translation>删除...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="72"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="73"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="87"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="88"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="404"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="405"/>
         <source>Add to quest as %1...</source>
         <translation>作为 %1 新增到任务...</translation>
     </message>
     <message>
         <location filename="../src/widgets/quest_tree_view.cpp" line="429"/>
+        <source>New sprite from image...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="443"/>
         <source>New GLSL file...</source>
         <translation>新的 GLSL 档案...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="485"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="499"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="611"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="625"/>
         <source>Open Properties</source>
         <translation>开启属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="617"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="631"/>
         <source>Explore folder</source>
         <translation>探索资料夹</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="86"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="87"/>
         <source>Author and license...</source>
         <translation>作者和许可证...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="805"/>
         <source>New folder</source>
-        <translation>新的资料夹</translation>
+        <translation type="vanished">新的资料夹</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="806"/>
         <source>Folder name:</source>
-        <translation>资料夹名称:</translation>
+        <translation type="vanished">资料夹名称:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="848"/>
         <source>New Lua script</source>
-        <translation>新Lua脚本</translation>
+        <translation type="vanished">新Lua脚本</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="849"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="900"/>
         <source>File name:</source>
-        <translation>档案名称:</translation>
+        <translation type="vanished">档案名称:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="899"/>
         <source>New GLSL file</source>
-        <translation>新的 GLSL 档案</translation>
+        <translation type="vanished">新的 GLSL 档案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1116"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1101"/>
         <source>Change description</source>
         <translation>更改说明</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1117"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1102"/>
         <source>New description for %1 &apos;%2&apos;:</source>
         <translation>%1 &apos;%2&apos; 的新 描述:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1154"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1139"/>
         <source>File information for &apos;%1&apos;</source>
         <translation>&apos;%1&apos;的文件资讯</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1156"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1141"/>
         <source>File information for %1 selected items</source>
         <translation>%1 个选定项目的文件资讯</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1237"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1222"/>
         <source>Do you really want to delete &apos;%1&apos;?</source>
         <translation>您确定要删除&apos;%1&apos;吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1238"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1223"/>
         <source>Do you really want to delete these %1 items?</source>
         <translation>您确定要删除这些 %1 项吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1240"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1225"/>
         <source>Delete confirmation</source>
         <translation>删除确认</translation>
     </message>
@@ -4496,267 +4889,287 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
     </message>
     <message>
         <location filename="../src/widgets/settings_dialog.ui" line="30"/>
+        <source>Appaerance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="36"/>
+        <source>Theme:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="50"/>
+        <source>Automatic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="55"/>
+        <source>Light mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="60"/>
+        <source>Dark mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="84"/>
         <source>Files</source>
         <translation>档案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="38"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="92"/>
         <source>Working directory:</source>
         <translation>工作目录:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="48"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="102"/>
         <source>Browse...</source>
         <translation>浏览...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="57"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="111"/>
         <source>Restore open tabs at startup</source>
         <translation>恢复启动时开启的分页</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="67"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="121"/>
         <source>Running</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="75"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="129"/>
         <source>Save modified files before running:</source>
         <translation>运行前保存修改的档案:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="83"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="137"/>
         <source>Ask</source>
         <translation>提问</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="88"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="142"/>
         <source>Yes</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="93"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="147"/>
         <source>No</source>
         <translation>否</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="116"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="170"/>
         <source>No audio</source>
         <translation>无音效</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="125"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="179"/>
         <source>Quest size:</source>
         <translation>任务大小:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="137"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="191"/>
         <source>Force Software Rendering</source>
         <translation>强制使用软件渲染</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="144"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="198"/>
         <source>Suspend when unfocused</source>
         <translation>不专注视窗时暂停</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="239"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="292"/>
         <source>Tabulation</source>
         <translation>间隔</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="245"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="298"/>
         <source>Length:</source>
         <translation>长度:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="278"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="331"/>
         <source>Replace by space</source>
         <translation>用空格取代</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="301"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="354"/>
         <source>External Editor</source>
         <translation>外部编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="313"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="366"/>
         <source>Command:</source>
         <translation>命令行:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="323"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="376"/>
         <source>executable %f %p</source>
         <translation>可执行档 %f %p</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="342"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="395"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="410"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="578"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="662"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="839"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1009"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="433"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="571"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="625"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="772"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="912"/>
         <source>Default zoom:</source>
         <translation>默认缩放:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="435"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="687"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1034"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="458"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="650"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="937"/>
         <source>Grid:</source>
         <translation>网格:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="468"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="730"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="891"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1067"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="491"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="693"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="824"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="970"/>
         <source>Show at opening</source>
         <translation>开启时显示</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="485"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="753"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1084"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="508"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="716"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="987"/>
         <source>Default size:</source>
         <translation>默认尺寸:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="492"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="760"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1091"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="515"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="723"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="994"/>
         <source>Style:</source>
         <translation>大小:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="499"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="767"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="898"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1098"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="522"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="730"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="831"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="1001"/>
         <source>Color:</source>
         <translation>颜色:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="542"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="565"/>
         <source>Tileset graphics view</source>
         <translation>图块集图形视图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="618"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="611"/>
         <source>Sprite editor</source>
         <translation>精灵图编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="372"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="624"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="425"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="617"/>
         <source>Main graphics view</source>
         <translation>主要图形视图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="774"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="737"/>
         <source>Auto detect size</source>
         <translation>自动检测尺寸</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="801"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="764"/>
         <source>Previewer graphics view</source>
         <translation>预览图形视图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="864"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="797"/>
         <source>Origin:</source>
         <translation>来源:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="168"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="222"/>
         <source>Text editor</source>
         <translation>文字编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="174"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="228"/>
         <source>Font</source>
         <translation>字体</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="180"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="234"/>
         <source>Family:</source>
         <translation>字体系列:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="214"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="268"/>
         <source>Size:</source>
         <translation>尺寸:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="366"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="419"/>
         <source>Map editor</source>
         <translation>地图编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="965"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="898"/>
         <source>Tileset editor</source>
         <translation>图块集编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="971"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="904"/>
         <source>Graphics view</source>
         <translation>图形视图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="380"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="548"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="632"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="809"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="979"/>
         <source>Background color:</source>
-        <translation>背景颜色:</translation>
+        <translation type="vanished">背景颜色:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="107"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="108"/>
         <source>Select external editor</source>
         <translation>选择外部编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="182"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="186"/>
         <source>Restore default settings</source>
         <translation>恢复默认设定</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="183"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="187"/>
         <source>Do you really want to restore default settings?</source>
         <translation>您真的要恢复默认设定吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="317"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="355"/>
         <source>Working directory</source>
         <translation>工作目录</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1045"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="994"/>
         <source>25 %</source>
         <translation>25 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1046"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="995"/>
         <source>50 %</source>
         <translation>50 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1047"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="996"/>
         <source>100 %</source>
         <translation>100 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1048"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="997"/>
         <source>200 %</source>
         <translation>200 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1049"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="998"/>
         <source>400 %</source>
         <translation>400 %</translation>
     </message>
@@ -4764,123 +5177,122 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
 <context>
     <name>SolarusEditor::ShaderEditor</name>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="36"/>
         <source>Shader properties</source>
-        <translation>着色器属性</translation>
+        <translation type="vanished">着色器属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="48"/>
+        <location filename="../src/widgets/shader_editor.ui" line="81"/>
         <source>Shader id</source>
         <translation>着色器 ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="55"/>
+        <location filename="../src/widgets/shader_editor.ui" line="88"/>
         <source>Filename of the shader program (without extension)</source>
         <translation>着色器源代码的档案名称(不含后缀名)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="71"/>
+        <location filename="../src/widgets/shader_editor.ui" line="104"/>
         <source>Description</source>
         <translation>描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="84"/>
+        <location filename="../src/widgets/shader_editor.ui" line="117"/>
         <source>User-friendly description to show in the editor</source>
         <translation>在编辑器中显示对使用者友好的描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="91"/>
+        <location filename="../src/widgets/shader_editor.ui" line="124"/>
         <location filename="../src/widgets/shader_editor.cpp" line="68"/>
         <source>Scaling factor</source>
         <translation>比例因素</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="120"/>
+        <location filename="../src/widgets/shader_editor.ui" line="153"/>
         <source>Preview settings</source>
         <translation>预览设定</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="134"/>
+        <location filename="../src/widgets/shader_editor.ui" line="167"/>
         <source>Preview mode</source>
         <translation>预览模式</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="155"/>
+        <location filename="../src/widgets/shader_editor.ui" line="188"/>
         <source>Picture</source>
         <translation>图片</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="169"/>
+        <location filename="../src/widgets/shader_editor.ui" line="202"/>
         <source>Map</source>
         <translation>地图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="180"/>
+        <location filename="../src/widgets/shader_editor.ui" line="213"/>
         <source>Sprite</source>
         <translation>精灵图</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="242"/>
+        <location filename="../src/widgets/shader_editor.ui" line="275"/>
         <source>Open a PNG file</source>
         <translation>开启 PNG 文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="337"/>
+        <location filename="../src/widgets/shader_editor.ui" line="376"/>
         <source>Animation</source>
         <translation>动画</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="354"/>
+        <location filename="../src/widgets/shader_editor.ui" line="393"/>
         <source>Direction</source>
         <translation>方向</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="418"/>
+        <location filename="../src/widgets/shader_editor.ui" line="463"/>
         <source>Vertex shader</source>
         <translation>顶点着色器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="436"/>
+        <location filename="../src/widgets/shader_editor.ui" line="481"/>
         <source>Use a vertex shader</source>
         <translation>使用顶点着色器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="494"/>
+        <location filename="../src/widgets/shader_editor.ui" line="539"/>
         <source>New vertex shader file</source>
         <translation>新的顶点着色器文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="505"/>
+        <location filename="../src/widgets/shader_editor.ui" line="550"/>
         <source>Save vertex shader file</source>
         <translation>储存顶点着色器文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="521"/>
+        <location filename="../src/widgets/shader_editor.ui" line="566"/>
         <source>Open vertex shader file</source>
         <translation>打开顶点着色器文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="579"/>
+        <location filename="../src/widgets/shader_editor.ui" line="624"/>
         <source>Fragment shader</source>
         <translation>片段着色器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="597"/>
+        <location filename="../src/widgets/shader_editor.ui" line="642"/>
         <source>Use a fragment shader</source>
         <translation>使用片段着色器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="655"/>
+        <location filename="../src/widgets/shader_editor.ui" line="700"/>
         <source>New fragment shader file</source>
         <translation>新的片段着色器文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="666"/>
+        <location filename="../src/widgets/shader_editor.ui" line="711"/>
         <source>Save fragment shader file</source>
         <translation>储存片段着色器文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="682"/>
+        <location filename="../src/widgets/shader_editor.ui" line="727"/>
         <source>Open fragment shader file</source>
         <translation>打开片段着色器文件</translation>
     </message>
@@ -4930,17 +5342,17 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>GLSL 着色器档案 (*.glsl)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="696"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="702"/>
         <source>Shader GLSL files must be in the shaders directory</source>
         <translation>Shader GLSL 档案必须位于 Shaders 目录中</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="830"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="836"/>
         <source>Open a PNG picture</source>
         <translation>开启 PNG 文件</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="832"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="838"/>
         <source>PNG file (*.png)</source>
         <translation>PNG档 (*.png)</translation>
     </message>
@@ -4974,147 +5386,146 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>精灵图编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="78"/>
         <source>Sprite properties</source>
-        <translation>精灵图属性</translation>
+        <translation type="vanished">精灵图属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="87"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="114"/>
         <source>Sprite id</source>
         <translation>精灵图ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="94"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="121"/>
         <source>Filename of the sprite (without extension)</source>
         <translation>精灵图的档案名称(不含后缀名)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="107"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="134"/>
         <source>Description</source>
         <translation>描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="114"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="141"/>
         <source>User-friendly description to show in the editor</source>
         <translation>在编辑器中显示对使用者友好的描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="137"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="164"/>
         <source>Add</source>
         <translation>新增</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="175"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="202"/>
         <source>Rename</source>
         <translation>重新命名</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="213"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="240"/>
         <source>Duplicate</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="327"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="354"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="370"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="397"/>
         <source>Animation properties</source>
         <translation>动画属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="382"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="409"/>
         <source>Source image</source>
         <translation>来源图像</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="418"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="445"/>
         <source>Source image of the animation</source>
         <translation>来源图像的动画</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="434"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="461"/>
         <source>Tileset of the animation</source>
         <translation>图块集的动画</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="441"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="468"/>
         <source>Refresh image</source>
         <translation>更新图像</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="444"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="471"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="461"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="488"/>
         <source>Change</source>
         <translation>修改</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="486"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="513"/>
         <source>Delay in milliseconds between two frames of the animation</source>
         <translation>动画两帧之间的延迟(以毫秒为单位)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="489"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="516"/>
         <source> ms</source>
         <translation> ms</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="505"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="532"/>
         <source>Frame delay</source>
         <translation>帧延迟</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="512"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="539"/>
         <source>Loop on frame</source>
         <translation>帧循环</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="522"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="549"/>
         <source>Index of the frame where you want the animation to come back when the last frame finishes</source>
         <translation>最后一帧结束时，您希望动画返回帧的索引</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="538"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="565"/>
         <source>Default animation</source>
         <translation>默认动画</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="545"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="572"/>
         <source>Default animation of the sprite</source>
         <translation>精灵图的默认动画</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="548"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="575"/>
         <source>Set as default</source>
         <translation>设定为默认</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="657"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="690"/>
         <source>Direction preview</source>
         <translation>预览方位</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="558"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="585"/>
         <source>Direction properties</source>
         <translation>方位属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="251"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="278"/>
         <source>Move up</source>
         <translation>上移</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="289"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="316"/>
         <source>Move down</source>
         <translation>下移</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="567"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="594"/>
         <source>Position</source>
         <translation>位置</translation>
     </message>
@@ -5129,17 +5540,17 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>影像中包含画面的区域左上角的 Y 座标</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="574"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="601"/>
         <source>Origin</source>
         <translation>来源</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="581"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="608"/>
         <source>Number of frames</source>
         <translation>帧数</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="588"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="615"/>
         <source>Number of columns</source>
         <translation>列数</translation>
     </message>
@@ -5154,17 +5565,17 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>精灵图原点的 Y 座标</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="595"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="622"/>
         <source>Number of frames of this direction</source>
         <translation>此方向的帧数</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="608"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="635"/>
         <source>Number of columns of the grid containing the frames of this direction in the image</source>
         <translation>影像中包含该方向帧的网格的列数</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="621"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="648"/>
         <source>Size</source>
         <translation>尺寸</translation>
     </message>
@@ -5300,7 +5711,7 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <translation>创建方向</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.cpp" line="1000"/>
+        <location filename="../src/widgets/sprite_editor.cpp" line="992"/>
         <source>Invalid description</source>
         <translation>描述无效</translation>
     </message>
@@ -5379,78 +5790,78 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
 <context>
     <name>SolarusEditor::SpritePreviewer</name>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="34"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="33"/>
         <source>Show origin</source>
         <translation>显示来源</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="41"/>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="384"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="40"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="377"/>
         <source>Zoom</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="74"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="86"/>
         <source>Index of the current frame</source>
         <translation>当前帧的索引</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="102"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="114"/>
         <source>Last</source>
         <translation>最后</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="134"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="146"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="166"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="178"/>
         <source>Next</source>
         <translation>下一个</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="227"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="239"/>
         <source>Previous</source>
         <translation>上一个</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="259"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="271"/>
         <source>First</source>
         <translation>第一个</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="194"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="187"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="197"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="190"/>
         <source>Start</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="386"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="379"/>
         <source>25 %</source>
         <translation>25 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="387"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="380"/>
         <source>50 %</source>
         <translation>50 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="388"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="381"/>
         <source>100 %</source>
         <translation>100 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="389"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="382"/>
         <source>200 %</source>
         <translation>200 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="390"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="383"/>
         <source>400 %</source>
         <translation>400 %</translation>
     </message>
@@ -5458,19 +5869,19 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
 <context>
     <name>SolarusEditor::SpriteScene</name>
     <message>
-        <location filename="../src/widgets/sprite_scene.cpp" line="200"/>
+        <location filename="../src/widgets/sprite_scene.cpp" line="201"/>
         <source>This tileset has no sprite image.
 Please select another tileset.</source>
         <translation>该图块集没有精灵图。
 请选择另一个图块集。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_scene.cpp" line="206"/>
+        <location filename="../src/widgets/sprite_scene.cpp" line="207"/>
         <source>Missing source image &apos;%1&apos;</source>
         <translation>缺少来源影像&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_scene.cpp" line="370"/>
+        <location filename="../src/widgets/sprite_scene.cpp" line="371"/>
         <source>No such direction index: %1</source>
         <translation>无此方向索引:%1</translation>
     </message>
@@ -5551,28 +5962,28 @@ Please select another tileset.</source>
         <translation>更改列数</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="615"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="613"/>
         <source>New multiframe direction</source>
         <translation>新的多帧方向</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="624"/>
-        <location filename="../src/widgets/sprite_view.cpp" line="684"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="622"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="682"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="610"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="608"/>
         <source>New direction</source>
         <translation>新的方向</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="672"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="670"/>
         <source>Move here</source>
         <translation>移动至此</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="678"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="676"/>
         <source>Duplicate here</source>
         <translation>复制至此</translation>
     </message>
@@ -5810,12 +6221,12 @@ Please select another tileset.</source>
         <translation>F4</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor.cpp" line="99"/>
+        <location filename="../src/widgets/text_editor.cpp" line="101"/>
         <source>Cannot open file &apos;%1&apos;</source>
         <translation>无法开启档案 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor.cpp" line="126"/>
+        <location filename="../src/widgets/text_editor.cpp" line="128"/>
         <source>Cannot open file &apos;%1&apos; for writing</source>
         <translation>无法开启档案 &apos;%1&apos; 并写入</translation>
     </message>
@@ -5823,22 +6234,22 @@ Please select another tileset.</source>
 <context>
     <name>SolarusEditor::TextEditorWidget</name>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="348"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="360"/>
         <source>Cut</source>
         <translation>剪下</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="359"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="371"/>
         <source>Copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="370"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="382"/>
         <source>Paste</source>
         <translation>贴上</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="383"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="395"/>
         <source>Select all</source>
         <translation>全选</translation>
     </message>
@@ -5869,169 +6280,169 @@ Please select another tileset.</source>
         <translation>图块集编辑器</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="96"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="102"/>
         <source>Tileset id</source>
         <translation>图块集ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="103"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="109"/>
         <source>Filename of the tileset (without extension)</source>
         <translation>图块集的档案名称(不含后缀名)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="119"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="125"/>
         <source>Description</source>
         <translation>描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="132"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="138"/>
         <source>User-friendly description to show in the editor</source>
         <translation>在编辑器中显示对使用者友好的描述</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="155"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="161"/>
         <source>Background color applied to maps using this tileset</source>
         <translation>使用此图块集应用于地图的背景颜色</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="226"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="232"/>
         <source>Name identifying the pattern</source>
         <translation>识别模式的名称</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="142"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="148"/>
         <source>Background</source>
         <translation>背景</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="175"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="181"/>
         <source>Patterns</source>
         <translation>图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="190"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="196"/>
         <source>Selection properties</source>
         <translation>选择属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="202"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="683"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="208"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="717"/>
         <source>Pattern id</source>
         <translation>图案ID</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="236"/>
-        <location filename="../src/widgets/tileset_editor.ui" line="491"/>
-        <location filename="../src/widgets/tileset_editor.ui" line="588"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="242"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="488"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="585"/>
         <source>Rename (F2)</source>
         <translation>重新命名 (F2)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="271"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="176"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="277"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="210"/>
         <source>Ground</source>
         <translation>地面</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="284"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="290"/>
         <source>Terrain of the pattern</source>
         <translation>图案的地形</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="303"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="337"/>
         <source>Animation</source>
         <translation>动画</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="331"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="337"/>
         <source>Scrolling</source>
         <translation>卷动</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="344"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="350"/>
         <source>Kind of animation of the pattern</source>
         <translation>图案的动画类型</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="354"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="360"/>
         <source>Frames</source>
         <translation>帧</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="376"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="382"/>
         <source>Horizontal or vertical separation (only for multi-frame patterns)</source>
         <translation>水平或垂直分离(仅适用于多帧图案)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="385"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="391"/>
         <source>Delay</source>
         <translation>延迟</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="392"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="398"/>
         <source> ms</source>
         <translation> ms</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="408"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="466"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="414"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="500"/>
         <source>Mirror loop</source>
         <translation>镜面循环</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="419"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="425"/>
         <source>Contours</source>
         <translation>轮廓</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="459"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="853"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="456"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="887"/>
         <source>Create contour</source>
         <translation>建立轮廓</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="566"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="563"/>
         <source>Contour properties</source>
         <translation>轮廓属性</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="572"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="569"/>
         <source>Id</source>
         <translation>Id</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="591"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="588"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="598"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="595"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="620"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="617"/>
         <source>Positioning</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="630"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="627"/>
         <source>Outside the selection</source>
         <translation>选择区域以外</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="639"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="636"/>
         <source>Inside the selection</source>
         <translation>选择区域以内</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="294"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="218"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="300"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="252"/>
         <source>Default layer</source>
         <translation>默认图层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="314"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="320"/>
         <source>Repeatable</source>
         <translation>可重复</translation>
     </message>
@@ -6046,53 +6457,53 @@ Please select another tileset.</source>
         <translation>移动图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="138"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="172"/>
         <source>Move patterns</source>
         <translation>移动图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="260"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="294"/>
         <source>Repeat mode</source>
         <translation>重复模式</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="347"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="381"/>
         <source>Animation separation</source>
         <translation>动画分离</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="386"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="426"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="420"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="460"/>
         <source>Frame delay</source>
         <translation>帧延迟</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="509"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="543"/>
         <source>Create pattern</source>
         <translation>创建图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="804"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="838"/>
         <source>Delete contour</source>
         <translation>删除轮廓</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="881"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="915"/>
         <source>Delete contour pattern</source>
         <translation>删除轮廓图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1309"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1352"/>
         <source>Rename tile pattern</source>
         <translation>重新命名图块图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1310"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1353"/>
         <source>New pattern id:</source>
         <translation>新图案ID:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1311"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1354"/>
         <source>Update existing maps using this pattern</source>
         <translation>使用此图案更新现有地图</translation>
     </message>
@@ -6101,93 +6512,98 @@ Please select another tileset.</source>
         <translation type="obsolete">Mettre à jour les références dans les maps existantes</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="529"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="609"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="526"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="643"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="932"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="966"/>
         <source>File &apos;%1&apos; is not a tileset</source>
         <translation>文件&apos;%1&apos;不是图块集</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="937"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="971"/>
         <source>Tileset %1</source>
         <translation>图块集 %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="940"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="974"/>
         <source>Tileset &apos;%1&apos; has been modified. Save changes?</source>
         <translation>图块集 &apos;%1&apos; 已被修改。 储存变更?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1226"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1256"/>
         <source>Invalid description</source>
         <translation>描述无效</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="545"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="579"/>
         <source>Duplicate</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="716"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="138"/>
+        <source>Resize pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_editor.cpp" line="750"/>
         <source>Border set id</source>
         <translation>设定边界id</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="743"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="777"/>
         <source>Border set inner</source>
         <translation>设定内边界</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="775"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="809"/>
         <source>Border set patterns</source>
         <translation>边界设定图案</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1394"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1437"/>
         <source>Cannot open map file &apos;%1&apos;</source>
         <translation>无法开启地图档案 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1402"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1445"/>
         <source>Invalid map file: &apos;%1&apos;</source>
         <translation>无效的地图档:%1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1427"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1470"/>
         <source>Failed to export map after changing pattern id: &apos;%1&apos;</source>
         <translation>更改模式 ID 后汇出地图失败:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1435"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1478"/>
         <source>Cannot open map file &apos;%1&apos; for writing</source>
         <translation>无法开启地图档&apos;%1&apos;进行写入</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1848"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1891"/>
         <source>Do you really want to delete pattern &apos;%1&apos;?</source>
         <translation>您确实要删除图案&apos;%1&apos;吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1852"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1895"/>
         <source>Do you really want to delete these %1 patterns?</source>
         <translation>您确实要删除这些 %1 图案吗?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1858"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1901"/>
         <source>Delete confirmation</source>
         <translation>删除确认</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1895"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1938"/>
         <source>Border set name</source>
         <translation>边界名称</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1896"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1939"/>
         <source>Border set name:</source>
         <translation>边界名称:</translation>
     </message>
@@ -6223,46 +6639,46 @@ Voulez-vous recharger l&apos;image ?</translation>
         <translation>无效的图块图案索引:%1</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1756"/>
+        <location filename="../src/tileset_model.cpp" line="1796"/>
         <source>Contour already exists: &apos;%1&apos;</source>
         <translation>轮廓已存在:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1760"/>
-        <location filename="../src/tileset_model.cpp" line="1811"/>
+        <location filename="../src/tileset_model.cpp" line="1800"/>
+        <location filename="../src/tileset_model.cpp" line="1851"/>
         <source>Invalid contour id: &apos;%1&apos;</source>
         <translation>无效轮廓 ID:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1766"/>
+        <location filename="../src/tileset_model.cpp" line="1806"/>
         <source>Failed to create contour &apos;%1&apos;</source>
         <translation>无法建立轮廓&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1783"/>
-        <location filename="../src/tileset_model.cpp" line="1807"/>
-        <location filename="../src/tileset_model.cpp" line="1838"/>
-        <location filename="../src/tileset_model.cpp" line="1859"/>
-        <location filename="../src/tileset_model.cpp" line="1883"/>
-        <location filename="../src/tileset_model.cpp" line="1898"/>
-        <location filename="../src/tileset_model.cpp" line="1926"/>
-        <location filename="../src/tileset_model.cpp" line="1947"/>
-        <location filename="../src/tileset_model.cpp" line="1965"/>
+        <location filename="../src/tileset_model.cpp" line="1823"/>
+        <location filename="../src/tileset_model.cpp" line="1847"/>
+        <location filename="../src/tileset_model.cpp" line="1878"/>
+        <location filename="../src/tileset_model.cpp" line="1899"/>
+        <location filename="../src/tileset_model.cpp" line="1923"/>
+        <location filename="../src/tileset_model.cpp" line="1938"/>
+        <location filename="../src/tileset_model.cpp" line="1966"/>
+        <location filename="../src/tileset_model.cpp" line="1987"/>
+        <location filename="../src/tileset_model.cpp" line="2005"/>
         <source>No such contour: &apos;%1&apos;</source>
         <translation>没有这样的轮廓:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1789"/>
+        <location filename="../src/tileset_model.cpp" line="1829"/>
         <source>Failed to delete contour &apos;%1&apos;</source>
         <translation>无法删除轮廓&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1815"/>
+        <location filename="../src/tileset_model.cpp" line="1855"/>
         <source>Contour id already in use: &apos;%1&apos;</source>
         <translation>轮廓 ID 已在使用:&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1821"/>
+        <location filename="../src/tileset_model.cpp" line="1861"/>
         <source>Failed to rename contour &apos;%1&apos;</source>
         <translation>无法重命名轮廓&apos;%1&apos;</translation>
     </message>
@@ -6282,12 +6698,12 @@ Voulez-vous recharger l&apos;image ?</translation>
 <context>
     <name>SolarusEditor::TilesetScene</name>
     <message>
-        <location filename="../src/widgets/tileset_scene.cpp" line="176"/>
+        <location filename="../src/widgets/tileset_scene.cpp" line="177"/>
         <source>Missing tileset image &apos;%1&apos;</source>
         <translation>缺少图块集影像&apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_scene.cpp" line="453"/>
+        <location filename="../src/widgets/tileset_scene.cpp" line="454"/>
         <source>No such pattern index: %1</source>
         <translation>无此图案索引:%1</translation>
     </message>
@@ -6295,93 +6711,108 @@ Voulez-vous recharger l&apos;image ?</translation>
 <context>
     <name>SolarusEditor::TilesetView</name>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="76"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="182"/>
         <source>Change id...</source>
         <translation>更改ID...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="77"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="183"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="84"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="190"/>
         <source>Delete...</source>
         <translation>删除...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="62"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="168"/>
         <source>Create contour...</source>
         <translation>建立轮廓...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="65"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="157"/>
+        <source>Resize</source>
+        <translation type="unfinished">调整大小</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_view.cpp" line="160"/>
+        <source>R</source>
+        <translation type="unfinished">R</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_view.cpp" line="171"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="98"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="204"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="99"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="205"/>
         <source>H</source>
         <translation>H</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="100"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="206"/>
         <source>V</source>
         <translation>V</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="101"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="207"/>
         <source>N</source>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="634"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="667"/>
+        <source>Ground</source>
+        <translation type="unfinished">地面</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_view.cpp" line="672"/>
         <source>Default layer</source>
         <translation>默认图层</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="640"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="677"/>
         <source>Repeatable</source>
         <translation>可重复</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="645"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="682"/>
         <source>Scrolling</source>
         <translation>卷动</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="720"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="756"/>
         <source>Layer %1</source>
         <translation>层级 %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="842"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1351"/>
         <source>New pattern (more options)</source>
         <translation>新图案(更多选项)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="848"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1357"/>
         <source>New pattern (%1)</source>
         <translation>新图案 (%1)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="858"/>
-        <location filename="../src/widgets/tileset_view.cpp" line="953"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1367"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1502"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="939"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1488"/>
         <source>Move here</source>
         <translation>移动到这</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="945"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1494"/>
         <source>Duplicate here</source>
         <translation>复制到这</translation>
     </message>

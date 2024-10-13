@@ -274,13 +274,13 @@
         <translation type="vanished">No se encuentra el archivo o directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="114"/>
-        <location filename="../src/widgets/import_dialog.cpp" line="366"/>
+        <location filename="../src/file_tools.cpp" line="121"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="375"/>
         <source>Source file cannot be read: &apos;%1&apos;</source>
         <translation>No puede leerse el archivo de origen: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="118"/>
+        <location filename="../src/file_tools.cpp" line="125"/>
         <source>Destination already exists: &apos;%1&apos;</source>
         <translation>El destino ya existe: &apos;%1&apos;</translation>
     </message>
@@ -289,53 +289,53 @@
         <translation type="vanished">No se encuentra el directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="103"/>
+        <location filename="../src/file_tools.cpp" line="110"/>
         <source>Source and destination are the same: &apos;%1&apos;</source>
         <translation>El origen y el destino son idénticos: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="110"/>
+        <location filename="../src/file_tools.cpp" line="117"/>
         <source>No such file or folder: &apos;%1&apos;</source>
         <translation>No se encuentra el archivo o directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="127"/>
+        <location filename="../src/file_tools.cpp" line="134"/>
         <source>No such folder: &apos;%1&apos;</source>
         <translation>No se encuentra el directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="134"/>
+        <location filename="../src/file_tools.cpp" line="141"/>
         <source>Cannot copy folder &apos;%1&apos; to one of its own subfolders: &apos;%2&apos;</source>
         <translation>No se puede copiar el directorio &apos;%1&apos; a uno de sus propios subdirectorios &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="138"/>
-        <location filename="../src/file_tools.cpp" line="214"/>
+        <location filename="../src/file_tools.cpp" line="145"/>
+        <location filename="../src/file_tools.cpp" line="221"/>
         <source>Cannot create folder &apos;%1&apos;</source>
         <translation>No se puede crear la carpeta &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="152"/>
+        <location filename="../src/file_tools.cpp" line="159"/>
         <source>Cannot copy file &apos;%1&apos; to &apos;%2&apos;</source>
         <translation>No se puede copiar el archivo &apos;%1&apos; a &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="183"/>
+        <location filename="../src/file_tools.cpp" line="190"/>
         <source>Failed to delete file &apos;%1&apos;</source>
         <translation>No se pudo eliminar el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="197"/>
+        <location filename="../src/file_tools.cpp" line="204"/>
         <source>Failed to delete folder &apos;%1&apos;</source>
         <translation>No se pudo eliminar la carpeta &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="237"/>
+        <location filename="../src/file_tools.cpp" line="244"/>
         <source>Cannot open file &apos;%1&apos;</source>
         <translation>No se puede abrir el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/file_tools.cpp" line="260"/>
+        <location filename="../src/file_tools.cpp" line="267"/>
         <source>Cannot open file &apos;%1&apos; for writing</source>
         <translation>No se puede abrir el archivo &apos;%1&apos; para escritura</translation>
     </message>
@@ -455,7 +455,22 @@
         <translation>Lava</translation>
     </message>
     <message>
-        <location filename="../src/new_quest_builder.cpp" line="40"/>
+        <location filename="../src/new_quest_builder.cpp" line="45"/>
+        <source>Could not create data directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/new_quest_builder.cpp" line="56"/>
+        <source>Untitled Quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/new_quest_builder.cpp" line="59"/>
+        <source>Could not create quest properties.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/new_quest_builder.cpp" line="101"/>
         <source>Could not find the assets directory.
 Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>No se pudo encontrar el directorio &quot;assets&quot;.
@@ -659,34 +674,52 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
         <translation>Herramienta deslizante</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="354"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="363"/>
         <source>Source file does not exist: &apos;%1&apos;</source>
         <translation>El archivo de origen no existe: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="358"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="367"/>
         <source>Source path is a folder: &apos;%1&apos;</source>
         <translation>La ruta de origen es un directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="362"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="371"/>
         <source>Source file is a symbolic link: &apos;%1&apos;</source>
         <translation>El archivo de origen es un enlace simbólico: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="458"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="456"/>
         <source>Source folder does not exist: &apos;%1&apos;</source>
         <translation>El directorio de origen no existe: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="462"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="460"/>
         <source>Source path is not a folder: &apos;%1&apos;</source>
         <translation>La ruta de origen no es un directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="466"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="464"/>
         <source>Source folder cannot be read: &apos;%1&apos;</source>
         <translation>El directorio de origen no se puede leer: &apos;%1&apos;</translation>
+    </message>
+</context>
+<context>
+    <name>QMessageBox</name>
+    <message>
+        <location filename="../src/widgets/gui_tools.cpp" line="35"/>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/gui_tools.cpp" line="48"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/gui_tools.cpp" line="61"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -951,6 +984,34 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
     </message>
 </context>
 <context>
+    <name>SolarusEditor::Console</name>
+    <message>
+        <location filename="../src/widgets/console.ui" line="42"/>
+        <source>Run Lua code to the quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="259"/>
+        <source>The quest process failed to start.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="262"/>
+        <source>The quest process crashed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="265"/>
+        <source>The quest process timed out.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/console.cpp" line="273"/>
+        <source>An unknown error occurred to the quest process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SolarusEditor::DialogPropertiesTable</name>
     <message>
         <location filename="../src/widgets/dialog_properties_table.cpp" line="35"/>
@@ -1015,150 +1076,149 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
         <translation>Descripción intuitiva para mostrar en el editor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="96"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="99"/>
         <source>Compare to language</source>
         <translation>Comparar con el idioma</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="109"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="112"/>
         <source>Refresh language</source>
         <translation>Recargar idioma</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="112"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="115"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="161"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="164"/>
         <source>Add dialog</source>
         <translation>Añadir diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="199"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="131"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="202"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="134"/>
         <source>Change dialog id</source>
         <translation>Cambiar id de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="237"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="240"/>
         <source>Duplicate dialog(s)</source>
         <translation>Duplicar diálogo(s)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="275"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="202"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="278"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="205"/>
         <source>Delete dialog</source>
         <translation>Eliminar diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="313"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="316"/>
         <source>Dialog properties</source>
         <translation>Propiedades del diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="321"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="324"/>
         <source>Dialog id:</source>
         <translation>Id del diálogo:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="366"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="371"/>
         <source>Text:</source>
         <translation>Texto:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="375"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="391"/>
         <source>1,1</source>
         <translation>1,1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="395"/>
         <source>Display right margin at column:</source>
-        <translation>Mostrar margen derecho en la columna:</translation>
+        <translation type="vanished">Mostrar margen derecho en la columna:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="436"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="416"/>
         <source>Translation:</source>
         <translation>Traducción:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="465"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="445"/>
         <source>Properties :</source>
         <translation>Propiedades:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="495"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="475"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="500"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="480"/>
         <source>Translation</source>
         <translation>Traducción</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="516"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="496"/>
         <source>Add property</source>
         <translation>Añadir propiedad</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="554"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="534"/>
         <source>Change property key</source>
         <translation>Cambiar clave de la propiedad</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.ui" line="592"/>
+        <location filename="../src/widgets/dialogs_editor.ui" line="572"/>
         <source>Delete property</source>
         <translation>Eliminar propiedad</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="67"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="70"/>
         <source>Create dialog</source>
         <translation>Crear diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="100"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="103"/>
         <source>Duplicate dialogs</source>
         <translation>Duplicar diálogos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="164"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="167"/>
         <source>Change dialog id prefix</source>
         <translation>Cambiar prefijo de id de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="234"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="237"/>
         <source>Delete dialogs</source>
         <translation>Eliminar diálogos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="268"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="271"/>
         <source>Change dialog text</source>
         <translation>Cambiar texto de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="303"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="306"/>
         <source>Create dialog property</source>
         <translation>Crear propiedad de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="337"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="340"/>
         <source>Delete dialog property</source>
         <translation>Eliminar propiedad de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="372"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="975"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="375"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="973"/>
         <source>Change dialog property key</source>
         <translation>Cambiar clave de propiedad de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="411"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="414"/>
         <source>Change dialog property</source>
         <translation>Cambiar propiedad de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="461"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="464"/>
         <source>Dialogs %1</source>
         <translation>Diálogos %1</translation>
     </message>
@@ -1167,78 +1227,84 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
         <translation type="vanished">Los diálogos &apos;%1&apos; han sido modificados. ¿Guardar cambios?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="464"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="467"/>
         <source>Dialogs &apos;%1&apos; have been modified. Save changes?</source>
         <translation>Los diálogos &apos;%1&apos; han sido modificados. ¿Guardar cambios?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="473"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="476"/>
         <source>&lt;No language&gt;</source>
         <translation>&lt;Ningún idioma&gt;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="639"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="628"/>
         <source>Invalid description</source>
         <translation>Descripción inválida</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="684"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="673"/>
         <source>New dialog</source>
         <translation>Nuevo diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="684"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="673"/>
         <source>New dialog id:</source>
         <translation>Nueva id de diálogo:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="692"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="681"/>
         <source>Invalid dialog id: %1</source>
         <translation>Id de diálogo inválida: %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="697"/>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="714"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="686"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="703"/>
         <source>Dialog &apos;%1&apos; already exists</source>
         <translation>El diálogo &apos;%1&apos; ya existe</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="710"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="699"/>
         <source>_copy</source>
         <translation>_copy</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="788"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="777"/>
         <source>Delete confirmation</source>
         <translation>Confirmar la eliminación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="789"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="778"/>
         <source>Do you really want to delete all dialogs prefixed by &apos;%1&apos;?</source>
         <translation>¿De verdad quieres eliminar todos los diálogos con prefijo &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="921"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="910"/>
         <source>New dialog property</source>
         <translation>Nueva propiedad de diálogo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="922"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="911"/>
         <source>New property key:</source>
         <translation>Nueva clave de propiedad:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="932"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="930"/>
         <source>The property &apos;%1&apos; already exists in the dialog &apos;%2&apos;</source>
         <translation>La propiedad &apos;%1&apos; ya existe en el diálogo &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="976"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="974"/>
         <source>Change the key of the property &apos;%1&apos;:</source>
         <translation>Cambiar clave de la propiedad &apos;%1&apos;:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/dialogs_editor.cpp" line="984"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="1099"/>
+        <source>Invalid property key: it should be a valid Lua identifier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="919"/>
+        <location filename="../src/widgets/dialogs_editor.cpp" line="982"/>
         <source>The property key cannot be empty</source>
         <translation>La clave de la propiedad no puede estar vacía</translation>
     </message>
@@ -1311,6 +1377,21 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
         <location filename="../src/widgets/dialogs_tree_view.cpp" line="57"/>
         <source>Delete...</source>
         <translation>Eliminar...</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::DrawingRectangleState</name>
+    <message>
+        <source>New pattern (more options)</source>
+        <translation type="obsolete">Nuevo patrón (más opciones)</translation>
+    </message>
+    <message>
+        <source>New pattern (%1)</source>
+        <translation type="obsolete">Nuevo patrón (%1)</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -1922,12 +2003,12 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
 <context>
     <name>SolarusEditor::Editor</name>
     <message>
-        <location filename="../src/widgets/editor.cpp" line="171"/>
+        <location filename="../src/widgets/editor.cpp" line="172"/>
         <source>File &apos;%1&apos; has been modified. Save changes?</source>
         <translation>El archivo &apos;%1&apos; ha sido modificado. ¿Guardar cambios?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/editor.cpp" line="465"/>
+        <location filename="../src/widgets/editor.cpp" line="466"/>
         <source>Save changes</source>
         <translation>Guardar cambios</translation>
     </message>
@@ -2027,7 +2108,7 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
 <context>
     <name>SolarusEditor::ImageView</name>
     <message>
-        <location filename="../src/widgets/image_view.cpp" line="40"/>
+        <location filename="../src/widgets/image_view.cpp" line="41"/>
         <source>Failed to load image &apos;%1&apos;</source>
         <translation>No se pudo cargar la imagen &apos;%1&apos;</translation>
     </message>
@@ -2040,147 +2121,147 @@ Por favor, actualiza los archivos de datos del proyecto para Solarus %2.</transl
         <translation>Importar archivos de otro proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="33"/>
+        <location filename="../src/widgets/import_dialog.ui" line="36"/>
         <source>Source quest</source>
         <translation>Proyecto fuente</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="49"/>
+        <location filename="../src/widgets/import_dialog.ui" line="52"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="65"/>
+        <location filename="../src/widgets/import_dialog.ui" line="68"/>
         <source>Destination quest</source>
         <translation>Proyecto de destino</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="88"/>
+        <location filename="../src/widgets/import_dialog.ui" line="91"/>
         <source>Identify missing</source>
         <translation>Identificar lo que falte</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.ui" line="99"/>
+        <location filename="../src/widgets/import_dialog.ui" line="102"/>
         <source>No missing files found</source>
         <translation>No se encontraron archivos que falten</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="56"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="57"/>
         <source>Import files</source>
         <translation>Importar archivos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="119"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="120"/>
         <source>Select a quest where to import from</source>
         <translation>Seleccionar un proyecto del que importar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="131"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="136"/>
         <source>Source and destination quest are the same</source>
         <translation>Los proyectos fuente y de destino son el mismo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="138"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="143"/>
         <source>No source quest was not found in folder &apos;%1&apos;</source>
         <translation>No se ha encontrado el proyecto fuente en el directorio &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="205"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="209"/>
         <source>No candidates found</source>
         <translation>No se encontraron candidatos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="206"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="210"/>
         <source>%1 candidates found</source>
         <translation>%1 candidato encontrado</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="262"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="272"/>
         <source>Import 1 item</source>
         <translation>Importar 1 ítem</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="265"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="275"/>
         <source>Import %1 items</source>
         <translation>Importar %1 ítems</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="300"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="309"/>
         <source>Import confirmation</source>
         <translation>Confirmación de importado</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="301"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="310"/>
         <source>%1 items will be imported to your quest.</source>
         <translation>%1 ítems serán importados a tu proyecto.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="335"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="344"/>
         <source>Cannot import symbolic link &apos;%1&apos;</source>
         <translation>No se puede importar el enlace simbólico &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="373"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="382"/>
         <source>Destination path already exists and is a folder: &apos;%1&apos;</source>
         <translation>La ruta de destino ya existe y es un directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="382"/>
-        <location filename="../src/widgets/import_dialog.cpp" line="484"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="391"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="482"/>
         <source>Destination already exists</source>
         <translation>El destino ya existe</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="383"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="392"/>
         <source>The destination file &apos;%1&apos; already exists.
 Do you want to overwrite it?</source>
         <translation>El archivo de destino &apos;%1&apos; ya existe.
 ¿Quieres sobreescribirlo?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="384"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="393"/>
         <source>Apply this choice for remaining files</source>
         <translation>Aplicar esta elección al resto de archivos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="411"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="420"/>
         <source>Failed to remove existing file &apos;%1&apos;</source>
         <translation>No se pudo eliminar el archivo existente &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="427"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="436"/>
         <source>Failed to copy file &apos;%1&apos; to &apos;%2&apos;</source>
         <translation>No se pudo copiar el archivo &apos;%1&apos; a &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="473"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="471"/>
         <source>Destination path already exists and is not a directory: &apos;%1&apos;</source>
         <translation>La ruta de destino ya existe y no es un directorio: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="485"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="483"/>
         <source>The destination directory &apos;%1&apos; already exists.
 Do you want to overwrite its content?</source>
         <translation>El directorio de destino &apos;%1&apos; ya existe.
 ¿Quieres sobreescribir su contenido?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="486"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="484"/>
         <source>Apply this choice for remaining directories</source>
         <translation>Aplicar esta elección al resto de directorios</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="578"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="601"/>
         <source>Rename</source>
         <translation>Renombrar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="581"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="604"/>
         <source>Overwrite</source>
         <translation>Sobreescribir</translation>
     </message>
     <message>
-        <location filename="../src/widgets/import_dialog.cpp" line="583"/>
+        <location filename="../src/widgets/import_dialog.cpp" line="606"/>
         <source>Skip</source>
         <translation>Saltar</translation>
     </message>
@@ -2201,305 +2282,326 @@ Do you want to overwrite its content?</source>
         <translation>Solarus Quest Editor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="71"/>
+        <location filename="../src/widgets/main_window.ui" line="77"/>
         <source>File</source>
         <translation>Archivo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="89"/>
+        <location filename="../src/widgets/main_window.ui" line="96"/>
         <source>Edit</source>
         <translation>Editar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="103"/>
+        <location filename="../src/widgets/main_window.ui" line="110"/>
         <source>Run</source>
         <translation>Ejecutar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="109"/>
+        <location filename="../src/widgets/main_window.ui" line="117"/>
         <source>View</source>
         <translation>Ver</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="122"/>
+        <location filename="../src/widgets/main_window.ui" line="130"/>
         <source>Help</source>
         <translation>Ayuda</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="131"/>
+        <location filename="../src/widgets/main_window.ui" line="139"/>
         <source>Tools</source>
         <translation>Herramientas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="138"/>
+        <location filename="../src/widgets/main_window.ui" line="146"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="179"/>
+        <location filename="../src/widgets/main_window.ui" line="188"/>
         <source>New quest...</source>
         <translation>Nuevo proyecto...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="184"/>
+        <location filename="../src/widgets/main_window.ui" line="193"/>
         <source>Load quest...</source>
         <translation>Cargar proyecto...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="187"/>
+        <location filename="../src/widgets/main_window.ui" line="196"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="192"/>
+        <location filename="../src/widgets/main_window.ui" line="201"/>
         <source>Exit</source>
         <translation>Salir</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="201"/>
-        <location filename="../src/widgets/main_window.cpp" line="1671"/>
+        <location filename="../src/widgets/main_window.ui" line="210"/>
+        <location filename="../src/widgets/main_window.cpp" line="1736"/>
         <source>Run quest</source>
         <translation>Ejecutar proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="204"/>
+        <location filename="../src/widgets/main_window.ui" line="213"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="213"/>
+        <location filename="../src/widgets/main_window.ui" line="222"/>
         <source>Cut</source>
         <translation>Cortar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="222"/>
+        <location filename="../src/widgets/main_window.ui" line="231"/>
         <source>Copy</source>
         <translation>Copiar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="231"/>
+        <location filename="../src/widgets/main_window.ui" line="240"/>
         <source>Paste</source>
         <translation>Pegar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="236"/>
+        <location filename="../src/widgets/main_window.ui" line="245"/>
         <source>Close</source>
         <translation>Cerrar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="245"/>
+        <location filename="../src/widgets/main_window.ui" line="254"/>
         <source>Save</source>
         <translation>Guardar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="257"/>
+        <location filename="../src/widgets/main_window.ui" line="266"/>
         <source>Show grid</source>
         <translation>Mostrar grid</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="260"/>
+        <location filename="../src/widgets/main_window.ui" line="269"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="275"/>
-        <location filename="../src/widgets/main_window.ui" line="278"/>
+        <location filename="../src/widgets/main_window.ui" line="284"/>
+        <location filename="../src/widgets/main_window.ui" line="287"/>
         <source>Show layer 0</source>
         <translation>Mostrar capa 0</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="281"/>
+        <location filename="../src/widgets/main_window.ui" line="290"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="296"/>
-        <location filename="../src/widgets/main_window.ui" line="299"/>
+        <location filename="../src/widgets/main_window.ui" line="305"/>
+        <location filename="../src/widgets/main_window.ui" line="308"/>
         <source>Show layer 1</source>
         <translation>Mostrar capa 1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="302"/>
+        <location filename="../src/widgets/main_window.ui" line="311"/>
         <source>1</source>
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="317"/>
-        <location filename="../src/widgets/main_window.ui" line="320"/>
+        <location filename="../src/widgets/main_window.ui" line="326"/>
+        <location filename="../src/widgets/main_window.ui" line="329"/>
         <source>Show layer 2</source>
         <translation>Mostrar capa 2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="323"/>
+        <location filename="../src/widgets/main_window.ui" line="332"/>
         <source>2</source>
         <translation>2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="332"/>
+        <location filename="../src/widgets/main_window.ui" line="341"/>
         <source>Documentation</source>
         <translation>Documentación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="335"/>
+        <location filename="../src/widgets/main_window.ui" line="344"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="344"/>
+        <location filename="../src/widgets/main_window.ui" line="353"/>
         <source>Website</source>
         <translation>Sitio web</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="349"/>
+        <location filename="../src/widgets/main_window.ui" line="358"/>
         <source>Find / Replace</source>
         <translation>Encontrar / Reemplazar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="458"/>
+        <location filename="../src/widgets/main_window.ui" line="467"/>
         <source>Import from a quest...</source>
         <translation>Importar desde un proyecto...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="461"/>
+        <location filename="../src/widgets/main_window.ui" line="470"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="466"/>
+        <location filename="../src/widgets/main_window.ui" line="475"/>
         <source>Build quest package...</source>
         <translation>Crear paquete de proyecto...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="475"/>
+        <location filename="../src/widgets/main_window.ui" line="484"/>
         <source>Export to image...</source>
         <translation>Exportar a imagen...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="478"/>
+        <location filename="../src/widgets/main_window.ui" line="487"/>
         <source>F10</source>
         <translation>F10</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="483"/>
+        <location filename="../src/widgets/main_window.ui" line="492"/>
         <source>About</source>
         <translation>Acerca de</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="501"/>
+        <location filename="../src/widgets/main_window.ui" line="504"/>
+        <source>Run current map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="507"/>
+        <source>Shift+F5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="512"/>
+        <source>Re-open closed tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="515"/>
+        <source>Ctrl+Shift+T</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Find...</source>
         <translation type="vanished">Buscar...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="354"/>
+        <location filename="../src/widgets/main_window.ui" line="363"/>
         <source>Options</source>
         <translation>Opciones</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="363"/>
+        <location filename="../src/widgets/main_window.ui" line="372"/>
         <source>Select all</source>
         <translation>Seleccionar todo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="368"/>
+        <location filename="../src/widgets/main_window.ui" line="377"/>
         <source>Save all</source>
         <translation>Guardar todo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="371"/>
+        <location filename="../src/widgets/main_window.ui" line="380"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="376"/>
+        <location filename="../src/widgets/main_window.ui" line="385"/>
         <source>Close all</source>
         <translation>Cerrar todo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="379"/>
+        <location filename="../src/widgets/main_window.ui" line="388"/>
         <source>Ctrl+Shift+W</source>
         <translation>Ctrl+Shift+W</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="387"/>
+        <location filename="../src/widgets/main_window.ui" line="396"/>
         <source>Show console</source>
         <translation>Mostrar consola</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="390"/>
+        <location filename="../src/widgets/main_window.ui" line="399"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="398"/>
+        <location filename="../src/widgets/main_window.ui" line="407"/>
         <source>Unselect all</source>
         <translation>Deseleccionar todo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="403"/>
+        <location filename="../src/widgets/main_window.ui" line="412"/>
         <source>Close quest</source>
         <translation>Cerrar proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="412"/>
-        <location filename="../src/widgets/main_window.cpp" line="1720"/>
-        <location filename="../src/widgets/main_window.cpp" line="1727"/>
+        <location filename="../src/widgets/main_window.ui" line="421"/>
+        <location filename="../src/widgets/main_window.cpp" line="1785"/>
+        <location filename="../src/widgets/main_window.cpp" line="1792"/>
         <source>Pause music</source>
         <translation>Pausar música</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="421"/>
-        <location filename="../src/widgets/main_window.cpp" line="1716"/>
+        <location filename="../src/widgets/main_window.ui" line="430"/>
+        <location filename="../src/widgets/main_window.cpp" line="1781"/>
         <source>Stop music</source>
         <translation>Detener música</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="433"/>
+        <location filename="../src/widgets/main_window.ui" line="442"/>
         <source>Show traversable entities</source>
         <translation>Mostrar entidades atravesables</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="445"/>
+        <location filename="../src/widgets/main_window.ui" line="454"/>
         <source>Show obstacle entities</source>
         <translation>Mostrar entidades obstáculo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="450"/>
+        <location filename="../src/widgets/main_window.ui" line="459"/>
         <source>Quest properties</source>
         <translation>Propiedades del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.ui" line="453"/>
+        <location filename="../src/widgets/main_window.ui" line="462"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="102"/>
+        <location filename="../src/widgets/main_window.cpp" line="104"/>
         <source>Recent quests</source>
         <translation>Proyectos recientes</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="126"/>
-        <location filename="../src/widgets/main_window.cpp" line="326"/>
+        <location filename="../src/widgets/main_window.cpp" line="130"/>
+        <location filename="../src/widgets/main_window.cpp" line="331"/>
         <source>Zoom</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="146"/>
+        <location filename="../src/widgets/main_window.cpp" line="150"/>
         <source>Show/hide more layers</source>
         <translation>Mostrar/ocultar más capas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="150"/>
+        <location filename="../src/widgets/main_window.cpp" line="154"/>
         <source>Lock/unlock layers</source>
         <translation>Bloquear/desbloquear capas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="158"/>
-        <location filename="../src/widgets/main_window.cpp" line="476"/>
+        <location filename="../src/widgets/main_window.cpp" line="162"/>
+        <location filename="../src/widgets/main_window.cpp" line="481"/>
         <source>Show/hide entity types</source>
         <translation>Mostrar/ocultar tipos de entidades</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="260"/>
+        <location filename="../src/widgets/main_window.cpp" line="265"/>
         <source>Could not locate the assets directory.
 Some features like creating a new quest will not be available.
 Please make sure that Solarus Quest Editor is correctly installed.</source>
@@ -2508,141 +2610,156 @@ Algunas características como crear un nuevo proyecto no estarán disponibles.
 Por favor, asegúrate de que Solarus Quest Editor está bien instalado.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="328"/>
+        <location filename="../src/widgets/main_window.cpp" line="333"/>
         <source>25 %</source>
         <translation>25 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="329"/>
+        <location filename="../src/widgets/main_window.cpp" line="334"/>
         <source>50 %</source>
         <translation>50 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="330"/>
+        <location filename="../src/widgets/main_window.cpp" line="335"/>
         <source>100 %</source>
         <translation>100 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="331"/>
+        <location filename="../src/widgets/main_window.cpp" line="336"/>
         <source>200 %</source>
         <translation>200 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="332"/>
+        <location filename="../src/widgets/main_window.cpp" line="337"/>
         <source>400 %</source>
         <translation>400 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="368"/>
+        <location filename="../src/widgets/main_window.cpp" line="373"/>
         <source>Show all layers</source>
         <translation>Mostrar todas capas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="378"/>
+        <location filename="../src/widgets/main_window.cpp" line="383"/>
         <source>Hide all layers</source>
         <translation>Ocultar todas capas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="397"/>
+        <location filename="../src/widgets/main_window.cpp" line="402"/>
         <source>Show layer %1</source>
         <translation>Mostrar capa %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="448"/>
+        <location filename="../src/widgets/main_window.cpp" line="453"/>
         <source>Lock layer %1</source>
         <translation>Bloquear capa %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="453"/>
+        <location filename="../src/widgets/main_window.cpp" line="458"/>
         <source>Ctrl+%1</source>
         <translation>Ctrl+%1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="505"/>
+        <location filename="../src/widgets/main_window.cpp" line="510"/>
         <source>Show all entities</source>
         <translation>Mostrar todas entidades</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="515"/>
+        <location filename="../src/widgets/main_window.cpp" line="520"/>
         <source>Hide all entities</source>
         <translation>Ocultar todas entidades</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="609"/>
+        <location filename="../src/widgets/main_window.cpp" line="615"/>
         <source>No quest was found in directory
 &apos;%1&apos;</source>
         <translation>No se encontraron proyectos en el directorio
 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="643"/>
+        <location filename="../src/widgets/main_window.cpp" line="688"/>
         <source>Obsolete quest</source>
         <translation>Proyecto obsoleto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="644"/>
+        <location filename="../src/widgets/main_window.cpp" line="689"/>
+        <source>The format of this quest (%1) is outdated.
+Your data files will be automatically updated to Solarus %2.
+Would you like to update this quest?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.cpp" line="696"/>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.cpp" line="737"/>
+        <source>An error occurred while upgrading the quest.
+Your quest was kept unchanged in format %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The format of this quest (%1) is outdated.
 Your data files will be automatically updated to Solarus %2.</source>
-        <translation>El formato de este proyecto (%1) está obsoleto.
+        <translation type="vanished">El formato de este proyecto (%1) está obsoleto.
 Tus archivos de datos serán actualizados automáticamente a Solarus %2.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="699"/>
+        <location filename="../src/widgets/main_window.cpp" line="720"/>
         <source>Upgrading quest data files</source>
         <translation>Actualizar archivos del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="716"/>
         <source>An error occured while upgrading the quest.
 Your quest was kept unchanged in format %1.</source>
-        <translation>Ha ocurrido un error al actualizar el proyecto.
+        <translation type="vanished">Ha ocurrido un error al actualizar el proyecto.
 Tu proyecto se ha guardado sin cambios en formato %1.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="764"/>
+        <location filename="../src/widgets/main_window.cpp" line="785"/>
         <source>Could not find the assets directory.
 Make sure that Solarus Quest Editor is properly installed.</source>
         <translation>No se pudo encontrar el directorio &quot;assets&quot;.
 Asegúrate de que Solarus Quest Editor está bien instalado.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="778"/>
-        <location filename="../src/widgets/main_window.cpp" line="816"/>
+        <location filename="../src/widgets/main_window.cpp" line="845"/>
         <source>Select quest directory</source>
         <translation>Seleccionar directorio del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1021"/>
+        <location filename="../src/widgets/main_window.cpp" line="1082"/>
         <source>Files are modified</source>
         <translation>Modificaciones sin guardar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1022"/>
+        <location filename="../src/widgets/main_window.cpp" line="1083"/>
         <source>Do you want to save modifications before running the quest?</source>
         <translation>¿Quieres guardar las modificaciones antes de ejecutar el proyecto?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1252"/>
+        <location filename="../src/widgets/main_window.cpp" line="1313"/>
         <source>Local Documentation Not Found</source>
         <translation>Documentación Local No Encontrada</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1253"/>
+        <location filename="../src/widgets/main_window.cpp" line="1314"/>
         <source>The local copy of Solarus Documentation could not be found. Would you like to try going on line to find the documentaion?</source>
         <translation>No se pudo encontrar la copia local de la Documentación Solarus. ¿Te gustaría intentar buscar la documentación en línea?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1651"/>
+        <location filename="../src/widgets/main_window.cpp" line="1716"/>
         <source>Missing show entity type action</source>
         <translation>No se encuentra la acción de mostrar el tipo de entidad</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1668"/>
+        <location filename="../src/widgets/main_window.cpp" line="1733"/>
         <source>Stop quest</source>
         <translation>Detener proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1724"/>
+        <location filename="../src/widgets/main_window.cpp" line="1789"/>
         <source>Play selected music</source>
         <translation>Reproducir música seleccionada</translation>
     </message>
@@ -2651,41 +2768,41 @@ Asegúrate de que Solarus Quest Editor está bien instalado.</translation>
         <translation type="vanished">Solarus Quest Editor %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1835"/>
+        <location filename="../src/widgets/main_window.cpp" line="1900"/>
         <source>File modified</source>
         <translation>Archivo modificado</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1836"/>
+        <location filename="../src/widgets/main_window.cpp" line="1901"/>
         <source>This file is open and has unsaved changes.
 Please save it or close it before renaming.</source>
         <translation>Este archivo está abierto y tiene cambios sin guardar.
 Por favor, guárdalo o ciérralo antes de renombrarlo.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1900"/>
-        <location filename="../src/widgets/main_window.cpp" line="1926"/>
+        <location filename="../src/widgets/main_window.cpp" line="1965"/>
+        <location filename="../src/widgets/main_window.cpp" line="1991"/>
         <source>Rename file</source>
         <translation>Renombrar archivo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1901"/>
-        <location filename="../src/widgets/main_window.cpp" line="1927"/>
+        <location filename="../src/widgets/main_window.cpp" line="1966"/>
+        <location filename="../src/widgets/main_window.cpp" line="1992"/>
         <source>New name for file &apos;%1&apos;:</source>
         <translation>Nuevo nombre para el archivo &apos;%1&apos;:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1902"/>
+        <location filename="../src/widgets/main_window.cpp" line="1967"/>
         <source>Update existing sprites using this image</source>
         <translation>Actualizar sprites existentes usando esta imagen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1969"/>
+        <location filename="../src/widgets/main_window.cpp" line="2034"/>
         <source>Unsaved changes</source>
         <translation>Cambios sin guardar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/main_window.cpp" line="1970"/>
+        <location filename="../src/widgets/main_window.cpp" line="2035"/>
         <source>All files must be saved before this operation.
 Do you want to save them now?</source>
         <translation>Todos los archivos deben ser guardados antes de esta operación.
@@ -2700,12 +2817,12 @@ Do you want to save them now?</source>
         <translation>Editor de mapa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="85"/>
+        <location filename="../src/widgets/map_editor.ui" line="103"/>
         <source>Map id</source>
         <translation>Id del mapa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="100"/>
+        <location filename="../src/widgets/map_editor.ui" line="118"/>
         <source>Filename of the map (without extension)</source>
         <translation>Nombre de archivo del mapa (sin extensión)</translation>
     </message>
@@ -2714,121 +2831,121 @@ Do you want to save them now?</source>
         <translation type="vanished">Abrir script del mapa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="113"/>
+        <location filename="../src/widgets/map_editor.ui" line="131"/>
         <source>Open map script (F4)</source>
         <translation>Abrir script de mapa (F4)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="116"/>
-        <location filename="../src/widgets/map_editor.ui" line="321"/>
-        <location filename="../src/widgets/map_editor.ui" line="392"/>
-        <location filename="../src/widgets/map_editor.ui" line="462"/>
+        <location filename="../src/widgets/map_editor.ui" line="134"/>
+        <location filename="../src/widgets/map_editor.ui" line="357"/>
+        <location filename="../src/widgets/map_editor.ui" line="428"/>
+        <location filename="../src/widgets/map_editor.ui" line="498"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="138"/>
+        <location filename="../src/widgets/map_editor.ui" line="156"/>
         <source>Description</source>
         <translation>Descripción</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="151"/>
+        <location filename="../src/widgets/map_editor.ui" line="169"/>
         <source>User-friendly description to show in the editor</source>
         <translation>Descripción intuitiva para mostrar en el editor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="158"/>
+        <location filename="../src/widgets/map_editor.ui" line="176"/>
         <source>Size</source>
         <translation>Tamaño</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="168"/>
+        <location filename="../src/widgets/map_editor.ui" line="186"/>
         <source>Layers</source>
         <translation>Capas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="193"/>
+        <location filename="../src/widgets/map_editor.ui" line="217"/>
         <source>to</source>
         <translation>a</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="228"/>
+        <location filename="../src/widgets/map_editor.ui" line="258"/>
         <source>Set a world</source>
         <translation>Mundo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="235"/>
+        <location filename="../src/widgets/map_editor.ui" line="265"/>
         <source>A name to group maps together</source>
         <translation>Nombre que permite agrupar los mapas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="242"/>
+        <location filename="../src/widgets/map_editor.ui" line="272"/>
         <source>Set a floor</source>
         <translation>Piso</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="257"/>
+        <location filename="../src/widgets/map_editor.ui" line="293"/>
         <source>Floor number of the map</source>
         <translation>Número de piso del mapa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="285"/>
+        <location filename="../src/widgets/map_editor.ui" line="321"/>
         <source>Location in its world</source>
         <translation>Posición en su mundo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="305"/>
-        <location filename="../src/widgets/map_editor.ui" line="443"/>
+        <location filename="../src/widgets/map_editor.ui" line="341"/>
+        <location filename="../src/widgets/map_editor.ui" line="479"/>
         <location filename="../src/widgets/map_editor.cpp" line="241"/>
         <source>Tileset</source>
         <translation>Tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="314"/>
-        <location filename="../src/widgets/map_editor.ui" line="382"/>
-        <location filename="../src/widgets/map_editor.ui" line="452"/>
+        <location filename="../src/widgets/map_editor.ui" line="350"/>
+        <location filename="../src/widgets/map_editor.ui" line="418"/>
+        <location filename="../src/widgets/map_editor.ui" line="488"/>
         <source>Tileset of the map</source>
         <translation>Tileset del mapa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="350"/>
+        <location filename="../src/widgets/map_editor.ui" line="386"/>
         <source>Patterns</source>
         <translation>Patrones</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="389"/>
-        <location filename="../src/widgets/map_editor.ui" line="459"/>
+        <location filename="../src/widgets/map_editor.ui" line="425"/>
+        <location filename="../src/widgets/map_editor.ui" line="495"/>
         <source>Edit tileset (Ctrl-T)</source>
         <translation>Editar tileset (Ctrl-T)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="405"/>
-        <location filename="../src/widgets/map_editor.ui" line="475"/>
+        <location filename="../src/widgets/map_editor.ui" line="441"/>
+        <location filename="../src/widgets/map_editor.ui" line="511"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="429"/>
+        <location filename="../src/widgets/map_editor.ui" line="465"/>
         <source>Contour generator</source>
         <translation>Generador de contorno</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="435"/>
+        <location filename="../src/widgets/map_editor.ui" line="471"/>
         <source>Generate contour tiles around the selection</source>
         <translation>Generar tiles de contorno alrededor de la selección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="484"/>
+        <location filename="../src/widgets/map_editor.ui" line="520"/>
         <source>Contour</source>
         <translation>Contorno</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="534"/>
+        <location filename="../src/widgets/map_editor.ui" line="570"/>
         <source>Generate contour tiles around the selection (Ctrl+B)</source>
         <translation>Generar tiles de contorno alrededor de la selección (Ctrl+B)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="537"/>
+        <location filename="../src/widgets/map_editor.ui" line="573"/>
         <source>Generate tiles</source>
         <translation>Generar tiles</translation>
     </message>
@@ -2841,7 +2958,7 @@ Do you want to save them now?</source>
         <translation type="vanished">Editar tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.ui" line="295"/>
+        <location filename="../src/widgets/map_editor.ui" line="331"/>
         <location filename="../src/widgets/map_editor.cpp" line="259"/>
         <source>Music</source>
         <translation>Música</translation>
@@ -2958,144 +3075,144 @@ Do you want to save them now?</source>
         <translation>El mapa &apos;%1&apos; ha sido modificado. ¿Guardar cambios?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1104"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1105"/>
         <source>F4</source>
         <translation>F4</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1120"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1121"/>
         <source>&lt;No music&gt;</source>
         <translation>&lt;Sin música&gt;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1121"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1122"/>
         <source>&lt;Same as before&gt;</source>
         <translation>&lt;Igual que antes&gt;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1126"/>
-        <location filename="../src/widgets/map_editor.cpp" line="1130"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1127"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1131"/>
         <source>(Tileset of the map)</source>
         <translation>(Tileset del mapa)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1139"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1140"/>
         <source>Width of the map in pixels</source>
         <translation>Anchura del mapa en píxeles</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1140"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1141"/>
         <source>Height of the map in pixels</source>
         <translation>Altura del mapa en píxeles</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1144"/>
         <location filename="../src/widgets/map_editor.cpp" line="1145"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1146"/>
         <source>Coordinates of the map in its world (useful to make adjacent scrolling maps)</source>
         <translation>Coordenadas del mapa en su mundo (útil para hacer scrolling entre mapas adyacentes)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1293"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1294"/>
         <source>Add tile</source>
         <translation>Añadir tile</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1294"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1295"/>
         <source>Add destination</source>
         <translation>Añadir destino</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1295"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1296"/>
         <source>Add teletransporter</source>
         <translation>Añadir teletransportador</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1296"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1297"/>
         <source>Add pickable</source>
         <translation>Añadir recogible</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1297"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1298"/>
         <source>Add destructible</source>
         <translation>Añadir destructible</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1298"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1299"/>
         <source>Add chest</source>
         <translation>Añadir cofre</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1299"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1300"/>
         <source>Add jumper</source>
         <translation>Añadir saltador</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1300"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1301"/>
         <source>Add enemy</source>
         <translation>Añadir enemigo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1301"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1302"/>
         <source>Add non-playing character</source>
         <translation>Añadir personaje no-jugador</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1302"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1303"/>
         <source>Add block</source>
         <translation>Añadir bloque</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1303"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1304"/>
         <source>Add switch</source>
         <translation>Añadir botón</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1304"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1305"/>
         <source>Add wall</source>
         <translation>Añadir pared</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1305"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1306"/>
         <source>Add sensor</source>
         <translation>Añadir sensor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1306"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1307"/>
         <source>Add crystal</source>
         <translation>Añadir cristal</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1307"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1308"/>
         <source>Add crystal block</source>
         <translation>Añadir bloque de cristal</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1308"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1309"/>
         <source>Add shop treasure</source>
         <translation>Añadir artículo de tienda</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1309"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1310"/>
         <source>Add stream</source>
         <translation>Añadir flujo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1310"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1311"/>
         <source>Add door</source>
         <translation>Añadir puerta</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1311"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1312"/>
         <source>Add stairs</source>
         <translation>Añadir escaleras</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1312"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1313"/>
         <source>Add separator</source>
         <translation>Añadir separador</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1313"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1314"/>
         <source>Add custom entity</source>
         <translation>Añadir entidad custom</translation>
     </message>
@@ -3110,38 +3227,44 @@ Do you want to save them now?</source>
         <translation>Imagen PNG (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1533"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1535"/>
         <source>Invalid description</source>
         <translation>Descripción inválida</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1604"/>
-        <location filename="../src/widgets/map_editor.cpp" line="1675"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1606"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1677"/>
         <source>Layer not empty</source>
         <translation>Capa no vacía</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="1605"/>
-        <location filename="../src/widgets/map_editor.cpp" line="1676"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1607"/>
+        <location filename="../src/widgets/map_editor.cpp" line="1678"/>
         <source>This layer is not empty: %1 entities will be destroyed.</source>
         <translation>Esta capa no está vacía: %1 entidades serán destruídas.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="2149"/>
+        <location filename="../src/widgets/map_editor.cpp" line="2151"/>
         <source>%1,%2,%3 </source>
         <translation>%1,%2,%3 </translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/map_editor.cpp" line="2459"/>
+        <source>Cannot generate tiles: some patterns of the contour &apos;%1&apos; are missing.
+Please fix it in the tileset.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1,%2 </source>
         <translation type="vanished">%1,%2 </translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="2136"/>
+        <location filename="../src/widgets/map_editor.cpp" line="2138"/>
         <source> - %1</source>
         <translation> - %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_editor.cpp" line="2138"/>
+        <location filename="../src/widgets/map_editor.cpp" line="2140"/>
         <source>: %1</source>
         <translation>: %1</translation>
     </message>
@@ -3243,164 +3366,179 @@ Do you want to save them now?</source>
 <context>
     <name>SolarusEditor::MapView</name>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="528"/>
+        <location filename="../src/widgets/map_view.cpp" line="542"/>
         <source>Edit</source>
         <translation>Editar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="536"/>
+        <location filename="../src/widgets/map_view.cpp" line="550"/>
         <source>Resize</source>
         <translation>Redimensionar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="537"/>
+        <location filename="../src/widgets/map_view.cpp" line="551"/>
         <source>R</source>
         <translation>R</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="544"/>
-        <location filename="../src/widgets/map_view.cpp" line="699"/>
+        <location filename="../src/widgets/map_view.cpp" line="558"/>
+        <location filename="../src/widgets/map_view.cpp" line="715"/>
         <source>Convert to dynamic tile</source>
         <translation>Convertir en tile dinámica</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="550"/>
+        <location filename="../src/widgets/map_view.cpp" line="564"/>
         <source>Change pattern...</source>
         <translation>Cambiar patrón...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="557"/>
+        <location filename="../src/widgets/map_view.cpp" line="571"/>
         <source>Change pattern of similar tiles...</source>
         <translation>Cambiar patrón de tiles similares...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="563"/>
+        <location filename="../src/widgets/map_view.cpp" line="577"/>
         <source>Generate borders around selection</source>
         <translation>Generar bordes alrededor de la selección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="564"/>
+        <location filename="../src/widgets/map_view.cpp" line="578"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="572"/>
+        <location filename="../src/widgets/map_view.cpp" line="587"/>
         <source>One layer up</source>
         <translation>Subir una capa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="573"/>
+        <location filename="../src/widgets/map_view.cpp" line="588"/>
         <source>+</source>
         <translation>+</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="581"/>
+        <location filename="../src/widgets/map_view.cpp" line="597"/>
         <source>One layer down</source>
         <translation>Bajar una capa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="582"/>
+        <location filename="../src/widgets/map_view.cpp" line="598"/>
         <source>-</source>
         <translation>-</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="590"/>
+        <location filename="../src/widgets/map_view.cpp" line="607"/>
         <source>Bring to front</source>
         <translation>Traer al frente</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="591"/>
+        <location filename="../src/widgets/map_view.cpp" line="608"/>
         <source>T</source>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="599"/>
+        <location filename="../src/widgets/map_view.cpp" line="617"/>
         <source>Bring to back</source>
         <translation>Llevar al fondo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="600"/>
+        <location filename="../src/widgets/map_view.cpp" line="618"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="608"/>
+        <location filename="../src/widgets/map_view.cpp" line="627"/>
         <source>Delete</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="615"/>
+        <location filename="../src/widgets/map_view.cpp" line="634"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="644"/>
+        <location filename="../src/widgets/map_view.cpp" line="663"/>
         <source>Layer %1</source>
         <translation>Capa %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="699"/>
+        <location filename="../src/widgets/map_view.cpp" line="715"/>
         <source>Convert to dynamic tiles</source>
         <translation>Convertir en tiles dinámicas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="702"/>
+        <location filename="../src/widgets/map_view.cpp" line="718"/>
         <source>Convert to static tile</source>
         <translation>Convertir en tile estática</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="702"/>
+        <location filename="../src/widgets/map_view.cpp" line="718"/>
         <source>Convert to static tiles</source>
         <translation>Convertir en tiles estáticas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="800"/>
+        <location filename="../src/widgets/map_view.cpp" line="814"/>
         <source>Direction</source>
         <translation>Dirección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="819"/>
-        <location filename="../src/widgets/map_view.cpp" line="827"/>
+        <location filename="../src/widgets/map_view.cpp" line="833"/>
+        <location filename="../src/widgets/map_view.cpp" line="841"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="820"/>
-        <location filename="../src/widgets/map_view.cpp" line="829"/>
+        <location filename="../src/widgets/map_view.cpp" line="834"/>
+        <location filename="../src/widgets/map_view.cpp" line="843"/>
         <source>Up</source>
         <translation>Arriba</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="821"/>
-        <location filename="../src/widgets/map_view.cpp" line="831"/>
+        <location filename="../src/widgets/map_view.cpp" line="835"/>
+        <location filename="../src/widgets/map_view.cpp" line="845"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="822"/>
-        <location filename="../src/widgets/map_view.cpp" line="833"/>
+        <location filename="../src/widgets/map_view.cpp" line="836"/>
+        <location filename="../src/widgets/map_view.cpp" line="847"/>
         <source>Down</source>
         <translation>Abajo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="828"/>
+        <location filename="../src/widgets/map_view.cpp" line="842"/>
         <source>Right-up</source>
         <translation>Derecha-arriba</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="830"/>
+        <location filename="../src/widgets/map_view.cpp" line="844"/>
         <source>Left-up</source>
         <translation>Izquierda-arriba</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="832"/>
+        <location filename="../src/widgets/map_view.cpp" line="846"/>
         <source>Left-down</source>
         <translation>Izquierda-abajo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/map_view.cpp" line="834"/>
+        <location filename="../src/widgets/map_view.cpp" line="848"/>
         <source>Right-down</source>
         <translation>Derecha-abajo</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::MovingPatternsState</name>
+    <message>
+        <source>Move here</source>
+        <translation type="obsolete">Mover aquí</translation>
+    </message>
+    <message>
+        <source>Duplicate here</source>
+        <translation type="obsolete">Duplicar aquí</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -3414,6 +3552,55 @@ Do you want to save them now?</source>
         <location filename="../src/widgets/music_chooser.cpp" line="182"/>
         <source>Stop music</source>
         <translation>Detener música</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewElementDialog</name>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="14"/>
+        <source>New element</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="22"/>
+        <source>License:</source>
+        <translation type="unfinished">Licencia:</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="29"/>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="57"/>
+        <source>Script name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.ui" line="36"/>
+        <source>Author:</source>
+        <translation type="unfinished">Autor:</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="53"/>
+        <source>New GLSL file</source>
+        <translation type="unfinished">Nuevo archivo GLSL</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="54"/>
+        <source>GLSL file name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="56"/>
+        <source>New Lua script</source>
+        <translation type="unfinished">Nuevo script Lua</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="59"/>
+        <source>New folder</source>
+        <translation type="unfinished">Nueva carpeta</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_element_dialog.cpp" line="60"/>
+        <source>Folder name:</source>
+        <translation type="unfinished">Nombre de la carpeta:</translation>
     </message>
 </context>
 <context>
@@ -3435,141 +3622,308 @@ Do you want to save them now?</source>
     </message>
 </context>
 <context>
+    <name>SolarusEditor::NewQuestDialog</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.ui" line="14"/>
+        <source>Create New Quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewQuestDialogContentsPage</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="14"/>
+        <source>WizardPage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="17"/>
+        <source>Initial Quest Contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="20"/>
+        <source>Choose the initial set of files for your quest.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="42"/>
+        <source>Community Resources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="60"/>
+        <source>Empty Quest</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="67"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start with default free resources and scripts.&lt;br/&gt;Uses GPL and Creative Commons licenses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_contents_page.ui" line="77"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start from no quest data.&lt;br/&gt;You will have to create data files from scratch.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewQuestDialogDirectoryPage</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="14"/>
+        <source>WizardPage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="17"/>
+        <source>Quest Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="20"/>
+        <source>Choose a location on disk for the new quest.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="31"/>
+        <source>Browse</source>
+        <translation type="unfinished">Navegar</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_directory_page.ui" line="40"/>
+        <source>Error Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="122"/>
+        <source>Directory not empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="123"/>
+        <source>The quest directory is not empty, are you sure you wish to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="148"/>
+        <source>Select quest directory</source>
+        <translation type="unfinished">Seleccionar directorio del proyecto</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="171"/>
+        <source>A quest already exists in this directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog.cpp" line="177"/>
+        <source>Parent directory does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::NewQuestDialogTitlePage</name>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_title_page.ui" line="14"/>
+        <source>WizardPage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_title_page.ui" line="17"/>
+        <source>Quest Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_quest_dialog_title_page.ui" line="20"/>
+        <source>Enter the title of the new quest.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SolarusEditor::NewResourceElementDialog</name>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="14"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="20"/>
         <source>Create resource</source>
         <translation>Crear recurso</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="32"/>
-        <source>Resource id (filename):</source>
-        <translation>Id de recurso (nombre de archivo):</translation>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="31"/>
+        <source>Resource id (filename)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="41"/>
+        <source>[required]</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/widgets/new_resource_element_dialog.ui" line="48"/>
-        <source>Licence:</source>
-        <translation>Licencia:</translation>
+        <source>Description</source>
+        <translation type="unfinished">Descripción</translation>
     </message>
     <message>
         <location filename="../src/widgets/new_resource_element_dialog.ui" line="55"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="90"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="104"/>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="118"/>
+        <source>[optional]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="62"/>
+        <source>Create with default code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="74"/>
+        <source>Ownership</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="83"/>
+        <source>Author</source>
+        <translation type="unfinished">Autor</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="97"/>
+        <source>License (data file)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.ui" line="111"/>
+        <source>License (script file)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resource id (filename):</source>
+        <translation type="vanished">Id de recurso (nombre de archivo):</translation>
+    </message>
+    <message>
+        <source>Licence:</source>
+        <translation type="vanished">Licencia:</translation>
+    </message>
+    <message>
         <source>Author:</source>
-        <translation>Autor:</translation>
+        <translation type="vanished">Autor:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.ui" line="22"/>
         <source>Description:</source>
-        <translation>Descripción:</translation>
+        <translation type="vanished">Descripción:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="43"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="48"/>
         <source>New map</source>
         <translation>Nuevo mapa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="44"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="49"/>
         <source>Map id (filename):</source>
         <translation>Id de mapa (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="48"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="56"/>
         <source>New tileset</source>
         <translation>Nuevo tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="49"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="57"/>
         <source>Tileset id (filename):</source>
         <translation>Id de tileset (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="53"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="62"/>
         <source>New sprite</source>
         <translation>Nuevo sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="54"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="63"/>
         <source>Sprite id (filename):</source>
         <translation>Id de sprite (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="58"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="68"/>
         <source>New music</source>
         <translation>Nueva música</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="59"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="69"/>
         <source>Music id (filename):</source>
         <translation>Id de música (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="63"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="74"/>
         <source>New sound</source>
         <translation>Nuevo sonido</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="64"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="75"/>
         <source>Sound id (filename):</source>
         <translation>Id de sonido (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="68"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="80"/>
         <source>New item</source>
         <translation>Nuevo ítem</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="69"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="81"/>
         <source>Item id (filename):</source>
         <translation>Id de ítem (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="73"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="87"/>
         <source>New enemy</source>
         <translation>Nuevo enemigo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="74"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="88"/>
         <source>Enemy id (filename):</source>
         <translation>Id de enemigo (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="78"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="94"/>
         <source>New custom entity</source>
         <translation>Nueva entidad custom</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="79"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="95"/>
         <source>Custom entity id (filename):</source>
         <translation>Id de entidad custom (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="83"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="101"/>
         <source>New language</source>
         <translation>Nuevo idioma</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="84"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="102"/>
         <source>Language id (filename):</source>
         <translation>Id de idioma (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="88"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="107"/>
         <source>New font</source>
         <translation>Nueva fuente</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="89"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="108"/>
         <source>Font id (filename):</source>
         <translation>Id de fuente (nombre de archivo):</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="93"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="113"/>
         <source>New shader</source>
         <translation>Nuevo shader</translation>
     </message>
     <message>
-        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="94"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="114"/>
         <source>Shader id (filename):</source>
         <translation>Id de shader (nombre de archivo):</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="129"/>
+        <location filename="../src/widgets/new_resource_element_dialog.cpp" line="140"/>
+        <source>License</source>
+        <translation type="unfinished">Licencia</translation>
     </message>
 </context>
 <context>
@@ -3650,12 +4004,12 @@ Do you want to save them now?</source>
         <translation>Detenido</translation>
     </message>
     <message>
-        <location filename="../src/widgets/package_dialog.cpp" line="114"/>
+        <location filename="../src/widgets/package_dialog.cpp" line="115"/>
         <source>Quest package location:</source>
         <translation>Ruta del paquete de proyecto:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/package_dialog.cpp" line="115"/>
+        <location filename="../src/widgets/package_dialog.cpp" line="117"/>
         <source>Solarus Packages (*.solarus)</source>
         <translation>Paquetes Solarus (*.solarus)</translation>
     </message>
@@ -3671,136 +4025,151 @@ Do you want to save them now?</source>
 <context>
     <name>SolarusEditor::Quest</name>
     <message>
-        <location filename="../src/quest.cpp" line="139"/>
+        <location filename="../src/quest.cpp" line="140"/>
         <source>No quest</source>
         <translation>No hay proyecto</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="144"/>
+        <location filename="../src/quest.cpp" line="145"/>
         <source>Missing Solarus version in quest.dat</source>
         <translation>No se encuentra la versión de Solarus en quest.dat</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="288"/>
+        <location filename="../src/quest.cpp" line="289"/>
         <source>Unknown resource type</source>
         <translation>Tipo de recurso desconocido</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1194"/>
+        <location filename="../src/quest.cpp" line="1196"/>
         <source>Empty file name</source>
         <translation>Nombre de archivo vacío</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1197"/>
+        <location filename="../src/quest.cpp" line="1199"/>
         <source>Invalid file name: &apos;%1&apos;</source>
         <translation>Nombre de archivo inválido: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1232"/>
+        <location filename="../src/quest.cpp" line="1234"/>
         <source>File &apos;%1&apos; is not in this quest</source>
         <translation>El archivo &apos;%1&apos; no está en este proyecto</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1255"/>
+        <location filename="../src/quest.cpp" line="1257"/>
         <source>File &apos;%1&apos; does not exist</source>
         <translation>El archivo &apos;%1&apos; no existe</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1268"/>
+        <location filename="../src/quest.cpp" line="1270"/>
         <source>File &apos;%1&apos; already exists</source>
         <translation>El archivo &apos;%1&apos; ya existe</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1291"/>
+        <location filename="../src/quest.cpp" line="1293"/>
         <source>File &apos;%1&apos; is not a folder</source>
         <translation>El archivo &apos;%1&apos; no es una carpeta</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1304"/>
+        <location filename="../src/quest.cpp" line="1306"/>
         <source>File &apos;%1&apos; is a folder</source>
         <translation>El archivo &apos;%1&apos; es una carpeta</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1329"/>
+        <location filename="../src/quest.cpp" line="1331"/>
         <source>Wrong script name: &apos;%1&apos; (should end with &apos;.lua&apos;)</source>
         <translation>Nombre de script incorrecto: &apos;%1&apos; (debería acabar en &apos;.lua&apos;)</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1355"/>
+        <location filename="../src/quest.cpp" line="1357"/>
         <source>Wrong GLSL shader file name: &apos;%1&apos; (should end with &apos;.glsl&apos;)</source>
         <translation>Nombre de shader GLSL incorrecto: &apos;%1&apos; (debería acabar en &apos;.glsl&apos;)</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1390"/>
+        <location filename="../src/quest.cpp" line="1392"/>
+        <source>Wrong image file name: &apos;%1&apos; (should end with &apos;.png&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/quest.cpp" line="1407"/>
         <source>Cannot create file &apos;%1&apos;</source>
         <translation>No se puede crear el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1439"/>
+        <location filename="../src/quest.cpp" line="1456"/>
         <source>Cannot read file &apos;%1&apos;</source>
         <translation>No se puede leer el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2192"/>
+        <location filename="../src/quest.cpp" line="1779"/>
+        <source>Cannot load image file: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/quest.cpp" line="1784"/>
+        <source>This sprite already exists: &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/quest.cpp" line="2268"/>
         <source>Failed to delete file &apos;%1&apos;</source>
         <translation>No se pudo eliminar el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2198"/>
+        <location filename="../src/quest.cpp" line="2274"/>
         <source>Failed to delete folder &apos;%1&apos;</source>
         <translation>No se pudo eliminar el directorio &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1410"/>
-        <location filename="../src/quest.cpp" line="1447"/>
+        <location filename="../src/quest.cpp" line="1427"/>
+        <location filename="../src/quest.cpp" line="1464"/>
         <source>Cannot write file &apos;%1&apos;</source>
         <translation>No se puede escribir en el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1737"/>
+        <location filename="../src/quest.cpp" line="1806"/>
         <source>Cannot create folder &apos;%1&apos;: parent folder does not exist</source>
         <translation>No se puede crear la carpeta &apos;%1&apos;: el directorio padre no existe</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1743"/>
-        <location filename="../src/quest.cpp" line="1780"/>
+        <location filename="../src/quest.cpp" line="1812"/>
+        <location filename="../src/quest.cpp" line="1849"/>
         <source>Cannot create folder &apos;%1&apos;</source>
         <translation>No se puede crear la carpeta &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1906"/>
+        <location filename="../src/quest.cpp" line="1982"/>
         <source>Resource &apos;%1&apos; already exists</source>
         <translation>El recurso &apos;%1&apos; ya existe</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="1923"/>
-        <location filename="../src/quest.cpp" line="1977"/>
+        <location filename="../src/quest.cpp" line="1999"/>
+        <location filename="../src/quest.cpp" line="2053"/>
         <source>Cannot rename file &apos;%1&apos;</source>
         <translation>No se puede renombrar el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2045"/>
+        <location filename="../src/quest.cpp" line="2121"/>
         <source>Same source and destination id</source>
         <translation>Id de fuente y destino idénticos</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2052"/>
+        <location filename="../src/quest.cpp" line="2128"/>
         <source>A resource with id &apos;%1&apos; already exists</source>
         <translation>Ya existe un recurso con el id &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2057"/>
-        <location filename="../src/quest.cpp" line="2101"/>
+        <location filename="../src/quest.cpp" line="2133"/>
+        <location filename="../src/quest.cpp" line="2177"/>
         <source>No such resource: &apos;%1&apos;</source>
         <translation>No existe el recurso: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2115"/>
+        <location filename="../src/quest.cpp" line="2191"/>
         <source>Cannot delete file &apos;%1&apos;</source>
         <translation>No se puede eliminar el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/quest.cpp" line="2155"/>
+        <location filename="../src/quest.cpp" line="2231"/>
         <source>Cannot delete folder &apos;%1&apos;</source>
         <translation>No se puede eliminar la carpeta &apos;%1&apos;</translation>
     </message>
@@ -4118,57 +4487,57 @@ Para ser usado con un id de elemento específico como: Renombrar Mapa X.</transl
         <translation>Licencia</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="577"/>
+        <location filename="../src/quest_files_model.cpp" line="591"/>
         <source>Quest</source>
         <translation>Proyecto</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="582"/>
+        <location filename="../src/quest_files_model.cpp" line="596"/>
         <source>Main Lua script</source>
         <translation>Script Lua principal</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="596"/>
+        <location filename="../src/quest_files_model.cpp" line="610"/>
         <source>Dialogs file</source>
         <translation>Archivo de diálogos</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="600"/>
+        <location filename="../src/quest_files_model.cpp" line="614"/>
         <source>Strings file</source>
         <translation>Archivo de textos</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="608"/>
+        <location filename="../src/quest_files_model.cpp" line="622"/>
         <source>Map script</source>
         <translation>Script de mapa</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="611"/>
+        <location filename="../src/quest_files_model.cpp" line="625"/>
         <source>Script</source>
         <translation>Script</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="615"/>
+        <location filename="../src/quest_files_model.cpp" line="629"/>
         <source>GLSL shader code</source>
         <translation>Código shader GLSL</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="623"/>
+        <location filename="../src/quest_files_model.cpp" line="637"/>
         <source>Tileset tiles image</source>
         <translation>Imagen de tiles de tileset</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="627"/>
+        <location filename="../src/quest_files_model.cpp" line="641"/>
         <source>Tileset sprites image</source>
         <translation>Imagen de sprites de tileset</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="630"/>
+        <location filename="../src/quest_files_model.cpp" line="644"/>
         <source>Image</source>
         <translation>Imagen</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="635"/>
+        <location filename="../src/quest_files_model.cpp" line="649"/>
         <source>Data file</source>
         <translation>Archivo de datos</translation>
     </message>
@@ -4177,12 +4546,12 @@ Para ser usado con un id de elemento específico como: Renombrar Mapa X.</transl
         <translation type="vanished">script Lua</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="764"/>
+        <location filename="../src/quest_files_model.cpp" line="778"/>
         <source>%1 (file not found)</source>
         <translation>%1 (archivo no encontrado)</translation>
     </message>
     <message>
-        <location filename="../src/quest_files_model.cpp" line="774"/>
+        <location filename="../src/quest_files_model.cpp" line="788"/>
         <source>%1 (not in the quest)</source>
         <translation>%1 (no está en el proyecto)</translation>
     </message>
@@ -4213,144 +4582,173 @@ Para ser usado con un id de elemento específico como: Renombrar Mapa X.</transl
         <translation>Información del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="82"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="81"/>
         <source>Solarus version</source>
         <translation>Versión de Solarus</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="89"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="88"/>
         <source>Version of the engine your data files are compatible with</source>
         <translation>Versión del motor compatible con tus archivos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="105"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="103"/>
         <source>Write directory</source>
         <translation>Directorio de guardado</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="117"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="115"/>
         <source>Folder where to write savegames, relative to &quot;$HOME/.solarus/&quot;.
 Must identify your quest to avoid confusion with other quests.</source>
         <translation>Carpeta donde se guardan las partidas, relativo a &quot;$HOME/.solarus/&quot;.
 Debe identificar tu proyecto para evitar confusión con otros proyectos.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="136"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="133"/>
         <source>Quest title</source>
         <translation>Título del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="148"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="145"/>
         <source>The name of your quest.</source>
         <translation>El nombre de tu proyecto.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="163"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="159"/>
         <source>Summary</source>
         <translation>Resumen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="175"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="171"/>
         <source>One line describing your quest.</source>
         <translation>Describe tu proyecto en una línea.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="190"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="185"/>
         <source>Description</source>
         <translation>Descripción</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="203"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="224"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="215"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="236"/>
         <source>People who develop this quest.</source>
         <translation>Gente que desarrolla este proyecto.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="230"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="250"/>
         <source>Quest version</source>
         <translation>Versión del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="242"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="262"/>
         <source>Current release of your quest.</source>
         <translation>Versión actual de tu proyecto.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="257"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="276"/>
         <source>Release date</source>
         <translation>Fecha de lanzamiento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="268"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="287"/>
         <source>In progress</source>
         <translation>En desarrollo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="275"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="294"/>
         <source>Released</source>
         <translation>Lanzado el</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="310"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="329"/>
         <source>Status and date of the current release.</source>
         <translation>Estado y fecha de la versión actual.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="325"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="343"/>
         <source>Website</source>
         <translation>Sitio web</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="337"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="355"/>
         <source>Official website of the quest.</source>
         <translation>Sitio web oficial del proyecto.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="364"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="378"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="389"/>
+        <source>Video options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="398"/>
+        <source>Smooth camera scrolling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="405"/>
+        <source>Enables subpixel smoothing of camera scrolling movement.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="415"/>
+        <source>Synchronize update rate with video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="422"/>
+        <source>Keeps the main loop update rate the same as the video refresh rate.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="210"/>
         <source>A more detailed description of your quest.</source>
         <translation>Una descripción más detallada de tu proyecto.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="384"/>
         <source>Quest size</source>
-        <translation>Tamaño del proyecto</translation>
+        <translation type="vanished">Tamaño del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="401"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="436"/>
         <source>Normal quest size</source>
         <translation>Tamaño normal del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="431"/>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="521"/>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="607"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="466"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="555"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="640"/>
         <source>x</source>
         <translation>x</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="472"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="507"/>
         <source>Size of the logical game area (before any scaling).
 This will be the visible space of the current map.</source>
         <translation>Tamaño del área de proyecto (antes de cualquier aumento).
 Esto será el espacio visible del mapa actual.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="491"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="525"/>
         <source>Minimum quest size</source>
         <translation>Tamaño mínimo del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="562"/>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="648"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="596"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="681"/>
         <source>Only useful to support a range of logical sizes.</source>
         <translation>Útil únicamente para permitir varios tamaños.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.ui" line="577"/>
+        <location filename="../src/widgets/quest_properties_editor.ui" line="610"/>
         <source>Maximum quest size</source>
         <translation>Tamaño máximo del proyecto</translation>
     </message>
@@ -4410,12 +4808,22 @@ Esto será el espacio visible del mapa actual.</translation>
         <translation>Cambiar tamaño máximo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.cpp" line="409"/>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="397"/>
+        <source>Set subpixel camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="424"/>
+        <source>Set dynamic timestep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="463"/>
         <source>Quest properties</source>
         <translation>Propiedades del proyecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_properties_editor.cpp" line="412"/>
+        <location filename="../src/widgets/quest_properties_editor.cpp" line="466"/>
         <source>Quest properties have been modified. Save changes?</source>
         <translation>Las propiedades del proyecto han sido modificadas. ¿Guardar cambios?</translation>
     </message>
@@ -4616,156 +5024,155 @@ Esto será el espacio visible del mapa actual.</translation>
 <context>
     <name>SolarusEditor::QuestTreeView</name>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="57"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="485"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="493"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="59"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="503"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="511"/>
         <source>Play</source>
         <translation>Reproducir</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="63"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="526"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="65"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="544"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="70"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="72"/>
         <source>Rename...</source>
         <translation>Renombrar...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="71"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="73"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="78"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="80"/>
         <source>Delete...</source>
         <translation>Eliminar...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="85"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="87"/>
         <source>Author and license...</source>
         <translation>Autor y licencia...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="86"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="88"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="400"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="405"/>
         <source>Add to quest as %1...</source>
         <translation>Añadir al proyecto como %1...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="425"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="429"/>
+        <source>New sprite from image...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="443"/>
         <source>New GLSL file...</source>
         <translation>Nuevo archivo GLSL...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="440"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="458"/>
         <source>New folder...</source>
         <translation>Nueva carpeta...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="448"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="466"/>
         <source>New script...</source>
         <translation>Nuevo script...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="481"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="499"/>
         <source>Stop</source>
         <translation>Detener</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="547"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="565"/>
         <source>Open Script</source>
         <translation>Abrir Script</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="558"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="576"/>
         <source>Open Dialogs</source>
         <translation>Abrir Diálogos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="564"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="582"/>
         <source>Open Strings</source>
         <translation>Abrir los Textos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="607"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="625"/>
         <source>Open Properties</source>
         <translation>Abrir Propiedades</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="613"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="631"/>
         <source>Explore folder</source>
         <translation>Explorar directorio</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="662"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="680"/>
         <source>Change description...</source>
         <translation>Cambiar descripción...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="801"/>
         <source>New folder</source>
-        <translation>Nueva carpeta</translation>
+        <translation type="vanished">Nueva carpeta</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="802"/>
         <source>Folder name:</source>
-        <translation>Nombre de la carpeta:</translation>
+        <translation type="vanished">Nombre de la carpeta:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="844"/>
         <source>New Lua script</source>
-        <translation>Nuevo script Lua</translation>
+        <translation type="vanished">Nuevo script Lua</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="845"/>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="896"/>
         <source>File name:</source>
-        <translation>Nombre de archivo:</translation>
+        <translation type="vanished">Nombre de archivo:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="895"/>
         <source>New GLSL file</source>
-        <translation>Nuevo archivo GLSL</translation>
+        <translation type="vanished">Nuevo archivo GLSL</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1112"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1101"/>
         <source>Change description</source>
         <translation>Cambiar descripción</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1113"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1102"/>
         <source>New description for %1 &apos;%2&apos;:</source>
         <translation>Nueva descripción para %1 &apos;%2&apos;:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1150"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1139"/>
         <source>File information for &apos;%1&apos;</source>
         <translation>Información de archivo para &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1152"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1141"/>
         <source>File information for %1 selected items</source>
         <translation>Información de archivo para &apos;%1&apos; ítems seleccionados</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1233"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1222"/>
         <source>Do you really want to delete &apos;%1&apos;?</source>
         <translation>¿De verdad quieres eliminar &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1234"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1223"/>
         <source>Do you really want to delete these %1 items?</source>
         <translation>¿De verdad quieres eliminar estos &apos;%1&apos; ítems?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/quest_tree_view.cpp" line="1236"/>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="1225"/>
         <source>Delete confirmation</source>
         <translation>Confirmar eliminación</translation>
     </message>
@@ -4800,51 +5207,76 @@ Esto será el espacio visible del mapa actual.</translation>
     </message>
     <message>
         <location filename="../src/widgets/settings_dialog.ui" line="30"/>
+        <source>Appaerance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="36"/>
+        <source>Theme:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="50"/>
+        <source>Automatic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="55"/>
+        <source>Light mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="60"/>
+        <source>Dark mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="84"/>
         <source>Files</source>
         <translation>Archivos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="38"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="92"/>
         <source>Working directory:</source>
         <translation>Directorio de trabajo:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="48"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="102"/>
         <source>Browse...</source>
         <translation>Explorar...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="57"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="111"/>
         <source>Restore open tabs at startup</source>
         <translation>Restaurar pestañas abiertas al arrancar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="67"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="121"/>
         <source>Running</source>
         <translation>Al ejecutar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="75"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="129"/>
         <source>Save modified files before running:</source>
         <translation>Guardar archivos modificados antes de ejecutar:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="83"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="137"/>
         <source>Ask</source>
         <translation>Preguntar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="88"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="142"/>
         <source>Yes</source>
         <translation>Sí</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="93"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="147"/>
         <source>No</source>
         <translation>No</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="116"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="170"/>
         <source>No audio</source>
         <translation>Sin audio</translation>
     </message>
@@ -4853,138 +5285,138 @@ Esto será el espacio visible del mapa actual.</translation>
         <translation type="vanished">Aceleración de vídeo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="125"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="179"/>
         <source>Quest size:</source>
         <translation>Tamaño de proyecto:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="137"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="191"/>
         <source>Force Software Rendering</source>
         <translation>Forzar renderizado por software</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="161"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="198"/>
+        <source>Suspend when unfocused</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/settings_dialog.ui" line="222"/>
         <source>Text editor</source>
         <translation>Editor de textos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="167"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="228"/>
         <source>Font</source>
         <translation>Fuente</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="173"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="234"/>
         <source>Family:</source>
         <translation>Familia:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="207"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="268"/>
         <source>Size:</source>
         <translation>Tamaño:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="232"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="292"/>
         <source>Tabulation</source>
         <translation>Tabulación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="238"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="298"/>
         <source>Length:</source>
         <translation>Longitud:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="271"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="331"/>
         <source>Replace by space</source>
         <translation>Sustituir por espacios</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="294"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="354"/>
         <source>External Editor</source>
         <translation>Editor externo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="306"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="366"/>
         <source>Command:</source>
         <translation>Comando:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="316"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="376"/>
         <source>executable %f %p</source>
         <translation>ejecutable %f %p</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="335"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="395"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="359"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="419"/>
         <source>Map editor</source>
         <translation>Editor de mapas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="365"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="425"/>
         <location filename="../src/widgets/settings_dialog.ui" line="617"/>
         <source>Main graphics view</source>
         <translation>Vista gráfica principal</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="373"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="541"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="625"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="802"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="972"/>
         <source>Background color:</source>
-        <translation>Color de fondo:</translation>
+        <translation type="vanished">Color de fondo:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="403"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="433"/>
         <location filename="../src/widgets/settings_dialog.ui" line="571"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="655"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="832"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1002"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="625"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="772"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="912"/>
         <source>Default zoom:</source>
         <translation>Zoom predeterminado:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="428"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="680"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1027"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="458"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="650"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="937"/>
         <source>Grid:</source>
         <translation>Grid:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="461"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="723"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="884"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1060"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="491"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="693"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="824"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="970"/>
         <source>Show at opening</source>
         <translation>Mostrar al abrir</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="478"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="746"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1077"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="508"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="716"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="987"/>
         <source>Default size:</source>
         <translation>Tamaño predeterminado:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="485"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="753"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1084"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="515"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="723"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="994"/>
         <source>Style:</source>
         <translation>Estilo:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="492"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="760"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="891"/>
-        <location filename="../src/widgets/settings_dialog.ui" line="1091"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="522"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="730"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="831"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="1001"/>
         <source>Color:</source>
         <translation>Color:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="535"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="565"/>
         <source>Tileset graphics view</source>
         <translation>Vista gráfica del tileset</translation>
     </message>
@@ -4994,72 +5426,72 @@ Esto será el espacio visible del mapa actual.</translation>
         <translation>Editor de sprites</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="767"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="737"/>
         <source>Auto detect size</source>
         <translation>Detectar tamaño automáticamente</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="794"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="764"/>
         <source>Previewer graphics view</source>
         <translation>Previsualización</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="857"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="797"/>
         <source>Origin:</source>
         <translation>Origen:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="958"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="898"/>
         <source>Tileset editor</source>
         <translation>Editor de tilesets</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.ui" line="964"/>
+        <location filename="../src/widgets/settings_dialog.ui" line="904"/>
         <source>Graphics view</source>
         <translation>Vista gráfica</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="104"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="108"/>
         <source>Select external editor</source>
         <translation>Seleccionar editor externo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="179"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="186"/>
         <source>Restore default settings</source>
         <translation>Restablecer configuración predeterminada</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="180"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="187"/>
         <source>Do you really want to restore default settings?</source>
         <translation>¿De verdad quieres restaurar la configuración predeterminada?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="313"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="355"/>
         <source>Working directory</source>
         <translation>Directorio de trabajo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1025"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="994"/>
         <source>25 %</source>
         <translation>25 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1026"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="995"/>
         <source>50 %</source>
         <translation>50 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1027"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="996"/>
         <source>100 %</source>
         <translation>100 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1028"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="997"/>
         <source>200 %</source>
         <translation>200 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/settings_dialog.cpp" line="1029"/>
+        <location filename="../src/widgets/settings_dialog.cpp" line="998"/>
         <source>400 %</source>
         <translation>400 %</translation>
     </message>
@@ -5067,123 +5499,122 @@ Esto será el espacio visible del mapa actual.</translation>
 <context>
     <name>SolarusEditor::ShaderEditor</name>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="36"/>
         <source>Shader properties</source>
-        <translation>Propiedades de shader</translation>
+        <translation type="vanished">Propiedades de shader</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="48"/>
+        <location filename="../src/widgets/shader_editor.ui" line="81"/>
         <source>Shader id</source>
         <translation>Id de shader</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="55"/>
+        <location filename="../src/widgets/shader_editor.ui" line="88"/>
         <source>Filename of the shader program (without extension)</source>
         <translation>Nombre de archivo del programa shader (sin extensión)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="71"/>
+        <location filename="../src/widgets/shader_editor.ui" line="104"/>
         <source>Description</source>
         <translation>Descripción</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="84"/>
+        <location filename="../src/widgets/shader_editor.ui" line="117"/>
         <source>User-friendly description to show in the editor</source>
         <translation>Descripción intuitiva para mostrar en el editor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="91"/>
+        <location filename="../src/widgets/shader_editor.ui" line="124"/>
         <location filename="../src/widgets/shader_editor.cpp" line="68"/>
         <source>Scaling factor</source>
         <translation>Factor de escala</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="120"/>
+        <location filename="../src/widgets/shader_editor.ui" line="153"/>
         <source>Preview settings</source>
         <translation>Configuración de vista previa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="134"/>
+        <location filename="../src/widgets/shader_editor.ui" line="167"/>
         <source>Preview mode</source>
         <translation>Modo de vista previa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="155"/>
+        <location filename="../src/widgets/shader_editor.ui" line="188"/>
         <source>Picture</source>
         <translation>Imagen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="169"/>
+        <location filename="../src/widgets/shader_editor.ui" line="202"/>
         <source>Map</source>
         <translation>Mapa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="180"/>
+        <location filename="../src/widgets/shader_editor.ui" line="213"/>
         <source>Sprite</source>
         <translation>Sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="242"/>
+        <location filename="../src/widgets/shader_editor.ui" line="275"/>
         <source>Open a PNG file</source>
         <translation>Abrir archivo PNG</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="337"/>
+        <location filename="../src/widgets/shader_editor.ui" line="376"/>
         <source>Animation</source>
         <translation>Animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="354"/>
+        <location filename="../src/widgets/shader_editor.ui" line="393"/>
         <source>Direction</source>
         <translation>Dirección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="418"/>
+        <location filename="../src/widgets/shader_editor.ui" line="463"/>
         <source>Vertex shader</source>
         <translation>Shader de vértices</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="436"/>
+        <location filename="../src/widgets/shader_editor.ui" line="481"/>
         <source>Use a vertex shader</source>
         <translation>Usar un shader de vértices</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="494"/>
+        <location filename="../src/widgets/shader_editor.ui" line="539"/>
         <source>New vertex shader file</source>
         <translation>Nuevo archivo de shader de vértices</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="505"/>
+        <location filename="../src/widgets/shader_editor.ui" line="550"/>
         <source>Save vertex shader file</source>
         <translation>Guardar archivo de shader de vértices</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="521"/>
+        <location filename="../src/widgets/shader_editor.ui" line="566"/>
         <source>Open vertex shader file</source>
         <translation>Abrir archivo de shader de vértices</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="579"/>
+        <location filename="../src/widgets/shader_editor.ui" line="624"/>
         <source>Fragment shader</source>
         <translation>Shader de fragmento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="597"/>
+        <location filename="../src/widgets/shader_editor.ui" line="642"/>
         <source>Use a fragment shader</source>
         <translation>Usar un shader de fragmento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="655"/>
+        <location filename="../src/widgets/shader_editor.ui" line="700"/>
         <source>New fragment shader file</source>
         <translation>Nuevo archivo de shader de fragmento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="666"/>
+        <location filename="../src/widgets/shader_editor.ui" line="711"/>
         <source>Save fragment shader file</source>
         <translation>Guardar archivo de shader de fragmento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.ui" line="682"/>
+        <location filename="../src/widgets/shader_editor.ui" line="727"/>
         <source>Open fragment shader file</source>
         <translation>Abrir archivo de shader de fragmento</translation>
     </message>
@@ -5233,17 +5664,17 @@ Esto será el espacio visible del mapa actual.</translation>
         <translation>Archivo de shader GLSL (*.glsl)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="696"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="702"/>
         <source>Shader GLSL files must be in the shaders directory</source>
         <translation>Los archivos shader GLSL deben estar en el directorio de shaders</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="830"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="836"/>
         <source>Open a PNG picture</source>
         <translation>Abrir imagen PNG</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shader_editor.cpp" line="832"/>
+        <location filename="../src/widgets/shader_editor.cpp" line="838"/>
         <source>PNG file (*.png)</source>
         <translation>Archivo PNG (*.png)</translation>
     </message>
@@ -5277,177 +5708,176 @@ Esto será el espacio visible del mapa actual.</translation>
         <translation>Editor de sprites</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="78"/>
         <source>Sprite properties</source>
-        <translation>Propiedades de sprite</translation>
+        <translation type="vanished">Propiedades de sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="87"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="114"/>
         <source>Sprite id</source>
         <translation>Id de sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="94"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="121"/>
         <source>Filename of the sprite (without extension)</source>
         <translation>Nombre de archivo del sprite (sin extensión)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="107"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="134"/>
         <source>Description</source>
         <translation>Descripción</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="114"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="141"/>
         <source>User-friendly description to show in the editor</source>
         <translation>Descripción intuitiva para mostrar en el editor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="137"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="164"/>
         <source>Add</source>
         <translation>Añadir</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="175"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="202"/>
         <source>Rename</source>
         <translation>Renombrar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="213"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="240"/>
         <source>Duplicate</source>
         <translation>Duplicar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="251"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="278"/>
         <source>Move up</source>
         <translation>Mover arriba</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="289"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="316"/>
         <source>Move down</source>
         <translation>Mover abajo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="327"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="354"/>
         <source>Delete</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="370"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="397"/>
         <source>Animation properties</source>
         <translation>Propiedades de animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="382"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="409"/>
         <source>Source image</source>
         <translation>Imagen fuente</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="418"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="445"/>
         <source>Source image of the animation</source>
         <translation>Imagen fuente de la animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="434"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="461"/>
         <source>Tileset of the animation</source>
         <translation>Tileset de la animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="441"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="468"/>
         <source>Refresh image</source>
         <translation>Recargar imagen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="444"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="471"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="461"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="488"/>
         <source>Change</source>
         <translation>Cambiar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="486"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="513"/>
         <source>Delay in milliseconds between two frames of the animation</source>
         <translation>Demora en milisegundos entre dos frames de la animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="489"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="516"/>
         <source> ms</source>
         <translation> ms</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="505"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="532"/>
         <source>Frame delay</source>
         <translation>Demora entre frames</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="512"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="539"/>
         <source>Loop on frame</source>
         <translation>Bucle en el frame</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="522"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="549"/>
         <source>Index of the frame where you want the animation to come back when the last frame finishes</source>
         <translation>Índice del frame donde quieres que la animación vuelva cuando el último frame acaba</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="538"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="565"/>
         <source>Default animation</source>
         <translation>Animación por defecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="545"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="572"/>
         <source>Default animation of the sprite</source>
         <translation>Animación por defecto del sprite</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="548"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="575"/>
         <source>Set as default</source>
         <translation>Definir por defecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="558"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="585"/>
         <source>Direction properties</source>
         <translation>Propiedades de dirección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="567"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="594"/>
         <source>Position</source>
         <translation>Posición</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="574"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="601"/>
         <source>Origin</source>
         <translation>Origen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="581"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="608"/>
         <source>Number of frames</source>
         <translation>Número de frames</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="588"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="615"/>
         <source>Number of columns</source>
         <translation>Número de columnas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="595"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="622"/>
         <source>Number of frames of this direction</source>
         <translation>Número de frames en esta dirección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="608"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="635"/>
         <source>Number of columns of the grid containing the frames of this direction in the image</source>
         <translation>Número de columnas del grid que contienen los frames de esta dirección en la imagen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="621"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="648"/>
         <source>Size</source>
         <translation>Tamaño</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.ui" line="657"/>
+        <location filename="../src/widgets/sprite_editor.ui" line="690"/>
         <source>Direction preview</source>
         <translation>Previsualización de la dirección</translation>
     </message>
@@ -5607,7 +6037,7 @@ Esto será el espacio visible del mapa actual.</translation>
         <translation>Crear dirección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_editor.cpp" line="1000"/>
+        <location filename="../src/widgets/sprite_editor.cpp" line="992"/>
         <source>Invalid description</source>
         <translation>Descripción inválida</translation>
     </message>
@@ -5686,78 +6116,78 @@ Esto será el espacio visible del mapa actual.</translation>
 <context>
     <name>SolarusEditor::SpritePreviewer</name>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="34"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="33"/>
         <source>Show origin</source>
         <translation>Mostrar origen</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="41"/>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="384"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="40"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="377"/>
         <source>Zoom</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="74"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="86"/>
         <source>Index of the current frame</source>
         <translation>Índice del frame actual</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="102"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="114"/>
         <source>Last</source>
         <translation>Último</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="134"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="146"/>
         <source>Stop</source>
         <translation>Detener</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="166"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="178"/>
         <source>Next</source>
         <translation>Siguiente</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="227"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="239"/>
         <source>Previous</source>
         <translation>Anterior</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.ui" line="259"/>
+        <location filename="../src/widgets/sprite_previewer.ui" line="271"/>
         <source>First</source>
         <translation>Primero</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="194"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="187"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="197"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="190"/>
         <source>Start</source>
         <translation>Comenzar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="386"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="379"/>
         <source>25 %</source>
         <translation>25 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="387"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="380"/>
         <source>50 %</source>
         <translation>50 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="388"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="381"/>
         <source>100 %</source>
         <translation>100 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="389"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="382"/>
         <source>200 %</source>
         <translation>200 %</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_previewer.cpp" line="390"/>
+        <location filename="../src/widgets/sprite_previewer.cpp" line="383"/>
         <source>400 %</source>
         <translation>400 %</translation>
     </message>
@@ -5765,19 +6195,19 @@ Esto será el espacio visible del mapa actual.</translation>
 <context>
     <name>SolarusEditor::SpriteScene</name>
     <message>
-        <location filename="../src/widgets/sprite_scene.cpp" line="200"/>
+        <location filename="../src/widgets/sprite_scene.cpp" line="201"/>
         <source>This tileset has no sprite image.
 Please select another tileset.</source>
         <translation>Este tileset no tiene imagen de sprite.
 Por favor, selecciona otro tileset.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_scene.cpp" line="206"/>
+        <location filename="../src/widgets/sprite_scene.cpp" line="207"/>
         <source>Missing source image &apos;%1&apos;</source>
         <translation>No se encuentra la imagen fuente &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_scene.cpp" line="370"/>
+        <location filename="../src/widgets/sprite_scene.cpp" line="371"/>
         <source>No such direction index: %1</source>
         <translation>No existe la dirección: %1</translation>
     </message>
@@ -5866,28 +6296,28 @@ Por favor, selecciona otro tileset.</translation>
         <translation>Cambiar número de columnas</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="615"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="613"/>
         <source>New multiframe direction</source>
         <translation>Nueva dirección multiframe</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="624"/>
-        <location filename="../src/widgets/sprite_view.cpp" line="684"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="622"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="682"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="610"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="608"/>
         <source>New direction</source>
         <translation>Nueva dirección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="672"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="670"/>
         <source>Move here</source>
         <translation>Mover aquí</translation>
     </message>
     <message>
-        <location filename="../src/widgets/sprite_view.cpp" line="678"/>
+        <location filename="../src/widgets/sprite_view.cpp" line="676"/>
         <source>Duplicate here</source>
         <translation>Duplicar aquí</translation>
     </message>
@@ -6141,12 +6571,12 @@ Por favor, selecciona otro tileset.</translation>
         <translation>F4</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor.cpp" line="99"/>
+        <location filename="../src/widgets/text_editor.cpp" line="101"/>
         <source>Cannot open file &apos;%1&apos;</source>
         <translation>No se puede abrir el archivo &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor.cpp" line="126"/>
+        <location filename="../src/widgets/text_editor.cpp" line="128"/>
         <source>Cannot open file &apos;%1&apos; for writing</source>
         <translation>No se puede abrir el archivo &apos;%1&apos; para escritura</translation>
     </message>
@@ -6154,22 +6584,22 @@ Por favor, selecciona otro tileset.</translation>
 <context>
     <name>SolarusEditor::TextEditorWidget</name>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="348"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="360"/>
         <source>Cut</source>
         <translation>Cortar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="359"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="371"/>
         <source>Copy</source>
         <translation>Copiar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="370"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="382"/>
         <source>Paste</source>
         <translation>Pegar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/text_editor_widget.cpp" line="383"/>
+        <location filename="../src/widgets/text_editor_widget.cpp" line="395"/>
         <source>Select all</source>
         <translation>Seleccionar todo</translation>
     </message>
@@ -6204,37 +6634,37 @@ Por favor, selecciona otro tileset.</translation>
         <translation type="vanished">Propiedades del tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="96"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="102"/>
         <source>Tileset id</source>
         <translation>Id del tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="103"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="109"/>
         <source>Filename of the tileset (without extension)</source>
         <translation>Nombre de archivo del tileset (sin extensión)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="119"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="125"/>
         <source>Description</source>
         <translation>Descripción</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="132"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="138"/>
         <source>User-friendly description to show in the editor</source>
         <translation>Descripción intuitiva para mostrar en el editor</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="142"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="148"/>
         <source>Background</source>
         <translation>Fondo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="155"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="161"/>
         <source>Background color applied to maps using this tileset</source>
         <translation>Color de fondo aplicado a mapas que usan este tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="175"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="181"/>
         <source>Patterns</source>
         <translation>Patrones</translation>
     </message>
@@ -6243,134 +6673,134 @@ Por favor, selecciona otro tileset.</translation>
         <translation type="vanished">Número de patrones de tile existentes en el tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="190"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="196"/>
         <source>Selection properties</source>
         <translation>Propiedades de la selección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="202"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="683"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="208"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="717"/>
         <source>Pattern id</source>
         <translation>Id del patrón</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="226"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="232"/>
         <source>Name identifying the pattern</source>
         <translation>Nombre identificador del patrón</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="236"/>
-        <location filename="../src/widgets/tileset_editor.ui" line="491"/>
-        <location filename="../src/widgets/tileset_editor.ui" line="588"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="242"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="488"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="585"/>
         <source>Rename (F2)</source>
         <translation>Renombrar (F2)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="271"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="176"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="277"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="210"/>
         <source>Ground</source>
         <translation>Suelo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="284"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="290"/>
         <source>Terrain of the pattern</source>
         <translation>Tipo de terreno del patrón</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="294"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="218"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="300"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="252"/>
         <source>Default layer</source>
         <translation>Capa por defecto</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="314"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="320"/>
         <source>Repeatable</source>
         <translation>Repetible</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="331"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="337"/>
         <source>Scrolling</source>
         <translation>Desplazamiento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="385"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="391"/>
         <source>Delay</source>
         <translation>Demora</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="392"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="398"/>
         <source> ms</source>
         <translation> ms</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="408"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="466"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="414"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="500"/>
         <source>Mirror loop</source>
         <translation>Bucle espejo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="419"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="425"/>
         <source>Contours</source>
         <translation>Contornos</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="459"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="853"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="456"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="887"/>
         <source>Create contour</source>
         <translation>Crear contorno</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="566"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="563"/>
         <source>Contour properties</source>
         <translation>Propiedades de contorno</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="572"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="569"/>
         <source>Id</source>
         <translation>Id</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="591"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="588"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="598"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="595"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="620"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="617"/>
         <source>Positioning</source>
         <translation>Posicionamiento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="630"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="627"/>
         <source>Outside the selection</source>
         <translation>Fuera de la selección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="639"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="636"/>
         <source>Inside the selection</source>
         <translation>Dentro de la selección</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="303"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="337"/>
         <source>Animation</source>
         <translation>Animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="344"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="350"/>
         <source>Kind of animation of the pattern</source>
         <translation>Tipo de animación del patrón</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="354"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="360"/>
         <source>Frames</source>
         <translation>Frames</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="376"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="382"/>
         <source>Horizontal or vertical separation (only for multi-frame patterns)</source>
         <translation>Separación horizontal o vertical (solamente para patrones multi-frame)</translation>
     </message>
@@ -6386,143 +6816,148 @@ Por favor, selecciona otro tileset.</translation>
     </message>
     <message>
         <location filename="../src/widgets/tileset_editor.cpp" line="138"/>
+        <source>Resize pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_editor.cpp" line="172"/>
         <source>Move patterns</source>
         <translation>Mover patrones</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="260"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="294"/>
         <source>Repeat mode</source>
         <translation>Modo de repetición</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="347"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="381"/>
         <source>Animation separation</source>
         <translation>Separación de animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="386"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="426"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="420"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="460"/>
         <source>Frame delay</source>
         <translation>Demora entre frames</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="509"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="543"/>
         <source>Create pattern</source>
         <translation>Crear patrón</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.ui" line="529"/>
-        <location filename="../src/widgets/tileset_editor.cpp" line="609"/>
+        <location filename="../src/widgets/tileset_editor.ui" line="526"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="643"/>
         <source>Delete</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="545"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="579"/>
         <source>Duplicate</source>
         <translation>Duplicar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="716"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="750"/>
         <source>Border set id</source>
         <translation>Id de conjunto de bordes</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="743"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="777"/>
         <source>Border set inner</source>
         <translation>Conjunto de bordes interior</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="775"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="809"/>
         <source>Border set patterns</source>
         <translation>Patrones de conjunto de bordes</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="804"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="838"/>
         <source>Delete contour</source>
         <translation>Borrar contorno</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="881"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="915"/>
         <source>Delete contour pattern</source>
         <translation>Borrar patrón de contorno</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="932"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="966"/>
         <source>File &apos;%1&apos; is not a tileset</source>
         <translation>El archivo &apos;%1&apos; no es un tileset</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="937"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="971"/>
         <source>Tileset %1</source>
         <translation>Tileset %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="940"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="974"/>
         <source>Tileset &apos;%1&apos; has been modified. Save changes?</source>
         <translation>El tileset &apos;%1&apos; ha sido modificado.¿Guardar cambios?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1226"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1256"/>
         <source>Invalid description</source>
         <translation>Descripción inválida</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1309"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1352"/>
         <source>Rename tile pattern</source>
         <translation>Renombrar patrón de tile</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1310"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1353"/>
         <source>New pattern id:</source>
         <translation>Nuevo id de patrón:</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1311"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1354"/>
         <source>Update existing maps using this pattern</source>
         <translation>Actualizar mapas existentes usando este patrón</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1393"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1437"/>
         <source>Cannot open map file &apos;%1&apos;</source>
         <translation>No se puede abrir el archivo del mapa &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1401"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1445"/>
         <source>Invalid map file: &apos;%1&apos;</source>
         <translation>Archivo de mapa inválido: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1426"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1470"/>
         <source>Failed to export map after changing pattern id: &apos;%1&apos;</source>
         <translation>No se pudo exportar mapa tras cambiar el id de patrón: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1434"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1478"/>
         <source>Cannot open map file &apos;%1&apos; for writing</source>
         <translation>No se puede abrir el archivo del mapa &apos;%1&apos; para escritura</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1847"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1891"/>
         <source>Do you really want to delete pattern &apos;%1&apos;?</source>
         <translation>¿De verdad quieres eliminar el patrón &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1851"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1895"/>
         <source>Do you really want to delete these %1 patterns?</source>
         <translation>¿De verdad quieres eliminar estos %1 patrones?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1857"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1901"/>
         <source>Delete confirmation</source>
         <translation>Confirmar eliminación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1894"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1938"/>
         <source>Border set name</source>
         <translation>Nombre de conjunto de bordes</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_editor.cpp" line="1895"/>
+        <location filename="../src/widgets/tileset_editor.cpp" line="1939"/>
         <source>Border set name:</source>
         <translation>Nombre de conjunto de bordes:</translation>
     </message>
@@ -6574,46 +7009,46 @@ Do you want to refresh the tileset?</source>
         <translation>Índice de patrón de tile inválido: %1</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1736"/>
+        <location filename="../src/tileset_model.cpp" line="1796"/>
         <source>Contour already exists: &apos;%1&apos;</source>
         <translation>El contorno ya existe: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1740"/>
-        <location filename="../src/tileset_model.cpp" line="1791"/>
+        <location filename="../src/tileset_model.cpp" line="1800"/>
+        <location filename="../src/tileset_model.cpp" line="1851"/>
         <source>Invalid contour id: &apos;%1&apos;</source>
         <translation>Id de contorno inválido: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1746"/>
+        <location filename="../src/tileset_model.cpp" line="1806"/>
         <source>Failed to create contour &apos;%1&apos;</source>
         <translation>No se pudo crear el contorno: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1763"/>
-        <location filename="../src/tileset_model.cpp" line="1787"/>
-        <location filename="../src/tileset_model.cpp" line="1818"/>
-        <location filename="../src/tileset_model.cpp" line="1839"/>
-        <location filename="../src/tileset_model.cpp" line="1863"/>
+        <location filename="../src/tileset_model.cpp" line="1823"/>
+        <location filename="../src/tileset_model.cpp" line="1847"/>
         <location filename="../src/tileset_model.cpp" line="1878"/>
-        <location filename="../src/tileset_model.cpp" line="1906"/>
-        <location filename="../src/tileset_model.cpp" line="1927"/>
-        <location filename="../src/tileset_model.cpp" line="1945"/>
+        <location filename="../src/tileset_model.cpp" line="1899"/>
+        <location filename="../src/tileset_model.cpp" line="1923"/>
+        <location filename="../src/tileset_model.cpp" line="1938"/>
+        <location filename="../src/tileset_model.cpp" line="1966"/>
+        <location filename="../src/tileset_model.cpp" line="1987"/>
+        <location filename="../src/tileset_model.cpp" line="2005"/>
         <source>No such contour: &apos;%1&apos;</source>
         <translation>No existe el contorno: &apos;%1</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1769"/>
+        <location filename="../src/tileset_model.cpp" line="1829"/>
         <source>Failed to delete contour &apos;%1&apos;</source>
         <translation>No se pudo borrar el contorno: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1795"/>
+        <location filename="../src/tileset_model.cpp" line="1855"/>
         <source>Contour id already in use: &apos;%1&apos;</source>
         <translation>La id de contorno ya está en uso: &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/tileset_model.cpp" line="1801"/>
+        <location filename="../src/tileset_model.cpp" line="1861"/>
         <source>Failed to rename contour &apos;%1&apos;</source>
         <translation>No se pudo renombrar el contorno: &apos;%1&apos;</translation>
     </message>
@@ -6629,12 +7064,12 @@ Do you want to refresh the tileset?</source>
 <context>
     <name>SolarusEditor::TilesetScene</name>
     <message>
-        <location filename="../src/widgets/tileset_scene.cpp" line="176"/>
+        <location filename="../src/widgets/tileset_scene.cpp" line="177"/>
         <source>Missing tileset image &apos;%1&apos;</source>
         <translation>No se encuentra la imagen del tileset &apos;%1&apos;</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_scene.cpp" line="453"/>
+        <location filename="../src/widgets/tileset_scene.cpp" line="454"/>
         <source>No such pattern index: %1</source>
         <translation>No existe el índice de patrón: %1</translation>
     </message>
@@ -6642,71 +7077,82 @@ Do you want to refresh the tileset?</source>
 <context>
     <name>SolarusEditor::TilesetView</name>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="76"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="182"/>
         <source>Change id...</source>
         <translation>Cambiar id...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="77"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="183"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="84"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="190"/>
         <source>Delete...</source>
         <translation>Eliminar...</translation>
     </message>
     <message>
+        <location filename="../src/widgets/tileset_view.cpp" line="160"/>
         <source>R</source>
-        <translation type="vanished">R</translation>
+        <translation>R</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="62"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="157"/>
+        <source>Resize</source>
+        <translation type="unfinished">Redimensionar</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_view.cpp" line="168"/>
         <source>Create contour...</source>
         <translation>Crear contorno...</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="65"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="171"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="98"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="204"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="99"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="205"/>
         <source>H</source>
         <translation>H</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="100"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="206"/>
         <source>V</source>
         <translation>V</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="101"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="207"/>
         <source>N</source>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="634"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="667"/>
+        <source>Ground</source>
+        <translation type="unfinished">Suelo</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/tileset_view.cpp" line="672"/>
         <source>Default layer</source>
         <translation>Capa predeterminada</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="640"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="677"/>
         <source>Repeatable</source>
         <translation>Repetible</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="645"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="682"/>
         <source>Scrolling</source>
         <translation>Desplazamiento</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="945"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1494"/>
         <source>Duplicate here</source>
         <translation>Duplicar aquí</translation>
     </message>
@@ -6715,28 +7161,28 @@ Do you want to refresh the tileset?</source>
         <translation type="vanished">Animación</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="720"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="756"/>
         <source>Layer %1</source>
         <translation>Capa %1</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="842"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1351"/>
         <source>New pattern (more options)</source>
         <translation>Nuevo patrón (más opciones)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="848"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1357"/>
         <source>New pattern (%1)</source>
         <translation>Nuevo patrón (%1)</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="858"/>
-        <location filename="../src/widgets/tileset_view.cpp" line="953"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1367"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1502"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../src/widgets/tileset_view.cpp" line="939"/>
+        <location filename="../src/widgets/tileset_view.cpp" line="1488"/>
         <source>Move here</source>
         <translation>Mover aquí</translation>
     </message>
