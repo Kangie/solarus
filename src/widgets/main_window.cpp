@@ -673,6 +673,7 @@ bool MainWindow::open_quest(const QString& quest_path) {
 
   update_title();
   ui.quest_tree_view->set_quest(quest);
+  ui.console_widget->clear();
 
   return success;
 }
