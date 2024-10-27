@@ -21,6 +21,7 @@ The multiplayer update!
 * Fix custom state direction control when the movement is disallowed (#1565).
 * Fix missing equipement for second heroes (#1576).
 * Fix `hero.set_invincible` not suspended with the game (#1554).
+* Fix NPC keeping animation `walking` after movement:stop() (#1652).
 * Fix custom entity still interacting when moved or disabled (#1056, #1407).
 * Fix unhelpful error when a destructible has no sprite.
 * Fix thrown objects destruction animation position (#1508).

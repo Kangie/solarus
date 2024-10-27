@@ -174,6 +174,7 @@ static void stop(LuaContext& context, Movement& movement) {
   if (Entity* entity = movement.get_entity()) {
     // The object controlled is a map entity.
     entity->clear_movement();
+    entity->notify_movement_finished();
   } else if (Drawable* drawable = movement.get_drawable()) {
     // The object controlled is a drawable.
     drawable->stop_movement();

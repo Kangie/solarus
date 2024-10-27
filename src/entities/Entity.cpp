@@ -1750,6 +1750,8 @@ void Entity::clear_movement() {
     movement->set_lua_notifications_enabled(false);  // Stop future Lua callbacks.
     old_movements.push_back(movement);               // Destroy it later.
     movement = nullptr;
+    // Don't call notify_movement_finished() from here or any virtual function
+    // as we can be in the destructor at this point.
   }
 }
 
