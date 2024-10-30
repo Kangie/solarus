@@ -28,8 +28,8 @@
 #  include <unistd.h>  // close()
 #endif
 
-#ifdef ANDROID
-#include <SDL_filesystem.h>
+#ifdef __ANDROID__
+#include <SDL.h>
 #endif
 
 #if defined(SOLARUS_OSX) || defined(SOLARUS_IOS)
@@ -125,12 +125,22 @@ SOLARUS_API bool open_quest(const std::string& program_name, const std::string& 
     close_quest();
   }
 
-  if (program_name.empty()) {
-    PHYSFS_init(nullptr);
+  char *argv0 = nullptr;
+
+#ifdef __ANDROID__
+  PHYSFS_Version pver;
+  PHYSFS_VERSION(&pver);
+  if (pver.major >= 3 && pver.minor >= 2) {
+    PHYSFS_AndroidInit init = {SDL_AndroidGetJNIEnv(), SDL_AndroidGetActivity()};
+    argv0 = (char *)&init;
   }
-  else {
-    PHYSFS_init(program_name.c_str());
+#endif
+
+  if (argv0 == nullptr && !program_name.empty()) {
+    argv0 = strdup(program_name.c_str());
   }
+
+  PHYSFS_init(argv0);
 
   quest_path_ = quest_path;
 
@@ -525,7 +535,7 @@ SOLARUS_API std::string get_base_write_dir() {
   return SOLARUS_BASE_WRITE_DIR;
 #elif defined(SOLARUS_OSX) || defined(SOLARUS_IOS)
   return get_user_application_support_directory();
-#elif defined(ANDROID)
+#elif defined(__ANDROID__)
           char *base_path = SDL_GetPrefPath("org.solarus-games.solarus", "solarus");
           std::string path(base_path);
           SDL_free(base_path);

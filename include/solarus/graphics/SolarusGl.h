@@ -16,7 +16,7 @@
  */
 #pragma once
 
-#ifdef ANDROID
+#ifdef __ANDROID__
 #include <SDL_opengles2.h>
 #include <stdio.h>
 #define SOLARUS_GL_ES
@@ -27,7 +27,7 @@
 
 namespace Solarus { namespace Gl {
     inline std::pair<GLint, GLint> getVersion() {
-#ifdef ANDROID
+#ifdef __ANDROID__
       GLint major, minor;
       const char* version = (const char*)glGetString(GL_VERSION);
       sscanf(version,"OpenGL ES %d.%d", &major, &minor);
@@ -40,7 +40,7 @@ namespace Solarus { namespace Gl {
     }
 
     inline bool load() {
-#ifdef ANDROID
+#ifdef __ANDROID__
         return true;
 #elif SOLARUS_GL_ES
         return gladLoadGLES2Loader(SDL_GL_GetProcAddress);

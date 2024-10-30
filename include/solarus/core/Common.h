@@ -23,7 +23,7 @@
 #ifndef SOLARUS_COMMON_H
 #define SOLARUS_COMMON_H
 
-#ifdef ANDROID
+#ifdef __ANDROID__
 #include "solarus/core/AndroidConfig.h"
 #else
 #include "solarus/core/config.h"
