@@ -29,7 +29,8 @@
 #endif
 
 #ifdef __ANDROID__
-#include <SDL.h>
+#include <SDL_filesystem.h>
+#include <SDL_system.h>
 #endif
 
 #if defined(SOLARUS_OSX) || defined(SOLARUS_IOS)
@@ -130,7 +131,7 @@ SOLARUS_API bool open_quest(const std::string& program_name, const std::string& 
 #ifdef __ANDROID__
   PHYSFS_Version pver;
   PHYSFS_VERSION(&pver);
-  if (pver.major >= 3 && pver.minor >= 2) {
+  if (pver.major >= 3 && (pver.major > 3 || pver.minor >= 2)) {
     PHYSFS_AndroidInit init = {SDL_AndroidGetJNIEnv(), SDL_AndroidGetActivity()};
     argv0 = (char *)&init;
   }
