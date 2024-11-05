@@ -73,7 +73,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>584</width>
+            <width>571</width>
             <height>692</height>
            </rect>
           </property>
@@ -400,6 +400,40 @@
               <property name="fieldGrowthPolicy">
                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
               </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="default_animation_label">
+                <property name="text">
+                 <string>Default animation</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <layout class="QHBoxLayout" name="horizontal_layout_3">
+                <item>
+                 <widget class="QCheckBox" name="default_animation_value">
+                  <property name="toolTip">
+                   <string>Default animation of the sprite</string>
+                  </property>
+                  <property name="text">
+                   <string>Set as default</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
               <item row="1" column="0">
                <widget class="QLabel" name="src_image_label">
                 <property name="toolTip">
@@ -507,6 +541,16 @@
                 </layout>
                </widget>
               </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="frame_delay_label">
+                <property name="toolTip">
+                 <string/>
+                </property>
+                <property name="text">
+                 <string>Frame delay</string>
+                </property>
+               </widget>
+              </item>
               <item row="2" column="1">
                <widget class="QSpinBox" name="frame_delay_field">
                 <property name="toolTip">
@@ -520,16 +564,6 @@
                 </property>
                 <property name="singleStep">
                  <number>10</number>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="frame_delay_label">
-                <property name="toolTip">
-                 <string/>
-                </property>
-                <property name="text">
-                 <string>Frame delay</string>
                 </property>
                </widget>
               </item>
@@ -556,23 +590,6 @@
                 </property>
                 <property name="value">
                  <number>-1</number>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="default_animation_label">
-                <property name="text">
-                 <string>Default animation</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QCheckBox" name="default_animation_value">
-                <property name="toolTip">
-                 <string>Default animation of the sprite</string>
-                </property>
-                <property name="text">
-                 <string>Set as default</string>
                 </property>
                </widget>
               </item>
