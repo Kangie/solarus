@@ -653,7 +653,7 @@ void ShaderEditor::new_source_file(WhichGlslEditor which) {
     if (ok) {
       // Automatically add .glsl extension if not present.
       if (!file_name.contains(".")) {
-        file_name = file_name + ".lua";
+        file_name = file_name + ".glsl";
       }
       Quest::check_valid_file_name(file_name);
       const QString& shaders_path = get_quest().get_resource_path(ResourceType::SHADER);

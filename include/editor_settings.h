@@ -44,6 +44,7 @@ public:
   static const QString last_author;
   static const QString last_license_data;
   static const QString last_license_script;
+  static const QString last_text_searched;
 
   // Console keys.
   static const QString console_history;
