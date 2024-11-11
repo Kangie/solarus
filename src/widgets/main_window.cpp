@@ -590,6 +590,7 @@ void MainWindow::close_quest() {
   ui.action_run_quest->setEnabled(false);
   ui.action_run_map->setEnabled(false);
   ui.quest_tree_view->set_quest(quest);
+  ui.console_widget->clear();
 
   EditorSettings settings;
   settings.set_value(EditorSettings::current_quest, "");
