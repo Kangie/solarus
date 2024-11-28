@@ -93,6 +93,14 @@ class Door: public Entity {
     void set_opening_condition_consumed(bool opening_condition_consumed);
     const std::string& get_cannot_open_dialog_id() const;
     void set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id);
+    const std::string& get_cannot_open_sound_id() const;
+    void set_cannot_open_sound_id(const std::string& sound_id);
+    const std::string& get_opening_sound_id() const;
+    void set_opening_sound_id(const std::string& sound_id);
+    const std::string& get_closing_sound_id() const;
+    void set_closing_sound_id(const std::string& sound_id);
+    const std::string& get_unlocking_sound_id() const;
+    void set_unlocking_sound_id(const std::string& sound_id);
 
     // State.
     bool can_open(Hero &hero) const;
@@ -138,6 +146,10 @@ class Door: public Entity {
                                                    * should be consumed when opening the door. */
     std::string cannot_open_dialog_id;            /**< Dialog to show if the door cannot be opened,
                                                    * or an empty string. */
+    std::string cannot_open_sound_id;             /**< Sound ID if cannot open. */
+    std::string opening_sound_id;                 /**< Sound ID for opening phase. */
+    std::string closing_sound_id;                 /**< Sound ID for closing phase. */
+    std::string unlocking_sound_id;               /**< Sound ID for unlocking phase. */
 
     // State.
     State state;                                  /**< State of the door: open, opening, closed or closing. */
