@@ -59,6 +59,7 @@ The multiplayer update!
 * Add a method `movement:get_type()` (#840).
 * Allow to disable the spin attack (#771).
 * Add methods `timer:get/set_duration()`.
+* Add methods to customize all door entities sounds (#1643).
 
 ### Solarus launcher GUI changes
 

@@ -352,25 +352,24 @@ static void change_crystal_state(Map & map) {
  * \param prefix Prefix of the names of the doors to open.
  */
 static void open_doors(Map& map, const std::string& prefix) {
-  bool any_opened = false;
   if (!map.is_loaded()) {
     return;
   }
   Entities& entities = map.get_entities();
+  std::set<std::string> sound_ids;
   const std::vector<EntityPtr>& doors =
       entities.get_entities_with_prefix(EntityType::DOOR, prefix);
   for (const EntityPtr& entity: doors) {
     Door& door = *std::static_pointer_cast<Door>(entity);
     if (!door.is_open() && !door.is_opening()) {
       door.open();
-      any_opened = true;
+      sound_ids.insert(door.get_opening_sound_id());
     }
   }
 
-  // make sure the sound is played only once even if the script calls
-  // this function repeatedly while the door is still changing
-  if (any_opened) {
-    Sound::play("door_open");
+  // plays every unique sound from all doors matching given name prefix
+  for (const std::string& sound_id : sound_ids) {
+    Sound::play(sound_id);
   }
 }
 
@@ -381,24 +380,23 @@ static void open_doors(Map& map, const std::string& prefix) {
  * \param prefix Prefix of the names of the doors to close.
  */
 static void close_doors(Map& map, const std::string& prefix) {
-  bool any_closed = false;
   if (!map.is_loaded()) {
     return;
   }
   Entities& entities = map.get_entities();
+  std::set<std::string> sound_ids;
   const std::vector<EntityPtr>& doors = entities.get_entities_with_prefix(EntityType::DOOR, prefix);
   for (const EntityPtr& entity: doors) {
     Door& door = *std::static_pointer_cast<Door>(entity);
     if (!door.is_closed() && !door.is_closing()) {
       door.close();
-      any_closed = true;
+      sound_ids.insert(door.get_closing_sound_id());
     }
   }
 
-  // make sure the sound is played only once even if the script calls
-  // this function repeatedly while the door is still changing
-  if (any_closed) {
-    Sound::play("door_closed");
+  // plays every unique sound from all doors matching given name prefix
+  for (const std::string& sound_id : sound_ids) {
+    Sound::play(sound_id);
   }
 }
 
