@@ -29,6 +29,7 @@ The multiplayer update!
 * Fix crash when loading a save file with Lua keywords (#1609).
 * Fix crash when a dialog starts during another dialog (#988, #1582).
 * Fix speed of target movement outside a game (#1297).
+* Fix crash when circle movement angular speed is 0 (#1657).
 
 ### Lua API changes
 
