@@ -416,6 +416,12 @@ void LuaContext::register_entity_module() {
   if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     block_methods.insert(block_methods.end(), {
       { "get_direction", block_api_get_direction},
+      { "get_moving_sound_id", block_api_get_moving_sound_id },
+      { "set_moving_sound_id", block_api_set_moving_sound_id },
+      { "get_falling_sound_id", block_api_get_falling_sound_id },
+      { "set_falling_sound_id", block_api_set_falling_sound_id },
+      { "get_sinking_sound_id", block_api_get_sinking_sound_id },
+      { "set_sinking_sound_id", block_api_set_sinking_sound_id },
     });
   }
 
@@ -5053,6 +5059,114 @@ int LuaContext::block_api_set_maximum_moves(lua_State* l) {
       "block:set_maximum_moves()",
       "Use block:set_max_moves() instead.");
   return block_api_set_max_moves(l);
+}
+
+/**
+ * \brief Implementation of block:get_moving_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_moving_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const std::string& sound_id = block.get_moving_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of block:set_moving_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_set_moving_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Block& block = *check_block(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    block.set_moving_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of block:get_falling_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_falling_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const std::string& sound_id = block.get_falling_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of block:set_falling_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_set_falling_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Block& block = *check_block(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    block.set_falling_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of block:get_sinking_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_sinking_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const std::string& sound_id = block.get_sinking_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of block:set_sinking_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_set_sinking_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Block& block = *check_block(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    block.set_sinking_sound_id(sound_id);
+
+    return 0;
+  });
 }
 
 /**

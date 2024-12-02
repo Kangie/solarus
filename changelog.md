@@ -62,6 +62,7 @@ The multiplayer update!
 * Add methods `timer:get/set_duration()`.
 * Add methods to customize all door entities sounds (#1643).
 * Add methods to customize all chest entities sounds.
+* Add methods to customize all block entities sounds.
 
 ### Solarus launcher GUI changes
 
