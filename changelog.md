@@ -61,6 +61,7 @@ The multiplayer update!
 * Allow to disable the spin attack (#771).
 * Add methods `timer:get/set_duration()`.
 * Add methods to customize all door entities sounds (#1643).
+* Add methods to customize all chest entities sounds.
 
 ### Solarus launcher GUI changes
 

@@ -376,12 +376,16 @@ void LuaContext::register_entity_module() {
   };
   if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     chest_methods.insert(chest_methods.end(), {
-      { "get_opening_method", chest_api_get_opening_method},
-      { "get_opening_condition", chest_api_get_opening_condition},
-      { "is_opening_condition_consumed", chest_api_is_opening_condition_consumed},
-      { "set_opening_method", chest_api_set_opening_method},
-      { "set_opening_condition", chest_api_set_opening_condition},
-      { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed},
+      { "get_opening_method", chest_api_get_opening_method },
+      { "get_opening_condition", chest_api_get_opening_condition },
+      { "is_opening_condition_consumed", chest_api_is_opening_condition_consumed },
+      { "set_opening_method", chest_api_set_opening_method },
+      { "set_opening_condition", chest_api_set_opening_condition },
+      { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed },
+      { "get_cannot_open_sound_id", chest_api_get_cannot_open_sound_id },
+      { "set_cannot_open_sound_id", chest_api_set_cannot_open_sound_id },
+      { "get_opening_sound_id", chest_api_get_opening_sound_id },
+      { "set_opening_sound_id", chest_api_set_opening_sound_id },
     });
   }
 
@@ -4762,6 +4766,79 @@ int LuaContext::chest_api_set_opening_condition_consumed(lua_State* l){
     return 1;
   });
 }
+
+/**
+ * \brief Implementation of chest:get_cannot_open_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_get_cannot_open_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    
+    const std::string& sound_id = chest.get_cannot_open_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_cannot_open_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_set_cannot_open_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    chest.set_cannot_open_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:get_opening_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_get_opening_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    
+    const std::string& sound_id = chest.get_opening_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_sound_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_set_opening_sound_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    chest.set_opening_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
 
 /**
  * \brief Returns whether a value is a userdata of type block.

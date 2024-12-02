@@ -63,7 +63,9 @@ Chest::Chest(
   treasure_given(open),
   treasure_date(0),
   opening_method(OpeningMethod::BY_INTERACTION),
-  opening_condition_consumed(false) {
+  opening_condition_consumed(false),
+  cannot_open_sound_id("wrong"),
+  opening_sound_id("chest_open") {
 
   set_collision_modes(CollisionMode::COLLISION_FACING);
 
@@ -352,6 +354,44 @@ void Chest::set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id) 
 }
 
 /**
+ * \brief Returns the id of the sound played when the hero is unable to open the chest.
+ * 
+ * \return The id of the "cannot open" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+const std::string& Chest::get_cannot_open_sound_id() const {
+  return cannot_open_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the hero is unable to open the chest.
+ * \param sound_id The if of the "cannot open" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+void Chest::set_cannot_open_sound_id(const std::string& sound_id) {
+  cannot_open_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound played when the hero is opening the chest.
+ * 
+ * \return The id of the "opening" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+const std::string& Chest::get_opening_sound_id() const {
+  return opening_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the hero is opening the chest.
+ * \param sound_id The if of the "opening" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+void Chest::set_opening_sound_id(const std::string& sound_id) {
+  opening_sound_id = sound_id;
+}
+
+/**
  * \brief Returns whether this entity is an obstacle for another one when
  * it is enabled.
  * \param other Another entity.
@@ -426,7 +466,9 @@ bool Chest::notify_action_command_pressed(Hero &hero) {
   ) {
 
     if (can_open(hero)) {
-      Sound::play("chest_open");
+      if (!opening_sound_id.empty()) {
+        Sound::play(opening_sound_id);
+      }
 
       set_open(true);
       treasure_date = System::now_ms() + 300;
@@ -436,7 +478,9 @@ bool Chest::notify_action_command_pressed(Hero &hero) {
       opening_hero = hero.shared_from_this_cast<Hero>();
     }
     else if (!get_cannot_open_dialog_id().empty()) {
-      Sound::play("wrong");
+      if (!cannot_open_sound_id.empty()) {
+        Sound::play(cannot_open_sound_id);
+      }
       get_game().start_dialog(get_cannot_open_dialog_id(), ScopedLuaRef(), ScopedLuaRef());
     }
 
