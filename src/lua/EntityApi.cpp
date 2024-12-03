@@ -234,6 +234,10 @@ void LuaContext::register_entity_module() {
   }
   if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     hero_methods.insert(hero_methods.end(), {
+      { "get_swimming_speed", hero_api_get_swimming_speed },
+      { "set_swimming_speed", hero_api_set_swimming_speed },
+      { "get_can_swim_faster", hero_api_get_can_swim_faster },
+      { "set_can_swim_faster", hero_api_set_can_swim_faster },
       { "get_push_delay", hero_api_get_push_delay},
       { "set_push_delay", hero_api_set_push_delay},
       { "get_carry_height", hero_api_get_carry_height},
@@ -2369,6 +2373,68 @@ int LuaContext::hero_api_set_walking_speed(lua_State* l) {
     int normal_walking_speed = LuaTools::check_int(l, 2);
 
     hero.set_normal_walking_speed(normal_walking_speed);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_swimming_speed(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Hero& hero = *check_hero(l, 1);
+
+    lua_pushinteger(l, hero.get_swimming_speed());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_swimming_speed(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    int swimming_speed = LuaTools::check_int(l, 2);
+
+    hero.set_swimming_speed(swimming_speed);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_can_swim_faster(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Hero& hero = *check_hero(l, 1);
+
+    lua_pushboolean(l, hero.get_can_swim_faster());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_can_swim_faster(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    int can_swim_faster = LuaTools::check_boolean(l, 2);
+
+    hero.set_can_swim_faster(can_swim_faster);
 
     return 0;
   });

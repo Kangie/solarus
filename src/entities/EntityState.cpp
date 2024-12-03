@@ -561,6 +561,15 @@ void Entity::State::notify_walking_speed_changed() {
 }
 
 /**
+ * \brief Notifies this state that the swimming speed has changed.
+ *
+ * If the entity can swim in this state, the state should modify its movement
+ * to set the new speed.
+ */
+void Entity::State::notify_swimming_speed_changed() {
+}
+
+/**
  * \brief Notifies this state that the entity has just changed its
  * position.
  */

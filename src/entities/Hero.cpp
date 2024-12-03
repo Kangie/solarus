@@ -114,6 +114,7 @@ Hero::Hero(const EquipmentPtr &equipment, const std::string& name):
   on_raised_blocks(false),
   falling_sound_id("hero_falls"),
   respawn_sound_id("message_end"),
+  swimming_speed(44),
   last_solid_ground_coords(0, 0),
   last_solid_ground_layer(0),
   target_solid_ground_callback(),
@@ -1009,6 +1010,41 @@ void Hero::set_walking_speed(int walking_speed) {
     this->walking_speed = walking_speed;
     get_state()->notify_walking_speed_changed();
   }
+}
+
+/**
+ * \brief Returns the current speed applied to the hero's movements when he is swimming.
+ * \return The current swimming speed.
+ */
+int Hero::get_swimming_speed() const {
+  return swimming_speed;
+}
+
+/**
+ * \brief Sets the speed to apply to the hero's movements when he is walking.
+ * \param swimming_speed the new swimming speed
+ */
+void Hero::set_swimming_speed(int swimming_speed) {
+  if (swimming_speed != this->swimming_speed) {
+    this->swimming_speed = swimming_speed;
+    get_state()->notify_swimming_speed_changed();
+  }
+}
+
+/**
+ * \brief Returns true if the hero can swim faster in deep water by pressing action command.
+ * \return The ability to swim faster.
+ */
+bool Hero::get_can_swim_faster() const {
+  return can_swim_faster;
+}
+
+/**
+ * \brief Sets the ability to swim faster in deep water by pressing action command.
+ * \param can_swim_faster sets the ability to swim faster.
+ */
+void Hero::set_can_swim_faster(bool can_swim_faster) {
+  this->can_swim_faster = can_swim_faster;
 }
  	
 /**
