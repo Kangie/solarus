@@ -37,6 +37,7 @@
 #include "solarus/entities/Teletransporter.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/lua/LuaContext.h"
+#include "solarus/core/Map.h"
 #include <lua.hpp>
 
 namespace Solarus {
@@ -781,7 +782,9 @@ void CustomEntity::add_collision_test(
       callback_ref
   );
 
-  check_collision_with_detectors();
+  if (is_on_map()) {
+    get_map().check_collision_from_detector(*this);
+  }
 }
 
 /**
@@ -804,7 +807,9 @@ void CustomEntity::add_collision_test(
       callback_ref
   );
 
-  check_collision_with_detectors();
+  if (is_on_map()) {
+    get_map().check_collision_from_detector(*this);
+  }
 }
 
 /**

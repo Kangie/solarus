@@ -205,6 +205,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1639_destination_get_direction"
   "bugs/1641_crash_assign_item"
   "bugs/1644_random_movement_get_angle"
+  "bugs/1648_custom_entities_collision_not_happening"
   "bugs/1652_npc_movement_stop_animation"
 )
 
