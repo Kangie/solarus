@@ -130,7 +130,7 @@ Returns the speed of the normal walking movement of hero.
 
 This speed is automatically reduced when the hero walks on special ground like
 grass, ladders or holes.
-- Return value (number): The speed of normal walk in pixels par second.
+- Return value (number): The speed of normal walk in pixels per second.
 
 \subsection lua_api_hero_set_walking_speed hero:set_walking_speed(walking_speed)
 
@@ -139,7 +139,32 @@ Sets the speed of the normal walking movement of hero.
 The default walking speed is 88 pixels per second.
 This speed is automatically reduced when the hero walks on special ground like
 grass, ladders or holes.
-- \c walking speed (number): The speed of normal walk in pixels par second.
+- \c walking speed (number): The speed of normal walk in pixels per second.
+
+\subsection lua_api_hero_get_swimming_speed hero:get_swimming_speed()
+
+Returns the speed of the swimming movement of hero.
+
+- Return value (number): The swimming speed in pixels per second.
+
+\subsection lua_api_hero_set_swimming_speed hero:set_swimming_speed(swimming_speed)
+
+Sets the swimming speed movement of hero.
+
+The default swimming speed is 44 pixels per second.
+When the player perform the swim boost, the speed is doubled.
+- \c swimming speed (number): The swimming speed n pixels per second.
+
+\subsection lua_api_hero_get_can_swim_faster hero:get_can_swim_faster()
+
+Returns true if the hero is allowed to perform a swim boost in deep water.
+
+- Return value (boolean): The ability to swim faster.
+
+\subsection lua_api_hero_set_can_swim_faster hero:set_can_swim_faster([can_swim_faster])
+
+Sets the ability for the player to perform a swim boost in deep water.
+- \c can_swim_faster (boolean): true if the hero is allowed to swim faster.
 
 \subsection lua_api_hero_get_push_delay hero:get_push_delay()
 

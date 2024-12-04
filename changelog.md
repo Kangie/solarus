@@ -63,6 +63,7 @@ The multiplayer update!
 * Add methods to customize all door entities sounds (#1643).
 * Add methods to customize all chest entities sounds.
 * Add methods to customize all block entities sounds.
+* Add methods `hero:get/set_walking_speed()` and `hero:get/set_can_swim_faster()`.
 
 ### Solarus launcher GUI changes
 

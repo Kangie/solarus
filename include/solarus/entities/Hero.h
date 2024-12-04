@@ -136,6 +136,8 @@ class Hero: public Entity {
     void set_normal_walking_speed(int normal_walking_speed);
     int get_walking_speed() const;
     void set_walking_speed(int walking_speed);
+    int get_swimming_speed() const;
+    void set_swimming_speed(int swimming_speed);
     int get_push_delay() const;
     void set_push_delay(int delay);
     int get_carry_height() const;
@@ -324,6 +326,9 @@ class Hero: public Entity {
     std::string get_respawn_sound_id() const;
     void set_respawn_sound_id(const std::string& respawn_sound_id);
 
+    bool get_can_swim_faster() const;
+    void set_can_swim_faster(bool can_swim_faster);
+
     const ControlsPtr& get_controls() const;
     void set_controls(const ControlsPtr& controls);
     const CommandsEffects& get_commands_effects() const;
@@ -414,6 +419,8 @@ class Hero: public Entity {
                                             * raised crystal blocks */
     std::string falling_sound_id;          /**< Sound to play when the hero is falling in bad ground. */
     std::string respawn_sound_id;          /**< Sound to play when the hero gets back from bad ground. */
+    int swimming_speed;                    /**< current wimming speed */
+    bool can_swim_faster;                  /**< if the hero has the ability to swim faster (swim boost) */
 
     // ground
     Point last_solid_ground_coords;        /**< coordinates of the last hero position on a ground

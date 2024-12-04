@@ -138,7 +138,7 @@ void Hero::SwimmingState::notify_action_command_pressed() {
     }
   }
 
-  if (!facing_entity_interaction) {
+  if (!facing_entity_interaction && hero.get_can_swim_faster()) {
     // The event was not handled by the facing entity.
     try_swim_faster();
   }
@@ -147,7 +147,10 @@ void Hero::SwimmingState::notify_action_command_pressed() {
  * \brief Notifies this state that the attack command was just pressed.
  */
 void Hero::SwimmingState::notify_attack_command_pressed() {
-  try_swim_faster();
+  Hero& hero = get_entity();
+  if (hero.get_can_swim_faster()) {
+    try_swim_faster();
+  }
 }
 
 /**
@@ -169,7 +172,7 @@ void Hero::SwimmingState::try_swim_faster() {
  * \return the swimming speed in pixels per second
  */
 int Hero::SwimmingState::get_slow_swimming_speed() const {
-  return get_entity().get_normal_walking_speed() / 2;
+  return get_entity().get_swimming_speed();
 }
 
 /**
@@ -177,7 +180,7 @@ int Hero::SwimmingState::get_slow_swimming_speed() const {
  * \return the faster swimming speed in pixels per second
  */
 int Hero::SwimmingState::get_fast_swimming_speed() const {
-  return get_entity().get_normal_walking_speed();
+  return get_entity().get_swimming_speed() * 2;
 }
 
 /**
