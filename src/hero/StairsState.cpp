@@ -118,6 +118,8 @@ void Hero::StairsState::start(const State* previous_state) {
     }
   }
   hero.set_movement(movement);
+
+  stairs->notify_entered();
 }
 
 /**
@@ -127,6 +129,8 @@ void Hero::StairsState::start(const State* previous_state) {
 void Hero::StairsState::stop(const State* next_state) {
 
   HeroState::stop(next_state);
+
+  stairs->notify_exited();
 
   if (carried_object != nullptr) {
 

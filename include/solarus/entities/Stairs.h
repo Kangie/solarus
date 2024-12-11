@@ -90,6 +90,8 @@ class Stairs: public Entity {
     virtual bool is_obstacle_for(Entity& other) override;
     virtual void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
     virtual void notify_enabled(bool enabled) override;
+    void notify_entered();
+    void notify_exited();
 
     int get_movement_direction(Way way) const;
     int get_animation_direction(Way way) const;

@@ -22,6 +22,7 @@
 #include "solarus/entities/DynamicTile.h"
 #include "solarus/entities/Entities.h"
 #include "solarus/entities/Stairs.h"
+#include "solarus/lua/LuaContext.h"
 #include <list>
 
 namespace Solarus {
@@ -137,6 +138,24 @@ void Stairs::notify_collision(
 
   if (is_enabled()) {
     entity_overlapping.notify_collision_with_stairs(*this, collision_mode);
+  }
+}
+
+/**
+ * \brief this function is called when another entity has entered this entity.
+ */
+void Stairs::notify_entered() {
+  if (get_lua_context() != nullptr) {
+    get_lua_context()->stairs_on_entered(*this);
+  }
+}
+
+/**
+ * \brief this function is called when another entity has exited this entity.
+ */
+void Stairs::notify_exited() {
+  if (get_lua_context() != nullptr) {
+    get_lua_context()->stairs_on_exited(*this);
   }
 }
 

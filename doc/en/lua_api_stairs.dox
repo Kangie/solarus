@@ -99,6 +99,14 @@ See \ref lua_api_entity_events to know these events.
 
 \section lua_api_stairs_events Events of the type stairs
 
-None.
+The following events are specific to stairs.
+
+\subsection lua_api_stairs_on_entered stairs:on_entered()
+
+Called when the \ref lua_api_hero "hero" has just entered these stairs.
+
+\subsection lua_api_stairs_on_exited stairs:on_exited()
+
+Called when the \ref lua_api_hero "hero" has just exited these stairs.
 
 */

@@ -2746,6 +2746,26 @@ void LuaContext::on_closed() {
 }
 
 /**
+ * \brief Calls the on_entered() method of the object on top of the stack.
+ */
+void LuaContext::on_entered() {
+  check_callback_thread();
+  if (find_method("on_entered")) {
+    call_function(1, 0, "on_entered");
+  }
+}
+
+/**
+ * \brief Calls the on_exited() method of the object on top of the stack.
+ */
+void LuaContext::on_exited() {
+  check_callback_thread();
+  if (find_method("on_exited")) {
+    call_function(1, 0, "on_exited");
+  }
+}
+
+/**
  * \brief Calls the on_moving() method of the object on top of the stack.
  */
 void LuaContext::on_moving() {
