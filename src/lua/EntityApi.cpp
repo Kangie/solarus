@@ -6068,6 +6068,44 @@ int LuaContext::stairs_api_is_inner(lua_State* l) {
 }
 
 /**
+ * \brief Calls the on_entered() method of a Lua stairs.
+ *
+ * Does nothing if the method is not defined.
+ *
+ * \param stairs Stairs entity.
+ */
+void LuaContext::stairs_on_entered(Stairs& stairs) {
+
+  if (!userdata_has_field(stairs, "on_entered")) {
+    return;
+  }
+  run_on_main([this, &stairs](lua_State* l){
+    push_stairs(l, stairs);
+    on_entered();
+    lua_pop(l, 1);
+  });
+}
+
+/**
+ * \brief Calls the on_exited() method of a Lua stairs.
+ *
+ * Does nothing if the method is not defined.
+ *
+ * \param stairs Stairs entity.
+ */
+void LuaContext::stairs_on_exited(Stairs& stairs) {
+
+  if (!userdata_has_field(stairs, "on_exited")) {
+    return;
+  }
+  run_on_main([this, &stairs](lua_State* l){
+    push_stairs(l, stairs);
+    on_exited();
+    lua_pop(l, 1);
+  });
+}
+
+/**
  * \brief Returns whether a value is a userdata of type shop treasure.
  * \param l A Lua context.
  * \param index An index in the stack.

@@ -515,6 +515,8 @@ class LuaContext {
     void separator_on_activated(Separator& separator, int direction4);
     void door_on_opened(Door& door);
     void door_on_closed(Door& door);
+    void stairs_on_entered(Stairs& stairs);
+    void stairs_on_exited(Stairs& stairs);
     bool shop_treasure_on_buying(ShopTreasure& shop_treasure);
     void shop_treasure_on_bought(ShopTreasure& shop_treasure);
     void destructible_on_looked(Destructible& destructible);
@@ -1591,6 +1593,8 @@ private:
     void on_opened();
     bool on_opened(const Treasure& treasure);
     void on_closed();
+    void on_entered();
+    void on_exited();
     void on_moving();
     void on_moved();
     void on_map_changed(Map& map, Camera &camera);
