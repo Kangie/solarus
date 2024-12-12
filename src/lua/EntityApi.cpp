@@ -2743,6 +2743,10 @@ int LuaContext::hero_api_set_sword_sprite_id(lua_State* l) {
  * \return Number of values to return to Lua.
  */
 int LuaContext::hero_api_get_sword_sound_id(lua_State* l) {
+  get().warning_deprecated(
+    { 2, 0 },
+    "hero:get_sword_sound_id()",
+    "Use hero:get_sword_sound()) instead.");
   return hero_api_get_sword_sound(l);
 }
 
@@ -2774,6 +2778,10 @@ int LuaContext::hero_api_get_sword_sound(lua_State* l) {
  * \return Number of values to return to Lua.
  */
 int LuaContext::hero_api_set_sword_sound_id(lua_State* l) {
+  get().warning_deprecated(
+    { 2, 0 },
+    "hero:set_sword_sound_id()",
+    "Use hero:set_sword_sound()) instead.");
   return hero_api_set_sword_sound(l);
 }
 
