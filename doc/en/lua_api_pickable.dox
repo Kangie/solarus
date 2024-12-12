@@ -127,6 +127,30 @@ Returns the kind of treasure represented by this pickable treasure.
   whether this pickable treasure is found.
   \c nil means that the treasure is not saved.
 
+\subsection lua_api_pickable_get_falling_sound pickable:get_falling_sound()
+
+Returns the sound id when the pickable is falling into a hole.
+- Return value (string): The sound id.
+
+\subsection lua_api_pickable_set_falling_sound pickable:set_falling_sound([sound_id])
+
+Changes the sound to play when the object is falling into a hole.
+By default, the sound used for falling is "jump".
+You can use this function if you want another sound to be played.
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
+\subsection lua_api_pickable_get_sinking_sound pickable:get_sinking_sound()
+
+Returns the sound id when the pickable is sinking into deep water or lava.
+- Return value (string): The sound id.
+
+\subsection lua_api_pickable_set_sinking_sound pickable:set_sinking_sound([sound_id])
+
+Changes the sound to play when the object is sinking into deep water or lava.
+By default, the sound used for sinking is "splash".
+You can use this function if you want another sound to be played.
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
 \section lua_api_pickable_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define

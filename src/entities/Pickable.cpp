@@ -57,6 +57,8 @@ Pickable::Pickable(
   shadow_sprite(),
   falling_height(FALLING_NONE),
   will_disappear(false),
+  falling_sound_id("jump"),
+  sinking_sound_id("splash"),
   shadow_xy(xy),
   appear_date(System::now_ms()),
   allow_pick_date(0),
@@ -423,7 +425,9 @@ void Pickable::check_bad_ground() {
 
     case Ground::HOLE:
     {
-      Sound::play("jump");
+      if (!falling_sound_id.empty()) {
+        Sound::play(falling_sound_id);
+      }
       remove_from_map();
     }
     break;
@@ -431,7 +435,9 @@ void Pickable::check_bad_ground() {
     case Ground::DEEP_WATER:
     case Ground::LAVA:
     {
-      Sound::play("splash");
+      if (!sinking_sound_id.empty()) {
+        Sound::play(sinking_sound_id);
+      }
       remove_from_map();
     }
     break;
@@ -532,6 +538,38 @@ void Pickable::set_suspended(bool suspended) {
       }
     }
   }
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is falling into a hole.
+ * \return The falling sound id or an empty string.
+ */
+const std::string& Pickable::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is falling into a hole.
+ * \param sound_id The falling sound id or an empty string.
+ */
+void Pickable::set_falling_sound_id(const std::string& sound_id) {
+  falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is sinking into deep water or lava.
+ * \return The sinking sound id or an empty string.
+ */
+const std::string& Pickable::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is sinking into deep water or lava.
+ * \param sound_id The sinking sound id or an empty string.
+ */
+void Pickable::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
 }
 
 /**
