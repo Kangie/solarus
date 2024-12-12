@@ -192,13 +192,13 @@ is consumed.
 
 - \c condition_consumed (boolean) : \c true if the condition is consumed, \c false if it is not. No value means \c true.
 
-\subsection lua_api_door_get_cannot_open_sound_id door:get_cannot_open_sound_id()
+\subsection lua_api_door_get_cannot_open_sound door:get_cannot_open_sound()
 
 Returns the sound id defined for this door when the hero is unable to open it.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_door_set_cannot_open_sound_id door:set_cannot_open_sound_id([sound_id])
+\subsection lua_api_door_set_cannot_open_sound door:set_cannot_open_sound([sound_id])
 
 Changes the sound to play when the hero is unable to open the door.
 
@@ -208,13 +208,13 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
-\subsection lua_api_door_get_opening_sound_id door:get_opening_sound_id()
+\subsection lua_api_door_get_opening_sound door:get_opening_sound()
 
 Returns the sound id for the door opening phase.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_door_set_opening_sound_id door:set_opening_sound_id([sound_id])
+\subsection lua_api_door_set_opening_sound door:set_opening_sound([sound_id])
 
 Changes the sound to play when the door is opening.
 
@@ -224,13 +224,13 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
-\subsection lua_api_door_get_closing_sound_id door:get_closing_sound_id()
+\subsection lua_api_door_get_closing_sound door:get_closing_sound()
 
 Returns the sound id for the door closing phase.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_door_set_closing_sound_id door:set_closing_sound_id([sound_id])
+\subsection lua_api_door_set_closing_sound door:set_closing_sound([sound_id])
 
 Changes the sound to play when the door is closing.
 
@@ -240,13 +240,13 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
-\subsection lua_api_door_get_unlocking_sound_id door:get_unlocking_sound_id()
+\subsection lua_api_door_get_unlocking_sound door:get_unlocking_sound()
 
 Returns the sound id for the door unlocking phase.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_door_set_unlocking_sound_id door:set_unlocking_sound_id([sound_id])
+\subsection lua_api_door_set_unlocking_sound door:set_unlocking_sound([sound_id])
 
 Changes the sound to play when the door is unlocking with an item (usually a key).
 

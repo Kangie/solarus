@@ -56,14 +56,15 @@ The multiplayer update!
 * Add a method `entity:set_name()` (#1527).
 * Add methods `hero:get/set_push_delay()` (#1524).
 * Add methods `hero:get/set_carry_height()`.
-* Add methods to customize hero falling and respawning sounds (#1645).
 * Add a method `game:get_values()` (#1552).
 * Add a method `movement:get_type()` (#840).
 * Allow to disable the spin attack (#771).
 * Add methods `timer:get/set_duration()`.
-* Add methods to customize all door entities sounds (#1643).
-* Add methods to customize all chest entities sounds.
+* Add methods to customize hero falling and respawning sounds (#1645).
 * Add methods to customize all block entities sounds.
+* Add methods to customize all chest entities sounds.
+* Add methods to customize all carried object entities sounds (#1658).
+* Add methods to customize all door entities sounds (#1643).
 * Add methods `hero:get/set_walking_speed()` and `hero:get/set_can_swim_faster()`.
 * Add events `stairs:on_entered()` and `stairs:on_exited()`.
 

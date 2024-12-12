@@ -77,6 +77,9 @@ CarriedObject::CarriedObject(
   is_breaking(false),
   break_one_layer_above(false),
   destruction_sound_id(destruction_sound_id),
+  throwing_sound_id("throw"),
+  falling_sound_id("jump"),
+  sinking_sound_id("walk_on_water"),
   damage_on_enemies(damage_on_enemies),
   shadow_sprite(nullptr),
   throwing_direction(0),
@@ -203,6 +206,54 @@ void CarriedObject::set_destruction_sound(const std::string& destruction_sound_i
 }
 
 /**
+ * \brief Returns the id of the sound to play when this object is thrown.
+ * \return The throwing sound id or an empty string.
+ */
+const std::string& CarriedObject::get_throwing_sound() const {
+  return throwing_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is thrown.
+ * \param sound_id The throwing sound id or an empty string.
+ */
+void CarriedObject::set_throwing_sound(const std::string& sound_id) {
+  this->throwing_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is falling into a hole.
+ * \return The falling sound id or an empty string.
+ */
+const std::string& CarriedObject::get_falling_sound() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is falling into a hole.
+ * \param sound_id The falling sound id or an empty string.
+ */
+void CarriedObject::set_falling_sound(const std::string& sound_id) {
+  this->falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is sinking into deep water or lava.
+ * \return The sinking sound id or an empty string.
+ */
+const std::string& CarriedObject::get_sinking_sound() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is sinking into deep water or lava.
+ * \param sound_id The sinking sound id or an empty string.
+ */
+void CarriedObject::set_sinking_sound(const std::string& sound_id) {
+  this->sinking_sound_id = sound_id;
+}
+
+/**
  * \brief Makes the item sprite stop moving.
  *
  * This function is called when the hero stops walking while carrying the item.
@@ -245,7 +296,9 @@ void CarriedObject::throw_item(int direction) {
   this->is_throwing = true;
 
   // play the sound
-  Sound::play("throw");
+  if (!throwing_sound_id.empty()) {
+    Sound::play(throwing_sound_id);
+  }
 
   // Set up sprites.
   if (main_sprite->has_animation("stopped")) {
@@ -364,13 +417,17 @@ void CarriedObject::break_item_on_ground() {
     }
 
     case Ground::HOLE:
-      Sound::play("jump");
+      if (!falling_sound_id.empty()) {
+        Sound::play(falling_sound_id);
+      }
       remove_from_map();
       break;
 
     case Ground::DEEP_WATER:
     case Ground::LAVA:
-      Sound::play("walk_on_water");
+      if (!sinking_sound_id.empty()) {
+        Sound::play(sinking_sound_id);  
+      }
       remove_from_map();
       break;
 

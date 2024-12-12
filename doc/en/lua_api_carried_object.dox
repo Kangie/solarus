@@ -93,6 +93,42 @@ Sets the sound to be played when this object is cut or broken.
 - \c destruction_sound_id (string): Id of the destruction sound.
   \c nil means that no sound will be played.
 
+\subsection lua_api_carried_object_get_throwing_sound carried_object:get_throwing_sound()
+
+Returns the sound id when the carried_object is thrown.
+- Return value (string): The sound id.
+
+\subsection lua_api_carried_object_set_throwing_sound carried_object:set_throwing_sound([sound_id])
+
+Changes the sound to play when the object is thrown.
+By default, the sound used for throwing is "throw".
+You can use this function if you want another sound to be played.
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
+\subsection lua_api_carried_object_get_falling_sound carried_object:get_falling_sound()
+
+Returns the sound id when the carried_object is falling into a hole.
+- Return value (string): The sound id.
+
+\subsection lua_api_carried_object_set_falling_sound carried_object:set_falling_sound([sound_id])
+
+Changes the sound to play when the object is falling into a hole.
+By default, the sound used for falling is "jump".
+You can use this function if you want another sound to be played.
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
+\subsection lua_api_carried_object_get_sinking_sound carried_object:get_sinking_sound()
+
+Returns the sound id when the carried_object is sinking into deep water or lava.
+- Return value (string): The sound id.
+
+\subsection lua_api_carried_object_set_sinking_sound carried_object:set_sinking_sound([sound_id])
+
+Changes the sound to play when the object is sinking into deep water or lava.
+By default, the sound used for sinking is "walk_on_water".
+You can use this function if you want another sound to be played.
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
 \section lua_api_carried_object_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define

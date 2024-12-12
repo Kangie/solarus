@@ -152,13 +152,13 @@ is consumed.
 
 - \c condition_consumed (boolean) : \c true if the condition is consumed, \c false if it is not. No value means \c true.
 
-\subsection lua_api_chest_get_cannot_open_sound_id chest:get_cannot_open_sound_id()
+\subsection lua_api_chest_get_cannot_open_sound chest:get_cannot_open_sound()
 
 Returns the sound id defined for this chest when the hero is unable to open it.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_chest_set_cannot_open_sound_id chest:set_cannot_open_sound_id([sound_id])
+\subsection lua_api_chest_set_cannot_open_sound chest:set_cannot_open_sound([sound_id])
 
 Changes the sound to play when the hero is unable to open the chest.
 
@@ -168,13 +168,13 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
-\subsection lua_api_chest_get_opening_sound_id chest:get_opening_sound_id()
+\subsection lua_api_chest_get_opening_sound chest:get_opening_sound()
 
 Returns the sound id for the chest opening phase.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_chest_set_opening_sound_id chest:set_opening_sound_id([sound_id])
+\subsection lua_api_chest_set_opening_sound chest:set_opening_sound([sound_id])
 
 Changes the sound to play when the chest is opening.
 
@@ -183,7 +183,6 @@ By default, the sound used for chest opening phase is "chest_open".
 You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
-
 
 \section lua_api_chest_inherited_events Events inherited from map entity
 
