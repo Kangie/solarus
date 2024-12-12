@@ -114,13 +114,13 @@ Returns the direction the block can be moved to, if it is restricted to a specif
 
 - Return value (number or nil) : a direction between \c 0 (East) and \c 3 (South), or nil if this block is not restricted to a specific direction.
 
-\subsection lua_api_block_get_moving_sound_id block:get_moving_sound_id()
+\subsection lua_api_block_get_moving_sound block:get_moving_sound()
 
 Returns the sound id defined for this block when the hero is moving (push or pull) the block.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_block_set_moving_sound_id block:set_moving_sound_id([sound_id])
+\subsection lua_api_block_set_moving_sound block:set_moving_sound([sound_id])
 
 Changes the sound to play when the hero is moving (push or pull) the block.
 
@@ -130,13 +130,13 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
-\subsection lua_api_block_get_falling_sound_id block:get_falling_sound_id()
+\subsection lua_api_block_get_falling_sound block:get_falling_sound()
 
 Returns the sound id defined for this block when it is falling into a hole.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_block_set_falling_sound_id block:set_falling_sound_id([sound_id])
+\subsection lua_api_block_set_falling_sound block:set_falling_sound([sound_id])
 
 Changes the sound to play when the block is falling into a hole.
 
@@ -146,13 +146,13 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
-\subsection lua_api_block_get_sinking_sound_id block:get_sinking_sound_id()
+\subsection lua_api_block_get_sinking_sound block:get_sinking_sound()
 
 Returns the sound id defined for this block when it is sinking into deep water or lava.
 
 - Return value (string): The sound id.
 
-\subsection lua_api_block_set_sinking_sound_id block:set_sinking_sound_id([sound_id])
+\subsection lua_api_block_set_sinking_sound block:set_sinking_sound([sound_id])
 
 Changes the sound to play when the block is sinking into deep water or lava.
 
