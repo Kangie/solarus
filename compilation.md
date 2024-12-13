@@ -63,7 +63,7 @@ probably with other recent compilers (please let us know).
 
 The following libraries are required to compile and execute Solarus:
 
-- SDL2 (2.0.14 or greater)
+- SDL2 (2.0.18 or greater)
 - SDL2main
 - SDL2_image
 - SDL2_ttf
