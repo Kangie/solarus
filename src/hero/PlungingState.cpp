@@ -48,7 +48,10 @@ void Hero::PlungingState::start(const State* previous_state) {
   else {
     get_sprites().set_animation("plunging_lava");
   }
-  Sound::play("splash");
+  const std::string& sinking_sound_id = get_entity().get_sinking_sound_id();
+  if (!sinking_sound_id.empty()) {
+    Sound::play(sinking_sound_id);
+  }
 }
 
 /**

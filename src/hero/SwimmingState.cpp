@@ -162,7 +162,10 @@ void Hero::SwimmingState::try_swim_faster() {
     fast_swimming = true;
     get_entity().set_walking_speed(get_fast_swimming_speed());
     get_sprites().set_animation_swimming_fast();
-    Sound::play("swim");
+    const std::string& swimming_sound_id = get_entity().get_swimming_sound_id();
+    if (!swimming_sound_id.empty()) {
+      Sound::play(swimming_sound_id);
+    }
     end_fast_swim_date = System::now_ms() + 600;
   }
 }

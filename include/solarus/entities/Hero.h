@@ -325,6 +325,26 @@ class Hero: public Entity {
     void set_falling_sound_id(const std::string& falling_sound_id);
     std::string get_respawn_sound_id() const;
     void set_respawn_sound_id(const std::string& respawn_sound_id);
+    std::string get_landing_sound_id() const;
+    void set_landing_sound_id(const std::string& sound_id);
+    std::string get_jumping_sound_id() const;
+    void set_jumping_sound_id(const std::string& sound_id);
+    std::string get_hurt_sound_id() const;
+    void set_hurt_sound_id(const std::string& sound_id);
+    std::string get_sinking_sound_id() const;
+    void set_sinking_sound_id(const std::string& sound_id);
+    std::string get_swimming_sound_id() const;
+    void set_swimming_sound_id(const std::string& sound_id);
+    std::string get_running_sound_id() const;
+    void set_running_sound_id(const std::string& sound_id);
+    std::string get_running_obstacle_sound_id() const;
+    void set_running_obstacle_sound_id(const std::string& sound_id);
+    std::string get_spin_attack_load_sound_id() const;
+    void set_spin_attack_load_sound_id(const std::string& sound_id);
+    std::string get_spin_attack_release_sound_id() const;
+    void set_spin_attack_release_sound_id(const std::string& sound_id);
+    std::string get_victory_sound_id() const;
+    void set_victory_sound_id(const std::string& sound_id);
 
     bool get_can_swim_faster() const;
     void set_can_swim_faster(bool can_swim_faster);
@@ -419,6 +439,17 @@ class Hero: public Entity {
                                             * raised crystal blocks */
     std::string falling_sound_id;          /**< Sound to play when the hero is falling in bad ground. */
     std::string respawn_sound_id;          /**< Sound to play when the hero gets back from bad ground. */
+    std::string landing_sound_id;          /**< Sound to play when the hero is landing on a walkable ground (from upper layer for example). */
+    std::string jumping_sound_id;          /**< Sound to play when the hero is jumping from a jumper or with built-in feather. */
+    std::string hurt_sound_id;             /**< Sound to play when the hero is getting damage from enemy or bad ground like prickles. */ 
+    std::string sinking_sound_id;          /**< Sound to play when the hero is sinking in deep water or lava. */
+    std::string swimming_sound_id;         /**< Sound to play when the hero is swimming in deep water. */
+    std::string running_sound_id;          /**< Sound to play when the hero is running. */
+    std::string running_obstacle_sound_id; /**< Sound to play when the hero is colliding with an obstacle while running. */
+    std::string spin_attack_load_sound_id; /**< Sound to play when the hero has just loaded the spin attack */
+    std::string
+        spin_attack_release_sound_id;      /**< Sound to play when the hero is releasing the spin attack */
+    std::string victory_sound_id;          /**< Sound to play on hero victory animation. */
     int swimming_speed;                    /**< current wimming speed */
     bool can_swim_faster;                  /**< if the hero has the ability to swim faster (swim boost) */
 

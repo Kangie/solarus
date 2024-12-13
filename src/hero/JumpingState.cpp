@@ -81,7 +81,10 @@ void Hero::JumpingState::start(const State* previous_state) {
   get_entity().set_movement(movement);
 
   if (with_sound) {
-    Sound::play("jump");
+    const std::string& jumping_sound_id = get_entity().get_jumping_sound_id();
+    if (!jumping_sound_id.empty()) {
+      Sound::play(jumping_sound_id);
+    }
   }
 }
 

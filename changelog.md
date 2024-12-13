@@ -65,6 +65,7 @@ The multiplayer update!
 * Add methods to customize all chest entities sounds.
 * Add methods to customize all carried object entities sounds (#1658).
 * Add methods to customize all door entities sounds (#1643).
+* Add methods to customize all hero sounds (#1661).
 * Add methods to customize all pickable entities sounds (#1660).
 * Add methods `hero:get/set_walking_speed()` and `hero:get/set_can_swim_faster()`.
 * Add events `stairs:on_entered()` and `stairs:on_exited()`.
