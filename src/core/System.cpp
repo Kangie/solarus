@@ -66,7 +66,7 @@ void System::initialize(const Arguments& args, ResourceProvider& resource_provid
 #endif
 
   // initialize SDL
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
   initial_time = Clock::now();
   ticks = 0;
 

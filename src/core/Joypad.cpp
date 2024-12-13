@@ -57,14 +57,7 @@ const EnumInfo<JoyPadAxis>::names_type EnumInfoTraits<JoyPadAxis>::names = {
 
 Joypad::Joypad(SDL_GameController *sdl_gc, SDL_Joystick *sdl_js) :
   controller(sdl_gc), joystick(sdl_js)
-{
-  haptic.reset(SDL_HapticOpenFromJoystick(sdl_js));
-  if(haptic) {
-    if(SDL_HapticRumbleInit(haptic.get()) != 0) {
-      haptic = nullptr;
-    }
-  }
-}
+{}
 
 bool Joypad::is_button_pressed(JoyPadButton button) const {
   return SDL_GameControllerGetButton(controller.get(),(SDL_GameControllerButton)button);
@@ -79,16 +72,17 @@ std::string Joypad::get_name() const {
   return std::string(SDL_GameControllerName(controller.get()));
 }
 
-void Joypad::rumble(float intensity, uint32_t time) {
-  if(haptic) {
-    SDL_HapticRumblePlay(haptic.get(),
-                         intensity,
-                         time);
-  }
+void Joypad::rumble(float low_frequency_intensity, float high_frequency_intensity, uint32_t duration) {
+  SDL_GameControllerRumble(
+    controller.get(),
+    65535 * low_frequency_intensity,
+    65535 * high_frequency_intensity,
+    duration
+  );
 }
 
 bool Joypad::has_rumble() {
-  return static_cast<bool>(haptic);
+  return SDL_GameControllerHasRumble(controller.get());
 }
 
 bool Joypad::is_attached() {
@@ -98,7 +92,6 @@ bool Joypad::is_attached() {
 void Joypad::reset() {
   controller.reset();
   joystick.reset();
-  haptic.reset();
 }
 
 const std::string& Joypad::get_lua_type_name() const {
