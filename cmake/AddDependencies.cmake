@@ -8,7 +8,7 @@ set(OpenGL_GL_PREFERENCE GLVND)
 
 # Find dependencies.
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
-find_package(SDL2 "2.0.14" REQUIRED)
+find_package(SDL2 "2.0.18" REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(OpenGL)
