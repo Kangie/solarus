@@ -553,6 +553,14 @@ void LuaContext::register_entity_module() {
       { "get_falling_height", pickable_api_get_falling_height },
       { "get_treasure", pickable_api_get_treasure },
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    pickable_methods.insert(pickable_methods.end(), {
+      { "get_falling_sound", pickable_api_get_falling_sound },
+      { "set_falling_sound", pickable_api_set_falling_sound },
+      { "get_sinking_sound", pickable_api_get_sinking_sound },
+      { "set_sinking_sound", pickable_api_set_sinking_sound },
+    });
+  }
 
   pickable_methods.insert(pickable_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -6381,6 +6389,82 @@ int LuaContext::pickable_api_get_treasure(lua_State* l) {
       push_string(l, treasure.get_savegame_variable());
     }
     return 3;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:get_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_get_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Pickable& pickable = *check_pickable(l, 1);
+    const std::string& sound_id = pickable.get_falling_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:set_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_set_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Pickable& pickable = *check_pickable(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    pickable.set_falling_sound_id(sound_id);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:get_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_get_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Pickable& pickable = *check_pickable(l, 1);
+    const std::string& sound_id = pickable.get_sinking_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:set_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_set_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Pickable& pickable = *check_pickable(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    pickable.set_sinking_sound_id(sound_id);
+    return 0;
   });
 }
 
