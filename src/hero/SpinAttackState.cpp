@@ -167,7 +167,10 @@ void Hero::SpinAttackState::play_spin_attack_sound() {
     Sound::play(custom_sound_name); // this particular sword has a spin attack sound effect
   }
   else {
-    Sound::play("sword_spin_attack_release");
+    const std::string& sword_spin_attack_release_sound_id = get_entity().get_spin_attack_release_sound_id();
+    if (!sword_spin_attack_release_sound_id.empty())  {
+      Sound::play(sword_spin_attack_release_sound_id);
+    }
   }
 }
 

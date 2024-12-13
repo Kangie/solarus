@@ -217,14 +217,20 @@ void Hero::HookshotState::finish_movement() {
     // the lower layer are not obstacles, and go to this layer
     --layer;
     if (!map.test_collision_with_obstacles(layer, hero_position, hero)) {
-      Sound::play("hero_lands");
+      const std::string& landing_sound_id = hero.get_landing_sound_id();
+      if (!landing_sound_id.empty()) {
+        Sound::play(landing_sound_id);
+      }
       entities.set_entity_layer(hero, layer);
       hero.start_state_from_ground();
     }
     else {
       // illegal position: get back to the start point
       // TODO: get back to the closest valid point from the destination instead
-      Sound::play("hero_hurt");
+      const std::string& hurt_sound_id = hero.get_hurt_sound_id();
+      if (!hurt_sound_id.empty()) {
+        Sound::play(hurt_sound_id);
+      }
       hero.set_state(std::make_shared<BackToSolidGroundState>(hero, false, 0, true));
     }
   }
