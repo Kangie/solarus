@@ -1445,9 +1445,10 @@ void MovingPatternsState::start() {
   data->setText(text_data);
 
   drag->setMimeData(data);
-  drag->exec(Qt::MoveAction | Qt::CopyAction);  // Blocking call during the drag operation.
-
-  get_view().start_state_idle();
+  Qt::DropAction drop_action = drag->exec(Qt::MoveAction | Qt::CopyAction);  // Blocking call during the drag operation.
+  if (drop_action == Qt::IgnoreAction) {
+    get_view().start_state_idle();
+  }
 }
 
 void MovingPatternsState::stop() {
