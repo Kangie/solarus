@@ -145,6 +145,14 @@ class Enemy: public Entity {
     void set_default_attack_consequences_sprite(const Sprite& sprite);
     const std::string& get_savegame_variable() const;
     bool is_saved() const;
+    const std::string& get_attack_failure_sound_id() const;
+    void set_attack_failure_sound_id(const std::string& sound_id);
+    const std::string& get_falling_sound_id() const;
+    void set_falling_sound_id(const std::string& sound_id);
+    const std::string& get_sinking_sound_id() const;
+    void set_sinking_sound_id(const std::string& sound_id);
+    const std::string& get_dying_sound_id() const;
+    void set_dying_sound_id(const std::string& sound_id);
     
     // sprites
     std::string get_animation() const;
@@ -251,6 +259,11 @@ class Enemy: public Entity {
     uint32_t start_shaking_date;       /**< date when the enemy shakes */
     uint32_t end_shaking_date;         /**< date when the enemy stops shaking and walks again */
     bool dying_animation_started;      /**< whether the dying animation was started */
+    std::string
+      attack_failure_sound_id;         /**< sound played when an attack failed on this enemy. */
+    std::string falling_sound_id;      /**< sound played when the enemy is falling into a hole. */
+    std::string sinking_sound_id;      /**< sound played when the enemy is sinking into deep water or lava. */
+    std::string dying_sound_id;        /**< sound played when the enemy is defeated. */
 
     Treasure treasure;                 /**< pickable item that appears when this enemy gets killed */
 

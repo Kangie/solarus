@@ -735,7 +735,15 @@ void LuaContext::register_entity_module() {
   }
   if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     enemy_methods.insert(enemy_methods.end(), {
-      { "get_savegame_variable", enemy_api_get_savegame_variable},
+      { "get_savegame_variable", enemy_api_get_savegame_variable },
+      { "get_attack_failure_sound", enemy_api_get_attack_failure_sound },
+      { "set_attack_failure_sound", enemy_api_set_attack_failure_sound },
+      { "get_falling_sound", enemy_api_get_falling_sound },
+      { "set_falling_sound", enemy_api_set_falling_sound },
+      { "get_sinking_sound", enemy_api_get_sinking_sound },
+      { "set_sinking_sound", enemy_api_set_sinking_sound },
+      { "get_dying_sound", enemy_api_get_dying_sound },
+      { "set_dying_sound", enemy_api_set_dying_sound },
     });
   }
 
@@ -8345,6 +8353,150 @@ int LuaContext::enemy_api_set_obstacle_behavior(lua_State* l) {
         l, 2, Enemy::obstacle_behavior_names);
 
     enemy.set_obstacle_behavior(behavior);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_attack_failure_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_attack_failure_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_attack_failure_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_attack_failure_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_attack_failure_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_attack_failure_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_falling_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_falling_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_sinking_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_sinking_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_dying_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_dying_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_dying_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_dying_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_dying_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_dying_sound_id(sound_id);
 
     return 0;
   });

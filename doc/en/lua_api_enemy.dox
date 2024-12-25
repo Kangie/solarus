@@ -522,6 +522,62 @@ The default value is \c "normal".
 \c "flying" allows the enemy to traverse holes, water and lava.
 - \c obstacle_behavior (string): \c "normal", \c "flying" or \c "swimming".
 
+\subsection lua_api_enemy_get_attack_failure_sound enemy:get_attack_failure_sound()
+
+Returns the sound id when an attack against the enemy fails.
+
+- Return value (string): The sound id.
+
+\subsection lua_api_enemy_set_attack_failure_sound enemy:set_attack_failure_sound([sound_id])
+
+Changes the sound to play when an attack against the enemy fails.
+By default, the sound used is "sword_tapping".
+You can use this function if you want another sound to be played.
+
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
+\subsection lua_api_enemy_get_falling_sound enemy:get_falling_sound()
+
+Returns the sound id when the enemy is falling into a hole.
+
+- Return value (string): The sound id.
+
+\subsection lua_api_enemy_set_falling_sound enemy:set_falling_sound([sound_id])
+
+Changes the sound to play when the enemy is falling into a hole.
+By default, the sound used is "jump".
+You can use this function if you want another sound to be played.
+
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
+\subsection lua_api_enemy_get_sinking_sound enemy:get_sinking_sound()
+
+Returns the sound id when the enemy is sinking into deep water or lava.
+
+- Return value (string): The sound id.
+
+\subsection lua_api_enemy_set_sinking_sound enemy:set_sinking_sound([sound_id])
+
+Changes the sound to play when the enemy is sinking into deep water or lava.
+By default, the sound used is "splash".
+You can use this function if you want another sound to be played.
+
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
+\subsection lua_api_enemy_get_dying_sound enemy:get_dying_sound()
+
+Returns the sound id when the enemy is dying.
+
+- Return value (string): The sound id.
+
+\subsection lua_api_enemy_set_dying_sound enemy:set_dying_sound([sound_id])
+
+Changes the sound to play when the enemy is dying.
+By default, the sound used is "enemy_killed".
+You can use this function if you want another sound to be played.
+
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
 \subsection lua_api_enemy_restart enemy:restart()
 
 Restarts this enemy.

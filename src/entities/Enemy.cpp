@@ -107,6 +107,10 @@ Enemy::Enemy(
   start_shaking_date(0),
   end_shaking_date(0),
   dying_animation_started(false),
+  attack_failure_sound_id("sword_tapping"),
+  falling_sound_id("jump"),
+  sinking_sound_id("splash"),
+  dying_sound_id("enemy_killed"),
   treasure(treasure),
   exploding(false),
   nb_explosions(0),
@@ -1204,7 +1208,9 @@ void Enemy::try_hurt(EnemyAttack attack, Entity& source, Sprite* this_sprite) {
 
     case EnemyReaction::ReactionType::PROTECTED:
       // attack failure sound
-      Sound::play("sword_tapping");
+      if (!attack_failure_sound_id.empty()) {
+        Sound::play(attack_failure_sound_id);
+      }
       break;
 
     case EnemyReaction::ReactionType::IMMOBILIZED:
@@ -1393,7 +1399,9 @@ void Enemy::kill() {
         if (get_obstacle_behavior() != ObstacleBehavior::FLYING) {
           // TODO animation of falling into a hole.
           special_ground = true;
-          Sound::play("jump");
+          if (!falling_sound_id.empty()) {
+            Sound::play(falling_sound_id);
+          }
           clear_treasure();
         }
         break;
@@ -1403,7 +1411,9 @@ void Enemy::kill() {
             get_obstacle_behavior() != ObstacleBehavior::SWIMMING) {
           // TODO water animation.
           special_ground = true;
-          Sound::play("splash");
+          if (!sinking_sound_id.empty()) {
+            Sound::play(sinking_sound_id);
+          }
           clear_treasure();
         }
         break;
@@ -1413,7 +1423,9 @@ void Enemy::kill() {
             get_obstacle_behavior() != ObstacleBehavior::SWIMMING) {
           // TODO lava animation.
           special_ground = true;
-          Sound::play("splash");
+          if (!sinking_sound_id.empty()) {
+            Sound::play(sinking_sound_id);
+          }
           clear_treasure();
         }
         break;
@@ -1430,7 +1442,9 @@ void Enemy::kill() {
         }
         create_sprite(dying_sprite_id);
       }
-      Sound::play("enemy_killed");
+      if (!dying_sound_id.empty()) {
+        Sound::play(dying_sound_id);
+      }
     }
   }
 
@@ -1568,6 +1582,78 @@ bool Enemy::is_immobilized() const {
 void Enemy::custom_attack(EnemyAttack attack, Sprite* this_sprite) {
 
   get_lua_context()->enemy_on_custom_attack_received(*this, attack, this_sprite);
+}
+
+/**
+ * \brief Returns the id of the sound to play when the attack against enemy failed.
+ * \return The id of the "attack failure" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_attack_failure_sound_id() const {
+  return attack_failure_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the attack against enemy failed.
+ * \param sound_id The id of the "attack failure" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_attack_failure_sound_id(const std::string& sound_id) {
+  attack_failure_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the enemy is falling into a hole.
+ * \return The id of the "falling" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the enemy is falling into a hole.
+ * \param sound_id The id of the "falling" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_falling_sound_id(const std::string& sound_id) {
+  falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the enemy is sinking into deep water or lava.
+ * \return The id of the "sinking" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the enemy is sinking into deep water or lava.
+ * \param sound_id The id of the "sinking" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the enemy is dying.
+ * \return The id of the "dying" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_dying_sound_id() const {
+  return dying_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the enemy is dying.
+ * \param sound_id The id of the "dying" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_dying_sound_id(const std::string& sound_id) {
+  dying_sound_id = sound_id;
 }
 
 }
