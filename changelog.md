@@ -68,6 +68,7 @@ The multiplayer update!
 * Add methods to customize all hero sounds (#1661).
 * Add methods to customize all enemy entities sounds (#1659).
 * Add methods to customize all pickable entities sounds (#1660).
+* Add methods to customize all shop treasure entities sounds (#1665).
 * Add methods `hero:get/set_walking_speed()` and `hero:get/set_can_swim_faster()`.
 * Add events `stairs:on_entered()` and `stairs:on_exited()`.
 * Add game controller rumbling features (#1590).

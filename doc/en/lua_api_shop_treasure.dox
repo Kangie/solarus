@@ -90,7 +90,19 @@ See \ref lua_api_entity_methods to know these methods.
 
 \section lua_api_shop_treasure_methods Methods of the type shop treasure
 
-None.
+\subsection lua_api_shop_treasure_get_cannot_buy_sound shop_treasure:get_cannot_buy_sound()
+
+Returns the sound id defined for this shop treasure when the player is unable to buy it.
+
+- Return value (string): The sound id.
+
+\subsection lua_api_shop_treasure_set_cannot_buy_sound shop_treasure:set_cannot_open_sound([sound_id])
+
+Changes the sound to play when the player is unable to buy the shop treasure.
+By default, the sound used is "wrong".
+You can use this function if you want another sound to be played.
+
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
 \section lua_api_shop_treasure_inherited_events Events inherited from map entity
 

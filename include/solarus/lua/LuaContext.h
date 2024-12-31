@@ -1131,6 +1131,8 @@ class LuaContext {
       door_api_set_cannot_open_sound,
       stairs_api_get_direction,
       stairs_api_is_inner,
+      shop_treasure_api_get_cannot_buy_sound,
+      shop_treasure_api_set_cannot_buy_sound,
       pickable_api_get_followed_entity,
       pickable_api_get_falling_height,
       pickable_api_get_treasure,
