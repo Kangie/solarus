@@ -773,6 +773,24 @@ void LuaContext::register_entity_module() {
       metamethods
   );
 
+  // Shop treasure.
+  std::vector<luaL_Reg> shop_treasure_methods = {};
+
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    shop_treasure_methods.insert(shop_treasure_methods.end(), {
+      { "get_cannot_buy_sound", shop_treasure_api_get_cannot_buy_sound },
+      { "set_cannot_buy_sound", shop_treasure_api_set_cannot_buy_sound },
+    });
+  }
+
+  shop_treasure_methods.insert(shop_treasure_methods.end(), common_methods.begin(), common_methods.end());
+  register_type(
+      get_entity_internal_type_name(EntityType::SHOP_TREASURE),
+      {},
+      shop_treasure_methods,
+      metamethods
+  );
+
   // Custom entity.
   std::vector<luaL_Reg> custom_entity_methods = {
       { "get_model", custom_entity_api_get_model },
@@ -826,7 +844,6 @@ void LuaContext::register_entity_module() {
   register_type(get_entity_internal_type_name(EntityType::WALL), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::CRYSTAL), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::CRYSTAL_BLOCK), {}, common_methods, metamethods);
-  register_type(get_entity_internal_type_name(EntityType::SHOP_TREASURE), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::BOMB), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::EXPLOSION), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::FIRE), {}, common_methods, metamethods);
@@ -6675,16 +6692,22 @@ int LuaContext::l_shop_treasure_question_dialog_finished(lua_State* l) {
 
       if (!treasure.is_obtainable()) {
         // This treasure is not allowed.
-        Sound::play("wrong");
+        if (!shop_treasure.get_cannot_buy_sound_id().empty()) {
+          Sound::play(shop_treasure.get_cannot_buy_sound_id());
+        }
       }
       else if (equipment.get_money() < shop_treasure.get_price()) {
         // Not enough money.
-        Sound::play("wrong");
+        if (!shop_treasure.get_cannot_buy_sound_id().empty()) {
+          Sound::play(shop_treasure.get_cannot_buy_sound_id());
+        }
         game.start_dialog("_shop.not_enough_money", ScopedLuaRef(), ScopedLuaRef());
       }
       else if (item.has_amount() && item.get_amount() >= item.get_max_amount()) {
         // The player already has the maximum amount of this item.
-        Sound::play("wrong");
+        if (!shop_treasure.get_cannot_buy_sound_id().empty()) {
+          Sound::play(shop_treasure.get_cannot_buy_sound_id());
+        }
         game.start_dialog("_shop.amount_full", ScopedLuaRef(), ScopedLuaRef());
       }
       else {
@@ -6704,6 +6727,46 @@ int LuaContext::l_shop_treasure_question_dialog_finished(lua_State* l) {
         }
       }
     }
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:get_cannot_buy_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_get_cannot_buy_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+
+    const std::string& sound_id = shop_treasure.get_cannot_buy_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    }
+    else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:set_cannot_buy_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_set_cannot_buy_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+    shop_treasure.set_cannot_buy_sound_id(sound_id);
+    
     return 0;
   });
 }
