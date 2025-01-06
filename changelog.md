@@ -74,6 +74,7 @@ The multiplayer update!
 * Add game controller rumbling features (#1590).
 * Add methods `npc:get/set_subtype()` (#1398).
 * Add methods `switch:get/set_subtype()` (#1667).
+* Add methods `enemy:get/set_immobilization_duration()` (#463).
 
 ### Solarus launcher GUI changes
 

@@ -1214,6 +1214,8 @@ class LuaContext {
       enemy_api_set_attacking_collision_mode,
       enemy_api_get_obstacle_behavior,
       enemy_api_set_obstacle_behavior,
+      enemy_api_get_immobilization_duration,
+      enemy_api_set_immobilization_duration,
       enemy_api_get_attack_failure_sound,
       enemy_api_set_attack_failure_sound,
       enemy_api_get_falling_sound,

@@ -97,6 +97,7 @@ Enemy::Enemy(
   traversable(true),
   attacking_collision_mode(CollisionMode::COLLISION_SPRITE),
   obstacle_behavior(ObstacleBehavior::NORMAL),
+  immobilization_duration(5000),
   being_hurt(false),
   stop_hurt_date(0),
   invulnerable(false),
@@ -531,6 +532,22 @@ Enemy::ObstacleBehavior Enemy::get_obstacle_behavior() const {
  */
 void Enemy::set_obstacle_behavior(ObstacleBehavior obstacle_behavior) {
   this->obstacle_behavior = obstacle_behavior;
+}
+
+/**
+ * \brief Returns the duration of immobilization of this enemy.
+ * \return the duration in milliseconds.
+ */
+int Enemy::get_immobilization_duration() const {
+  return immobilization_duration;
+}
+
+/**
+ * \brief Sets the immobilization duration for this enemy.
+ * \param duration the duration in milliseconds.
+ */
+void Enemy::set_immobilization_duration(int duration) {
+  immobilization_duration = duration;
 }
 
 /**
@@ -1552,7 +1569,7 @@ bool Enemy::is_sprite_finished_or_looping() const {
 void Enemy::immobilize() {
 
   immobilized = true;
-  start_shaking_date = System::now_ms() + 5000;
+  start_shaking_date = System::now_ms() + immobilization_duration;
 }
 
 /**
