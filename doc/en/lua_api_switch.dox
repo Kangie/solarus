@@ -52,6 +52,18 @@ See \ref lua_api_entity_methods to know these methods.
 
 The following methods are specific to switches.
 
+\subsection lua_api_switch_get_subtype switch:get_subtype()
+
+Returns the subtype for this switch.
+
+- Return value (string): the subtype, "walkable", "arrow_target" or "solid".
+
+\subsection lua_api_switch_set_subtype switch:set_subtype(subtype)
+
+Sets the subtype for this switch.
+
+- \c subtype (string): the subtype, "walkable", "arrow_target" or "solid".
+
 \subsection lua_api_switch_is_walkable switch:is_walkable()
 
 Returns whether this is a walkable switch.
@@ -95,13 +107,13 @@ However, it can still changed programmatically by calling
 \remark The method \ref lua_api_switch_set_activated "switch:set_activated()"
   works even on a locked switch.
 
-\subsection lua_api_switch_get_inactivate_when_leaving "switch:get_inactivate_when_leaving()"
+\subsection lua_api_switch_get_inactivate_when_leaving switch:get_inactivate_when_leaving()
   Returns whether the switch becomes inactivated when the \ref lua_api_hero "hero" or the 
   \ref lua_api_block "block" leaves it (only for a walkable switch).
 
   Return value (boolean) : \c true if the switch becomes inactivated when left, \c false if it stays activated.
 
-\subsection lua_api_switch_set_inactivate_when_leaving "switch:set_inactivate_when_leaving(inactivate_when_leaving)"
+\subsection lua_api_switch_set_inactivate_when_leaving switch:set_inactivate_when_leaving(inactivate_when_leaving)
   Sets whether the switch becomes inactivated when the \ref lua_api_hero "hero" or the 
   \ref lua_api_block "block" leaves it (only for a walkable switch).
 
