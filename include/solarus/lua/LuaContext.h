@@ -1099,6 +1099,8 @@ class LuaContext {
       switch_api_get_inactivate_when_leaving,
       switch_api_set_inactivate_when_leaving,
       switch_api_is_walkable,
+      switch_api_get_subtype,
+      switch_api_set_subtype,
       stream_api_get_direction,
       stream_api_set_direction,
       stream_api_get_speed,

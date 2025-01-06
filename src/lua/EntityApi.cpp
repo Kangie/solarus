@@ -478,6 +478,9 @@ void LuaContext::register_entity_module() {
     switch_methods.insert(switch_methods.end(), {
         { "get_inactivate_when_leaving", switch_api_get_inactivate_when_leaving},
         { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
+        { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
+        { "get_subtype", switch_api_get_subtype },
+        { "set_subtype", switch_api_set_subtype },
     });
   }
 
@@ -5891,6 +5894,50 @@ int LuaContext::switch_api_is_walkable(lua_State* l) {
 
     lua_pushboolean(l, sw.is_walkable());
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of switch:get_subtype().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::switch_api_get_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Switch& sw = *check_switch(l, 1);
+
+    for (const auto& pair: Switch::subtype_names) {
+      if (pair.first == sw.get_subtype()) {
+        push_string(l, pair.second);
+        return 1;
+      }
+    }
+
+    lua_pushnil(l);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of switch:set_subtype().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::switch_api_set_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Switch& sw = *check_switch(l, 1);
+
+    std::string subtype_name = LuaTools::check_string(l, 2);
+    for (const auto& pair: Switch::subtype_names) {
+      if (pair.second == subtype_name) {
+        sw.set_subtype(pair.first);
+        return 0;
+      }
+    }
+
+    return 0;
   });
 }
 

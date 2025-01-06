@@ -73,6 +73,7 @@ The multiplayer update!
 * Add events `stairs:on_entered()` and `stairs:on_exited()`.
 * Add game controller rumbling features (#1590).
 * Add methods `npc:get/set_subtype()` (#1398).
+* Add methods `switch:get/set_subtype()` (#1667).
 
 ### Solarus launcher GUI changes
 
