@@ -80,6 +80,8 @@ class SOLARUS_API Npc: public Entity {
     );
 
     EntityType get_type() const override;
+    Subtype get_subtype() const;
+    void set_subtype(Subtype subtype);
 
     bool is_solid() const;
     bool is_traversable() const;

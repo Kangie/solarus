@@ -72,6 +72,7 @@ The multiplayer update!
 * Add methods `hero:get/set_walking_speed()` and `hero:get/set_can_swim_faster()`.
 * Add events `stairs:on_entered()` and `stairs:on_exited()`.
 * Add game controller rumbling features (#1590).
+* Add methods `npc:get/set_subtype()` (#1398).
 
 ### Solarus launcher GUI changes
 

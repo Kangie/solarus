@@ -104,6 +104,23 @@ EntityType Npc::get_type() const {
 }
 
 /**
+ * \brief Returns the subtype of this NPC.
+ * \return the subtype of NPC entity.
+ */
+Npc::Subtype Npc::get_subtype() const {
+  return subtype;
+}
+
+/**
+ * \brief Sets the subtype of this NPC.
+ * \param subtype the subtype of NPC entity.
+ */
+void Npc::set_subtype(Npc::Subtype subtype) {
+  this->subtype = subtype;
+  set_drawn_in_y_order(subtype == USUAL_NPC);
+}
+
+/**
  * \brief Creates the sprite specified.
  * \param sprite_name sprite animation set of the entity, or an empty string to create no sprite
  * \param initial_direction direction of the entity's sprite (ignored if there is no sprite
