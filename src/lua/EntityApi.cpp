@@ -385,6 +385,13 @@ void LuaContext::register_entity_module() {
       { "set_traversable", npc_api_set_traversable },
   };
 
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    npc_methods.insert(npc_methods.end(), {
+      { "get_subtype", npc_api_get_subtype },
+      { "set_subtype", npc_api_set_subtype },
+    });
+  }
+
   npc_methods.insert(npc_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
       get_entity_internal_type_name(EntityType::NPC),
@@ -5054,6 +5061,47 @@ int LuaContext::npc_api_set_traversable(lua_State* l) {
     bool traversable = LuaTools::opt_boolean(l, 2, true);
 
     npc.set_traversable(traversable);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of npc:get_subtype().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::npc_api_get_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Npc& npc = *check_npc(l, 1);
+    
+    lua_pushinteger(l, npc.get_subtype());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of npc:set_traversable().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::npc_api_set_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Npc& npc = *check_npc(l, 1);
+
+    int subtype = LuaTools::opt_int(l, 2, 1);
+    switch (subtype) {
+      case Npc::Subtype::GENERALIZED_NPC:
+        npc.set_subtype(Npc::Subtype::GENERALIZED_NPC);
+        break;
+      case Npc::Subtype::USUAL_NPC:
+      default:
+        npc.set_subtype(Npc::Subtype::USUAL_NPC);
+        break;
+    }
 
     return 0;
   });

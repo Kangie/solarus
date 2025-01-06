@@ -72,6 +72,18 @@ See \ref lua_api_entity_methods to know these methods.
 
 The following methods are specific to non-playing characters.
 
+\subsection lua_api_npc_get_subtype npc:get_subtype()
+
+Returns the subtype for this NPC.
+
+- Return value (number): the subtype number, 0 for generalized, 1 for usual.
+
+\subsection lua_api_npc_set_subtype npc:set_subtype([subtype])
+
+Sets the subtype for this NPC.
+
+- \c subtype (number, optional): the subtype number, 0 for generalized, 1 for usual. Default is 1.
+
 \subsection lua_api_npc_is_traversable npc:is_traversable()
 
 Returns whether this NPC can be traversed by other entities.
