@@ -720,6 +720,8 @@ void LuaContext::register_entity_module() {
       { "set_traversable", enemy_api_set_traversable },
       { "get_obstacle_behavior", enemy_api_get_obstacle_behavior },
       { "set_obstacle_behavior", enemy_api_set_obstacle_behavior },
+      { "get_immobilization_duration", enemy_api_get_immobilization_duration },
+      { "set_immobilization_duration", enemy_api_set_immobilization_duration },
       { "restart", enemy_api_restart },
       { "hurt", enemy_api_hurt },
       { "immobilize", enemy_api_immobilize },
@@ -8511,6 +8513,36 @@ int LuaContext::enemy_api_set_obstacle_behavior(lua_State* l) {
         l, 2, Enemy::obstacle_behavior_names);
 
     enemy.set_obstacle_behavior(behavior);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_immobilization_duration().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_immobilization_duration(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Enemy& enemy = *check_enemy(l, 1);
+    lua_pushinteger(l, enemy.get_immobilization_duration());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_immobilization_duration().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_immobilization_duration(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    int duration = LuaTools::check_int(l, 2);
+    enemy.set_immobilization_duration(duration);
 
     return 0;
   });

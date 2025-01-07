@@ -117,6 +117,8 @@ class Enemy: public Entity {
     void set_attacking_collision_mode(CollisionMode attacking_collision_mode);
     ObstacleBehavior get_obstacle_behavior() const;
     void set_obstacle_behavior(ObstacleBehavior obstacle_behavior);
+    int get_immobilization_duration() const;
+    void set_immobilization_duration(int duration);
     bool get_pushed_back_when_hurt() const;
     void set_pushed_back_when_hurt(bool pushed_back_when_hurt);
     bool get_push_hero_on_sword() const;
@@ -247,6 +249,7 @@ class Enemy: public Entity {
         attacking_collision_mode;      /**< How the enemy tries to attack the hero. */
     ObstacleBehavior
         obstacle_behavior;             /**< Whether this enemy can fly or swim. */
+    int immobilization_duration;       /**< Duration in milliseconds during which the enemy is immobilized. */
 
     // enemy state
     bool being_hurt;                   /**< indicates that the enemy is being hurt */

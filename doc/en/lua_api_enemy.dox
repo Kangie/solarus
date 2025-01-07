@@ -522,6 +522,16 @@ The default value is \c "normal".
 \c "flying" allows the enemy to traverse holes, water and lava.
 - \c obstacle_behavior (string): \c "normal", \c "flying" or \c "swimming".
 
+\subsection lua_api_enemy_get_immobilization_duration enemy:get_immobilization_duration()
+
+Returns the immobilization duration for this enemy.
+- Return value (integer): the duration in milliseconds. Default value is 5000 (5 seconds).
+
+\subsection lua_api_enemy_set_immobilization_duration enemy:set_immobilization_duration(duration)
+
+Sets the immobilization duration for this enemy.
+- \c duration (integer): the duration in milliseconds.
+
 \subsection lua_api_enemy_get_attack_failure_sound enemy:get_attack_failure_sound()
 
 Returns the sound id when an attack against the enemy fails.
