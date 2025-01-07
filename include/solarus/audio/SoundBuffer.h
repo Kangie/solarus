@@ -19,7 +19,7 @@
 
 #include "solarus/core/Common.h"
 #include <mutex>
-#include <al.h>
+#include <AL/al.h>
 #include <vorbis/vorbisfile.h>
 
 namespace Solarus {
