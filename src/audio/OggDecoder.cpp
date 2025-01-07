@@ -17,7 +17,7 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/audio/OggDecoder.h"
-#include <al.h>
+#include <AL/al.h>
 #include <sstream>
 #include <vector>
 

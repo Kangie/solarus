@@ -38,7 +38,7 @@ pkg_check_modules(PC_OPENAL QUIET openal)
 # locate OpenAL header
 find_path(OPENAL_INCLUDE_DIR
   NAMES
-    al.h
+    AL/al.h
   HINTS
     ENV OPENAL_DIR
     ${PC_OPENAL_INCLUDEDIR}
@@ -52,10 +52,6 @@ find_path(OPENAL_INCLUDE_DIR
     /opt
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Creative\ Labs\\OpenAL\ 1.1\ Software\ Development\ Kit\\1.00.0000;InstallDir]
   PATH_SUFFIXES
-    OpenAL
-    AL
-    include/OpenAL
-    include/AL
     include
 )
 

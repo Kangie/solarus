@@ -24,7 +24,7 @@
 #include "solarus/lua/LuaContext.h"
 #include <algorithm>
 #ifdef SOLARUS_OPENAL_EXTENSIONS_RECONNECT
-#  include <alext.h>
+#  include <AL/alext.h>
 #endif
 #include <cstdlib>
 #include <cstring>
