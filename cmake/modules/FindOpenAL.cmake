@@ -46,6 +46,7 @@ find_path(OPENAL_INCLUDE_DIR
   PATHS
     ~/Library/Frameworks
     /Library/Frameworks
+    /opt/homebrew/opt/openal-soft
     /sw # Fink
     /opt/local # DarwinPorts
     /opt/csw # Blastwave
@@ -69,6 +70,7 @@ find_library(OPENAL_LIBRARY
   PATHS
     ~/Library/Frameworks
     /Library/Frameworks
+    /opt/homebrew/opt/openal-soft
     /sw # Fink
     /opt/local # DarwinPorts
     /opt/csw # Blastwave

@@ -292,7 +292,7 @@ Type from your build directory:
 To install the needed packages via the brew package manager, type:
 
 ```bash
-brew install cmake ninja sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug physfs glm
+brew install cmake ninja sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug physfs glm openal-soft
 ```
 
 You will also need a copy of the OS X SDK, which is included with XCode.
