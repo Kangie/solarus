@@ -26,7 +26,7 @@
 
 namespace Solarus {
 
-class MusicSystem {
+class SOLARUS_API MusicSystem {
   
   public:
     static void initialize();
