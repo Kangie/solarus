@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
@@ -712,7 +712,7 @@ void Map::start(const std::string& destination_name) {
   this->started = true;
 
   if (is_loaded()) {
-    Music::play(music_id, true);
+    MusicSystem::play(music_id, true);
     std::shared_ptr<Destination> destination = get_destination(destination_name);
     get_entities().notify_map_starting(*this, destination);
     get_lua_context().run_map(*this, destination);

@@ -1,0 +1,34 @@
+/**
+\page lua_api_music Music
+
+\tableofcontents
+
+You can create, play, or pause musics through \c sol.music.
+
+An object of type \c music represents a music with its current playing state.
+Multiple musics effects can be played, paused, resumed or
+stopped independently.
+
+\section lua_api_music_functions Functions of sol.music
+
+\subsection lua_api_music_create sol.music.create(music_id)
+
+Creates a new music but does not play it.
+
+Generates a Lua error if the music file does not exist.
+
+- \c music_id (string): Name of the music file to read, relative to
+  the \c musics directory and without extension.
+- Return value (music): The music object.
+
+\section lua_api_music_methods Methods of sol.music
+
+\subsection lua_api_music_play music:play()
+
+Starts playing the music.
+
+\subsection lua_api_music_stop music:stop()
+
+Stops playing the music.
+
+*/

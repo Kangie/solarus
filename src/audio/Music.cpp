@@ -16,6 +16,7 @@
  */
 #include "solarus/audio/ItDecoder.h"
 #include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/audio/OggDecoder.h"
 #include "solarus/audio/SpcDecoder.h"
 #include "solarus/core/Debug.h"
@@ -25,16 +26,12 @@
 #include <lua.hpp>
 #include <algorithm>
 #include <sstream>
+#include <iostream>
 
 namespace Solarus {
 
 constexpr int Music::nb_buffers;
 constexpr int Music::buffer_size;
-std::unique_ptr<SpcDecoder> Music::spc_decoder = nullptr;
-std::unique_ptr<ItDecoder> Music::it_decoder = nullptr;
-std::unique_ptr<OggDecoder> Music::ogg_decoder = nullptr;
-float Music::volume = 1.0;
-std::unique_ptr<Music> Music::current_music = nullptr;
 
 const std::string Music::none = "none";
 const std::string Music::unchanged = "same";
@@ -54,10 +51,14 @@ const std::vector<std::string> Music::format_names = {
  */
 Music::Music():
   id(none),
-  format(NO_FORMAT),
+  format(FORMAT_NONE),
   loop(false),
   callback_ref(),
-  source(AL_NONE) {
+  source(AL_NONE),
+  spc_decoder(std::unique_ptr<SpcDecoder>(new SpcDecoder())),
+  it_decoder(std::unique_ptr<ItDecoder>(new ItDecoder())),
+  ogg_decoder(std::unique_ptr<OggDecoder>(new OggDecoder())),
+  volume(1.0) {
 
   for (int i = 0; i < nb_buffers; i++) {
     buffers[i] = AL_NONE;
@@ -77,10 +78,14 @@ Music::Music(
     bool loop,
     const ScopedLuaRef& callback_ref):
   id(music_id),
-  format(OGG),
+  format(FORMAT_OGG),
   loop(loop),
   callback_ref(callback_ref),
-  source(AL_NONE) {
+  source(AL_NONE),
+  spc_decoder(std::unique_ptr<SpcDecoder>(new SpcDecoder())),
+  it_decoder(std::unique_ptr<ItDecoder>(new ItDecoder())),
+  ogg_decoder(std::unique_ptr<OggDecoder>(new OggDecoder())),
+  volume(1.0) {
 
   SOLARUS_REQUIRE(!loop || callback_ref.is_empty(),
       "Attempt to set both a loop and a callback to music");
@@ -91,42 +96,15 @@ Music::Music(
 }
 
 /**
- * \brief Initializes the music system.
+ * \brief Creates a new music.
  */
-void Music::initialize() {
-
-  // initialize the decoding features
-  spc_decoder = std::unique_ptr<SpcDecoder>(new SpcDecoder());
-  it_decoder = std::unique_ptr<ItDecoder>(new ItDecoder());
-  ogg_decoder = std::unique_ptr<OggDecoder>(new OggDecoder());
-
-  set_volume(100);
+MusicPtr Music::create(const std::string& music_id) {
+  Music* music = new Music(music_id, true, ScopedLuaRef());
+  return MusicPtr(music);
 }
 
-/**
- * \brief Exits the music system.
- */
-void Music::quit() {
-
-  if (is_initialized()) {
-    if (current_music != nullptr) {
-      current_music->stop();
-    }
-
-    current_music = nullptr;
-    spc_decoder = nullptr;
-    it_decoder = nullptr;
-    ogg_decoder = nullptr;
-    volume = 1.0;
-  }
-}
-
-/**
- * \brief Returns whether the music system is initialized.
- * \return \c true if the music system is initialized.
- */
-bool Music::is_initialized() {
-  return spc_decoder != nullptr;
+const std::string& Music::get_id() const {
+  return id;
 }
 
 /**
@@ -134,12 +112,7 @@ bool Music::is_initialized() {
  * \return The format of the current music.
  */
 Music::Format Music::get_format() {
-
-  if (current_music == nullptr) {
-    return NO_FORMAT;
-  }
-
-  return current_music->format;
+  return format;
 }
 
 /**
@@ -147,7 +120,6 @@ Music::Format Music::get_format() {
  * \return the volume (0 to 100)
  */
 int Music::get_volume() {
-
   return (int) (volume * 100.0 + 0.5);
 }
 
@@ -156,12 +128,9 @@ int Music::get_volume() {
  * \param volume the new volume (0 to 100)
  */
 void Music::set_volume(int volume) {
-
-  volume = std::min(100, std::max(0, volume));
-  Music::volume = volume / 100.0;
-
-  if (current_music != nullptr && current_music->source != AL_NONE) {
-    alSourcef(current_music->source, AL_GAIN, Music::volume);
+  this->volume = std::min(100, std::max(0, volume)) / 100.0;
+  if (source != AL_NONE) {
+    alSourcef(source, AL_GAIN, this->volume);
   }
 }
 
@@ -174,7 +143,7 @@ void Music::set_volume(int volume) {
  */
 int Music::get_num_channels() {
 
-  SOLARUS_REQUIRE(get_format() == IT,
+  SOLARUS_REQUIRE(get_format() == FORMAT_IT,
       "This function is only supported for .it musics");
 
   return it_decoder->get_num_channels();
@@ -190,7 +159,7 @@ int Music::get_num_channels() {
  */
 int Music::get_channel_volume(int channel) {
 
-  SOLARUS_REQUIRE(get_format() == IT,
+  SOLARUS_REQUIRE(get_format() == FORMAT_IT,
       "This function is only supported for .it musics");
 
   return it_decoder->get_channel_volume(channel);
@@ -206,7 +175,7 @@ int Music::get_channel_volume(int channel) {
  */
 void Music::set_channel_volume(int channel, int volume) {
 
-  SOLARUS_REQUIRE(get_format() == IT,
+  SOLARUS_REQUIRE(get_format() == FORMAT_IT,
       "This function is only supported for .it musics");
 
   it_decoder->set_channel_volume(channel, volume);
@@ -221,7 +190,7 @@ void Music::set_channel_volume(int channel, int volume) {
  */
 int Music::get_tempo() {
 
-  SOLARUS_REQUIRE(get_format() == IT,
+  SOLARUS_REQUIRE(get_format() == FORMAT_IT,
       "This function is only supported for .it musics");
 
   return it_decoder->get_tempo();
@@ -236,175 +205,10 @@ int Music::get_tempo() {
  */
 void Music::set_tempo(int tempo) {
 
-  SOLARUS_REQUIRE(get_format() == IT,
+  SOLARUS_REQUIRE(get_format() == FORMAT_IT,
       "This function is only supported for .it musics");
 
   it_decoder->set_tempo(tempo);
-}
-
-/**
- * \brief Returns the id of the music currently playing.
- * \return the id of the current music, or "none" if no music is being played
- */
-const std::string& Music::get_current_music_id() {
-  return current_music != nullptr ? current_music->id : none;
-}
-
-/**
- * \brief Tries to find a music file from a music id.
- * \param music_id Id of the music to find (file name without
- * directory or extension). Cannot be Music::none or Music::unchanged.
- * \param file_name Resulting file name with its extension
- * (empty string if not found).
- * \param format Resulting music format.
- */
-void Music::find_music_file(const std::string& music_id,
-    std::string& file_name, Format& format) {
-
-  file_name = "";
-  format = OGG;
-
-  std::string file_name_start = std::string("musics/" + music_id);
-  if (QuestFiles::data_file_exists(file_name_start + ".ogg")) {
-    format = OGG;
-    file_name = file_name_start + ".ogg";
-  }
-  else if (QuestFiles::data_file_exists(file_name_start + ".it")) {
-    format = IT;
-    file_name = file_name_start + ".it";
-  }
-  else if (QuestFiles::data_file_exists(file_name_start + ".spc")) {
-    format = SPC;
-    file_name = file_name_start + ".spc";
-  }
-}
-
-/**
- * \brief Returns whether a music exists.
- * \param music_id Id of the music to test. Music::none and Music::unchanged
- * are also considered valid.
- * \return true If this music exists.
- */
-bool Music::exists(const std::string& music_id) {
-
-  if (music_id == none || music_id == unchanged) {
-    return true;
-  }
-
-  std::string file_name;
-  Format format;
-  find_music_file(music_id, file_name, format);
-
-  return !file_name.empty();
-}
-
-/**
- * \brief Plays a music.
- *
- * If the music is different from the current one, the current one is stopped.
- * The music specified can also be Music::none_id (then the current music is
- * just stopped).
- * or even Music::unchanged_id (the current music continues in this case).
- *
- * \param music_id Id of the music to play (file name without extension).
- * \param loop Whether the music should loop when reaching its end
- * (if there is an end).
- */
-void Music::play(const std::string& music_id, bool loop) {
-
-  play(music_id, loop, ScopedLuaRef());
-}
-
-/**
- * \brief Plays a music with an optional Lua callback to call when it finishes.
- * \param music_id Id of the music to play (file name without extension).
- * \param loop Whether the music should loop when reaching its end
- * (if there is an end).
- * \param callback_ref Lua function to call when the music finishes or
- * an empty ref. There cannot be both a loop and a callback at the same time.
- */
-void Music::play(
-    const std::string& music_id,
-    bool loop,
-    const ScopedLuaRef& callback_ref
-) {
-  if (music_id != unchanged && music_id != get_current_music_id()) {
-    // The music is changed.
-
-    if (current_music != nullptr) {
-      // Stop the music that was played.
-      current_music->stop();
-      current_music = nullptr;
-    }
-
-    if (music_id != none) {
-      // Play another music.
-      current_music = std::unique_ptr<Music>(
-          new Music(music_id, loop, callback_ref)
-      );
-      if (!current_music->start()) {
-        // Could not play the music.
-        current_music = nullptr;
-      }
-    }
-  }
-}
-
-/**
- * \brief Stops playing any music.
- *
- * The callback if any is not called.
- */
-void Music::stop_playing() {
-
-  play(none, false);
-}
-
-/**
- * \brief Pauses any music currently playing.
- *
- * The callback if any is not called.
- */
-void Music::pause_playing() {
-
-  if (current_music != nullptr) {
-    current_music->set_paused(true);
-  }
-}
-
-/**
- * \brief Resumes playing any music previously paused.
- *
- * The callback if any is not called.
- */
-void Music::resume_playing() {
-
-  if (current_music != nullptr) {
-    current_music->set_paused(false);
-  }
-}
-
-/**
- * \brief Updates the music system.
- *
- * When a music is playing, this function continues the streaming.
- */
-void Music::update() {
-
-  if (!is_initialized()) {
-    return;
-  }
-
-  if (current_music != nullptr) {
-    bool playing = current_music->update_playing();
-    if (!playing) {
-      // Music is finished.
-      ScopedLuaRef callback_ref = current_music->callback_ref;
-      current_music->stop();
-      current_music = nullptr;
-      callback_ref.call("music callback");
-    }
-  }
 }
 
 /**
@@ -432,20 +236,16 @@ bool Music::update_playing() {
 
     // Fill it by decoding more data.
     switch (format) {
-
-      case SPC:
+      case FORMAT_SPC:
         decode_spc(buffer, buffer_size);
         break;
-
-      case IT:
+      case FORMAT_IT:
         decode_it(buffer, buffer_size);
         break;
-
-      case OGG:
+      case FORMAT_OGG:
         decode_ogg(buffer, buffer_size);
         break;
-
-      case NO_FORMAT:
+      case FORMAT_NONE:
         Debug::die("Invalid music format");
         break;
     }
@@ -465,15 +265,7 @@ bool Music::update_playing() {
   return status == AL_PLAYING;
 }
 
-/**
- * \brief Notifies the music system that the audio device was disconnected.
- */
-void Music::notify_device_disconnected_all() {
 
-  if (current_music != nullptr) {
-    current_music->notify_device_disconnected();
-  }
-}
 
 /**
  * \brief Notifies this music that the audio device was disconnected.
@@ -484,16 +276,6 @@ void Music::notify_device_disconnected() {
   source = AL_NONE;
   for (int i = 0; i < nb_buffers; ++i) {
     buffers[i] = AL_NONE;
-  }
-}
-
-/**
- * \brief Notifies the music system that an audio device was reconnected.
- */
-void Music::notify_device_reconnected_all() {
-
-  if (current_music != nullptr) {
-    current_music->notify_device_reconnected();
   }
 }
 
@@ -511,16 +293,16 @@ void Music::notify_device_reconnected() {
     for (int i = 0; i < nb_buffers; i++) {
       ALuint buffer = buffers[i];
       switch (format) {
-        case SPC:
+        case FORMAT_SPC:
           decode_spc(buffer, buffer_size);
           break;
-        case IT:
+        case FORMAT_IT:
           decode_it(buffer, buffer_size);
           break;
-        case OGG:
+        case FORMAT_OGG:
           decode_ogg(buffer, buffer_size);
           break;
-        case NO_FORMAT:
+        case FORMAT_NONE:
           Debug::die("Invalid music format");
           break;
       }
@@ -600,13 +382,13 @@ void Music::decode_ogg(ALuint destination_buffer, ALsizei nb_samples) {
  */
 bool Music::start() {
 
-  if (!is_initialized()) {
+  if (!MusicSystem::is_initialized()) {
     return false;
   }
 
   // First time: find the file.
   if (file_name.empty()) {
-    find_music_file(id, file_name, format);
+    MusicSystem::find_music_file(id, file_name, format);
 
     if (file_name.empty()) {
       Debug::error(std::string("Cannot find music file 'musics/")
@@ -627,7 +409,7 @@ bool Music::start() {
   std::string sound_buffer;
   switch (format) {
 
-    case SPC:
+    case FORMAT_SPC:
 
       sound_buffer = QuestFiles::data_file_read(file_name);
 
@@ -639,7 +421,7 @@ bool Music::start() {
       }
       break;
 
-    case IT:
+    case FORMAT_IT:
 
       sound_buffer = QuestFiles::data_file_read(file_name);
 
@@ -651,7 +433,7 @@ bool Music::start() {
       }
       break;
 
-    case OGG:
+    case FORMAT_OGG:
 
       sound_buffer = QuestFiles::data_file_read(file_name);
 
@@ -664,7 +446,7 @@ bool Music::start() {
       }
       break;
 
-    case NO_FORMAT:
+    case FORMAT_NONE:
       Debug::die("Invalid music format");
       break;
   }
@@ -684,7 +466,9 @@ bool Music::start() {
     success = false;
   }
 
-  alSourcePlay(source);
+  MusicPtr shared_this = shared_from_this_cast<Music>();
+  MusicSystem::remove_music(shared_this); // To avoid duplicates.
+  MusicSystem::add_music(shared_this);
 
   // The update() function will then take care of filling the buffers
 
@@ -698,7 +482,7 @@ bool Music::start() {
  */
 void Music::stop() {
 
-  if (!is_initialized()) {
+  if (!MusicSystem::is_initialized()) {
     return;
   }
 
@@ -721,20 +505,19 @@ void Music::stop() {
   // delete the buffers
   alDeleteBuffers(nb_buffers, buffers);
 
+  MusicPtr shared_this = std::static_pointer_cast<Music>(shared_from_this());
+  MusicSystem::remove_music(shared_this);
+
   switch (format) {
-
-    case SPC:
+    case FORMAT_SPC:
       break;
-
-    case IT:
+    case FORMAT_IT:
       it_decoder->unload();
       break;
-
-    case OGG:
+    case FORMAT_OGG:
       ogg_decoder->unload();
       break;
-
-    case NO_FORMAT:
+    case FORMAT_NONE:
       Debug::die("Invalid music format");
       break;
   }
@@ -746,7 +529,7 @@ void Music::stop() {
  */
 bool Music::is_paused() {
 
-  if (!is_initialized()) {
+  if (!MusicSystem::is_initialized()) {
     return false;
   }
 
@@ -761,7 +544,7 @@ bool Music::is_paused() {
  */
 void Music::set_paused(bool pause) {
 
-  if (!is_initialized()) {
+  if (!MusicSystem::is_initialized()) {
     return;
   }
 
@@ -771,6 +554,10 @@ void Music::set_paused(bool pause) {
   else {
     alSourcePlay(source);
   }
+}
+
+const ScopedLuaRef& Music::get_callback() const {
+  return callback_ref;
 }
 
 /**
@@ -783,6 +570,14 @@ void Music::set_paused(bool pause) {
  */
 void Music::set_callback(const ScopedLuaRef& callback_ref) {
   this->callback_ref = callback_ref;
+}
+
+/**
+ * \brief Returns the name identifying this type in Lua.
+ * \return The name identifying this type in Lua.
+ */
+const std::string& Music::get_lua_type_name() const {
+  return LuaContext::music_module_name;
 }
 
 }
