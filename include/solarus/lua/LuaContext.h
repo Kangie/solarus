@@ -18,6 +18,7 @@
 #ifndef SOLARUS_LUA_CONTEXT_H
 #define SOLARUS_LUA_CONTEXT_H
 
+#include "solarus/audio/MusicPtr.h"
 #include "solarus/audio/SoundPtr.h"
 #include "solarus/core/Ability.h"
 #include "solarus/core/Controls.h"
@@ -123,6 +124,7 @@ class LuaContext {
     static const std::string main_module_name;
     static const std::string audio_module_name;
     static const std::string sound_module_name;
+    static const std::string music_module_name;
     static const std::string video_module_name;
     static const std::string input_module_name;
     static const std::string joypad_module_name;
@@ -589,6 +591,11 @@ class LuaContext {
       sound_api_set_pan,
       sound_api_get_pitch,
       sound_api_set_pitch,
+
+      // Music API.
+      music_api_create,
+      music_api_play,
+      music_api_stop,
 
       // Video API.
       video_api_get_window_title,
@@ -1368,6 +1375,7 @@ class LuaContext {
     void register_main_module();
     void register_audio_module();
     void register_sound_module();
+    void register_music_module();
     void register_video_module();
     void register_input_module();
     void register_joypad_module();
@@ -1398,6 +1406,7 @@ public:
     static void push_dialog(lua_State* current_l, const Dialog& dialog);
     static void push_timer(lua_State* current_l, const TimerPtr& timer);
     static void push_sound(lua_State* current_l, Sound& sound);
+    static void push_music(lua_State* current_l, Music& music);
     static void push_surface(lua_State* current_l, Surface& surface);
     static void push_text_surface(lua_State* current_l, TextSurface& text_surface);
     static void push_sprite(lua_State* current_l, Sprite& sprite);
@@ -1487,6 +1496,8 @@ public:
     static TimerPtr check_timer(lua_State* current_l, int index);
     static bool is_sound(lua_State* current_l, int index);
     static SoundPtr check_sound(lua_State* current_l, int index);
+    static bool is_music(lua_State* current_l, int index);
+    static MusicPtr check_music(lua_State* current_l, int index);
     static bool is_drawable(lua_State* current_l, int index);
     static DrawablePtr check_drawable(lua_State* current_l, int index);
     static bool is_surface(lua_State* current_l, int index);

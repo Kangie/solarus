@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Arguments.h"
 #include "solarus/core/Debug.h"
@@ -104,7 +104,7 @@ void Sound::initialize(const Arguments& args, ResourceProvider* resource_provide
   alGenBuffers(0, nullptr);  // Necessary on some systems to avoid errors with the first sound loaded.
 
   // initialize the music system
-  Music::initialize();
+  MusicSystem::initialize();
 }
 
 /**
@@ -124,7 +124,7 @@ void Sound::quit() {
   stop_all();
 
   // uninitialize the music subsystem
-  Music::quit();
+  MusicSystem::quit();
 
   // uninitialize OpenAL
   alcMakeContextCurrent(nullptr);
@@ -194,7 +194,7 @@ void Sound::update_device_connection() {
         }
         resource_provider->notify_audio_device_disconnected();
       }
-      Music::notify_device_disconnected_all();
+      MusicSystem::notify_device_disconnected_all();
     }
   }
 
@@ -219,7 +219,7 @@ void Sound::update_device_connection() {
         } else {
           const ALchar* current_device_name = alcGetString(device, SOLARUS_OPENAL_DEVICE_SPECIFIER);
           Logger::info(std::string("Connected to audio device '") + (current_device_name ? current_device_name : "") + "'");
-          Music::notify_device_reconnected_all();
+          MusicSystem::notify_device_reconnected_all();
         }
       }
       if (device == nullptr) {
@@ -464,7 +464,7 @@ void Sound::update() {
   }
 
   // also update the music
-  Music::update();
+  MusicSystem::update();
 }
 
 /**

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/Arguments.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
@@ -560,7 +560,7 @@ void MainLoop::step(uint64_t timestep_ns) {
       // Reset
       lua_context->exit();
       lua_context->initialize(lua_script_arg);
-      Music::stop_playing();
+      MusicSystem::stop_playing();
     }
   }
 }
@@ -652,14 +652,14 @@ void MainLoop::notify_input(const InputEvent& event) {
       Logger::info("Simulation suspended");
       set_suspended(true);
       Sound::pause_all();
-      Music::pause_playing();
+      MusicSystem::pause_playing();
     }
   }
   else if (suspend_unfocused && event.is_window_focus_gained()) {
     if (is_suspended()) {
       Logger::info("Simulation resumed");
       set_suspended(false);
-      Music::resume_playing();
+      MusicSystem::resume_playing();
       Sound::resume_all();
     }
   }

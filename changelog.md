@@ -48,6 +48,7 @@ The multiplayer update!
 * Allow to stop or pause a sound effect (#1289).
 * Allow to change the volume of a sound effect (#1608).
 * Allow to change the pan and pitch of a sound effect.
+* New music API (#1386).
 * Add a method `sol.surface.load()` to safely load from any directory (#1484).
 * Add a method `surface:save()` to save a surface to a PNG file (#1215).
 * Add functions `sol.main.rawget/rawset()` (#1424).

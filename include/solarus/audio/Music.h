@@ -18,6 +18,7 @@
 #define SOLARUS_MUSIC_H
 
 #include "solarus/core/Common.h"
+#include "solarus/audio/MusicPtr.h"
 #include "solarus/audio/Sound.h"
 #include "solarus/lua/ScopedLuaRef.h"
 #include <memory>
@@ -35,22 +36,20 @@ class SpcDecoder;
  *
  * A music should be in format .spc (Snes), .it (Impulse Tracker module) or .ogg.
  * The .mp3 format will probably be supported in a future version.
- * Only one music can be played at the same time.
  * Before using this class, the audio system should have been
  * initialized, by calling Sound::initialize().
  */
-class SOLARUS_API Music {
+class SOLARUS_API Music: public ExportableToLua {
 
   public:
-
     /**
      * The music file formats recognized.
      */
     enum Format {
-      NO_FORMAT,        /**< No music. */
-      SPC,              /**< Original Snes music. */
-      IT,               /**< Impulse Tracker module. */
-      OGG               /**< Ogg Vorbis. */
+      FORMAT_NONE,      /**< No music. */
+      FORMAT_SPC,       /**< Original Snes music. */
+      FORMAT_IT,        /**< Impulse Tracker module. */
+      FORMAT_OGG        /**< Ogg Vorbis. */
     };
 
     static const std::string none;               /**< Special id indicating that there is no music. */
@@ -58,61 +57,39 @@ class SOLARUS_API Music {
     static const std::vector<std::string>
         format_names;                            /**< Name of each format. */
 
-    static void initialize();
-    static void quit();
-    static bool is_initialized();
-    static void update();
-
-    static Format get_format();
-    static int get_volume();
-    static void set_volume(int volume);
-    static int get_num_channels();
-    static int get_channel_volume(int channel);
-    static void set_channel_volume(int channel, int volume);
-    static int get_tempo();
-    static void set_tempo(int tempo);
-
-    static void find_music_file(const std::string& music_id,
-        std::string& file_name, Format& format);
-    static bool exists(const std::string& music_id);
-    static void play(
-        const std::string& music_id,
-        bool loop
-    );
-    static void play(
-        const std::string& music_id,
-        bool loop,
-        const ScopedLuaRef& callback_ref
-    );
-    static void stop_playing();
-    static const std::string& get_current_music_id();
-    static void pause_playing();
-    static void resume_playing();
-    static void notify_device_disconnected_all();
-    static void notify_device_reconnected_all();
-
-  private:
-
     Music();
-    Music(
-        const std::string& music_id,
-        bool loop,
-        const ScopedLuaRef& callback_ref
-    );
+    Music(const std::string& music_id, bool loop, const ScopedLuaRef& callback_ref);
+
+    const std::string& get_id() const;
+    Format get_format();
+    int get_volume();
+    void set_volume(int volume);
+    int get_num_channels();
+    int get_channel_volume(int channel);
+    void set_channel_volume(int channel, int volume);
+    int get_tempo();
+    void set_tempo(int tempo);
 
     bool start();
     void stop();
+    bool update_playing();
+
     bool is_paused();
     void set_paused(bool pause);
+    const ScopedLuaRef& get_callback() const;
     void set_callback(const ScopedLuaRef& callback_ref);
 
+    void notify_device_disconnected();
+    void notify_device_reconnected();
+
+    const std::string& get_lua_type_name() const override;    
+
+    static MusicPtr create(const std::string& music_id);
+
+  private:
     void decode_spc(ALuint destination_buffer, ALsizei nb_samples);
     void decode_it(ALuint destination_buffer, ALsizei nb_samples);
     void decode_ogg(ALuint destination_buffer, ALsizei nb_samples);
-
-    bool update_playing();
-    void notify_device_disconnected();
-    void notify_device_reconnected();
 
     std::string id;                              /**< id of this music */
     std::string file_name;                       /**< name of the file to play */
@@ -125,16 +102,11 @@ class SOLARUS_API Music {
     ALuint buffers[nb_buffers];                  /**< multiple buffers used to stream the music */
     ALuint source;                               /**< the OpenAL source streaming the buffers */
 
-    static std::unique_ptr<SpcDecoder>
-        spc_decoder;                             /**< The SPC decoder. */
-    static std::unique_ptr<ItDecoder>
-        it_decoder;                              /**< The IT decoder. */
-    static std::unique_ptr<OggDecoder>
-        ogg_decoder;                             /**< The OGG decoder. */
-    static float volume;                         /**< volume of musics (0.0 to 1.0) */
-
-    static std::unique_ptr<Music> current_music; /**< the music currently played (if any) */
-
+    std::unique_ptr<SpcDecoder> spc_decoder;     /**< The SPC decoder. */
+    std::unique_ptr<ItDecoder> it_decoder;       /**< The IT decoder. */
+    std::unique_ptr<OggDecoder> ogg_decoder;     /**< The OGG decoder. */
+    
+    float volume;                                /**< Volume of this music (0.0 to 1.0) */
 };
 
 }

@@ -80,6 +80,7 @@ See the specification page of each feature for more details.
 
 - \subpage lua_api_main "sol.main": some general-purpose features.
 - \subpage lua_api_audio "sol.audio": playing musics and managing sounds.
+- \subpage lua_api_music "sol.music": playing musics.
 - \subpage lua_api_sound "sol.sound": playing sound effects.
 - \subpage lua_api_video "sol.video": changing video settings.
 - \subpage lua_api_shader "sol.shader": modifying the rendering.

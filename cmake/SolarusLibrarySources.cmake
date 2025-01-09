@@ -2,7 +2,9 @@
 target_sources(solarus
   PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/ItDecoder.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/MusicPtr.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/Music.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/MusicSystem.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/OggDecoder.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/SoundPtr.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/Sound.h"
@@ -245,6 +247,7 @@ target_sources(solarus
   PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/ItDecoder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/Music.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/MusicSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/OggDecoder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/Sound.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/SoundBuffer.cpp"
@@ -422,6 +425,7 @@ target_sources(solarus
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/MapApi.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/MenuApi.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/MovementApi.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/MusicApi.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/ScopedLuaRef.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/ShaderApi.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/SoundApi.cpp"

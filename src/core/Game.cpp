@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/CommandsEffects.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
@@ -163,7 +163,7 @@ void Game::stop() {
   get_savegame().set_game(nullptr);
 
   controls->remove(); // Stop our controls
-  Music::stop_playing();
+  MusicSystem::stop_playing();
 
   started = false;
 }

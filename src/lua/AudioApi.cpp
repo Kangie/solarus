@@ -16,6 +16,7 @@
  */
 #include "solarus/audio/Sound.h"
 #include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/MainLoop.h"
 #include "solarus/core/ResourceProvider.h"
 #include "solarus/lua/LuaBind.h"
@@ -80,15 +81,15 @@ static void play_music(lua_State* l, std::optional<std::string> music_id_arg) {
 
   if (music_id.empty()) {
     // nil music: stop playing any music.
-    Music::stop_playing();
+    MusicSystem::stop_playing();
   } else {
-    if (!Music::exists(music_id)) {
+    if (!MusicSystem::exists(music_id)) {
       // Could not find the specified music.
       LuaTools::error(l, std::string("No such music: '") + music_id + "'");
     }
 
     // Valid music file name.
-    Music::play(music_id, loop, callback_ref);
+    MusicSystem::play(music_id, loop, callback_ref);
   }
 }
 
@@ -97,7 +98,7 @@ static void play_music(lua_State* l, std::optional<std::string> music_id_arg) {
  * \return The music id if music is playing, otherwise an empty optional.
  */
 static std::optional<std::string> get_music() {
-  const std::string& music_id = Music::get_current_music_id();
+  const std::string& music_id = MusicSystem::get_current_music_id();
 
   if (music_id == Music::none) {
     return std::nullopt;
@@ -111,9 +112,9 @@ static std::optional<std::string> get_music() {
  * \return The format name if music is playing, otherwise an empty optional.
  */
 static std::optional<std::string> get_music_format() {
-  const Music::Format format = Music::get_format();
+  const Music::Format format = MusicSystem::get_current_music_format();
 
-  if (format == Music::NO_FORMAT) {
+  if (format == Music::FORMAT_NONE) {
     // No music is playing.
     return std::nullopt;
   } else {
@@ -127,10 +128,10 @@ static std::optional<std::string> get_music_format() {
  *   otherwise an empty optional.
  */
 static std::optional<int> get_music_num_channels() {
-  if (Music::get_format() != Music::IT) {
+  if (MusicSystem::get_current_music_format() != Music::FORMAT_IT) {
     return std::nullopt;
   } else {
-    return std::make_optional(Music::get_num_channels());
+    return std::make_optional(MusicSystem::get_current_music_num_channels());
   }
 }
 
@@ -142,14 +143,14 @@ static std::optional<int> get_music_num_channels() {
  *   otherwise an empty optional.
  */
 static std::optional<int> get_music_channel_volume(lua_State * l, int channel) {
-  if (Music::get_format() != Music::IT) {
+  if (MusicSystem::get_current_music_format() != Music::FORMAT_IT) {
     return std::nullopt;
   } else {
-    if (channel < 0 || channel >= Music::get_num_channels()) {
+    if (channel < 0 || channel >= MusicSystem::get_current_music_num_channels()) {
       LuaTools::arg_error(l, 1,
         "Invalid channel number: " + std::to_string(channel));
     }
-    return std::make_optional(Music::get_channel_volume(channel));
+    return std::make_optional(MusicSystem::get_current_music_channel_volume(channel));
   }
 }
 
@@ -161,14 +162,14 @@ static std::optional<int> get_music_channel_volume(lua_State * l, int channel) {
  * \return Whether or not the current music has channels.
  */
 static bool set_music_channel_volume(lua_State * l, int channel, int volume) {
-  if (Music::get_format() != Music::IT) {
+  if (MusicSystem::get_current_music_format() != Music::FORMAT_IT) {
     return false;
   } else {
-    if (channel < 0 || channel >= Music::get_num_channels()) {
+    if (channel < 0 || channel >= MusicSystem::get_current_music_num_channels()) {
       LuaTools::arg_error(l, 1,
         "Invalid channel number: " + std::to_string(channel));
     }
-    Music::set_channel_volume(channel, volume);
+    MusicSystem::set_current_music_channel_volume(channel, volume);
     return true;
   }
 }
@@ -179,10 +180,10 @@ static bool set_music_channel_volume(lua_State * l, int channel, int volume) {
  *   otherwise an empty optional.
  */
 static std::optional<int> get_music_tempo() {
-  if (Music::get_format() != Music::IT) {
+  if (MusicSystem::get_current_music_format() != Music::FORMAT_IT) {
     return std::nullopt;
   } else {
-    return std::make_optional(Music::get_tempo());
+    return std::make_optional(MusicSystem::get_current_music_tempo());
   }
 }
 
@@ -192,10 +193,10 @@ static std::optional<int> get_music_tempo() {
  * \return Whether or not the current music supports tempo.
  */
 static bool set_music_tempo(int tempo) {
-  if (Music::get_format() != Music::IT) {
+  if (MusicSystem::get_current_music_format() != Music::FORMAT_IT) {
     return false;
   } else {
-    Music::set_tempo(tempo);
+    MusicSystem::set_current_music_tempo(tempo);
     return true;
   }
 }
@@ -211,10 +212,10 @@ void LuaContext::register_audio_module() {
       { "set_sound_volume", LUA_TO_C_BIND(Sound::set_global_volume) },
       { "play_sound", LUA_TO_C_BIND(play_sound) },
       { "preload_sounds", LUA_TO_C_BIND(preload_sounds) },
-      { "get_music_volume", LUA_TO_C_BIND(Music::get_volume) },
-      { "set_music_volume", LUA_TO_C_BIND(Music::set_volume) },
+      { "get_music_volume", LUA_TO_C_BIND(MusicSystem::get_global_volume) },
+      { "set_music_volume", LUA_TO_C_BIND(MusicSystem::set_global_volume) },
       { "play_music", LUA_TO_C_BIND(play_music) },
-      { "stop_music", LUA_TO_C_BIND(Music::stop_playing) },
+      { "stop_music", LUA_TO_C_BIND(MusicSystem::stop_playing) },
       { "get_music", LUA_TO_C_BIND(get_music) },
       { "get_music_format", LUA_TO_C_BIND(get_music_format) },
       { "get_music_num_channels", LUA_TO_C_BIND(get_music_num_channels) },
