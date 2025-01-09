@@ -33,6 +33,11 @@ Starts playing the sound effect.
 
 Stops playing the sound effect.
 
+\subsection lua_api_sound_is_paused sound:is_playing()
+
+Returns whether the sound effect is currently playing.
+- Return value (boolean): \c true if the sound is playing, \c false otherwise.
+
 \subsection lua_api_sound_is_paused sound:is_paused()
 
 Returns whether the sound effect is currently paused.
@@ -43,6 +48,17 @@ Returns whether the sound effect is currently paused.
 Pauses or resumes the sound effect.
 - \c paused (boolean, optional): \c true to pause the sound, \c false to
   unpause it. No value means \c true.
+
+\subsection lua_api_sound_is_looped sound:is_looped()
+
+Returns whether the sound effect should be played in a loop.
+- Return value (boolean): \c true if the sound is played in a loop, \c false otherwise.
+
+\subsection lua_api_sound_set_looped sound:set_looped([looped])
+
+Sets that the sound effect should be played in a loop.
+- \c looped (boolean, optional): \c true to set the loop, \c false to
+  clear the loop. No value means \c true.
 
 \subsection lua_api_sound_get_volume sound:get_volume()
 

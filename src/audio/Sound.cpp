@@ -515,6 +515,7 @@ bool Sound::start() {
     alGenSources(1, &source);
     alSourcei(source, AL_BUFFER, buffer);
     alSourcef(source, AL_GAIN, get_actual_volume());
+    alSourcei(source, AL_LOOPING, looped ? AL_TRUE : AL_FALSE);
 
     // update initial parameters
     set_pan(pan);
@@ -593,6 +594,20 @@ void Sound::stop_source() {
   }
 
   source = AL_NONE;
+}
+
+/**
+ * \brief Returns whether the sound is currently playing.
+ * \return \c true if the sound is playing.
+ */
+bool Sound::is_playing() const {
+  if (device == nullptr || source == AL_NONE) {
+    return false;
+  }
+
+  ALint status;
+  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  return status == AL_PLAYING;
 }
 
 /**
@@ -687,6 +702,22 @@ void Sound::stop_all() {
   for (const SoundPtr& sound: current_sounds) {
     sound->stop();
   }
+}
+
+/**
+ * \brief Returns whether the sound is looped.
+ * \return true if the sound is looped.
+ */
+bool Sound::is_looped() const {
+  return looped;
+}
+
+/**
+ * \brief Sets if the sound should be played in a loop.
+ * \param looped true if the sound is looped.
+ */
+void Sound::set_looped(bool looped) {
+  this->looped = looped;
 }
 
 /**
