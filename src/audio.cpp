@@ -16,7 +16,7 @@
  */
 #include "audio.h"
 #include "quest.h"
-#include <solarus/audio/Music.h>
+#include <solarus/audio/MusicSystem.h>
 #include <solarus/audio/Sound.h>
 #include <solarus/audio/SoundBuffer.h>
 #include <solarus/core/Arguments.h>
@@ -138,11 +138,11 @@ void play_music(Quest& quest, const QString& music_id) {
     return;
   }
 
-  if (!Solarus::Music::exists(music_id.toStdString())) {
+  if (!Solarus::MusicSystem::exists(music_id.toStdString())) {
     qWarning() << "Cannot open music file " << music_id;
     return;
   }
-  Solarus::Music::play(music_id.toStdString(), true);
+  Solarus::MusicSystem::play(music_id.toStdString(), true);
 
   close_quest();
 
@@ -159,7 +159,7 @@ void stop_music(Quest& quest) {
     initialize();
   }
 
-  Solarus::Music::stop_playing();
+  Solarus::MusicSystem::stop_playing();
 
   quest.set_current_music_id("");
 }
