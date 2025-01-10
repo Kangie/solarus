@@ -627,6 +627,12 @@ void LuaContext::register_entity_module() {
         { "set_weight", entity_api_set_weight },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    destructible_methods.insert(destructible_methods.end(), {
+        { "get_exploding_sound", destructible_api_get_exploding_sound },
+        { "set_exploding_sound", destructible_api_set_exploding_sound },
+    });
+  }
 
   destructible_methods.insert(destructible_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -658,6 +664,8 @@ void LuaContext::register_entity_module() {
         { "set_falling_sound", carried_object_api_set_falling_sound },
         { "get_sinking_sound", carried_object_api_get_sinking_sound },
         { "set_sinking_sound", carried_object_api_set_sinking_sound },
+        { "get_exploding_sound", carried_object_api_get_exploding_sound },
+        { "set_exploding_sound", carried_object_api_set_exploding_sound },
     });
   }
 
@@ -758,6 +766,8 @@ void LuaContext::register_entity_module() {
       { "set_sinking_sound", enemy_api_set_sinking_sound },
       { "get_dying_sound", enemy_api_get_dying_sound },
       { "set_dying_sound", enemy_api_set_dying_sound },
+      { "get_exploding_sound", enemy_api_get_exploding_sound },
+      { "set_exploding_sound", enemy_api_set_exploding_sound },
     });
   }
 
@@ -7215,6 +7225,43 @@ int LuaContext::destructible_api_set_destruction_sound(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of destructible:get_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::destructible_api_get_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Destructible& destructible = *check_destructible(l, 1);
+    const std::string& sound_id = destructible.get_exploding_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of destructible:set_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::destructible_api_set_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Destructible& destructible = *check_destructible(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    destructible.set_exploding_sound_id(sound_id);
+    return 0;
+  });
+}
+
+/**
  * \brief Implementation of destructible:get_can_be_cut().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -7602,6 +7649,43 @@ int LuaContext::carried_object_api_set_sinking_sound(lua_State* l) {
     }
 
     carried_object.set_sinking_sound(sound_id);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:get_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_get_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const CarriedObject& carried_object = *check_carried_object(l, 1);
+    const std::string& sound_id = carried_object.get_exploding_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:set_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_set_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    CarriedObject& carried_object = *check_carried_object(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    carried_object.set_exploding_sound_id(sound_id);
     return 0;
   });
 }
@@ -8727,6 +8811,42 @@ int LuaContext::enemy_api_set_dying_sound(lua_State* l) {
     const std::string& sound_id = LuaTools::opt_string(l, 2, "");
 
     enemy.set_dying_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_exploding_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_exploding_sound_id(sound_id);
 
     return 0;
   });

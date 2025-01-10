@@ -112,6 +112,7 @@ Enemy::Enemy(
   falling_sound_id("jump"),
   sinking_sound_id("splash"),
   dying_sound_id("enemy_killed"),
+  exploding_sound_id("explosion"),
   treasure(treasure),
   exploding(false),
   nb_explosions(0),
@@ -889,7 +890,9 @@ void Enemy::update() {
       get_entities().add_entity(std::make_shared<Explosion>(
           "", get_map().get_max_layer(), xy, false
       ));
-      Sound::play("explosion");
+      if (!exploding_sound_id.empty()) {
+        Sound::play(exploding_sound_id);
+      }
 
       next_explosion_date = now + 200;
       nb_explosions++;
@@ -1671,6 +1674,22 @@ const std::string& Enemy::get_dying_sound_id() const {
  */
 void Enemy::set_dying_sound_id(const std::string& sound_id) {
   dying_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is exploding.
+ * \return The exploding sound id or an empty string.
+ */
+const std::string& Enemy::get_exploding_sound_id() const {
+  return exploding_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is exploding.
+ * \param sound_id The exploding sound id or an empty string.
+ */
+void Enemy::set_exploding_sound_id(const std::string& sound_id) {
+  this->exploding_sound_id = sound_id;
 }
 
 }

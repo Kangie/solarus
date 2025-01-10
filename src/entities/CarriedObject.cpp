@@ -80,6 +80,7 @@ CarriedObject::CarriedObject(
   throwing_sound_id("throw"),
   falling_sound_id("jump"),
   sinking_sound_id("walk_on_water"),
+  exploding_sound_id("explosion"),
   damage_on_enemies(damage_on_enemies),
   shadow_sprite(nullptr),
   throwing_direction(0),
@@ -254,6 +255,22 @@ void CarriedObject::set_sinking_sound(const std::string& sound_id) {
 }
 
 /**
+ * \brief Returns the id of the sound to play when this object is exploding.
+ * \return The exploding sound id or an empty string.
+ */
+const std::string& CarriedObject::get_exploding_sound_id() const {
+  return exploding_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is exploding.
+ * \param sound_id The exploding sound id or an empty string.
+ */
+void CarriedObject::set_exploding_sound_id(const std::string& sound_id) {
+  this->exploding_sound_id = sound_id;
+}
+
+/**
  * \brief Makes the item sprite stop moving.
  *
  * This function is called when the hero stops walking while carrying the item.
@@ -377,7 +394,9 @@ void CarriedObject::break_item() {
     get_entities().add_entity(std::make_shared<Explosion>(
         "", get_layer(), get_xy(), true
     ));
-    Sound::play("explosion");
+    if (!exploding_sound_id.empty()) {
+      Sound::play(exploding_sound_id);
+    }
     if (is_throwing) {
       remove_from_map(); // because if the item was still carried by the hero, then the hero class will destroy it
     }

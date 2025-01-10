@@ -74,6 +74,8 @@ class CarriedObject: public Entity {
     void set_falling_sound(const std::string& sound_id);
     const std::string& get_sinking_sound() const;
     void set_sinking_sound(const std::string& sound_id);
+    const std::string& get_exploding_sound_id() const;
+    void set_exploding_sound_id(const std::string& sound_id);
 
     void set_animation_stopped();
     void set_animation_walking();
@@ -139,6 +141,7 @@ class CarriedObject: public Entity {
     std::string throwing_sound_id;      /**< the sound played when the item is thrown by the hero */
     std::string falling_sound_id;       /**< the sound played when the item is falling into a hole */
     std::string sinking_sound_id;       /**< the sound played when the item is sinking into deep water or lava */
+    std::string exploding_sound_id;     /**< the sound played when the item is exploding */
     int damage_on_enemies;              /**< damage for an enemy that receives the item */
 
     // throwing the item
