@@ -321,29 +321,31 @@ class Hero: public Entity {
     void start_state_from_ground();
     void start_custom_state(const std::shared_ptr<CustomState>& custom_state);
 
-    std::string get_falling_sound_id() const;
+    const std::string& get_falling_sound_id() const;
     void set_falling_sound_id(const std::string& falling_sound_id);
-    std::string get_respawn_sound_id() const;
+    const std::string& get_respawn_sound_id() const;
     void set_respawn_sound_id(const std::string& respawn_sound_id);
-    std::string get_landing_sound_id() const;
+    const std::string& get_landing_sound_id() const;
     void set_landing_sound_id(const std::string& sound_id);
-    std::string get_jumping_sound_id() const;
+    const std::string& get_jumping_sound_id() const;
     void set_jumping_sound_id(const std::string& sound_id);
-    std::string get_hurt_sound_id() const;
+    const std::string& get_hurt_sound_id() const;
     void set_hurt_sound_id(const std::string& sound_id);
-    std::string get_sinking_sound_id() const;
+    const std::string& get_sinking_sound_id() const;
     void set_sinking_sound_id(const std::string& sound_id);
-    std::string get_swimming_sound_id() const;
+    const std::string& get_lifting_sound_id() const;
+    void set_lifting_sound_id(const std::string& sound_id);
+    const std::string& get_swimming_sound_id() const;
     void set_swimming_sound_id(const std::string& sound_id);
-    std::string get_running_sound_id() const;
+    const std::string& get_running_sound_id() const;
     void set_running_sound_id(const std::string& sound_id);
-    std::string get_running_obstacle_sound_id() const;
+    const std::string& get_running_obstacle_sound_id() const;
     void set_running_obstacle_sound_id(const std::string& sound_id);
-    std::string get_spin_attack_load_sound_id() const;
+    const std::string& get_spin_attack_load_sound_id() const;
     void set_spin_attack_load_sound_id(const std::string& sound_id);
-    std::string get_spin_attack_release_sound_id() const;
+    const std::string& get_spin_attack_release_sound_id() const;
     void set_spin_attack_release_sound_id(const std::string& sound_id);
-    std::string get_victory_sound_id() const;
+    const std::string& get_victory_sound_id() const;
     void set_victory_sound_id(const std::string& sound_id);
 
     bool get_can_swim_faster() const;
@@ -444,6 +446,7 @@ class Hero: public Entity {
     std::string hurt_sound_id;             /**< Sound to play when the hero is getting damage from enemy or bad ground like prickles. */ 
     std::string sinking_sound_id;          /**< Sound to play when the hero is sinking in deep water or lava. */
     std::string swimming_sound_id;         /**< Sound to play when the hero is swimming in deep water. */
+    std::string lifting_sound_id;          /**< Sound to play when the hero is lifting an entity. */
     std::string running_sound_id;          /**< Sound to play when the hero is running. */
     std::string running_obstacle_sound_id; /**< Sound to play when the hero is colliding with an obstacle while running. */
     std::string spin_attack_load_sound_id; /**< Sound to play when the hero has just loaded the spin attack */

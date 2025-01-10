@@ -951,14 +951,12 @@ You can use this function if you want another sound to be played.
 
 \subsection lua_api_hero_get_respawn_sound hero:get_respawn_sound()
 
-Returns the name of the sound played when the hero gets back to solid ground
-after falling.
+Returns the name of the sound played when the hero gets back to solid ground after falling.
 - Return value (string): The respawning sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_respawn_sound hero:set_respawn_sound(sound_id)
 
-Changes the sound to play when the hero gets back to solid ground
-after falling.
+Changes the sound to play when the hero gets back to solid ground after falling.
 
 By default, this sound is \c "message_end" for historical reasons.
 
@@ -969,7 +967,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_landing_sound hero:get_landing_sound()
 
 Returns the name of the sound played when the hero is landing after juming from a jumper or from an upper layer.
-after falling.
 - Return value (string): The landing sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_landing_sound hero:set_landing_sound(sound_id)
@@ -985,7 +982,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_jumping_sound hero:get_jumping_sound()
 
 Returns the name of the sound played when the hero is jumping from a jumper or using the built-in feather item.
-after falling.
 - Return value (string): The jumping sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_jumping_sound hero:set_jumping_sound(sound_id)
@@ -1001,7 +997,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_hurt_sound hero:get_hurt_sound()
 
 Returns the name of the sound played when the hero is getting damage.
-after falling.
 - Return value (string): The hurt sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_hurt_sound hero:set_hurt_sound(sound_id)
@@ -1017,7 +1012,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_sinking_sound hero:get_sinking_sound()
 
 Returns the name of the sound played when the hero is sinking into deep water or lava.
-after falling.
 - Return value (string): The sinking sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_sinking_sound hero:set_sinking_sound(sound_id)
@@ -1033,7 +1027,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_swimming_sound hero:get_swimming_sound()
 
 Returns the name of the sound played when the hero is swimming.
-after falling.
 - Return value (string): The swimming sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_swimming_sound hero:set_swimming_sound(sound_id)
@@ -1046,10 +1039,24 @@ You can use this function if you want another sound to be played.
 - \c sound_id (string or \c nil): The swimming sound id.
   \c nil or an empty string means no sound.
 
+\subsection lua_api_hero_get_lifting_sound hero:get_lifting_sound()
+
+Returns the name of the sound played when the hero is lifting an entity (if liftable).
+- Return value (string): The lifting sound id. \c nil means no sound.
+
+\subsection lua_api_hero_set_lifting_sound hero:set_lifting_sound(sound_id)
+
+Changes the sound to play when the hero is lifting an entity (if liftable).
+
+By default, this sound is \c "lift" for historical reasons.
+
+You can use this function if you want another sound to be played.
+- \c sound_id (string or \c nil): The lifting sound id.
+  \c nil or an empty string means no sound.
+
 \subsection lua_api_hero_get_running_sound hero:get_running_sound()
 
 Returns the name of the sound played when the hero is running.
-after falling.
 - Return value (string): The running sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_running_sound hero:set_running_sound(sound_id)
@@ -1065,7 +1072,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_running_obstacle_sound hero:get_running_obstacle_sound()
 
 Returns the name of the sound played when the hero is colliding with an obstacle while running.
-after falling.
 - Return value (string): The running_obstacle sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_running_obstacle_sound hero:set_running_obstacle_sound(sound_id)
@@ -1081,7 +1087,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_spin_attack_load_sound hero:get_spin_attack_load_sound()
 
 Returns the name of the sound played when the hero is loading the spin attack.
-after falling.
 - Return value (string): The spin_attack_load sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_spin_attack_load_sound hero:set_spin_attack_load_sound(sound_id)
@@ -1097,7 +1102,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_spin_attack_release_sound hero:get_spin_attack_release_sound()
 
 Returns the name of the sound played when the hero is releasing the spin attack.
-after falling.
 - Return value (string): The spin_attack_release sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_spin_attack_release_sound hero:set_spin_attack_release_sound(sound_id)
@@ -1113,7 +1117,6 @@ You can use this function if you want another sound to be played.
 \subsection lua_api_hero_get_victory_sound hero:get_victory_sound()
 
 Returns the name of the sound played when the hero is performing the victory animation.
-after falling.
 - Return value (string): The victory sound id. \c nil means no sound.
 
 \subsection lua_api_hero_set_victory_sound hero:set_victory_sound(sound_id)
@@ -1125,10 +1128,6 @@ By default, this sound is \c "victory" for historical reasons.
 You can use this function if you want another sound to be played.
 - \c sound_id (string or \c nil): The victory sound id.
   \c nil or an empty string means no sound.
-
-
-
-
 
 \section lua_api_hero_methods_deprecated Deprecated methods of Hero
 

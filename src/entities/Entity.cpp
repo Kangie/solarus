@@ -3570,7 +3570,9 @@ bool Entity::notify_action_command_pressed(Hero& hero) {
     );
     hero.start_lifting(carried_object);
 
-    Sound::play("lift");
+    if (!hero.get_lifting_sound_id().empty()) {
+      Sound::play(hero.get_lifting_sound_id());
+    }
     remove_from_map();
     get_lua_context()->entity_on_lifting(*this, hero, *carried_object);
     return true;
