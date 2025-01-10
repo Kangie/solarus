@@ -404,7 +404,9 @@ bool Destructible::notify_action_command_pressed(Hero &hero) {
       hero.start_lifting(carried_object);
 
       // Play the sound.
-      Sound::play("lift");
+      if (!hero.get_lifting_sound_id().empty()) {
+        Sound::play(hero.get_lifting_sound_id());
+      }
 
       // Create the pickable treasure.
       create_treasure();

@@ -975,6 +975,8 @@ class LuaContext {
       hero_api_set_sinking_sound,
       hero_api_get_swimming_sound,
       hero_api_set_swimming_sound,
+      hero_api_get_lifting_sound,
+      hero_api_set_lifting_sound,
       hero_api_get_running_sound,
       hero_api_set_running_sound,
       hero_api_get_running_obstacle_sound,

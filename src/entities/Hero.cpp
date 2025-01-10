@@ -119,6 +119,7 @@ Hero::Hero(const EquipmentPtr &equipment, const std::string& name):
   hurt_sound_id("hero_hurt"),
   sinking_sound_id("splash"),
   swimming_sound_id("swim"),
+  lifting_sound_id("lift"),
   running_sound_id("running"),
   running_obstacle_sound_id("running_obstacle"),
   spin_attack_load_sound_id("sword_spin_attack_load"),
@@ -3134,7 +3135,7 @@ void Hero::start_custom_state(const std::shared_ptr<CustomState>& custom_state) 
  * \brief Returns the sound to play when the hero is falling.
  * \return The falling sound or an empty string.
  */
-std::string Hero::get_falling_sound_id() const {
+const std::string& Hero::get_falling_sound_id() const {
   return falling_sound_id;
 }
 
@@ -3150,7 +3151,7 @@ void Hero::set_falling_sound_id(const std::string& falling_sound_id) {
  * \brief Returns the sound to play when the hero respawns from bad grounds.
  * \return The respawning sound or an empty string.
  */
-std::string Hero::get_respawn_sound_id() const {
+const std::string& Hero::get_respawn_sound_id() const {
   return respawn_sound_id;
 }
 
@@ -3166,7 +3167,7 @@ void Hero::set_respawn_sound_id(const std::string& respawn_sound_id) {
  * \brief Returns the sound to play when the hero is landing.
  * \return The landing sound or an empty string.
  */
-std::string Hero::get_landing_sound_id() const {
+const std::string& Hero::get_landing_sound_id() const {
   return landing_sound_id;
 }
 
@@ -3182,7 +3183,7 @@ void Hero::set_landing_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is jumping.
  * \return The jumping sound or an empty string.
  */
-std::string Hero::get_jumping_sound_id() const {
+const std::string& Hero::get_jumping_sound_id() const {
   return jumping_sound_id;
 }
 
@@ -3198,7 +3199,7 @@ void Hero::set_jumping_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is getting damage.
  * \return The hurting sound or an empty string.
  */
-std::string Hero::get_hurt_sound_id() const {
+const std::string& Hero::get_hurt_sound_id() const {
   return hurt_sound_id;
 }
 
@@ -3214,7 +3215,7 @@ void Hero::set_hurt_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is sinking.
  * \return The sinking sound or an empty string.
  */
-std::string Hero::get_sinking_sound_id() const {
+const std::string& Hero::get_sinking_sound_id() const {
   return sinking_sound_id;
 }
 
@@ -3230,7 +3231,7 @@ void Hero::set_sinking_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is swimming.
  * \return The swimming sound or an empty string.
  */
-std::string Hero::get_swimming_sound_id() const {
+const std::string& Hero::get_swimming_sound_id() const {
   return swimming_sound_id;
 }
 
@@ -3243,10 +3244,26 @@ void Hero::set_swimming_sound_id(const std::string& sound_id) {
 }
 
 /**
+ * \brief Returns the sound to play when the hero is lifting an entity.
+ * \return The lifting sound or an empty string.
+ */
+const std::string& Hero::get_lifting_sound_id() const {
+  return lifting_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is lifting an entity.
+ * \param sound_id The lifting sound or an empty string.
+ */
+void Hero::set_lifting_sound_id(const std::string& sound_id) {
+  lifting_sound_id = sound_id;
+}
+
+/**
  * \brief Returns the sound to play when the hero is running.
  * \return The running sound or an empty string.
  */
-std::string Hero::get_running_sound_id() const {
+const std::string& Hero::get_running_sound_id() const {
   return running_sound_id;
 }
 
@@ -3262,7 +3279,7 @@ void Hero::set_running_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is running into an_obstacle.
  * \return The running_obstacle sound or an empty string.
  */
-std::string Hero::get_running_obstacle_sound_id() const {
+const std::string& Hero::get_running_obstacle_sound_id() const {
   return running_obstacle_sound_id;
 }
 
@@ -3278,7 +3295,7 @@ void Hero::set_running_obstacle_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is loading the spin attack.
  * \return The spin_attack_load sound or an empty string.
  */
-std::string Hero::get_spin_attack_load_sound_id() const {
+const std::string& Hero::get_spin_attack_load_sound_id() const {
   return spin_attack_load_sound_id;
 }
 
@@ -3294,7 +3311,7 @@ void Hero::set_spin_attack_load_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is releasing the spin attack.
  * \return The spin_attack_release sound or an empty string.
  */
-std::string Hero::get_spin_attack_release_sound_id() const {
+const std::string& Hero::get_spin_attack_release_sound_id() const {
   return spin_attack_release_sound_id;
 }
 
@@ -3310,7 +3327,7 @@ void Hero::set_spin_attack_release_sound_id(const std::string& sound_id) {
  * \brief Returns the sound to play when the hero is performing victory animation.
  * \return The victory sound or an empty string.
  */
-std::string Hero::get_victory_sound_id() const {
+const std::string& Hero::get_victory_sound_id() const {
   return victory_sound_id;
 }
 
