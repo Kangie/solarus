@@ -129,6 +129,18 @@ By default, the sound used for sinking is "walk_on_water".
 You can use this function if you want another sound to be played.
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
+\subsection lua_api_carried_object_get_exploding_sound carried_object:get_exploding_sound()
+
+Returns the sound id when the carried_object is exploding.
+- Return value (string): The sound id.
+
+\subsection lua_api_carried_object_set_exploding_sound carried_object:set_exploding_sound([sound_id])
+
+Changes the sound to play when the object is exploding.
+By default, the sound used for exploding is "explosion".
+You can use this function if you want another sound to be played.
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
 \section lua_api_carried_object_inherited_events Events inherited from map entity
 
 Events are callback methods automatically called by the engine if you define

@@ -588,6 +588,20 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
+\subsection lua_api_enemy_get_exploding_sound enemy:get_exploding_sound()
+
+Returns the sound id when the enemy is exploding.
+
+- Return value (string): The sound id.
+
+\subsection lua_api_enemy_set_exploding_sound enemy:set_exploding_sound([sound_id])
+
+Changes the sound to play when the enemy is exploding.
+By default, the sound used is "explosion".
+You can use this function if you want another sound to be played.
+
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
 \subsection lua_api_enemy_restart enemy:restart()
 
 Restarts this enemy.

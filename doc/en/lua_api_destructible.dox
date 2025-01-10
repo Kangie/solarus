@@ -75,6 +75,18 @@ Sets the sound to be played when this object is cut or broken.
 - \c destruction_sound_id (string): Id of the destruction sound.
   \c nil means that no sound will be played.
 
+\subsection lua_api_destructible_get_exploding_sound destructible:get_exploding_sound()
+
+Returns the sound id when the destructible is exploding.
+- Return value (string): The sound id.
+
+\subsection lua_api_destructible_set_exploding_sound destructible:set_exploding_sound([sound_id])
+
+Changes the sound to play when the object is exploding.
+By default, the sound used for exploding is "explosion".
+You can use this function if you want another sound to be played.
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
 \subsection lua_api_destructible_get_can_be_cut destructible:get_can_be_cut()
 
 Returns whether this object can be cut by the sword.

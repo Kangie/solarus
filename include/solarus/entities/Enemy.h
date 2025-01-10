@@ -155,6 +155,8 @@ class Enemy: public Entity {
     void set_sinking_sound_id(const std::string& sound_id);
     const std::string& get_dying_sound_id() const;
     void set_dying_sound_id(const std::string& sound_id);
+    const std::string& get_exploding_sound_id() const;
+    void set_exploding_sound_id(const std::string& sound_id);
     
     // sprites
     std::string get_animation() const;
@@ -267,6 +269,7 @@ class Enemy: public Entity {
     std::string falling_sound_id;      /**< sound played when the enemy is falling into a hole. */
     std::string sinking_sound_id;      /**< sound played when the enemy is sinking into deep water or lava. */
     std::string dying_sound_id;        /**< sound played when the enemy is defeated. */
+    std::string exploding_sound_id;    /**< sound played when the enemy is exploding. */
 
     Treasure treasure;                 /**< pickable item that appears when this enemy gets killed */
 
