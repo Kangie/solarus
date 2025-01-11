@@ -62,7 +62,7 @@ class SOLARUS_API Music: public ExportableToLua {
 
     const std::string& get_id() const;
     Format get_format();
-    int get_volume();
+    int get_volume() const;
     void set_volume(int volume);
     int get_num_channels();
     int get_channel_volume(int channel);
@@ -74,13 +74,14 @@ class SOLARUS_API Music: public ExportableToLua {
     void stop();
     bool update_playing();
 
-    bool is_paused();
+    bool is_paused() const;
     void set_paused(bool pause);
     const ScopedLuaRef& get_callback() const;
     void set_callback(const ScopedLuaRef& callback_ref);
 
     void notify_device_disconnected();
     void notify_device_reconnected();
+    void notify_global_volume_changed();
 
     const std::string& get_lua_type_name() const override;    
 
