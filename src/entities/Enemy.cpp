@@ -113,6 +113,7 @@ Enemy::Enemy(
   sinking_sound_id("splash"),
   dying_sound_id("enemy_killed"),
   exploding_sound_id("explosion"),
+  hurt_sound_id(""),
   treasure(treasure),
   exploding(false),
   nb_explosions(0),
@@ -1127,25 +1128,27 @@ void Enemy::attack_stopped_by_hero_shield(Hero& hero) {
  * \brief Plays the appropriate sound when the enemy is hurt.
  */
 void Enemy::play_hurt_sound() {
+  if (!has_set_hurt_sound) {
+    std::string sound_id = "";
+    switch (hurt_style) {
+      case HurtStyle::NORMAL:
+        sound_id = "enemy_hurt";
+        break;
 
-  std::string sound_id = "";
-  switch (hurt_style) {
+      case HurtStyle::MONSTER:
+        sound_id = "monster_hurt";
+        break;
 
-    case HurtStyle::NORMAL:
-      sound_id = "enemy_hurt";
-      break;
-
-    case HurtStyle::MONSTER:
-      sound_id = "monster_hurt";
-      break;
-
-    case HurtStyle::BOSS:
-      sound_id = (life > 0) ? "boss_hurt" : "boss_killed";
-      break;
-
+      case HurtStyle::BOSS:
+        sound_id = (life > 0) ? "boss_hurt" : "boss_killed";
+        break;
+    }
+    Sound::play(sound_id);
+  } else {
+    if (!hurt_sound_id.empty()) {
+      Sound::play(hurt_sound_id);
+    }
   }
-
-  Sound::play(sound_id);
 }
 
 /**
@@ -1690,6 +1693,23 @@ const std::string& Enemy::get_exploding_sound_id() const {
  */
 void Enemy::set_exploding_sound_id(const std::string& sound_id) {
   this->exploding_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is hurt.
+ * \return The hurt sound id or an empty string.
+ */
+const std::string& Enemy::get_hurt_sound_id() const {
+  return exploding_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is hurt.
+ * \param sound_id The hurt sound id or an empty string.
+ */
+void Enemy::set_hurt_sound_id(const std::string& sound_id) {
+  has_set_hurt_sound = true;
+  this->hurt_sound_id = sound_id;
 }
 
 }
