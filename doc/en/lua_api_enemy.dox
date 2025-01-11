@@ -602,6 +602,20 @@ You can use this function if you want another sound to be played.
 
 - \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
 
+\subsection lua_api_enemy_get_hurt_sound enemy:get_hurt_sound()
+
+Returns the sound id when the enemy is hurt.
+
+- Return value (string): The sound id.
+
+\subsection lua_api_enemy_set_hurt_sound enemy:set_hurt_sound([sound_id])
+
+Changes the sound to play when the enemy is hurt.
+You can use this function if you want another sound to be played.
+Calling this function disable sounds related to hurt_style.
+
+- \c sound_id (string, optional): The sound id. An empty string or nil means no sound.
+
 \subsection lua_api_enemy_restart enemy:restart()
 
 Restarts this enemy.

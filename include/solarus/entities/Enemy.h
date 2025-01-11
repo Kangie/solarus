@@ -157,6 +157,8 @@ class Enemy: public Entity {
     void set_dying_sound_id(const std::string& sound_id);
     const std::string& get_exploding_sound_id() const;
     void set_exploding_sound_id(const std::string& sound_id);
+    const std::string& get_hurt_sound_id() const;
+    void set_hurt_sound_id(const std::string& sound_id);
     
     // sprites
     std::string get_animation() const;
@@ -231,6 +233,7 @@ class Enemy: public Entity {
     int damage_on_hero;                /**< number of heart quarters the player loses when he gets hurt by this enemy;
                                         * this number is divided depending on the hero's tunic number (default: 1) */
     int life;                          /**< number of health points of the enemy (default: 1) */
+    bool has_set_hurt_sound;           /**< indicates whether set_hurt_sound has been called or not. */
     HurtStyle hurt_style;              /**< style of sounds and animations when this enemy gets hurt
                                         * (default: HURT_NORMAL) */
     std::string dying_sprite_id;       /**< Sprite to show during the dying animation if any. */
@@ -270,6 +273,7 @@ class Enemy: public Entity {
     std::string sinking_sound_id;      /**< sound played when the enemy is sinking into deep water or lava. */
     std::string dying_sound_id;        /**< sound played when the enemy is defeated. */
     std::string exploding_sound_id;    /**< sound played when the enemy is exploding. */
+    std::string hurt_sound_id;         /**< sound played when the enemy is hurt. */
 
     Treasure treasure;                 /**< pickable item that appears when this enemy gets killed */
 

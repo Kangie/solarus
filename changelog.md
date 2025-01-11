@@ -67,7 +67,7 @@ The multiplayer update!
 * Add methods to customize all carried object entities sounds (#1658).
 * Add methods to customize all door entities sounds (#1643).
 * Add methods to customize all hero sounds (#1661, #1666).
-* Add methods to customize all enemy entities sounds (#1659).
+* Add methods to customize all enemy entities sounds (#1659, #1669).
 * Add methods to customize all pickable entities sounds (#1660).
 * Add methods to customize all shop treasure entities sounds (#1665).
 * Add methods to customize all exploding entities sounds (#1662).

@@ -1242,6 +1242,8 @@ class LuaContext {
       enemy_api_set_dying_sound,
       enemy_api_get_exploding_sound,
       enemy_api_set_exploding_sound,
+      enemy_api_get_hurt_sound,
+      enemy_api_set_hurt_sound,
       enemy_api_restart,
       enemy_api_hurt,
       enemy_api_is_immobilized,

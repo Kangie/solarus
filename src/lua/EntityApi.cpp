@@ -768,6 +768,8 @@ void LuaContext::register_entity_module() {
       { "set_dying_sound", enemy_api_set_dying_sound },
       { "get_exploding_sound", enemy_api_get_exploding_sound },
       { "set_exploding_sound", enemy_api_set_exploding_sound },
+      { "get_hurt_sound", enemy_api_get_hurt_sound },
+      { "set_hurt_sound", enemy_api_set_hurt_sound },
     });
   }
 
@@ -8847,6 +8849,42 @@ int LuaContext::enemy_api_set_exploding_sound(lua_State* l) {
     const std::string& sound_id = LuaTools::opt_string(l, 2, "");
 
     enemy.set_exploding_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_hurt_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_hurt_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_hurt_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_hurt_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_hurt_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_hurt_sound_id(sound_id);
 
     return 0;
   });
