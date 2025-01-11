@@ -38,7 +38,7 @@ float MusicSystem::global_volume = 100;
  * \brief Initializes the music system.
  */
 void MusicSystem::initialize() {
-  set_global_volume(100);
+  global_volume = 1.0;
   initialized = true;
 }
 
@@ -51,13 +51,14 @@ void MusicSystem::quit() {
     if (current_music != nullptr) {
       current_music->stop();
     }
-
     current_music = nullptr;
-    global_volume = 1.0;
 
-    // TODO: stop_all_musics
-
+    for (const MusicPtr& music: current_musics) {
+      music->stop();
+    }
     current_musics.clear();
+
+    global_volume = 1.0;
   }
 }
 
@@ -83,6 +84,9 @@ int MusicSystem::get_global_volume() {
  */
 void MusicSystem::set_global_volume(int volume) {
   global_volume = std::min(100, std::max(0, volume)) / 100.0;
+  for (const MusicPtr& music: current_musics) {
+    music->notify_global_volume_changed();
+  }
 }
 
 /**

@@ -37,6 +37,8 @@ void LuaContext::register_music_module() {
   const std::vector<luaL_Reg> methods = {
     { "play", music_api_play },
     { "stop", music_api_stop },
+    { "get_volume", music_api_get_volume },
+    { "set_volume", music_api_set_volume },
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -119,6 +121,39 @@ int LuaContext::music_api_stop(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Music& music = *check_music(l, 1);
     music.stop();
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of music:get_volume().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_get_volume(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+
+    lua_pushinteger(l, music.get_volume());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of music:set_volume().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_set_volume(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+    int volume = LuaTools::check_int(l, 2);
+
+    music.set_volume(volume);
 
     return 0;
   });

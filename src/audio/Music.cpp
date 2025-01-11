@@ -119,7 +119,7 @@ Music::Format Music::get_format() {
  * \brief Returns the current volume of music.
  * \return the volume (0 to 100)
  */
-int Music::get_volume() {
+int Music::get_volume() const {
   return (int) (volume * 100.0 + 0.5);
 }
 
@@ -129,8 +129,10 @@ int Music::get_volume() {
  */
 void Music::set_volume(int volume) {
   this->volume = std::min(100, std::max(0, volume)) / 100.0;
+  float global_volume = MusicSystem::get_global_volume() / 100.0;
+
   if (source != AL_NONE) {
-    alSourcef(source, AL_GAIN, this->volume);
+    alSourcef(source, AL_GAIN, this->volume * global_volume);
   }
 }
 
@@ -246,7 +248,7 @@ bool Music::update_playing() {
         decode_ogg(buffer, buffer_size);
         break;
       case FORMAT_NONE:
-        Debug::die("Invalid music format");
+        Debug::die("update_playing: Invalid music format");
         break;
     }
 
@@ -279,6 +281,9 @@ void Music::notify_device_disconnected() {
   }
 }
 
+/**
+ * \brief Notifies this music that the audio device was reconnected.
+ */
 void Music::notify_device_reconnected() {
 
   if (buffers[0] == AL_NONE) {
@@ -303,13 +308,20 @@ void Music::notify_device_reconnected() {
           decode_ogg(buffer, buffer_size);
           break;
         case FORMAT_NONE:
-          Debug::die("Invalid music format");
+          Debug::die("notify_device_reconnected: Invalid music format");
           break;
       }
       alSourceQueueBuffers(source, 1, &buffer);
     }
     alSourcePlay(source);
   }
+}
+
+/**
+ * \brief Notifies this music that the MusicSystem global volume has changed.
+ */
+void Music::notify_global_volume_changed() {
+  set_volume(get_volume());
 }
 
 /**
@@ -447,7 +459,7 @@ bool Music::start() {
       break;
 
     case FORMAT_NONE:
-      Debug::die("Invalid music format");
+      Debug::die("start: Invalid music format");
       break;
   }
 
@@ -505,9 +517,6 @@ void Music::stop() {
   // delete the buffers
   alDeleteBuffers(nb_buffers, buffers);
 
-  MusicPtr shared_this = std::static_pointer_cast<Music>(shared_from_this());
-  MusicSystem::remove_music(shared_this);
-
   switch (format) {
     case FORMAT_SPC:
       break;
@@ -518,16 +527,19 @@ void Music::stop() {
       ogg_decoder->unload();
       break;
     case FORMAT_NONE:
-      Debug::die("Invalid music format");
+      Debug::die("stop: Invalid music format");
       break;
   }
+
+  MusicPtr shared_this = std::static_pointer_cast<Music>(shared_from_this());
+  MusicSystem::remove_music(shared_this);
 }
 
 /**
  * \brief Returns whether the music is paused.
  * \return true if the music is paused, false otherwise
  */
-bool Music::is_paused() {
+bool Music::is_paused() const {
 
   if (!MusicSystem::is_initialized()) {
     return false;

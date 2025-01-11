@@ -31,4 +31,14 @@ Starts playing the music.
 
 Stops playing the music.
 
+\subsection lua_api_music_get_volume music:get_volume()
+
+Returns the volume for this music.
+- Return value (integer): The volume between 0 and 100.
+
+\subsection lua_api_music_set_volume music:set_volume(volume)
+
+Sets the volume for this music relative to the global volume (see sol.audio.set_music_volume).
+- \c volume (integer): The volume between 0 and 100.
+
 */
