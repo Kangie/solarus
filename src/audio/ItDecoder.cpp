@@ -76,7 +76,7 @@ int ItDecoder::decode(void* decoded_data, int nb_samples) {
  * \return The number of channels.
  */
 int ItDecoder::get_num_channels() const {
-  return ModPlug_NumChannels(modplug_file.get());
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->m_nChannels;
 }
 
 /**
@@ -85,24 +85,10 @@ int ItDecoder::get_num_channels() const {
  * \return The volume of this channel.
  */
 int ItDecoder::get_channel_volume(int channel) const {
-
-  const int num_patterns = ModPlug_NumPatterns(modplug_file.get());
-
   SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
       "Invalid channel number");
 
-  if (num_patterns == 0) {
-    return 0;
-  }
-
-  unsigned int num_rows = 0;
-  ModPlugNote* notes = ModPlug_GetPattern(modplug_file.get(), 0, &num_rows);
-
-  if (num_rows == 0) {
-    return 0;
-  }
-
-  return notes[0].Volume;
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nGlobalVol;
 }
 
 /**
@@ -111,17 +97,10 @@ int ItDecoder::get_channel_volume(int channel) const {
  * \param volume The volume to set.
  */
 void ItDecoder::set_channel_volume(int channel, int volume) {
+  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
+      "Invalid channel number");
 
-  const unsigned int num_channels = get_num_channels();
-  const unsigned int num_patterns = ModPlug_NumPatterns(modplug_file.get());
-
-  for (unsigned int pattern = 0; pattern < num_patterns; ++pattern) {
-    unsigned int num_rows;
-    ModPlugNote* notes = ModPlug_GetPattern(modplug_file.get(), pattern, &num_rows);
-    for (unsigned int j = channel; j < num_rows * num_channels; j += num_channels) {
-      notes[j].Volume = volume;
-    }
-  }
+  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nGlobalVol = volume;
 }
 
 /**
