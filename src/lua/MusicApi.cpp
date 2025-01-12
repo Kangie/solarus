@@ -39,6 +39,10 @@ void LuaContext::register_music_module() {
     { "stop", music_api_stop },
     { "get_volume", music_api_get_volume },
     { "set_volume", music_api_set_volume },
+    { "get_channel_volume", music_api_get_channel_volume },
+    { "set_channel_volume", music_api_set_channel_volume },
+    { "get_channel_pan", music_api_get_channel_pan },
+    { "set_channel_pan", music_api_set_channel_pan },
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -154,6 +158,76 @@ int LuaContext::music_api_set_volume(lua_State* l) {
     int volume = LuaTools::check_int(l, 2);
 
     music.set_volume(volume);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of music:get_channel_volume).
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_get_channel_volume(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+    int channel_index = LuaTools::check_int(l, 2);
+
+    lua_pushinteger(l, music.get_channel_volume(channel_index));
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of music:set_channel_volume().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_set_channel_volume(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+    int channel_index = LuaTools::check_int(l, 2);
+    int pan = LuaTools::check_int(l, 3);
+
+    music.set_channel_volume(channel_index, pan);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of music:get_channel_pan().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_get_channel_pan(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+    int channel_index = LuaTools::check_int(l, 2);
+
+    lua_pushinteger(l, music.get_channel_pan(channel_index));
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of music:set_channel_pan().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_set_channel_pan(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+    int channel_index = LuaTools::check_int(l, 2);
+    int pan = LuaTools::check_int(l, 3);
+
+    music.set_channel_pan(channel_index, pan);
 
     return 0;
   });

@@ -601,6 +601,10 @@ class LuaContext {
       music_api_stop,
       music_api_get_volume,
       music_api_set_volume,
+      music_api_get_channel_volume,
+      music_api_set_channel_volume,
+      music_api_get_channel_pan,
+      music_api_set_channel_pan,
 
       // Video API.
       video_api_get_window_title,

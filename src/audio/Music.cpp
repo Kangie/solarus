@@ -184,6 +184,37 @@ void Music::set_channel_volume(int channel, int volume) {
 }
 
 /**
+ * \brief Returns the pan of a channel of the current music.
+ *
+ * This function is only supported for .it musics.
+ *
+ * \param channel Index of a channel.
+ * \return The pan of this channel.
+ */
+int Music::get_channel_pan(int channel) {
+  SOLARUS_REQUIRE(get_format() == FORMAT_IT,
+      "This function is only supported for .it musics");
+
+  return it_decoder->get_channel_pan(channel);
+}
+
+/**
+ * \brief Sets the pan of a channel of the current music.
+ *
+ * This function is only supported for .it musics.
+ *
+ * \param channel Index of a channel.
+ * \param pan The pan to set.
+ */
+void Music::set_channel_pan(int channel, int pan) {
+
+  SOLARUS_REQUIRE(get_format() == FORMAT_IT,
+      "This function is only supported for .it musics");
+
+  it_decoder->set_channel_pan(channel, pan);
+}
+
+/**
  * \brief Returns the tempo of the current music.
  *
  * This function is only supported for .it musics.

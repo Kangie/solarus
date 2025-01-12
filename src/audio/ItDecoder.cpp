@@ -104,6 +104,30 @@ void ItDecoder::set_channel_volume(int channel, int volume) {
 }
 
 /**
+ * \brief Returns the pan of a channel.
+ * \param channel A channel index.
+ * \return The pan of this channel.
+ */
+int ItDecoder::get_channel_pan(int channel) const {
+  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
+      "Invalid channel number");
+
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nPan;
+}
+
+/**
+ * \brief Sets the pan of a channel.
+ * \param channel A channel index.
+ * \param pan The pan to set.
+ */
+void ItDecoder::set_channel_pan(int channel, int pan) {
+  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
+      "Invalid channel number");
+
+  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nPan = pan;
+}
+
+/**
  * \brief Returns the tempo of the music.
  * \return The tempo.
  */
