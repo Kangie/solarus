@@ -25,7 +25,6 @@
 #include <lua.hpp>
 #include <algorithm>
 #include <sstream>
-#include <iostream>
 
 namespace Solarus {
 
@@ -320,7 +319,7 @@ bool Music::update_playing() {
   // Check whether there is still something playing.
   ALint status;
   alGetSourcei(source, AL_SOURCE_STATE, &status);
-  if (status != AL_PLAYING) {
+  if (status != AL_PLAYING && status != AL_PAUSED) {
     // The end of the file is reached, or we need to decode more data.
     alSourcePlay(source);
   }

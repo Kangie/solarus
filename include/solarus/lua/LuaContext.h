@@ -600,6 +600,8 @@ class LuaContext {
       music_api_create,
       music_api_play,
       music_api_stop,
+      music_api_is_paused,
+      music_api_set_paused,
       music_api_get_volume,
       music_api_set_volume,
       music_api_get_channel_volume,
