@@ -90,10 +90,12 @@ class SOLARUS_API Music: public ExportableToLua {
     static MusicPtr create(const std::string& music_id);
 
   private:
+    void load(const std::string& music_id);
     void decode_spc(ALuint destination_buffer, ALsizei nb_samples);
     void decode_it(ALuint destination_buffer, ALsizei nb_samples);
     void decode_ogg(ALuint destination_buffer, ALsizei nb_samples);
 
+    bool load_successful;                        /**< If the music loading phase has been successful. */
     std::string id;                              /**< id of this music */
     std::string file_name;                       /**< name of the file to play */
     Format format;                               /**< format of the music, detected from the file name */

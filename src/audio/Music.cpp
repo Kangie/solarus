@@ -87,6 +87,8 @@ Music::Music(
   ogg_decoder(std::unique_ptr<OggDecoder>(new OggDecoder())),
   volume(1.0) {
 
+  load(music_id);
+
   SOLARUS_REQUIRE(!loop || callback_ref.is_empty(),
       "Attempt to set both a loop and a callback to music");
 
@@ -101,6 +103,35 @@ Music::Music(
 MusicPtr Music::create(const std::string& music_id) {
   Music* music = new Music(music_id, true, ScopedLuaRef());
   return MusicPtr(music);
+}
+
+/**
+ * \brief Performs the loading of music into memory
+ */
+void Music::load(const std::string& music_id) {
+  // Detect format from file_name
+  std::string file_name;
+  MusicSystem::find_music_file(music_id, file_name, format);
+
+  // Load music into
+  std::string sound_buffer;
+  switch (format) {
+    case FORMAT_SPC:
+      sound_buffer = QuestFiles::data_file_read(file_name);
+      spc_decoder->load((int16_t*) sound_buffer.data(), sound_buffer.size());
+      break;
+    case FORMAT_IT:
+      sound_buffer = QuestFiles::data_file_read(file_name);
+      it_decoder->load(sound_buffer);
+      break;
+    case FORMAT_OGG:
+      sound_buffer = QuestFiles::data_file_read(file_name);
+      load_successful = ogg_decoder->load(std::move(sound_buffer), loop);
+      break;
+    case FORMAT_NONE:
+      Debug::die("start: Invalid music format");
+      break;
+  }
 }
 
 const std::string& Music::get_id() const {
@@ -424,7 +455,6 @@ void Music::decode_ogg(ALuint destination_buffer, ALsizei nb_samples) {
  * \return true if the music was loaded successfully
  */
 bool Music::start() {
-
   if (!MusicSystem::is_initialized()) {
     return false;
   }
@@ -441,64 +471,41 @@ bool Music::start() {
     }
   }
 
-  bool success = true;
-
   // create the buffers and the source
   alGenBuffers(nb_buffers, buffers);
   alGenSources(1, &source);
   alSourcef(source, AL_GAIN, volume);
 
-  // load the music into memory
-  std::string sound_buffer;
+  // decode music from memory
   switch (format) {
-
     case FORMAT_SPC:
-
-      sound_buffer = QuestFiles::data_file_read(file_name);
-
-      // Give the SPC data into the SPC decoder.
-      spc_decoder->load((int16_t*) sound_buffer.data(), sound_buffer.size());
-
       for (int i = 0; i < nb_buffers; i++) {
         decode_spc(buffers[i], buffer_size);
       }
       break;
-
     case FORMAT_IT:
-
-      sound_buffer = QuestFiles::data_file_read(file_name);
-
-      // Give the IT data to the IT decoder
-      it_decoder->load(sound_buffer);
-
       for (int i = 0; i < nb_buffers; i++) {
         decode_it(buffers[i], buffer_size);
       }
       break;
-
     case FORMAT_OGG:
-
-      sound_buffer = QuestFiles::data_file_read(file_name);
-
-      // Give the OGG data to the OGG decoder.
-      success = ogg_decoder->load(std::move(sound_buffer), this->loop);
-      if (success) {
+      if (load_successful) {
         for (int i = 0; i < nb_buffers; i++) {
           decode_ogg(buffers[i], buffer_size);
         }
       }
       break;
-
     case FORMAT_NONE:
       Debug::die("start: Invalid music format");
       break;
   }
 
-  if (!success) {
+  if (!load_successful) {
     Debug::error("Cannot load music file '" + file_name + "'");
   }
 
   // start the streaming
+  bool start_successful = true;
   alSourceQueueBuffers(source, nb_buffers, buffers);
   ALenum error = alGetError();
   if (error != AL_NO_ERROR) {
@@ -506,7 +513,7 @@ bool Music::start() {
     oss << "Cannot initialize buffers for music '"
         << file_name << "': error " << error;
     Debug::error(oss.str());
-    success = false;
+    start_successful = false;
   }
 
   MusicPtr shared_this = shared_from_this_cast<Music>();
@@ -515,7 +522,7 @@ bool Music::start() {
 
   // The update() function will then take care of filling the buffers
 
-  return success;
+  return start_successful;
 }
 
 /**
@@ -561,9 +568,6 @@ void Music::stop() {
       Debug::die("stop: Invalid music format");
       break;
   }
-
-  MusicPtr shared_this = std::static_pointer_cast<Music>(shared_from_this());
-  MusicSystem::remove_music(shared_this);
 }
 
 /**
