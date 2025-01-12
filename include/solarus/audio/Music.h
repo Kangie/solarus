@@ -67,6 +67,8 @@ class SOLARUS_API Music: public ExportableToLua {
     int get_num_channels();
     int get_channel_volume(int channel);
     void set_channel_volume(int channel, int volume);
+    int get_channel_pan(int channel);
+    void set_channel_pan(int channel, int pan);
     int get_tempo();
     void set_tempo(int tempo);
 

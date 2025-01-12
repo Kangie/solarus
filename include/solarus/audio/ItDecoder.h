@@ -43,6 +43,8 @@ class ItDecoder {
     int get_num_channels() const;
     int get_channel_volume(int channel) const;
     void set_channel_volume(int channel, int volume);
+    int get_channel_pan(int channel) const;
+    void set_channel_pan(int channel, int pan);
     int get_tempo() const;
     void set_tempo(int tempo);
 
