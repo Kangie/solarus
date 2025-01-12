@@ -38,6 +38,8 @@ void LuaContext::register_music_module() {
   const std::vector<luaL_Reg> methods = {
     { "play", music_api_play },
     { "stop", music_api_stop },
+    { "is_paused", music_api_is_paused },
+    { "set_paused", music_api_set_paused },
     { "get_volume", music_api_get_volume },
     { "set_volume", music_api_set_volume },
     { "get_channel_volume", music_api_get_channel_volume },
@@ -127,6 +129,36 @@ int LuaContext::music_api_stop(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Music& music = *check_music(l, 1);
     music.stop();
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of music:is_paused().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_is_paused(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+    lua_pushboolean(l, music.is_paused());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of music:set_paused().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::music_api_set_paused(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Music& music = *check_music(l, 1);
+    bool paused = LuaTools::check_boolean(l, 2);
+    music.set_paused(paused);
 
     return 0;
   });
