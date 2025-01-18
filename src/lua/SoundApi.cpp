@@ -39,6 +39,7 @@ void LuaContext::register_sound_module() {
   // Functions of sol.sound.
   const std::vector<luaL_Reg> functions = {
       { "create", sound_api_create },
+      { "stop_all", sound_api_stop_all },
   };
 
   // Methods of the sound type.
@@ -113,6 +114,19 @@ int LuaContext::sound_api_create(lua_State* l) {
     SoundPtr sound = Sound::create(sound_buffer);
     push_sound(l, *sound);
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of sol.sound.stop_all().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_stop_all(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Sound::stop_all();
+    return 0;
   });
 }
 

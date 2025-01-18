@@ -581,6 +581,7 @@ class LuaContext {
 
       // Sound API.
       sound_api_create,
+      sound_api_stop_all,
       sound_api_play,
       sound_api_stop,
       sound_api_is_playing,

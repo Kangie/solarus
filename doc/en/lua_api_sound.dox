@@ -23,6 +23,11 @@ Unlike music files, sound files are entirely read before being played.
   the \c sounds directory and without extension.
   Currently, only OGG Vorbis (<tt>.ogg</tt>) sound files are supported.
 
+\subsection lua_api_sound_stop_all sol.sound.stop_all()
+
+Stops all currently playing sounds.
+This is useful if you started multiple looped sounds and want them to stop all at once (for example when a map finishes).
+
 \section lua_api_sound_methods Methods of sol.sound
 
 \subsection lua_api_sound_play sound:play()
@@ -59,6 +64,11 @@ Returns whether the sound effect should be played in a loop.
 Sets that the sound effect should be played in a loop.
 - \c looped (boolean, optional): \c true to set the loop, \c false to
   clear the loop. No value means \c true.
+
+Note: Sounds (especially when they are looped) are played accross maps and games.
+You will certainly want to stop all playing sound when the hero is leaving a map or exiting a game.
+For this, use the function
+\ref lua_api_sound_stop_all
 
 \subsection lua_api_sound_get_volume sound:get_volume()
 
