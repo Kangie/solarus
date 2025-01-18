@@ -309,8 +309,15 @@ void MusicSystem::update() {
   }
 
   // Update current musics from sol.music API
+  std::list<MusicPtr> musics_to_remove;
   for (const MusicPtr& music: current_musics) {
-    music->update_playing();
+    if (!music->update_playing()) {
+      musics_to_remove.push_back(music);
+    }
+  }
+
+  for (const MusicPtr& music: musics_to_remove) {
+    current_musics.remove(music);
   }
 }
 

@@ -119,10 +119,12 @@ void Music::load(const std::string& music_id) {
     case FORMAT_SPC:
       sound_buffer = QuestFiles::data_file_read(file_name);
       spc_decoder->load((int16_t*) sound_buffer.data(), sound_buffer.size());
+      load_successful = true;
       break;
     case FORMAT_IT:
       sound_buffer = QuestFiles::data_file_read(file_name);
       it_decoder->load(sound_buffer);
+      load_successful = true;
       break;
     case FORMAT_OGG:
       sound_buffer = QuestFiles::data_file_read(file_name);
@@ -515,10 +517,6 @@ bool Music::start() {
     Debug::error(oss.str());
     start_successful = false;
   }
-
-  MusicPtr shared_this = shared_from_this_cast<Music>();
-  MusicSystem::remove_music(shared_this); // To avoid duplicates.
-  MusicSystem::add_music(shared_this);
 
   // The update() function will then take care of filling the buffers
 

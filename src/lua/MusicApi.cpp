@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/MainLoop.h"
 #include "solarus/core/ResourceProvider.h"
@@ -95,6 +96,7 @@ int LuaContext::music_api_create(lua_State* l) {
   return state_boundary_handle(l, [&] {
     const std::string& music_id = LuaTools::check_string(l, 1);
     MusicPtr music = Music::create(music_id);
+    MusicSystem::add_music(music);
     push_music(l, *music);
     return 1;
   });
