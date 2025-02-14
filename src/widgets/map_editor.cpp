@@ -641,7 +641,7 @@ public:
     MapModel& map = get_map();
     for (const EntityIndex& index : indexes) {
       map.set_entity_field(index, "pattern", pattern_id_after);
-      const QSize& size = map.get_entity_closest_valid_size(index);
+      const QSize& size = map.get_entity_closest_snapped_size(index);
       if (map.is_entity_size_valid(index, size)) {
         map.set_entity_size(index, size);
       }

@@ -31,6 +31,7 @@ public:
   CustomEntity(MapModel& map, const EntityIndex& index);
 
   void notify_field_changed(const QString& key, const QVariant& value) override;
+  bool is_size_valid(const QSize& size) const override;
 };
 
 }

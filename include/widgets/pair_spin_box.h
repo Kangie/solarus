@@ -31,7 +31,7 @@ class PairSpinBox : public QWidget {
 
 public:
 
-  PairSpinBox(QWidget* parent = nullptr);
+  explicit PairSpinBox(QWidget* parent = nullptr);
 
   int get_first_value() const;
   int get_second_value() const;

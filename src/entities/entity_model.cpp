@@ -1440,14 +1440,34 @@ bool EntityModel::is_size_valid(const QSize& size) const {
 }
 
 /**
- * @brief Rounds legal size the closest to the given size.
+ * @brief Finds a valid size from the given wanted size.
+ */
+QSize EntityModel::get_closest_valid_size(const QSize& size) const {
+
+  if (is_size_valid(size)) {
+    // No need to snap.
+    return size;
+  }
+
+  // Snap to a multiple of the base size.
+  const QSize snapped_size = get_closest_snapped_size(size);
+  if (is_size_valid(snapped_size)) {
+    return snapped_size;
+  }
+
+  // Snapping failed: fallback to some default valid size.
+  return get_valid_size();
+}
+
+/**
+ * @brief Snaps a size to a multiple of the base size.
  *
  * This takes into account the resizing mode.
  *
  * @param size The size to check.
  * @return @c the rounded size.
  */
-QSize EntityModel::get_closest_valid_size(const QSize& size) const {
+QSize EntityModel::get_closest_snapped_size(const QSize& size) const {
 
   QSize valid_size = get_base_size();
   bool extend_width = false;
@@ -1498,11 +1518,6 @@ QSize EntityModel::get_closest_valid_size(const QSize& size) const {
     float base_height = get_base_size().height();
     valid_size.setHeight(qMax(base_height,
         qRound(size.height() / base_height) * base_height));
-  }
-
-  if (!is_size_valid(valid_size)) {
-    // Safety check.
-    return get_valid_size();
   }
 
   return valid_size;

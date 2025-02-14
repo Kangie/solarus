@@ -14,6 +14,7 @@
 * Show two license fields when creating a new map.
 * Map editor: allow to run the current map for testing purposes (#517).
 * Map editor: create teletransporters with scrolling if on the edge (#473).
+* Map editor: allow custom entities of any size (#538).
 * Tileset editor: allow to resize tile patterns (#159).
 * Sprite editor: allow to create a sprite from an image (#527).
 * Add error reporting to the quest runner process.

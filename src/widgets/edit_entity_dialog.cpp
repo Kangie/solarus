@@ -1477,10 +1477,10 @@ void EditEntityDialog::initialize_size() {
   // Apply the resize mode contraints.
   update_size_constraints();
 
-  connect(ui.size_field, SIGNAL(first_value_changed(int)),
-          this, SLOT(width_changed(int)));
-  connect(ui.size_field, SIGNAL(second_value_changed(int)),
-          this, SLOT(height_changed(int)));
+  connect(ui.size_field, &PairSpinBox::first_value_changed,
+          this, &EditEntityDialog::width_changed);
+  connect(ui.size_field, &PairSpinBox::second_value_changed,
+          this, &EditEntityDialog::height_changed);
 }
 
 /**
