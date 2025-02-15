@@ -16,8 +16,6 @@
  */
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/InputEvent.h"
-#include "solarus/core/Rectangle.h"
-#include "solarus/graphics/Video.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 
@@ -372,10 +370,10 @@ int LuaContext::input_api_get_joypads(lua_State* l) {
   return state_boundary_handle(l,[&]{
     lua_newtable(l); // t
     int i = 1;
-    for(const auto& pair : InputEvent::get_joypads()) {
-      lua_pushnumber(l,i); // t i
-      push_joypad(l,*pair.second); // t i j
-      lua_settable(l,-3); // t
+    for (const auto& pair : InputEvent::get_joypads()) {
+      lua_pushnumber(l, i); // t i
+      push_joypad(l, *pair.second); // t i j
+      lua_settable(l, -3); // t
       i++;
     }
     return 1;
@@ -385,8 +383,8 @@ int LuaContext::input_api_get_joypads(lua_State* l) {
 // Events
 void LuaContext::input_on_joypad_connected(Joypad& joy) {
   check_callback_thread();
-  push_input(current_l); //push_input(current_l);
-  if(find_method("on_joypad_connected")) {
+  push_input(current_l);
+  if (find_method("on_joypad_connected")) {
     push_joypad(current_l, joy);
     call_function(2, 0, "on_joypad_connected");
   }
