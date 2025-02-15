@@ -22,7 +22,6 @@
 #include "solarus/graphics/Transition.h"
 #include "solarus/lua/ExportableToLua.h"
 #include <map>
-#include <vector>
 #include <string>
 
 struct lua_State;

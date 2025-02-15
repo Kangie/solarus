@@ -480,7 +480,6 @@ void Controls::set_keyboard_binding(const Command &command, InputEvent::Keyboard
     if (previous_command != Command(CommandId::NONE)) {
       // This key is already mapped to a command.
       keyboard_mapping[previous_key] = previous_command;
-      //set_saved_keyboard_binding(previous_command, previous_key);
     }
     else {
       keyboard_mapping.erase(previous_key);
@@ -490,7 +489,6 @@ void Controls::set_keyboard_binding(const Command &command, InputEvent::Keyboard
   if (key != InputEvent::KeyboardKey::NONE) {
     keyboard_mapping[key] = command;
   }
-  //set_saved_keyboard_binding(command, key);
 }
 
 /**
@@ -530,7 +528,7 @@ void Controls::set_joypad_binding(const Command &command, const JoypadBinding& j
     }
   }
 
-  if (!joypad_binding.is_invalid()){
+  if (!joypad_binding.is_invalid()) {
     joypad_mapping[joypad_binding] = command;
   }
 }
@@ -653,8 +651,40 @@ std::string Controls::get_keyboard_binding_savegame_variable(
   return "";
 }
 
-void Controls::save(Savegame& /*savegame*/) const {
-  //TODO !!
+/**
+ * \brief Writes these controls to a savegame.
+ *
+ * This should only be called for main controls for now.
+ * TOOD add support for saving multiple controls independently,
+ * possibly with a prefix?
+ *
+ * \param savegame The savegame to update.
+ */
+void Controls::save(Savegame& savegame) const {
+
+  for (CommandId command : {
+    CommandId::ACTION,
+    CommandId::ATTACK,
+    CommandId::ITEM_1,
+    CommandId::ITEM_2,
+    CommandId::PAUSE,
+    CommandId::RIGHT,
+    CommandId::UP,
+    CommandId::LEFT,
+    CommandId::DOWN
+  }) {
+    std::string savegame_variable = get_keyboard_binding_savegame_variable(command);
+    InputEvent::KeyboardKey keyboard_key = get_keyboard_binding(command);
+    if (keyboard_key != InputEvent::KeyboardKey::NONE) {
+      savegame.set_string(savegame_variable, enum_to_name(keyboard_key));
+    }
+
+    savegame_variable = get_joypad_binding_savegame_variable(command);
+    JoypadBinding joypad_binding = get_joypad_binding(command).value_or(JoyPadButton::INVALID);
+    if (!joypad_binding.is_invalid()) {
+      savegame.set_string(savegame_variable, joypad_binding.to_string());
+    }
+  }
 }
 
 /**
@@ -704,21 +734,6 @@ InputEvent::KeyboardKey Controls::get_saved_keyboard_binding(
 }
 
 /**
- * \brief Saves the low-level keyboard command where the specified game key is
- * mapped.
- * \param command A game command.
- * \param keyboard_key The keyboard key to map to this game command in the
- * savegame.
- */
-void Controls::set_saved_keyboard_binding(
-      Command command, InputEvent::KeyboardKey keyboard_key, Savegame& save) {
-
-  const std::string& savegame_variable = get_keyboard_binding_savegame_variable(command);
-  const std::string& keyboard_key_name = enum_to_name(keyboard_key);
-  save.set_string(savegame_variable, keyboard_key_name);
-}
-
-/**
  * \brief Returns the game command (if any) associated to the specified
  * keyboard key.
  * \param key A keyboard key.
@@ -749,18 +764,6 @@ Controls::JoypadBinding Controls::get_saved_joypad_binding(
 
   const std::string& savegame_variable = get_joypad_binding_savegame_variable(command);
   return JoypadBinding(save.get_string(savegame_variable));
-}
-
-/**
- * \brief Saves the low-level joypad action where the specified game command
- * is mapped.
- * \param command A game command.
- * \return The joypad action to map to this game command in the savegame.
- */
-void Controls::set_saved_joypad_binding(Command command, const JoypadBinding &joypad_binding, Savegame &save) {
-
-  const std::string& savegame_variable = get_joypad_binding_savegame_variable(command);
-  save.set_string(savegame_variable, joypad_binding.to_string());
 }
 
 /**

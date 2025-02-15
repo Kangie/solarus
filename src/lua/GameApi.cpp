@@ -245,6 +245,10 @@ int LuaContext::game_api_save(lua_State* l) {
       LuaTools::error(l, "Cannot save game: no write directory was specified in quest.dat");
     }
 
+    const Game* game = savegame.get_game();
+    if (game != nullptr) {
+      game->get_controls().save(savegame);
+    }
     savegame.save();
 
     return 0;
