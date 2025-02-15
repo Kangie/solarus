@@ -1,0 +1,121 @@
+cmake_minimum_required(VERSION 3.19.0)
+
+project("solarus-launcher"
+  LANGUAGES CXX
+  VERSION 2.0.0
+  HOMEPAGE_URL "https://www.solarus-games.org"
+  DESCRIPTION "Legacy Launcher for Solarus Quests"
+)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER CMakeAutogenTargets)
+
+if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "13.6")
+endif()
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg)
+qt_standard_project_setup()
+
+# Dependencies.
+include(FetchContent)
+FetchContent_Declare(qlementine_icons
+  GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
+  GIT_TAG 0a269d7c4eb77fdc8ca92a7fb2ceae1baae29727 #v1.5.0
+)
+FetchContent_MakeAvailable(qlementine_icons)
+set_target_properties(qlementine_icons
+  PROPERTIES
+    FOLDER dependencies
+)
+
+FetchContent_Declare(qlementine
+  GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
+  GIT_TAG b53a59aff84f1f2ddcf9f26e2e039e82b2ecb5f2 #dev
+)
+FetchContent_MakeAvailable(qlementine)
+set_target_properties(qlementine
+  PROPERTIES
+    FOLDER dependencies
+)
+
+# Icon.
+set(MACOSX_BUNDLE_ICON_FILE solarus_launcher_icon.icns)
+set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.icns")
+set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
+# Target.
+qt_add_executable(SolarusLauncher MACOSX_BUNDLE
+  ${APP_ICON_MACOS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Common.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestData.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListItemDelegate.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListItemDelegate.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListModel.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListModel.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
+)
+set_target_properties(SolarusLauncher PROPERTIES OUTPUT_NAME "Solarus Launcher")
+
+qt_add_resources(SolarusLauncher "resources"
+  PREFIX "/solarus/launcher/"
+  FILES
+    resources/themes/dark.json
+    resources/themes/light.json
+    resources/icon/solarus_launcher_icon.icns
+    resources/icon/solarus_launcher_icon.ico
+    resources/icon/solarus_launcher_icon.svg
+    resources/icon/solarus_launcher_icon_1024.png
+    resources/icon/solarus_launcher_icon_128.png
+    resources/icon/solarus_launcher_icon_16.png
+    resources/icon/solarus_launcher_icon_20.png
+    resources/icon/solarus_launcher_icon_24.png
+    resources/icon/solarus_launcher_icon_256.png
+    resources/icon/solarus_launcher_icon_32.png
+    resources/icon/solarus_launcher_icon_40.png
+    resources/icon/solarus_launcher_icon_48.png
+    resources/icon/solarus_launcher_icon_512.png
+    resources/icon/solarus_launcher_icon_64.png
+    resources/icon/solarus_launcher_icon_96.png
+    resources/icon/solarus_launcher_icon_symbolic.svg
+    resources/icon/solarus_quest_icon.icns
+    resources/icon/solarus_quest_icon.ico
+)
+
+target_link_libraries(SolarusLauncher
+  PRIVATE
+    Qt6::Widgets
+    Qt6::Svg
+    oclero::qlementine
+    oclero::qlementine_icons
+)
+
+set_target_properties(SolarusLauncher PROPERTIES
+  ${BUNDLE_ID_OPTION}
+  MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+  MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+  MACOSX_BUNDLE TRUE
+  WIN32_EXECUTABLE TRUE
+)
+
+include(GNUInstallDirs)
+install(TARGETS SolarusLauncher
+  BUNDLE DESTINATION .
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+qt_finalize_executable(SolarusLauncher)
