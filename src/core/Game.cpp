@@ -300,7 +300,7 @@ bool Game::notify_input(const InputEvent& event) {
 }
 
 /**
- * \brief This function is called when a game commend event is raised.
+ * \brief This function is called when a game command event is raised.
  * \param command A game command.
  */
 void Game::notify_control(const ControlEvent& event) {
@@ -319,8 +319,8 @@ void Game::notify_control(const ControlEvent& event) {
   }
 
   // See if the map scripts handled the command.
-  for(const MapPtr& map : current_maps) {
-    if(map->notify_control(event)) {
+  for (const MapPtr& map : current_maps) {
+    if (map->notify_control(event)) {
       return;
     }
   }

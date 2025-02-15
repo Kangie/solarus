@@ -23,7 +23,6 @@
 #include "solarus/entities/Hero.h"
 #include "solarus/lua/LuaContext.h"
 #include <lua.hpp>
-#include <sstream>
 
 namespace Solarus {
 
@@ -113,7 +112,7 @@ Controls::Controls(MainLoop& main_loop, Game& game):
   keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::RIGHT, save)] = ControlAxisBinding{AxisId::X, AxisDirection::PLUS};
 
   //Add default joypad if auto mapping is enabled
-  if(InputEvent::is_legacy_joypad_enabled()) {
+  if (InputEvent::is_legacy_joypad_enabled()) {
     set_joypad(InputEvent::other_joypad(nullptr));
   }
 }
@@ -169,11 +168,11 @@ double Controls::get_axis_state(const Axis &axis) const {
 int Controls::get_wanted_direction8() const {
   uint16_t direction_mask = 0x0000;
 
-  if(are_analog_commands_enabled()) {
+  if (are_analog_commands_enabled()) {
     double x = get_axis_state(AxisId::X);
     double y = get_axis_state(AxisId::Y);
 
-    if(x > 0) {
+    if (x > 0) {
       direction_mask |= direction_masks[0];
     }
     if (y < 0) {
@@ -210,7 +209,7 @@ int Controls::get_wanted_direction8() const {
 std::pair<double, double> Controls::get_wanted_polar() const {
   double x = 0.0;
   double y = 0.0;
-  if(are_analog_commands_enabled()) {
+  if (are_analog_commands_enabled()) {
     x = get_axis_state(AxisId::X);
     y = get_axis_state(AxisId::Y);
   } else {
@@ -248,7 +247,7 @@ void Controls::notify_input(const InputEvent& event) {
   }
   else if (event.is_keyboard_key_released()) {
     keyboard_key_released(event.get_keyboard_key());
-  } else if(event.is_joypad_event() && event.get_joypad() == joypad) {
+  } else if (event.is_joypad_event() && event.get_joypad() == joypad) {
     //Only handle events of the selected joypad
     if (event.is_joypad_button_released()) {
       joypad_button_released(event.get_joypad_button());
@@ -271,11 +270,11 @@ void Controls::notify_input(const InputEvent& event) {
  */
 void Controls::keyboard_key_pressed(InputEvent::KeyboardKey keyboard_key_pressed) {
   if (!customizing) {
-    for(const auto& command :  keyboard_mapping.vec_for(keyboard_key_pressed)) {
+    for (const auto& command :  keyboard_mapping.vec_for(keyboard_key_pressed)) {
       command_pressed(command);
     }
 
-    for(const auto& cab : keyboard_axis_mapping.vec_for(keyboard_key_pressed)) {
+    for (const auto& cab : keyboard_axis_mapping.vec_for(keyboard_key_pressed)) {
         if(cab.axis != Axis(AxisId::NONE)) {
           command_axis_moved(cab.axis, get_axis_state(cab.axis)+(cab.direction == AxisDirection::PLUS ? 1.0 : -1.0));
         }
@@ -320,7 +319,7 @@ void Controls::joypad_button_pressed(JoyPadButton button) {
 
   if (!customizing) {
     // If the joypad button is mapped, notify the game.
-    for(const auto& command : joypad_mapping.vec_for(binding)) {
+    for (const auto& command : joypad_mapping.vec_for(binding)) {
       command_pressed(command);
     }
   }
@@ -345,7 +344,7 @@ void Controls::joypad_button_pressed(JoyPadButton button) {
  */
 void Controls::joypad_button_released(JoyPadButton button) {
   auto binding = JoypadBinding(button);
-  for(const auto& command : joypad_mapping.vec_for(binding)) {
+  for (const auto& command : joypad_mapping.vec_for(binding)) {
     command_released(command);
   }
 }
@@ -358,12 +357,12 @@ void Controls::joypad_button_released(JoyPadButton button) {
 void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
   if (std::abs(state) < 1e-5) {
     // Axis in centered position : Test both positive and negative bindings for release
-    for(const auto& command : joypad_mapping.vec_for(JoypadBinding(axis, AxisDirection::PLUS))) {
+    for (const auto& command : joypad_mapping.vec_for(JoypadBinding(axis, AxisDirection::PLUS))) {
       if (is_command_pressed(command)) {
         command_released(command);
       }
     }
-    for(const auto& command : joypad_mapping.vec_for(JoypadBinding(axis, AxisDirection::MINUS))) {
+    for (const auto& command : joypad_mapping.vec_for(JoypadBinding(axis, AxisDirection::MINUS))) {
       if (is_command_pressed(command)) {
         command_released(command);
       }
@@ -377,15 +376,15 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
 
     if (!customizing) {
       // First release all commands going the other direction
-      for(const auto& inverse_command : joypad_mapping.vec_for((JoypadBinding(axis, -state > 0 ? AxisDirection::PLUS : AxisDirection::MINUS)))) {
+      for (const auto& inverse_command : joypad_mapping.vec_for((JoypadBinding(axis, -state > 0 ? AxisDirection::PLUS : AxisDirection::MINUS)))) {
         if (is_command_pressed(inverse_command)) {
           command_released(inverse_command);
         }
       }
       // Other command released.
       // Then fire commands going in the correct one
-      for(const auto& command : joypad_mapping.vec_for(binding)) {
-        if(!is_command_pressed(command)){
+      for (const auto& command : joypad_mapping.vec_for(binding)) {
+        if (!is_command_pressed(command)){
           command_pressed(command);
         }
       }
@@ -403,8 +402,8 @@ void Controls::joypad_axis_moved(JoyPadAxis axis, double state) {
     }
   }
 
-  //Handle command axes
-  for(const ControlAxisBinding& ab : joypad_axis_mapping.vec_for(axis)) {
+  // Handle command axes
+  for (const ControlAxisBinding& ab : joypad_axis_mapping.vec_for(axis)) {
     command_axis_moved(ab.axis, ab.direction == AxisDirection::PLUS ? state : -state);
   }
 }
@@ -529,7 +528,7 @@ void Controls::set_joypad_binding(const Command &command, const JoypadBinding& j
     }
   }
 
-  if(!joypad_binding.is_invalid()){
+  if (!joypad_binding.is_invalid()){
     joypad_mapping[joypad_binding] = command;
   }
 }
@@ -542,7 +541,7 @@ void Controls::set_joypad_binding(const Command &command, const JoypadBinding& j
 std::tuple<InputEvent::KeyboardKey, InputEvent::KeyboardKey> Controls::get_keyboard_axis_binding(const Axis& command_axis) const {
   InputEvent::KeyboardKey plus = InputEvent::KeyboardKey::NONE, minus = InputEvent::KeyboardKey::NONE;
   keyboard_axis_mapping.for_each([&](const auto& key, const auto& binding){
-      if(binding.axis == command_axis) {
+      if (binding.axis == command_axis) {
           (binding.direction == AxisDirection::PLUS ? plus : minus) = key;
       }
   });
@@ -559,11 +558,11 @@ std::tuple<InputEvent::KeyboardKey, InputEvent::KeyboardKey> Controls::get_keybo
  * @param plus key triggering positive state
  */
 void Controls::set_keyboard_axis_binding(const Axis& command_axis, InputEvent::KeyboardKey minus, InputEvent::KeyboardKey plus) {
-  auto [pm,pp] = get_keyboard_axis_binding(command_axis);
+  auto [pm, pp] = get_keyboard_axis_binding(command_axis);
   auto prev_min = get_axis_from_keyboard(minus);
   auto prev_plus = get_axis_from_keyboard(plus);
-  if(pm != InputEvent::KeyboardKey::NONE or pp != InputEvent::KeyboardKey::NONE){
-    if(prev_min.axis != Axis(AxisId::NONE) || prev_plus.axis != Axis(AxisId::NONE)) {
+  if (pm != InputEvent::KeyboardKey::NONE or pp != InputEvent::KeyboardKey::NONE){
+    if (prev_min.axis != Axis(AxisId::NONE) || prev_plus.axis != Axis(AxisId::NONE)) {
       keyboard_axis_mapping[pm] = prev_min;
       keyboard_axis_mapping[pp] = prev_plus;
     } else {
@@ -587,7 +586,7 @@ void Controls::set_keyboard_axis_binding(const Axis& command_axis, InputEvent::K
 Controls::JoypadAxisBinding Controls::get_joypad_axis_binding(const Axis& command_axis) const {
   JoypadAxisBinding jaxisb = {JoyPadAxis::INVALID, AxisDirection::PLUS};
   joypad_axis_mapping.for_each([&](const auto& axis, const auto& binding){
-      if(binding.axis == command_axis){
+      if (binding.axis == command_axis){
           jaxisb = {axis, binding.direction};
       }
   });
@@ -597,7 +596,7 @@ Controls::JoypadAxisBinding Controls::get_joypad_axis_binding(const Axis& comman
 /**
  * \brief Maps the specified joypad axis to a command axis
  *
- * If this joypad axis was already mapped to a command axis, both caxis are switched.
+ * If this joypad axis was already mapped to a command axis, both axis are switched.
  *
  * \param command_axis A game command.
  * \param axis A joypad axis
@@ -607,7 +606,7 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoypadAxisBindi
   auto previous_binding = get_joypad_axis_binding(command_axis);
   auto previous_command_axis = get_axis_from_joypad(binding.axis);
 
-  if(previous_binding.invalid()){
+  if (previous_binding.invalid()){
     if(previous_command_axis.axis != Axis(AxisId::NONE)){
       joypad_axis_mapping[previous_binding.axis] = previous_command_axis;
     } else {
@@ -615,7 +614,7 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoypadAxisBindi
     }
   }
 
-  if(!binding.invalid()) {
+  if (!binding.invalid()) {
     joypad_axis_mapping[binding.axis] = ControlAxisBinding{command_axis, binding.direction};
   }
 }
@@ -643,7 +642,7 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoypadAxisBindi
       { CommandId::DOWN, Savegame::KEY_KEYBOARD_DOWN }
     };
 
-    if(std::holds_alternative<CommandId>(command)){
+    if (std::holds_alternative<CommandId>(command)){
       return savegame_variables.find(std::get<CommandId>(command))->second;
     } else if (std::holds_alternative<CustomId>(command)){
       return "_command_key_" + std::get<CustomId>(command).id;
@@ -782,6 +781,7 @@ void Controls::set_joypad_axis_binding(const Axis& command_axis, JoypadAxisBindi
    * @brief Loads the engine hard-coded default joypad bindings
    */
   void Controls::load_default_joypad_bindings() {
+
     joypad_mapping[JoypadBinding(JoyPadAxis::LEFT_X, AxisDirection::PLUS)] = CommandId::RIGHT;
     joypad_mapping[JoypadBinding(JoyPadAxis::LEFT_X, AxisDirection::MINUS)] = CommandId::LEFT;
     joypad_mapping[JoypadBinding(JoyPadAxis::LEFT_Y, AxisDirection::PLUS)] = CommandId::DOWN;

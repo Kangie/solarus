@@ -18,10 +18,8 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/InputEvent.h"
 #include "solarus/core/Logger.h"
-#include "solarus/core/Rectangle.h"
 #include "solarus/graphics/Video.h"
 #include "solarus/lua/LuaContext.h"
-#include "solarus/core/CurrentQuest.h"
 #include <SDL.h>
 #include <cstdlib>  // std::abs
 #include <sstream>
@@ -966,8 +964,8 @@ void InputEvent::set_legacy_joypad_enabled(bool joypad_enabled) {
  * @return other joypad or nullptr if none
  */
 JoypadPtr InputEvent::other_joypad(const JoypadPtr& joypad) {
-  for(const auto& p : joypads) {
-    if(p.second != joypad) {
+  for (const auto& p : joypads) {
+    if (p.second != joypad) {
       return p.second;
     }
   }

@@ -299,9 +299,9 @@ bool Entity::State::notify_input(const InputEvent& /* event */) {
 }
 
 void Entity::State::notify_control(const ControlEvent& event) {
-  if(event.is_pressed()) {
+  if (event.is_pressed()) {
     notify_command_pressed(event.get_command());
-  } else if(event.is_released()){
+  } else if (event.is_released()){
     notify_command_released(event.get_command());
   }
 }

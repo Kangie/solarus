@@ -2013,10 +2013,11 @@ bool LuaContext::on_joypad_axis_moved(const InputEvent& event) {
     JoyPadAxis axis = event.get_joypad_axis();
     double state = event.get_joypad_axis_state();
 
-    if(CurrentQuest::is_format_at_least({2, 0}))
+    if (CurrentQuest::is_format_at_least({2, 0})) {
       push_string(current_l, enum_to_name(axis));
-    else // Emulate old behaviour if quest is not 2.0
+    } else { // Emulate old behaviour if the quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(axis));
+    }
     lua_pushnumber(current_l, state);
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(4, 1, "on_joypad_axis_moved");

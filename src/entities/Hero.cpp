@@ -495,7 +495,7 @@ bool Hero::notify_input(const InputEvent& event) {
 bool Hero::notify_control(const ControlEvent& event) {
 
   //TODO filter events that aren't for this hero
-  if(!event.is_from(controls)) {
+  if (!event.is_from(controls)) {
     return false; //Don't handle events not destined to this hero
   }
 
