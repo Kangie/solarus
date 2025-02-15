@@ -249,6 +249,7 @@ tileset{ id = "overworld", description = "Overworld" }
 
 sprite{ id = "16x16", description = "16x16 sprite" }
 sprite{ id = "16x24", description = "16x24 sprite" }
+sprite{ id = "1x1", description = "1x1 sprite" }
 sprite{ id = "blocks/block_brown", description = "Block (brown)" }
 sprite{ id = "chests/chest_brown", description = "Chest (brown)" }
 sprite{ id = "destructibles/vase", description = "Vase" }
@@ -1073,6 +1074,7 @@ file{ path = "sprites/16x16.dat", author = "Christopho", license = "CC BY-SA 4.0
 file{ path = "sprites/16x16.png", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/16x24.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/16x24.png", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "sprites/1x1.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/blocks/block.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/blocks/block_brown.dat", license = "CC BY-SA 4.0" }
 file{ path = "sprites/chests/chest.png", author = "Diarandor", license = "CC BY-SA 4.0" }

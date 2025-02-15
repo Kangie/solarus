@@ -1842,17 +1842,19 @@ Called at each cycle of the main loop while this map is the current one.
 \remark As this function is called at each cycle, it is recommended to use other
 solutions when possible, like \ref lua_api_timer "timers" and other events.
 
-\subsection lua_api_map_on_draw map:on_draw(dst_surface)
+\subsection lua_api_map_on_draw map:on_draw(camera_surface)
 
 Called when the map has just been redrawn by the engine.
 
-The engine has already drawn the map, but not the
+The engine has already drawn the map contents, but not the
 \ref lua_api_menu "menus" of this map if any.
 Use this event if you want to draw some additional content on the map
 before the menus, for example an overlay.
-- \c dst_surface (\ref lua_api_surface "surface"): The surface where the map
-  is drawn. This surface represents the visible part of the screen, not the
-  whole map.
+- \c camera_surface (\ref lua_api_surface "surface"): The surface of the camera
+  being drawn.
+  This surface represents the visible part of the camera, not the whole map.
+
+\remark If the map has multiple cameras, this event is called for every camera.
 
 \subsection lua_api_map_on_suspended map:on_suspended(suspended)
 

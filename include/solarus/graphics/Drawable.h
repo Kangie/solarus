@@ -161,7 +161,7 @@ class Drawable: public ExportableToLua {
     uint8_t opacity = 255;        /**< Opacity of this drawable object */
     double rotation = 0;          /**< Rotation of the object around transform_origin*/
     Scale scale;                  /**< Scale of the object around transform_origin*/
-    Point transformation_origin;       /**< pivot for the transformations (rot,scale) of the object*/
+    Point transformation_origin;  /**< Pivot for the transformations (rot,scale) of the object */
     Color color_mod = Color::white;
 };
 

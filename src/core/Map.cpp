@@ -596,11 +596,12 @@ void Map::draw() {
     get_entities().draw(*camera);
 
     // foreground
-    camera->reset_view();
     //draw_foreground(camera_surface);
 
     // Lua
-    get_lua_context().map_on_draw(*this, camera_surface); //TODO check for coordinates problem
+    get_lua_context().map_on_draw(*this, camera_surface); //TODO check for coordinates
+
+    camera->reset_view();
   }
 }
 
