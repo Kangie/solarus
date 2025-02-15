@@ -797,10 +797,6 @@ void Controls::load_default_joypad_bindings() {
 
   joypad_axis_mapping[JoyPadAxis::LEFT_X] = ControlAxisBinding{AxisId::X, AxisDirection::PLUS};
   joypad_axis_mapping[JoyPadAxis::LEFT_Y] = ControlAxisBinding{AxisId::Y, AxisDirection::PLUS};
-  auto b = get_joypad_binding(get_command_by_name("left"));
-  b = get_joypad_binding(get_command_by_name("right"));
-  b = get_joypad_binding(get_command_by_name("up"));
-  b = get_joypad_binding(get_command_by_name("down"));
 }
 
 /**
