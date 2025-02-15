@@ -154,7 +154,7 @@ bool Controls::is_command_pressed(const Command&command) const {
  */
 double Controls::get_axis_state(const Axis &axis) const {
   const auto& it = command_axes_state.find(axis);
-  if(it != command_axes_state.end()) {
+  if (it != command_axes_state.end()) {
     return it->second;
   } else {
     return 0.0;
@@ -229,7 +229,7 @@ std::pair<double, double> Controls::get_wanted_polar() const {
     }
   }
   double angle = atan2(-y, x);
-  double norm = std::min(sqrt(x*x+y*y), 1.0); //Clamp the norm to 1
+  double norm = std::min(sqrt(x*x+y*y), 1.0); // Clamp the norm to 1
   return {norm, angle};
 }
 
@@ -250,7 +250,7 @@ void Controls::notify_input(const InputEvent& event) {
   else if (event.is_keyboard_key_released()) {
     keyboard_key_released(event.get_keyboard_key());
   } else if (event.is_joypad_event() && event.get_joypad() == joypad) {
-    //Only handle events of the selected joypad
+    // Only handle events of the selected joypad
     if (event.is_joypad_button_released()) {
       joypad_button_released(event.get_joypad_button());
     }
@@ -300,12 +300,12 @@ void Controls::keyboard_key_pressed(InputEvent::KeyboardKey keyboard_key_pressed
  * \param keyboard_control_released The key released.
  */
 void Controls::keyboard_key_released(InputEvent::KeyboardKey keyboard_key_released) {
-  for(const auto& command :  keyboard_mapping.vec_for(keyboard_key_released)) {
+  for (const auto& command :  keyboard_mapping.vec_for(keyboard_key_released)) {
     command_released(command);
   }
 
-  for(const auto& cab : keyboard_axis_mapping.vec_for(keyboard_key_released)) {
-    if(cab.axis != Axis(AxisId::NONE)) {
+  for (const auto& cab : keyboard_axis_mapping.vec_for(keyboard_key_released)) {
+    if (cab.axis != Axis(AxisId::NONE)) {
       command_axis_moved(cab.axis, get_axis_state(cab.axis)+(cab.direction == AxisDirection::PLUS ? -1.0 : 1.0));
     }
   }
