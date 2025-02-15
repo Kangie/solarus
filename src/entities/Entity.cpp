@@ -34,13 +34,9 @@
 #include "solarus/entities/Separator.h"
 #include "solarus/entities/StreamAction.h"
 #include "solarus/entities/Switch.h"
-#include "solarus/entities/Tileset.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/movements/Movement.h"
-#include <algorithm>
-#include <iterator>
-#include <list>
 #include <utility>
 
 namespace Solarus {
@@ -957,10 +953,8 @@ Rectangle Entity::get_max_bounding_box() const {
   Rectangle result = get_bounding_box();
   for (const SpritePtr& sprite: get_sprites()) {
     Rectangle box = sprite->get_max_bounding_box();
-    box.add_xy(sprite->get_xy());  // Take into account the sprite's own offset.
     box.add_xy(get_xy());  // Take into account the coordinates of the entity.
     result |= box;
-    // TODO when the sprite's offset changes, update the bounding box
   }
   return result;
 }
@@ -3783,9 +3777,10 @@ void Entity::update_sprites() {
  */
 void Entity::update_sprite(Sprite& sprite) {
 
-  sprite.update();
-  if (sprite.has_frame_changed()) {
-    // The frame has just changed.
+  bool changed = false;
+  sprite.update(changed);
+  if (changed) {
+    // The frame or offset has just changed.
     // Pixel-precise collisions need to be rechecked.
     if (sprite.are_pixel_collisions_enabled()) {
 

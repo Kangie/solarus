@@ -71,7 +71,7 @@ class Sprite final: public Drawable {
     virtual Size get_size() const override;
     const Size& get_max_size() const;
     virtual Point get_origin() const override;
-    const Rectangle& get_max_bounding_box() const;
+    Rectangle get_max_bounding_box() const;
 
     // animation state
     const std::string& get_current_animation() const;
@@ -102,7 +102,7 @@ class Sprite final: public Drawable {
     bool is_animation_looping() const;
     bool is_animation_finished() const;
     bool is_last_frame_reached() const;
-    bool has_frame_changed() const;
+    void notify_position_changed() override;
 
     // effects
     bool is_blinking() const;
@@ -113,6 +113,7 @@ class Sprite final: public Drawable {
 
     // update and draw
     virtual void update() override;
+    void update(bool &changed);
     void draw_intermediate() const;
 
     Rectangle clamp_region(const Rectangle& region) const;
@@ -132,7 +133,7 @@ class Sprite final: public Drawable {
     static SpriteAnimationSet& get_animation_set(const std::string& id);
     int get_next_frame() const;
     Surface& get_intermediate_surface() const ;
-    void set_frame_changed(bool frame_changed);
+    void set_changed(bool changed);
     void notify_finished();
 
     // animation set
@@ -149,7 +150,7 @@ class Sprite final: public Drawable {
                                         * of the entity, because sometimes a sprite can
                                         * go backwards. */
     int current_frame;                 /**< current frame of the animation (the first one is number 0) */
-    bool frame_changed;                /**< indicates that the frame has just changed */
+    bool changed;                      /**< indicates that collisions should be recomputed */
 
     uint32_t frame_delay;              /**< delay between two frames in milliseconds */
     uint32_t next_frame_date;          /**< date of the next frame */

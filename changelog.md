@@ -3,6 +3,9 @@
 ## Solarus 2.0.0 (in progress)
 
 The multiplayer update!
+Solarus now supports multiple maps, cameras, heroes and game controllers.
+This release comes with a new game controller API and an improved audio API
+with better support and customization features.
 
 ### Engine changes
 
@@ -31,6 +34,7 @@ The multiplayer update!
 * Fix speed of target movement outside a game (#1297).
 * Fix crash when circle movement angular speed is 0 (#1657).
 * Fix `custom_entity:add_collision_test()` not always checking collisions (#1648).
+* Fix collisions when moving a sprite without moving the entity (#1535).
 
 ### Lua API changes
 

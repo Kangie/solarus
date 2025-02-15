@@ -106,7 +106,11 @@ const Point& Drawable::get_xy() const {
  * \param xy The new coordinates of this drawable object.
  */
 void Drawable::set_xy(const Point& xy) {
-  this->xy = xy;
+
+  if (xy != this->xy) {
+    this->xy = xy;
+    notify_position_changed();
+  }
 }
 
 /**
@@ -206,6 +210,13 @@ void Drawable::set_suspended(bool suspended) {
   if (movement != nullptr) {
     movement->set_suspended(suspended);
   }
+}
+
+/**
+ * \brief Notifies this object that its position has changed.
+ */
+void Drawable::notify_position_changed() {
+  // Do nothing by default.
 }
 
 /**
