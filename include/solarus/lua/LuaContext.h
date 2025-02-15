@@ -1446,14 +1446,14 @@ public:
      * @param elements A collection of userdata, order is preserved
      */
     static void push_userdata_array(lua_State* l, const Container& elements) {
-        int i = 0;
-        lua_newtable(l);
-        for(const auto& element: elements) {
-          ++i;
-          lua_pushinteger(l, i);
-          push_userdata(l, *element);
-          lua_rawset(l, -3);
-        }
+      int i = 0;
+      lua_newtable(l);
+      for (const auto& element: elements) {
+        ++i;
+        lua_pushinteger(l, i);
+        push_userdata(l, *element);
+        lua_rawset(l, -3);
+      }
     }
 
     /**
