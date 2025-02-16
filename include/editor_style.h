@@ -68,8 +68,10 @@ public:
   void set_mode(Mode mode);
   Mode get_actual_mode() const;
   static const ModeInfo& get_mode_info();
-
   static Mode get_os_mode();
+
+  QRect subControlRect(ComplexControl control, const QStyleOptionComplex* option,
+                       SubControl subControl, const QWidget* widget) const override;
 
 signals:
   void actual_mode_changed(Mode mode);

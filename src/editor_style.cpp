@@ -3,6 +3,7 @@
 #include <map>
 #include <QApplication>
 #include <QWidget>
+#include <QStyleOptionComboBox>
 
 namespace SolarusEditor {
 
@@ -135,6 +136,36 @@ QColor const& EditorStyle::textFieldBackgroundColor(MouseState const mouse, Stat
   default:
     return QlementineStyle::textFieldBackgroundColor(mouse, status);
   }
+}
+
+/**
+ * @brief Workaround for Qlementine bug #63 that crops the left of QLineEdit.
+ * Assumes that editable comboboxes that don't have icons in their items.
+ */
+QRect EditorStyle::subControlRect(
+    ComplexControl control, const QStyleOptionComplex* option, SubControl subControl, const QWidget* widget) const {
+
+  switch (control) {
+  case CC_ComboBox:
+    if (const auto* comboBoxOpt = qstyleoption_cast<const QStyleOptionComboBox*>(option)) {
+      switch (subControl) {
+      case SC_ComboBoxEditField:
+        if (comboBoxOpt->editable) {
+          const auto indicatorSize = theme().iconSize;
+          const auto spacing = theme().spacing;
+          const auto indicatorButtonW = spacing * 2 + indicatorSize.width();
+          const auto editFieldW = comboBoxOpt->rect.width() - indicatorButtonW;
+          return QRect{ comboBoxOpt->rect.x(), comboBoxOpt->rect.y(), editFieldW, comboBoxOpt->rect.height() };
+        }
+        break;
+      default:
+        break;
+      }
+    }
+  default:
+    break;
+  }
+  return QlementineStyle::subControlRect(control, option, subControl, widget);
 }
 
 }  // namespace Solarus Editor
