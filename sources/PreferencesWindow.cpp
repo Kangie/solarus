@@ -70,9 +70,7 @@ protected:
     const auto* style = qobject_cast<oclero::qlementine::QlementineStyle*>(this->style());
     const auto& bgColor = style ? style->theme().backgroundColorMain3 : palette().base();
     QPainter p(this);
-    p.setPen(Qt::NoPen);
-    p.setBrush(bgColor);
-    p.drawRect(rect());
+    p.fillRect(rect(), bgColor);
   }
 };
 

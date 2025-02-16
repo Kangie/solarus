@@ -11,6 +11,8 @@ class QLabel;
 class QMenuBar;
 class QAction;
 class QSortFilterProxyModel;
+class QPlainTextEdit;
+class QSplitter;
 
 namespace oclero::qlementine {
 class LineEdit;
@@ -52,11 +54,15 @@ private:
 
   void openContactPage();
 
+protected:
+  void resizeEvent(QResizeEvent *event) override;
+  void closeEvent(QCloseEvent *event) override;
+
 private:
-  Preferences* _preferences{nullptr};
-  QuestListModel* _model{nullptr};
-  QSortFilterProxyModel* _proxyModel{nullptr};
-  QuestRunner* _runner{nullptr};
+  Preferences* _preferences{ nullptr };
+  QuestListModel* _model{ nullptr };
+  QSortFilterProxyModel* _proxyModel{ nullptr };
+  QuestRunner* _runner{ nullptr };
   struct {
     QMenuBar* menuBar{ nullptr };
     QToolBar* toolBar{ nullptr };
@@ -68,12 +74,13 @@ private:
     oclero::qlementine::LineEdit* searchLineEdit{ nullptr };
     oclero::qlementine::Switch* themeSwitch{ nullptr };
     QListView* listView{ nullptr };
+    QPlainTextEdit* console{ nullptr };
+    QSplitter* consoleSplitter{ nullptr };
     QStatusBar* statusBar{ nullptr };
     oclero::qlementine::Label* questCountLabel{ nullptr };
     QuestPropertiesPanel* propertiesPanel{ nullptr };
     oclero::qlementine::Expander* propertiesPanelExpander{ nullptr };
   } _ui;
   oclero::qlementine::ThemeManager* _themeManager{ nullptr };
-
 };
 } // namespace solarus::launcher

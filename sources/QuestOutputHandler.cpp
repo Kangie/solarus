@@ -51,7 +51,7 @@ void QuestOutputHandler::onStateChanged(bool playing) {
 }
 
 void QuestOutputHandler::parseAndPrintLine(const QString& line) {
-  static const QRegularExpression output_regexp(OUTPUT_REGEXP);
+  static const QRegularExpression output_regexp("^\\[Solarus\\] \\[(\\d+)\\] (\\w*): (.+)$");
   static const QRegularExpression output_simplify_console_error_regexp(OUTPUT_SIMPLIFY_CONSOLE_ERROR_REGEXP);
 
 #ifdef QT_DEBUG

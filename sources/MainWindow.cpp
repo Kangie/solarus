@@ -34,6 +34,9 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QSortFilterProxyModel>
+#include <QPlainTextEdit>
+#include <QPainter>
+#include <QSplitter>
 
 #include <oclero/qlementine/icons/Icons16.hpp>
 #include <oclero/qlementine.hpp>
@@ -127,6 +130,12 @@ static QString showContaingFolder() {
 }
 static QString solarusQuests() {
   return QApplication::translate("SolarusLauncher", "Solarus Quests");
+}
+static QString playingLabel() {
+  return QApplication::translate("SolarusLauncher", "Playing:");
+}
+static QString closeConsole() {
+  return QApplication::translate("SolarusLauncher", "Close console");
 }
 } // namespace i18n
 
@@ -265,12 +274,52 @@ private:
   QLabel* _ageLabel{ nullptr };
 };
 
+class PlainTextEditBackground : public QWidget {
+  using QWidget::QWidget;
+
+protected:
+  void paintEvent(QPaintEvent*) override {
+    const auto* style = qobject_cast<oclero::qlementine::QlementineStyle*>(this->style());
+    const auto& bgColor = style ? style->theme().backgroundColorWorkspace : palette().base();
+    QPainter p(this);
+    p.fillRect(rect(), bgColor);
+  }
+};
+
+class CustomSplitterHandle : public QSplitterHandle {
+  using QSplitterHandle::QSplitterHandle;
+
+public:
+  std::function<void()> onMouseReleased;
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event) override {
+    QSplitterHandle::mouseReleaseEvent(event);
+    if (onMouseReleased) {
+      onMouseReleased();
+    }
+  }
+};
+
+class CustomSplitter : public QSplitter {
+  using QSplitter::QSplitter;
+
+public:
+  std::function<void()> onHandleMouseReleased;
+
+protected:
+  QSplitterHandle *createHandle() override {
+    auto *handle = new CustomSplitterHandle(orientation(), this);
+    handle->onMouseReleased = onHandleMouseReleased;
+    return handle;
+  }
+};
+
 MainWindow::MainWindow(QWidget* parent)
   : QWidget(parent)
   , _preferences(new Preferences(this))
   , _runner(new QuestRunner(this))
   , _model(new QuestListModel(this)) {
-
   _proxyModel = new QSortFilterProxyModel(_model);
   _proxyModel->setSourceModel(_model);
   _proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -281,6 +330,7 @@ MainWindow::MainWindow(QWidget* parent)
   ensurePolished();
   setMinimumSize(640, 320);
   oclero::qlementine::centerWidget(this);
+  restoreGeometry(_preferences->windowGeometry());
 
   setupThemeManager();
   setWindowTitle(QApplication::applicationDisplayName());
@@ -552,126 +602,249 @@ void MainWindow::setupUi() {
     }
   }
 
-  auto* rowLayout = new QHBoxLayout();
-  rowLayout->setSpacing(0);
-  rowLayout->setContentsMargins(0, 0, 0, 0);
-
-  _ui.listView = new CustomListView(this);
+  auto* topWidget = new QWidget(this);
   {
-    _ui.listView->ensurePolished();
-    _ui.listView->setFlow(QListView::Flow::LeftToRight);
-    _ui.listView->setSpacing(16);
-    _ui.listView->setResizeMode(QListView::ResizeMode::Adjust);
-    _ui.listView->setViewMode(QListView::ViewMode::IconMode);
-    _ui.listView->setDragEnabled(false);
-    _ui.listView->setItemAlignment(Qt::AlignCenter);
-    _ui.listView->setMovement(QListView::Movement::Static);
-    _ui.listView->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
-    _ui.listView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectItems);
-    _ui.listView->setWrapping(true);
-    _ui.listView->setContentsMargins(0, 0, 0, 0);
-    _ui.listView->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerPixel);
-    _ui.listView->setUniformItemSizes(true);
+    auto* topWidgetLayout = new QHBoxLayout(topWidget);
+    topWidget->setLayout(topWidgetLayout);
+    topWidgetLayout->setSpacing(0);
+    topWidgetLayout->setContentsMargins(0, 0, 0, 0);
 
-    auto* listDelegate = new QuestListItemDelegate(_ui.listView);
-    _ui.listView->setItemDelegate(listDelegate);
+    _ui.listView = new CustomListView(this);
+    {
+      _ui.listView->ensurePolished();
+      _ui.listView->setFlow(QListView::Flow::LeftToRight);
+      _ui.listView->setSpacing(16);
+      _ui.listView->setResizeMode(QListView::ResizeMode::Adjust);
+      _ui.listView->setViewMode(QListView::ViewMode::IconMode);
+      _ui.listView->setDragEnabled(false);
+      _ui.listView->setItemAlignment(Qt::AlignCenter);
+      _ui.listView->setMovement(QListView::Movement::Static);
+      _ui.listView->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+      _ui.listView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectItems);
+      _ui.listView->setWrapping(true);
+      _ui.listView->setContentsMargins(0, 0, 0, 0);
+      _ui.listView->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerPixel);
+      _ui.listView->setUniformItemSizes(true);
 
-    _ui.listView->setModel(_proxyModel);
-    auto* selectionModel = _ui.listView->selectionModel();
+      auto* listDelegate = new QuestListItemDelegate(_ui.listView);
+      _ui.listView->setItemDelegate(listDelegate);
 
-
-    const auto updateUi = [this]() {
-      const auto current = _ui.listView->currentIndex();
-      const auto hasCurrent = current.isValid();
-      _ui.removeQuestButton->setEnabled(hasCurrent);
-
-      _ui.playStopQuestButton->setEnabled(hasCurrent || _runner->state() == QuestRunner::State::Running);
-
-      const auto questData = _model->questDataAt(current);
-      _ui.propertiesPanel->setQuest(questData);
-    };
-
-    QObject::connect(_ui.listView, &QListView::pressed, this, updateUi);
-
-    QObject::connect(selectionModel, &QItemSelectionModel::currentRowChanged, this, updateUi);
-
-    // QObject::connect(_ui.listView, &QListView::doubleClicked, this, [this](const QModelIndex& index) {
-    //   const auto filePath = _model->questFilePath(index);
-    //   _runner->start(filePath);
-    // });
-
-    _ui.listView->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+      _ui.listView->setModel(_proxyModel);
+      auto* selectionModel = _ui.listView->selectionModel();
 
 
-    QObject::connect(_ui.listView, &QListView::customContextMenuRequested, this, [this](const QPoint& pos) {
-      const auto index = _ui.listView->indexAt(pos);
-      if (index.isValid()) {
-        QMenu menu(_ui.listView);
+      const auto updateUi = [this]() {
+        const auto current = _ui.listView->currentIndex();
+        const auto hasCurrent = current.isValid();
+        _ui.removeQuestButton->setEnabled(hasCurrent);
 
-        {
-          auto* playAction = new QAction(makeIcon(Icons16::Media_Play), i18n::playQuest(), &menu);
-          playAction->setShortcutVisibleInContextMenu(true);
-          playAction->setShortcut(QKeySequence(Qt::Key_Return));
-          menu.addAction(playAction);
-          QObject::connect(playAction, &QAction::triggered, this, [this, index]() {
-            const auto questPath = _model->questFilePath(index);
-            _runner->start(questPath);
-          });
+        _ui.playStopQuestButton->setEnabled(hasCurrent || _runner->state() == QuestRunner::State::Running);
+
+        const auto questData = _model->questDataAt(current);
+        _ui.propertiesPanel->setQuest(questData);
+      };
+
+      QObject::connect(_ui.listView, &QListView::pressed, this, updateUi);
+
+      QObject::connect(selectionModel, &QItemSelectionModel::currentRowChanged, this, updateUi);
+
+      // QObject::connect(_ui.listView, &QListView::doubleClicked, this, [this](const QModelIndex& index) {
+      //   const auto filePath = _model->questFilePath(index);
+      //   _runner->start(filePath);
+      // });
+
+      _ui.listView->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+
+
+      QObject::connect(_ui.listView, &QListView::customContextMenuRequested, this, [this](const QPoint& pos) {
+        const auto index = _ui.listView->indexAt(pos);
+        if (index.isValid()) {
+          QMenu menu(_ui.listView);
+
+          {
+            auto* playAction = new QAction(makeIcon(Icons16::Media_Play), i18n::playQuest(), &menu);
+            playAction->setShortcutVisibleInContextMenu(true);
+            playAction->setShortcut(QKeySequence(Qt::Key_Return));
+            menu.addAction(playAction);
+            QObject::connect(playAction, &QAction::triggered, this, [this, index]() {
+              const auto questPath = _model->questFilePath(index);
+              _runner->start(questPath);
+            });
+          }
+          {
+            auto* infoAction = new QAction(makeIcon(Icons16::Misc_Info), i18n::showQuestInfo(), &menu);
+            infoAction->setShortcutVisibleInContextMenu(true);
+            menu.addAction(infoAction);
+            QObject::connect(infoAction, &QAction::triggered, this, [this, index]() {
+              // TODO
+            });
+          }
+          menu.addSeparator();
+          {
+            auto* removeAction = new QAction(makeIcon(Icons16::Action_Trash), i18n::removeQuest(), &menu);
+            removeAction->setShortcutVisibleInContextMenu(true);
+            removeAction->setShortcut(QKeySequence::StandardKey::Delete);
+            menu.addAction(removeAction);
+            QObject::connect(removeAction, &QAction::triggered, this, [this, index]() {
+              _model->removeQuest(index);
+            });
+          }
+
+          const auto globalPos = _ui.listView->mapToGlobal(pos);
+          menu.exec(globalPos);
         }
-        {
-          auto* infoAction = new QAction(makeIcon(Icons16::Misc_Info), i18n::showQuestInfo(), &menu);
-          infoAction->setShortcutVisibleInContextMenu(true);
-          menu.addAction(infoAction);
-          QObject::connect(infoAction, &QAction::triggered, this, [this, index]() {
-            // TODO
-          });
-        }
-        menu.addSeparator();
-        {
-          auto* removeAction = new QAction(makeIcon(Icons16::Action_Trash), i18n::removeQuest(), &menu);
-          removeAction->setShortcutVisibleInContextMenu(true);
-          removeAction->setShortcut(QKeySequence::StandardKey::Delete);
-          menu.addAction(removeAction);
-          QObject::connect(removeAction, &QAction::triggered, this, [this, index]() {
-            _model->removeQuest(index);
-          });
-        }
+      });
+    }
 
-        const auto globalPos = _ui.listView->mapToGlobal(pos);
-        menu.exec(globalPos);
-      }
-    });
-  }
+    _ui.propertiesPanelExpander = new oclero::qlementine::Expander(this);
+    {
+      _ui.propertiesPanelExpander->setOrientation(Qt::Horizontal);
+      _ui.propertiesPanelExpander->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+      auto* expanderContent = new QWidget(_ui.propertiesPanelExpander);
+      expanderContent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+      auto* expanderLayout = new QHBoxLayout(expanderContent);
+      expanderContent->setLayout(expanderLayout);
+      expanderLayout->setContentsMargins(0, 0, 0, 0);
+      expanderLayout->setSpacing(0);
 
-  _ui.propertiesPanelExpander = new oclero::qlementine::Expander(this);
-  {
-    _ui.propertiesPanelExpander->setOrientation(Qt::Horizontal);
-    _ui.propertiesPanelExpander->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    auto* expanderContent = new QWidget(_ui.propertiesPanelExpander);
-    expanderContent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    auto* expanderLayout = new QHBoxLayout(expanderContent);
-    expanderContent->setLayout(expanderLayout);
-    expanderLayout->setContentsMargins(0, 0, 0, 0);
-    expanderLayout->setSpacing(0);
+      expanderLayout->addWidget(oclero::qlementine::makeVerticalLine(this));
+      _ui.propertiesPanel = new QuestPropertiesPanel(expanderContent);
+      expanderLayout->addWidget(_ui.propertiesPanel);
 
-    expanderLayout->addWidget(oclero::qlementine::makeVerticalLine(this));
-    _ui.propertiesPanel = new QuestPropertiesPanel(expanderContent);
-    expanderLayout->addWidget(_ui.propertiesPanel);
-
-    _ui.propertiesPanelExpander->setContent(expanderContent);
-    _ui.propertiesPanelExpander->setExpanded(_preferences->appPropertiesPanelVisible());
-
-    QObject::connect(_ui.propertiesPanelExpander, &oclero::qlementine::Expander::expandedChanged, this, [this]() {
-      _preferences->setAppPropertiesPanelVisible(_ui.propertiesPanelExpander->expanded());
-    });
-
-    QObject::connect(_preferences, &Preferences::appPropertiesPanelVisibleChanged, this, [this]() {
+      _ui.propertiesPanelExpander->setContent(expanderContent);
       _ui.propertiesPanelExpander->setExpanded(_preferences->appPropertiesPanelVisible());
-    });
+
+      QObject::connect(_ui.propertiesPanelExpander, &oclero::qlementine::Expander::expandedChanged, this, [this]() {
+        _preferences->setAppPropertiesPanelVisible(_ui.propertiesPanelExpander->expanded());
+      });
+
+      QObject::connect(_preferences, &Preferences::appPropertiesPanelVisibleChanged, this, [this]() {
+        _ui.propertiesPanelExpander->setExpanded(_preferences->appPropertiesPanelVisible());
+      });
+    }
+
+    topWidgetLayout->addWidget(_ui.listView);
+    topWidgetLayout->addWidget(_ui.propertiesPanelExpander);
   }
 
-  rowLayout->addWidget(_ui.listView);
-  rowLayout->addWidget(_ui.propertiesPanelExpander);
+  auto* bottomWidget = new QWidget(this);
+  {
+    auto* bottomWidgetLayout = new QVBoxLayout(bottomWidget);
+    bottomWidget->setLayout(bottomWidgetLayout);
+    bottomWidgetLayout->setSpacing(0);
+    bottomWidgetLayout->setContentsMargins(0, 0, 0, 0);
+
+    {
+      auto* consoleToolBar = new QFrame(bottomWidget);
+      bottomWidgetLayout->addWidget(consoleToolBar);
+
+      auto* consoleToolBarLayout = new QHBoxLayout(consoleToolBar);
+      consoleToolBarLayout->setContentsMargins(12, 2, 4, 2);
+      consoleToolBar->setLayout(consoleToolBarLayout);
+
+      auto* playingLabel = new QLabel(consoleToolBar);
+      playingLabel->setText(QString("<b>%1</b>").arg(i18n::playingLabel()));
+      playingLabel->setVisible(false);
+      consoleToolBarLayout->addWidget(playingLabel);
+
+      auto* consoleTitleLabel = new QLabel(consoleToolBar);
+      consoleTitleLabel->setVisible(false);
+      consoleToolBarLayout->addWidget(consoleTitleLabel);
+
+      QObject::connect(_runner, &QuestRunner::questChanged, this, [this, playingLabel, consoleTitleLabel]() {
+        const auto path = _runner->questFilePath();
+        consoleTitleLabel->setText(path);
+        const auto hasQuest = !path.isEmpty();
+        playingLabel->setVisible(hasQuest);
+        consoleTitleLabel->setVisible(hasQuest);
+      });
+
+      consoleToolBarLayout->addStretch();
+
+      auto* closeButton = new QPushButton(consoleToolBar);
+      closeButton->setToolTip(i18n::closeConsole());
+      closeButton->setFocusPolicy(Qt::NoFocus);
+      closeButton->setIconSize(QSize(12, 12));
+      closeButton->setFixedSize(18, 18);
+      closeButton->setFlat(true);
+      closeButton->setIcon(makeIcon(Icons16::Action_Close));
+      consoleToolBarLayout->addWidget(closeButton);
+
+      QObject::connect(closeButton, &QPushButton::clicked, this, [this]() {
+        _preferences->setAppConsoleVisible(false);
+      });
+    }
+
+    {
+      auto* line = oclero::qlementine::makeHorizontalLine(bottomWidget);
+      bottomWidgetLayout->addWidget(line);
+    }
+
+    {
+      auto* consoleContainer = new PlainTextEditBackground(this);
+      bottomWidgetLayout->addWidget(consoleContainer);
+
+      consoleContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+      auto* consoleContainerLayout = new QVBoxLayout(consoleContainer);
+      consoleContainerLayout->setContentsMargins(0, 0, 0, 0);
+      consoleContainer->setLayout(consoleContainerLayout);
+      consoleContainerLayout->setSpacing(0);
+
+      _ui.console = new QPlainTextEdit(consoleContainer);
+      _ui.console->setFrameShape(QFrame::Shape::NoFrame);
+      _ui.console->setReadOnly(true);
+      _ui.console->setMaximumBlockCount(10000);
+      _ui.console->setMinimumHeight(100);
+      consoleContainerLayout->addWidget(_ui.console);
+
+      // Monospace font.
+      auto monospaceFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+      if (const auto* style = qobject_cast<oclero::qlementine::QlementineStyle*>(this->style())) {
+        monospaceFont = style->theme().fontMonospace;
+      }
+      _ui.console->setFont(monospaceFont);
+    }
+  }
+
+  auto* customSplitter = new CustomSplitter(this);
+  customSplitter->onHandleMouseReleased = [this, bottomWidget]() {
+    if (_ui.consoleSplitter->sizes().at(1) == 0) {
+      bottomWidget->setVisible(false);
+      _preferences->setAppConsoleVisible(false);
+    } else {
+      bottomWidget->setVisible(true);
+      _preferences->setAppConsoleVisible(true);
+    }
+
+    _preferences->setWindowSplitterState(_ui.consoleSplitter->saveState());
+  };
+  _ui.consoleSplitter = customSplitter;
+  _ui.consoleSplitter->setOrientation(Qt::Vertical);
+  _ui.consoleSplitter->addWidget(topWidget);
+  _ui.consoleSplitter->addWidget(bottomWidget);
+  _ui.consoleSplitter->setCollapsible(0, false);
+  _ui.consoleSplitter->setHandleWidth(2);
+
+  QObject::connect(_preferences, &Preferences::appConsoleVisibleChanged, this, [this, bottomWidget] () {
+    const auto bottomVisible = _preferences->appConsoleVisible();
+    if (bottomVisible) {
+      bottomWidget->show();
+      _ui.consoleSplitter->setSizes({_ui.consoleSplitter->sizes().at(0), 100});
+    } else {
+      bottomWidget->hide();
+      _ui.consoleSplitter->setSizes({_ui.consoleSplitter->sizes().at(0), 0});
+    }
+
+    bottomWidget->setVisible(bottomVisible);
+  });
+
+  // Restore geometry from settings.
+  _ui.consoleSplitter->restoreState(_preferences->windowSplitterState());
+  if (_ui.consoleSplitter->sizes().at(1) == 0) {
+    bottomWidget->setVisible(false);
+  } else {
+    bottomWidget->setVisible(true);
+  }
 
   _ui.statusBar = new QStatusBar(this);
   {
@@ -695,7 +868,7 @@ void MainWindow::setupUi() {
 
   windowLayout->setMenuBar(_ui.menuBar);
   windowLayout->addWidget(_ui.toolBar);
-  windowLayout->addLayout(rowLayout);
+  windowLayout->addWidget(_ui.consoleSplitter);
   windowLayout->addWidget(_ui.statusBar);
 }
 
@@ -912,5 +1085,17 @@ void MainWindow::playStopQuest() {
 
 void MainWindow::openContactPage() {
   QDesktopServices::openUrl(QUrl("https://www.solarus-games.org/about/contact"));
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event) {
+  QWidget::resizeEvent(event);
+  _preferences->setWindowGeometry(saveGeometry());
+  _preferences->setWindowSplitterState(_ui.consoleSplitter->saveState());
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+  QWidget::closeEvent(event);
+  _preferences->setWindowGeometry(saveGeometry());
+  _preferences->setWindowSplitterState(_ui.consoleSplitter->saveState());
 }
 } // namespace solarus::launcher

@@ -11,10 +11,8 @@ constexpr auto key_appConsoleVisible{ "app/appConsoleVisible" };
 constexpr auto key_appTheme{ "app/theme" };
 constexpr auto key_appQuestList{ "app/questList" };
 
-constexpr auto key_windowX{ "window/x" };
-constexpr auto key_windowY{ "window/y" };
-constexpr auto key_windowWidth{ "window/width" };
-constexpr auto key_windowHeight{ "window/height" };
+constexpr auto key_windowGeometry{ "window/geometry" };
+constexpr auto key_windowSplitterState{ "window/splitterState" };
 
 constexpr auto key_questForceSoftwareRendering{ "quests/forceSoftwareRendering" };
 constexpr auto key_questFullScreen{ "quests/fullScreen" };
@@ -132,48 +130,20 @@ void Preferences::addQuestToList(const QString& value) {
   }
 }
 
-int Preferences::windowX() const {
-  return _qSettings.value(key_windowX, -1).toInt();
+QByteArray Preferences::windowGeometry() const {
+  return _qSettings.value(key_windowGeometry, {}).toByteArray();
 }
 
-void Preferences::setWindowX(int value) {
-  if (value != windowX()) {
-    _qSettings.setValue(key_windowX, value);
-    emit windowXChanged();
-  }
+void Preferences::setWindowGeometry(const QByteArray& value) {
+  _qSettings.setValue(key_windowGeometry, value);
 }
 
-int Preferences::windowY() const {
-  return _qSettings.value(key_windowY, -1).toInt();
+QByteArray Preferences::windowSplitterState() const {
+  return _qSettings.value(key_windowSplitterState, {}).toByteArray();
 }
 
-void Preferences::setWindowY(int value) {
-  if (value != windowY()) {
-    _qSettings.setValue(key_windowY, value);
-    emit windowYChanged();
-  }
-}
-
-int Preferences::windowWidth() const {
-  return _qSettings.value(key_windowWidth, -1).toInt();
-}
-
-void Preferences::setWindowWidth(int value) {
-  if (value != windowWidth()) {
-    _qSettings.setValue(key_windowWidth, value);
-    emit windowWidthChanged();
-  }
-}
-
-int Preferences::windowHeight() const {
-  return _qSettings.value(key_windowHeight, -1).toInt();
-}
-
-void Preferences::setWindowHeight(int value) {
-  if (value != windowHeight()) {
-    _qSettings.setValue(key_windowHeight, value);
-    emit windowHeightChanged();
-  }
+void Preferences::setWindowSplitterState(const QByteArray& value) {
+  _qSettings.setValue(key_windowSplitterState, value);
 }
 
 bool Preferences::questEnableAudio() const {

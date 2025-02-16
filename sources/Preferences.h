@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QString>
+#include <QByteArray>
 
 namespace solarus::launcher {
 class Preferences : public QObject {
@@ -38,21 +39,11 @@ public: // App preferences.
   Q_SIGNAL void appQuestListChanged();
 
 public: // Window preferences.
-  int windowX() const;
-  void setWindowX(int value);
-  Q_SIGNAL void windowXChanged();
+  QByteArray windowGeometry() const;
+  void setWindowGeometry(const QByteArray& value);
 
-  int windowY() const;
-  void setWindowY(int value);
-  Q_SIGNAL void windowYChanged();
-
-  int windowWidth() const;
-  void setWindowWidth(int value);
-  Q_SIGNAL void windowWidthChanged();
-
-  int windowHeight() const;
-  void setWindowHeight(int value);
-  Q_SIGNAL void windowHeightChanged();
+  QByteArray windowSplitterState() const;
+  void setWindowSplitterState(const QByteArray& value);
 
 public: // Quest preferences.
   bool questEnableAudio() const;
