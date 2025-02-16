@@ -1369,8 +1369,7 @@ void MainWindow::current_editor_changed(int index) {
   const bool select_all_supported = has_editor && editor->is_select_all_supported();
   ui.action_select_all->setEnabled(select_all_supported);
 
-  const bool run_map_supported = has_editor && editor->is_run_map_supported();
-  ui.action_run_map->setEnabled(run_map_supported);
+  update_run_quest();
 
   const bool find_supported = has_editor && editor->is_find_supported();
   ui.action_find->setEnabled(find_supported);
@@ -1725,16 +1724,19 @@ void MainWindow::update_entity_types_visibility() {
 }
 
 /**
- * @brief Slot called when the quest has just started or stopped.
+ * @brief Updates the run quest and run map actions.
  */
 void MainWindow::update_run_quest() {
 
   if (quest_runner.is_started()) {
     ui.action_run_quest->setIcon(QIcon(":/images/icon_stop.png"));
     ui.action_run_quest->setToolTip(tr("Stop quest"));
+    ui.action_run_map->setEnabled(false);
   } else {
     ui.action_run_quest->setIcon(QIcon(":/images/icon_start.png"));
     ui.action_run_quest->setToolTip(tr("Run quest"));
+    const Editor* editor = get_current_editor();
+    ui.action_run_map->setEnabled(editor != nullptr && editor->is_run_map_supported());
   }
 }
 
