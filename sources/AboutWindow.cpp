@@ -107,14 +107,13 @@ void AboutWindow::setupUi() {
     buttonsLayout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
     buttonsLayout->setSpacing(4);
     buttonsLayout->setContentsMargins(0, 0, 0, 0);
-    for (const auto [tooltip, url, icon] :
-      {
-        std::make_tuple("Twitter", "https://twitter.com/solarusgames", Icons16::Brand_TwitterFill),
-        std::make_tuple("Mastodon", "https://mastodon.gamedev.place/@solarus", Icons16::Brand_FacebookFill),
-        // std::make_tuple("Discord", "https://discord.gg/yYHjJHt", Icons16::Brand_DiscordFill),
-        std::make_tuple("YouTube", "https://www.youtube.com/c/ChristophoZS", Icons16::Brand_YoutubeFill),
-        // std::make_tuple("GitLab", "https://www.gitlab.com/solarus-games", Icons16::Brand_GitlabFill),
-      }) {
+    for (const auto [tooltip, url, icon] : {
+           std::make_tuple("Twitter", "https://twitter.com/solarusgames", Icons16::Brand_TwitterFill),
+           std::make_tuple("Mastodon", "https://mastodon.gamedev.place/@solarus", Icons16::Brand_FacebookFill),
+           // std::make_tuple("Discord", "https://discord.gg/yYHjJHt", Icons16::Brand_DiscordFill),
+           std::make_tuple("YouTube", "https://www.youtube.com/c/ChristophoZS", Icons16::Brand_YoutubeFill),
+           // std::make_tuple("GitLab", "https://www.gitlab.com/solarus-games", Icons16::Brand_GitlabFill),
+         }) {
       auto* button = new QPushButton(this);
       button->setIcon(makeIcon(icon));
       button->setFocusPolicy(Qt::NoFocus);
@@ -149,11 +148,12 @@ void AboutWindow::setupUi() {
       copyrightLabel->setText(QApplication::applicationDisplayName());
       copyrightLabel->setAlignment(Qt::AlignCenter);
       const auto copyrightText = QString("© %1-%2 %3. %4")
-                                      .arg(COPYRIGHT_YEAR_START, COPYRIGHT_YEAR_CURRENT, QApplication::organizationName(), i18n::allRightsReserved());
+                                   .arg(COPYRIGHT_YEAR_START, COPYRIGHT_YEAR_CURRENT, QApplication::organizationName(),
+                                     i18n::allRightsReserved());
       copyrightLabel->setText(copyrightText);
 
-      auto *smallTextsLayout = new QVBoxLayout();
-      smallTextsLayout->setContentsMargins(0,0,0,0);
+      auto* smallTextsLayout = new QVBoxLayout();
+      smallTextsLayout->setContentsMargins(0, 0, 0, 0);
       smallTextsLayout->setSpacing(2);
       smallTextsLayout->addWidget(licenseLabel);
       smallTextsLayout->setAlignment(licenseLabel, Qt::AlignHCenter);
@@ -167,39 +167,5 @@ void AboutWindow::setupUi() {
       rootLayout->addLayout(smallTextsLayout);
     }
   }
-
-  // auto* website_label = new am::gui::Label(bottom_part);
-  // {
-  //   const auto text = QString(R"(<a style="text-decoration:none;" href="%1">%2</a>)")
-  //                       .arg(WEBSITE_URL_WITH_TRACKER())
-  //                       .arg(QUrl(WEBSITE_URL_WITHOUT_TRACKER()).host());
-  //   const auto& palette = website_label->palette();
-  //   const auto& normal_text_color = palette.color(QPalette::ColorGroup::Normal, QPalette::ColorRole::Text);
-  //   const auto colored_text = am::gui::WidgetsUtils::applyLinkColors(text, normal_text_color);
-  //   website_label->setText(colored_text);
-  //   website_label->setAlignment(Qt::AlignCenter);
-  //   website_label->setToolTip(i18n::guitarProOfficialWebsite());
-  //   QObject::connect(website_label, &QLabel::linkActivated, website_label, [](const QString& link) {
-  //     QDesktopServices::openUrl(link);
-  //   });
-  // }
-
-  // auto* copyright_label = new am::gui::Label(bottom_part);
-  // {
-  //   const auto copyright_text = QString("© %1-%2 %3. %4")
-  //                                 .arg(COPYRIGHT_YEAR_START)
-  //                                 .arg(COPYRIGHT_YEAR_END)
-  //                                 .arg(qApp->organizationName())
-  //                                 .arg(i18n::allRightsReserved());
-  //   copyright_label->setText(copyright_text);
-  //   copyright_label->setAlignment(Qt::AlignCenter);
-  //   copyright_label->setProperty("am_light_text", true);
-  // }
-
-  // auto* bottom_layout = am::gui::makeVLayout(spacing, { 0 }, buttonsLayout, website_label, copyright_label);
-  // bottom_layout->setAlignment(buttonsLayout, Qt::AlignHCenter);
-  // bottom_layout->setAlignment(website_label, Qt::AlignHCenter);
-  // bottom_layout->setAlignment(copyright_label, Qt::AlignHCenter);
-  // bottom_part->setLayout(bottom_layout);
 }
 } // namespace solarus::launcher

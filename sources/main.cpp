@@ -7,32 +7,14 @@
 
 #include "MainWindow.h"
 
-#include <QIcon>
+#include <solarus/core/Arguments.h>
+#include <solarus/core/Debug.h>
+#include <solarus/core/MainLoop.h>
 
-void setAppIcon() {
-  static constexpr std::array<QIcon::Mode, 4> modes{
-    QIcon::Mode::Normal,
-    QIcon::Mode::Disabled,
-    QIcon::Mode::Active,
-    QIcon::Mode::Selected,
-  };
-  static constexpr std::array<int, 12> dimensions{ 16, 20, 24, 32, 40, 48, 64, 96, 128, 256, 512, 1024 };
-  static constexpr const char* path_base(":/solarus/launcher/resources/icon/solarus_launcher_icon_");
-  static constexpr const char* path_ext(".png");
+#include <string>
+#include <iostream>
 
-  QIcon app_icon;
-  for (const auto dimension : dimensions) {
-    const auto path = path_base + QString::number(dimension) + path_ext;
-    QPixmap pixmap(path);
-    for (const auto mode : modes) {
-      app_icon.addPixmap(pixmap, mode, QIcon::State::On);
-      app_icon.addPixmap(pixmap, mode, QIcon::State::Off);
-    }
-  }
-  QGuiApplication::setWindowIcon(app_icon);
-}
-
-int main(int argc, char* argv[]) {
+int runGUI(int argc, char* argv[]) {
   QGuiApplication::setApplicationName("Solarus Launcher");
   QGuiApplication::setApplicationDisplayName("Solarus Launcher");
   QGuiApplication::setOrganizationName("Solarus Labs");
@@ -42,7 +24,7 @@ int main(int argc, char* argv[]) {
 
   QApplication app(argc, argv);
   app.setQuitOnLastWindowClosed(true);
-  setAppIcon();
+  solarus::launcher::MainWindow::setAppIcon();
 
   // Custom style that supports theming.
   auto* style = new oclero::qlementine::QlementineStyle(&app);
@@ -60,4 +42,37 @@ int main(int argc, char* argv[]) {
   window->show();
 
   return app.exec();
+}
+
+int runCLI(int argc, char* argv[]) {
+  Solarus::Debug::set_abort_on_die(true);
+  Solarus::Debug::set_show_popup_on_die(false);
+
+  // Run the Solarus main loop.
+  const Solarus::Arguments args(argc, argv);
+  Solarus::MainLoop(args).run();
+
+  return EXIT_SUCCESS;
+}
+
+int printHelp(int argc, char* argv[]) {
+  const auto binary_name = std::string{ (argc > 0) ? argv[0] : "solarus-launcher" };
+  std::cout << "Usage:\n" << binary_name << " [--version] [--help] [<path/to/quest.solarus>]" << std::endl;
+  return EXIT_SUCCESS;
+}
+
+int main(int argc, char** argv) {
+  if (argc > 1) {
+    const auto arg1 = std::string{ argv[1] };
+    if (arg1 == "--help" || arg1 == "-h") {
+      return printHelp(argc, argv);
+    } else if (arg1 == "--version" || arg1 == "-v") {
+      std::cout << "2.0.0" << std::endl;
+      return EXIT_SUCCESS;
+    } else {
+      return runCLI(argc, argv);
+    }
+  } else {
+    return runGUI(argc, argv);
+  }
 }

@@ -21,7 +21,6 @@ set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER CMakeAutogenTargets)
 if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "13.6")
 endif()
-
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg)
 qt_standard_project_setup()
 
@@ -47,13 +46,25 @@ set_target_properties(qlementine
     FOLDER dependencies
 )
 
+set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
+set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
+FetchContent_Declare(solarus
+  GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
+  GIT_TAG 3d8f5e5a125f1f8e199b70280a0bd40db84f3d51 #new-launcher
+)
+FetchContent_MakeAvailable(solarus)
+set_target_properties(solarus
+  PROPERTIES
+    FOLDER dependencies
+)
+
 # Icon.
 set(MACOSX_BUNDLE_ICON_FILE solarus_launcher_icon.icns)
 set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.icns")
 set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
 # Target.
-qt_add_executable(SolarusLauncher MACOSX_BUNDLE
+qt_add_executable(solarus-launcher MANUAL_FINALIZATION
   ${APP_ICON_MACOS}
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.h
@@ -66,11 +77,15 @@ qt_add_executable(SolarusLauncher MACOSX_BUNDLE
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListItemDelegate.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListModel.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListModel.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestRunner.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestRunner.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
 )
-set_target_properties(SolarusLauncher PROPERTIES OUTPUT_NAME "Solarus Launcher")
+set_target_properties(solarus-launcher PROPERTIES OUTPUT_NAME "Solarus Launcher")
 
-qt_add_resources(SolarusLauncher "resources"
+qt_add_resources(solarus-launcher "resources"
   PREFIX "/solarus/launcher/"
   FILES
     resources/themes/dark.json
@@ -95,27 +110,36 @@ qt_add_resources(SolarusLauncher "resources"
     resources/icon/solarus_quest_icon.ico
 )
 
-target_link_libraries(SolarusLauncher
+target_link_libraries(solarus-launcher
   PRIVATE
     Qt6::Widgets
     Qt6::Svg
     oclero::qlementine
     oclero::qlementine_icons
+    solarus
 )
 
-set_target_properties(SolarusLauncher PROPERTIES
+string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
+set_target_properties(solarus-launcher PROPERTIES
   ${BUNDLE_ID_OPTION}
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+  MACOSX_BUNDLE_BUNDLE_NAME "Solarus Launcher"
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+  MACOSX_BUNDLE_GUI_IDENTIFIER "org.solarus-games.solarus-launcher"
+  MACOSX_BUNDLE_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} Solarus Labs."
   MACOSX_BUNDLE TRUE
   WIN32_EXECUTABLE TRUE
+  XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED OFF
+  XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
+  XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual"
+  XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS OFF
 )
 
 include(GNUInstallDirs)
-install(TARGETS SolarusLauncher
+install(TARGETS solarus-launcher
   BUNDLE DESTINATION .
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-qt_finalize_executable(SolarusLauncher)
+qt_finalize_executable(solarus-launcher)

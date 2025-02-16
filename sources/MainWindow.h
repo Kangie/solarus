@@ -15,10 +15,14 @@ namespace oclero::qlementine {
 class LineEdit;
 class Switch;
 class ThemeManager;
+class Label;
+class Expander;
 } // namespace oclero::qlementine
 
 namespace solarus::launcher {
 class QuestListModel;
+class QuestRunner;
+class QuestPropertiesPanel;
 
 class MainWindow : public QWidget {
   Q_OBJECT
@@ -27,14 +31,18 @@ public:
   explicit MainWindow(QWidget* parent = nullptr);
   virtual ~MainWindow() = default;
 
+  static void setAppIcon();
+
 private:
   void setupThemeManager();
   void setupUi();
   void setupMenuBar();
-  void setTheme(const QString& theme);
+  void openAddQuestDialog();
+  void openAddFolderDialog();
 
 private:
   QuestListModel* _model;
+  QuestRunner* _runner;
   struct {
     QMenuBar* menuBar{ nullptr };
     QToolBar* toolBar{ nullptr };
@@ -46,7 +54,9 @@ private:
     oclero::qlementine::Switch* themeSwitch{ nullptr };
     QListView* listView{ nullptr };
     QStatusBar* statusBar{ nullptr };
-    QLabel* questCountLabel{ nullptr };
+    oclero::qlementine::Label* questCountLabel{ nullptr };
+    QuestPropertiesPanel* propertiesPanel{ nullptr };
+    oclero::qlementine::Expander* propertiesPanelExpander{ nullptr };
   } _ui;
   oclero::qlementine::ThemeManager* _themeManager{ nullptr };
 };
