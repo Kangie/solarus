@@ -5,6 +5,8 @@
 
 #include "QuestData.h"
 
+class QFileSystemWatcher;
+
 namespace solarus::launcher {
 class QuestListModel : public QAbstractListModel {
   Q_OBJECT
@@ -32,5 +34,6 @@ signals:
 
 private:
   QList<QuestData> _quests;
+  QFileSystemWatcher* _watcher{nullptr};
 };
 } // namespace solarus::launcher

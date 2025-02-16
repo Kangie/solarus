@@ -8,6 +8,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QDir>
+#include <QFileSystemWatcher>
 
 #include <string>
 #include <vector>
@@ -147,8 +148,17 @@ QuestData makeQuestData(const QString& path) {
 } // namespace
 
 QuestListModel::QuestListModel(QObject* parent)
-  : QAbstractListModel(parent) {}
+  : QAbstractListModel(parent) {
+  _watcher = new QFileSystemWatcher(this);
 
+  QObject::connect(_watcher, &QFileSystemWatcher::fileChanged, this, [this](const QString& path) {
+    if (QFile::exists(path)) {
+      addQuest(path);
+    } else {
+      removeQuest(path);
+    }
+  });
+}
 
 void QuestListModel::addQuest(const QString& path) {
   const auto questData = makeQuestData(path);
@@ -160,6 +170,8 @@ void QuestListModel::addQuest(const QString& path) {
     return other.id == questData.id || other.path == questData.path;
   });
   if (it == _quests.end()) {
+    _watcher->addPath(path);
+
     const auto row = static_cast<int>(_quests.size());
     beginInsertRows({}, row, row);
     _quests.emplace_back(questData);
@@ -192,6 +204,8 @@ void QuestListModel::removeQuest(const QString& path) {
     return other.path == path;
   });
   if (it != _quests.end()) {
+    _watcher->removePath(path);
+
     const auto row = std::distance(_quests.begin(), it);
     beginRemoveRows({}, row, row);
     _quests.removeAt(row);

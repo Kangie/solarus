@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+#pragma once
+
+#include <QObject>
+#include <QSettings>
+#include <QString>
+
+namespace solarus::launcher {
+class Preferences : public QObject {
+  Q_OBJECT
+
+public:
+  explicit Preferences(QObject* parent = nullptr);
+  virtual ~Preferences();
+
+  void resetToDefaults();
+
+public: // App preferences.
+  QString appLanguage() const;
+  void setAppLanguage(const QString& value);
+  Q_SIGNAL void appLanguageChanged();
+
+  bool appPropertiesPanelVisible() const;
+  void setAppPropertiesPanelVisible(bool value);
+  Q_SIGNAL void appPropertiesPanelVisibleChanged();
+
+  bool appConsoleVisible() const;
+  void setAppConsoleVisible(bool value);
+  Q_SIGNAL void appConsoleVisibleChanged();
+
+  QString appTheme() const;
+  void setAppTheme(const QString& value);
+  Q_SIGNAL void appThemeChanged();
+
+  QStringList appQuestList() const;
+  void setQuestList(const QStringList& value);
+  void addQuestToList(const QString& value);
+  Q_SIGNAL void appQuestListChanged();
+
+public: // Window preferences.
+  int windowX() const;
+  void setWindowX(int value);
+  Q_SIGNAL void windowXChanged();
+
+  int windowY() const;
+  void setWindowY(int value);
+  Q_SIGNAL void windowYChanged();
+
+  int windowWidth() const;
+  void setWindowWidth(int value);
+  Q_SIGNAL void windowWidthChanged();
+
+  int windowHeight() const;
+  void setWindowHeight(int value);
+  Q_SIGNAL void windowHeightChanged();
+
+public: // Quest preferences.
+  bool questEnableAudio() const;
+  void setQuestEnableAudio(bool value);
+  Q_SIGNAL void questEnableAudioChanged();
+
+  bool questForceSoftwareRendering() const;
+  void setQuestForceSoftwareRendering(bool value);
+  Q_SIGNAL void questForceSoftwareRenderingChanged();
+
+  bool questFullScreen() const;
+  void setQuestFullScreen(bool value);
+  Q_SIGNAL void questFullScreenChanged();
+
+  bool questSuspendWhenUnfocused() const;
+  void setQuestSuspendWhenUnfocused(bool value);
+  Q_SIGNAL void questSuspendWhenUnfocusedChanged();
+
+private:
+  QSettings _qSettings;
+};
+} // namespace solarus::launcher

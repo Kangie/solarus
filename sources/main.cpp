@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include <QApplication>
 
 #include <oclero/qlementine.hpp>

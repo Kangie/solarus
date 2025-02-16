@@ -13,7 +13,5 @@ public:
 
 private:
   void setupUi();
-
-private:
 };
 } // namespace solarus::launcher

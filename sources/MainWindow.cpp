@@ -7,6 +7,8 @@
 #include "AboutWindow.h"
 #include "Utils.h"
 #include "QuestRunner.h"
+#include "Preferences.h"
+#include "PreferencesWindow.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -29,6 +31,9 @@
 #include <QSignalBlocker>
 #include <QFormLayout>
 #include <QScrollArea>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QSortFilterProxyModel>
 
 #include <oclero/qlementine/icons/Icons16.hpp>
 #include <oclero/qlementine.hpp>
@@ -73,7 +78,10 @@ static QString stopQuest() {
   return QApplication::translate("SolarusLauncher", "Stop Quesr");
 }
 static QString showHideQuestInformation() {
-  return QApplication::translate("SolarusLauncher", "Show/Hide quest Information");
+  return QApplication::translate("SolarusLauncher", "Show/Hide Quest Information");
+}
+static QString showHideConsole() {
+  return QApplication::translate("SolarusLauncher", "Show/Hide Quest Console");
 }
 static QString search() {
   return QApplication::translate("SolarusLauncher", "Search...");
@@ -258,16 +266,24 @@ private:
 };
 
 MainWindow::MainWindow(QWidget* parent)
-  : QWidget(parent) {
-  setMinimumSize(640, 400);
-  oclero::qlementine::centerWidget(this);
-  ensurePolished();
+  : QWidget(parent)
+  , _preferences(new Preferences(this))
+  , _runner(new QuestRunner(this))
+  , _model(new QuestListModel(this)) {
 
-  _runner = new QuestRunner(this);
-  _model = new QuestListModel(this);
+  _proxyModel = new QSortFilterProxyModel(_model);
+  _proxyModel->setSourceModel(_model);
+  _proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+  _proxyModel->setSortRole(Qt::DisplayRole);
+  _proxyModel->setDynamicSortFilter(true);
+  _proxyModel->sort(0, Qt::AscendingOrder);
+
+  ensurePolished();
+  setMinimumSize(640, 320);
+  oclero::qlementine::centerWidget(this);
 
   setupThemeManager();
-  setWindowTitle("Solarus Launcher");
+  setWindowTitle(QApplication::applicationDisplayName());
   setupMenuBar();
   setupUi();
 
@@ -302,7 +318,18 @@ void MainWindow::setupThemeManager() {
   auto* qlementineStyle = qobject_cast<oclero::qlementine::QlementineStyle*>(style());
   _themeManager = new oclero::qlementine::ThemeManager(qlementineStyle, this);
   _themeManager->loadDirectory(":/solarus/launcher/resources/themes");
-  _themeManager->setCurrentTheme("Dark");
+
+  const auto theme = _preferences->appTheme();
+  _themeManager->setCurrentTheme(theme);
+
+  QObject::connect(_preferences, &Preferences::appThemeChanged, this, [this]() {
+    const auto theme = _preferences->appTheme();
+    _themeManager->setCurrentTheme(theme);
+  });
+  QObject::connect(_themeManager, &oclero::qlementine::ThemeManager::currentThemeChanged, this, [this]() {
+    const auto theme = _themeManager->currentTheme();
+    _preferences->setAppTheme(theme);
+  });
 }
 
 void MainWindow::setupUi() {
@@ -367,22 +394,7 @@ void MainWindow::setupUi() {
       _ui.removeQuestButton->setEnabled(false);
 
       QObject::connect(_ui.removeQuestButton, &QPushButton::clicked, this, [this]() {
-        const auto index = _ui.listView->currentIndex();
-        if (index.isValid()) {
-          const auto questFilePath = _model->questFilePath(index);
-          /*uto* messageBox = new QMessageBox(QMessageBox::Icon::Question,
-                                 "Remove Quest",
-                                 "Do you want to remove this quest?",
-                                 QMessageBox::Button::No | QMessageBox::Button::Yes,
-                                 this);
-          messageBox->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
-          const auto result = messageBox->exec();
-          if (result == QMessageBox::Button::Yes) {
-            _model->removeQuest(questFilePath);
-          }*/
-
-          _model->removeQuest(questFilePath);
-        }
+        removeCurrentQuest();
       });
     }
 
@@ -394,18 +406,21 @@ void MainWindow::setupUi() {
       _ui.playStopQuestButton->setChecked(false);
       _ui.playStopQuestButton->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextBesideIcon);
       _ui.playStopQuestButton->setFocusPolicy(Qt::NoFocus);
+
+      // Ensure the button's width does not change.
+      _ui.playStopQuestButton->ensurePolished();
+      _ui.playStopQuestButton->setIcon(makeIcon(Icons16::Media_Play));
+      _ui.playStopQuestButton->setText(i18n::play());
+      const auto w1 = _ui.playStopQuestButton->sizeHint().width();
+      _ui.playStopQuestButton->setText(i18n::stop());
+      const auto w2 = _ui.playStopQuestButton->sizeHint().width();
+      const auto w = std::max(w1, w2);
+      _ui.playStopQuestButton->setFixedWidth(w);
+
       _ui.toolBar->addWidget(_ui.playStopQuestButton);
 
       QObject::connect(_ui.playStopQuestButton, &QPushButton::clicked, this, [this]() {
-        if (_runner->state() == QuestRunner::State::Stopped) {
-          const auto index = _ui.listView->currentIndex();
-          if (index.isValid()) {
-            const auto questFilePath = _model->questFilePath(index);
-            _runner->start(questFilePath);
-          }
-        } else {
-          _runner->stop();
-        }
+        playStopQuest();
       });
 
       const auto updatePlayStopButton = [this]() {
@@ -454,8 +469,8 @@ void MainWindow::setupUi() {
       _ui.searchLineEdit->setIcon(makeIcon(Icons16::Navigation_Search));
       _ui.toolBar->addWidget(_ui.searchLineEdit);
 
-      QObject::connect(_ui.searchLineEdit, &QLineEdit::textEdited, this, [this]() {
-        // TODO
+      QObject::connect(_ui.searchLineEdit, &QLineEdit::textEdited, this, [this](const QString& text) {
+        _proxyModel->setFilterFixedString(text);
       });
     }
 
@@ -477,14 +492,13 @@ void MainWindow::setupUi() {
       _ui.themeSwitch->setToolTip(i18n::switchTheme());
 
       const auto updateThemeSwitch = [this]() {
-        _ui.themeSwitch->blockSignals(true);
-        _ui.themeSwitch->setChecked(_themeManager->currentTheme() == "Dark");
-        _ui.themeSwitch->blockSignals(false);
+        QSignalBlocker _(_ui.themeSwitch);
+        _ui.themeSwitch->setChecked(_preferences->appTheme() == "Dark");
       };
       QObject::connect(_ui.themeSwitch, &oclero::qlementine::Switch::clicked, this, [this](auto checked) {
-        _themeManager->setCurrentTheme(checked ? "Dark" : "Light");
+        _preferences->setAppTheme(checked ? "Dark" : "Light");
       });
-      QObject::connect(_themeManager, &oclero::qlementine::ThemeManager::currentThemeChanged, this, updateThemeSwitch);
+      QObject::connect(_preferences, &Preferences::appThemeChanged, this, updateThemeSwitch);
 
       themeLayout->addWidget(lightIconWidget);
       themeLayout->addWidget(_ui.themeSwitch);
@@ -495,19 +509,45 @@ void MainWindow::setupUi() {
 
     _ui.toolBar->addSeparator();
 
+    _ui.toggleConsoleButton = new QToolButton(_ui.toolBar);
+    {
+      _ui.toggleConsoleButton->setText(i18n::showHideConsole());
+      _ui.toggleConsoleButton->setIcon(makeIcon(Icons16::Navigation_UiPanelBottom));
+      _ui.toggleConsoleButton->setToolTip(i18n::showHideConsole());
+      _ui.toggleConsoleButton->setCheckable(true);
+      _ui.toggleConsoleButton->setChecked(_preferences->appConsoleVisible());
+      _ui.toggleConsoleButton->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonIconOnly);
+      _ui.toggleConsoleButton->setFocusPolicy(Qt::NoFocus);
+      _ui.toolBar->addWidget(_ui.toggleConsoleButton);
+
+      QObject::connect(_ui.toggleConsoleButton, &QPushButton::clicked, this, [this](bool checked) {
+        _preferences->setAppConsoleVisible(checked);
+      });
+
+      QObject::connect(_preferences, &Preferences::appConsoleVisibleChanged, this, [this]() {
+        QSignalBlocker _(_ui.toggleConsoleButton);
+        _ui.toggleConsoleButton->setChecked(_preferences->appConsoleVisible());
+      });
+    }
+
     _ui.togglePanelButton = new QToolButton(_ui.toolBar);
     {
       _ui.togglePanelButton->setText(i18n::showHideQuestInformation());
       _ui.togglePanelButton->setIcon(makeIcon(Icons16::Navigation_UiPanelRight));
       _ui.togglePanelButton->setToolTip(i18n::showHideQuestInformation());
       _ui.togglePanelButton->setCheckable(true);
-      _ui.togglePanelButton->setChecked(false);
+      _ui.togglePanelButton->setChecked(_preferences->appPropertiesPanelVisible());
       _ui.togglePanelButton->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonIconOnly);
       _ui.togglePanelButton->setFocusPolicy(Qt::NoFocus);
       _ui.toolBar->addWidget(_ui.togglePanelButton);
 
       QObject::connect(_ui.togglePanelButton, &QPushButton::clicked, this, [this](bool checked) {
-        _ui.propertiesPanelExpander->setExpanded(checked);
+        _preferences->setAppPropertiesPanelVisible(checked);
+      });
+
+      QObject::connect(_preferences, &Preferences::appPropertiesPanelVisibleChanged, this, [this]() {
+        QSignalBlocker _(_ui.togglePanelButton);
+        _ui.togglePanelButton->setChecked(_preferences->appPropertiesPanelVisible());
       });
     }
   }
@@ -536,7 +576,7 @@ void MainWindow::setupUi() {
     auto* listDelegate = new QuestListItemDelegate(_ui.listView);
     _ui.listView->setItemDelegate(listDelegate);
 
-    _ui.listView->setModel(_model);
+    _ui.listView->setModel(_proxyModel);
     auto* selectionModel = _ui.listView->selectionModel();
 
 
@@ -544,6 +584,8 @@ void MainWindow::setupUi() {
       const auto current = _ui.listView->currentIndex();
       const auto hasCurrent = current.isValid();
       _ui.removeQuestButton->setEnabled(hasCurrent);
+
+      _ui.playStopQuestButton->setEnabled(hasCurrent || _runner->state() == QuestRunner::State::Running);
 
       const auto questData = _model->questDataAt(current);
       _ui.propertiesPanel->setQuest(questData);
@@ -617,15 +659,15 @@ void MainWindow::setupUi() {
     expanderLayout->addWidget(_ui.propertiesPanel);
 
     _ui.propertiesPanelExpander->setContent(expanderContent);
-    _ui.propertiesPanelExpander->setExpanded(true);
+    _ui.propertiesPanelExpander->setExpanded(_preferences->appPropertiesPanelVisible());
 
-    const auto syncButton = [this]() {
-      const auto expanded = _ui.propertiesPanelExpander->expanded();
-      QSignalBlocker _(_ui.togglePanelButton);
-      _ui.togglePanelButton->setChecked(expanded);
-    };
-    syncButton();
-    QObject::connect(_ui.propertiesPanelExpander, &oclero::qlementine::Expander::expandedChanged, this, syncButton);
+    QObject::connect(_ui.propertiesPanelExpander, &oclero::qlementine::Expander::expandedChanged, this, [this]() {
+      _preferences->setAppPropertiesPanelVisible(_ui.propertiesPanelExpander->expanded());
+    });
+
+    QObject::connect(_preferences, &Preferences::appPropertiesPanelVisibleChanged, this, [this]() {
+      _ui.propertiesPanelExpander->setExpanded(_preferences->appPropertiesPanelVisible());
+    });
   }
 
   rowLayout->addWidget(_ui.listView);
@@ -668,28 +710,46 @@ void MainWindow::setupMenuBar() {
     fileMenu->setSeparatorsCollapsible(true);
 
     fileMenu->addAction(
-      makeIcon(Icons16::Action_PlusCircle, macOS), i18n::addQuestAction(), QKeySequence::StandardKey::New, []() {});
+      makeIcon(Icons16::Action_PlusCircle, macOS), i18n::addQuestAction(), QKeySequence::StandardKey::New, [this]() {
+        openAddQuestDialog();
+      });
+
     fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS), i18n::addQuestFolderAction(),
-      QKeySequence::StandardKey::Open, []() {});
+      QKeySequence::StandardKey::Open, [this]() {
+        openAddFolderDialog();
+      });
+
     fileMenu->addAction(
-      makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), QKeySequence::StandardKey::Delete, []() {});
+      makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), QKeySequence::StandardKey::Delete, [this]() {
+        removeCurrentQuest();
+      });
+
     fileMenu->addSeparator();
 
-    fileMenu->addAction(makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_Return }, []() {
-      // TODO
-    });
-    fileMenu->addAction(makeIcon(Icons16::File_FolderOpen, macOS), i18n::showContaingFolder(), QKeySequence{}, []() {
-      // TODO
-    });
+    fileMenu->addAction(
+      makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_Return }, [this]() {
+        startCurrentQuest();
+      });
+
+    fileMenu->addAction(
+      makeIcon(Icons16::File_FolderOpen, macOS), i18n::showContaingFolder(), QKeySequence{}, [this]() {
+        openCurrentQuestFolder();
+      });
+
     fileMenu->addAction(
       makeIcon(Icons16::Navigation_Search, macOS), i18n::search(), QKeySequence::StandardKey::Find, [this]() {
         _ui.searchLineEdit->setFocus(Qt::MenuBarFocusReason);
       });
+
     fileMenu->addSeparator();
 
     fileMenu->addAction(makeIcon(Icons16::Navigation_Settings, macOS), i18n::preferences(),
-      QKeySequence::StandardKey::Preferences, []() {});
+      QKeySequence::StandardKey::Preferences, [this]() {
+        openPreferencesDialog();
+      });
+
     fileMenu->addSeparator();
+
 #ifdef Q_OS_WIN
     // QKeySequence::Quit is empty on Windows.
     const auto quitShortcut = QKeySequence(Qt::CTRL | Qt::Key_Q);
@@ -722,33 +782,60 @@ void MainWindow::setupMenuBar() {
       themeActionGroup->addAction(action);
       action->setChecked(name == currentTheme);
 
-      QObject::connect(action, &QAction::triggered, action, [this, name](auto checked) {
-        if (checked) {
-          _themeManager->setCurrentTheme(name);
-        }
+      QObject::connect(action, &QAction::triggered, this, [this, name](auto checked) {
+        _themeManager->setCurrentTheme(name);
       });
-      QObject::connect(
-        _themeManager, &oclero::qlementine::ThemeManager::currentThemeChanged, action, [this, name, action]() {
-          action->setChecked(name == _themeManager->currentTheme());
-        });
+      QObject::connect(_preferences, &Preferences::appThemeChanged, this, [this, name, action]() {
+        QSignalBlocker _(action);
+        action->setChecked(name == _preferences->appTheme());
+      });
     }
 
-    themeMenu->addSeparator();
-    themeMenu->addAction(
-      makeIcon(Icons16::Action_Swap, macOS), i18n::switchTheme(), { Qt::CTRL | Qt::Key_T }, [this]() {
-        _themeManager->setNextTheme();
+    viewMenu->addAction(makeIcon(Icons16::Action_Swap, macOS), i18n::switchTheme(), { Qt::CTRL | Qt::Key_T }, [this]() {
+      _themeManager->setNextTheme();
+    });
+
+    viewMenu->addSeparator();
+
+    {
+      auto* action = viewMenu->addAction(makeIcon(Icons16::Navigation_UiPanelBottom, macOS), i18n::showHideConsole(),
+        { Qt::Key_F12 }, [this](bool checked) {
+          _preferences->setAppConsoleVisible(checked);
+        });
+      action->setCheckable(true);
+      action->setChecked(_preferences->appConsoleVisible());
+
+      QObject::connect(_preferences, &Preferences::appConsoleVisibleChanged, this, [this, action]() {
+        QSignalBlocker _(action);
+        action->setChecked(_preferences->appConsoleVisible());
       });
+    }
+
+    {
+      auto* action = viewMenu->addAction(makeIcon(Icons16::Navigation_UiPanelRight, macOS),
+        i18n::showHideQuestInformation(), { Qt::Key_F10 }, [this](bool checked) {
+          _preferences->setAppPropertiesPanelVisible(checked);
+        });
+      action->setCheckable(true);
+      action->setChecked(_preferences->appPropertiesPanelVisible());
+
+      QObject::connect(_preferences, &Preferences::appPropertiesPanelVisibleChanged, this, [this, action]() {
+        QSignalBlocker _(action);
+        action->setChecked(_preferences->appPropertiesPanelVisible());
+      });
+    }
   }
 
   auto* helpMenu = _ui.menuBar->addMenu(i18n::helpMenu());
   {
     helpMenu->setSeparatorsCollapsible(true);
-    helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, []() {
 
+    helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, [this]() {
+      openContactPage();
     });
+
     helpMenu->addAction(makeIcon(Icons16::Misc_Info, macOS), i18n::about(), QKeySequence{}, [this]() {
-      AboutWindow aboutWindow(this);
-      aboutWindow.exec();
+      openAboutDialog();
     });
   }
 }
@@ -772,5 +859,58 @@ void MainWindow::openAddFolderDialog() {
       _model->addQuestFolder(dirPath);
     }
   });
+}
+
+void MainWindow::removeCurrentQuest() {
+  const auto index = _ui.listView->currentIndex();
+  if (index.isValid()) {
+    const auto questFilePath = _model->questFilePath(index);
+    /*uto* messageBox = new QMessageBox(QMessageBox::Icon::Question,
+                                 "Remove Quest",
+                                 "Do you want to remove this quest?",
+                                 QMessageBox::Button::No | QMessageBox::Button::Yes,
+                                 this);
+          messageBox->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+          const auto result = messageBox->exec();
+          if (result == QMessageBox::Button::Yes) {
+            _model->removeQuest(questFilePath);
+          }*/
+
+    _model->removeQuest(questFilePath);
+  }
+}
+
+void MainWindow::startCurrentQuest() {
+  // TODO
+}
+
+void MainWindow::openCurrentQuestFolder() {
+  // TODO
+}
+
+void MainWindow::openPreferencesDialog() {
+  PreferencesWindow window(*_preferences, *_themeManager, this);
+  window.exec();
+}
+
+void MainWindow::openAboutDialog() {
+  AboutWindow aboutWindow(this);
+  aboutWindow.exec();
+}
+
+void MainWindow::playStopQuest() {
+  if (_runner->state() == QuestRunner::State::Stopped) {
+    const auto index = _ui.listView->currentIndex();
+    if (index.isValid()) {
+      const auto questFilePath = _model->questFilePath(index);
+      _runner->start(questFilePath);
+    }
+  } else {
+    _runner->stop();
+  }
+}
+
+void MainWindow::openContactPage() {
+  QDesktopServices::openUrl(QUrl("https://www.solarus-games.org/about/contact"));
 }
 } // namespace solarus::launcher

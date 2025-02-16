@@ -28,7 +28,7 @@ qt_standard_project_setup()
 include(FetchContent)
 FetchContent_Declare(qlementine_icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
-  GIT_TAG 0a269d7c4eb77fdc8ca92a7fb2ceae1baae29727 #v1.5.0
+  GIT_TAG 2e09b37ed13d5d9fce7e5d5e2c0c96727e0dc9b0 #v1.6.0
 )
 FetchContent_MakeAvailable(qlementine_icons)
 set_target_properties(qlementine_icons
@@ -72,6 +72,10 @@ qt_add_executable(solarus-launcher MANUAL_FINALIZATION
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/PreferencesWindow.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/PreferencesWindow.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestData.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListItemDelegate.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListItemDelegate.h

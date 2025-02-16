@@ -15,7 +15,7 @@ constexpr auto COPYRIGHT_YEAR_START = "2006";
 constexpr auto COPYRIGHT_YEAR_CURRENT = "2025";
 
 namespace i18n {
-static QString aboutDialogTitle() {
+static QString windowTitle() {
   return QApplication::translate("SolarusLauncher", "About %1");
 }
 static QString allRightsReserved() {
@@ -32,7 +32,7 @@ static QString license() {
 AboutWindow::AboutWindow(QWidget* parent)
   : QDialog(parent) {
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  setWindowTitle(i18n::aboutDialogTitle().arg(QApplication::applicationDisplayName()));
+  setWindowTitle(i18n::windowTitle().arg(QApplication::applicationDisplayName()));
   setWindowModality(Qt::WindowModality::ApplicationModal);
   setWindowFlag(Qt::WindowType::MSWindowsFixedSizeDialogHint, true);
   setWindowFlag(Qt::WindowType::WindowContextHelpButtonHint, false);
@@ -108,11 +108,9 @@ void AboutWindow::setupUi() {
     buttonsLayout->setSpacing(4);
     buttonsLayout->setContentsMargins(0, 0, 0, 0);
     for (const auto [tooltip, url, icon] : {
-           std::make_tuple("Twitter", "https://twitter.com/solarusgames", Icons16::Brand_TwitterFill),
-           std::make_tuple("Mastodon", "https://mastodon.gamedev.place/@solarus", Icons16::Brand_FacebookFill),
-           // std::make_tuple("Discord", "https://discord.gg/yYHjJHt", Icons16::Brand_DiscordFill),
+           std::make_tuple("X", "https://x.com/solarusgames", Icons16::Brand_X),
+           std::make_tuple("Mastodon", "https://mastodon.gamedev.place/@solarus", Icons16::Brand_MastodonFill),
            std::make_tuple("YouTube", "https://www.youtube.com/c/ChristophoZS", Icons16::Brand_YoutubeFill),
-           // std::make_tuple("GitLab", "https://www.gitlab.com/solarus-games", Icons16::Brand_GitlabFill),
          }) {
       auto* button = new QPushButton(this);
       button->setIcon(makeIcon(icon));

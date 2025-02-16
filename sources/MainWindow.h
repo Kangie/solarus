@@ -10,6 +10,7 @@ class QStatusBar;
 class QLabel;
 class QMenuBar;
 class QAction;
+class QSortFilterProxyModel;
 
 namespace oclero::qlementine {
 class LineEdit;
@@ -23,6 +24,7 @@ namespace solarus::launcher {
 class QuestListModel;
 class QuestRunner;
 class QuestPropertiesPanel;
+class Preferences;
 
 class MainWindow : public QWidget {
   Q_OBJECT
@@ -37,12 +39,24 @@ private:
   void setupThemeManager();
   void setupUi();
   void setupMenuBar();
+
   void openAddQuestDialog();
   void openAddFolderDialog();
+  void removeCurrentQuest();
+  void startCurrentQuest();
+  void openCurrentQuestFolder();
+  void openPreferencesDialog();
+
+  void openAboutDialog();
+  void playStopQuest();
+
+  void openContactPage();
 
 private:
-  QuestListModel* _model;
-  QuestRunner* _runner;
+  Preferences* _preferences{nullptr};
+  QuestListModel* _model{nullptr};
+  QSortFilterProxyModel* _proxyModel{nullptr};
+  QuestRunner* _runner{nullptr};
   struct {
     QMenuBar* menuBar{ nullptr };
     QToolBar* toolBar{ nullptr };
@@ -50,6 +64,7 @@ private:
     QToolButton* removeQuestButton{ nullptr };
     QToolButton* playStopQuestButton{ nullptr };
     QToolButton* togglePanelButton{ nullptr };
+    QToolButton* toggleConsoleButton{ nullptr };
     oclero::qlementine::LineEdit* searchLineEdit{ nullptr };
     oclero::qlementine::Switch* themeSwitch{ nullptr };
     QListView* listView{ nullptr };
@@ -59,5 +74,6 @@ private:
     oclero::qlementine::Expander* propertiesPanelExpander{ nullptr };
   } _ui;
   oclero::qlementine::ThemeManager* _themeManager{ nullptr };
+
 };
 } // namespace solarus::launcher
