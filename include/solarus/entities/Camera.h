@@ -91,14 +91,11 @@ class Camera : public Entity {
     void set_subpixel_offset(const glm::vec2& offset);
     Point get_position_on_screen(Scale px_scale) const;
 
-
     const SurfacePtr& get_surface() const;
 
     Point get_position_on_screen() const;
     void set_position_on_screen(const Point& position_on_screen);
     Point get_position_to_track(const Point& tracked_xy) const;
-
-
 
     void start_tracking(const EntityPtr& entity);
     void start_manual();
@@ -113,8 +110,8 @@ class Camera : public Entity {
 
     void reset_view();
     void apply_view();
+    bool is_view_applied() const;
 
-    void set_surface_mode();
     void notify_window_size_changed(const Size& new_size);
 
     Rectangle get_viewport_rectangle() const;
@@ -148,7 +145,8 @@ private:
     float rotation = 0.f;         /**< Rotation of this camera */
     glm::vec2 position_offset
     = {0.f,0.f};    /**< Small offset in position to compensate for discretization after zoom */
-    glm::vec2 subpixel_offset;       /**< Speed of subpixel move */
+    glm::vec2 subpixel_offset;    /**< Speed of subpixel move */
+    bool view_applied = false;    /**< Whether the view is set */
 };
 
 }
