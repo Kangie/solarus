@@ -689,7 +689,7 @@ void Map::draw_visual(Drawable& drawable, const Point &xy) {
     // When called from entity:on_pre_draw(), it expects
     // coordinates relative to the map.
     // See how Map::draw() above calls apply_view()/reset_view().
-//    dst -= camera->get_xy();
+    dst -= camera->get_xy();
   }
 
   const SurfacePtr& camera_surface = camera->get_surface();
