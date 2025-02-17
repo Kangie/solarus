@@ -57,10 +57,10 @@ static QString addQuestFolder() {
   return QApplication::translate("SolarusLauncher", "Add Quest Folder");
 }
 static QString addQuestAction() {
-  return QApplication::translate("SolarusLauncher", "Add Quest...");
+  return QApplication::translate("SolarusLauncher", "Add Quest…");
 }
 static QString addQuestFolderAction() {
-  return QApplication::translate("SolarusLauncher", "Add Quests from Folder...");
+  return QApplication::translate("SolarusLauncher", "Add Folder…");
 }
 static QString removeQuest() {
   return QApplication::translate("SolarusLauncher", "Remove Quest");
@@ -78,7 +78,7 @@ static QString showQuestInfo() {
   return QApplication::translate("SolarusLauncher", "Show Quest Information");
 }
 static QString stopQuest() {
-  return QApplication::translate("SolarusLauncher", "Stop Quesr");
+  return QApplication::translate("SolarusLauncher", "Stop Quest");
 }
 static QString showHideQuestInformation() {
   return QApplication::translate("SolarusLauncher", "Show/Hide Quest Information");
@@ -87,7 +87,7 @@ static QString showHideConsole() {
   return QApplication::translate("SolarusLauncher", "Show/Hide Quest Console");
 }
 static QString search() {
-  return QApplication::translate("SolarusLauncher", "Search...");
+  return QApplication::translate("SolarusLauncher", "Search…");
 }
 static QString noQuestFound() {
   return QApplication::translate("SolarusLauncher", "No quest found");
@@ -96,7 +96,7 @@ static QString questsFound(int count) {
   return QApplication::translate("SolarusLauncher", "%n quest(s) found", "", count);
 }
 static QString preferences() {
-  return QApplication::translate("SolarusLauncher", "Preferences...");
+  return QApplication::translate("SolarusLauncher", "Preferences…");
 }
 static QString quit() {
   return QApplication::translate("SolarusLauncher", "Quit");
@@ -114,7 +114,7 @@ static QString contact() {
   return QApplication::translate("SolarusLauncher", "Contact");
 }
 static QString about() {
-  return QApplication::translate("SolarusLauncher", "About...");
+  return QApplication::translate("SolarusLauncher", "About…");
 }
 static QString switchTheme() {
   return QApplication::translate("SolarusLauncher", "Switch Theme");
@@ -126,7 +126,7 @@ static QString questMenu() {
   return QApplication::translate("SolarusLauncher", "Quest");
 }
 static QString showContaingFolder() {
-  return QApplication::translate("SolarusLauncher", "Show Containing Folder...");
+  return QApplication::translate("SolarusLauncher", "Show Containing Folder");
 }
 static QString solarusQuests() {
   return QApplication::translate("SolarusLauncher", "Solarus Quests");
@@ -136,6 +136,9 @@ static QString playingLabel() {
 }
 static QString closeConsole() {
   return QApplication::translate("SolarusLauncher", "Close console");
+}
+static QString noQuestPlaying() {
+  return QApplication::translate("SolarusLauncher", "No quest playing");
 }
 } // namespace i18n
 
@@ -293,7 +296,7 @@ public:
   std::function<void()> onMouseReleased;
 
 protected:
-  void mouseReleaseEvent(QMouseEvent *event) override {
+  void mouseReleaseEvent(QMouseEvent* event) override {
     QSplitterHandle::mouseReleaseEvent(event);
     if (onMouseReleased) {
       onMouseReleased();
@@ -308,8 +311,8 @@ public:
   std::function<void()> onHandleMouseReleased;
 
 protected:
-  QSplitterHandle *createHandle() override {
-    auto *handle = new CustomSplitterHandle(orientation(), this);
+  QSplitterHandle* createHandle() override {
+    auto* handle = new CustomSplitterHandle(orientation(), this);
     handle->onMouseReleased = onHandleMouseReleased;
     return handle;
   }
@@ -420,11 +423,13 @@ void MainWindow::setupUi() {
         _ui.addQuestButton->setPopupMode(QToolButton::ToolButtonPopupMode::MenuButtonPopup);
 
         auto* addQuestAction = subMenu->addAction(makeIcon(Icons16::Action_PlusCircle), i18n::addQuestAction());
+        addQuestAction->setShortcut(QKeySequence::StandardKey::New);
         QObject::connect(addQuestAction, &QAction::triggered, this, [this]() {
           openAddQuestDialog();
         });
 
         auto* addFolderAction = subMenu->addAction(makeIcon(Icons16::Action_AddFolder), i18n::addQuestFolderAction());
+        addFolderAction->setShortcut(QKeySequence::StandardKey::Open);
         QObject::connect(addFolderAction, &QAction::triggered, this, [this]() {
           openAddFolderDialog();
         });
@@ -521,6 +526,17 @@ void MainWindow::setupUi() {
 
       QObject::connect(_ui.searchLineEdit, &QLineEdit::textEdited, this, [this](const QString& text) {
         _proxyModel->setFilterFixedString(text);
+      });
+
+      auto* cancelAction = _ui.searchLineEdit->addAction({}, QKeySequence::StandardKey::Cancel);
+      QObject::connect(cancelAction, &QAction::triggered, this, [this]() {
+        _ui.searchLineEdit->clear();
+        emit _ui.searchLineEdit->textEdited(_ui.searchLineEdit->text());
+        _ui.listView->setFocus(Qt::FocusReason::ShortcutFocusReason);
+      });
+
+      QObject::connect(_ui.searchLineEdit, &QLineEdit::returnPressed, this, [this]() {
+        _ui.listView->setFocus(Qt::FocusReason::ShortcutFocusReason);
       });
     }
 
@@ -663,8 +679,7 @@ void MainWindow::setupUi() {
 
           {
             auto* playAction = new QAction(makeIcon(Icons16::Media_Play), i18n::playQuest(), &menu);
-            playAction->setShortcutVisibleInContextMenu(true);
-            playAction->setShortcut(QKeySequence(Qt::Key_Return));
+            playAction->setShortcut(QKeySequence(Qt::Key_F5));
             menu.addAction(playAction);
             QObject::connect(playAction, &QAction::triggered, this, [this, index]() {
               const auto questPath = _model->questFilePath(index);
@@ -673,7 +688,6 @@ void MainWindow::setupUi() {
           }
           {
             auto* infoAction = new QAction(makeIcon(Icons16::Misc_Info), i18n::showQuestInfo(), &menu);
-            infoAction->setShortcutVisibleInContextMenu(true);
             menu.addAction(infoAction);
             QObject::connect(infoAction, &QAction::triggered, this, [this, index]() {
               // TODO
@@ -682,7 +696,6 @@ void MainWindow::setupUi() {
           menu.addSeparator();
           {
             auto* removeAction = new QAction(makeIcon(Icons16::Action_Trash), i18n::removeQuest(), &menu);
-            removeAction->setShortcutVisibleInContextMenu(true);
             removeAction->setShortcut(QKeySequence::StandardKey::Delete);
             menu.addAction(removeAction);
             QObject::connect(removeAction, &QAction::triggered, this, [this, index]() {
@@ -742,22 +755,45 @@ void MainWindow::setupUi() {
       consoleToolBarLayout->setContentsMargins(12, 2, 4, 2);
       consoleToolBar->setLayout(consoleToolBarLayout);
 
+      auto* iconWidget = new oclero::qlementine::IconWidget(consoleToolBar);
+      consoleToolBarLayout->addWidget(iconWidget);
+
+      auto* playingLayout = new QHBoxLayout();
+      playingLayout->setContentsMargins(0, 0, 0, 0);
+      playingLayout->setSpacing(4);
+      consoleToolBarLayout->addLayout(playingLayout);
+
       auto* playingLabel = new QLabel(consoleToolBar);
       playingLabel->setText(QString("<b>%1</b>").arg(i18n::playingLabel()));
-      playingLabel->setVisible(false);
-      consoleToolBarLayout->addWidget(playingLabel);
+      playingLayout->addWidget(playingLabel);
 
       auto* consoleTitleLabel = new QLabel(consoleToolBar);
-      consoleTitleLabel->setVisible(false);
       consoleToolBarLayout->addWidget(consoleTitleLabel);
+      playingLayout->addWidget(consoleTitleLabel);
 
-      QObject::connect(_runner, &QuestRunner::questChanged, this, [this, playingLabel, consoleTitleLabel]() {
+      if (const auto* qlementineStyle = qobject_cast<oclero::qlementine::QlementineStyle*>(style())) {
+        const auto updatePalette = [qlementineStyle, playingLabel, consoleTitleLabel, iconWidget]() {
+          const auto palette = qlementineStyle->paletteForTextRole(oclero::qlementine::TextRole::Caption);
+          playingLabel->setPalette(palette);
+          consoleTitleLabel->setPalette(palette);
+          iconWidget->setPalette(palette);
+        };
+        updatePalette();
+        QObject::connect(qlementineStyle, &oclero::qlementine::QlementineStyle::themeChanged, this, [updatePalette]() {
+          updatePalette();
+        });
+      }
+
+      const auto updateQuestToolBar = [this, playingLabel, consoleTitleLabel, iconWidget]() {
         const auto path = _runner->questFilePath();
-        consoleTitleLabel->setText(path);
         const auto hasQuest = !path.isEmpty();
+        consoleTitleLabel->setText(hasQuest ? path : i18n::noQuestPlaying());
         playingLabel->setVisible(hasQuest);
-        consoleTitleLabel->setVisible(hasQuest);
-      });
+        iconWidget->setIcon(makeIcon(hasQuest ? Icons16::Software_CommandLine : Icons16::Misc_Info));
+      };
+      updateQuestToolBar();
+
+      QObject::connect(_runner, &QuestRunner::questChanged, this, updateQuestToolBar);
 
       consoleToolBarLayout->addStretch();
 
@@ -825,14 +861,14 @@ void MainWindow::setupUi() {
   _ui.consoleSplitter->setCollapsible(0, false);
   _ui.consoleSplitter->setHandleWidth(2);
 
-  QObject::connect(_preferences, &Preferences::appConsoleVisibleChanged, this, [this, bottomWidget] () {
+  QObject::connect(_preferences, &Preferences::appConsoleVisibleChanged, this, [this, bottomWidget]() {
     const auto bottomVisible = _preferences->appConsoleVisible();
     if (bottomVisible) {
       bottomWidget->show();
-      _ui.consoleSplitter->setSizes({_ui.consoleSplitter->sizes().at(0), 100});
+      _ui.consoleSplitter->setSizes({ _ui.consoleSplitter->sizes().at(0), 100 });
     } else {
       bottomWidget->hide();
-      _ui.consoleSplitter->setSizes({_ui.consoleSplitter->sizes().at(0), 0});
+      _ui.consoleSplitter->setSizes({ _ui.consoleSplitter->sizes().at(0), 0 });
     }
 
     bottomWidget->setVisible(bottomVisible);
@@ -899,10 +935,9 @@ void MainWindow::setupMenuBar() {
 
     fileMenu->addSeparator();
 
-    fileMenu->addAction(
-      makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_Return }, [this]() {
-        startCurrentQuest();
-      });
+    fileMenu->addAction(makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
+      startCurrentQuest();
+    });
 
     fileMenu->addAction(
       makeIcon(Icons16::File_FolderOpen, macOS), i18n::showContaingFolder(), QKeySequence{}, [this]() {
@@ -1087,13 +1122,13 @@ void MainWindow::openContactPage() {
   QDesktopServices::openUrl(QUrl("https://www.solarus-games.org/about/contact"));
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
+void MainWindow::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
   _preferences->setWindowGeometry(saveGeometry());
   _preferences->setWindowSplitterState(_ui.consoleSplitter->saveState());
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent* event) {
   QWidget::closeEvent(event);
   _preferences->setWindowGeometry(saveGeometry());
   _preferences->setWindowSplitterState(_ui.consoleSplitter->saveState());

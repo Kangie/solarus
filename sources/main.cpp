@@ -36,7 +36,7 @@ int runGUI(int argc, char* argv[]) {
   oclero::qlementine::icons::initializeIconTheme();
   QIcon::setThemeName("qlementine");
 
-  // Qlementine theme manager.
+  // Main window.
   auto window = std::make_unique<solarus::launcher::MainWindow>();
   window->show();
 

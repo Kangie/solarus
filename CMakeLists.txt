@@ -38,7 +38,7 @@ set_target_properties(qlementine_icons
 
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG b53a59aff84f1f2ddcf9f26e2e039e82b2ecb5f2 #dev
+  GIT_TAG 2271bbb9ca076d916780fc7f51ef3b1859f22aaa #dev
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
