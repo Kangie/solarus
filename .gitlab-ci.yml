@@ -24,7 +24,7 @@
 
 variables:
   IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
-  IMAGE_VERSION: 20241005
+  IMAGE_VERSION: 20250217
   GIT_DEPTH: 10
 
 stages:
@@ -286,8 +286,8 @@ mingw-x64-package:
       staging/bin/solarus-launcher.exe
     EXTRAS: >-
       staging/share/solarus-gui/translations
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/platforms
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/styles
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
     TEXT_FILES: >-
       changelog.md
       license
@@ -334,8 +334,8 @@ mingw-x86-package:
       staging/bin/solarus-launcher.exe
     EXTRAS: >-
       staging/share/solarus-gui/translations
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/platforms
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/styles
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
     TEXT_FILES: >-
       changelog.md
       license
