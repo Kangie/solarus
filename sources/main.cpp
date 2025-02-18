@@ -14,12 +14,12 @@
 #include <iostream>
 
 int runGUI(int argc, char* argv[]) {
-  QGuiApplication::setApplicationName("Solarus Launcher");
-  QGuiApplication::setApplicationDisplayName("Solarus Launcher");
-  QGuiApplication::setOrganizationName("Solarus Labs");
-  QGuiApplication::setOrganizationDomain("solarus-games.org");
-  QGuiApplication::setApplicationVersion("2.0.0");
-  QGuiApplication::setDesktopFileName("Solarus Launcher");
+  QGuiApplication::setApplicationName(PROJECT_APP_NAME);
+  QGuiApplication::setApplicationDisplayName(PROJECT_APP_NAME);
+  QGuiApplication::setOrganizationName(PROJECT_APP_ORGANISATION);
+  QGuiApplication::setOrganizationDomain(PROJECT_APP_ORGANISATION_DOMAIN);
+  QGuiApplication::setApplicationVersion(PROJECT_VERSION);
+  QGuiApplication::setDesktopFileName(PROJECT_APP_NAME);
 
   QApplication app(argc, argv);
   app.setQuitOnLastWindowClosed(true);

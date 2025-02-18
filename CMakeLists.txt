@@ -7,6 +7,16 @@ project("solarus-launcher"
   DESCRIPTION "Legacy Launcher for Solarus Quests"
 )
 
+string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
+set(APP_NAME "Solarus Launcher")
+set(APP_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} Solarus Labs.")
+set(APP_IDENTIFIER "org.solarus-games.solarus-launcher")
+set(APP_ORGANISATION "Solarus Labs")
+set(APP_ORGANISATION_DOMAIN "solarus-games.org")
+set(SOCIALMEDIA_X "https://x.com/solarusgames")
+set(SOCIALMEDIA_MASTODON "https://mastodon.gamedev.place/@solarus")
+set(SOCIALMEDIA_YOUTUBE "https://www.youtube.com/c/ChristophoZS")
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -38,7 +48,7 @@ set_target_properties(qlementine_icons
 
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG 2271bbb9ca076d916780fc7f51ef3b1859f22aaa #dev
+  GIT_TAG e2d98210c25c6132668cf53a80df83809213495d #dev
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -87,7 +97,7 @@ qt_add_executable(solarus-launcher MANUAL_FINALIZATION
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
 )
-set_target_properties(solarus-launcher PROPERTIES OUTPUT_NAME "Solarus Launcher")
+set_target_properties(solarus-launcher PROPERTIES OUTPUT_NAME ${APP_NAME})
 
 qt_add_resources(solarus-launcher "resources"
   PREFIX "/solarus/launcher/"
@@ -123,20 +133,34 @@ target_link_libraries(solarus-launcher
     solarus
 )
 
-string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
 set_target_properties(solarus-launcher PROPERTIES
   ${BUNDLE_ID_OPTION}
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-  MACOSX_BUNDLE_BUNDLE_NAME "Solarus Launcher"
+  MACOSX_BUNDLE_BUNDLE_NAME ${APP_NAME}
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-  MACOSX_BUNDLE_GUI_IDENTIFIER "org.solarus-games.solarus-launcher"
-  MACOSX_BUNDLE_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} Solarus Labs."
+  MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_IDENTIFIER}
+  MACOSX_BUNDLE_COPYRIGHT ${APP_COPYRIGHT}
   MACOSX_BUNDLE TRUE
   WIN32_EXECUTABLE TRUE
   XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED OFF
   XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
   XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual"
   XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS OFF
+)
+
+target_compile_definitions(solarus-launcher PRIVATE
+  PROJECT_VERSION="${PROJECT_VERSION}"
+  PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+  PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+  PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+  PROJECT_APP_NAME="${APP_NAME}"
+  PROJECT_APP_COPYRIGHT="${APP_COPYRIGHT}"
+  PROJECT_APP_ORGANISATION="${APP_ORGANISATION}"
+  PROJECT_APP_ORGANISATION_DOMAIN="${APP_ORGANISATION_DOMAIN}"
+  PROJECT_HOMEPAGE_URL="${PROJECT_HOMEPAGE_URL}"
+  PROJECT_SOCIALMEDIA_X="${SOCIALMEDIA_X}"
+  PROJECT_SOCIALMEDIA_MASTODON="${SOCIALMEDIA_MASTODON}"
+  PROJECT_SOCIALMEDIA_YOUTUBE="${SOCIALMEDIA_YOUTUBE}"
 )
 
 include(GNUInstallDirs)

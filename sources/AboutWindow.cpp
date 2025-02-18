@@ -11,9 +11,6 @@
 #include <oclero/qlementine/widgets/Label.hpp>
 
 namespace solarus::launcher {
-constexpr auto COPYRIGHT_YEAR_START = "2006";
-constexpr auto COPYRIGHT_YEAR_CURRENT = "2025";
-
 namespace i18n {
 static QString windowTitle() {
   return QApplication::translate("SolarusLauncher", "About %1");
@@ -57,7 +54,7 @@ void AboutWindow::setupUi() {
     iconLabel->setFixedSize(64, 64);
     iconLabel->setScaledContents(true);
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    iconLabel->setPixmap(QPixmap(":/solarus/launcher/resources/icon/solarus_launcher_icon_1024.png"));
+    iconLabel->setPixmap(QApplication::windowIcon().pixmap(iconLabel->height() * 2));
 
     auto iconLabelLayout = new QHBoxLayout();
     iconLabelLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
@@ -108,9 +105,9 @@ void AboutWindow::setupUi() {
     buttonsLayout->setSpacing(4);
     buttonsLayout->setContentsMargins(0, 0, 0, 0);
     for (const auto [tooltip, url, icon] : {
-           std::make_tuple("X", "https://x.com/solarusgames", Icons16::Brand_X),
-           std::make_tuple("Mastodon", "https://mastodon.gamedev.place/@solarus", Icons16::Brand_MastodonFill),
-           std::make_tuple("YouTube", "https://www.youtube.com/c/ChristophoZS", Icons16::Brand_YoutubeFill),
+           std::make_tuple("X", PROJECT_SOCIALMEDIA_X, Icons16::Brand_X),
+           std::make_tuple("Mastodon", PROJECT_SOCIALMEDIA_MASTODON, Icons16::Brand_MastodonFill),
+           std::make_tuple("YouTube", PROJECT_SOCIALMEDIA_YOUTUBE, Icons16::Brand_YoutubeFill),
          }) {
       auto* button = new QPushButton(this);
       button->setIcon(makeIcon(icon));
@@ -131,8 +128,13 @@ void AboutWindow::setupUi() {
 
     // Legal information.
     {
+      auto prettyUrl = QString(PROJECT_HOMEPAGE_URL);
+      if (prettyUrl.startsWith("https://")) {
+        prettyUrl.remove(0, 8);
+      }
+
       auto* websiteLabel = new oclero::qlementine::Label(this);
-      websiteLabel->setText("<a href=\"https://www.solarus-games.org\">www.solarus-games.org</a>");
+      websiteLabel->setText(QString("<a href=\"%1\">%2</a>").arg(PROJECT_HOMEPAGE_URL, prettyUrl));
       websiteLabel->setAlignment(Qt::AlignCenter);
 
       auto* licenseLabel = new oclero::qlementine::Label(this);
@@ -145,9 +147,7 @@ void AboutWindow::setupUi() {
       copyrightLabel->setRole(oclero::qlementine::TextRole::Caption);
       copyrightLabel->setText(QApplication::applicationDisplayName());
       copyrightLabel->setAlignment(Qt::AlignCenter);
-      const auto copyrightText = QString("© %1-%2 %3. %4")
-                                   .arg(COPYRIGHT_YEAR_START, COPYRIGHT_YEAR_CURRENT, QApplication::organizationName(),
-                                     i18n::allRightsReserved());
+      const auto copyrightText = QString("%1 %2").arg(PROJECT_APP_COPYRIGHT, i18n::allRightsReserved());
       copyrightLabel->setText(copyrightText);
 
       auto* smallTextsLayout = new QVBoxLayout();
