@@ -8,7 +8,7 @@ include(cmake/SolarusGuiLibraryQtSources.cmake)
 target_link_libraries(solarus-gui
   PUBLIC
     solarus
-    Qt5::Widgets
+    Qt6::Widgets
 )
 
 # Set the build properties for "solarus-gui"
