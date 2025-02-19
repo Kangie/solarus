@@ -25,17 +25,23 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER CMakeAutogenTargets)
 
 if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "13.6")
 endif()
+
+# Find Qt.
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg)
 qt_standard_project_setup()
 
 # Dependencies.
 include(FetchContent)
+
+# Qlementine Icons: an SVG icon library made for Qt.
 FetchContent_Declare(qlementine_icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
   GIT_TAG 2e09b37ed13d5d9fce7e5d5e2c0c96727e0dc9b0 #v1.6.0
@@ -46,6 +52,7 @@ set_target_properties(qlementine_icons
     FOLDER dependencies
 )
 
+# Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
   GIT_TAG e2d98210c25c6132668cf53a80df83809213495d #dev
@@ -56,17 +63,25 @@ set_target_properties(qlementine
     FOLDER dependencies
 )
 
-set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
-set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
-FetchContent_Declare(solarus
-  GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-  GIT_TAG 3d8f5e5a125f1f8e199b70280a0bd40db84f3d51 #new-launcher
-)
-FetchContent_MakeAvailable(solarus)
-set_target_properties(solarus
-  PROPERTIES
-    FOLDER dependencies
-)
+# Solarus: the engine.
+# If this flag is set, CMake will download Solarus from its git repository
+# instead of using a locally pre-built version.
+if(SOLARUS_FETCHCONTENT)
+  set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
+  set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
+  FetchContent_Declare(solarus
+    GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
+    GIT_TAG 3d8f5e5a125f1f8e199b70280a0bd40db84f3d51 #new-launcher
+  )
+  FetchContent_MakeAvailable(solarus)
+  set_target_properties(solarus
+    PROPERTIES
+      FOLDER dependencies
+  )
+endif()
+
+# Ensure that Solarus is found, one way or another.
+find_package(solarus REQUIRED)
 
 # Icon.
 set(MACOSX_BUNDLE_ICON_FILE solarus_launcher_icon.icns)
@@ -74,7 +89,7 @@ set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_
 set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
 # Target.
-qt_add_executable(solarus-launcher MANUAL_FINALIZATION
+qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${APP_ICON_MACOS}
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.h
@@ -82,6 +97,8 @@ qt_add_executable(solarus-launcher MANUAL_FINALIZATION
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MessageBox.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MessageBox.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/PreferencesWindow.cpp
@@ -97,9 +114,9 @@ qt_add_executable(solarus-launcher MANUAL_FINALIZATION
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
 )
-set_target_properties(solarus-launcher PROPERTIES OUTPUT_NAME ${APP_NAME})
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${APP_NAME})
 
-qt_add_resources(solarus-launcher "resources"
+qt_add_resources(${PROJECT_NAME} "resources"
   PREFIX "/solarus/launcher/"
   FILES
     resources/themes/dark.json
@@ -124,7 +141,7 @@ qt_add_resources(solarus-launcher "resources"
     resources/icon/solarus_quest_icon.ico
 )
 
-target_link_libraries(solarus-launcher
+target_link_libraries(${PROJECT_NAME}
   PRIVATE
     Qt6::Widgets
     Qt6::Svg
@@ -133,7 +150,7 @@ target_link_libraries(solarus-launcher
     solarus
 )
 
-set_target_properties(solarus-launcher PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
   ${BUNDLE_ID_OPTION}
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
   MACOSX_BUNDLE_BUNDLE_NAME ${APP_NAME}
@@ -148,7 +165,7 @@ set_target_properties(solarus-launcher PROPERTIES
   XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS OFF
 )
 
-target_compile_definitions(solarus-launcher PRIVATE
+target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_VERSION="${PROJECT_VERSION}"
   PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
   PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
@@ -164,10 +181,10 @@ target_compile_definitions(solarus-launcher PRIVATE
 )
 
 include(GNUInstallDirs)
-install(TARGETS solarus-launcher
+install(TARGETS ${PROJECT_NAME}
   BUNDLE DESTINATION .
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-qt_finalize_executable(solarus-launcher)
+qt_finalize_executable(${PROJECT_NAME})
