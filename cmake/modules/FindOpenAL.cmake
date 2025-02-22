@@ -26,7 +26,7 @@
 # This module defines the following cache variables:
 #
 #   OPENAL_INCLUDE_DIR
-#     The directory containing 'al.h'
+#     The directory containing 'AL/al.h'
 #   OPENAL_LIBRARY
 #     The path to the OpenAL library
 #
@@ -57,20 +57,27 @@ find_path(OPENAL_INCLUDE_DIR
 )
 
 # locate OpenAL library
+if(APPLE)
+    # On macOS, prevent CMake from finding the deprecated built-in OpenAL (we want OpenAL Soft)
+    set(FIND_OPENAL_NO_DEFAULT_PATH NO_DEFAULT_PATH)
+else()
+    set(FIND_OPENAL_NO_DEFAULT_PATH)
+endif()
 find_library(OPENAL_LIBRARY
   NAMES
-    OpenAL
-    al
     openal
+    al
+    OpenAL
     OpenAL32
   HINTS
     ENV OPENAL_DIR
     ${PC_OPENAL_LIBDIR}
     ${PC_OPENAL_LIBRARY_DIRS}
   PATHS
+    /usr/local/opt/openal-soft # Homebrew on macOS Intel
+    /opt/homebrew/opt/openal-soft # Homebrew on macOS ARM
     ~/Library/Frameworks
     /Library/Frameworks
-    /opt/homebrew/opt/openal-soft
     /sw # Fink
     /opt/local # DarwinPorts
     /opt/csw # Blastwave
@@ -79,6 +86,7 @@ find_library(OPENAL_LIBRARY
   PATH_SUFFIXES
     lib
     lib64
+  ${FIND_OPENAL_NO_DEFAULT_PATH}
 )
 
 # extract OpenAL version
