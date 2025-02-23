@@ -2,22 +2,33 @@
 
 ## Solarus Quest Editor 2.0.0 (in progress)
 
-* Dark mode support and more modern style.
+### New features
+
+* Dark mode support and more modern UI style using the Qlementine library.
 * New quest creation wizard (#460).
-* New option to not generate default code when creating scripts (#528).
-* Graphics view now show a checkered background to represent transparency.
-* Quest tree: allow to set the author and license information of folders and GLSL files.
-* Quest tree: allow to set the author and license information of scripts (#501).
 * Reopen last tabs also when a quest is given in the command line.
 * Allow to reopen the last closed tab (#165).
+* Graphics view now show a checkered background to represent transparency.
+* New option to not generate default code when creating scripts (#528).
+* Allow to set author and license when creating folders, Lua and GLSL scripts.
+* Show two license fields when creating a new map.
 * Map editor: allow to run the current map for testing purposes (#517).
+* Map editor: create teletransporters with scrolling if on the edge (#473).
+* Map editor: allow custom entities of any size (#538).
+* Tileset editor: allow to resize tile patterns (#159).
+* Sprite editor: allow to create a sprite from an image (#527).
+* Add error reporting to the quest runner process.
+* Add support of ANSI color codes to the GUI console.
+
+### Bug fixes
+
+* Prevent from creating a resource file with no name before the extension.
+* Fix importing a language from another quest (#530).
 * Map editor: fix tileset scrollbars jumping when switching tilesets (#510).
 * Map editor: fix contour generation from other tilesets.
 * Map editor: fix origin lost when copy-pasting a custom entity (#432).
-* Map editor: fix inconsistencies when editing an entity being resized or moved.
+* Map editor: fix editing an entity being resized or moved.
 * Map editor: update contour selector when the tileset file has changed.
-* Tileset editor: allow to resize tile patterns (#159).
-* Sprite editor: allow to create a sprite from an image (#527).
 * Dialogs editor: prevent invalid custom property keys (#352).
 * Dialogs editor: remove the margin display broken feature.
 * Fix zoom clamping in map, tileset, sprite and image views (#513).
@@ -25,6 +36,10 @@
 * Initial quest: fix item icon still showing unequiped items.
 * Initial quest: fix missing heart falling animation error.
 * Initial quest: fix missing broken vase sprite.
+* Fix running quest on Windows when binaries are under Unicode paths.
+* Use monospaced font consistently across platforms in the GUI console.
+* Preserve empty lines from the engine in the GUI console.
+* Only remove trailing '\n' characters in the GUI console.
 
 ## Solarus Quest Editor 1.6.5 (2021-04-06)
 

@@ -11,7 +11,6 @@ target_link_libraries(solarus-quest-editor
   Qt6::OpenGL
   Qt6::OpenGLWidgets
   "${SOLARUS_LIBRARIES}"
-  "${SOLARUS_GUI_LIBRARIES}"
   "${SDL2_LIBRARY}"
   "${SDL2_IMAGE_LIBRARY}"
   "${SDL2_TTF_LIBRARY}"

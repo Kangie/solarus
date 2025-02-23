@@ -18,7 +18,6 @@
 #define SOLARUSEDITOR_TELETRANSPORTER_H
 
 #include "entity_model.h"
-#include "transition_traits.h"
 
 namespace SolarusEditor {
 
@@ -34,6 +33,7 @@ public:
 protected:
 
   void set_initial_values() override;
+  void notify_being_added() override;
 
 };
 

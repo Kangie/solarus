@@ -42,16 +42,17 @@ public:
   void set_element_id(const QString& value);
   QString get_element_description() const;
   void set_element_description(const QString& value);
-  QuestDatabase::FileInfo get_file_info() const;
+  QuestDatabase::FileInfo get_data_file_info() const;
+  QuestDatabase::FileInfo get_script_file_info() const;
 
 public slots:
 
   void done(int result) override;
 
 private:
+  void element_id_changed();
 
   Ui::NewResourceElementDialog ui;     /**< The widgets. */
-
   ResourceType resource_type;          /**< Type of resource to create. */
 
 };

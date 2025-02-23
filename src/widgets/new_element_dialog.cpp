@@ -16,20 +16,15 @@
  */
 #include "widgets/gui_tools.h"
 #include "widgets/new_element_dialog.h"
+#include "editor_settings.h"
 #include "quest.h"
 
 namespace SolarusEditor {
 
 /**
- * @brief Creates a dialog for a new directory.
- * @param parent parent The parent widget or nullptr.
- */
-NewElementDialog::NewElementDialog(QWidget *parent) :
-    NewElementDialog("no extension", parent) {}
-
-/**
- * @brief Creates a dialog for a new file.
- * @param file_type The new file type to be created.
+ * @brief Creates a dialog for a new file or directory.
+ * @param file_type Extension of the file to be created.
+ * An empty string means a directory.
  * @param parent parent The parent widget or nullptr.
  */
 NewElementDialog::NewElementDialog(
@@ -42,6 +37,15 @@ NewElementDialog::NewElementDialog(
   // Set the type of resource to show.
   QString title;
   QString id_text;
+  EditorSettings settings;
+
+  // Fill in retained author/license.
+  bool is_file = !get_file_type().isEmpty();
+
+  ui.author_line_edit->setText(settings.get_value_string(EditorSettings::last_author));
+  if (is_file) {
+    ui.license_line_edit->setText(settings.get_value_string(EditorSettings::last_license_script));
+  }
 
   // Check if new element created is a script by file type.
   // If not, it's a directory.
@@ -94,7 +98,7 @@ QuestDatabase::FileInfo NewElementDialog::get_file_info() const {
 
   return QuestDatabase::FileInfo{
     ui.author_line_edit->text(),
-    ui.licence_line_edit->text(),
+    ui.license_line_edit->text(),
   };
 }
 
@@ -105,6 +109,15 @@ QuestDatabase::FileInfo NewElementDialog::get_file_info() const {
 void NewElementDialog::done(int result) {
 
   if (result == QDialog::Accepted) {
+
+    EditorSettings settings;
+    bool is_file = !get_file_type().isEmpty();
+
+    // Store previous author/license when dialog finished.
+    settings.set_value(EditorSettings::last_author, ui.author_line_edit->text());
+    if (is_file) {
+      settings.set_value(EditorSettings::last_license_script, ui.license_line_edit->text());
+    }
 
     if (get_element_id().isEmpty()) {
       if (get_file_type() == "glsl") {
@@ -118,10 +131,10 @@ void NewElementDialog::done(int result) {
     }
 
     if (!Quest::is_valid_file_name(get_element_id())) {
-      if (get_file_type().isEmpty()) {
-        GuiTools::error_dialog("Invalid folder name");
-      } else {
+      if (is_file) {
         GuiTools::error_dialog("Invalid file name");
+      } else {
+        GuiTools::error_dialog("Invalid folder name");
       }
       return;
     }

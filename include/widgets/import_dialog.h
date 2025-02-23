@@ -64,6 +64,7 @@ private:
   bool import_file(const QFileInfo& source_info, bool multiple);
   bool import_dir(const QFileInfo& source_info, bool multiple);
   void import_path_meta_information(const QString& source_path, const QString& destination_path);
+  void import_resource_element(const QString& source_path, const QString& destination_path);
   static int prompt_overwrite_confirmation(
       const QString& title,
       const QString& message,

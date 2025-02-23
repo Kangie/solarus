@@ -165,7 +165,8 @@ public:
   void create_resource_element(ResourceType resource_type,
                                const QString& element_id,
                                const QString& description,
-                               const QuestDatabase::FileInfo& file_info = QuestDatabase::FileInfo());
+                               const QuestDatabase::FileInfo& data_file_info,
+                               const QuestDatabase::FileInfo& script_file_info);
   void rename_file(const QString& old_path, const QString& new_path);
   bool rename_file_if_exists(const QString& old_path, const QString& new_path);
   void rename_dir(const QString& old_path, const QString& new_path);

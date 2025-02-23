@@ -143,11 +143,13 @@ public:
   bool is_size_valid() const;
   virtual bool is_size_valid(const QSize& size) const;
   QSize get_closest_valid_size(const QSize& size) const;
+  QSize get_closest_snapped_size(const QSize& size) const;
   virtual QSize get_valid_size() const;
 
   // Displaying in the editor.
   virtual void draw(QPainter& painter) const;
   virtual void notify_tileset_changed(const QString& tileset_id);
+  virtual void notify_being_added();
 
   void reload_sprite();
 

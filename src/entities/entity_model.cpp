@@ -1440,14 +1440,34 @@ bool EntityModel::is_size_valid(const QSize& size) const {
 }
 
 /**
- * @brief Rounds legal size the closest to the given size.
+ * @brief Finds a valid size from the given wanted size.
+ */
+QSize EntityModel::get_closest_valid_size(const QSize& size) const {
+
+  if (is_size_valid(size)) {
+    // No need to snap.
+    return size;
+  }
+
+  // Snap to a multiple of the base size.
+  const QSize snapped_size = get_closest_snapped_size(size);
+  if (is_size_valid(snapped_size)) {
+    return snapped_size;
+  }
+
+  // Snapping failed: fallback to some default valid size.
+  return get_valid_size();
+}
+
+/**
+ * @brief Snaps a size to a multiple of the base size.
  *
  * This takes into account the resizing mode.
  *
  * @param size The size to check.
  * @return @c the rounded size.
  */
-QSize EntityModel::get_closest_valid_size(const QSize& size) const {
+QSize EntityModel::get_closest_snapped_size(const QSize& size) const {
 
   QSize valid_size = get_base_size();
   bool extend_width = false;
@@ -1498,11 +1518,6 @@ QSize EntityModel::get_closest_valid_size(const QSize& size) const {
     float base_height = get_base_size().height();
     valid_size.setHeight(qMax(base_height,
         qRound(size.height() / base_height) * base_height));
-  }
-
-  if (!is_size_valid(valid_size)) {
-    // Safety check.
-    return get_valid_size();
   }
 
   return valid_size;
@@ -1557,15 +1572,29 @@ void EntityModel::notify_field_changed(const QString& key, const QVariant& value
 /**
  * @brief This function is called when this is a new entity.
  *
- * Field values are initially set to their default value as specified by
- * Solarus.
+ * Field values were initially set to their default value as specified by
+ * the map file format.
  * Subclasses can reimplement this function to set more appropriate initial
  * values for the user.
+ *
+ * Note that the entity's position on the map is not yet known at this point.
+ * Use \c notify_being_added to initialize values that depend on the position.
  */
 void EntityModel::set_initial_values() {
 
   // Choose an initial position aligned to the grid.
   set_top_left(QPoint(0, 0));
+}
+
+/**
+ * @brief Called when this new entity is about to be added on the map.
+ *
+ * Used to further refine the initial values once the entity's position
+ * the map is known.
+ */
+void EntityModel::notify_being_added() {
+
+  // Nothing done by default.
 }
 
 /**

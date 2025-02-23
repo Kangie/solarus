@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/find_text_dialog.h"
+#include "editor_settings.h"
 #include <QPushButton>
 
 namespace SolarusEditor {
@@ -28,6 +29,11 @@ FindTextDialog::FindTextDialog(QWidget* parent) :
   ui() {
 
   ui.setupUi(this);
+
+  EditorSettings settings;
+
+  ui.find_field->setText(settings.get_value_string(EditorSettings::last_text_searched));
+  ui.find_field->selectAll();
 
   QPushButton* find_button = new QPushButton(tr("Find"), this);
   ui.button_box->addButton(find_button, QDialogButtonBox::ApplyRole);

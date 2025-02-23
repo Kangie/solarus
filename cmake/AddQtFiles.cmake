@@ -9,6 +9,7 @@ set(solarus_quest_editor_FORMS
   src/widgets/change_resource_id_dialog.ui
   src/widgets/change_source_image_dialog.ui
   src/widgets/change_string_key_dialog.ui
+  src/widgets/console.ui
   src/widgets/dialogs_editor.ui
   src/widgets/edit_entity_dialog.ui
   src/widgets/external_script_dialog.ui
@@ -58,6 +59,8 @@ qt6_add_resources(solarus_quest_editor_RESOURCES_RCC
 set(solarus_quest_editor_TRANSLATIONS
   translations/solarus_editor_es.ts
   translations/solarus_editor_fr.ts
+  translations/solarus_editor_zh_CN.ts
+  translations/solarus_editor_zh_TW.ts
 )
 qt6_add_translation(solarus_quest_editor_TRANSLATIONS_QM
   ${solarus_quest_editor_TRANSLATIONS}

@@ -51,6 +51,8 @@ public:
   void expand_to_path(const QString& path);
   bool can_delete_paths(const QStringList& paths);
 
+  void create_new_file(const QString& file_type);
+
 signals:
 
   void open_file_requested(Quest& quest, const QString& path);

@@ -53,4 +53,13 @@ void CustomEntity::notify_field_changed(const QString& key, const QVariant& valu
   }
 }
 
+/**
+ * @copydoc EntityModel::is_size_valid
+ */
+bool CustomEntity::is_size_valid(const QSize& size) const {
+  // Allow sizes that are not multiples of the base size
+  return size.width() > 0 && size.height() > 0;
+}
+
+
 }

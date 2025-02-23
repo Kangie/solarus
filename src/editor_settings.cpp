@@ -34,6 +34,10 @@ const QString EditorSettings::no_audio = "no_audio";
 const QString EditorSettings::quest_size = "quest_size";
 const QString EditorSettings::force_software_rendering = "force_software_rendering";
 const QString EditorSettings::suspend_unfocused = "suspend_unfocused";
+const QString EditorSettings::last_author = "last_author";
+const QString EditorSettings::last_license_data = "last_license_data";
+const QString EditorSettings::last_license_script = "last_license_script";
+const QString EditorSettings::last_text_searched = "last_text_searched";
 
 // Import dialog keys.
 const QString EditorSettings::import_last_source_quest = "import_last_source_quest";

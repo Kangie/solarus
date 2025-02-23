@@ -119,7 +119,7 @@ bool NewQuestDialogDirectoryPage::validatePage() {
   if (quest_directory.exists() && !quest_directory.isEmpty()) {
     QMessageBox confirm(
       QMessageBox::Warning,
-      tr("Directory Not Empty"),
+      tr("Directory not empty"),
       tr("The quest directory is not empty, are you sure you wish to continue?"),
       QMessageBox::Ok | QMessageBox::Cancel,
       nullptr
@@ -168,13 +168,13 @@ void NewQuestDialogDirectoryPage::update_is_complete() {
   QDir quest_dir(ui.quest_directory_edit->text());
   if (quest_dir.exists()) {
     if (quest_dir.exists(QStringLiteral("data"))) {
-      ui.error_label->setText("A quest already exists in this directory.");
+      ui.error_label->setText(tr("A quest already exists in this directory."));
     } else {
       ui.error_label->setText("");
     }
   } else {
     if (!quest_dir.cdUp()) {
-      ui.error_label->setText("Parent directory does not exist.");
+      ui.error_label->setText(tr("Parent directory does not exist."));
     } else {
       ui.error_label->setText("");
     }

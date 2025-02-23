@@ -1166,6 +1166,7 @@ bool Quest::is_valid_file_name(const QString& name) {
       name == ".." ||                  // Don't go up in the file hierarchy.
       name.startsWith("../") ||
       name.endsWith("/..") ||
+      name.endsWith("/") ||
       name.contains("/../") ||
       name.trimmed() != name           // The file name should not begin or
                                        // end with whitespaces.
@@ -1887,12 +1888,15 @@ bool Quest::create_dir_if_not_exists(const QString& parent_path, const QString& 
  * @param resource_type A type of resource.
  * @param element_id Id of the element to create.
  * @param description Description of the element to create.
+ * @param data_file_info Ownership info of data file(s) to create if any.
+ * @param script_file_info Ownership info of script file(s) to create if any.
  * @throws EditorException If an error occurred.
  */
 void Quest::create_resource_element(ResourceType resource_type,
                                     const QString& element_id,
                                     const QString& description,
-                                    const QuestDatabase::FileInfo& file_info) {
+                                    const QuestDatabase::FileInfo& data_file_info,
+                                    const QuestDatabase::FileInfo& script_file_info) {
 
   Quest::check_valid_file_name(element_id);
 
@@ -1959,11 +1963,15 @@ void Quest::create_resource_element(ResourceType resource_type,
   if (!database.exists(resource_type, element_id)) {
     done_in_resource_list = true;
     database.add(resource_type, element_id, description);
-    if (!file_info.is_empty()) {
-      for (QString const & abs_path :
-            get_resource_element_paths(resource_type, element_id)) {
-        QString const & path = get_path_relative_to_data_path(abs_path);
-        database.set_file_info(path, file_info);
+    if (!data_file_info.is_empty() || !script_file_info.is_empty()) {
+      const QStringList& abs_paths = get_resource_element_paths(resource_type, element_id);
+      for (const QString& abs_path : abs_paths) {
+        const QString& path = get_path_relative_to_data_path(abs_path);
+        if (is_script(abs_path)) {
+          database.set_file_info(path, script_file_info);
+        } else {
+          database.set_file_info(path, data_file_info);
+        }
       }
     }
     database.save();

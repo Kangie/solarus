@@ -36,7 +36,7 @@
 #include "quest.h"
 #include "refactoring.h"
 #include "version.h"
-#include <solarus/gui/quest_runner.h>
+#include "quest_runner.h"
 #include <QActionGroup>
 #include <QCloseEvent>
 #include <QDebug>
@@ -235,7 +235,7 @@ MainWindow::MainWindow(QWidget* parent) :
   connect(ui.tab_widget, &EditorTabs::refactoring_requested,
           this, &MainWindow::refactoring_requested);
   connect(ui.tab_widget, &EditorTabs::clear_console,
-          ui.console_widget, &SolarusGui::Console::clear);
+          ui.console_widget, &SolarusEditor::Console::clear);
   connect(ui.tab_widget, &EditorTabs::log_message_to_console,
           this, &MainWindow::log_message_to_console);
   connect(ui.tab_widget, &EditorTabs::run_map_requested,
@@ -244,9 +244,9 @@ MainWindow::MainWindow(QWidget* parent) :
   connect(grid_size, &PairSpinBox::value_changed,
           this, &MainWindow::change_grid_size);
 
-  connect(&quest_runner, &SolarusGui::QuestRunner::running,
+  connect(&quest_runner, &SolarusEditor::QuestRunner::running,
           this, &MainWindow::quest_running);
-  connect(&quest_runner, &SolarusGui::QuestRunner::finished,
+  connect(&quest_runner, &SolarusEditor::QuestRunner::finished,
           this, &MainWindow::quest_finished);
 
   connect(&quest, &Quest::current_music_changed,
@@ -596,6 +596,7 @@ void MainWindow::close_quest() {
   ui.action_run_quest->setEnabled(false);
   ui.action_run_map->setEnabled(false);
   ui.quest_tree_view->set_quest(quest);
+  ui.console_widget->clear();
 
   EditorSettings settings;
   settings.set_value(EditorSettings::current_quest, "");
@@ -1374,8 +1375,7 @@ void MainWindow::current_editor_changed(int index) {
   const bool select_all_supported = has_editor && editor->is_select_all_supported();
   ui.action_select_all->setEnabled(select_all_supported);
 
-  const bool run_map_supported = has_editor && editor->is_run_map_supported();
-  ui.action_run_map->setEnabled(run_map_supported);
+  update_run_quest();
 
   const bool find_supported = has_editor && editor->is_find_supported();
   ui.action_find->setEnabled(find_supported);
@@ -1730,16 +1730,19 @@ void MainWindow::update_entity_types_visibility() {
 }
 
 /**
- * @brief Slot called when the quest has just started or stopped.
+ * @brief Updates the run quest and run map actions.
  */
 void MainWindow::update_run_quest() {
 
   if (quest_runner.is_started()) {
     ui.action_run_quest->setIcon(QIcon(":/images/icon_stop.png"));
     ui.action_run_quest->setToolTip(tr("Stop quest"));
+    ui.action_run_map->setEnabled(false);
   } else {
     ui.action_run_quest->setIcon(QIcon(":/images/icon_start.png"));
     ui.action_run_quest->setToolTip(tr("Run quest"));
+    const Editor* editor = get_current_editor();
+    ui.action_run_map->setEnabled(editor != nullptr && editor->is_run_map_supported());
   }
 }
 

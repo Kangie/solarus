@@ -35,6 +35,8 @@ set(solarus_quest_editor_SOURCES
   include/widgets/change_string_key_dialog.h
   include/widgets/closable_tab_bar.h
   include/widgets/color_chooser.h
+  include/widgets/console_line_edit.h
+  include/widgets/console.h
   include/widgets/dialog_properties_table.h
   include/widgets/dialogs_editor.h
   include/widgets/dialogs_tree_view.h
@@ -123,6 +125,7 @@ set(solarus_quest_editor_SOURCES
   include/quest_database.h
   include/quest_files_model.h
   include/quest_properties.h
+  include/quest_runner.h
   include/rectangle.h
   include/refactoring.h
   include/resize_mode.h
@@ -135,7 +138,7 @@ set(solarus_quest_editor_SOURCES
   include/strings_model.h
   include/tileset_model.h
   include/transition_traits.h
-  include/version.h
+  include/version.h.in
   include/view_settings.h
   src/entities/block.cpp
   src/entities/chest.cpp
@@ -172,6 +175,8 @@ set(solarus_quest_editor_SOURCES
   src/widgets/change_string_key_dialog.cpp
   src/widgets/closable_tab_bar.cpp
   src/widgets/color_chooser.cpp
+  src/widgets/console_line_edit.cpp
+  src/widgets/console.cpp
   src/widgets/dialog_properties_table.cpp
   src/widgets/dialogs_editor.cpp
   src/widgets/dialogs_tree_view.cpp
@@ -254,6 +259,7 @@ set(solarus_quest_editor_SOURCES
   src/quest_database.cpp
   src/quest_files_model.cpp
   src/quest_properties.cpp
+  src/quest_runner.cpp
   src/rectangle.cpp
   src/refactoring.cpp
   src/shader_model.cpp

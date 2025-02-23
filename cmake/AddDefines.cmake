@@ -18,3 +18,4 @@ endif()
 if(SOLARUSEDITOR_NO_NATIVE_DIALOGS)
   add_definitions(-DSOLARUSEDITOR_NO_NATIVE_DIALOGS)
 endif()
+

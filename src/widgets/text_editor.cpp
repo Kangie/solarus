@@ -253,6 +253,9 @@ void TextEditor::settings_changed() {
  */
 int TextEditor::find_text_requested(const QString& text) {
 
+  EditorSettings settings;
+  settings.set_value(EditorSettings::last_text_searched, text);
+
   if (!text_widget->find(text)) {
     // Text not found: search back from the beginning.
     QTextCursor cursor = text_widget->textCursor();

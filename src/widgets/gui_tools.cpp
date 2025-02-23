@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/gui_tools.h"
-#include <solarus/gui/gui_tools.h>
 #include <QLabel>
 #include <QMessageBox>
 #include <QPainter>
@@ -28,27 +27,39 @@ namespace GuiTools {
  * @brief Shows a modal dialog box with an information message.
  * @param message The message to show.
  */
-void information_dialog(const QString& message) {
+void information_dialog(const QString &message) {
 
-  SolarusGui::GuiTools::information_dialog(message);
+  QMessageBox messageBox;
+  messageBox.setIcon(QMessageBox::Information);
+  messageBox.setText(message);
+  messageBox.setWindowTitle(QMessageBox::tr("Information"));
+  messageBox.exec();
 }
 
 /**
  * @brief Shows a modal dialog box with a warning message.
  * @param message The message to show.
  */
-void warning_dialog(const QString& message) {
+void warning_dialog(const QString &message) {
 
-  SolarusGui::GuiTools::warning_dialog(message);
+  QMessageBox messageBox;
+  messageBox.setIcon(QMessageBox::Warning);
+  messageBox.setText(message);
+  messageBox.setWindowTitle(QMessageBox::tr("Warning"));
+  messageBox.exec();
 }
 
 /**
  * @brief Shows a modal dialog box with an error message.
  * @param message The message to show.
  */
-void error_dialog(const QString& message) {
+void error_dialog(const QString &message) {
 
-  SolarusGui::GuiTools::error_dialog(message);
+  QMessageBox messageBox;
+  messageBox.setIcon(QMessageBox::Critical);
+  messageBox.setText(message);
+  messageBox.setWindowTitle(QMessageBox::tr("Error"));
+  messageBox.exec();
 }
 
 /**
@@ -62,21 +73,18 @@ void error_dialog(const QString& message) {
  * @param color Color to use.
  * @param thickness Thickness of the brush.
  */
-void draw_rectangle_border(QPainter& painter,
-                           const QRect& where,
-                           const QColor& color,
-                           int thickness) {
+void draw_rectangle_border(QPainter &painter, const QRect &where,
+                           const QColor &color, int thickness) {
   const int x = where.x();
   const int y = where.y();
   const int w = where.width();
   const int h = where.height();
   const int t = thickness;
   QBrush brush(color);
-  painter.fillRect(QRect(        x,         y, w, t), brush);
-  painter.fillRect(QRect(        x, y + h - t, w, t), brush);
-  painter.fillRect(QRect(        x,         y, t, h), brush);
-  painter.fillRect(QRect(x + w - t,         y, t, h), brush);
-
+  painter.fillRect(QRect(x, y, w, t), brush);
+  painter.fillRect(QRect(x, y + h - t, w, t), brush);
+  painter.fillRect(QRect(x, y, t, h), brush);
+  painter.fillRect(QRect(x + w - t, y, t, h), brush);
 }
 
 /**
@@ -90,9 +98,8 @@ void draw_rectangle_border(QPainter& painter,
  * @param color Color to use.
  * @param thickness Thickness of the brush.
  */
-void draw_rectangle_border_double(QPainter& painter,
-                                  const QRect& where,
-                                  const QColor& color_between) {
+void draw_rectangle_border_double(QPainter &painter, const QRect &where,
+                                  const QColor &color_between) {
 
   draw_rectangle_border(painter, where, color_between, 2);
 
@@ -115,8 +122,8 @@ void draw_rectangle_border_double(QPainter& painter,
  * @param color Grid color.
  * @param style Grid style.
  */
-void draw_grid(QPainter& painter, const QRect& where,
-  const QSize &size, const QColor& color, GridStyle style) {
+void draw_grid(QPainter &painter, const QRect &where, const QSize &size,
+               const QColor &color, GridStyle style) {
 
   if (style == GridStyle::INTERSECT_POINT) {
     draw_grid_point(painter, where, size, color);
@@ -151,7 +158,6 @@ void draw_grid(QPainter& painter, const QRect& where,
 
   painter.setPen(pen);
   painter.drawLines(lines.data(), lines.size());
-
 }
 
 /**
@@ -161,9 +167,8 @@ void draw_grid(QPainter& painter, const QRect& where,
  * @param size Grid size.
  * @param color Grid color.
  */
-void draw_grid_point(
-  QPainter& painter, const QRect& where,
-  const QSize &size, const QColor& color) {
+void draw_grid_point(QPainter &painter, const QRect &where, const QSize &size,
+                     const QColor &color) {
 
   QVarLengthArray<QPointF, 100> points;
 
@@ -183,29 +188,30 @@ void draw_grid_point(
  */
 QBrush get_checkered_brush() {
 
-  static const QBrush brush = [](){
-      int checkSize = 8;
-      int numChecks = 2;  // Number of checks in each direction.
-      QColor lightColor(216, 216, 216);
-      QColor darkColor(184, 184, 184);
-//      QColor darkColor(152, 152, 152);
+  static const QBrush brush = []() {
+    int checkSize = 8;
+    int numChecks = 2; // Number of checks in each direction.
+    QColor lightColor(216, 216, 216);
+    QColor darkColor(184, 184, 184);
+    //      QColor darkColor(152, 152, 152);
 
-      QPixmap pixmap(numChecks * checkSize, numChecks * checkSize);
-      pixmap.fill(Qt::transparent);
-      QPainter painter(&pixmap);
+    QPixmap pixmap(numChecks * checkSize, numChecks * checkSize);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
 
-      for (int x = 0; x < numChecks; ++x) {
-        for (int y = 0; y < numChecks; ++y) {
-          QColor color = ((x + y) % 2 == 0) ? lightColor : darkColor;
-          painter.fillRect(x * checkSize, y * checkSize, checkSize, checkSize, color);
-        }
+    for (int x = 0; x < numChecks; ++x) {
+      for (int y = 0; y < numChecks; ++y) {
+        QColor color = ((x + y) % 2 == 0) ? lightColor : darkColor;
+        painter.fillRect(x * checkSize, y * checkSize, checkSize, checkSize,
+                         color);
       }
-      return QBrush(pixmap);
+    }
+    return QBrush(pixmap);
   }();
 
   return brush;
 }
 
-}
+} // namespace GuiTools
 
-}
+} // namespace SolarusEditor

@@ -786,10 +786,11 @@ void QuestTreeView::new_element_action_triggered() {
 
     QString element_id = dialog.get_element_id();
     QString description = dialog.get_element_description();
-    QuestDatabase::FileInfo file_info = dialog.get_file_info();
+    const QuestDatabase::FileInfo& data_file_info = dialog.get_data_file_info();
+    const QuestDatabase::FileInfo& script_file_info = dialog.get_script_file_info();
 
     quest.create_resource_element(
-          resource_type, element_id, description, file_info);
+          resource_type, element_id, description, data_file_info, script_file_info);
 
     if (quest.is_image(path)) {
       quest.create_sprite_from_image(path, element_id);
@@ -801,7 +802,7 @@ void QuestTreeView::new_element_action_triggered() {
       set_selected_path(created_path);
 
       // Open it.
-      open_file_requested(quest, created_path);
+      emit open_file_requested(quest, created_path);
     }
   }
 
@@ -818,47 +819,7 @@ void QuestTreeView::new_element_action_triggered() {
  */
 void QuestTreeView::new_directory_action_triggered() {
 
-  if (is_read_only()) {
-    return;
-  }
-
-  QString path = get_selected_path();
-  if (path.isEmpty()) {
-    return;
-  }
-
-  try {
-    NewElementDialog dialog(parentWidget());
-    int result = dialog.exec();
-
-    if (result != QDialog::Accepted) {
-      return;
-    }
-
-    QString dir_name = dialog.get_element_id();
-
-    Quest& quest = model->get_quest();
-    Quest::check_valid_file_name(dir_name);
-    quest.create_dir(path, dir_name);
-
-    // Add file info to directory.
-    QString dir_path = path + '/' + dir_name;
-    const QString& relative_path =
-        quest.get_path_relative_to_data_path(dir_path);
-    QuestDatabase& database = quest.get_database();
-    QuestDatabase::FileInfo file_info = dialog.get_file_info();
-
-    database.set_file_info(relative_path, file_info);
-    database.save();
-
-    // Select the directory created.
-    set_selected_path(dir_path);
-  }
-
-  catch (const EditorException& ex) {
-    ex.show_dialog();
-  }
-
+  create_new_file("");
 }
 
 /**
@@ -869,55 +830,7 @@ void QuestTreeView::new_directory_action_triggered() {
  */
 void QuestTreeView::new_script_action_triggered() {
 
-  if (is_read_only()) {
-    return;
-  }
-
-  QString parent_path = get_selected_path();
-  if (parent_path.isEmpty()) {
-    return;
-  }
-
-  try {
-    const QString file_type = "lua";
-
-    NewElementDialog dialog(file_type, parentWidget());
-    int result = dialog.exec();
-
-    if (result != QDialog::Accepted) {
-      return;
-    }
-
-    QString file_name = dialog.get_element_id();
-
-    // Automatically add .lua extension if not present.
-    if (!file_name.contains(".")) {
-      file_name = file_name + "." + file_type;
-    }
-    Quest::check_valid_file_name(file_name);
-    Quest& quest = model->get_quest();
-    QString script_path = parent_path + '/' + file_name;
-    quest.create_script(script_path);
-
-    // Add the file info.
-    const QString& relative_path =
-          quest.get_path_relative_to_data_path(script_path);
-    QuestDatabase& database = quest.get_database();
-    QuestDatabase::FileInfo file_info = dialog.get_file_info();
-
-    database.set_file_info(relative_path, file_info);
-    database.save();
-
-    // Select the file created.
-    set_selected_path(script_path);
-
-    // Open it.
-    open_file_requested(quest, script_path);
-  }
-  catch (const EditorException& ex) {
-    ex.show_dialog();
-  }
-
+  create_new_file("lua");
 }
 
 /**
@@ -928,6 +841,16 @@ void QuestTreeView::new_script_action_triggered() {
  */
 void QuestTreeView::new_shader_code_file_action_triggered() {
 
+  create_new_file("glsl");
+}
+
+/**
+ * @brief Create a new file, such as a script, or a shader code file.
+ * @param file_type The type of file to be created.
+ * A directory is created when no file type is present.
+ */
+void QuestTreeView::create_new_file(const QString& file_type) {
+
   if (is_read_only()) {
     return;
   }
@@ -938,8 +861,6 @@ void QuestTreeView::new_shader_code_file_action_triggered() {
   }
 
   try {
-    const QString file_type = "glsl";
-
     NewElementDialog dialog(file_type, parentWidget());
     int result = dialog.exec();
 
@@ -948,17 +869,27 @@ void QuestTreeView::new_shader_code_file_action_triggered() {
     }
 
     QString file_name = dialog.get_element_id();
+    bool is_file = !(file_type.isEmpty());
 
-    // Automatically add .glsl extension if not present.
-    if (!file_name.contains(".")) {
+    // Automatically add file type extension if not present.
+    if (is_file && !file_name.contains(".")) {
       file_name = file_name + "." + file_type;
     }
-    Quest::check_valid_file_name(file_name);
     Quest& quest = model->get_quest();
-    QString path = parent_path + '/' + file_name;
-    quest.create_shader_code_file(path);
+    Quest::check_valid_file_name(file_name);
+    QString path = parent_path + "/" + file_name;
 
-    // Add the file info.
+    // Create file based on type.
+    // A directory is created when no file type is available.
+    if (!is_file) {
+      quest.create_dir(parent_path, file_name);
+    } else if (file_type == "glsl") {
+      quest.create_shader_code_file(path);
+    } else {
+      quest.create_script(path);
+    }
+
+    // Add file info to database.
     const QString& relative_path =
         quest.get_path_relative_to_data_path(path);
     QuestDatabase& database = quest.get_database();
@@ -967,16 +898,17 @@ void QuestTreeView::new_shader_code_file_action_triggered() {
     database.set_file_info(relative_path, file_info);
     database.save();
 
-    // Select the file created.
+    // Select the element created.
     set_selected_path(path);
 
-    // Open it.
-    open_file_requested(quest, path);
+    // Open element if it's a file.
+    if (is_file) {
+      open_file_requested(quest, path);
+    }
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
   }
-
 }
 
 /**
