@@ -35,6 +35,12 @@
 find_package(PkgConfig QUIET)
 pkg_check_modules(PC_OPENAL QUIET openal)
 
+# on Apple, prevent CMake from finding the deprecated built-in OpenAL (we want OpenAL Soft)
+set(FIND_OPENAL_NO_DEFAULT_PATH)
+if(APPLE)
+  set(FIND_OPENAL_NO_DEFAULT_PATH NO_DEFAULT_PATH)
+endif()
+
 # locate OpenAL header
 find_path(OPENAL_INCLUDE_DIR
   NAMES
@@ -44,9 +50,10 @@ find_path(OPENAL_INCLUDE_DIR
     ${PC_OPENAL_INCLUDEDIR}
     ${PC_OPENAL_INCLUDE_DIRS}
   PATHS
+    /usr/local/opt/openal-soft # Homebrew on macOS Intel
+    /opt/homebrew/opt/openal-soft # Homebrew on macOS ARM
     ~/Library/Frameworks
     /Library/Frameworks
-    /opt/homebrew/opt/openal-soft
     /sw # Fink
     /opt/local # DarwinPorts
     /opt/csw # Blastwave
@@ -54,15 +61,10 @@ find_path(OPENAL_INCLUDE_DIR
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\Creative\ Labs\\OpenAL\ 1.1\ Software\ Development\ Kit\\1.00.0000;InstallDir]
   PATH_SUFFIXES
     include
+  ${FIND_OPENAL_NO_DEFAULT_PATH}
 )
 
 # locate OpenAL library
-if(APPLE)
-    # On macOS, prevent CMake from finding the deprecated built-in OpenAL (we want OpenAL Soft)
-    set(FIND_OPENAL_NO_DEFAULT_PATH NO_DEFAULT_PATH)
-else()
-    set(FIND_OPENAL_NO_DEFAULT_PATH)
-endif()
 find_library(OPENAL_LIBRARY
   NAMES
     openal
