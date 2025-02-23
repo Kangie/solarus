@@ -21,5 +21,5 @@ target_link_libraries(solarus-quest-editor
   "${VORBISFILE_LIBRARY}"
   "${OGG_LIBRARY}"
   "${MODPLUG_LIBRARY}"
-  oclero::qlementine
+  qlementine
 )
