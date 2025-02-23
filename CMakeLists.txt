@@ -13,9 +13,12 @@ set(APP_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} Solarus Labs.")
 set(APP_IDENTIFIER "org.solarus-games.solarus-launcher")
 set(APP_ORGANISATION "Solarus Labs")
 set(APP_ORGANISATION_DOMAIN "solarus-games.org")
-set(SOCIALMEDIA_X "https://x.com/solarusgames")
-set(SOCIALMEDIA_MASTODON "https://mastodon.gamedev.place/@solarus")
-set(SOCIALMEDIA_YOUTUBE "https://www.youtube.com/c/ChristophoZS")
+set(LINKS_X "https://x.com/solarusgames")
+set(LINKS_MASTODON "https://mastodon.gamedev.place/@solarus")
+set(LINKS_YOUTUBE "https://www.youtube.com/c/ChristophoZS")
+set(LINKS_DISCORD "https://discord.gg/yYHjJHt")
+set(LINKS_SOURCE_CODE "https://www.gitlab.com/solarus-games")
+set(LINKS_CONTACT "https://www.solarus-games.org/about/contact")
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -55,7 +58,7 @@ set_target_properties(qlementine_icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG e2d98210c25c6132668cf53a80df83809213495d #dev
+  GIT_TAG 468ba5795809b140c4c2981c68009ab24d506d3e #v1.0.2
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -71,17 +74,18 @@ if(SOLARUS_FETCHCONTENT)
   set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG 3d8f5e5a125f1f8e199b70280a0bd40db84f3d51 #new-launcher
+    GIT_TAG 6c314e665af9e927c9d83a1661389f8a34a2d671 #new-launcher
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
     PROPERTIES
       FOLDER dependencies
   )
+else()
+  # Ensure that Solarus is found, one way or another.
+  find_package(Solarus REQUIRED)
 endif()
 
-# Ensure that Solarus is found, one way or another.
-find_package(solarus REQUIRED)
 
 # Icon.
 set(MACOSX_BUNDLE_ICON_FILE solarus_launcher_icon.icns)
@@ -112,6 +116,7 @@ qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestRunner.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${APP_NAME})
@@ -145,7 +150,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE
     Qt6::Widgets
     Qt6::Svg
-    oclero::qlementine
+    qlementine
     oclero::qlementine_icons
     solarus
 )
@@ -175,9 +180,12 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_APP_ORGANISATION="${APP_ORGANISATION}"
   PROJECT_APP_ORGANISATION_DOMAIN="${APP_ORGANISATION_DOMAIN}"
   PROJECT_HOMEPAGE_URL="${PROJECT_HOMEPAGE_URL}"
-  PROJECT_SOCIALMEDIA_X="${SOCIALMEDIA_X}"
-  PROJECT_SOCIALMEDIA_MASTODON="${SOCIALMEDIA_MASTODON}"
-  PROJECT_SOCIALMEDIA_YOUTUBE="${SOCIALMEDIA_YOUTUBE}"
+  PROJECT_LINKS_X="${LINKS_X}"
+  PROJECT_LINKS_MASTODON="${LINKS_MASTODON}"
+  PROJECT_LINKS_YOUTUBE="${LINKS_YOUTUBE}"
+  PROJECT_LINKS_DISCORD="${LINKS_DISCORD}"
+  PROJECT_LINKS_SOURCE_CODE="${LINKS_SOURCE_CODE}"
+  PROJECT_LINKS_CONTACT="${LINKS_CONTACT}"
 )
 
 include(GNUInstallDirs)

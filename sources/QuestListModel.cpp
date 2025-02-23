@@ -89,6 +89,20 @@ QPixmap getQuestThumbnail() {
   return getThumnailFromLogo(logo);
 }
 
+Common::Controls getControls(const Solarus::FlagSet<Solarus::QuestProperties::Control>& controls) {
+  using Control = Solarus::QuestProperties::Control;
+
+  // TODO: check if there is a better way to have this enum in a QVariant.
+  // Idealy, use directly the enum from Solarus.
+  Common::Controls result;
+  for (const auto control : { Control::Keyboard, Control::Mouse, Control::Joypad, Control::Other }) {
+    if (controls.has_flag(control)) {
+      result.setFlag(static_cast<Common::Control>(control));
+    }
+  }
+  return result;
+}
+
 void initializeFromProperties(QuestData& questData, const Solarus::QuestProperties& properties) {
   static const QRegularExpression listSplitRE("\\s*,\\s*");
 
@@ -108,7 +122,7 @@ void initializeFromProperties(QuestData& questData, const Solarus::QuestProperti
   questData.maxPlayers = properties.get_max_players();
   questData.languages = toStringList(properties.get_languages());
   questData.genres = toStringList(properties.get_genres());
-  // questData.controls = properties.get_controls(); // TODO
+  questData.controls = getControls(properties.get_controls());
   questData.website = QString::fromStdString(properties.get_website());
   questData.id = QString::fromStdString(properties.get_quest_write_dir());
 

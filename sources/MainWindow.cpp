@@ -9,6 +9,7 @@
 #include "QuestRunner.h"
 #include "Preferences.h"
 #include "PreferencesWindow.h"
+#include "MessageBox.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -113,6 +114,9 @@ static QString helpMenu() {
 static QString contact() {
   return QApplication::translate("SolarusLauncher", "Contact");
 }
+static QString sourceCode() {
+  return QApplication::translate("SolarusLauncher", "Source Code");
+}
 static QString about() {
   return QApplication::translate("SolarusLauncher", "About…");
 }
@@ -126,7 +130,7 @@ static QString questMenu() {
   return QApplication::translate("SolarusLauncher", "Quest");
 }
 static QString showContaingFolder() {
-  return QApplication::translate("SolarusLauncher", "Show Containing Folder");
+  return QApplication::translate("SolarusLauncher", "Open Containing Folder");
 }
 static QString solarusQuests() {
   return QApplication::translate("SolarusLauncher", "Solarus Quests");
@@ -139,6 +143,13 @@ static QString closeConsole() {
 }
 static QString noQuestPlaying() {
   return QApplication::translate("SolarusLauncher", "No quest playing");
+}
+static QString questRemovalConfirmation() {
+  return QApplication::translate("SolarusLauncher", "Do you want to remove this Solarus Quest?");
+}
+static QString questRemovalDescription() {
+  return QApplication::translate(
+    "SolarusLauncher", "The quest will be removed from Solarus Launcher index, but will be kept on disk.");
 }
 } // namespace i18n
 
@@ -648,7 +659,6 @@ void MainWindow::setupUi() {
       _ui.listView->setModel(_proxyModel);
       auto* selectionModel = _ui.listView->selectionModel();
 
-
       const auto updateUi = [this]() {
         const auto current = _ui.listView->currentIndex();
         const auto hasCurrent = current.isValid();
@@ -664,10 +674,9 @@ void MainWindow::setupUi() {
 
       QObject::connect(selectionModel, &QItemSelectionModel::currentRowChanged, this, updateUi);
 
-      // QObject::connect(_ui.listView, &QListView::doubleClicked, this, [this](const QModelIndex& index) {
-      //   const auto filePath = _model->questFilePath(index);
-      //   _runner->start(filePath);
-      // });
+      QObject::connect(_ui.listView, &QListView::doubleClicked, this, [this](const QModelIndex& index) {
+        playQuest(index);
+      });
 
       _ui.listView->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 
@@ -682,24 +691,35 @@ void MainWindow::setupUi() {
             playAction->setShortcut(QKeySequence(Qt::Key_F5));
             menu.addAction(playAction);
             QObject::connect(playAction, &QAction::triggered, this, [this, index]() {
-              const auto questPath = _model->questFilePath(index);
-              _runner->start(questPath);
+              playQuest(index);
             });
           }
           {
             auto* infoAction = new QAction(makeIcon(Icons16::Misc_Info), i18n::showQuestInfo(), &menu);
             menu.addAction(infoAction);
             QObject::connect(infoAction, &QAction::triggered, this, [this, index]() {
-              // TODO
+              _ui.listView->setCurrentIndex(index);
+              _preferences->setAppPropertiesPanelVisible(true);
+            });
+          }
+          {
+            auto* folderAction = new QAction(makeIcon(Icons16::File_FolderOpen), i18n::showContaingFolder(), &menu);
+            menu.addAction(folderAction);
+            QObject::connect(folderAction, &QAction::triggered, this, [this, index]() {
+              openQuestFolder(index);
             });
           }
           menu.addSeparator();
           {
             auto* removeAction = new QAction(makeIcon(Icons16::Action_Trash), i18n::removeQuest(), &menu);
+#ifdef __APPLE__
+            removeAction->setShortcut(Qt::Key_Backspace);
+#else
             removeAction->setShortcut(QKeySequence::StandardKey::Delete);
+#endif
             menu.addAction(removeAction);
             QObject::connect(removeAction, &QAction::triggered, this, [this, index]() {
-              _model->removeQuest(index);
+              removeQuest(index);
             });
           }
 
@@ -928,15 +948,20 @@ void MainWindow::setupMenuBar() {
         openAddFolderDialog();
       });
 
-    fileMenu->addAction(
-      makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), QKeySequence::StandardKey::Delete, [this]() {
-        removeCurrentQuest();
-      });
+#ifdef __APPLE__
+    const auto removeQuestShortcut = QKeySequence(Qt::Key_Backspace);
+#else
+    const auto removeQuestShortcut = QKeySequence(QKeySequence::StandardKey::Delete);
+#endif
+
+    fileMenu->addAction(makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), removeQuestShortcut, [this]() {
+      removeCurrentQuest();
+    });
 
     fileMenu->addSeparator();
 
     fileMenu->addAction(makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
-      startCurrentQuest();
+      playCurrentQuest();
     });
 
     fileMenu->addAction(
@@ -1042,9 +1067,13 @@ void MainWindow::setupMenuBar() {
       openContactPage();
     });
 
+    helpMenu->addAction(makeIcon(Icons16::File_FileScript, macOS), i18n::sourceCode(), QKeySequence{}, [this]() {
+      openContactPage();
+    });
     helpMenu->addAction(makeIcon(Icons16::Misc_Info, macOS), i18n::about(), QKeySequence{}, [this]() {
       openAboutDialog();
     });
+
   }
 }
 
@@ -1069,31 +1098,53 @@ void MainWindow::openAddFolderDialog() {
   });
 }
 
-void MainWindow::removeCurrentQuest() {
-  const auto index = _ui.listView->currentIndex();
+void MainWindow::removeQuest(const QModelIndex& index) {
   if (index.isValid()) {
     const auto questFilePath = _model->questFilePath(index);
-    /*uto* messageBox = new QMessageBox(QMessageBox::Icon::Question,
-                                 "Remove Quest",
-                                 "Do you want to remove this quest?",
-                                 QMessageBox::Button::No | QMessageBox::Button::Yes,
-                                 this);
-          messageBox->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
-          const auto result = messageBox->exec();
-          if (result == QMessageBox::Button::Yes) {
-            _model->removeQuest(questFilePath);
-          }*/
-
-    _model->removeQuest(questFilePath);
+    auto* msgBox = new MessageBox(this);
+    msgBox->setType(MessageBox::Type::Warning);
+    msgBox->setTitle(i18n::questRemovalConfirmation());
+    msgBox->setText(i18n::questRemovalDescription() + QString("<br/><br/><b>%1</b>").arg(questFilePath));
+    msgBox->setButtons(MessageBox::Button::Cancel | MessageBox::Button::Yes);
+    msgBox->setButtonIcon(MessageBox::Button::Yes, makeIcon(Icons16::Action_Trash));
+    QObject::connect(msgBox, &MessageBox::finished, this, [this, questFilePath](int result) {
+      const auto button = MessageBox::buttonResult(result);
+      if (button == MessageBox::Yes) {
+        _model->removeQuest(questFilePath);
+      }
+    });
+    msgBox->show();
   }
 }
 
-void MainWindow::startCurrentQuest() {
+void MainWindow::removeCurrentQuest() {
+  const auto index = _ui.listView->currentIndex();
+  removeQuest(index);
+}
+
+void MainWindow::playQuest(const QModelIndex& index) {
+  if (index.isValid()) {
+    const auto questFilePath = _model->questFilePath(index);
+    _runner->start(questFilePath);
+  }
+}
+
+void MainWindow::playCurrentQuest() {
   // TODO
 }
 
+void MainWindow::openQuestFolder(const QModelIndex& index) {
+  if (index.isValid()) {
+    const auto questFilePath = _model->questFilePath(index);
+    const auto questFileInfo = QFileInfo(questFilePath);
+    const auto questDirUrl = QUrl::fromLocalFile(questFileInfo.absoluteDir().absolutePath());
+    QDesktopServices::openUrl(questDirUrl);
+  }
+}
+
 void MainWindow::openCurrentQuestFolder() {
-  // TODO
+  const auto index = _ui.listView->currentIndex();
+  openQuestFolder(index);
 }
 
 void MainWindow::openPreferencesDialog() {
@@ -1119,7 +1170,11 @@ void MainWindow::playStopQuest() {
 }
 
 void MainWindow::openContactPage() {
-  QDesktopServices::openUrl(QUrl("https://www.solarus-games.org/about/contact"));
+  QDesktopServices::openUrl(QUrl(PROJECT_LINKS_CONTACT));
+}
+
+void MainWindow::openSourceCodePage() {
+  QDesktopServices::openUrl(QUrl(PROJECT_LINKS_SOURCE_CODE));
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {

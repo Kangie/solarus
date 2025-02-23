@@ -44,19 +44,25 @@ private:
 
   void openAddQuestDialog();
   void openAddFolderDialog();
-  void removeCurrentQuest();
-  void startCurrentQuest();
-  void openCurrentQuestFolder();
   void openPreferencesDialog();
-
   void openAboutDialog();
+  void openContactPage();
+  void openSourceCodePage();
+  void openQuestPropertiesPanel();
+
+  void removeQuest(const QModelIndex& index);
+  void removeCurrentQuest();
+
+  void playQuest(const QModelIndex& index);
+  void playCurrentQuest();
   void playStopQuest();
 
-  void openContactPage();
+  void openQuestFolder(const QModelIndex& index);
+  void openCurrentQuestFolder();
 
 protected:
-  void resizeEvent(QResizeEvent *event) override;
-  void closeEvent(QCloseEvent *event) override;
+  void resizeEvent(QResizeEvent* event) override;
+  void closeEvent(QCloseEvent* event) override;
 
 private:
   Preferences* _preferences{ nullptr };

@@ -33,7 +33,6 @@ AboutWindow::AboutWindow(QWidget* parent)
   setWindowModality(Qt::WindowModality::ApplicationModal);
   setWindowFlag(Qt::WindowType::MSWindowsFixedSizeDialogHint, true);
   setWindowFlag(Qt::WindowType::WindowContextHelpButtonHint, false);
-  // setWindowFlag(Qt::WindowType::Tool, true);
   setWindowFlag(Qt::WindowType::WindowMaximizeButtonHint, false);
   setWindowFlag(Qt::WindowType::WindowMinimizeButtonHint, false);
   setWindowFlag(Qt::WindowType::WindowFullscreenButtonHint, false);
@@ -105,9 +104,9 @@ void AboutWindow::setupUi() {
     buttonsLayout->setSpacing(4);
     buttonsLayout->setContentsMargins(0, 0, 0, 0);
     for (const auto [tooltip, url, icon] : {
-           std::make_tuple("X", PROJECT_SOCIALMEDIA_X, Icons16::Brand_X),
-           std::make_tuple("Mastodon", PROJECT_SOCIALMEDIA_MASTODON, Icons16::Brand_MastodonFill),
-           std::make_tuple("YouTube", PROJECT_SOCIALMEDIA_YOUTUBE, Icons16::Brand_YoutubeFill),
+           std::make_tuple("X", PROJECT_LINKS_X, Icons16::Brand_X),
+           std::make_tuple("Mastodon", PROJECT_LINKS_MASTODON, Icons16::Brand_MastodonFill),
+           std::make_tuple("YouTube", PROJECT_LINKS_YOUTUBE, Icons16::Brand_YoutubeFill),
          }) {
       auto* button = new QPushButton(this);
       button->setIcon(makeIcon(icon));
