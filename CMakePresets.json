@@ -1,8 +1,8 @@
 {
-  "version": 3,
+  "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 21,
+    "minor": 23,
     "patch": 0
   },
   "configurePresets": [
@@ -13,7 +13,8 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "Qt6_DIR": "/opt/homebrew/opt/qt/lib/cmake/Qt6"
+        "Qt6_DIR": "/opt/homebrew/opt/qt/lib/cmake/Qt6",
+        "SOLARUS_FETCHCONTENT": true
       },
       "condition": {
         "type": "equals",
@@ -28,7 +29,8 @@
       "generator": "Visual Studio 17 2022",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "C:/Qt/6.7.2/msvc2022_64/lib/cmake/Qt6"
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.7.2/msvc2022_64/lib/cmake/Qt6",
+        "SOLARUS_FETCHCONTENT": true
       },
       "condition": {
         "type": "equals",
@@ -42,6 +44,9 @@
       "description": "Makefile for Linux",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.7.2/msvc2022_64/lib/cmake/Qt6"
+      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -88,6 +93,40 @@
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
       }
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "macos",
+      "displayName": "macOS",
+      "configurePreset": "macos",
+      "description": "DMG packaging for macOS",
+      "generators": ["DragNDrop"],
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "macos",
+      "displayName": "macOS",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "macos"
+        },
+        {
+          "type": "build",
+          "name": "macos"
+        },
+        {
+          "type": "package",
+          "name": "macos"
+        }
+      ]
     }
   ]
 }

@@ -86,7 +86,6 @@ else()
   find_package(Solarus REQUIRED)
 endif()
 
-
 # Icon.
 set(MACOSX_BUNDLE_ICON_FILE solarus_launcher_icon.icns)
 set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.icns")
@@ -188,11 +187,33 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_LINKS_CONTACT="${LINKS_CONTACT}"
 )
 
+set(EXECUTABLE_PATH "$<TARGET_FILE_NAME:${PROJECT_NAME}>.app")
+qt_generate_deploy_script(
+    TARGET ${PROJECT_NAME}
+    OUTPUT_SCRIPT DEPLOY_SCRIPT
+    CONTENT "
+qt_deploy_runtime_dependencies(
+    EXECUTABLE \"${EXECUTABLE_PATH}\"
+    DEPLOY_TOOL_OPTIONS \"${DEPLOY_TOOL_OPTIONS_ARG}\"
+    GENERATE_QT_CONF
+    VERBOSE
+    NO_APP_STORE_COMPLIANCE
+)")
+
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}
   BUNDLE DESTINATION .
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+install(SCRIPT "${DEPLOY_SCRIPT}")
 
 qt_finalize_executable(${PROJECT_NAME})
+
+# Packaging.
+include(CPack)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(CPACK_GENERATOR "DragNDrop")
+  set(CPACK_PACKAGE_FILE_NAME "${APP_NAME} Installer") # The name of the generated package
+  set(CPACK_BUNDLE_NAME "${APP_NAME}") # The name of the app bundle
+endif()
