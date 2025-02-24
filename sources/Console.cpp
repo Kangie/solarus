@@ -134,7 +134,8 @@ void Console::setupUi() {
   layout->addWidget(ui.log_view);
 
   if (const auto* style = qobject_cast<oclero::qlementine::QlementineStyle*>(this->style())) {
-    const auto& font = style->theme().fontMonospace;
+    auto font = style->theme().fontMonospace;
+    font.setPointSizeF(11.);
     ui.log_view->setFont(font);
   } else {
     const auto font = QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont);
