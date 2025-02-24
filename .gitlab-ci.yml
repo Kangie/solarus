@@ -16,7 +16,7 @@
 
 variables:
   IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
-  IMAGE_VERSION: 20241005
+  IMAGE_VERSION: 20250217
   GIT_DEPTH: 10
 
 stages:
@@ -376,8 +376,8 @@ mingw-x64-package:
       staging/share/solarus-gui/translations
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/platforms
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/styles
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
       cmake/win32/bzip2.dll
       cmake/win32/zip.exe
     TEXT_FILES: >-
@@ -409,8 +409,8 @@ mingw-x86-package:
       staging/share/solarus-gui/translations
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/platforms
-      /usr/$ARCH-w64-mingw32/lib/qt/plugins/styles
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
       cmake/win32/bzip2.dll
       cmake/win32/zip.exe
     TEXT_FILES: >-
