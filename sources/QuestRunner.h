@@ -5,8 +5,6 @@
 #include <QProcess>
 #include <QTimer>
 
-#include "QuestOutputHandler.h"
-
 namespace solarus::launcher {
 class QuestRunner : public QObject {
   Q_OBJECT
@@ -35,11 +33,15 @@ public:
 
 public:
   State state() const;
+
   const QString& questFilePath() const;
-  QuestOutputHandler& outputHandler() const;
+  void start(const QString& questFilePath);
+  void stop();
+
   const QString& fullOutput() const;
 
-public:
+  int executeCommand(const QString& command);
+
   bool audioEnabled() const;
   void setAudioEnabled(bool);
 
@@ -52,30 +54,22 @@ public:
   bool suspendWhenUnfocused() const;
   void setSuspendWhenUnfocused(bool);
 
-public slots:
-  void start(const QString& questFilePath);
-  void stop();
-  int executeCommand(const QString& command);
+signals:
+  void stateChanged();
+  void errorRaised(ErrorCode error);
+  void questChanged();
+  void outputProduced(const QStringList& lines);
 
-private slots:
+private:
   void onProcessError(QProcess::ProcessError error);
   void onProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
   void onProcessStandardOutputAvailable();
   void onProcessStateChanged(QProcess::ProcessState state);
   void onTimerTimeout();
-
-signals:
-  void aboutToStop();
-  void stateChanged();
-  void errorRaised(ErrorCode error);
-  void questChanged();
-
-private:
   std::pair<QString, QStringList> createArguments(const QString& questPath) const;
 
 private:
   QProcess _process;
-  QuestOutputHandler _questOutputHandler;
   QString _questFullOutput;
   QTimer _timer;
   int _lastCommandId{ -1 };

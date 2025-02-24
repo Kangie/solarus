@@ -27,6 +27,7 @@ class QuestListModel;
 class QuestRunner;
 class QuestPropertiesPanel;
 class Preferences;
+class Console;
 
 class MainWindow : public QWidget {
   Q_OBJECT
@@ -80,7 +81,7 @@ private:
     oclero::qlementine::LineEdit* searchLineEdit{ nullptr };
     oclero::qlementine::Switch* themeSwitch{ nullptr };
     QListView* listView{ nullptr };
-    QPlainTextEdit* console{ nullptr };
+    Console* console{ nullptr };
     QSplitter* consoleSplitter{ nullptr };
     QStatusBar* statusBar{ nullptr };
     oclero::qlementine::Label* questCountLabel{ nullptr };

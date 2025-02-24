@@ -10,6 +10,7 @@
 #include "Preferences.h"
 #include "PreferencesWindow.h"
 #include "MessageBox.h"
+#include "Console.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -140,6 +141,9 @@ static QString playingLabel() {
 }
 static QString closeConsole() {
   return QApplication::translate("SolarusLauncher", "Close console");
+}
+static QString clearConsole() {
+  return QApplication::translate("SolarusLauncher", "Clear console");
 }
 static QString noQuestPlaying() {
   return QApplication::translate("SolarusLauncher", "No quest playing");
@@ -817,6 +821,19 @@ void MainWindow::setupUi() {
 
       consoleToolBarLayout->addStretch();
 
+      auto* clearConsoleButton = new QPushButton(consoleToolBar);
+      clearConsoleButton->setToolTip(i18n::clearConsole());
+      clearConsoleButton->setFocusPolicy(Qt::NoFocus);
+      clearConsoleButton->setIconSize(QSize(12, 12));
+      clearConsoleButton->setFixedSize(18, 18);
+      clearConsoleButton->setFlat(true);
+      clearConsoleButton->setIcon(makeIcon(Icons16::Action_Trash));
+      consoleToolBarLayout->addWidget(clearConsoleButton);
+
+      QObject::connect(clearConsoleButton, &QPushButton::clicked, this, [this]() {
+        _ui.console->clear();
+      });
+
       auto* closeButton = new QPushButton(consoleToolBar);
       closeButton->setToolTip(i18n::closeConsole());
       closeButton->setFocusPolicy(Qt::NoFocus);
@@ -846,11 +863,9 @@ void MainWindow::setupUi() {
       consoleContainer->setLayout(consoleContainerLayout);
       consoleContainerLayout->setSpacing(0);
 
-      _ui.console = new QPlainTextEdit(consoleContainer);
-      _ui.console->setFrameShape(QFrame::Shape::NoFrame);
-      _ui.console->setReadOnly(true);
-      _ui.console->setMaximumBlockCount(10000);
+      _ui.console = new Console(consoleContainer);
       _ui.console->setMinimumHeight(100);
+      _ui.console->set_quest_runner(_runner);
       consoleContainerLayout->addWidget(_ui.console);
 
       // Monospace font.

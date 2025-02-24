@@ -24,12 +24,12 @@ QuestRunner::QuestRunner(QObject* parent)
   QObject::connect(&_timer, &QTimer::timeout, this, &QuestRunner::onTimerTimeout);
   _timer.start(timerDelay);
 
-  QObject::connect(&_questOutputHandler, &QuestOutputHandler::htmlProduced, this, [this](const auto& html) {
-    _questFullOutput.append(html);
-  });
-  QObject::connect(&_questOutputHandler, &QuestOutputHandler::outputCleared, this, [this]() {
-    _questFullOutput.clear();
-  });
+  // QObject::connect(&_questOutputHandler, &QuestOutputHandler::htmlProduced, this, [this](const auto& html) {
+  //   _questFullOutput.append(html);
+  // });
+  // QObject::connect(&_questOutputHandler, &QuestOutputHandler::outputCleared, this, [this]() {
+  //   _questFullOutput.clear();
+  // });
 }
 
 QuestRunner::~QuestRunner() {
@@ -61,10 +61,6 @@ const QString& QuestRunner::questFilePath() const {
   return _questFilePath;
 }
 
-QuestOutputHandler& QuestRunner::outputHandler() const {
-  return const_cast<QuestRunner*>(this)->_questOutputHandler;
-}
-
 const QString& QuestRunner::fullOutput() const {
   return _questFullOutput;
 }
@@ -92,12 +88,11 @@ void QuestRunner::start(const QString& questFilePath) {
 
 void QuestRunner::stop() {
   if (_process.state() != QProcess::ProcessState::NotRunning) {
-    emit aboutToStop();
-
     // Clear the previous quest.
     _questFullOutput.clear();
     _questFilePath.clear();
     emit questChanged();
+
 
     _process.terminate();
   }
@@ -149,7 +144,8 @@ void QuestRunner::onProcessError(QProcess::ProcessError error) {
 }
 
 void QuestRunner::onProcessFinished(int /*exitCode*/, QProcess::ExitStatus /*exitStatus*/) {
-  emit aboutToStop();
+  emit stateChanged();
+
   _lastCommandId = -1;
 
   // Clear the previous quest.
@@ -158,7 +154,6 @@ void QuestRunner::onProcessFinished(int /*exitCode*/, QProcess::ExitStatus /*exi
   emit questChanged();
 
   emit stateChanged();
-  _questOutputHandler.onStateChanged(false);
 }
 
 void QuestRunner::onProcessStandardOutputAvailable() {
@@ -176,7 +171,7 @@ void QuestRunner::onProcessStandardOutputAvailable() {
   }
 
   if (!lines.isEmpty()) {
-    _questOutputHandler.onOutputProduced(lines);
+    emit outputProduced(lines);
   }
 }
 
@@ -189,7 +184,6 @@ void QuestRunner::onProcessStateChanged(QProcess::ProcessState state) {
     emit questChanged();
   }
   emit stateChanged();
-  _questOutputHandler.onStateChanged(this->state() == State::Running);
 }
 
 void QuestRunner::onTimerTimeout() {

@@ -98,6 +98,8 @@ qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Common.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Console.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Console.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.h
@@ -114,8 +116,6 @@ qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListModel.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestRunner.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestRunner.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestOutputHandler.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
 )
