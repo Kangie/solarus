@@ -54,9 +54,9 @@ bool PanTool::eventFilter(QObject* object, QEvent* event) {
       // Middle button pressed: start panning the view.
       QApplication::setOverrideCursor(Qt::ClosedHandCursor);
       pan_initial_point = QPoint(
-            scroll_area->horizontalScrollBar()->value() + mouse_event->x(),
-            scroll_area->verticalScrollBar()->value() + mouse_event->y()
-            );
+          scroll_area->horizontalScrollBar()->value() + mouse_event->position().x(),
+          scroll_area->verticalScrollBar()->value() + mouse_event->position().y()
+      );
 
       return true;
     }
@@ -68,9 +68,9 @@ bool PanTool::eventFilter(QObject* object, QEvent* event) {
     if ((mouse_event->buttons() & Qt::MiddleButton) == Qt::MiddleButton) {
       // Moved the mouse while pressing middle button: pan the view.
       QPoint scroll_point(
-            pan_initial_point.x() - mouse_event->x(),
-            pan_initial_point.y() - mouse_event->y()
-            );
+          pan_initial_point.x() - mouse_event->position().x(),
+          pan_initial_point.y() - mouse_event->position().y()
+      );
       scroll_area->horizontalScrollBar()->setValue(scroll_point.x());
       scroll_area->verticalScrollBar()->setValue(scroll_point.y());
 

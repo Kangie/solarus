@@ -1168,14 +1168,14 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(map, &MapModel::layer_range_changed,
           this, &MapEditor::layer_range_changed);
 
-  connect(ui.world_check_box, &QCheckBox::stateChanged,
+  connect(ui.world_check_box, &QCheckBox::checkStateChanged,
           this, &MapEditor::world_check_box_changed);
   connect(ui.world_field, &QLineEdit::editingFinished,
           this, &MapEditor::change_world_requested);
   connect(map, &MapModel::world_changed,
           this, &MapEditor::update_world_field);
 
-  connect(ui.floor_check_box, &QCheckBox::stateChanged,
+  connect(ui.floor_check_box, &QCheckBox::checkStateChanged,
           this, &MapEditor::floor_check_box_changed);
   connect(ui.floor_field, &QSpinBox::editingFinished,
           this, &MapEditor::change_floor_requested);
@@ -1322,7 +1322,7 @@ void MapEditor::build_entity_creation_toolbar() {
     action->setCheckable(true);
     action->setData(static_cast<int>(type));
     entity_creation_toolbar->addAction(action);
-    connect(action, &QAction::triggered, [this, type](bool checked) {
+    connect(action, &QAction::triggered, this, [this, type](bool checked) {
       entity_creation_button_triggered(type, checked);
     });
   }
@@ -1949,8 +1949,8 @@ void MapEditor::map_selection_changed() {
 
   // Update whether cut/copy are available.
   bool empty_selection = ui.map_view->is_selection_empty();
-  can_cut_changed(!empty_selection);
-  can_copy_changed(!empty_selection);
+  emit can_cut_changed(!empty_selection);
+  emit can_copy_changed(!empty_selection);
 
   // Update the tileset view with the selected tile patterns.
   const EntityIndexes& entity_indexes = ui.map_view->get_selected_entities();
