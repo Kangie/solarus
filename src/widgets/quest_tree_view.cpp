@@ -90,9 +90,6 @@ QuestTreeView::QuestTreeView(QWidget* parent) :
   connect(change_file_info_action, &QAction::triggered,
           this, &QuestTreeView::change_file_info_action_triggered);
   addAction(change_file_info_action);
-
-  connect(this, &QuestTreeView::activated,
-          this, &QuestTreeView::default_action_triggered);
 }
 
 /**
@@ -321,7 +318,7 @@ void QuestTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
  */
 void QuestTreeView::contextMenuEvent(QContextMenuEvent* event) {
 
-  if(model == nullptr) {
+  if (model == nullptr) {
     return;
   }
 
