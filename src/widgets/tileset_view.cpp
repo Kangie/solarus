@@ -205,7 +205,7 @@ TilesetView::TilesetView(QWidget* parent) :
   set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::HORIZONTAL)]->setShortcut(tr("H"));
   set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::VERTICAL)]->setShortcut(tr("V"));
   set_repeat_mode_actions[static_cast<int>(PatternRepeatMode::NONE)]->setShortcut(tr("N"));
-  for (QAction* action : qAsConst(set_repeat_mode_actions)) {
+  for (QAction* action : std::as_const(set_repeat_mode_actions)) {
     action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   }
 
@@ -1391,10 +1391,10 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
   QPainterPath path;
   path.addRect(QRect(area.topLeft() - QPoint(1, 1),
                      area.size() + QSize(2, 2)));
-  get_scene().setSelectionArea(path, Qt::ContainsItemBoundingRect);
+  get_scene().setSelectionArea(path, Qt::ReplaceSelection, Qt::ContainsItemBoundingRect);
 
   // Re-select items that were already selected if Ctrl or Shift was pressed.
-  for (QGraphicsItem* item : qAsConst(initial_selection)) {
+  for (QGraphicsItem* item : std::as_const(initial_selection)) {
     item->setSelected(true);
   }
 
@@ -1461,7 +1461,7 @@ void MovingPatternsState::stop() {
  */
 void MovingPatternsState::clear_current_areas() {
 
-  for (QGraphicsRectItem* item : qAsConst(current_area_items)) {
+  for (QGraphicsRectItem* item : std::as_const(current_area_items)) {
     get_scene().removeItem(item);
     delete item;
   }
@@ -1520,7 +1520,8 @@ void MovingPatternsState::drag_enter(QDragEnterEvent& event) {
 
 void MovingPatternsState::drag_move(QDragMoveEvent& event) {
 
-  last_point = Point::floor_8(get_view().mapToScene(event.pos()));
+  last_point = Point::floor_8(
+      get_view().mapToScene(event.position().toPoint()));
   QPoint delta = last_point - initial_point;
 
   clear_current_areas();

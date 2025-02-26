@@ -475,7 +475,7 @@ QModelIndex BorderSetModel::get_border_set_index(const QString& border_set_id) c
   // TODO store a QString -> int cache
   for (int row = 0; row < rowCount(); ++row) {
 
-    if (border_set_indexes[row].border_set_id.get() == border_set_id) {
+    if (*border_set_indexes[row].border_set_id.get() == border_set_id) {
       return this->index(row, 0);
     }
   }

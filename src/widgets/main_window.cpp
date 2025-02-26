@@ -41,7 +41,6 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QDir>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -341,7 +340,7 @@ QMenu* MainWindow::create_zoom_menu() {
     QAction* action = new QAction(zoom.first, action_group);
     zoom_actions[zoom.second] = action;
     action->setCheckable(true);
-    connect(action, &QAction::triggered, [this, zoom]() {
+    connect(action, &QAction::triggered, this, [this, zoom]() {
       Editor* editor = get_current_editor();
       if (editor != nullptr) {
         editor->get_view_settings().set_zoom(zoom.second);
@@ -538,24 +537,31 @@ QMenu* MainWindow::create_show_entities_menu() {
  */
 void MainWindow::initialize_geometry_on_screen() {
 
-  QDesktopWidget* desktop = QApplication::desktop();
-  QRect screen = desktop->screenGeometry(desktop->screenNumber(QCursor::pos()));
+  // Get the screen where the cursor is currently located.
+  QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
+  if (screen == nullptr) {
+    // Fallback to the primary screen if no screen is found.
+    screen = QGuiApplication::primaryScreen();
+  }
+
+  QRect screen_geometry = screen->geometry();
+
 
   // Choose a comfortable initial size depending on the screen resolution.
   // The ui is designed to work well with a window size of 1280x680 and above.
   int width = 1270;
   int height = 680;
-  if (screen.width() >= 1920) {
+  if (screen_geometry.width() >= 1920) {
     width = 1500;
   }
-  if (screen.height() >= 1024) {
+  if (screen_geometry.height() >= 1024) {
     height = 980;
   }
-  setGeometry(0, 0, qMin(width, screen.width()), qMin(height, screen.height()));
+  setGeometry(0, 0, qMin(width, screen_geometry.width()), qMin(height, screen_geometry.height()));
 
   // And center the window on the screen where the mouse is currently.
-  int x = screen.width() / 2 - frameGeometry().width() / 2 + screen.left() - 2;
-  int y = screen.height() / 2 - frameGeometry().height() / 2 + screen.top() - 10;
+  int x = screen_geometry.width() / 2 - frameGeometry().width() / 2 + screen_geometry.left() - 2;
+  int y = screen_geometry.height() / 2 - frameGeometry().height() / 2 + screen_geometry.top() - 10;
 
   move(qMax(0, x), qMax(0, y));
 }

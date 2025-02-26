@@ -18,6 +18,7 @@
 #include "quest.h"
 #include "dialogs_model.h"
 #include <QIcon>
+#include <QRegularExpression>
 
 namespace SolarusEditor {
 
@@ -472,7 +473,7 @@ bool DialogsModel::can_duplicate_dialogs(
   const QStringList& ids = get_ids(prefix);
   for (QString prefixed_id : ids) {
 
-    prefixed_id.replace(QRegExp(QString("^") + prefix), new_prefix);
+    prefixed_id.replace(QRegularExpression(QString("^") + prefix), new_prefix);
     if (dialog_exists(prefixed_id)) {
       id = prefixed_id;
       return false;
@@ -500,7 +501,7 @@ void DialogsModel::duplicate_dialogs(
   const QStringList& ids = get_ids(prefix);
   for (QString id : ids) {
     const auto& data = get_dialog_data(id);
-    id.replace(QRegExp(QString("^") + prefix), new_prefix);
+    id.replace(QRegularExpression(QString("^") + prefix), new_prefix);
     create_dialog(id, data);
   }
 }
@@ -644,9 +645,9 @@ bool DialogsModel::can_set_dialog_id_prefix(
     const QString& old_prefix, const QString& new_prefix, QString& id) {
 
   const QStringList& ids = get_ids(old_prefix);
+  QRegularExpression regexp(QString("^") + old_prefix);
   for (QString prefixed_id : ids) {
-
-    prefixed_id.replace(QRegExp(QString("^") + old_prefix), new_prefix);
+    prefixed_id.replace(regexp, new_prefix);
     if (dialog_exists(prefixed_id)) {
       id = prefixed_id;
       return false;
@@ -677,7 +678,7 @@ QList<QPair<QString, QString>> DialogsModel::set_dialog_id_prefix(
   for (QString old_id : old_ids) {
 
     QString new_id = old_id;
-    new_id.replace(QRegExp(QString("^") + old_prefix), new_prefix);
+    new_id.replace(QRegularExpression(QString("^") + old_prefix), new_prefix);
     list.push_back(
       QPair<QString, QString>(old_id, set_dialog_id(old_id, new_id)));
   }

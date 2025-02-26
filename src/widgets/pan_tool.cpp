@@ -50,7 +50,7 @@ bool PanTool::eventFilter(QObject* object, QEvent* event) {
   if (event->type() == QEvent::MouseButtonPress) {
     QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
 
-    if (mouse_event->button() == Qt::MidButton) {
+    if (mouse_event->button() == Qt::MiddleButton) {
       // Middle button pressed: start panning the view.
       QApplication::setOverrideCursor(Qt::ClosedHandCursor);
       pan_initial_point = QPoint(
@@ -65,7 +65,7 @@ bool PanTool::eventFilter(QObject* object, QEvent* event) {
   else if (event->type() == QEvent::MouseMove) {
     QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
 
-    if ((mouse_event->buttons() & Qt::MidButton) == Qt::MidButton) {
+    if ((mouse_event->buttons() & Qt::MiddleButton) == Qt::MiddleButton) {
       // Moved the mouse while pressing middle button: pan the view.
       QPoint scroll_point(
             pan_initial_point.x() - mouse_event->x(),
@@ -81,7 +81,7 @@ bool PanTool::eventFilter(QObject* object, QEvent* event) {
   else if (event->type() == QEvent::MouseButtonRelease) {
     QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
 
-    if (mouse_event->button() == Qt::MidButton) {
+    if (mouse_event->button() == Qt::MiddleButton) {
       QApplication::restoreOverrideCursor();
       return true;
     }
@@ -93,7 +93,7 @@ bool PanTool::eventFilter(QObject* object, QEvent* event) {
     if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
       // Shift + wheel: pan the view.
       int new_value =
-          scroll_area->horizontalScrollBar()->value() - wheel_event->delta();
+          scroll_area->horizontalScrollBar()->value() - wheel_event->pixelDelta().y();
       scroll_area->horizontalScrollBar()->setValue(new_value);
       return true;
     }

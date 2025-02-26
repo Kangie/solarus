@@ -35,7 +35,7 @@ ClosableTabBar::ClosableTabBar(QWidget* parent) :
  */
 void ClosableTabBar::mousePressEvent(QMouseEvent* event) {
 
-  if (event->button() == Qt::MidButton) {
+  if (event->button() == Qt::MiddleButton) {
     int index = tabAt(event->pos());
     if (index != -1) {
       // Middle mouse button on a tab: close it.

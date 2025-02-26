@@ -496,7 +496,7 @@ public:
     MapEditorCommand(editor, MapEditor::tr("Convert tiles")),
     indexes_before(indexes) {
 
-    qSort(this->indexes_before);
+    std::sort(this->indexes_before.begin(), this->indexes_before.end());
   }
 
   void undo() override {
@@ -553,7 +553,7 @@ public:
     MapEditorCommand(editor, MapEditor::tr("Convert tiles")),
     indexes_before(indexes) {
 
-    qSort(this->indexes_before);
+    std::sort(this->indexes_before.begin(), this->indexes_before.end());
   }
 
   void undo() override {
@@ -733,7 +733,7 @@ public:
     indexes_after(),
     layer_after(layer) {
 
-    qSort(this->indexes_before);
+    std::sort(this->indexes_before.begin(), this->indexes_before.end());
   }
 
   void undo() override {
@@ -776,7 +776,7 @@ public:
     indexes_before(indexes),
     indexes_after() {
 
-    qSort(this->indexes_before);
+    std::sort(this->indexes_before.begin(), this->indexes_before.end());
   }
 
   void undo() override {
@@ -821,7 +821,7 @@ public:
     indexes_before(indexes),
     indexes_after() {
 
-    qSort(this->indexes_before);
+    std::sort(this->indexes_before.begin(), this->indexes_before.end());
   }
 
   void undo() override {
@@ -866,7 +866,7 @@ public:
     indexes_before(indexes),
     indexes_after(indexes) {
 
-    qSort(this->indexes_before);
+    std::sort(this->indexes_before.begin(), this->indexes_before.end());
   }
 
   void undo() override {
@@ -924,7 +924,7 @@ public:
     indexes_before(indexes),
     indexes_after(indexes) {
 
-    qSort(this->indexes_before);
+    std::sort(this->indexes_before.begin(), this->indexes_before.end());
   }
 
   void undo() override {

@@ -81,7 +81,7 @@ void LuaSyntaxHighlighter::create_rules() {
   };
 
   for (const QString& pattern : keyword_patterns) {
-    rule.pattern = QRegExp(pattern);
+    rule.pattern = QRegularExpression(pattern);
     rule.format = keyword_format;
     rules.append(rule);
   }
@@ -89,11 +89,11 @@ void LuaSyntaxHighlighter::create_rules() {
   // Strings.
   QTextCharFormat string_format;
   string_format.setForeground(mode_info.literal_string_color);
-  rule.pattern = QRegExp("\"[^\"]*\"");
+  rule.pattern = QRegularExpression("\"[^\"]*\"");
   rule.format = string_format;
   rules.append(rule);
 
-  rule.pattern = QRegExp("'[^']*'");
+  rule.pattern = QRegularExpression("'[^']*'");
   rule.format = string_format;
   rules.append(rule);
 
@@ -102,15 +102,15 @@ void LuaSyntaxHighlighter::create_rules() {
   single_line_comment_format.setForeground(mode_info.comment_color);
   // Avoid to highlight comments in strings,
   // and don't match --[[ or --]] markers.
-  rule.pattern = QRegExp(
+  rule.pattern = QRegularExpression(
         not_in_a_single_line_string +
         R"((--([^\[\]]|\[[^\[]|\][^\]])[^\n]*$)$)"
   );
   rule.format = single_line_comment_format;
   rules.append(rule);
 
-  comment_start_pattern = QRegExp("--\\[\\[");
-  comment_end_pattern = QRegExp("--\\]\\]");
+  comment_start_pattern = QRegularExpression("--\\[\\[");
+  comment_end_pattern = QRegularExpression("--\\]\\]");
   QTextCharFormat multi_line_comment_format;
   multi_line_comment_format.setForeground(mode_info.comment_color);
 
@@ -123,43 +123,45 @@ void LuaSyntaxHighlighter::create_rules() {
  */
 void LuaSyntaxHighlighter::highlightBlock(const QString& text) {
 
-  for (const HighlightingRule& rule : qAsConst(rules)) {
-    QRegExp pattern(rule.pattern);
-    int index = pattern.indexIn(text);
-    if (pattern.captureCount() > 0) {
-      index = pattern.pos(1);
-    }
-    while (index >= 0) {
-      int length = pattern.matchedLength();
-      if (pattern.captureCount() > 0) {
-        const QStringList captures = pattern.capturedTexts();
+  for (const HighlightingRule& rule : std::as_const(rules)) {
+    QRegularExpression pattern(rule.pattern);
+    QRegularExpressionMatch match = pattern.match(text);
+    int index = match.capturedStart(0);
+
+    while (match.hasMatch()) {
+      int length = match.capturedLength(0);
+      if (match.lastCapturedIndex() > 0) {
+        const QStringList captures = match.capturedTexts();
         length = captures.first().size();
       }
       setFormat(index, length, rule.format);
-      index = pattern.indexIn(text, index + length);
+      match = pattern.match(text, index + length);
+      index = match.capturedStart(0);
     }
   }
   setCurrentBlockState(0);
 
   int start_index = 0;
   if (previousBlockState() != 1) {
-    start_index = comment_start_pattern.indexIn(text);
+    start_index = comment_start_pattern.match(text).capturedStart(0);
   }
 
   while (start_index >= 0) {
-    int end_index = comment_end_pattern.indexIn(text, start_index);
+    QRegularExpressionMatch match = comment_end_pattern.match(text);
+    int end_index = match.capturedStart(start_index);
     int comment_length;
     if (end_index == -1) {
       setCurrentBlockState(1);
       comment_length = text.length() - start_index;
     } else {
       comment_length = end_index - start_index
-          + comment_end_pattern.matchedLength();
+          + match.capturedLength();
     }
     QTextCharFormat multi_line_comment_format;
     multi_line_comment_format.setForeground(EditorStyle::get_mode_info().comment_color);
     setFormat(start_index, comment_length, multi_line_comment_format);
-    start_index = comment_start_pattern.indexIn(text, start_index + comment_length);
+    match = comment_start_pattern.match(text);
+    start_index = match.capturedStart(start_index + comment_length);
   }
 }
 

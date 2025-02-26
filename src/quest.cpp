@@ -226,7 +226,7 @@ QString Quest::get_data_path() const {
  * @return The path relative to the quest data directory, or an empty string
  * if it is not in the quest data directory.
  */
-QString Quest::get_path_relative_to_data_path(const QString& path) {
+QString Quest::get_path_relative_to_data_path(const QString& path) const {
 
   const QString& data_path = get_data_path();
   if (!path.startsWith(data_path)) {
@@ -1427,7 +1427,7 @@ void Quest::create_file_from_string(
     throw EditorException(tr("Cannot write file '%1'").arg(path));
   }
   QTextStream out(&file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   out << content;
   file.close();
 
@@ -1464,7 +1464,7 @@ void Quest::create_file_from_template(
     throw EditorException(tr("Cannot write file '%1'").arg(output_file_path));
   }
   QTextStream out(&output_file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   out << content;
   output_file.close();
 

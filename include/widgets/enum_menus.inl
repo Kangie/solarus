@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "enum_traits.h"
+#include <QActionGroup>
 #include <QMenu>
 
 namespace SolarusEditor {

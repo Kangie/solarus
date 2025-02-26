@@ -26,9 +26,8 @@ namespace SolarusEditor {
  */
 QList<Ground> EnumTraits<Ground>::get_values() {
 
-  return QList<Ground>::fromStdList(
-        Solarus::EnumInfo<Ground>::enums()
-  );
+  const std::list<Ground> values = Solarus::EnumInfo<Ground>::enums();
+  return QList<Ground>(values.begin(), values.end());
 }
 
 /**

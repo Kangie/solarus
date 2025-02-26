@@ -25,9 +25,8 @@ namespace SolarusEditor {
  */
 QList<StartingLocationMode> EnumTraits<StartingLocationMode>::get_values() {
 
-  return QList<StartingLocationMode>::fromStdList(
-        Solarus::EnumInfo<StartingLocationMode>::enums()
-  );
+  const std::list<StartingLocationMode> values = Solarus::EnumInfo<StartingLocationMode>::enums();
+  return QList<StartingLocationMode>(values.begin(), values.end());
 }
 
 /**

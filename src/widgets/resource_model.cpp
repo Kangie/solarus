@@ -156,7 +156,7 @@ void ResourceModel::remove_id(const QString& id) {
  */
 void ResourceModel::add_element(const QString& element_id) {
 
-  QStringList files = element_id.split('/', QString::SkipEmptyParts);
+  QStringList files = element_id.split('/', Qt::SkipEmptyParts);
   QStandardItem* parent = invisibleRootItem();
   while (files.size() > 1) {
     parent = find_or_create_dir_item(*parent, files.first());

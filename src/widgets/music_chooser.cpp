@@ -36,7 +36,7 @@ MusicChooser::MusicChooser(QWidget* parent) :
   play_music_button.setIconSize(QSize(24, 24));
 
   QHBoxLayout* layout = new QHBoxLayout(this);
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
 
   layout->addWidget(&music_selector);
   layout->addWidget(&play_music_button);
@@ -54,12 +54,12 @@ void MusicChooser::set_quest(Quest& quest) {
 
   music_selector.set_quest(quest);
 
-  connect(&play_music_button, SIGNAL(clicked(bool)),
-          this, SLOT(play_music_button_clicked()));
-  connect(&music_selector, SIGNAL(activated(QString)),
-          this, SLOT(music_selector_activated(QString)));
-  connect(&quest, SIGNAL(current_music_changed(QString)),
-          this, SLOT(quest_music_changed(QString)));
+  connect(&play_music_button, &QAbstractButton::clicked,
+          this, &MusicChooser::play_music_button_clicked);
+  connect(&music_selector, &QComboBox::textActivated,
+          this, &MusicChooser::music_selector_activated);
+  connect(&quest, &Quest::current_music_changed,
+          this, &MusicChooser::quest_music_changed);
 
   update_play_button();
 }

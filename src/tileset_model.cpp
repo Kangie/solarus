@@ -148,7 +148,7 @@ void TilesetModel::save() const {
       QByteArray old_file_hash = hasher.result();
 
       hasher.reset();
-      hasher.addData(new_data.data(), new_data.size());
+      hasher.addData(QByteArrayView(new_data.data(), new_data.size()));
 
       if (hasher.result() == old_file_hash) {
         // The saved version is already up-to-date: nothing to save.
@@ -464,7 +464,7 @@ int TilesetModel::create_pattern(const QString& pattern_id, const QRect& frame) 
   emit pattern_created(index, pattern_id);
 
   // Restore the selection.
-  for (const QString& selected_pattern_id : qAsConst(old_selection_ids)) {
+  for (const QString& selected_pattern_id : std::as_const(old_selection_ids)) {
     int new_index = id_to_index(selected_pattern_id);
     add_to_selected(new_index);
   }
@@ -528,7 +528,7 @@ void TilesetModel::delete_pattern(int index) {
   emit pattern_deleted(index, pattern_id);
 
   // Restore the selection.
-  for (const QString& selected_pattern_id : qAsConst(old_selection_ids)) {
+  for (const QString& selected_pattern_id : std::as_const(old_selection_ids)) {
 
     if (selected_pattern_id == pattern_id) {
       // Exclude the deleted one.
@@ -592,7 +592,7 @@ void TilesetModel::delete_patterns(const QList<int>& indexes) {
   endResetModel();
 
   // Restore the selection.
-  for (const QString& selected_pattern_id : qAsConst(old_selection_ids)) {
+  for (const QString& selected_pattern_id : std::as_const(old_selection_ids)) {
     int new_index = id_to_index(selected_pattern_id);
     if (new_index == -1) {
       // This one was just deleted.
@@ -681,7 +681,7 @@ int TilesetModel::set_pattern_id(int index, const QString& new_id) {
   emit pattern_id_changed(index, old_id, new_index, new_id);
 
   // Restore the selection.
-  for (QString pattern_id : qAsConst(old_selection_ids)) {
+  for (QString pattern_id : std::as_const(old_selection_ids)) {
     if (pattern_id == old_id) {
       pattern_id = new_id;
     }

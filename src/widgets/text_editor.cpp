@@ -21,6 +21,7 @@
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "quest.h"
+#include <QFile>
 #include <QIcon>
 #include <QLayout>
 #include <QList>
@@ -101,7 +102,7 @@ void TextEditor::load() {
     throw EditorException(tr("Cannot open file '%1'").arg(file_path));
   }
   QTextStream out(&file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   text_widget->setPlainText(out.readAll());
   get_undo_stack().setClean();
 }
@@ -129,7 +130,7 @@ void TextEditor::save() {
   }
 
   QTextStream out(&file);
-  out.setCodec("UTF-8");
+  out.setEncoding(QStringConverter::Utf8);
   out << text_widget->toPlainText();
   text_widget->document()->setModified(false);
 }

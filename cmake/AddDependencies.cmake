@@ -4,10 +4,25 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/modules/
 # Wheither LuaJIT should be used instead of vanilla Lua.
 option(SOLARUS_USE_LUAJIT "Use LuaJIT instead of default Lua (recommended)" ON)
 
-find_package(Qt5Core "5.7" REQUIRED)
-find_package(Qt5Widgets "5.7" REQUIRED)
-find_package(Qt5LinguistTools "5.7" REQUIRED)
-find_package(SDL2 "2.0.6" REQUIRED)
+find_package(Qt6Core "6.8" REQUIRED)
+find_package(Qt6Widgets "6.8" REQUIRED)
+find_package(Qt6OpenGL "6.8" REQUIRED)
+find_package(Qt6OpenGLWidgets "6.8" REQUIRED)
+
+# Find Qt6LinguistTools within the host path when set.
+# This is required for cross compilation with Qt6 as the module is
+# absent in the target install tree.
+find_package(Qt6LinguistTools "6.8" QUIET)
+if (NOT Qt6LinguistTools_FOUND AND QT_HOST_PATH)
+  find_package(Qt6LinguistTools "6.8"
+               PATHS "${QT_HOST_PATH}" "${QT_HOST_PATH}/lib/cmake"
+               NO_CMAKE_FIND_ROOT_PATH NO_DEFAULT_PATH QUIET)
+endif()
+if (NOT Qt6LinguistTools_FOUND)
+  message(FATAL_ERROR "CMake module Qt6LinguistTools could not be found.")
+endif()
+
+find_package(SDL2 "2.0.18" REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(OpenAL REQUIRED)
@@ -33,6 +48,6 @@ include(FetchContent)
 FetchContent_Declare(
   qlementine
   GIT_REPOSITORY https://github.com/oclero/qlementine.git
-  GIT_TAG        59860afd2de0079761e2ed15512791ca8d230dbe
+  GIT_TAG        v1.0.2
 )
 FetchContent_MakeAvailable(qlementine)

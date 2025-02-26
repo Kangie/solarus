@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 
 project(solarus-quest-editor VERSION 2.0.0)
 
@@ -24,7 +24,7 @@ elseif(WIN32)
   )
 endif()
 
-include(cmake/AddQt5Files.cmake)
+include(cmake/AddQtFiles.cmake)
 include(cmake/AddEditorExecutable.cmake)
 include(cmake/AddInstallTargets.cmake)
 include(cmake/AddUninstallTargets.cmake)

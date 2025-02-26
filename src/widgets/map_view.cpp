@@ -972,7 +972,8 @@ void MapView::paste() {
     return;
   }
 
-  QStringList entity_strings = text.split(QRegExp("[\n\r]\\}[\n\r]"), QString::SkipEmptyParts);
+  static const QRegularExpression regexp("[\n\r]\\}[\n\r]");
+  QStringList entity_strings = text.split(regexp, Qt::SkipEmptyParts);
 
   EntityModels entities;
   for (int i = 0; i < entity_strings.size(); ++i) {
@@ -2061,7 +2062,7 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
   QPainterPath path;
   path.addRect(QRect(area.topLeft() - QPoint(1, 1),
                      area.size() + QSize(2, 2)));
-  scene.setSelectionArea(path, Qt::ContainsItemBoundingRect);
+  scene.setSelectionArea(path, Qt::ReplaceSelection, Qt::ContainsItemBoundingRect);
 
   // But don't select entities on locked layers.
   const EntityIndexes selected_indexes = scene.get_selected_entities();
