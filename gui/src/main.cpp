@@ -20,7 +20,6 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/MainLoop.h"
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QFileInfo>
 #include <QMainWindow>
@@ -76,8 +75,8 @@ int run_gui(int argc, char* argv[]) {
 
   // Set up Qt translations.
   QTranslator qt_translator;
-  qt_translator.load(locale, "qt", "_",
-                     QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  (void)!qt_translator.load(locale, "qt", "_",
+                     QLibraryInfo::path(QLibraryInfo::TranslationsPath));
   application.installTranslator(&qt_translator);
 
   // Set up application translations.

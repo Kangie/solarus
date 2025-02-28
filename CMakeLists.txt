@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 
 # Android: version information must be updated manually in AndroidConfig.h
 project(solarus-engine VERSION 2.0.0)
