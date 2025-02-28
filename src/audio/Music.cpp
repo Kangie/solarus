@@ -162,10 +162,9 @@ int Music::get_volume() const {
  */
 void Music::set_volume(int volume) {
   this->volume = std::min(100, std::max(0, volume)) / 100.0;
-  float global_volume = MusicSystem::get_global_volume() / 100.0;
 
   if (source != AL_NONE) {
-    alSourcef(source, AL_GAIN, this->volume * global_volume);
+    alSourcef(source, AL_GAIN, this->volume * (MusicSystem::get_global_volume() / 100.0f));
   }
 }
 
@@ -354,7 +353,7 @@ void Music::notify_device_reconnected() {
     // Recreate a source and buffers.
     alGenBuffers(nb_buffers, buffers);
     alGenSources(1, &source);
-    alSourcef(source, AL_GAIN, volume);
+    alSourcef(source, AL_GAIN, volume * (MusicSystem::get_global_volume() / 100.0f));
 
     // Continue playing music.
     // Buffer data that was already decoded to buffers before the
@@ -476,7 +475,7 @@ bool Music::start() {
   // create the buffers and the source
   alGenBuffers(nb_buffers, buffers);
   alGenSources(1, &source);
-  alSourcef(source, AL_GAIN, volume);
+  alSourcef(source, AL_GAIN, volume * (MusicSystem::get_global_volume() / 100.0f));
 
   // decode music from memory
   switch (format) {

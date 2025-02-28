@@ -126,6 +126,7 @@ map{ id = "bugs/1644_random_movement_get_angle", description = "#1644 random_mov
 map{ id = "bugs/1648_custom_entities_collision_not_happening", description = "#1648: Collisions between custom entities" }
 map{ id = "bugs/1652_npc_movement_stop_animation", description = "Christopho" }
 map{ id = "bugs/1657_crash_circle_movement", description = "#1657 circle_movement:set_angular_speed(0) crashes the engine" }
+map{ id = "bugs/1680_music_volume", description = "#1680: Music volume" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
@@ -297,6 +298,7 @@ sprite{ id = "shatter", description = "Shatter" }
 sprite{ id = "things/platform", description = "32x32 platform" }
 sprite{ id = "todo", description = "TODO image" }
 
+music{ id = "great_fairy", description = "great_fairy" }
 
 sound{ id = "arrow_hit", description = "arrow_hit" }
 sound{ id = "bird_chirp", description = "bird_chirp" }
@@ -718,6 +720,8 @@ file{ path = "maps/bugs/1652_npc_movement_stop_animation.dat", author = "Christo
 file{ path = "maps/bugs/1652_npc_movement_stop_animation.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1657_crash_circle_movement.dat", author = "Metallizer", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1657_crash_circle_movement.lua", author = "Metallizer", license = "GPL v3" }
+file{ path = "maps/bugs/1680_music_volume.dat", author = "Metallizer", }
+file{ path = "maps/bugs/1680_music_volume.lua", author = "Metallizer", }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -951,6 +955,7 @@ file{ path = "maps/text_predict.dat", author = "std::gregwar", license = "CC BY-
 file{ path = "maps/text_predict.lua", author = "std::gregwar", license = "GPL v3" }
 file{ path = "maps/traversable.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/traversable.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "musics/great_fairy.it", author = "Metallizer", }
 file{ path = "shaders/scale2x.dat", author = "Christopho", license = "GPL v3" }
 file{ path = "shaders/scale2x.frag.glsl", author = "Vlag", license = "GPL v3" }
 file{ path = "shaders/scale2x.vert.glsl", author = "Vlag", license = "GPL v3" }

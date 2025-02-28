@@ -32,7 +32,7 @@ namespace Solarus {
 std::shared_ptr<Music> MusicSystem::current_music = nullptr;
 std::list<MusicPtr> MusicSystem::current_musics;
 bool MusicSystem::initialized = false;
-float MusicSystem::global_volume = 100;
+float MusicSystem::global_volume = 1.0f;
 
 /**
  * \brief Initializes the music system.
