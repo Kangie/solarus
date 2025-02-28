@@ -78,6 +78,7 @@ EntityModel::EntityModel(
   no_direction_allowed(false),
   no_direction_text(MapModel::tr("No direction")),
   traversable(true),
+  locked(false),
   draw_sprite_info(),
   sprite_model(nullptr),
   sprite_image(),
@@ -1011,6 +1012,25 @@ void EntityModel::set_enabled_at_start(bool enabled_at_start) {
 }
 
 /**
+ * @brief Returns whether this entity is locked.
+ * @return @c true if this entity is locked.
+ */
+bool EntityModel::is_locked() const {
+  return locked;
+}
+
+/**
+ * @brief Sets whether this entity is locked.
+ *
+ * When an entity is locked, it cannot be moved in the map view.
+ *
+ * @param locked @c true if to lock this entity, @c false to unlock it.
+ */
+void EntityModel::set_locked(bool locked) {
+  this->locked = locked;
+}
+
+/**
  * @brief Returns whether this entity has a "subtype" field.
  * @return @c true if a subtype property exists.
  */
@@ -1313,7 +1333,7 @@ QString EntityModel::to_string() const {
  */
 bool EntityModel::is_resizable() const {
 
-  return get_resize_mode() != ResizeMode::NONE;
+  return get_resize_mode() != ResizeMode::NONE && !is_locked();
 }
 
 /**

@@ -974,6 +974,39 @@ private:
 };
 
 /**
+ * @brief Locking or unlocking entities on the map.
+ */
+class SetEntitiesLockedCommand : public MapEditorCommand {
+
+public:
+  SetEntitiesLockedCommand(MapEditor& editor, const EntityIndexes& indexes, bool locked) :
+      MapEditorCommand(editor, locked ? MapEditor::tr("Lock") : MapEditor::tr("Unlock")),
+      indexes(indexes),
+      locked(locked) {
+  }
+
+  void undo() override {
+    for (const EntityIndex& index: indexes) {
+      get_map().set_entity_locked(index, !locked);
+    }
+    // Select impacted entities.
+    get_map_view().set_selected_entities(indexes);
+  }
+
+  void redo() override {
+    for (const EntityIndex& index: indexes) {
+      get_map().set_entity_locked(index, locked);
+    }
+    // Select impacted entities.
+    get_map_view().set_selected_entities(indexes);
+  }
+
+private:
+  EntityIndexes indexes;          // Indexes of entites to change.
+  bool locked;                    // Whether to lock or unlock.
+};
+
+/**
  * @brief Adding entities to the map.
  */
 class AddEntitiesCommand : public MapEditorCommand {
@@ -1243,6 +1276,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::bring_entities_to_front_requested);
   connect(ui.map_view, &MapView::bring_entities_to_back_requested,
           this, &MapEditor::bring_entities_to_back_requested);
+  connect(ui.map_view, &MapView::set_entities_locked_requested,
+          this, &MapEditor::set_entities_locked_requested);
   connect(ui.map_view, &MapView::add_entities_requested,
           this, &MapEditor::add_entities_requested);
   connect(ui.map_view, &MapView::remove_entities_requested,
@@ -2402,6 +2437,20 @@ void MapEditor::bring_entities_to_back_requested(const EntityIndexes& indexes) {
 }
 
 /**
+ * @brief Slot called when the user wants to lock or unlock some entities.
+ * @param indexes Indexes of the entities to change.
+ * @param locked @c true to lock, @c false to unlock.
+ */
+void MapEditor::set_entities_locked_requested(const EntityIndexes& indexes, bool locked) {
+
+  if (indexes.isEmpty()) {
+    return;
+  }
+
+  try_command(new SetEntitiesLockedCommand(*this, indexes, locked));
+}
+
+/**
  * @brief Slot called when the user wants to add entities.
  * @param entities Entities ready to be added to the map.
  * @param replace_selection @c true to clear the previous selection.
@@ -2497,7 +2546,7 @@ void MapEditor::entity_creation_button_triggered(EntityType type, bool checked) 
   }
   else {
     // Stop adding entities.
-    ui.map_view->start_state_doing_nothing();
+    ui.map_view->start_state_idle();
   }
 }
 

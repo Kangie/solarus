@@ -38,22 +38,24 @@ MapScene::MapScene(MapModel& map, QObject* parent) :
 
   build();
 
-  connect(&map, SIGNAL(size_changed(QSize)),
-          this, SLOT(size_changed(QSize)));
-  connect(&map, SIGNAL(layer_range_changed(int, int)),
-          this, SLOT(layer_range_changed(int, int)));
-  connect(&map, SIGNAL(entities_added(EntityIndexes)),
-          this, SLOT(entities_added(EntityIndexes)));
-  connect(&map, SIGNAL(entities_about_to_be_removed(EntityIndexes)),
-          this, SLOT(entities_about_to_be_removed(EntityIndexes)));
-  connect(&map, SIGNAL(entity_layer_changed(EntityIndex, EntityIndex)),
-          this, SLOT(entity_layer_changed(EntityIndex, EntityIndex)));
-  connect(&map, SIGNAL(entity_order_changed(EntityIndex, int)),
-          this, SLOT(entity_order_changed(EntityIndex, int)));
-  connect(&map, SIGNAL(entity_xy_changed(EntityIndex, QPoint)),
-          this, SLOT(entity_xy_changed(EntityIndex, QPoint)));
-  connect(&map, SIGNAL(entity_size_changed(EntityIndex, QSize)),
-          this, SLOT(entity_size_changed(EntityIndex, QSize)));
+  connect(&map, &MapModel::size_changed,
+          this, &MapScene::size_changed);
+  connect(&map, &MapModel::layer_range_changed,
+          this, &MapScene::layer_range_changed);
+  connect(&map, &MapModel::entities_added,
+          this, &MapScene::entities_added);
+  connect(&map, &MapModel::entities_about_to_be_removed,
+          this, &MapScene::entities_about_to_be_removed);
+  connect(&map, &MapModel::entity_layer_changed,
+          this, &MapScene::entity_layer_changed);
+  connect(&map, &MapModel::entity_order_changed,
+          this, &MapScene::entity_order_changed);
+  connect(&map, &MapModel::entity_xy_changed,
+          this, &MapScene::entity_xy_changed);
+  connect(&map, &MapModel::entity_size_changed,
+          this, &MapScene::entity_size_changed);
+  connect(&map, &MapModel::entity_locked_changed,
+          this, &MapScene::entity_locked_changed);
 }
 
 /**
@@ -568,6 +570,24 @@ void MapScene::entity_size_changed(const EntityIndex& index, const QSize& size) 
   Q_ASSERT(item != nullptr);
 
   item->update_size();
+}
+
+/**
+ * @brief Slot called when the locked state of an entity has changed.
+ *
+ * Its item on the scene is updated accordingly.
+ *
+ * @param index Index of an entity.
+ * @param locked @c true if the entity was just locked
+ */
+void MapScene::entity_locked_changed(const EntityIndex& index, bool locked) {
+
+  Q_UNUSED(locked);
+
+  EntityItem* item = get_entity_item(index);
+  Q_ASSERT(item != nullptr);
+
+  item->update();
 }
 
 /**

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "entities/tile.h"
 #include "widgets/edit_entity_dialog.h"
 #include "widgets/entity_item.h"
 #include "widgets/enum_menus.h"
@@ -50,10 +49,10 @@ namespace {
  *
  * He can select or unselect entities.
  */
-class DoingNothingState : public MapView::State {
+class IdleState : public MapView::State {
 
 public:
-  explicit DoingNothingState(MapView& view);
+  explicit IdleState(MapView& view);
 
   void key_pressed(const QKeyEvent& event) override;
   void mouse_pressed(const QMouseEvent& event) override;
@@ -63,8 +62,12 @@ public:
   void tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) override;
 
 private:
-  QPoint mouse_pressed_point;               /**< Point where the mouse was pressed, in view coordinates. */
-  bool clicked_with_control_or_shift;
+  QPoint mouse_pressed_point;      /**< Point where the mouse was pressed, in view coordinates. */
+  bool selection_delayed = false;  /**< Mouse pressed on an entity but without selecting it yet
+                                    * e.g. because it is locked or control/shift was pressed.
+                                    * Depending on the mouse mouvement, either the entity will
+                                    * be selected when releasing the mouse, or a selection
+                                    * rectangle will start. */
 };
 
 /**
@@ -216,6 +219,8 @@ MapView::MapView(QWidget* parent) :
   down_one_layer_action(nullptr),
   bring_to_front_action(nullptr),
   bring_to_back_action(nullptr),
+  lock_action(nullptr),
+  unlock_action(nullptr),
   remove_action(nullptr),
   cancel_action(nullptr) {
 
@@ -292,7 +297,7 @@ void MapView::set_map(MapModel* map) {
     tileset_id_changed(map->get_tileset_id());
 
     // Start the state mechanism.
-    start_state_doing_nothing();
+    start_state_idle();
 
     connect(scene, &MapScene::selectionChanged,
             this, &MapView::map_selection_changed);
@@ -399,9 +404,9 @@ void MapView::set_state(std::unique_ptr<State> state) {
 /**
  * @brief Moves to the normal state of the map view.
  */
-void MapView::start_state_doing_nothing() {
+void MapView::start_state_idle() {
 
-  set_state(std::unique_ptr<State>(new DoingNothingState(*this)));
+  set_state(std::unique_ptr<State>(new IdleState(*this)));
 
   emit stopped_state();
 }
@@ -436,7 +441,7 @@ void MapView::start_state_resizing_entities() {
   const EntityIndexes selection = get_selected_entities();
   if (!are_entities_resizable(selection)) {
     // The selection is empty or not resizable.
-    start_state_doing_nothing();
+    start_state_idle();
     return;
   }
 
@@ -578,7 +583,7 @@ void MapView::build_context_menu_actions() {
   add_border_action->setShortcut(tr("Ctrl+B"));
   add_border_action->setShortcutContext(Qt::WindowShortcut);
   connect(add_border_action, &QAction::triggered, this, [this]() {
-    start_state_doing_nothing();
+    start_state_idle();
     emit generate_borders_requested(get_selected_entities());
   });
   addAction(add_border_action);
@@ -588,7 +593,7 @@ void MapView::build_context_menu_actions() {
   up_one_layer_action->setShortcut(tr("+"));
   up_one_layer_action->setShortcutContext(Qt::WindowShortcut);
   connect(up_one_layer_action, &QAction::triggered, this, [this]() {
-    start_state_doing_nothing();
+    start_state_idle();
     emit increase_entities_layer_requested(get_selected_entities());
   });
   addAction(up_one_layer_action);
@@ -598,7 +603,7 @@ void MapView::build_context_menu_actions() {
   down_one_layer_action->setShortcut(tr("-"));
   down_one_layer_action->setShortcutContext(Qt::WindowShortcut);
   connect(down_one_layer_action, &QAction::triggered, this, [this]() {
-    start_state_doing_nothing();
+    start_state_idle();
     emit decrease_entities_layer_requested(get_selected_entities());
   });
   addAction(down_one_layer_action);
@@ -608,7 +613,7 @@ void MapView::build_context_menu_actions() {
   bring_to_front_action->setShortcut(tr("T"));
   bring_to_front_action->setShortcutContext(Qt::WindowShortcut);
   connect(bring_to_front_action, &QAction::triggered, this, [this]() {
-    start_state_doing_nothing();
+    start_state_idle();
     emit bring_entities_to_front_requested(get_selected_entities());
   });
   addAction(bring_to_front_action);
@@ -618,10 +623,22 @@ void MapView::build_context_menu_actions() {
   bring_to_back_action->setShortcut(tr("B"));
   bring_to_back_action->setShortcutContext(Qt::WindowShortcut);
   connect(bring_to_back_action, &QAction::triggered, this, [this]() {
-    start_state_doing_nothing();
+    start_state_idle();
     emit bring_entities_to_back_requested(get_selected_entities());
   });
   addAction(bring_to_back_action);
+
+  lock_action = new QAction(tr("Lock"), this);
+  connect(lock_action, &QAction::triggered, this, [this]() {
+    emit set_entities_locked_requested(get_selected_entities(), true);
+  });
+  addAction(lock_action);
+
+  unlock_action = new QAction(tr("Unlock"), this);
+  connect(unlock_action, &QAction::triggered, this, [this]() {
+    emit set_entities_locked_requested(get_selected_entities(), false);
+  });
+  addAction(unlock_action);
 
   remove_action = new QAction(
         QIcon(":/images/icon_delete.png"), tr("Delete"), this);
@@ -682,7 +699,7 @@ QMenu* MapView::create_context_menu() {
   // Cut, Copy, Paste
   // Borders
   // Layers, One layer up, One layer down
-  // Bring to front, Bring to back
+  // Bring to front, Bring to back, Lock
   // Delete
 
   QMenu* menu = new QMenu(this);
@@ -789,9 +806,28 @@ QMenu* MapView::create_context_menu() {
     menu->addAction(up_one_layer_action);
     menu->addAction(down_one_layer_action);
 
-    // Bring to front/back.
+    // Bring to front/back, lock, unlock.
     menu->addAction(bring_to_front_action);
     menu->addAction(bring_to_back_action);
+
+    bool has_locked = false;
+    bool has_unlocked = false;
+    for (const EntityIndex& index: indexes) {
+
+      if (get_map()->is_entity_locked(index)) {
+        has_locked = true;
+      } else {
+        has_unlocked = true;
+      }
+
+      if (has_locked && has_unlocked) {
+        break;
+      }
+    }
+    lock_action->setEnabled(has_unlocked);
+    unlock_action->setEnabled(has_locked);
+    menu->addAction(lock_action);
+    menu->addAction(unlock_action);
     menu->addSeparator();
 
     // Remove.
@@ -1222,7 +1258,7 @@ void MapView::notify_tileset_changed() {
   }
   scene->update();
 
-  start_state_doing_nothing();
+  start_state_idle();
 }
 
 /**
@@ -1345,7 +1381,7 @@ void MapView::mouseDoubleClickEvent(QMouseEvent* event) {
       QGraphicsItem* item = items_under_mouse.first();
       EntityModel* entity = scene->get_entity_from_item(*item);
       if (entity != nullptr) {
-        start_state_doing_nothing();
+        start_state_idle();
         edit_selected_entity();
       }
     }
@@ -1512,7 +1548,7 @@ void MapView::cancel_state_requested() {
   if (state != nullptr) {
     state->cancel();
   }
-  start_state_doing_nothing();
+  start_state_idle();
 }
 
 /**
@@ -1538,7 +1574,7 @@ void MapView::edit_selected_entity() {
     return;
   }
 
-  start_state_doing_nothing();
+  start_state_idle();
   EntityIndex index = indexes.first();
   EditEntityDialog dialog(map->get_entity(index));
   int result = dialog.exec();
@@ -1598,7 +1634,17 @@ void MapView::change_pattern_of_similar_tiles() {
  */
 void MapView::move_selected_entities(const QPoint& translation, bool allow_merge_to_previous) {
 
-  emit move_entities_requested(get_selected_entities(), translation, allow_merge_to_previous);
+  EntityIndexes indexes = get_selected_entities();
+
+  // Filter out any locked entity.
+  indexes.removeIf([this](const EntityIndex& index) {
+    return get_map()->is_entity_locked(index);
+  });
+  if (indexes.isEmpty()) {
+    return;
+  }
+
+  emit move_entities_requested(indexes, translation, allow_merge_to_previous);
 }
 
 /**
@@ -1616,7 +1662,7 @@ void MapView::resize_entities(const QMap<EntityIndex, QRect>& boxes, bool allow_
  */
 void MapView::remove_selected_entities() {
 
-  start_state_doing_nothing();
+  start_state_idle();
   emit remove_entities_requested(get_selected_entities());
 }
 
@@ -1799,16 +1845,15 @@ void MapView::State::tileset_selection_changed(const QString& tileset_id, const 
  * @brief Constructor.
  * @param view The map view to manage.
  */
-DoingNothingState::DoingNothingState(MapView& view) :
-  MapView::State(view),
-  clicked_with_control_or_shift(false) {
+IdleState::IdleState(MapView& view) :
+  MapView::State(view) {
 
 }
 
 /**
  * @copydoc MapView::State::key_pressed
  */
-void DoingNothingState::key_pressed(const QKeyEvent& event) {
+void IdleState::key_pressed(const QKeyEvent& event) {
 
   switch (event.key()) {
 
@@ -1837,13 +1882,14 @@ void DoingNothingState::key_pressed(const QKeyEvent& event) {
 /**
  * @copydoc MapView::State::mouse_pressed
  */
-void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
+void IdleState::mouse_pressed(const QMouseEvent& event) {
 
   if (event.button() != Qt::LeftButton && event.button() != Qt::RightButton) {
     return;
   }
 
   MapView& view = get_view();
+  const MapModel& map = *view.get_map();
   MapScene& scene = get_scene();
 
   mouse_pressed_point = event.pos();
@@ -1856,6 +1902,7 @@ void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
   QGraphicsItem* item = items_under_mouse.isEmpty() ? nullptr : items_under_mouse.first();
   const EntityItem* entity_item = qgraphicsitem_cast<const EntityItem*>(item);
 
+  EntityIndex index = entity_item != nullptr ? entity_item->get_index() : EntityIndex();
   const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
 
   bool keep_selected = false;
@@ -1863,9 +1910,11 @@ void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
     // If ctrl or shift is pressed, keep the existing selection.
     keep_selected = true;
   }
-  else if (item != nullptr && item->isSelected()) {
-    // When clicking an already selected item, keep the existing selection too.
-    keep_selected = true;
+  else if (item != nullptr) {
+    if (item->isSelected()) {
+      // When clicking an already selected item, keep the existing selection too.
+      keep_selected = true;
+    }
   }
 
   if (!keep_selected) {
@@ -1878,27 +1927,24 @@ void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
 
       if (control_or_shift) {
         // Either toggle the clicked item or start a selection rectangle.
-        // If will depend on wether the mouse moves before it is released.
-        clicked_with_control_or_shift = true;
+        // It will depend on wether the mouse moves before it is released.
+        selection_delayed = true;
+        return;
       }
-      else {
-        if (!item->isSelected()) {
-          // Select the item.
-          if (entity_item != nullptr) {
-            const EntityIndex& index = entity_item->get_index();
-            if (!view.get_view_settings()->is_layer_locked(index.layer)) {
-              view.select_entity(index, true);
-            }
-            else {
-              // Left click on a locked layer: trace a selection rectangle.
-              view.start_state_drawing_rectangle(event.pos());
-              return;
-            }
+      if (!item->isSelected()) {
+        // Select the item if not locked.
+        if (index.is_valid()) {
+          if (view.get_view_settings()->is_layer_locked(index.layer) || map.is_entity_locked(index)) {
+            // Left click on a locked layer or entity: don't select it yet.
+            selection_delayed = true;
+            return;
+          } else {
+            view.select_entity(index, true);
           }
         }
-        // Allow to move selected items.
-        view.start_state_moving_entities(event.pos());
       }
+      // Allow to move selected items.
+      view.start_state_moving_entities(event.pos());
     }
     else {
       // Left click outside items: trace a selection rectangle.
@@ -1907,12 +1953,11 @@ void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
   }
 
   else if (event.button() == Qt::RightButton) {
-
     if (entity_item != nullptr) {
       if (!entity_item->isSelected()) {
         // Select the right-clicked item.
-        const EntityIndex& index = entity_item->get_index();
-        if (!view.get_view_settings()->is_layer_locked(index.layer)) {
+        if (!view.get_view_settings()->is_layer_locked(index.layer) &&
+            !map.is_entity_locked(index)) {
           view.select_entity(index, true);
         }
       }
@@ -1923,17 +1968,15 @@ void DoingNothingState::mouse_pressed(const QMouseEvent& event) {
 /**
  * @copydoc MapView::State::mouse_moved
  */
-void DoingNothingState::mouse_moved(const QMouseEvent& event) {
+void IdleState::mouse_moved(const QMouseEvent& event) {
 
-  if (clicked_with_control_or_shift) {
-
-    // Moving the mouse while control or shift is pressed:
-    // start a selection rectangle after a small distance threshold.
+  MapView& view = get_view();
+  if (selection_delayed && view.is_selection_empty()) {
+    // Start a selection rectangle after a small distance threshold.
     QPoint current_point = event.pos();
     if ((current_point - mouse_pressed_point).manhattanLength() >= 4) {
       // Significant move: not a click.
       // Start a selection rectangle.
-      MapView& view = get_view();
       view.start_state_drawing_rectangle(mouse_pressed_point);
     }
   }
@@ -1942,44 +1985,43 @@ void DoingNothingState::mouse_moved(const QMouseEvent& event) {
 /**
  * @copydoc MapView::State::mouse_released
  */
-void DoingNothingState::mouse_released(const QMouseEvent& event) {
+void IdleState::mouse_released(const QMouseEvent& event) {
 
   if (event.button() != Qt::LeftButton) {
     return;
   }
 
-  if (clicked_with_control_or_shift) {
-    // Left-clicking an item while pressing control or shift: toggle it.
-    // If the mouse had moved in the meantime, mouse_moved() would have started
-    // a selection rectangle.
-    MapView& view = get_view();
+  // Left-clicking an item while pressing control or shift: toggle it.
+  // If the mouse had moved in the meantime, mouse_moved() would have started
+  // a selection rectangle.
+  MapView& view = get_view();
 
-    QList<QGraphicsItem*> items_under_mouse = view.items(
-          QRect(event.pos(), QSize(1, 1)),
-          Qt::IntersectsItemBoundingRect  // Pick transparent items too.
-    );
-    QGraphicsItem* item = items_under_mouse.isEmpty() ? nullptr : items_under_mouse.first();
-    const EntityItem* entity_item = qgraphicsitem_cast<const EntityItem*>(item);
-    if (entity_item != nullptr) {
-      const bool was_selected = item->isSelected();
-      if (was_selected) {
+  QList<QGraphicsItem*> items_under_mouse = view.items(
+        QRect(event.pos(), QSize(1, 1)),
+        Qt::IntersectsItemBoundingRect  // Pick transparent items too.
+  );
+  QGraphicsItem* item = items_under_mouse.isEmpty() ? nullptr : items_under_mouse.first();
+  const EntityItem* entity_item = qgraphicsitem_cast<const EntityItem*>(item);
+  if (entity_item != nullptr) {
+    const bool was_selected = item->isSelected();
+    if (was_selected) {
+      if (selection_delayed) {
         view.select_entity(entity_item->get_index(), false);
+        selection_delayed = false;
       }
-      else {
-        const bool layer_locked = view.get_view_settings()->is_layer_locked(entity_item->get_index().layer);
-        if (!layer_locked) {
-          view.select_entity(entity_item->get_index(), true);
-        }
+    } else {
+      const bool layer_locked = view.get_view_settings()->is_layer_locked(entity_item->get_index().layer);
+      if (!layer_locked) {
+        view.select_entity(entity_item->get_index(), true);
       }
     }
-    clicked_with_control_or_shift = false;
   }
 }
 
 /**
  * @copydoc MapView::State::context_menu_requested
  */
-void DoingNothingState::context_menu_requested(const QPoint& where) {
+void IdleState::context_menu_requested(const QPoint& where) {
 
   MapView& view = get_view();
   QMenu* menu = view.create_context_menu();
@@ -1989,7 +2031,7 @@ void DoingNothingState::context_menu_requested(const QPoint& where) {
 /**
  * @copydoc MapView::State::tileset_selection_changed
  */
-void DoingNothingState::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
+void IdleState::tileset_selection_changed(const QString& tileset_id, const QList<int>& indexes) {
 
   // Create corresponding tiles.
   get_view().start_adding_entities_from_tileset(tileset_id, indexes);
@@ -2064,7 +2106,7 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
                      area.size() + QSize(2, 2)));
   scene.setSelectionArea(path, Qt::ReplaceSelection, Qt::ContainsItemBoundingRect);
 
-  // But don't select entities on locked layers.
+  // But don't select locked entities.
   const EntityIndexes selected_indexes = scene.get_selected_entities();
   const ViewSettings& view_settings = *view.get_view_settings();
   for (const EntityIndex& index : selected_indexes) {
@@ -2094,7 +2136,7 @@ void DrawingRectangleState::mouse_released(const QMouseEvent& event) {
 
   Q_UNUSED(event);
 
-  get_view().start_state_doing_nothing();
+  get_view().start_state_idle();
 }
 
 /**
@@ -2149,7 +2191,7 @@ void MovingEntitiesState::mouse_released(const QMouseEvent& event) {
 
   Q_UNUSED(event);
 
-  get_view().start_state_doing_nothing();
+  get_view().start_state_idle();
 }
 
 /**
@@ -2385,7 +2427,7 @@ void ResizingEntitiesState::mouse_released(const QMouseEvent& event) {
     view.start_state_adding_entities(std::move(clones), guess_layer);
   }
   else {
-    get_view().start_state_doing_nothing();
+    get_view().start_state_idle();
   }
 }
 
@@ -2929,7 +2971,7 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
     }
     else {
       // Get back to normal state.
-      view.start_state_doing_nothing();
+      view.start_state_idle();
     }
   }
 }
@@ -2966,7 +3008,7 @@ void AddingEntitiesState::tileset_selection_changed(const QString& tileset_id, c
 
   if (indexes.isEmpty()) {
     // Stop adding the tiles that were selected.
-    get_view().start_state_doing_nothing();
+    get_view().start_state_idle();
     return;
   }
 

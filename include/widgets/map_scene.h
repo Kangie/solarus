@@ -80,6 +80,7 @@ private slots:
   void entity_order_changed(const EntityIndex& index_before, int order_after);
   void entity_xy_changed(const EntityIndex& index, const QPoint& xy);
   void entity_size_changed(const EntityIndex& index, const QSize& size);
+  void entity_locked_changed(const EntityIndex& index, bool locked);
 
 private:
 
