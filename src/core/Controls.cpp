@@ -74,9 +74,9 @@ Controls::Controls(MainLoop &main_loop):
 }
 
 /**
- * @brief Controls binding constructor that load values from the savegame
- * @param main_loop the mainloop
- * @param game savegame from where to load bindings
+ * @brief Creates controls for a game.
+ * @param main_loop The main loop.
+ * @param game Savegame from where to load bindings, if legacy storage is enabled.
  */
 Controls::Controls(MainLoop& main_loop, Game& game):
   main_loop(main_loop),
@@ -88,32 +88,36 @@ Controls::Controls(MainLoop& main_loop, Game& game):
   load_default_keyboard_bindings();
 
   const Savegame& save = game.get_savegame();
-  // Load the commands from the savegame.
-  for (const auto& kvp : EnumInfoTraits<CommandId>::names) {
+  if (save.get_legacy_controls_storage()) {
+    // Automatically load the commands from the savegame (pre 2.0 behavior).
+    for (const auto& kvp : EnumInfoTraits<CommandId>::names) {
 
-    CommandId command = kvp.first;
-    if (command == CommandId::NONE) {
-      continue;
+      CommandId command = kvp.first;
+      if (command == CommandId::NONE) {
+        continue;
+      }
+
+      // Keyboard.
+      InputEvent::KeyboardKey keyboard_key = get_saved_keyboard_binding(command, save);
+      if (keyboard_key != InputEvent::KeyboardKey::NONE) {
+        set_keyboard_binding(command, keyboard_key);  // Replace any default key.
+      }
+
+      // Joypad.
+      const JoypadBinding& joypad_binding = get_saved_joypad_binding(command, save);
+      if (!joypad_binding.is_invalid()) {
+        set_joypad_binding(command, joypad_binding);  // Replace any default joypad binding.
+      }
     }
 
-    // Keyboard.
-    InputEvent::KeyboardKey keyboard_key = get_saved_keyboard_binding(command, save);
-    keyboard_mapping[keyboard_key] = command;
-
-    // Joypad.
-    const JoypadBinding& joypad_binding = get_saved_joypad_binding(command, save);
-    if (!joypad_binding.is_invalid()) {
-      joypad_mapping[joypad_binding] = command;
-    }
+    // Replicate binding of keyboard on default command axes.
+    keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::UP, save)] = ControlAxisBinding{AxisId::Y, AxisDirection::MINUS};
+    keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::DOWN, save)] = ControlAxisBinding{AxisId::Y, AxisDirection::PLUS};
+    keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::LEFT, save)] = ControlAxisBinding{AxisId::X, AxisDirection::MINUS};
+    keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::RIGHT, save)] = ControlAxisBinding{AxisId::X, AxisDirection::PLUS};
   }
 
-  // Replicate binding of keyboard on default command axes :
-  keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::UP, save)] = ControlAxisBinding{AxisId::Y, AxisDirection::MINUS};
-  keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::DOWN, save)] = ControlAxisBinding{AxisId::Y, AxisDirection::PLUS};
-  keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::LEFT, save)] = ControlAxisBinding{AxisId::X, AxisDirection::MINUS};
-  keyboard_axis_mapping[get_saved_keyboard_binding(CommandId::RIGHT, save)] = ControlAxisBinding{AxisId::X, AxisDirection::PLUS};
-
-  // Add default joypad if auto mapping is enabled
+  // Add default joypad if auto mapping is enabled.
   if (InputEvent::is_legacy_joypad_enabled()) {
     set_joypad(InputEvent::other_joypad(nullptr));
   }
