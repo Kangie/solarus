@@ -40,7 +40,12 @@ with better support and customization features.
 
 #### Changes that introduce incompatibilities
 
+Solarus 2.0 can still run quests in 1.5 and 1.6 format.
+The following list of incompatibilities only affect quests in the 2.0 format.
+See the migration guide for more detailed instructions.
+
 * Joypad input events now provide button names instead of numbers.
+* Controls are no longer saved by default, see `game:set_legacy_controls_storage()`.
 * `hero:teleport()` now also teleports the camera instead of recreating one.
 * `hero:get_sword_sound_id()` now returns `nil` if there is no sword sound.
 
@@ -48,7 +53,7 @@ with better support and customization features.
 
 * Add support for multiple maps, cameras, heroes and game controllers.
 * New game controller API with better support and customization features.
-* Add overload to `entity:is_in_same_region()`, pass position (#514).
+* Add methods `game:get/set_legacy_controls_storage()` for compatibility.
 * Allow to stop or pause a sound effect (#1289).
 * Allow to change the volume of a sound effect (#1608).
 * Allow to change the pan and pitch of a sound effect.
@@ -59,6 +64,7 @@ with better support and customization features.
 * Add a method `destination:is_default()`.
 * Add a methode `destination:get_direction()` (#1639).
 * Add a method `entity:set_name()` (#1527).
+* Add overload to `entity:is_in_same_region()`, pass position (#514).
 * Add methods `hero:get/set_push_delay()` (#1524).
 * Add methods `hero:get/set_carry_height()`.
 * Add a method `game:get_values()` (#1552).

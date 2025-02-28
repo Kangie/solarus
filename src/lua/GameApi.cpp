@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/AbilityInfo.h"
-#include "solarus/core/CommandsEffects.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/Equipment.h"
@@ -114,6 +113,8 @@ void LuaContext::register_game_module() {
     methods.insert(methods.end(), {
       { "get_controls", game_api_get_controls },
       { "set_controls", game_api_set_controls },
+      { "get_legacy_controls_storage", game_api_get_legacy_controls_storage },
+      { "set_legacy_controls_storage", game_api_set_legacy_controls_storage },
       { "create_camera", game_api_create_camera },
       { "remove_camera", game_api_remove_camera },
       { "get_cameras", game_api_get_cameras },
@@ -1699,6 +1700,40 @@ int LuaContext::game_api_set_controls(lua_State* l) {
     ControlsPtr cmds = check_controls(l, 2);
 
     savegame.get_game()->set_controls(cmds);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of game:get_legacy_controls_storage().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_get_legacy_controls_storage(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+
+    bool legacy_controls_storage = savegame.get_legacy_controls_storage();
+
+    lua_pushboolean(l, legacy_controls_storage);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of game:set_legacy_controls_storage().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::game_api_set_legacy_controls_storage(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Savegame& savegame = *check_game(l, 1);
+    bool legacy_controls_storage = LuaTools::opt_boolean(l, 2, true);
+
+    savegame.set_legacy_controls_storage(legacy_controls_storage);
+
     return 0;
   });
 }

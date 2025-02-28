@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/InputEvent.h"
 #include "solarus/core/MainLoop.h"
@@ -91,7 +92,8 @@ Savegame::Savegame(MainLoop& main_loop, const std::string& file_name):
   file_name(file_name),
   main_loop(main_loop),
   game(nullptr),
-  default_transition_style(Transition::Style::FADE) {
+  default_transition_style(Transition::Style::FADE),
+  legacy_controls_storage(CurrentQuest::is_format_at_most({ 1, 6 })) {
 
   // Don't call initialize() manually because the shared_ptr does not exist
   // at this point, but is needed by initialize() when calling item scripts.
@@ -200,6 +202,32 @@ void Savegame::set_default_joypad_controls() {
   set_string(KEY_JOYPAD_UP, "left_y -");
   set_string(KEY_JOYPAD_LEFT, "left_x -");
   set_string(KEY_JOYPAD_DOWN, "left_y +");
+}
+
+/**
+ * \brief Returns whether main controls should be stored the < 2.0 way.
+ * \return \c true if legacty controls storage is enabled.
+ */
+bool Savegame::get_legacy_controls_storage() const {
+  return legacy_controls_storage;
+}
+
+/**
+ * \brief Sets whether main controls should be stored the < 2.0 way.
+ *
+ * If enabled, controls are loaded and saved automtically with this savegame,
+ * but with the following limitations.
+ *   - Does not support multiple heroes: only saves the main hero controls.
+ *   - Limited support of multiple inputs bound to the same command:
+ *     at most only one from the keyboard and one from the joypad.
+ *   - Does not support custom commands: scripts have to load and save them on their own.
+ *   - Does not apply to menus outside a game (like a title screen) because this stores
+ *     to a savegame.
+ *
+ * \return \c true if legacy controls storage is enabled.
+ */
+void Savegame::set_legacy_controls_storage(bool legacy_controls_storage) {
+  this->legacy_controls_storage = legacy_controls_storage;
 }
 
 /**

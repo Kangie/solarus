@@ -1230,9 +1230,9 @@ void Game::set_suspended_by_script(bool suspended) {
  * \brief Restarts the game with the current savegame state.
  */
 void Game::restart() {
-  //Transition each hero out of their map
-  for(const CameraPtr& camera : cameras) {
-    if(camera->is_on_map()) {
+  // Transition each hero out of their map
+  for (const CameraPtr& camera : cameras) {
+    if (camera->is_on_map()) {
       CameraTeleportation ht;
       ht.camera = camera;
       ht.current_map = camera->get_map().shared_from_this_cast<Map>();

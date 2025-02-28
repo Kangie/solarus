@@ -38,7 +38,7 @@ Starts playing the sound effect.
 
 Stops playing the sound effect.
 
-\subsection lua_api_sound_is_paused sound:is_playing()
+\subsection lua_api_sound_is_playing sound:is_playing()
 
 Returns whether the sound effect is currently playing.
 - Return value (boolean): \c true if the sound is playing, \c false otherwise.

@@ -772,7 +772,7 @@ Sets the keyboard key that triggers a game command.
 \note If this keyboard key was already mapped to a command, keyboard keys of
 both commands are switched.
 
-\remark equivalent to <tt>game:get_controls():set_keyboard_binding(command)</tt>.
+\remark equivalent to <tt>game:get_controls():set_keyboard_binding(command, key)</tt>.
 
 \subsection lua_api_game_get_command_joypad_binding game:get_command_joypad_binding(command)
 
@@ -794,11 +794,10 @@ Sets the joypad input that should trigger the specified game command.
   \c "right", \c "up", \c "left" and \c "down".
 - joypad_string (string): Joypad binding code (see \ref lua_api_controls_set_joypad_binding)
 
-
 \note If this joypad input was already mapped to a command, joypad inputs of
 both commands are switched.
 
-\remark equivalent to <tt>game:get_controls():set_joypad_binding(command)</tt>.
+\remark equivalent to <tt>game:get_controls():set_joypad_binding(command, joypad_string)</tt>.
 
 \subsection lua_api_game_capture_command_binding game:capture_command_binding(command, [callback])
 
@@ -819,7 +818,7 @@ it automatically becomes the new keyboard or joypad binding for a game command.
 \note If the keyboard (or joypad) input was already mapped to a command,
 keyboard (or joypad) inputs of both commands are switched.
 
-\remark equivalent to <tt>game:get_controls():capture_bindings(command)</tt>.
+\remark equivalent to <tt>game:get_controls():capture_bindings(command, callback)</tt>.
 
 \subsection lua_api_game_is_command_pressed game:is_command_pressed(command)
 
@@ -881,13 +880,38 @@ game command.
 
 Gets the \ref lua_api_controls object bound to the game (and the hero in the default case).
 
-- Return value (\ref lua_api_controls): main controls of the game
+- Return value (\ref lua_api_controls): Main controls of the game.
 
 \subsection lua_api_game_set_controls game:set_controls(controls)
 
 Sets the \ref lua_api_controls object bound to the game.
 
-- \c controls (\ref lua_api_controls): controls to set as main game controls
+- \c controls (\ref lua_api_controls): Controls to set as main game controls.
+
+\subsection lua_api_get_legacy_controls_storage game:get_legacy_controls_storage()
+
+Returns whether main controls should be stored the legacy way (pre Solarus 2.0).
+See \ref lua_api_set_legacy_controls_storage for more details.
+- Return value (boolean): \c true if legacy controls storage is enabled.
+
+\subsection lua_api_set_legacy_controls_storage game:set_legacy_controls_storage([legacy_controls_storage])
+
+Sets whether main controls should be stored the legacy way (pre Solarus 2.0).
+
+When legacy storage is enabled, controls are loaded and saved automtically with this savegame,
+but with the following historical limitations:
+- Does not support multiple heroes: only saves controls of the main hero.
+- Limited support of multiple inputs bound to the same command:
+  at most, only one keyboard input plus one joypad input.
+- Does not support custom commands: scripts have to load and save them on their own.
+- Does not apply to menus outside a game (like title screens) because this stores
+  bindings in a savegame.
+
+The default value is \c false to allow maximum customization.
+You can still enable this option if you are okay with the limitations
+or if your quest was designed before Solarus 2.0.
+- legacy_controls_storage (boolean, optional): \c true to enable legacy controls storage.
+  No value means \c true.
 
 \subsection lua_api_game_create_camera game:create_camera(id, map_id, [detination id, [transition_style]])
 
@@ -896,13 +920,16 @@ camera is added to currently running map, else it loads the new map.
 
 - \c id (string): Name of this new camera.
 - \c map_id (string): Id of the map to create this camera onto
-- \c destination_id (string): Id of the destination that this camera should look at when created
-- \c transition_style (string): Style of the transition the camera will use to fade-in.
+- \c destination_id (string): Id of the destination that this camera should
+  look at when created
+- \c transition_style (string): Style of the transition the camera will use
+  to fade-in.
 
 \subsection lua_api_game_remove_camera game:remove_camera(camera, [transition_style])
 
-Remove a camera from this game. If the camera was the last on its map, the map gets unloaded and removed. This is different from `camera:remove()` that means removing the camera from the map.
-
+Remove a camera from this game. If the camera was the last on its map, the map
+gets unloaded and removed. This is different from `camera:remove()` that means
+removing the camera from the map.
 - \c camera (\ref lua_api_camera): Camera to remove.
 - \c transition_style (string): Style of the transition the camera will use to fade-out.
 
