@@ -628,13 +628,15 @@ void MapView::build_context_menu_actions() {
   });
   addAction(bring_to_back_action);
 
-  lock_action = new QAction(tr("Lock"), this);
+  lock_action = new QAction(
+      QIcon(":/images/icon_lock.png"), tr("Lock"), this);
   connect(lock_action, &QAction::triggered, this, [this]() {
     emit set_entities_locked_requested(get_selected_entities(), true);
   });
   addAction(lock_action);
 
-  unlock_action = new QAction(tr("Unlock"), this);
+  unlock_action = new QAction(
+      QIcon(":/images/icon_unlock.png"), tr("Unlock"), this);
   connect(unlock_action, &QAction::triggered, this, [this]() {
     emit set_entities_locked_requested(get_selected_entities(), false);
   });
