@@ -173,5 +173,7 @@
         <file>images/border_set.png</file>
         <file>images/icon_start_map.png</file>
         <file>images/icon_eldran.png</file>
+        <file>images/icon_lock.png</file>
+        <file>images/icon_unlock.png</file>
     </qresource>
 </RCC>

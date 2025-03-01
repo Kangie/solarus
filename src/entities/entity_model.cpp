@@ -296,7 +296,7 @@ EntityModelPtr EntityModel::create(
   case EntityType::HOOKSHOT:
     qCritical() << MapModel::tr("Unexpected entity type (not allowed in map files): %1").arg(
                       EntityTraits::get_lua_name(type));
-    break;
+    return nullptr;
   }
 
   if (!index.is_valid()) {
@@ -1011,6 +1011,25 @@ void EntityModel::set_enabled_at_start(bool enabled_at_start) {
 }
 
 /**
+ * @brief Returns whether this entity is locked.
+ * @return @c true if this entity is locked.
+ */
+bool EntityModel::is_locked() const {
+  return get_entity().is_locked();
+}
+
+/**
+ * @brief Sets whether this entity is locked.
+ *
+ * When an entity is locked, it cannot be moved in the map view.
+ *
+ * @param locked @c true if to lock this entity, @c false to unlock it.
+ */
+void EntityModel::set_locked(bool locked) {
+  get_entity().set_locked(locked);
+}
+
+/**
  * @brief Returns whether this entity has a "subtype" field.
  * @return @c true if a subtype property exists.
  */
@@ -1313,7 +1332,7 @@ QString EntityModel::to_string() const {
  */
 bool EntityModel::is_resizable() const {
 
-  return get_resize_mode() != ResizeMode::NONE;
+  return get_resize_mode() != ResizeMode::NONE && !is_locked();
 }
 
 /**

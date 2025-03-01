@@ -103,7 +103,7 @@ public:
   bool are_entities_resizable(const EntityIndexes& indexes) const;
 
   // State of the view.
-  void start_state_doing_nothing();
+  void start_state_idle();
   void start_state_drawing_rectangle(const QPoint& initial_point);
   void start_state_moving_entities(const QPoint& initial_point);
   void start_state_resizing_entities();
@@ -175,6 +175,8 @@ signals:
       const EntityIndexes& indexes);
   void bring_entities_to_back_requested(
       const EntityIndexes& indexes);
+  void set_entities_locked_requested(
+      const EntityIndexes& indexes, bool locked);
   void add_entities_requested(
       AddableEntities& entities,
       bool replace_selection);
@@ -227,6 +229,8 @@ private:
   QAction* down_one_layer_action;  /**< Action of putting selecting entities one layer down. */
   QAction* bring_to_front_action;  /**< Action of bringing selected entities to front. */
   QAction* bring_to_back_action;   /**< Action of bringing selected entities to back. */
+  QAction* lock_action;            /**< Action of locking entities. */
+  QAction* unlock_action;          /**< Action of unlocking entities. */
   QAction* remove_action;          /**< Action of deleting selected entities. */
   QAction* cancel_action;          /**< Action of stopping the current state. */
 

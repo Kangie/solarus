@@ -121,4 +121,4 @@ Images used in the editor are licensed under
 [Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)](
 http://creativecommons.org/licenses/by-sa/3.0/).
 
-See the `license.txt` file for more details.
+See the `license.md` file for more details.

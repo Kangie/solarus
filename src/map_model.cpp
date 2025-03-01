@@ -1421,6 +1421,43 @@ bool MapModel::is_common_direction(const EntityIndexes& indexes, int& direction)
 }
 
 /**
+ * @brief Returns whether an entity is locked.
+ * @param index An entity index.
+ * @return @c true if this entity is locked.
+ */
+bool MapModel::is_entity_locked(const EntityIndex& index) const {
+
+  if (!entity_exists(index)) {
+    return 0;
+  }
+
+  return get_entity(index).is_locked();
+}
+
+/**
+ * @brief Sets whether an entity is locked.
+ *
+ * When an entity is locked, it cannot be moved in the map view.
+ *
+ * @param index An entity index.
+ * @param locked @c true if to lock this entity, @c false to unlock it.
+ */
+void MapModel::set_entity_locked(const EntityIndex& index, bool locked) {
+
+  if (!entity_exists(index)) {
+    return;
+  }
+
+  EntityModel& entity = get_entity(index);
+  if (locked == entity.is_locked()) {
+    // No changed.
+    return;
+  }
+  get_entity(index).set_locked(locked);
+  emit entity_locked_changed(index, locked);
+}
+
+/**
  * @brief Returns the number of user-defined properties of an entity.
  * @param index Index of an entity.
  * @return The number of user-defined properties.
