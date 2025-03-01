@@ -78,7 +78,6 @@ EntityModel::EntityModel(
   no_direction_allowed(false),
   no_direction_text(MapModel::tr("No direction")),
   traversable(true),
-  locked(false),
   draw_sprite_info(),
   sprite_model(nullptr),
   sprite_image(),
@@ -297,7 +296,7 @@ EntityModelPtr EntityModel::create(
   case EntityType::HOOKSHOT:
     qCritical() << MapModel::tr("Unexpected entity type (not allowed in map files): %1").arg(
                       EntityTraits::get_lua_name(type));
-    break;
+    return nullptr;
   }
 
   if (!index.is_valid()) {
@@ -1016,7 +1015,7 @@ void EntityModel::set_enabled_at_start(bool enabled_at_start) {
  * @return @c true if this entity is locked.
  */
 bool EntityModel::is_locked() const {
-  return locked;
+  return get_entity().is_locked();
 }
 
 /**
@@ -1027,7 +1026,7 @@ bool EntityModel::is_locked() const {
  * @param locked @c true if to lock this entity, @c false to unlock it.
  */
 void EntityModel::set_locked(bool locked) {
-  this->locked = locked;
+  get_entity().set_locked(locked);
 }
 
 /**

@@ -271,7 +271,6 @@ private:
   bool no_direction_allowed;      /**< Whether the special no-value -1 is an allowed direction. */
   QString no_direction_text;      /**< The text to show in a GUI for the special no-value -1 (if allowed). */
   bool traversable;               /**< Whether this entity is assumed to be traversable. */
-  bool locked;                    /**< Whether this entity should be locked in the map view. */
   SubtypeList subtypes;           /**< Existing subtypes of this entity type. */
 
   // Displaying.
