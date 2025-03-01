@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "Utils.h"
+#include <Utils.h>
 
 QIcon makeIcon(Icons16 id, bool macOSMenu, const QSize& size) {
   if (macOSMenu)

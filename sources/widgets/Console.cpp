@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "Console.h"
+#include <widgets/Console.h>
 
-#include "QuestRunner.h"
+#include <quests/QuestRunner.h>
 
 #include <oclero/qlementine/style/QlementineStyle.hpp>
 

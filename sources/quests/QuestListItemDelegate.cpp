@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "QuestListItemDelegate.h"
-#include "oclero/qlementine/utils/StateUtils.hpp"
+#include <quests/QuestListItemDelegate.h>
 
 #include <QPainter>
 
 #include <oclero/qlementine/utils/ImageUtils.hpp>
+#include <oclero/qlementine/utils/StateUtils.hpp>
 #include <oclero/qlementine/style/QlementineStyle.hpp>
 
 namespace solarus::launcher {

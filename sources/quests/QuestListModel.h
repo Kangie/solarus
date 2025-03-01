@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 
-#include "QuestData.h"
+#include <quests/QuestData.h>
 
 class QFileSystemWatcher;
 
@@ -34,6 +34,6 @@ signals:
 
 private:
   QList<QuestData> _quests;
-  QFileSystemWatcher* _watcher{nullptr};
+  QFileSystemWatcher* _watcher{ nullptr };
 };
 } // namespace solarus::launcher

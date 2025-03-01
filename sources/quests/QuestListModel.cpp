@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "QuestListModel.h"
+#include <quests/QuestListModel.h>
 
 #include <QPixmap>
 #include <QStringList>

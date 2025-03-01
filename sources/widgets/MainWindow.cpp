@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#include <widgets/MainWindow.h>
 
-#include "MainWindow.h"
+#include <widgets/Console.h>
+#include <widgets/MessageBox.h>
+#include <widgets/PreferencesWindow.h>
 
-#include "QuestListModel.h"
-#include "QuestListItemDelegate.h"
-#include "AboutWindow.h"
-#include "Utils.h"
-#include "QuestRunner.h"
-#include "Preferences.h"
-#include "PreferencesWindow.h"
-#include "MessageBox.h"
-#include "Console.h"
+#include <quests/QuestListModel.h>
+#include <quests/QuestListItemDelegate.h>
+#include <quests/QuestRunner.h>
+
+#include <BasicUpdater.h>
+#include <Utils.h>
+#include <Preferences.h>
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -51,6 +52,7 @@
 #include <oclero/qlementine/style/ThemeManager.hpp>
 #include <oclero/qlementine/utils/WidgetUtils.hpp>
 #include <oclero/qlementine/widgets/Expander.hpp>
+#include <oclero/qlementine/widgets/AboutDialog.hpp>
 
 namespace solarus::launcher {
 namespace i18n {
@@ -94,10 +96,10 @@ static QString search() {
   return QApplication::translate("SolarusLauncher", "Search…");
 }
 static QString noQuestFound() {
-  return QApplication::translate("SolarusLauncher", "No quest found");
+  return QApplication::translate("SolarusLauncher", "No Quest added");
 }
 static QString questsFound(int count) {
-  return QApplication::translate("SolarusLauncher", "%n quest(s) found", "", count);
+  return QApplication::translate("SolarusLauncher", "%n Quest(s) added", "", count);
 }
 static QString preferences() {
   return QApplication::translate("SolarusLauncher", "Preferences…");
@@ -156,6 +158,27 @@ static QString questRemovalConfirmation() {
 static QString questRemovalDescription() {
   return QApplication::translate(
     "SolarusLauncher", "The quest will be removed from Solarus Launcher index, but will be kept on disk.");
+}
+static QString updateAvailable() {
+  return QApplication::translate( "SolarusLauncher", "Update Available");
+}
+static QString versionComparison() {
+  return QApplication::translate( "SolarusLauncher", "You have %1, %2 is available.");
+}
+static QString checkForUpdates() {
+  return QApplication::translate( "SolarusLauncher", "Check for Updates");
+}
+static QString aboutWindowTitle(const QString& appName) {
+  return QApplication::translate("SolarusLauncher", "About %1").arg(appName);
+}
+static QString allRightsReserved() {
+  return QApplication::translate("SolarusLauncher", "All rights reserved.");
+}
+static QString appDescription() {
+  return QApplication::translate("SolarusLauncher", "A graphical user interface to launch and manage Solarus quests.");
+}
+static QString license() {
+  return QApplication::translate("SolarusLauncher", "Licensed under GPL v3 and CC-BY-SA 4.0.");
 }
 } // namespace i18n
 
@@ -235,7 +258,7 @@ protected:
 };
 
 class QuestPropsModel : public QAbstractTableModel {
-  public:
+public:
   using QAbstractTableModel::QAbstractTableModel;
 
   enum TableColumn {
@@ -281,15 +304,15 @@ public:
 
   QVariant data(const QModelIndex& index, int role) const override {
     switch (role) {
-    case Qt::ItemDataRole::DisplayRole:
-      switch (index.column()) {
-      case TableColumn::Value:
-        return rowValue(index.row());
+      case Qt::ItemDataRole::DisplayRole:
+        switch (index.column()) {
+          case TableColumn::Value:
+            return rowValue(index.row());
+          default:
+            break;
+        }
       default:
         break;
-      }
-    default:
-      break;
     }
 
     return {};
@@ -1044,21 +1067,65 @@ void MainWindow::setupUi() {
 
   _ui.statusBar = new QStatusBar(this);
   {
+    _ui.statusBar->setFixedHeight(28);
     _ui.statusBar->setSizeGripEnabled(false);
     _ui.statusBar->setContentsMargins(16, 0, 16, 0);
     {
-      _ui.questCountLabel = new oclero::qlementine::Label(_ui.statusBar);
+      _ui.updateButton = new QPushButton(_ui.statusBar);
       {
-        _ui.questCountLabel->setRole(oclero::qlementine::TextRole::Caption);
-        _ui.questCountLabel->setText(i18n::noQuestFound());
-        _ui.questCountLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        _ui.updateButton->setText(i18n::updateAvailable());
+        _ui.updateButton->setAutoDefault(false);
+        _ui.updateButton->setDefault(true);
+        _ui.updateButton->setFixedHeight(20);
+        _ui.updateButton->setIcon(makeIcon(Icons16::Action_Update));
+        _ui.updateButton->setVisible(false);
+        _ui.statusBar->addPermanentWidget(_ui.updateButton);
+      }
 
-        QObject::connect(_model, &QuestListModel::rowCountChanged, this, [this]() {
+      auto* questCountContainer = new QWidget(_ui.statusBar);
+      questCountContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+      auto* questCountLayout = new QHBoxLayout(questCountContainer);
+      questCountLayout->setContentsMargins(0, 0, 0, 0);
+      questCountLayout->setSpacing(8);
+
+      auto* iconWidget = new oclero::qlementine::IconWidget(questCountContainer);
+      {
+        const auto updateIcon = [this, iconWidget](){
           const auto count = _model->rowCount({});
-          _ui.questCountLabel->setText(count > 0 ? i18n::questsFound(count) : i18n::noQuestFound());
+          iconWidget->setIcon(makeIcon(count > 0 ? Icons16::Misc_Library : Icons16::Misc_Warning));
+        };
+        updateIcon();
+        QObject::connect(_model, &QuestListModel::rowCountChanged, this, updateIcon);
+      }
+      questCountLayout->addWidget(iconWidget);
+
+      auto* questCountLabel = new QLabel(_ui.statusBar);
+      {
+        // questCountLabel->setRole(oclero::qlementine::TextRole::Caption);
+        questCountLabel->setText(i18n::noQuestFound());
+        questCountLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+        QObject::connect(_model, &QuestListModel::rowCountChanged, this, [this, questCountLabel]() {
+          const auto count = _model->rowCount({});
+          questCountLabel->setText(count > 0 ? i18n::questsFound(count) : i18n::noQuestFound());
         });
       }
-      _ui.statusBar->addPermanentWidget(_ui.questCountLabel);
+      questCountLayout->addWidget(questCountLabel);
+
+      if (const auto* qlementineStyle = qobject_cast<oclero::qlementine::QlementineStyle*>(style())) {
+        const auto updatePalette = [qlementineStyle, iconWidget, questCountLabel]() {
+          const auto palette = qlementineStyle->paletteForTextRole(oclero::qlementine::TextRole::Caption);
+          iconWidget->setPalette(palette);
+          questCountLabel->setPalette(palette);
+        };
+        updatePalette();
+        QObject::connect(qlementineStyle, &oclero::qlementine::QlementineStyle::themeChanged, this, [updatePalette]() {
+          updatePalette();
+        });
+      }
+
+      _ui.statusBar->addWidget(questCountContainer);
+
     }
   }
 
@@ -1206,10 +1273,17 @@ void MainWindow::setupMenuBar() {
     helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, [this]() {
       openContactPage();
     });
-
     helpMenu->addAction(makeIcon(Icons16::File_FileScript, macOS), i18n::sourceCode(), QKeySequence{}, [this]() {
-      openContactPage();
+      openSourceCodePage();
     });
+
+    helpMenu->addSeparator();
+
+    _ui.checkForUpdateAction = helpMenu->addAction(makeIcon(Icons16::Action_Update, macOS), i18n::checkForUpdates(), QKeySequence{}, [this]() {
+      checkForUpdates();
+    });
+    _ui.checkForUpdateAction->setMenuRole(QAction::MenuRole::ApplicationSpecificRole);
+
     helpMenu->addAction(makeIcon(Icons16::Misc_Info, macOS), i18n::about(), QKeySequence{}, [this]() {
       openAboutDialog();
     });
@@ -1292,8 +1366,21 @@ void MainWindow::openPreferencesDialog() {
 }
 
 void MainWindow::openAboutDialog() {
-  AboutWindow aboutWindow(this);
-  aboutWindow.exec();
+  auto* dialog = new oclero::qlementine::AboutDialog(this);
+  dialog->setWindowTitle(i18n::aboutWindowTitle(QApplication::applicationDisplayName()));
+  dialog->setWebsiteUrl(PROJECT_HOMEPAGE_URL);
+  dialog->setDescription(i18n::appDescription());
+  dialog->setLicense(i18n::license());
+  dialog->setCopyright(QString("%1 %2").arg(PROJECT_APP_COPYRIGHT, i18n::allRightsReserved()));
+  for (const auto [tooltip, url, icon] : {
+           std::make_tuple("X", PROJECT_LINKS_X, Icons16::Brand_X),
+           std::make_tuple("Mastodon", PROJECT_LINKS_MASTODON, Icons16::Brand_MastodonFill),
+           std::make_tuple("YouTube", PROJECT_LINKS_YOUTUBE, Icons16::Brand_YoutubeFill),
+           std::make_tuple("GitLab", PROJECT_LINKS_SOURCE_CODE, Icons16::Brand_GitlabFill),
+       }) {
+    dialog->addSocialMediaLink(tooltip, url, makeIcon(icon));
+  }
+  dialog->show();
 }
 
 void MainWindow::playStopQuest() {
@@ -1314,6 +1401,42 @@ void MainWindow::openContactPage() {
 
 void MainWindow::openSourceCodePage() {
   QDesktopServices::openUrl(QUrl(PROJECT_LINKS_SOURCE_CODE));
+}
+
+void MainWindow::checkForUpdates() {
+  _ui.updateButton->setVisible(false);
+  _ui.statusBar->clearMessage();
+  _ui.statusBar->showMessage("Checking for updates...", 0);
+  _ui.updateButton->disconnect();
+  _ui.checkForUpdateAction->setEnabled(false);
+
+  solarus::launcher::checkForUpdates([this](const UpdateCheckResult& result) {
+    _ui.checkForUpdateAction->setEnabled(true);
+
+    switch (result.status) {
+    case UpdateCheckStatus::UpdateAvailable:
+      _ui.updateButton->setVisible(true);
+      _ui.statusBar->clearMessage();
+      _ui.updateButton->setToolTip(i18n::versionComparison()
+                                  .arg(result.currentVersion.toString(), result.newVersion.toString()));
+      QObject::connect(_ui.updateButton, &QPushButton::clicked, this, [this, result]() {
+        QDesktopServices::openUrl(result.newVersionDownloadUrl);
+      });
+    break;
+    case UpdateCheckStatus::NoUpdate:
+      _ui.updateButton->setVisible(false);
+      _ui.statusBar->clearMessage();
+      _ui.statusBar->showMessage("No update available", 5000);
+      break;
+    case UpdateCheckStatus::Error:
+      _ui.updateButton->setVisible(false);
+      _ui.statusBar->clearMessage();
+      _ui.statusBar->showMessage(QString("Failed to check for updates. Error code: %1").arg(result.errorCode), 5000);
+      break;
+    default:
+      break;
+    }
+  });
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {

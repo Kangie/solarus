@@ -2,33 +2,33 @@
   "meta": {
     "author": "Olivier Cléro",
     "name": "Dark",
-    "version": "1.5.0"
+    "version": "1.0.0"
   },
 
-  "backgroundColorMain1": "#1f2127",
-  "backgroundColorMain2": "#282b33",
+  "backgroundColorMain1": "#201F2E",
+  "backgroundColorMain2": "#29293A",
   "backgroundColorMain3": "#333848",
   "backgroundColorMain4": "#333848",
 
-  "backgroundColorWorkspace": "#17181c",
+  "backgroundColorWorkspace": "#181623",
   "backgroundColorTabBar": "#1e2026",
 
-  "borderColor": "#40485a",
+  "borderColor": "#424660",
   "borderColorHovered": "#4a5670",
   "borderColorPressed": "#5b6e98",
   "borderColorDisabled": "#2f343f",
 
-  "focusColor": "#3097ff6a",
+  "focusColor": "#ffab00aa",
 
   "neutralColor": "#4c5368",
   "neutralColorHovered": "#535c78",
   "neutralColorPressed": "#5b6688",
   "neutralColorDisabled": "#2d313b",
 
-  "primaryColor": "#5086ff",
-  "primaryColorHovered": "#6494ff",
-  "primaryColorPressed": "#7aa3ff",
-  "primaryColorDisabled": "#2c3448",
+  "primaryColor": "#FF7B00",
+  "primaryColorHovered": "#FF8E00",
+  "primaryColorPressed": "#FF9600",
+  "primaryColorDisabled": "#4A2736",
 
   "primaryAlternativeColor": "#3161f8",
   "primaryAlternativeColorHovered": "#4571fe",

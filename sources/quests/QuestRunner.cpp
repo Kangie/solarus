@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "QuestRunner.h"
+#include <quests/QuestRunner.h>
 
 #include <QCoreApplication>
 #include <QByteArray>

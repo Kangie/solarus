@@ -8,7 +8,7 @@
 #include <QUrl>
 #include <QPixmap>
 
-#include "Common.h"
+#include <Common.h>
 
 namespace solarus::launcher {
 struct QuestData {

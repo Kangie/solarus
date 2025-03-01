@@ -19,6 +19,8 @@ set(LINKS_YOUTUBE "https://www.youtube.com/c/ChristophoZS")
 set(LINKS_DISCORD "https://discord.gg/yYHjJHt")
 set(LINKS_SOURCE_CODE "https://www.gitlab.com/solarus-games")
 set(LINKS_CONTACT "https://www.solarus-games.org/about/contact")
+set(LINKS_RELEASES "https://gitlab.com/api/v4/projects/solarus-games%2Fsolarus-launcher-legacy/releases")
+set(LINKS_UPDATE_ENDPOINT "https://gitlab.com/api/v4/projects/solarus-games%2Fsolarus-launcher-legacy/releases/permalink/latest")
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -45,12 +47,12 @@ qt_standard_project_setup()
 include(FetchContent)
 
 # Qlementine Icons: an SVG icon library made for Qt.
-FetchContent_Declare(qlementine_icons
+FetchContent_Declare(qlementine-icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
-  GIT_TAG 2e09b37ed13d5d9fce7e5d5e2c0c96727e0dc9b0 #v1.6.0
+  GIT_TAG 4b582b20b3f9b39bb9889ad4bca680ba16357bc2 #v1.7.0
 )
-FetchContent_MakeAvailable(qlementine_icons)
-set_target_properties(qlementine_icons
+FetchContent_MakeAvailable(qlementine-icons)
+set_target_properties(qlementine-icons
   PROPERTIES
     FOLDER dependencies
 )
@@ -58,7 +60,7 @@ set_target_properties(qlementine_icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG 468ba5795809b140c4c2981c68009ab24d506d3e #v1.0.2
+  GIT_TAG 96b659c724debeb07a19e0d031c87da06ee8828a #v1.1.2
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -94,31 +96,32 @@ set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION
 # Target.
 qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${APP_ICON_MACOS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/AboutWindow.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/BasicUpdater.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/BasicUpdater.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Common.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Console.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Console.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MainWindow.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MessageBox.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/MessageBox.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/PreferencesWindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/PreferencesWindow.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestData.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListItemDelegate.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListItemDelegate.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListModel.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestListModel.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestRunner.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/QuestRunner.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestData.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListItemDelegate.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListItemDelegate.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListModel.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListModel.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestRunner.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestRunner.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/Console.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/Console.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MainWindow.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MainWindow.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MessageBox.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MessageBox.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/PreferencesWindow.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/PreferencesWindow.h
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${APP_NAME})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sources)
 
 qt_add_resources(${PROJECT_NAME} "resources"
   PREFIX "/solarus/launcher/"
@@ -150,7 +153,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Widgets
     Qt6::Svg
     qlementine
-    oclero::qlementine_icons
+    qlementine-icons
     solarus
 )
 
@@ -185,6 +188,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_LINKS_DISCORD="${LINKS_DISCORD}"
   PROJECT_LINKS_SOURCE_CODE="${LINKS_SOURCE_CODE}"
   PROJECT_LINKS_CONTACT="${LINKS_CONTACT}"
+  PROJECT_LINKS_RELEASES="${LINKS_RELEASES}"
+  PROJECT_LINKS_UPDATE_ENDPOINT="${LINKS_UPDATE_ENDPOINT}"
 )
 
 set(EXECUTABLE_PATH "$<TARGET_FILE_NAME:${PROJECT_NAME}>.app")

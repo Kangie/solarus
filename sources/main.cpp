@@ -4,7 +4,7 @@
 #include <oclero/qlementine.hpp>
 #include <oclero/qlementine/icons/QlementineIcons.hpp>
 
-#include "MainWindow.h"
+#include <widgets/MainWindow.h>
 
 #include <solarus/core/Arguments.h>
 #include <solarus/core/Debug.h>

@@ -1,6 +1,7 @@
-#include "MessageBox.h"
+// SPDX-License-Identifier: GPL-3.0-or-later
+#include <widgets/MessageBox.h>
 
-#include "Utils.h"
+#include <Utils.h>
 
 #include <oclero/qlementine/widgets/Label.hpp>
 #include <oclero/qlementine/utils/LayoutUtils.hpp>

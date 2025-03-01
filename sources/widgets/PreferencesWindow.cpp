@@ -1,7 +1,8 @@
-#include "PreferencesWindow.h"
+// SPDX-License-Identifier: GPL-3.0-or-later
+#include <widgets/PreferencesWindow.h>
 
-#include "Preferences.h"
-#include "Utils.h"
+#include <Preferences.h>
+#include <Utils.h>
 
 #include <QApplication>
 #include <QBoxLayout>

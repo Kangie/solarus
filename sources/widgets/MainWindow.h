@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
-
 #include <QWidget>
 
 class QListView;
@@ -13,6 +12,7 @@ class QAction;
 class QSortFilterProxyModel;
 class QPlainTextEdit;
 class QSplitter;
+class QPushButton;
 
 namespace oclero::qlementine {
 class LineEdit;
@@ -61,6 +61,8 @@ private:
   void openQuestFolder(const QModelIndex& index);
   void openCurrentQuestFolder();
 
+  void checkForUpdates();
+
 protected:
   void resizeEvent(QResizeEvent* event) override;
   void closeEvent(QCloseEvent* event) override;
@@ -84,9 +86,10 @@ private:
     Console* console{ nullptr };
     QSplitter* consoleSplitter{ nullptr };
     QStatusBar* statusBar{ nullptr };
-    oclero::qlementine::Label* questCountLabel{ nullptr };
     QuestPropertiesPanel* propertiesPanel{ nullptr };
     oclero::qlementine::Expander* propertiesPanelExpander{ nullptr };
+    QPushButton* updateButton{nullptr};
+    QAction* checkForUpdateAction{nullptr};
   } _ui;
   oclero::qlementine::ThemeManager* _themeManager{ nullptr };
 };

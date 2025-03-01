@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 
-#include "QuestRunner.h"
+#include <quests/QuestRunner.h>
 
 #include <QWidget>
 #include <QMap>
