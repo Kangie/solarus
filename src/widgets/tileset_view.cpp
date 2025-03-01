@@ -546,7 +546,7 @@ void TilesetView::paintEvent(QPaintEvent* event) {
  */
 void TilesetView::keyPressEvent(QKeyEvent* event) {
 
-  if (event->key() == Qt::Key_Escape) {
+  if (event->key() == Qt::Key_Escape && !is_read_only()) {
     start_state_idle();
     return;
   }
