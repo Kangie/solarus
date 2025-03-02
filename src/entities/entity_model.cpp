@@ -1030,6 +1030,22 @@ void EntityModel::set_locked(bool locked) {
 }
 
 /**
+ * @brief Returns the group of this entity.
+ * @return The group or 0.
+ */
+int EntityModel::get_group() const {
+  return get_entity().get_group();
+}
+
+/**
+ * @brief Sets the group of this entity.
+ * @param group The group or 0.
+ */
+void EntityModel::set_group(int group) {
+  get_entity().set_group(group);
+}
+
+/**
  * @brief Returns whether this entity has a "subtype" field.
  * @return @c true if a subtype property exists.
  */

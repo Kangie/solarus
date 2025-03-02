@@ -175,5 +175,7 @@
         <file>images/icon_eldran.png</file>
         <file>images/icon_lock.png</file>
         <file>images/icon_unlock.png</file>
+        <file>images/icon_group.png</file>
+        <file>images/icon_ungroup.png</file>
     </qresource>
 </RCC>

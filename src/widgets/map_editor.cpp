@@ -1014,6 +1014,74 @@ private:
 };
 
 /**
+ * @brief Grouping entities on the map.
+ */
+class GroupEntitiesCommand : public MapEditorCommand {
+
+public:
+  GroupEntitiesCommand(MapEditor& editor, const EntityIndexes& indexes) :
+      MapEditorCommand(editor, MapEditor::tr("Group")),
+      indexes(indexes) {
+  }
+
+  void undo() override {
+    get_map().destroy_group(group_after);
+    // Select impacted entities.
+    get_map_view().set_selected_entities(indexes);
+  }
+
+  void redo() override {
+
+    // For now, entities have to be all ungrouped initially.
+    Q_ASSERT(!indexes.isEmpty());
+    for (const EntityIndex& index : indexes) {
+      Q_ASSERT(get_map().get_entity_group(index) == 0);
+    }
+
+    group_after = get_map().create_group(indexes);
+    get_map_view().set_selected_entities(indexes);
+  }
+
+private:
+  EntityIndexes indexes;
+  int group_after = 0;
+};
+
+/**
+ * @brief Ungrouping entities on the map.
+ */
+class UngroupEntitiesCommand : public MapEditorCommand {
+
+public:
+  UngroupEntitiesCommand(MapEditor& editor, const EntityIndexes& indexes) :
+      MapEditorCommand(editor, MapEditor::tr("Ungroup")),
+      indexes(indexes) {
+  }
+
+  void undo() override {
+    const int group = get_map().create_group(indexes);
+    Q_ASSERT(group == group_before);
+    get_map_view().set_selected_entities(indexes);
+  }
+
+  void redo() override {
+
+    // Entities have to be in the same group initially.
+    Q_ASSERT(!indexes.isEmpty());
+    group_before = get_map().get_entity_group(indexes.first());
+    Q_ASSERT(group_before != 0);
+    for (const EntityIndex& index : indexes) {
+      Q_ASSERT(get_map().get_entity_group(index) == group_before);
+    }
+    get_map().destroy_group(group_before);
+    get_map_view().set_selected_entities(indexes);
+  }
+
+  EntityIndexes indexes;
+  int group_before = 0;
+};
+
+/**
  * @brief Adding entities to the map.
  */
 class AddEntitiesCommand : public MapEditorCommand {
@@ -1295,6 +1363,8 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::bring_entities_to_back_requested);
   connect(ui.map_view, &MapView::set_entities_locked_requested,
           this, &MapEditor::set_entities_locked_requested);
+  connect(ui.map_view, &MapView::set_entities_grouped_requested,
+          this, &MapEditor::set_entities_grouped_requested);
   connect(ui.map_view, &MapView::add_entities_requested,
           this, &MapEditor::add_entities_requested);
   connect(ui.map_view, &MapView::remove_entities_requested,
@@ -2465,6 +2535,25 @@ void MapEditor::set_entities_locked_requested(const EntityIndexes& indexes, bool
   }
 
   try_command(new SetEntitiesLockedCommand(*this, indexes, locked));
+}
+
+/**
+ * @brief Slot called when the user wants to group or ungroup some entities.
+ * @param indexes Indexes of the entities to change.
+ * @param locked @c true to lock, @c false to unlock.
+ */
+void MapEditor::set_entities_grouped_requested(const EntityIndexes& indexes, bool grouped) {
+
+  if (indexes.size() < 1) {
+    return;
+  }
+
+  // TODO check that they are all in the same group.
+  if (grouped) {
+    try_command(new GroupEntitiesCommand(*this, indexes));
+  } else {
+    try_command(new UngroupEntitiesCommand(*this, indexes));
+  }
 }
 
 /**

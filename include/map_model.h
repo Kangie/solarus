@@ -127,6 +127,9 @@ public:
   bool is_common_direction(const EntityIndexes& indexes, int& direction) const;
   bool is_entity_locked(const EntityIndex& index) const;
   void set_entity_locked(const EntityIndex& index, bool locked);
+  int get_entity_group(const EntityIndex& index) const;
+  int create_group(const EntityIndexes& indexes);
+  void destroy_group(int group);
   int get_entity_user_property_count(const EntityIndex& index) const;
   QPair<QString, QString> get_entity_user_property(const EntityIndex& index, int property_index) const;
   void set_entity_user_property(const EntityIndex& index, int property_index, const QPair<QString, QString>& property);
@@ -167,6 +170,7 @@ signals:
   void entity_size_changed(const EntityIndex& index, const QSize& size);
   void entity_direction_changed(const EntityIndex& index, int direction);
   void entity_locked_changed(const EntityIndex& index, bool locked);
+  void entity_group_changed(const EntityIndex& index, int group);
   void entity_user_property_changed(const EntityIndex& index, int property_index, const QPair<QString, QString>& property);
   void entity_user_property_added(const EntityIndex& index, int property_index, const QPair<QString, QString>& property);
   void entity_user_property_removed(const EntityIndex& index, int property_index);
@@ -181,6 +185,7 @@ public slots:
 private:
 
   void set_tileset(QPointer<TilesetModel> tileset);
+  void set_entity_group(const EntityIndex& index, int group);
   void rebuild_entity_indexes(int layer);
 
   Quest& quest;                   /**< The quest the tileset belongs to. */
@@ -190,6 +195,8 @@ private:
       tileset;                    /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
+  QMap<int, EntityIndexes>
+      groups;                     /**< Grouped entities, by group id. */
   bool bulk_mode;                 /**< Whether a bulk change is in progress. */
 };
 

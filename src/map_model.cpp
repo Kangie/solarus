@@ -1450,11 +1450,75 @@ void MapModel::set_entity_locked(const EntityIndex& index, bool locked) {
 
   EntityModel& entity = get_entity(index);
   if (locked == entity.is_locked()) {
-    // No changed.
+    // No change.
     return;
   }
   get_entity(index).set_locked(locked);
   emit entity_locked_changed(index, locked);
+}
+
+/**
+ * @brief Returns the group of an entity.
+ * @param index An entity index.
+ * @return The group or 0.
+ */
+int MapModel::get_entity_group(const EntityIndex& index) const {
+
+  if (!entity_exists(index)) {
+    return 0;
+  }
+
+  return get_entity(index).get_group();
+}
+
+/**
+ * @brief Sets he group of an entity.
+ * @param index An entity index.
+ * @param group The group or 0.
+ */
+void MapModel::set_entity_group(const EntityIndex& index, int group) {
+
+  if (!entity_exists(index)) {
+    return;
+  }
+
+  EntityModel& entity = get_entity(index);
+  if (group == entity.get_group()) {
+    // No change.
+    return;
+  }
+  get_entity(index).set_group(group);
+  emit entity_group_changed(index, group);
+}
+
+/**
+ * @brief Groups some entities together.
+ * @param indexes Indexes to group.
+ */
+int MapModel::create_group(const EntityIndexes& indexes) {
+
+  const int group = groups.isEmpty() ? 1 : groups.lastKey() + 1;
+  for (const EntityIndex& index : indexes) {
+    set_entity_group(index, group);
+  }
+  groups[group] = indexes;
+  return group;
+}
+
+/**
+ * @brief Ungroups some entities.
+ * @param group The group to remove.
+ */
+void MapModel::destroy_group(int group) {
+
+  const EntityIndexes& indexes = groups.value(group);
+  if (indexes.isEmpty()) {
+    return;
+  }
+  for (const EntityIndex& index: indexes) {
+    set_entity_group(index, 0);
+  }
+  groups.remove(group);
 }
 
 /**
@@ -1773,12 +1837,18 @@ AddableEntities MapModel::remove_entities(const EntityIndexes& indexes) {
 void MapModel::rebuild_entity_indexes(int layer) {
 
   int i = 0;
+  groups.clear();
   for (auto it = entities[layer].begin(); it != entities[layer].end(); ++it) {
 
     const EntityModelPtr& entity = *it;
     Q_ASSERT(entity != nullptr);
     EntityIndex index = entity->get_index();
     index.order = i;
+
+    if (entity->get_group() != 0) {
+      groups[entity->get_group()].append(index);
+    }
+
     entity->index_changed(index);
     ++i;
   }
