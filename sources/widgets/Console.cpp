@@ -10,8 +10,28 @@
 #include <QRegularExpression>
 #include <QPlainTextEdit>
 #include <QBoxLayout>
+#include <QApplication>
 
 namespace solarus::launcher {
+namespace i18n {
+QString questError(QuestRunner::ErrorCode error) {
+  switch (error) {
+    case QuestRunner::ErrorCode::ProcessFailedToStart:
+      return QApplication::translate("SolarusLauncher", "The quest process failed to start.");
+    case QuestRunner::ErrorCode::ProcessCrashed:
+      return QApplication::translate("SolarusLauncher", "The quest process crashed.");
+    case QuestRunner::ErrorCode::ProcessTimedOut:
+      return QApplication::translate("SolarusLauncher", "The quest process timed out.");
+    case QuestRunner::ErrorCode::ProcessWriteError:
+    case QuestRunner::ErrorCode::ProcessReadError:
+      return QString();
+    default:
+    case QuestRunner::ErrorCode::UnknownError:
+      return QApplication::translate("SolarusLauncher", "An unknown error occurred to the quest process.");
+  }
+}
+} // namespace i18n
+
 namespace {
 /**
  * @brief Wraps a line of plain text in html color tags.
@@ -234,21 +254,19 @@ void Console::quest_output_produced(const QStringList& lines) {
   }
 }
 
-
 /**
  * @brief Slot called when the quest encounters a process execution error.
  * @param error The process error that happened.
  */
 void Console::quest_error(QuestRunner::ErrorCode error) {
+  const auto text = i18n::questError(error);
   switch (error) {
     case QuestRunner::ErrorCode::ProcessFailedToStart:
-      add_message("Fatal", tr("The quest process failed to start."));
-      break;
     case QuestRunner::ErrorCode::ProcessCrashed:
-      add_message("Fatal", tr("The quest process crashed."));
+      add_message("Fatal", text);
       break;
     case QuestRunner::ErrorCode::ProcessTimedOut:
-      add_message("Error", tr("The quest process timed out."));
+      add_message("Error", text);
       break;
     case QuestRunner::ErrorCode::ProcessWriteError:
     case QuestRunner::ErrorCode::ProcessReadError:
@@ -257,7 +275,7 @@ void Console::quest_error(QuestRunner::ErrorCode error) {
       break;
     default:
     case QuestRunner::ErrorCode::UnknownError:
-      add_message("Error", tr("An unknown error occurred to the quest process."));
+      add_message("Error", text);
       break;
   }
 }
@@ -441,7 +459,6 @@ QString Console::colorize_line(const QString& message) {
   } else if (message.startsWith("Fatal: ")) {
     decorated_line = colorize(decorated_line, theme.fatalColor.name());
   }
-
 
   // Also replace ANSI color codes if any.
   decorated_line = ansi_to_html(decorated_line);

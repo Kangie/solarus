@@ -8,6 +8,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QFileSystemWatcher>
+#include <QSortFilterProxyModel>
 
 #include <string>
 #include <vector>
@@ -164,6 +165,13 @@ QuestListModel::QuestListModel(QObject* parent)
   : QAbstractListModel(parent) {
   _watcher = new QFileSystemWatcher(this);
 
+  _proxyModel = new QSortFilterProxyModel(this);
+  _proxyModel->setSourceModel(this);
+  _proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+  _proxyModel->setSortRole(Qt::DisplayRole);
+  _proxyModel->setDynamicSortFilter(true);
+  _proxyModel->sort(0, Qt::AscendingOrder);
+
   QObject::connect(_watcher, &QFileSystemWatcher::fileChanged, this, [this](const QString& path) {
     if (QFile::exists(path)) {
       addQuest(path);
@@ -283,5 +291,20 @@ QVariant QuestListModel::data(const QModelIndex& index, int role) const {
     default:
       return {};
   }
+}
+
+const QModelIndex& QuestListModel::currentQuest() const {
+  return _currentQuest;
+}
+
+void QuestListModel::setCurrentQuest(const QModelIndex& index) {
+  if (index != _currentQuest) {
+    _currentQuest = index;
+    emit currentQuestChanged(_currentQuest);
+  }
+}
+
+QSortFilterProxyModel* QuestListModel::proxyModel() {
+  return _proxyModel;
 }
 } // namespace solarus::launcher

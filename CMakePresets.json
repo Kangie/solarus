@@ -56,6 +56,14 @@
   ],
   "buildPresets": [
     {
+      "name": "macos-i18n",
+      "displayName": "Update translations",
+      "configurePreset": "macos",
+      "description": "Update .ts files (Qt translations)",
+      "targets": ["update_translations"],
+      "configuration": "Release"
+    },
+    {
       "name": "macos",
       "displayName": "macOS",
       "configurePreset": "macos",

@@ -3,6 +3,7 @@
 
 #include <Preferences.h>
 #include <Utils.h>
+#include <Controller.h>
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -75,11 +76,9 @@ protected:
   }
 };
 
-PreferencesWindow::PreferencesWindow(
-  Preferences& preferences, oclero::qlementine::ThemeManager& themeManager, QWidget* parent)
+PreferencesWindow::PreferencesWindow(Controller* controller, QWidget* parent)
   : QDialog(parent)
-  , _preferences(preferences)
-  , _themeManager(themeManager) {
+  , _controller(controller) {
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
   setWindowTitle(i18n::windowTitle().arg(QApplication::applicationDisplayName()));
   setWindowModality(Qt::WindowModality::ApplicationModal);
@@ -139,8 +138,8 @@ void PreferencesWindow::setupUi() {
     auto* comboBox = new QComboBox(this);
     comboBox->setMinimumWidth(100);
 
-    const auto& themes = _themeManager.themes();
-    const auto currentTheme = _preferences.appTheme();
+    const auto& themes = _controller->themeManager()->themes();
+    const auto currentTheme = _controller->preferences()->appTheme();
 
     for (const auto& theme : themes) {
       const auto name = theme.meta.name;
@@ -153,7 +152,7 @@ void PreferencesWindow::setupUi() {
 
     QObject::connect(comboBox, &QComboBox::currentIndexChanged, this, [this, comboBox](int index) {
       const auto theme = comboBox->itemData(index).toString();
-      _preferences.setAppTheme(theme);
+      _controller->preferences()->setAppTheme(theme);
     });
 
     formLayout->addRow(i18n::appTheme(), comboBox);
@@ -162,27 +161,28 @@ void PreferencesWindow::setupUi() {
     auto* switchButton = new oclero::qlementine::Switch(this);
     formLayout->addRow(i18n::appPropertiesPanelVisible(), switchButton);
 
-    switchButton->setChecked(_preferences.appPropertiesPanelVisible());
+    switchButton->setChecked(_controller->preferences()->appPropertiesPanelVisible());
     QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _preferences.setAppPropertiesPanelVisible(checked);
+      _controller->preferences()->setAppPropertiesPanelVisible(checked);
     });
-    QObject::connect(&_preferences, &Preferences::appPropertiesPanelVisibleChanged, this, [this, switchButton]() {
-      QSignalBlocker _(switchButton);
-      const auto value = _preferences.appPropertiesPanelVisible();
-      switchButton->setChecked(value);
-    });
+    QObject::connect(
+      _controller->preferences(), &Preferences::appPropertiesPanelVisibleChanged, this, [this, switchButton]() {
+        QSignalBlocker _(switchButton);
+        const auto value = _controller->preferences()->appPropertiesPanelVisible();
+        switchButton->setChecked(value);
+      });
   }
   {
     auto* switchButton = new oclero::qlementine::Switch(this);
     formLayout->addRow(i18n::appConsoleVisible(), switchButton);
 
-    switchButton->setChecked(_preferences.appConsoleVisible());
+    switchButton->setChecked(_controller->preferences()->appConsoleVisible());
     QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _preferences.setAppConsoleVisible(checked);
+      _controller->preferences()->setAppConsoleVisible(checked);
     });
-    QObject::connect(&_preferences, &Preferences::appConsoleVisibleChanged, this, [this, switchButton]() {
+    QObject::connect(_controller->preferences(), &Preferences::appConsoleVisibleChanged, this, [this, switchButton]() {
       QSignalBlocker _(switchButton);
-      const auto value = _preferences.appConsoleVisible();
+      const auto value = _controller->preferences()->appConsoleVisible();
       switchButton->setChecked(value);
     });
   }
@@ -199,13 +199,13 @@ void PreferencesWindow::setupUi() {
     auto* switchButton = new oclero::qlementine::Switch(this);
     formLayout->addRow(i18n::questEnableAudio(), switchButton);
 
-    switchButton->setChecked(_preferences.questEnableAudio());
+    switchButton->setChecked(_controller->preferences()->questEnableAudio());
     QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _preferences.setQuestEnableAudio(checked);
+      _controller->preferences()->setQuestEnableAudio(checked);
     });
-    QObject::connect(&_preferences, &Preferences::questEnableAudioChanged, this, [this, switchButton]() {
+    QObject::connect(_controller->preferences(), &Preferences::questEnableAudioChanged, this, [this, switchButton]() {
       QSignalBlocker _(switchButton);
-      const auto value = _preferences.questEnableAudio();
+      const auto value = _controller->preferences()->questEnableAudio();
       switchButton->setChecked(value);
     });
   }
@@ -213,27 +213,28 @@ void PreferencesWindow::setupUi() {
     auto* switchButton = new oclero::qlementine::Switch(this);
     formLayout->addRow(i18n::questForceSoftwareRendering(), switchButton);
 
-    switchButton->setChecked(_preferences.questForceSoftwareRendering());
+    switchButton->setChecked(_controller->preferences()->questForceSoftwareRendering());
     QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _preferences.setQuestForceSoftwareRendering(checked);
+      _controller->preferences()->setQuestForceSoftwareRendering(checked);
     });
-    QObject::connect(&_preferences, &Preferences::questForceSoftwareRenderingChanged, this, [this, switchButton]() {
-      QSignalBlocker _(switchButton);
-      const auto value = _preferences.questForceSoftwareRendering();
-      switchButton->setChecked(value);
-    });
+    QObject::connect(
+      _controller->preferences(), &Preferences::questForceSoftwareRenderingChanged, this, [this, switchButton]() {
+        QSignalBlocker _(switchButton);
+        const auto value = _controller->preferences()->questForceSoftwareRendering();
+        switchButton->setChecked(value);
+      });
   }
   {
     auto* switchButton = new oclero::qlementine::Switch(this);
     formLayout->addRow(i18n::questFullScreen(), switchButton);
 
-    switchButton->setChecked(_preferences.questFullScreen());
+    switchButton->setChecked(_controller->preferences()->questFullScreen());
     QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _preferences.setQuestFullScreen(checked);
+      _controller->preferences()->setQuestFullScreen(checked);
     });
-    QObject::connect(&_preferences, &Preferences::questFullScreenChanged, this, [this, switchButton]() {
+    QObject::connect(_controller->preferences(), &Preferences::questFullScreenChanged, this, [this, switchButton]() {
       QSignalBlocker _(switchButton);
-      const auto value = _preferences.questFullScreen();
+      const auto value = _controller->preferences()->questFullScreen();
       switchButton->setChecked(value);
     });
   }
@@ -241,15 +242,16 @@ void PreferencesWindow::setupUi() {
     auto* switchButton = new oclero::qlementine::Switch(this);
     formLayout->addRow(i18n::questSuspendWhenUnfocused(), switchButton);
 
-    switchButton->setChecked(_preferences.questSuspendWhenUnfocused());
+    switchButton->setChecked(_controller->preferences()->questSuspendWhenUnfocused());
     QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _preferences.setQuestSuspendWhenUnfocused(checked);
+      _controller->preferences()->setQuestSuspendWhenUnfocused(checked);
     });
-    QObject::connect(&_preferences, &Preferences::questSuspendWhenUnfocusedChanged, this, [this, switchButton]() {
-      QSignalBlocker _(switchButton);
-      const auto value = _preferences.questSuspendWhenUnfocused();
-      switchButton->setChecked(value);
-    });
+    QObject::connect(
+      _controller->preferences(), &Preferences::questSuspendWhenUnfocusedChanged, this, [this, switchButton]() {
+        QSignalBlocker _(switchButton);
+        const auto value = _controller->preferences()->questSuspendWhenUnfocused();
+        switchButton->setChecked(value);
+      });
   }
   {
     formLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
@@ -272,7 +274,7 @@ void PreferencesWindow::setupUi() {
     containerLayout->setAlignment(resetButton, Qt::AlignLeft);
 
     QObject::connect(resetButton, &QPushButton::clicked, this, [this]() {
-      _preferences.resetToDefaults();
+      _controller->preferences()->resetToDefaults();
     });
   }
 }

@@ -5,6 +5,7 @@
 #include <oclero/qlementine/icons/QlementineIcons.hpp>
 
 #include <widgets/MainWindow.h>
+#include <Controller.h>
 
 #include <solarus/core/Arguments.h>
 #include <solarus/core/Debug.h>
@@ -37,7 +38,8 @@ int runGUI(int argc, char* argv[]) {
   QIcon::setThemeName("qlementine");
 
   // Main window.
-  auto window = std::make_unique<solarus::launcher::MainWindow>();
+  auto* controller = new solarus::launcher::Controller(qApp);
+  auto window = std::make_unique<solarus::launcher::MainWindow>(controller);
   window->show();
 
   return app.exec();

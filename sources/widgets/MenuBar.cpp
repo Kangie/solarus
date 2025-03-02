@@ -1,0 +1,250 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+#include <widgets/MenuBar.h>
+
+#include <Preferences.h>
+#include <Utils.h>
+#include <Controller.h>
+#include <BasicUpdater.h>
+
+#include <QApplication>
+#include <QActionGroup>
+
+#include <oclero/qlementine/style/ThemeManager.hpp>
+
+namespace solarus::launcher {
+namespace i18n {
+static QString addQuestAction() {
+  return QApplication::translate("SolarusLauncher", "Add Quest…");
+}
+static QString addQuestFolderAction() {
+  return QApplication::translate("SolarusLauncher", "Add Folder…");
+}
+static QString preferences() {
+  return QApplication::translate("SolarusLauncher", "Preferences…");
+}
+static QString quit() {
+  return QApplication::translate("SolarusLauncher", "Quit");
+}
+static QString fileMenu() {
+  return QApplication::translate("SolarusLauncher", "File");
+}
+static QString viewMenu() {
+  return QApplication::translate("SolarusLauncher", "View");
+}
+static QString helpMenu() {
+  return QApplication::translate("SolarusLauncher", "Help");
+}
+static QString contact() {
+  return QApplication::translate("SolarusLauncher", "Contact");
+}
+static QString sourceCode() {
+  return QApplication::translate("SolarusLauncher", "Source Code");
+}
+static QString about() {
+  return QApplication::translate("SolarusLauncher", "About…");
+}
+static QString switchTheme() {
+  return QApplication::translate("SolarusLauncher", "Switch Theme");
+}
+static QString theme() {
+  return QApplication::translate("SolarusLauncher", "Theme");
+}
+static QString questMenu() {
+  return QApplication::translate("SolarusLauncher", "Quest");
+}
+static QString showContaingFolder() {
+  return QApplication::translate("SolarusLauncher", "Open Containing Folder");
+}
+static QString removeQuest() {
+  return QApplication::translate("SolarusLauncher", "Remove Quest");
+}
+static QString playQuest() {
+  return QApplication::translate("SolarusLauncher", "Play Quest");
+}
+static QString showHideQuestInformation() {
+  return QApplication::translate("SolarusLauncher", "Show/Hide Quest Information");
+}
+static QString showHideConsole() {
+  return QApplication::translate("SolarusLauncher", "Show/Hide Quest Console");
+}
+static QString search() {
+  return QApplication::translate("SolarusLauncher", "Search…");
+}
+static QString checkForUpdates() {
+  return QApplication::translate("SolarusLauncher", "Check for Updates");
+}
+} // namespace i18n
+
+MenuBar::MenuBar(Controller* controller, QWidget* parent)
+  : QMenuBar(parent)
+  , _controller(controller) {
+  setupUi();
+}
+
+void MenuBar::setupUi() {
+  setNativeMenuBar(true);
+
+  const auto macOS = QSysInfo::productType() == "macos";
+
+  auto* fileMenu = addMenu(i18n::fileMenu());
+  {
+    fileMenu->setSeparatorsCollapsible(true);
+
+    fileMenu->addAction(
+      makeIcon(Icons16::Action_PlusCircle, macOS), i18n::addQuestAction(), QKeySequence::StandardKey::New, [this]() {
+        // openAddQuestDialog();
+      });
+
+    fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS), i18n::addQuestFolderAction(),
+      QKeySequence::StandardKey::Open, [this]() {
+        // openAddFolderDialog();
+      });
+
+#ifdef __APPLE__
+    const auto removeQuestShortcut = QKeySequence(Qt::Key_Backspace);
+#else
+    const auto removeQuestShortcut = QKeySequence(QKeySequence::StandardKey::Delete);
+#endif
+
+    fileMenu->addAction(makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), removeQuestShortcut, [this]() {
+      // removeCurrentQuest();
+    });
+
+    fileMenu->addSeparator();
+
+    fileMenu->addAction(makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
+      // playCurrentQuest();
+    });
+
+    fileMenu->addAction(
+      makeIcon(Icons16::File_FolderOpen, macOS), i18n::showContaingFolder(), QKeySequence{}, [this]() {
+        // openCurrentQuestFolder();
+      });
+
+    fileMenu->addAction(
+      makeIcon(Icons16::Navigation_Search, macOS), i18n::search(), QKeySequence::StandardKey::Find, [this]() {
+        // _ui.searchLineEdit->setFocus(Qt::MenuBarFocusReason);
+      });
+
+    fileMenu->addSeparator();
+
+    fileMenu->addAction(makeIcon(Icons16::Navigation_Settings, macOS), i18n::preferences(),
+      QKeySequence::StandardKey::Preferences, [this]() {
+        // openPreferencesDialog();
+      });
+
+    fileMenu->addSeparator();
+
+#ifdef Q_OS_WIN
+    // QKeySequence::Quit is empty on Windows.
+    const auto quitShortcut = QKeySequence(Qt::CTRL | Qt::Key_Q);
+#else
+    const auto quitShortcut = QKeySequence(QKeySequence::Quit);
+#endif
+    fileMenu->addAction(makeIcon(Icons16::Action_Close, macOS), i18n::quit(), quitShortcut, []() {
+      qApp->quit();
+    });
+  }
+
+  auto* viewMenu = addMenu(i18n::viewMenu());
+  {
+    viewMenu->setSeparatorsCollapsible(true);
+
+    auto* themeMenu = viewMenu->addMenu(i18n::theme());
+    themeMenu->setIcon(makeIcon(Icons16::Misc_PaintPalette, macOS));
+
+    auto* themeActionGroup = new QActionGroup(themeMenu);
+    themeActionGroup->setExclusive(true);
+
+    auto* themeManager = _controller->themeManager();
+    const auto& themes = themeManager->themes();
+    const auto currentTheme = themeManager->currentTheme();
+
+    for (const auto& theme : themes) {
+      const auto name = theme.meta.name;
+      const auto icon = name == "Dark" ? makeIcon(Icons16::Misc_Moon, macOS) : makeIcon(Icons16::Misc_Sun, macOS);
+      auto* action = themeMenu->addAction(icon, name);
+      action->setCheckable(true);
+      themeActionGroup->addAction(action);
+      action->setChecked(name == currentTheme);
+
+      QObject::connect(action, &QAction::triggered, this, [this, name, themeManager](auto checked) {
+        themeManager->setCurrentTheme(name);
+      });
+      QObject::connect(_controller->preferences(), &Preferences::appThemeChanged, this, [this, name, action]() {
+        QSignalBlocker _(action);
+        action->setChecked(name == _controller->preferences()->appTheme());
+      });
+    }
+
+    viewMenu->addAction(makeIcon(Icons16::Action_Swap, macOS), i18n::switchTheme(), { Qt::CTRL | Qt::Key_T }, [this]() {
+      _controller->themeManager()->setNextTheme();
+    });
+
+    viewMenu->addSeparator();
+
+    {
+      auto* action = viewMenu->addAction(makeIcon(Icons16::Navigation_UiPanelBottom, macOS), i18n::showHideConsole(),
+        { Qt::Key_F12 }, [this](bool checked) {
+          _controller->preferences()->setAppConsoleVisible(checked);
+        });
+      action->setCheckable(true);
+      action->setChecked(_controller->preferences()->appConsoleVisible());
+
+      QObject::connect(_controller->preferences(), &Preferences::appConsoleVisibleChanged, this, [this, action]() {
+        QSignalBlocker _(action);
+        action->setChecked(_controller->preferences()->appConsoleVisible());
+      });
+    }
+
+    {
+      auto* action = viewMenu->addAction(makeIcon(Icons16::Navigation_UiPanelRight, macOS),
+        i18n::showHideQuestInformation(), { Qt::Key_F10 }, [this](bool checked) {
+          _controller->preferences()->setAppPropertiesPanelVisible(checked);
+        });
+      action->setCheckable(true);
+      action->setChecked(_controller->preferences()->appPropertiesPanelVisible());
+
+      QObject::connect(
+        _controller->preferences(), &Preferences::appPropertiesPanelVisibleChanged, this, [this, action]() {
+          QSignalBlocker _(action);
+          action->setChecked(_controller->preferences()->appPropertiesPanelVisible());
+        });
+    }
+  }
+
+  auto* helpMenu = addMenu(i18n::helpMenu());
+  {
+    helpMenu->setSeparatorsCollapsible(true);
+
+    helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, [this]() {
+      _controller->openContactPage();
+    });
+    helpMenu->addAction(makeIcon(Icons16::File_FileScript, macOS), i18n::sourceCode(), QKeySequence{}, [this]() {
+      _controller->openSourceCodePage();
+    });
+
+    helpMenu->addSeparator();
+
+    {
+      auto* checkForUpdateAction =
+        helpMenu->addAction(makeIcon(Icons16::Action_Update, macOS), i18n::checkForUpdates(), QKeySequence{}, [this]() {
+          _controller->checkForUpdates();
+        });
+      checkForUpdateAction->setMenuRole(QAction::MenuRole::ApplicationSpecificRole);
+
+      QObject::connect(_controller->updater(), &BasicUpdater::checkStarted, this, [this, checkForUpdateAction]() {
+        checkForUpdateAction->setEnabled(false);
+      });
+      QObject::connect(_controller->updater(), &BasicUpdater::checkFinished, this,
+        [this, checkForUpdateAction](const BasicUpdater::Result& result) {
+          checkForUpdateAction->setEnabled(true);
+        });
+    }
+
+    helpMenu->addAction(makeIcon(Icons16::Misc_Info, macOS), i18n::about(), QKeySequence{}, [this]() {
+      _controller->openAboutDialog();
+    });
+  }
+}
+} // namespace solarus::launcher
