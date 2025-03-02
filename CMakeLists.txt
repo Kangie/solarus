@@ -108,26 +108,22 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/s
 qt_add_resources(${PROJECT_NAME} "resources"
   PREFIX "/solarus/launcher/"
   FILES
-    resources/themes/dark.json
-    resources/themes/light.json
-    resources/icon/solarus_launcher_icon.icns
-    resources/icon/solarus_launcher_icon.ico
-    resources/icon/solarus_launcher_icon.svg
-    resources/icon/solarus_launcher_icon_1024.png
-    resources/icon/solarus_launcher_icon_128.png
     resources/icon/solarus_launcher_icon_16.png
     resources/icon/solarus_launcher_icon_20.png
-    resources/icon/solarus_launcher_icon_24.png
-    resources/icon/solarus_launcher_icon_256.png
     resources/icon/solarus_launcher_icon_32.png
     resources/icon/solarus_launcher_icon_40.png
     resources/icon/solarus_launcher_icon_48.png
-    resources/icon/solarus_launcher_icon_512.png
     resources/icon/solarus_launcher_icon_64.png
     resources/icon/solarus_launcher_icon_96.png
-    resources/icon/solarus_launcher_icon_symbolic.svg
-    resources/icon/solarus_quest_icon.icns
-    resources/icon/solarus_quest_icon.ico
+    resources/icon/solarus_launcher_icon_128.png
+    resources/icon/solarus_launcher_icon_256.png
+    resources/icon/solarus_launcher_icon_512.png
+    resources/icon/solarus_launcher_icon_1024.png
+    resources/icon/solarus_launcher_icon.icns
+    resources/icon/solarus_launcher_icon.ico
+    resources/icon/solarus_launcher_icon.svg
+    resources/themes/dark.json
+    resources/themes/light.json
 )
 
 qt_add_translations(
@@ -206,9 +202,12 @@ install(SCRIPT "${DEPLOY_SCRIPT}")
 qt_finalize_executable(${PROJECT_NAME})
 
 # Packaging.
-include(CPack)
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(CPACK_GENERATOR "DragNDrop")
-  set(CPACK_PACKAGE_FILE_NAME "${APP_NAME} Installer") # The name of the generated package
-  set(CPACK_BUNDLE_NAME "${APP_NAME}") # The name of the app bundle
+  set(CPACK_PACKAGE_FILE_NAME "${APP_NAME} Installer")
+  set(CPACK_DMG_VOLUME_NAME "${APP_NAME} Installer")
+  set(CPACK_BUNDLE_NAME "${APP_NAME}")
+  set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMVolumeIcon.icns")
+  set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMGBackground@2x.png")
 endif()
+include(CPack)
