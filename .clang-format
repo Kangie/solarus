@@ -56,7 +56,7 @@ FixNamespaceComments: true
 IndentPPDirectives: AfterHash
 IndentWrappedFunctionNames: false
 KeepEmptyLinesAtTheStartOfBlocks: false
-MaxEmptyLinesToKeep: 2
+MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
 ReflowComments: false
 SortUsingDeclarations: false

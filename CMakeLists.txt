@@ -40,8 +40,8 @@ if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
 endif()
 
 # Find Qt.
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg)
-qt_standard_project_setup()
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network LinguistTools)
+qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES en fr)
 
 # Dependencies.
 include(FetchContent)
@@ -90,37 +90,19 @@ endif()
 
 # Icon.
 set(MACOSX_BUNDLE_ICON_FILE solarus_launcher_icon.icns)
-set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.icns")
+set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/${MACOSX_BUNDLE_ICON_FILE}")
 set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
+file(GLOB_RECURSE SOURCES
+  "${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/sources/*.h"
+)
 
 # Target.
 qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${APP_ICON_MACOS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/BasicUpdater.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/BasicUpdater.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Common.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Preferences.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestData.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListItemDelegate.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListItemDelegate.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListModel.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestListModel.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestRunner.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/quests/QuestRunner.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/Utils.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/Console.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/Console.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MainWindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MainWindow.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MessageBox.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/MessageBox.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/PreferencesWindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/widgets/PreferencesWindow.h
+  ${SOURCES}
 )
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${APP_NAME})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sources)
 
 qt_add_resources(${PROJECT_NAME} "resources"
@@ -148,10 +130,16 @@ qt_add_resources(${PROJECT_NAME} "resources"
     resources/icon/solarus_quest_icon.ico
 )
 
+qt_add_translations(
+  TARGETS ${PROJECT_NAME}
+  TS_FILE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/i18n
+)
+
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
     Qt6::Widgets
     Qt6::Svg
+    Qt6::Network
     qlementine
     qlementine-icons
     solarus
@@ -159,6 +147,8 @@ target_link_libraries(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
   ${BUNDLE_ID_OPTION}
+  OUTPUT_NAME ${APP_NAME}
+  MACOSX_BUNDLE_ICON_FILE ${MACOSX_BUNDLE_ICON_FILE}
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
   MACOSX_BUNDLE_BUNDLE_NAME ${APP_NAME}
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
