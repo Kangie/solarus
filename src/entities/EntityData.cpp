@@ -495,6 +495,22 @@ void EntityData::set_locked(bool locked) {
 }
 
 /**
+ * \brief Returns the group of this entity on the map.
+ * \return The group or 0.
+ */
+int EntityData::get_group() const {
+  return group;
+}
+
+/**
+ * \brief Sets the group of this entity.
+ * \param group The group.
+ */
+void EntityData::set_group(int group) {
+  this->group = group;
+}
+
+/**
  * \brief Returns the coordinates of this entity on the map.
  * \return The coordinates of the entity.
  */
@@ -929,11 +945,13 @@ EntityData EntityData::check_entity_data(lua_State* l, int index, EntityType typ
   int y = LuaTools::check_int_field(l, index, "y");
   bool enabled_at_start = LuaTools::opt_boolean_field(l, index, "enabled_at_start", true);
   bool locked = LuaTools::opt_boolean_field(l, index, "locked", false);
+  int group = LuaTools::opt_int_field(l, index, "group", 0);
 
   EntityData entity(type);
   entity.set_layer(layer);
   entity.set_xy({ x, y });
   entity.set_locked(locked);
+  entity.set_group(group);
 
   if (entity.is_dynamic()) {
     entity.set_name(name);
@@ -1082,6 +1100,9 @@ bool EntityData::export_to_lua(std::ostream& out) const {
   }
   if (is_locked()) {
     out << "  locked = true,\n";
+  }
+  if (get_group() != 0) {
+    out << "  group = " << get_group() << ",\n";
   }
 
   // User-defined properties.

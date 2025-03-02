@@ -213,6 +213,13 @@ The following properties exist for all types of entities
 - \c enabled_at_start (boolean, optional): Whether the entity should initially
   be enabled on the map.
   The default value is \c true.
+- \c locked (boolean, optional): Whether the entity is locked.
+  This is only used in the quest editor and has no effect at runtime.
+  The default value is \c false.
+- \c group (number, optional): Group number of the entity.
+  This is only used in the quest editor for grouping
+  and has no effect at runtime.
+  The default value is \c 0.
 - \c properties (table, optional): Array of additional properties.
   The engine does nothing special with them,
   but your scripts can use them to store some custom extra information.
