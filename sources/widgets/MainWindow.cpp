@@ -31,7 +31,7 @@ MainWindow::MainWindow(Controller* controller, QWidget* parent)
   : QWidget(parent)
   , _controller(controller) {
   ensurePolished();
-  setMinimumSize(640, 320);
+  setMinimumSize(720, 320);
   oclero::qlementine::centerWidget(this);
   restoreGeometry(_controller->preferences()->windowGeometry());
 

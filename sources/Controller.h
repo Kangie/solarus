@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
+
 #include <QObject>
+#include <QStringList>
+
+class QTranslator;
 
 namespace oclero::qlementine {
 class ThemeManager;
@@ -39,6 +43,9 @@ public:
 
   void checkForUpdates();
 
+  const QStringList& languages() const;
+  static QString themeName(const QString& themeName);
+
   Q_SIGNAL void focusOnListViewRequested(Qt::FocusReason reason);
 
   Preferences* preferences();
@@ -49,6 +56,7 @@ public:
 
 private:
   void setupThemeManager();
+  void loadLanguages();
 
 private:
   Preferences* _preferences{ nullptr };
@@ -56,5 +64,7 @@ private:
   QuestRunner* _runner{ nullptr };
   BasicUpdater* _updater{ nullptr };
   oclero::qlementine::ThemeManager* _themeManager{ nullptr };
+  QStringList _languages;
+  QTranslator* _translator;
 };
 } // namespace solarus::launcher

@@ -5,6 +5,7 @@
 #include <Utils.h>
 #include <Controller.h>
 #include <BasicUpdater.h>
+#include <quests/QuestListModel.h>
 
 #include <QApplication>
 #include <QActionGroup>
@@ -92,12 +93,12 @@ void MenuBar::setupUi() {
 
     fileMenu->addAction(
       makeIcon(Icons16::Action_PlusCircle, macOS), i18n::addQuestAction(), QKeySequence::StandardKey::New, [this]() {
-        // openAddQuestDialog();
+        _controller->openAddQuestDialog();
       });
 
     fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS), i18n::addQuestFolderAction(),
       QKeySequence::StandardKey::Open, [this]() {
-        // openAddFolderDialog();
+        _controller->openAddFolderDialog();
       });
 
 #ifdef __APPLE__
@@ -106,31 +107,37 @@ void MenuBar::setupUi() {
     const auto removeQuestShortcut = QKeySequence(QKeySequence::StandardKey::Delete);
 #endif
 
-    fileMenu->addAction(makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), removeQuestShortcut, [this]() {
-      // removeCurrentQuest();
-    });
+    auto* removeQuestAction =
+      fileMenu->addAction(makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), removeQuestShortcut, [this]() {
+        _controller->removeCurrentQuest();
+      });
+    removeQuestAction->setEnabled(_controller->model()->currentQuest().isValid());
+    QObject::connect(
+      _controller->model(), &QuestListModel::currentQuestChanged, this, [removeQuestAction](const QModelIndex& index) {
+        removeQuestAction->setEnabled(index.isValid());
+      });
 
     fileMenu->addSeparator();
 
     fileMenu->addAction(makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
-      // playCurrentQuest();
+      _controller->playCurrentQuest();
     });
 
     fileMenu->addAction(
       makeIcon(Icons16::File_FolderOpen, macOS), i18n::showContaingFolder(), QKeySequence{}, [this]() {
-        // openCurrentQuestFolder();
+        _controller->openCurrentQuestFolder();
       });
 
     fileMenu->addAction(
       makeIcon(Icons16::Navigation_Search, macOS), i18n::search(), QKeySequence::StandardKey::Find, [this]() {
-        // _ui.searchLineEdit->setFocus(Qt::MenuBarFocusReason);
+        emit _controller->focusOnListViewRequested(Qt::ShortcutFocusReason);
       });
 
     fileMenu->addSeparator();
 
     fileMenu->addAction(makeIcon(Icons16::Navigation_Settings, macOS), i18n::preferences(),
       QKeySequence::StandardKey::Preferences, [this]() {
-        // openPreferencesDialog();
+        _controller->openPreferencesDialog();
       });
 
     fileMenu->addSeparator();
@@ -163,13 +170,17 @@ void MenuBar::setupUi() {
     for (const auto& theme : themes) {
       const auto name = theme.meta.name;
       const auto icon = name == "Dark" ? makeIcon(Icons16::Misc_Moon, macOS) : makeIcon(Icons16::Misc_Sun, macOS);
-      auto* action = themeMenu->addAction(icon, name);
+      const auto text = Controller::themeName(theme.meta.name);
+      auto* action = themeMenu->addAction(icon, text);
+      action->setData(name);
       action->setCheckable(true);
       themeActionGroup->addAction(action);
       action->setChecked(name == currentTheme);
 
-      QObject::connect(action, &QAction::triggered, this, [this, name, themeManager](auto checked) {
-        themeManager->setCurrentTheme(name);
+      QObject::connect(action, &QAction::triggered, this, [this, name, themeManager](bool checked) {
+        if (checked) {
+          themeManager->setCurrentTheme(name);
+        }
       });
       QObject::connect(_controller->preferences(), &Preferences::appThemeChanged, this, [this, name, action]() {
         QSignalBlocker _(action);

@@ -14,6 +14,9 @@ public:
   explicit PreferencesWindow(Controller* controller, QWidget* parent = nullptr);
   virtual ~PreferencesWindow() = default;
 
+protected:
+  void mouseReleaseEvent(QMouseEvent*) override;
+
 private:
   void setupUi();
 

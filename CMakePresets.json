@@ -61,7 +61,12 @@
       "configurePreset": "macos",
       "description": "Update .ts files (Qt translations)",
       "targets": ["update_translations"],
-      "configuration": "Release"
+      "configuration": "Release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
     },
     {
       "name": "macos",

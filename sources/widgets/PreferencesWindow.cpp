@@ -15,6 +15,7 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QPainter>
+#include <QLocale>
 
 #include <oclero/qlementine/widgets/Label.hpp>
 #include <oclero/qlementine/widgets/Switch.hpp>
@@ -32,14 +33,27 @@ static QString appPreferencesTitle() {
 static QString appLanguage() {
   return QApplication::translate("SolarusLauncher", "Language");
 }
+static QString appLanguageCaption() {
+  return QApplication::translate(
+    "SolarusLauncher", "You must restart the application for it to take this change into account.");
+}
 static QString appPropertiesPanelVisible() {
   return QApplication::translate("SolarusLauncher", "Show Quest Information Panel");
+}
+static QString appPropertiesPanelVisibleCaption() {
+  return QApplication::translate("SolarusLauncher", "Displays detailed information about the selected Quest.");
 }
 static QString appConsoleVisible() {
   return QApplication::translate("SolarusLauncher", "Show Console");
 }
+static QString appConsoleVisibleCaption() {
+  return QApplication::translate("SolarusLauncher", "Very useful to spot bugs.");
+}
 static QString appTheme() {
   return QApplication::translate("SolarusLauncher", "Theme");
+}
+static QString appThemeCaption() {
+  return QApplication::translate("SolarusLauncher", "Change the app's look. No need to restart.");
 }
 static QString questPreferencesTitle() {
   return QApplication::translate("SolarusLauncher", "Quests");
@@ -47,14 +61,26 @@ static QString questPreferencesTitle() {
 static QString questEnableAudio() {
   return QApplication::translate("SolarusLauncher", "Audio Enabled");
 }
+static QString questEnableAudioCaption() {
+  return QApplication::translate("SolarusLauncher", "Plays the quest audio.");
+}
 static QString questForceSoftwareRendering() {
   return QApplication::translate("SolarusLauncher", "Force Software Rendering");
+}
+static QString questForceSoftwareRenderingCaption() {
+  return QApplication::translate("SolarusLauncher", "Enable this if your machine doesn't support OpenGL.");
 }
 static QString questFullScreen() {
   return QApplication::translate("SolarusLauncher", "Full Screen");
 }
+static QString questFullScreenCaption() {
+  return QApplication::translate("SolarusLauncher", "Start the quest as full screen.");
+}
 static QString questSuspendWhenUnfocused() {
   return QApplication::translate("SolarusLauncher", "Suspend Quest when unfocused");
+}
+static QString questSuspendWhenUnfocusedCaption() {
+  return QApplication::translate("SolarusLauncher", "Pauses the game when the window is no longer active.");
 }
 static QString reset() {
   return QApplication::translate("SolarusLauncher", "Reset");
@@ -63,6 +89,38 @@ static QString resetTooltip() {
   return QApplication::translate("SolarusLauncher", "Reset to factory defaults.");
 }
 } // namespace i18n
+
+namespace {
+QString languageName(const QString& langCode) {
+  const auto locale = QLocale(langCode);
+  auto result = locale.nativeLanguageName();
+  if (!result.isEmpty()) {
+    result[0] = result[0].toUpper();
+  }
+  if (result == "American English") {
+    result = "English";
+  }
+  return result;
+}
+
+QWidget* makeRowLabel(const QString& label, const QString& caption, QWidget* parent) {
+  auto* container = new QWidget(parent);
+  container->setMaximumWidth(250);
+  auto* layout = new QVBoxLayout(container);
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(4);
+
+  auto* qLabel = new QLabel(label, container);
+  qLabel->setWordWrap(true);
+  layout->addWidget(qLabel);
+
+  auto* captionLabel = new oclero::qlementine::Label(caption, oclero::qlementine::TextRole::Caption, container);
+  captionLabel->setWordWrap(true);
+  captionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  layout->addWidget(captionLabel);
+  return container;
+}
+} // namespace
 
 class BottomWidget : public QWidget {
   using QWidget::QWidget;
@@ -89,7 +147,7 @@ PreferencesWindow::PreferencesWindow(Controller* controller, QWidget* parent)
 
   setupUi();
   ensurePolished();
-  const auto sh = sizeHint() + QSize(0, 32);
+  const auto sh = sizeHint() + QSize(0, 40);
   setFixedWidth(sh.width());
   setMaximumHeight(sh.height());
   setMinimumHeight(200);
@@ -127,63 +185,75 @@ void PreferencesWindow::setupUi() {
     formLayout->addRow(title);
   }
   {
-    auto* comboBox = new QComboBox(this);
-    comboBox->setMinimumWidth(100);
-    for (const auto& lang : { "en_US", "fr_FR" }) {
-      comboBox->addItem(lang, QString(lang));
+    auto* languageComboBox = new QComboBox(this);
+    languageComboBox->setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy::AdjustToContents);
+    const auto icon = makeIcon(Icons16::Misc_Comment);
+    for (const auto& lang : std::as_const(_controller->languages())) {
+      languageComboBox->addItem(icon, languageName(lang), QVariant(lang));
     }
-    formLayout->addRow(i18n::appLanguage(), comboBox);
+
+    const auto currentLanguage = _controller->preferences()->appLanguage();
+    const auto currentIndex = languageComboBox->findData(currentLanguage);
+    languageComboBox->setCurrentIndex(currentIndex);
+
+    QObject::connect(languageComboBox, &QComboBox::currentIndexChanged, this, [this, languageComboBox](int index) {
+      const auto lang = languageComboBox->itemData(index).toString();
+      _controller->preferences()->setAppLanguage(lang);
+    });
+
+    formLayout->addRow(makeRowLabel(i18n::appLanguage(), i18n::appLanguageCaption(), this), languageComboBox);
   }
   {
-    auto* comboBox = new QComboBox(this);
-    comboBox->setMinimumWidth(100);
+    auto* themeComboBox = new QComboBox(this);
+    themeComboBox->setMinimumWidth(100);
 
     const auto& themes = _controller->themeManager()->themes();
     const auto currentTheme = _controller->preferences()->appTheme();
 
     for (const auto& theme : themes) {
-      const auto name = theme.meta.name;
-      const auto icon = makeIcon(name == "Dark" ? Icons16::Misc_Moon : Icons16::Misc_Sun);
-      comboBox->addItem(icon, name, QString(name));
+      const auto text = Controller::themeName(theme.meta.name);
+      const auto icon = makeIcon(theme.meta.name == "Dark" ? Icons16::Misc_Moon : Icons16::Misc_Sun);
+      themeComboBox->addItem(icon, text, QString(theme.meta.name));
     }
 
-    const auto index = comboBox->findData(currentTheme);
-    comboBox->setCurrentIndex(index);
+    const auto index = themeComboBox->findData(currentTheme);
+    themeComboBox->setCurrentIndex(index);
 
-    QObject::connect(comboBox, &QComboBox::currentIndexChanged, this, [this, comboBox](int index) {
-      const auto theme = comboBox->itemData(index).toString();
+    QObject::connect(themeComboBox, &QComboBox::currentIndexChanged, this, [this, themeComboBox](int index) {
+      const auto theme = themeComboBox->itemData(index).toString();
       _controller->preferences()->setAppTheme(theme);
     });
 
-    formLayout->addRow(i18n::appTheme(), comboBox);
+    formLayout->addRow(makeRowLabel(i18n::appTheme(), i18n::appThemeCaption(), this), themeComboBox);
   }
   {
-    auto* switchButton = new oclero::qlementine::Switch(this);
-    formLayout->addRow(i18n::appPropertiesPanelVisible(), switchButton);
+    auto* propertiesPanelSwitch = new oclero::qlementine::Switch(this);
+    formLayout->addRow(makeRowLabel(i18n::appPropertiesPanelVisible(), i18n::appPropertiesPanelVisibleCaption(), this),
+      propertiesPanelSwitch);
 
-    switchButton->setChecked(_controller->preferences()->appPropertiesPanelVisible());
-    QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
+    propertiesPanelSwitch->setChecked(_controller->preferences()->appPropertiesPanelVisible());
+    QObject::connect(propertiesPanelSwitch, &QAbstractButton::clicked, this, [this](bool checked) {
       _controller->preferences()->setAppPropertiesPanelVisible(checked);
     });
-    QObject::connect(
-      _controller->preferences(), &Preferences::appPropertiesPanelVisibleChanged, this, [this, switchButton]() {
-        QSignalBlocker _(switchButton);
+    QObject::connect(_controller->preferences(), &Preferences::appPropertiesPanelVisibleChanged, this,
+      [this, propertiesPanelSwitch]() {
+        QSignalBlocker _(propertiesPanelSwitch);
         const auto value = _controller->preferences()->appPropertiesPanelVisible();
-        switchButton->setChecked(value);
+        propertiesPanelSwitch->setChecked(value);
       });
   }
   {
-    auto* switchButton = new oclero::qlementine::Switch(this);
-    formLayout->addRow(i18n::appConsoleVisible(), switchButton);
+    auto* consoleSwitch = new oclero::qlementine::Switch(this);
+    formLayout->addRow(makeRowLabel(i18n::appConsoleVisible(), i18n::appConsoleVisibleCaption(), this), consoleSwitch);
 
-    switchButton->setChecked(_controller->preferences()->appConsoleVisible());
-    QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
+    consoleSwitch->setChecked(_controller->preferences()->appConsoleVisible());
+    QObject::connect(consoleSwitch, &QAbstractButton::clicked, this, [this](bool checked) {
       _controller->preferences()->setAppConsoleVisible(checked);
     });
-    QObject::connect(_controller->preferences(), &Preferences::appConsoleVisibleChanged, this, [this, switchButton]() {
-      QSignalBlocker _(switchButton);
+    QObject::connect(_controller->preferences(), &Preferences::appConsoleVisibleChanged, this, [this, consoleSwitch]() {
+      QSignalBlocker _(consoleSwitch);
       const auto value = _controller->preferences()->appConsoleVisible();
-      switchButton->setChecked(value);
+      consoleSwitch->setChecked(value);
     });
   }
   {
@@ -196,61 +266,66 @@ void PreferencesWindow::setupUi() {
     formLayout->addRow(title);
   }
   {
-    auto* switchButton = new oclero::qlementine::Switch(this);
-    formLayout->addRow(i18n::questEnableAudio(), switchButton);
+    auto* questAudiowitch = new oclero::qlementine::Switch(this);
+    formLayout->addRow(makeRowLabel(i18n::questEnableAudio(), i18n::questEnableAudioCaption(), this), questAudiowitch);
 
-    switchButton->setChecked(_controller->preferences()->questEnableAudio());
-    QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
+    questAudiowitch->setChecked(_controller->preferences()->questEnableAudio());
+    QObject::connect(questAudiowitch, &QAbstractButton::clicked, this, [this](bool checked) {
       _controller->preferences()->setQuestEnableAudio(checked);
     });
-    QObject::connect(_controller->preferences(), &Preferences::questEnableAudioChanged, this, [this, switchButton]() {
-      QSignalBlocker _(switchButton);
-      const auto value = _controller->preferences()->questEnableAudio();
-      switchButton->setChecked(value);
-    });
-  }
-  {
-    auto* switchButton = new oclero::qlementine::Switch(this);
-    formLayout->addRow(i18n::questForceSoftwareRendering(), switchButton);
-
-    switchButton->setChecked(_controller->preferences()->questForceSoftwareRendering());
-    QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _controller->preferences()->setQuestForceSoftwareRendering(checked);
-    });
     QObject::connect(
-      _controller->preferences(), &Preferences::questForceSoftwareRenderingChanged, this, [this, switchButton]() {
-        QSignalBlocker _(switchButton);
-        const auto value = _controller->preferences()->questForceSoftwareRendering();
-        switchButton->setChecked(value);
+      _controller->preferences(), &Preferences::questEnableAudioChanged, this, [this, questAudiowitch]() {
+        QSignalBlocker _(questAudiowitch);
+        const auto value = _controller->preferences()->questEnableAudio();
+        questAudiowitch->setChecked(value);
       });
   }
   {
-    auto* switchButton = new oclero::qlementine::Switch(this);
-    formLayout->addRow(i18n::questFullScreen(), switchButton);
+    auto* softwareRenderingSwitch = new oclero::qlementine::Switch(this);
+    formLayout->addRow(
+      makeRowLabel(i18n::questForceSoftwareRendering(), i18n::questForceSoftwareRenderingCaption(), this),
+      softwareRenderingSwitch);
 
-    switchButton->setChecked(_controller->preferences()->questFullScreen());
-    QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
-      _controller->preferences()->setQuestFullScreen(checked);
+    softwareRenderingSwitch->setChecked(_controller->preferences()->questForceSoftwareRendering());
+    QObject::connect(softwareRenderingSwitch, &QAbstractButton::clicked, this, [this](bool checked) {
+      _controller->preferences()->setQuestForceSoftwareRendering(checked);
     });
-    QObject::connect(_controller->preferences(), &Preferences::questFullScreenChanged, this, [this, switchButton]() {
-      QSignalBlocker _(switchButton);
-      const auto value = _controller->preferences()->questFullScreen();
-      switchButton->setChecked(value);
-    });
+    QObject::connect(_controller->preferences(), &Preferences::questForceSoftwareRenderingChanged, this,
+      [this, softwareRenderingSwitch]() {
+        QSignalBlocker _(softwareRenderingSwitch);
+        const auto value = _controller->preferences()->questForceSoftwareRendering();
+        softwareRenderingSwitch->setChecked(value);
+      });
   }
   {
-    auto* switchButton = new oclero::qlementine::Switch(this);
-    formLayout->addRow(i18n::questSuspendWhenUnfocused(), switchButton);
+    auto* fullScreenSwitch = new oclero::qlementine::Switch(this);
+    formLayout->addRow(makeRowLabel(i18n::questFullScreen(), i18n::questFullScreenCaption(), this), fullScreenSwitch);
 
-    switchButton->setChecked(_controller->preferences()->questSuspendWhenUnfocused());
-    QObject::connect(switchButton, &QAbstractButton::clicked, this, [this](bool checked) {
+    fullScreenSwitch->setChecked(_controller->preferences()->questFullScreen());
+    QObject::connect(fullScreenSwitch, &QAbstractButton::clicked, this, [this](bool checked) {
+      _controller->preferences()->setQuestFullScreen(checked);
+    });
+    QObject::connect(
+      _controller->preferences(), &Preferences::questFullScreenChanged, this, [this, fullScreenSwitch]() {
+        QSignalBlocker _(fullScreenSwitch);
+        const auto value = _controller->preferences()->questFullScreen();
+        fullScreenSwitch->setChecked(value);
+      });
+  }
+  {
+    auto* suspendSwitch = new oclero::qlementine::Switch(this);
+    formLayout->addRow(
+      makeRowLabel(i18n::questSuspendWhenUnfocused(), i18n::questSuspendWhenUnfocusedCaption(), this), suspendSwitch);
+
+    suspendSwitch->setChecked(_controller->preferences()->questSuspendWhenUnfocused());
+    QObject::connect(suspendSwitch, &QAbstractButton::clicked, this, [this](bool checked) {
       _controller->preferences()->setQuestSuspendWhenUnfocused(checked);
     });
     QObject::connect(
-      _controller->preferences(), &Preferences::questSuspendWhenUnfocusedChanged, this, [this, switchButton]() {
-        QSignalBlocker _(switchButton);
+      _controller->preferences(), &Preferences::questSuspendWhenUnfocusedChanged, this, [this, suspendSwitch]() {
+        QSignalBlocker _(suspendSwitch);
         const auto value = _controller->preferences()->questSuspendWhenUnfocused();
-        switchButton->setChecked(value);
+        suspendSwitch->setChecked(value);
       });
   }
   {
@@ -276,6 +351,13 @@ void PreferencesWindow::setupUi() {
     QObject::connect(resetButton, &QPushButton::clicked, this, [this]() {
       _controller->preferences()->resetToDefaults();
     });
+  }
+}
+
+void PreferencesWindow::mouseReleaseEvent(QMouseEvent* evt) {
+  QDialog::mouseReleaseEvent(evt);
+  if (auto* widget = qApp->focusWidget()) {
+    widget->clearFocus();
   }
 }
 } // namespace solarus::launcher

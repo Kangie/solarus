@@ -41,7 +41,10 @@ endif()
 
 # Find Qt.
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network LinguistTools)
-qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES en fr)
+qt_standard_project_setup(
+  I18N_TRANSLATED_LANGUAGES en_US fr_FR
+  I18N_SOURCE_LANGUAGE en_US
+)
 
 # Dependencies.
 include(FetchContent)

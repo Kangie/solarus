@@ -68,6 +68,7 @@ ToolBar::ToolBar(Controller* controller, QWidget* parent)
   : QToolBar(parent)
   , _controller(controller) {
   setupUi();
+  setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 }
 
 void ToolBar::setupUi() {

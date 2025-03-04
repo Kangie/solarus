@@ -1,4 +1,3 @@
 - JSON themes with Solarus colors
-- Embed En and Fr translations
 - Windows installer
 - Improve the status bar when checking for update

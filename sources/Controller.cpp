@@ -18,6 +18,7 @@
 #include <QFileDialog>
 #include <QApplication>
 #include <QDesktopServices>
+#include <QTranslator>
 
 namespace solarus::launcher {
 namespace i18n {
@@ -49,7 +50,43 @@ static QString license() {
 static QString solarusQuests() {
   return QApplication::translate("SolarusLauncher", "Solarus Quests");
 }
+static QString themeName(const QString themeId) {
+  if (themeId == "Dark") {
+    return QApplication::translate("SolarusLauncher", "Dark");
+  } else if (themeId == "Light") {
+    return QApplication::translate("SolarusLauncher", "Light");
+  } else {
+    return themeId;
+  }
+}
 } // namespace i18n
+
+namespace {
+QString findBestLanguage(const QString& desiredLanguage, const QStringList& availableLanguages) {
+  if (availableLanguages.size() > 0) {
+    if (!desiredLanguage.isEmpty()) {
+      for (const auto& lang : {
+             // User's language in settings.
+             desiredLanguage,
+             // User's system language.
+             QLocale().name(),
+             // Fallback to English (US).
+             QLocale(QLocale::English, QLocale::UnitedStates).name(),
+           }) {
+        const auto index = availableLanguages.indexOf(desiredLanguage);
+        if (index != -1) {
+          return desiredLanguage;
+        }
+      }
+    }
+
+    // Fallback: use first available language.
+    return availableLanguages.front();
+  }
+
+  return QString{};
+}
+} // namespace
 
 Controller::Controller(QObject* parent)
   : QObject(parent)
@@ -58,6 +95,8 @@ Controller::Controller(QObject* parent)
   , _runner(new QuestRunner(this))
   , _updater(new BasicUpdater(this)) {
   setupThemeManager();
+  loadLanguages();
+
   // TMP
   _model->addQuestFolder("/Users/oclero/Documents/Solarus/Quests");
 }
@@ -78,6 +117,36 @@ void Controller::setupThemeManager() {
     const auto theme = _themeManager->currentTheme();
     _preferences->setAppTheme(theme);
   });
+}
+
+void Controller::loadLanguages() {
+  constexpr auto sourceDirPath = ":/i18n/";
+  constexpr auto fileName = "solarus-launcher";
+  constexpr auto separator = "_";
+
+  constexpr auto filterFlags = QDir::Filter::NoDotAndDotDot | QDir::Filter::Files | QDir::Filter::Readable;
+  constexpr auto sortFlags = QDir::SortFlag::Name;
+  const auto sourceDirectory = QDir(sourceDirPath);
+  const auto filePrefix = QString(fileName) + separator;
+  const auto entries = sourceDirectory.entryInfoList({ QStringLiteral("*.qm") }, filterFlags, sortFlags);
+  for (const auto& entry : std::as_const(entries)) {
+    if (!entry.baseName().startsWith(QStringLiteral("qt"))) {
+      const auto baseName = entry.baseName();
+      const auto hasPrefix = !filePrefix.isEmpty() && baseName.startsWith(filePrefix);
+      const auto& languageName = hasPrefix ? baseName.mid(filePrefix.length()) : baseName;
+      _languages.append(languageName);
+    }
+  }
+
+  // Find best language.
+  const auto userLang = findBestLanguage(_preferences->appLanguage(), _languages);
+  _translator = new QTranslator(this);
+  if (_translator->load(QLocale(userLang), sourceDirectory.absolutePath() + "/" + fileName, separator, sourceDirPath)) {
+    qApp->installTranslator(_translator);
+  }
+
+  // const auto locale = QLocale::system();
+  // QLocale::setDefault(locale);
 }
 
 void Controller::openAddQuestDialog() {
@@ -199,6 +268,14 @@ void Controller::checkForUpdates() {
     //"https://gitlab.com/api/v4/projects/6933864/releases/permalink/latest",
     //PROJECT_LINKS_UPDATE_ENDPOINT
   );
+}
+
+const QStringList& Controller::languages() const {
+  return _languages;
+}
+
+QString Controller::themeName(const QString& themeId) {
+  return i18n::themeName(themeId);
 }
 
 Preferences* Controller::preferences() {

@@ -45,77 +45,87 @@
 <context>
     <name>SolarusLauncher</name>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="60"/>
+        <location filename="../sources/Controller.cpp" line="26"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="27"/>
         <source>Add Quest</source>
         <translation>Ajouter une quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="63"/>
+        <location filename="../sources/Controller.cpp" line="29"/>
         <source>Add Quest Folder</source>
         <translation>Ajouter un dossier de quêtes</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="66"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="18"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="30"/>
         <source>Add Quest…</source>
         <translation>Ajouter une quête…</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="69"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="21"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="33"/>
         <source>Add Folder…</source>
         <translation>Ajouter un dossier…</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="72"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="60"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="19"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="36"/>
         <source>Remove Quest</source>
         <translation>Supprimer la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="75"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="39"/>
         <source>Play</source>
         <translation>Jouer</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="78"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="42"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="81"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="63"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="22"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="45"/>
         <source>Play Quest</source>
         <translation>Jouer la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="84"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
         <source>Show Quest Information</source>
         <translation>Afficher les informations sur la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="87"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="48"/>
         <source>Stop Quest</source>
         <translation>Arrêter la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="90"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="66"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="57"/>
         <source>Show/Hide Quest Information</source>
         <translation>Afficher/Masquer les informations sur la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="93"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="69"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="60"/>
         <source>Show/Hide Quest Console</source>
         <translation>Afficher/Masquer la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="96"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="72"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="51"/>
         <source>Search…</source>
         <translation>Rechercher…</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="99"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="20"/>
         <source>No Quest added</source>
         <translation>Pas de quêtes ajoutées</translation>
     </message>
     <message numerus="yes">
-        <location filename="../sources/widgets/MainWindow.cpp" line="102"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="23"/>
         <source>%n Quest(s) added</source>
         <translation>
             <numerusform>%n quêtes ajoutées</numerusform>
@@ -123,213 +133,281 @@
         </translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="105"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="24"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="63"/>
         <source>Preferences…</source>
         <translation>Préférences…</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="108"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="27"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="111"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="30"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="114"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="33"/>
         <source>View</source>
         <translation>Affichage</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="117"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="36"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="120"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="39"/>
         <source>Contact</source>
         <translation>Contact</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="123"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="42"/>
         <source>Source Code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="126"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="45"/>
         <source>About…</source>
         <translation>À propos…</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="129"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="48"/>
+        <location filename="../sources/widgets/ToolBar.cpp" line="54"/>
         <source>Switch Theme</source>
         <translation>Changer de thème</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="132"/>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="41"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="51"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="53"/>
         <source>Theme</source>
         <translation>Thème</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="135"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="54"/>
         <source>Quest</source>
         <translation>Quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="138"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="57"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
         <source>Open Containing Folder</source>
         <translation>Ouvrir le dossier contenant</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="141"/>
+        <location filename="../sources/Controller.cpp" line="51"/>
         <source>Solarus Quests</source>
         <translation>Quêtes Solarus</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="144"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="23"/>
         <source>Playing:</source>
         <translation>En cours:</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="147"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="26"/>
         <source>Close console</source>
         <translation>Fermer la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="150"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="29"/>
         <source>Clear console</source>
         <translation>Effacer la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="153"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="32"/>
         <source>No quest playing</source>
         <translation>Pas de quête en cours</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="156"/>
+        <location filename="../sources/Controller.cpp" line="32"/>
         <source>Do you want to remove this Solarus Quest?</source>
-        <translation>Voulez-vous supprimer cette quête Solarus ?</translation>
+        <translation>Voulez-vous supprimer cette quête Solarus&#xa0;?</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="159"/>
+        <location filename="../sources/Controller.cpp" line="35"/>
         <source>The quest will be removed from Solarus Launcher index, but will be kept on disk.</source>
         <translation>Cette quête sera désindexée de Solarus Launcher, mais conservée sur le disque.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="163"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="26"/>
         <source>Update Available</source>
         <translation>Mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="166"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="29"/>
+        <source>No Update Available</source>
+        <translation>Pas de mise à jour disponible</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/StatusBar.cpp" line="32"/>
         <source>You have %1, %2 is available.</source>
         <translation>Vous avez la version %1, et la version %2 est disponible.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="169"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="35"/>
+        <source>Checking for updates…</source>
+        <translation>Vérification des mises à jour…</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/StatusBar.cpp" line="38"/>
+        <source>Failed to check for updates. Error code: %1</source>
+        <translation>Erreur lors de la vérification des mises à jour. Code d&apos;erreur&#xa0;: %1</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/MenuBar.cpp" line="75"/>
         <source>Check for Updates</source>
         <translation>Vérifier les mises à jour</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="172"/>
+        <location filename="../sources/Controller.cpp" line="39"/>
         <source>About %1</source>
         <translation>À propos de %1</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="175"/>
+        <location filename="../sources/Controller.cpp" line="42"/>
         <source>All rights reserved.</source>
         <translation>Tous droits réservés.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="178"/>
+        <location filename="../sources/Controller.cpp" line="45"/>
         <source>A graphical user interface to launch and manage Solarus quests.</source>
         <translation>Une interface graphique pour jouer et gérer vos quêtes Solarus.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MainWindow.cpp" line="181"/>
+        <location filename="../sources/Controller.cpp" line="48"/>
         <source>Licensed under GPL v3 and CC-BY-SA 4.0.</source>
         <translation>Sous licences GPL v3 et CC-BY-SA 4.0.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="26"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="28"/>
         <source>%1 Preferences</source>
         <translation>Préférences de %1</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="29"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="31"/>
         <source>Application</source>
         <translation>Application</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="32"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="34"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="35"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="37"/>
+        <source>You must restart the application for it to take this change into account.</source>
+        <translation>Vous devrez redémarrer l&apos;application pour que ce soit pris en compte.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="41"/>
         <source>Show Quest Information Panel</source>
         <translation>Afficher le panneau des informations de la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="38"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="44"/>
+        <source>Displays detailed information about the selected Quest.</source>
+        <translation>Affiche les informations détaillées de la quête sélectionnée.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="47"/>
         <source>Show Console</source>
         <translation>Afficher la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="44"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="50"/>
+        <source>Very useful to spot bugs.</source>
+        <translation>Très pratique pour déceler des bugs.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="56"/>
+        <source>Change the app&apos;s look. No need to restart.</source>
+        <translation>Changer l&apos;apparence de l&apos;application. Pas besoin de redémarrer.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="59"/>
         <source>Quests</source>
         <translation>Quêtes</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="47"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="62"/>
         <source>Audio Enabled</source>
         <translation>Audio activé</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="50"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="65"/>
+        <source>Plays the quest audio.</source>
+        <translation>Jouer l&apos;audio des quêtes.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="68"/>
         <source>Force Software Rendering</source>
         <translation>Forcer le rendu logiciel</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="53"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="71"/>
+        <source>Enable this if your machine doesn&apos;t support OpenGL.</source>
+        <translation>Activez ceci si votre ordinateur ne supporte pas OpenGL.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="74"/>
         <source>Full Screen</source>
         <translation>Plein écran</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="56"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="77"/>
+        <source>Start the quest as full screen.</source>
+        <translation>Démarrer les quêtes en plein écran.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="80"/>
         <source>Suspend Quest when unfocused</source>
         <translation>Mettre la quête en pause quand elle n&apos;a pas le focus</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="59"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="83"/>
+        <source>Pauses the game when the window is no longer active.</source>
+        <translation>Met le jeu en pause quand la fenêtre n&apos;est plus active.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="86"/>
         <source>Reset</source>
         <translation>Réinitialiser</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="62"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="89"/>
         <source>Reset to factory defaults.</source>
         <translation>Réinitialiser aux paramètres d&apos;usine.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/Console.cpp" line="19"/>
+        <location filename="../sources/Controller.cpp" line="55"/>
+        <source>Dark</source>
+        <translation>Sombre</translation>
+    </message>
+    <message>
+        <location filename="../sources/Controller.cpp" line="57"/>
+        <source>Light</source>
+        <translation>Clair</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/Console.cpp" line="20"/>
         <source>The quest process failed to start.</source>
         <translation>Le processus de la quête n&apos;a pas pu démarrer.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/Console.cpp" line="21"/>
+        <location filename="../sources/widgets/Console.cpp" line="22"/>
         <source>The quest process crashed.</source>
         <translation>Le processus de la quête s&apos;est arrêté.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/Console.cpp" line="23"/>
+        <location filename="../sources/widgets/Console.cpp" line="24"/>
         <source>The quest process timed out.</source>
         <translation>Le processus de la quête a expiré.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/Console.cpp" line="29"/>
+        <location filename="../sources/widgets/Console.cpp" line="30"/>
         <source>An unknown error occurred to the quest process.</source>
         <translation>Une erreur inconnue s&apos;est produite lors du processus de quête.</translation>
     </message>
