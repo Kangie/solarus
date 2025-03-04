@@ -34,6 +34,7 @@
 #include "refactoring.h"
 #include "tileset_model.h"
 #include "view_settings.h"
+#include <QtGlobal>
 #include <QFileDialog>
 #include <QItemSelectionModel>
 #include <QMessageBox>
@@ -1201,15 +1202,25 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(map, &MapModel::layer_range_changed,
           this, &MapEditor::layer_range_changed);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
   connect(ui.world_check_box, &QCheckBox::checkStateChanged,
           this, &MapEditor::world_check_box_changed);
+#else
+  connect(ui.world_check_box, &QCheckBox::stateChanged,
+          this, &MapEditor::world_check_box_changed);
+#endif
   connect(ui.world_field, &QLineEdit::editingFinished,
           this, &MapEditor::change_world_requested);
   connect(map, &MapModel::world_changed,
           this, &MapEditor::update_world_field);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
   connect(ui.floor_check_box, &QCheckBox::checkStateChanged,
           this, &MapEditor::floor_check_box_changed);
+#else
+  connect(ui.floor_check_box, &QCheckBox::stateChanged,
+          this, &MapEditor::floor_check_box_changed);
+#endif
   connect(ui.floor_field, &QSpinBox::editingFinished,
           this, &MapEditor::change_floor_requested);
   connect(map, &MapModel::floor_changed,
