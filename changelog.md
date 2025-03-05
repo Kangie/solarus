@@ -87,6 +87,8 @@ See the migration guide for more detailed instructions.
 * Add methods `npc:get/set_subtype()` (#1398).
 * Add methods `switch:get/set_subtype()` (#1667).
 * Add methods `enemy:get/set_immobilization_duration()` (#463).
+* Add new quest properties: `initial_release_date`, `license`, `languages`,
+`min_players`, `max_players`, `genres`, `age`, `controls`, `dynamic_timestep`, `subpixel_camera`.
 
 ### Solarus launcher GUI changes
 
