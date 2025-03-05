@@ -21,7 +21,7 @@
 #include <cstddef>
 #include <memory>
 #include <string>
-#include <modplug.h>
+#include <libmodplug/modplug.h>
 
 namespace Solarus {
 

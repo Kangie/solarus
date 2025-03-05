@@ -26,7 +26,7 @@
 # This module defines the following cache variables:
 #
 #   MODPLUG_INCLUDE_DIR
-#     The directory containing 'modplug.h'
+#     The directory containing 'libmodplug/modplug.h'
 #   MODPLUG_LIBRARY
 #     The path to the ModPlug library
 #
@@ -38,7 +38,7 @@ pkg_check_modules(PC_MODPLUG QUIET libmodplug)
 # locate ModPlug header
 find_path(MODPLUG_INCLUDE_DIR
   NAMES
-    modplug.h
+    libmodplug/modplug.h
   HINTS
     ENV MODPLUG_DIR
     ${PC_MODPLUG_INCLUDEDIR}
@@ -51,10 +51,6 @@ find_path(MODPLUG_INCLUDE_DIR
     /opt/csw # Blastwave
     /opt
   PATH_SUFFIXES
-    libmodplug
-    modplug
-    include/libmodplug
-    include/modplug
     include
 )
 
