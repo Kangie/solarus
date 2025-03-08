@@ -22,6 +22,7 @@
 
 #include <QApplication>
 #include <QVBoxLayout>
+#include <QShortcut>
 
 #include <oclero/qlementine/utils/WidgetUtils.hpp>
 #include <oclero/qlementine/widgets/Expander.hpp>
@@ -161,6 +162,11 @@ void MainWindow::setupUi() {
   windowLayout->addWidget(_ui.toolBar);
   windowLayout->addWidget(_ui.splitter);
   windowLayout->addWidget(_ui.statusBar);
+
+  auto* closeWindowShortcut = new QShortcut(QKeySequence::StandardKey::Close, this, [this]() {
+    close();
+  });
+  Q_UNUSED(closeWindowShortcut) // make clang-analyzer happy.
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {

@@ -56,6 +56,8 @@ public:
     Button,
   };
 
+  std::function<void()> onButtonClicked;
+
   MessageWidget(QWidget* parent)
     : QStackedWidget(parent) {
     setupUi();
@@ -138,7 +140,10 @@ private:
     button->setDefault(true);
     button->setFixedHeight(20);
     button->setIcon(makeIcon(Icons16::Action_Update));
-
+    QObject::connect(button, &QPushButton::clicked, this, [this]() {
+      if (onButtonClicked)
+        onButtonClicked();
+    });
     addWidget(emptyWidget);
     addWidget(loadingContainer);
     addWidget(temporaryMessageLabel);
@@ -160,20 +165,19 @@ void StatusBar::setupUi() {
   _ui.messageWidget = new MessageWidget(this);
   {
     QObject::connect(_controller->updater(), &BasicUpdater::checkStarted, this, [this]() {
+      _ui.messageWidget->onButtonClicked = nullptr;
       _ui.messageWidget->setCurrentPage(MessageWidget::Page::Loading, i18n::checkingForUpdates());
     });
 
     QObject::connect(
       _controller->updater(), &BasicUpdater::checkFinished, this, [this](const BasicUpdater::Result& result) {
-        clearMessage();
-
         switch (result.status) {
           case BasicUpdater::Status::UpdateAvailable:
             _ui.messageWidget->setCurrentPage(MessageWidget::Page::Button, i18n::updateAvailable(),
               i18n::versionComparison().arg(result.currentVersion, result.newVersion));
-            // QObject::connect(_ui.updateButton, &QPushButton::clicked, this, [this, result]() {
-            //   QDesktopServices::openUrl(result.newVersionDownloadUrl);
-            // });
+            _ui.messageWidget->onButtonClicked = [this, result]() {
+              QDesktopServices::openUrl(result.newVersionDownloadUrl);
+            };
             break;
           case BasicUpdater::Status::NoUpdate:
             _ui.messageWidget->setCurrentPage(MessageWidget::Page::TemporaryMessage, i18n::noUpdateAvailable());

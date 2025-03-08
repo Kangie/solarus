@@ -63,7 +63,7 @@ set_target_properties(qlementine-icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG 20057366b1a521e1132c43025ca2ec81d272dabb #dev
+  GIT_TAG 5f4ea6fd571f53f34e82a77062913a228910a5c5 #dev
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
