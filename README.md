@@ -11,18 +11,7 @@
 
 ## Build Instructions
 
-Be sure to have Qt and Solarus' dependencies installed.
-
-```bash
-brew install cmake ninja sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug physfs glm openal-soft qt@6
-```
-
-CMake presets are provided for ease of use.
-
-```bash
-cmake --preset macos
-cmake --build --preset macos
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions for each supported platform.
 
 ## License
 
