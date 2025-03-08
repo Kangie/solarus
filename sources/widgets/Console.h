@@ -28,6 +28,9 @@ public:
   explicit Console(QWidget* parent = nullptr);
 
   void clear();
+  bool is_empty() const;
+  Q_SIGNAL void empty_changed();
+
   void add_message(const QString& log_level, const QString& message);
   void add_line(const QString& line);
 

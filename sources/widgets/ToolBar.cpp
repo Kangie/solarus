@@ -227,6 +227,11 @@ void ToolBar::setupUi() {
     QObject::connect(searchLineEdit, &QLineEdit::returnPressed, this, [this]() {
       emit _controller->focusOnListViewRequested(Qt::ShortcutFocusReason);
     });
+
+    QObject::connect(
+      _controller, &Controller::focusOnSearchFieldRequested, this, [this, searchLineEdit](Qt::FocusReason reason) {
+        searchLineEdit->setFocus(reason);
+      });
   }
 
   auto* themeWidget = new QWidget(this);

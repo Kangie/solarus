@@ -47,6 +47,7 @@ private:
   Q_SLOT void onReplyReceived(QNetworkReply* reply);
 
 public:
+  bool _checking{ false };
   QNetworkAccessManager* _manager{ nullptr };
 };
 } // namespace solarus::launcher

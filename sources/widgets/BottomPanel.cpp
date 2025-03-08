@@ -107,16 +107,16 @@ void BottomPanel::setupUi() {
 
     consoleToolBarLayout->addStretch();
 
-    auto* clearConsoleButton = new QPushButton(consoleToolBar);
-    clearConsoleButton->setToolTip(i18n::clearConsole());
-    clearConsoleButton->setFocusPolicy(Qt::NoFocus);
-    clearConsoleButton->setIconSize(QSize(12, 12));
-    clearConsoleButton->setFixedSize(18, 18);
-    clearConsoleButton->setFlat(true);
-    clearConsoleButton->setIcon(makeIcon(Icons16::Action_Trash));
-    consoleToolBarLayout->addWidget(clearConsoleButton);
+    _ui.clearConsoleButton = new QPushButton(consoleToolBar);
+    _ui.clearConsoleButton->setToolTip(i18n::clearConsole());
+    _ui.clearConsoleButton->setFocusPolicy(Qt::NoFocus);
+    _ui.clearConsoleButton->setIconSize(QSize(12, 12));
+    _ui.clearConsoleButton->setFixedSize(18, 18);
+    _ui.clearConsoleButton->setFlat(true);
+    _ui.clearConsoleButton->setIcon(makeIcon(Icons16::Action_Trash));
+    consoleToolBarLayout->addWidget(_ui.clearConsoleButton);
 
-    QObject::connect(clearConsoleButton, &QPushButton::clicked, this, [this]() {
+    QObject::connect(_ui.clearConsoleButton, &QPushButton::clicked, this, [this]() {
       _ui.console->clear();
     });
 
@@ -151,6 +151,11 @@ void BottomPanel::setupUi() {
     _ui.console->setMinimumHeight(100);
     _ui.console->set_quest_runner(_controller->runner());
     consoleContainerLayout->addWidget(_ui.console);
+
+    _ui.clearConsoleButton->setVisible(!_ui.console->is_empty());
+    QObject::connect(_ui.console, &Console::empty_changed, this, [this]() {
+      _ui.clearConsoleButton->setVisible(!_ui.console->is_empty());
+    });
   }
 }
 } // namespace solarus::launcher

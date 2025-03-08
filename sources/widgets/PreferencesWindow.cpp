@@ -103,21 +103,37 @@ QString languageName(const QString& langCode) {
   return result;
 }
 
+QIcon languageIcon(const QString& langCode) {
+  constexpr auto flagsDirPath = ":/solarus/launcher/resources/flags/";
+  static const auto mapping = QMap<QString, QString>{
+    { "en_US", "en.svg" },
+    { "fr_FR", "fr.svg" },
+  };
+  const auto svgFileName = mapping.value(langCode);
+  return svgFileName.isEmpty() ? QIcon() : QIcon(flagsDirPath + svgFileName);
+}
+
 QWidget* makeRowLabel(const QString& label, const QString& caption, QWidget* parent) {
   auto* container = new QWidget(parent);
-  container->setMaximumWidth(250);
+  container->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+  container->setFixedWidth(224);
   auto* layout = new QVBoxLayout(container);
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(4);
 
   auto* qLabel = new QLabel(label, container);
+  qLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   qLabel->setWordWrap(true);
   layout->addWidget(qLabel);
 
   auto* captionLabel = new oclero::qlementine::Label(caption, oclero::qlementine::TextRole::Caption, container);
   captionLabel->setWordWrap(true);
-  captionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  captionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  captionLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
   layout->addWidget(captionLabel);
+
+  layout->addStretch();
+
   return container;
 }
 } // namespace
@@ -147,7 +163,7 @@ PreferencesWindow::PreferencesWindow(Controller* controller, QWidget* parent)
 
   setupUi();
   ensurePolished();
-  const auto sh = sizeHint() + QSize(0, 40);
+  const auto sh = sizeHint(); // + QSize(0, 40);
   setFixedWidth(sh.width());
   setMaximumHeight(sh.height());
   setMinimumHeight(200);
@@ -173,8 +189,9 @@ void PreferencesWindow::setupUi() {
   scrollArea->setWidget(scrollAreaContent);
 
   auto* formLayout = new QFormLayout(scrollAreaContent);
-  formLayout->setContentsMargins(32, 16, 32, 16);
+  formLayout->setContentsMargins(32, 16, 32, 32);
   formLayout->setHorizontalSpacing(32);
+  formLayout->setVerticalSpacing(16);
   formLayout->setRowWrapPolicy(QFormLayout::RowWrapPolicy::DontWrapRows);
   scrollAreaContent->setLayout(formLayout);
 
@@ -186,10 +203,12 @@ void PreferencesWindow::setupUi() {
   }
   {
     auto* languageComboBox = new QComboBox(this);
+    if (auto* qlementine = qobject_cast<oclero::qlementine::QlementineStyle*>(languageComboBox->style())) {
+      qlementine->setAutoIconColor(languageComboBox, oclero::qlementine::AutoIconColor::None);
+    }
     languageComboBox->setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy::AdjustToContents);
-    const auto icon = makeIcon(Icons16::Misc_Comment);
     for (const auto& lang : std::as_const(_controller->languages())) {
-      languageComboBox->addItem(icon, languageName(lang), QVariant(lang));
+      languageComboBox->addItem(languageIcon(lang), languageName(lang), QVariant(lang));
     }
 
     const auto currentLanguage = _controller->preferences()->appLanguage();
@@ -257,7 +276,7 @@ void PreferencesWindow::setupUi() {
     });
   }
   {
-    formLayout->addItem(new QSpacerItem(0, 16, QSizePolicy::Fixed, QSizePolicy::Fixed));
+    formLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
   }
   {
     auto* title = new oclero::qlementine::Label(this);
@@ -327,9 +346,6 @@ void PreferencesWindow::setupUi() {
         const auto value = _controller->preferences()->questSuspendWhenUnfocused();
         suspendSwitch->setChecked(value);
       });
-  }
-  {
-    formLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
   }
   {
     auto* container = new BottomWidget(this);

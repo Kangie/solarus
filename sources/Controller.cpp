@@ -264,10 +264,9 @@ void Controller::openSourceCodePage() {
 }
 
 void Controller::checkForUpdates() {
-  _updater->checkForUpdates("https://gitlab.com/api/v4/projects/6933864/releases/v1.1.2"
-    //"https://gitlab.com/api/v4/projects/6933864/releases/permalink/latest",
-    //PROJECT_LINKS_UPDATE_ENDPOINT
-  );
+  //"https://gitlab.com/api/v4/projects/6933864/releases/permalink/latest",
+  //PROJECT_LINKS_UPDATE_ENDPOINT
+  _updater->checkForUpdates("https://gitlab.com/api/v4/projects/6933864/releases/v1.1.2-");
 }
 
 const QStringList& Controller::languages() const {

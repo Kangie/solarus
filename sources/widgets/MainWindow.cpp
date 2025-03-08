@@ -152,12 +152,8 @@ void MainWindow::setupUi() {
   });
 
   // Restore geometry from settings.
+  _ui.bottomPanel->setVisible(_controller->preferences()->appConsoleVisible());
   _ui.splitter->restoreState(_controller->preferences()->windowSplitterState());
-  if (_ui.splitter->sizes().at(1) == 0) {
-    _ui.bottomPanel->setVisible(false);
-  } else {
-    _ui.bottomPanel->setVisible(true);
-  }
 
   _ui.statusBar = new StatusBar(_controller, this);
 

@@ -63,7 +63,7 @@ set_target_properties(qlementine-icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG 96b659c724debeb07a19e0d031c87da06ee8828a #v1.1.2
+  GIT_TAG 20057366b1a521e1132c43025ca2ec81d272dabb #dev
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -111,6 +111,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/s
 qt_add_resources(${PROJECT_NAME} "resources"
   PREFIX "/solarus/launcher/"
   FILES
+    # resources/flags/de.svg
+    resources/flags/en.svg
+    # resources/flags/es.svg
+    resources/flags/fr.svg
+    # resources/flags/it.svg
+    # resources/flags/pt.svg
+    # resources/flags/ru.svg
+    # resources/flags/zh.svg
     resources/icon/solarus_launcher_icon_16.png
     resources/icon/solarus_launcher_icon_20.png
     resources/icon/solarus_launcher_icon_32.png

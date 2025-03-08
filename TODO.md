@@ -1,3 +1,3 @@
 - JSON themes with Solarus colors
 - Windows installer
-- Improve the status bar when checking for update
+- QSortFilterProxyModel: index from wrong model passed to mapToSource

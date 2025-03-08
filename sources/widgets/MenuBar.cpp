@@ -130,7 +130,7 @@ void MenuBar::setupUi() {
 
     fileMenu->addAction(
       makeIcon(Icons16::Navigation_Search, macOS), i18n::search(), QKeySequence::StandardKey::Find, [this]() {
-        emit _controller->focusOnListViewRequested(Qt::ShortcutFocusReason);
+        emit _controller->focusOnSearchFieldRequested(Qt::ShortcutFocusReason);
       });
 
     fileMenu->addSeparator();

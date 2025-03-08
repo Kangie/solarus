@@ -78,11 +78,15 @@ BasicUpdater::BasicUpdater(QObject* parent)
 }
 
 void BasicUpdater::checkForUpdates(const QString& endpoint) {
-  const auto url = QUrl(endpoint);
-  auto request = QNetworkRequest(url);
-  request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::SameOriginRedirectPolicy);
-  request.setTransferTimeout(3000);
-  _manager->get(request);
+  if (!_checking) {
+    _checking = true;
+    emit checkStarted();
+    const auto url = QUrl(endpoint);
+    auto request = QNetworkRequest(url);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::SameOriginRedirectPolicy);
+    request.setTransferTimeout(5000);
+    _manager->get(request);
+  }
 }
 
 void BasicUpdater::doUpdate() {
@@ -90,6 +94,7 @@ void BasicUpdater::doUpdate() {
 }
 
 void BasicUpdater::onReplyReceived(QNetworkReply* reply) {
+  _checking = false;
   const auto error = reply->error();
   if (error == QNetworkReply::NoError) {
     const auto responseData = reply->readAll();

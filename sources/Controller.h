@@ -47,6 +47,7 @@ public:
   static QString themeName(const QString& themeName);
 
   Q_SIGNAL void focusOnListViewRequested(Qt::FocusReason reason);
+  Q_SIGNAL void focusOnSearchFieldRequested(Qt::FocusReason reason);
 
   Preferences* preferences();
   QuestListModel* model();

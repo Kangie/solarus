@@ -170,6 +170,14 @@ void Console::clear() {
   ui.log_view->clear();
   raw_content.clear();
   last_new_message_index = -1;
+  emit empty_changed();
+}
+
+/**
+ * @brief Returns true if the console does not contain any text, false otherwise.
+ */
+bool Console::is_empty() const {
+  return ui.log_view->document()->isEmpty();
 }
 
 /**
@@ -179,7 +187,7 @@ void Console::clear() {
  */
 void Console::add_message(const QString& log_level, const QString& message) {
   QStringList lines = message.split("\n");
-  for (QString line : lines) {
+  for (QString line : std::as_const(lines)) {
     if (!line.isEmpty()) {
       line = log_level + ": " + line;
     }
@@ -200,11 +208,15 @@ void Console::add_line(const QString& line) {
  * @brief Formats and shows lines that are not yet in the console.
  */
 void Console::update_ui_with_new_messages() {
+  const auto is_empty = this->is_empty();
   while (raw_content.size() > last_new_message_index + 1) {
     ++last_new_message_index;
     QString raw_line = raw_content.at(last_new_message_index);
     const QString& wrapped = QString("<pre>%1</pre>").arg(colorize_line(raw_line));
     ui.log_view->appendHtml(wrapped);
+  }
+  if (is_empty != this->is_empty()) {
+    emit empty_changed();
   }
 }
 

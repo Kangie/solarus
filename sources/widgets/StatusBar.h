@@ -6,9 +6,11 @@
 
 class QPushButton;
 class QLabel;
+class QStackedWidget;
 
 namespace solarus::launcher {
 class Controller;
+class MessageWidget;
 
 class StatusBar : public QStatusBar {
   Q_OBJECT
@@ -23,8 +25,8 @@ private:
 private:
   QPointer<Controller> _controller;
   struct {
-    QPushButton* updateButton;
-    QLabel* questCountLabel;
+    MessageWidget* messageWidget{ nullptr };
+    QLabel* questCountLabel{ nullptr };
   } _ui;
 };
 } // namespace solarus::launcher

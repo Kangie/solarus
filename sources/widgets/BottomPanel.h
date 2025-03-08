@@ -2,6 +2,8 @@
 #include <QWidget>
 #include <QPointer>
 
+class QPushButton;
+
 namespace solarus::launcher {
 class Console;
 class Controller;
@@ -20,6 +22,7 @@ private:
   QPointer<Controller> _controller;
   struct {
     Console* console{ nullptr };
+    QPushButton* clearConsoleButton{ nullptr };
   } _ui;
 };
 } // namespace solarus::launcher
