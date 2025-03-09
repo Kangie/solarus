@@ -85,7 +85,7 @@
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="63"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="66"/>
         <location filename="../sources/widgets/QuestListView.cpp" line="22"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="45"/>
         <source>Play Quest</source>
@@ -102,30 +102,30 @@
         <translation>Arrêter la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="66"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="69"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="57"/>
         <source>Show/Hide Quest Information</source>
         <translation>Afficher/Masquer les informations sur la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="69"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="72"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="60"/>
         <source>Show/Hide Quest Console</source>
         <translation>Afficher/Masquer la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="72"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="75"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="51"/>
         <source>Search…</source>
         <translation>Rechercher…</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/StatusBar.cpp" line="20"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="22"/>
         <source>No Quest added</source>
         <translation>Pas de quêtes ajoutées</translation>
     </message>
     <message numerus="yes">
-        <location filename="../sources/widgets/StatusBar.cpp" line="23"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="25"/>
         <source>%n Quest(s) added</source>
         <translation>
             <numerusform>%n quêtes ajoutées</numerusform>
@@ -181,7 +181,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="51"/>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="53"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="54"/>
         <source>Theme</source>
         <translation>Thème</translation>
     </message>
@@ -195,6 +195,11 @@
         <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
         <source>Open Containing Folder</source>
         <translation>Ouvrir le dossier contenant</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/MenuBar.cpp" line="63"/>
+        <source>Reload Quests</source>
+        <translation>Recharger les quêtes</translation>
     </message>
     <message>
         <location filename="../sources/Controller.cpp" line="51"/>
@@ -232,32 +237,32 @@
         <translation>Cette quête sera désindexée de Solarus Launcher, mais conservée sur le disque.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/StatusBar.cpp" line="26"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="28"/>
         <source>Update Available</source>
         <translation>Mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/StatusBar.cpp" line="29"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="31"/>
         <source>No Update Available</source>
         <translation>Pas de mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/StatusBar.cpp" line="32"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="34"/>
         <source>You have %1, %2 is available.</source>
         <translation>Vous avez la version %1, et la version %2 est disponible.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/StatusBar.cpp" line="35"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="37"/>
         <source>Checking for updates…</source>
         <translation>Vérification des mises à jour…</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/StatusBar.cpp" line="38"/>
+        <location filename="../sources/widgets/StatusBar.cpp" line="40"/>
         <source>Failed to check for updates. Error code: %1</source>
         <translation>Erreur lors de la vérification des mises à jour. Code d&apos;erreur&#xa0;: %1</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="75"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="78"/>
         <source>Check for Updates</source>
         <translation>Vérifier les mises à jour</translation>
     </message>
@@ -282,102 +287,102 @@
         <translation>Sous licences GPL v3 et CC-BY-SA 4.0.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="28"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="29"/>
         <source>%1 Preferences</source>
         <translation>Préférences de %1</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="31"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="32"/>
         <source>Application</source>
         <translation>Application</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="34"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="35"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="37"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="38"/>
         <source>You must restart the application for it to take this change into account.</source>
         <translation>Vous devrez redémarrer l&apos;application pour que ce soit pris en compte.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="41"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="42"/>
         <source>Show Quest Information Panel</source>
         <translation>Afficher le panneau des informations de la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="44"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="45"/>
         <source>Displays detailed information about the selected Quest.</source>
         <translation>Affiche les informations détaillées de la quête sélectionnée.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="47"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="48"/>
         <source>Show Console</source>
         <translation>Afficher la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="50"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="51"/>
         <source>Very useful to spot bugs.</source>
         <translation>Très pratique pour déceler des bugs.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="56"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="57"/>
         <source>Change the app&apos;s look. No need to restart.</source>
         <translation>Changer l&apos;apparence de l&apos;application. Pas besoin de redémarrer.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="59"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="60"/>
         <source>Quests</source>
         <translation>Quêtes</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="62"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="63"/>
         <source>Audio Enabled</source>
         <translation>Audio activé</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="65"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="66"/>
         <source>Plays the quest audio.</source>
         <translation>Jouer l&apos;audio des quêtes.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="68"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="69"/>
         <source>Force Software Rendering</source>
         <translation>Forcer le rendu logiciel</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="71"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="72"/>
         <source>Enable this if your machine doesn&apos;t support OpenGL.</source>
         <translation>Activez ceci si votre ordinateur ne supporte pas OpenGL.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="74"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="75"/>
         <source>Full Screen</source>
         <translation>Plein écran</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="77"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="78"/>
         <source>Start the quest as full screen.</source>
         <translation>Démarrer les quêtes en plein écran.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="80"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="81"/>
         <source>Suspend Quest when unfocused</source>
         <translation>Mettre la quête en pause quand elle n&apos;a pas le focus</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="83"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="84"/>
         <source>Pauses the game when the window is no longer active.</source>
         <translation>Met le jeu en pause quand la fenêtre n&apos;est plus active.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="86"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="87"/>
         <source>Reset</source>
         <translation>Réinitialiser</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="89"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="90"/>
         <source>Reset to factory defaults.</source>
         <translation>Réinitialiser aux paramètres d&apos;usine.</translation>
     </message>
@@ -410,6 +415,41 @@
         <location filename="../sources/widgets/Console.cpp" line="30"/>
         <source>An unknown error occurred to the quest process.</source>
         <translation>Une erreur inconnue s&apos;est produite lors du processus de quête.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="23"/>
+        <source>All</source>
+        <translation>Tous publics</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="25"/>
+        <source>Restricted</source>
+        <translation>Déconseillé aux mineurs</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="27"/>
+        <source>Warning</source>
+        <translation>Déconseillé aux enfants</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="36"/>
+        <source>Joypad</source>
+        <translation>Manette</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="38"/>
+        <source>Keyboard</source>
+        <translation>Clavier</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="40"/>
+        <source>Mouse</source>
+        <translation>Souris</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="42"/>
+        <source>Other</source>
+        <translation>Autre</translation>
     </message>
 </context>
 </TS>

@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 
-#include <QObject>
 #include <QFlags>
+#include <QIcon>
+#include <QObject>
+#include <QString>
 
 namespace solarus::launcher {
 class Common {
@@ -10,6 +12,7 @@ class Common {
 
 public:
   enum class AgeRating {
+    Unknown,
     All,
     Warning,
     Restricted,
@@ -26,6 +29,11 @@ public:
   Q_ENUM(Control)
   Q_DECLARE_FLAGS(Controls, Control)
   Q_FLAG(Controls)
+
+  static QIcon ageIcon(const AgeRating value);
+
+  static QString languageName(const QString& langCode);
+  static QIcon languageIcon(const QString& langCode);
 
 private:
   Common() = delete;

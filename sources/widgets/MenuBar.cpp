@@ -59,6 +59,9 @@ static QString showContaingFolder() {
 static QString removeQuest() {
   return QApplication::translate("SolarusLauncher", "Remove Quest");
 }
+static QString reloadQuestsAction() {
+  return QApplication::translate("SolarusLauncher", "Reload Quests");
+}
 static QString playQuest() {
   return QApplication::translate("SolarusLauncher", "Play Quest");
 }
@@ -115,6 +118,11 @@ void MenuBar::setupUi() {
     QObject::connect(
       _controller->model(), &QuestListModel::currentQuestChanged, this, [removeQuestAction](const QModelIndex& index) {
         removeQuestAction->setEnabled(index.isValid());
+      });
+
+    fileMenu->addAction(makeIcon(Icons16::Action_Refresh, macOS), i18n::reloadQuestsAction(),
+      QKeySequence(Qt::SHIFT | Qt::Key_R), [this]() {
+        _controller->loadQuests();
       });
 
     fileMenu->addSeparator();

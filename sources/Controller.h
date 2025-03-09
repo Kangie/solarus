@@ -23,6 +23,7 @@ public:
   explicit Controller(QObject* parent = nullptr);
   virtual ~Controller() = default;
 
+  void loadQuests();
   void openAddQuestDialog();
   void openAddFolderDialog();
   void openPreferencesDialog();

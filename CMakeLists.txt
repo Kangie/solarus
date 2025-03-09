@@ -79,7 +79,7 @@ if(SOLARUS_FETCHCONTENT)
   set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG 6c314e665af9e927c9d83a1661389f8a34a2d671 #new-launcher
+    GIT_TAG b0aeefdae8c80b3cf91614d68c4b264640c4265b #new-launcher
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
@@ -135,6 +135,9 @@ qt_add_resources(${PROJECT_NAME} "resources"
     resources/icon/solarus_launcher_icon.svg
     resources/themes/dark.json
     resources/themes/light.json
+    resources/age_ratings/all.svg
+    resources/age_ratings/restricted.svg
+    resources/age_ratings/warning.svg
 )
 
 qt_add_translations(

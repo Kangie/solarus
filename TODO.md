@@ -1,3 +1,3 @@
 - JSON themes with Solarus colors
 - Windows installer
-- QSortFilterProxyModel: index from wrong model passed to mapToSource
+- QSortFilterProxyModel: index from wrong model passed to mapToSource --> quest sync issues

@@ -47,6 +47,11 @@ MainWindow::MainWindow(Controller* controller, QWidget* parent)
   QTimer::singleShot(1000, this, [this]() {
     _controller->checkForUpdates();
   });
+
+  // Load quests.
+  QTimer::singleShot(0, this, [this]() {
+    _controller->loadQuests();
+  });
 }
 
 void MainWindow::setAppIcon() {

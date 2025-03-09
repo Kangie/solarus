@@ -97,8 +97,11 @@ Controller::Controller(QObject* parent)
   setupThemeManager();
   loadLanguages();
 
-  // TMP
-  _model->addQuestFolder("/Users/oclero/Documents/Solarus/Quests");
+  // Save/load quest list from settings.
+  QObject::connect(_model, &QuestListModel::questListChanged, this, [this]() {
+    const auto questPathList = _model->questPathList();
+    _preferences->setQuestList(questPathList);
+  });
 }
 
 void Controller::setupThemeManager() {
@@ -149,24 +152,32 @@ void Controller::loadLanguages() {
   // QLocale::setDefault(locale);
 }
 
+void Controller::loadQuests() {
+  _model->setQuestPathList(_preferences->questList());
+}
+
 void Controller::openAddQuestDialog() {
   QTimer::singleShot(0, this, [this]() {
-    const auto defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    const auto filePath = QFileDialog::getOpenFileName(
-      qApp->activeWindow(), i18n::addQuest(), defaultDir, QString("%1 (*.solarus)").arg(i18n::solarusQuests()));
+    static const auto solarusFiles = QString("%1 (*.solarus)");
+    const auto filePath = QFileDialog::getOpenFileName(qApp->activeWindow(), i18n::addQuest(),
+      _preferences->appLastOpenedPath(), solarusFiles.arg(i18n::solarusQuests()));
     if (!filePath.isEmpty()) {
-      _model->addQuest(filePath);
+      QTimer::singleShot(500, this, [this, filePath]() {
+        _model->addQuest(filePath);
+      });
     }
+    _preferences->setAppLastOpenedPath(filePath);
   });
 }
 
 void Controller::openAddFolderDialog() {
   QTimer::singleShot(0, this, [this]() {
-    const auto defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    const auto dirPath = QFileDialog::getExistingDirectory(qApp->activeWindow(), i18n::addQuestFolder(), defaultDir);
+    const auto dirPath = QFileDialog::getExistingDirectory(
+      qApp->activeWindow(), i18n::addQuestFolder(), _preferences->appLastOpenedPath());
     if (!dirPath.isEmpty()) {
       _model->addQuestFolder(dirPath);
     }
+    _preferences->setAppLastOpenedPath(dirPath);
   });
 }
 

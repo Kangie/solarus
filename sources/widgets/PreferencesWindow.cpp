@@ -4,6 +4,7 @@
 #include <Preferences.h>
 #include <Utils.h>
 #include <Controller.h>
+#include <Common.h>
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -91,27 +92,6 @@ static QString resetTooltip() {
 } // namespace i18n
 
 namespace {
-QString languageName(const QString& langCode) {
-  const auto locale = QLocale(langCode);
-  auto result = locale.nativeLanguageName();
-  if (!result.isEmpty()) {
-    result[0] = result[0].toUpper();
-  }
-  if (result == "American English") {
-    result = "English";
-  }
-  return result;
-}
-
-QIcon languageIcon(const QString& langCode) {
-  constexpr auto flagsDirPath = ":/solarus/launcher/resources/flags/";
-  static const auto mapping = QMap<QString, QString>{
-    { "en_US", "en.svg" },
-    { "fr_FR", "fr.svg" },
-  };
-  const auto svgFileName = mapping.value(langCode);
-  return svgFileName.isEmpty() ? QIcon() : QIcon(flagsDirPath + svgFileName);
-}
 
 QWidget* makeRowLabel(const QString& label, const QString& caption, QWidget* parent) {
   auto* container = new QWidget(parent);
@@ -208,7 +188,7 @@ void PreferencesWindow::setupUi() {
     }
     languageComboBox->setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy::AdjustToContents);
     for (const auto& lang : std::as_const(_controller->languages())) {
-      languageComboBox->addItem(languageIcon(lang), languageName(lang), QVariant(lang));
+      languageComboBox->addItem(Common::languageIcon(lang), Common::languageName(lang), QVariant(lang));
     }
 
     const auto currentLanguage = _controller->preferences()->appLanguage();

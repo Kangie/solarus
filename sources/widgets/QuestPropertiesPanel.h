@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 
-#include <QWidget>
+#include <QScrollArea>
 
 class QLabel;
 class QTableView;
+class QModelIndex;
 
 namespace solarus::launcher {
 class QuestPropsModel;
 class QuestListModel;
 
-class QuestPropertiesPanel : public QWidget {
+class QuestPropertiesPanel : public QScrollArea {
   Q_OBJECT
 
 public:
@@ -19,10 +20,12 @@ public:
 
 private:
   void setupUi();
+  void updateUi(const QModelIndex& index);
 
 private:
   QuestListModel* _model{ nullptr };
   QLabel* _thumbnailLabel{ nullptr };
+  QLabel* _descriptionLabel{ nullptr };
   QTableView* _tableView{ nullptr };
   QuestPropsModel* _tableModel{ nullptr };
 };

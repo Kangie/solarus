@@ -33,10 +33,14 @@ public: // App preferences.
   void setAppTheme(const QString& value);
   Q_SIGNAL void appThemeChanged();
 
-  QStringList appQuestList() const;
+  QStringList questList() const;
   void setQuestList(const QStringList& value);
   void addQuestToList(const QString& value);
-  Q_SIGNAL void appQuestListChanged();
+  Q_SIGNAL void questListChanged();
+
+  QString appLastOpenedPath() const;
+  void setAppLastOpenedPath(const QString& path);
+  Q_SIGNAL void appLastOpenedPathChanged();
 
 public: // Window preferences.
   QByteArray windowGeometry() const;

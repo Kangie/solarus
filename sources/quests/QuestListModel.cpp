@@ -46,7 +46,7 @@ QPixmap getThumnailFromLogo(const QPixmap& logo) {
 
   constexpr auto thumbnailW = 700;
   constexpr auto thumbnailH = 360;
-  constexpr auto thumbnailPadding = -30;
+  constexpr auto thumbnailPadding = 8;
   constexpr auto logoW = thumbnailW - thumbnailPadding * 2;
   constexpr auto logoH = thumbnailH - thumbnailPadding * 2;
 
@@ -56,7 +56,8 @@ QPixmap getThumnailFromLogo(const QPixmap& logo) {
   QPainter p(&result);
   p.setRenderHint(QPainter::Antialiasing, true);
 
-  const auto resizedLogo = logo.scaled(logoW, logoH, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  const auto newSize = (QSizeF(logoW, logoH) * logo.devicePixelRatioF()).toSize();
+  const auto resizedLogo = logo.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
   const auto resizedLogoSize = resizedLogo.deviceIndependentSize();
   const auto logoX = (thumbnailW - resizedLogoSize.width()) / 2.;
   const auto logoY = (thumbnailH - resizedLogoSize.height()) / 2.;
@@ -115,7 +116,7 @@ void initializeFromProperties(QuestData& questData, const Solarus::QuestProperti
     QDate::fromString(QString::fromStdString(properties.get_release_date()), QStringLiteral("yyyyMMdd"));
   questData.description = QString::fromStdString(properties.get_long_description());
   questData.version = QVersionNumber::fromString(QString::fromStdString(properties.get_quest_version()));
-  questData.engineVersion = QVersionNumber::fromString(QString::fromStdString(properties.get_quest_version()));
+  questData.engineVersion = QVersionNumber::fromString(QString::fromStdString(properties.get_solarus_version()));
   questData.licenses =
     QString::fromStdString(properties.get_license()).split(listSplitRE, Qt::SplitBehaviorFlags::SkipEmptyParts);
   questData.minPlayers = properties.get_min_players();
@@ -188,7 +189,7 @@ void QuestListModel::addQuest(const QString& path) {
 
   // Check if already in the list. If not, add it. Else, replace it.
   const auto it = std::find_if(_quests.begin(), _quests.end(), [&questData](const QuestData& other) {
-    return other.id == questData.id || other.path == questData.path;
+    return /*other.id == questData.id ||*/ other.path == questData.path;
   });
   if (it == _quests.end()) {
     _watcher->addPath(path);
@@ -205,6 +206,8 @@ void QuestListModel::addQuest(const QString& path) {
     const auto modelIndex = index(row);
     emit dataChanged(modelIndex, modelIndex);
   }
+
+  emit questListChanged();
 }
 
 void QuestListModel::addQuestFolder(const QString& path) {
@@ -221,19 +224,8 @@ void QuestListModel::addQuestFolder(const QString& path) {
 }
 
 void QuestListModel::removeQuest(const QString& path) {
-  const auto it = std::find_if(_quests.begin(), _quests.end(), [&path](const QuestData& other) {
-    return other.path == path;
-  });
-  if (it != _quests.end()) {
-    _watcher->removePath(path);
-
-    const auto row = std::distance(_quests.begin(), it);
-    beginRemoveRows({}, row, row);
-    _quests.removeAt(row);
-    endRemoveRows();
-
-    emit rowCountChanged();
-  }
+  const auto index = questOfPath(path);
+  removeQuest(index);
 }
 
 void QuestListModel::removeQuest(const QModelIndex& index) {
@@ -247,6 +239,7 @@ void QuestListModel::removeQuest(const QModelIndex& index) {
     endRemoveRows();
 
     emit rowCountChanged();
+    emit questListChanged();
   }
 }
 
@@ -306,5 +299,37 @@ void QuestListModel::setCurrentQuest(const QModelIndex& index) {
 
 QSortFilterProxyModel* QuestListModel::proxyModel() {
   return _proxyModel;
+}
+
+QModelIndex QuestListModel::questOfPath(const QString& path) const {
+  const auto it = std::find_if(_quests.begin(), _quests.end(), [&path](const QuestData& other) {
+    return other.path == path;
+  });
+
+  if (it != _quests.end()) {
+    const auto row = std::distance(_quests.begin(), it);
+    return index(row);
+  }
+
+  return {};
+}
+
+QStringList QuestListModel::questPathList() const {
+  QStringList result(_quests.count());
+  for (auto i = 0; i <result.count(); ++i) {
+    result[i] = _quests.at(i).path;
+  }
+  return result;
+}
+
+void QuestListModel::setQuestPathList(const QStringList& list) {
+  beginResetModel();
+  for (const auto& path : std::as_const(list)) {
+    QSignalBlocker _(this);
+    addQuest(path);
+  }
+  endResetModel();
+  emit rowCountChanged();
+  emit questListChanged();
 }
 } // namespace solarus::launcher

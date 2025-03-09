@@ -2,6 +2,7 @@
 #include <Preferences.h>
 
 #include <QGuiApplication>
+#include <QStandardPaths>
 
 namespace solarus::launcher {
 namespace {
@@ -10,6 +11,7 @@ constexpr auto key_appPropertiesPanelVisible{ "app/propertiesPanelVisible" };
 constexpr auto key_appConsoleVisible{ "app/appConsoleVisible" };
 constexpr auto key_appTheme{ "app/theme" };
 constexpr auto key_appQuestList{ "app/questList" };
+constexpr auto key_appLastOpenedPath{ "app/lastOpenedPath" };
 
 constexpr auto key_windowGeometry{ "window/geometry" };
 constexpr auto key_windowSplitterState{ "window/splitterState" };
@@ -28,6 +30,8 @@ constexpr auto default_questForceSoftwareRendering{ false };
 constexpr auto default_questFullScreen{ false };
 constexpr auto default_questEnableAudio{ true };
 constexpr auto default_questSuspendWhenUnfocused{ true };
+
+static const auto default_lastOpenedPath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
 
 QString applicationName() {
 #if defined(Q_OS_WIN)
@@ -110,23 +114,34 @@ void Preferences::setAppTheme(const QString& value) {
   }
 }
 
-QStringList Preferences::appQuestList() const {
+QStringList Preferences::questList() const {
   return _qSettings.value(key_appQuestList, QStringList{}).toStringList();
 }
 
 void Preferences::setQuestList(const QStringList& value) {
-  if (value != appQuestList()) {
+  if (value != questList()) {
     _qSettings.setValue(key_appQuestList, value);
-    emit appQuestListChanged();
+    emit questListChanged();
   }
 }
 
 void Preferences::addQuestToList(const QString& value) {
-  auto list = appQuestList();
+  auto list = questList();
   if (!list.contains(value)) {
     list.append(value);
     _qSettings.setValue(key_appQuestList, list);
-    emit appQuestListChanged();
+    emit questListChanged();
+  }
+}
+
+QString Preferences::appLastOpenedPath() const {
+  return _qSettings.value(key_appLastOpenedPath, default_lastOpenedPath).toString();
+}
+
+void Preferences::setAppLastOpenedPath(const QString& value) {
+  if (value != appLastOpenedPath()) {
+    _qSettings.setValue(key_appLastOpenedPath, value);
+    emit appLastOpenedPathChanged();
   }
 }
 

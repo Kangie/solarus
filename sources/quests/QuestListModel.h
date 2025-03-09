@@ -32,12 +32,18 @@ public:
 
   QSortFilterProxyModel* proxyModel();
 
+  QModelIndex questOfPath(const QString& path) const;
+
+  QStringList questPathList() const;
+  void setQuestPathList(const QStringList& list);
+
 public:
   int rowCount(const QModelIndex& parent) const override;
   QVariant data(const QModelIndex& index, int role) const override;
 
 signals:
   void rowCountChanged();
+  void questListChanged();
 
 private:
   QList<QuestData> _quests;

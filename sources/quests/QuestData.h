@@ -27,7 +27,7 @@ struct QuestData {
   uint maxPlayers{ 0 };
   QStringList genres;
   QUrl website;
-  Common::AgeRating ageRating{ Common::AgeRating::All };
+  Common::AgeRating ageRating{ Common::AgeRating::Unknown };
   Common::Controls controls{ Common::Control::None };
   QString id;
   QPixmap thumbnail;
