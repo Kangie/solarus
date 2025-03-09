@@ -12,10 +12,37 @@
 #include <QScrollArea>
 #include <QApplication>
 #include <QScrollBar>
+#include <QStyledItemDelegate>
+#include <QPainter>
+#include <QMouseEvent>
+#include <QDesktopServices>
 
 #include <oclero/qlementine/style/QlementineStyle.hpp>
+#include <oclero/qlementine/utils/StateUtils.hpp>
 
 namespace solarus::launcher {
+enum TableColumn {
+  Value,
+  ColumnCount,
+};
+
+enum TableRow {
+  Title,
+  Authors,
+  InitialReleaseDate,
+  LatestReleaseDate,
+  Version,
+  EngineVersion,
+  Licenses,
+  Languages,
+  Players,
+  Genres,
+  Website,
+  Age,
+  Controls,
+  RowCount,
+};
+
 namespace i18n {
 static QString ageToString(const Common::AgeRating value) {
   switch (value) {
@@ -44,8 +71,42 @@ static QString controlToString(const Common::Control value) {
       return "";
   }
 }
+
+static QString tableRowHeader(const int row) {
+  switch (row) {
+    case TableRow::Title:
+      return QApplication::translate("SolarusLauncher", "Title");
+    case TableRow::Authors:
+      return QApplication::translate("SolarusLauncher", "Authors");
+    case TableRow::InitialReleaseDate:
+      return QApplication::translate("SolarusLauncher", "Release Date");
+    case TableRow::LatestReleaseDate:
+      return QApplication::translate("SolarusLauncher", "Latest Update");
+    case TableRow::Version:
+      return QApplication::translate("SolarusLauncher", "Version");
+    case TableRow::EngineVersion:
+      return QApplication::translate("SolarusLauncher", "Solarus Version");
+    case TableRow::Licenses:
+      return QApplication::translate("SolarusLauncher", "License");
+    case TableRow::Languages:
+      return QApplication::translate("SolarusLauncher", "Languages");
+    case TableRow::Players:
+      return QApplication::translate("SolarusLauncher", "Players");
+    case TableRow::Genres:
+      return QApplication::translate("SolarusLauncher", "Genres");
+    case TableRow::Website:
+      return QApplication::translate("SolarusLauncher", "Website");
+    case TableRow::Age:
+      return QApplication::translate("SolarusLauncher", "Age");
+    case TableRow::Controls:
+      return QApplication::translate("SolarusLauncher", "Controls");
+    default:
+      return QString();
+  }
+}
 } // namespace i18n
 
+namespace {
 static QString controlsToString(const Common::Controls controls) {
   QStringList strings;
   for (const auto control : {
@@ -65,37 +126,103 @@ static QString playersToString(const int minPlayers, const int maxPlayers) {
   return maxPlayers == minPlayers ? (maxPlayers > 0 ? QString::number(maxPlayers) : QString())
                                   : QString("%1-%2").arg(minPlayers, maxPlayers);
 }
+} // namespace
 
-static QString makeHtmlLink(const QUrl& url) {
-  return url.isEmpty() ? QString() : QString("<a href=\"%1\">%1</a>").arg(url.toString());
-}
+class LinkDelegate : public QStyledItemDelegate {
+private:
+  QModelIndex pressedIndex;
+
+public:
+  explicit LinkDelegate(QObject* parent = nullptr)
+    : QStyledItemDelegate(parent) {}
+
+  void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override {
+    auto linkColor = option.palette.link().color();
+    if (const auto* qlementine = qobject_cast<oclero::qlementine::QlementineStyle*>(option.widget->style())) {
+      // const auto mouseOver = option.state.testFlag(QStyle::State_MouseOver);
+      const auto mouse = oclero::qlementine::getMouseState(option.state);
+      linkColor = qlementine->color(mouse, oclero::qlementine::ColorRole::Primary);
+    }
+
+    const auto linkText = index.data(Qt::DisplayRole).toString();
+    const auto contentRect = option.rect.marginsRemoved(QMargins(4, 0, 8, 0));
+    const auto elidedText = option.fontMetrics.elidedText(linkText, Qt::TextElideMode::ElideRight, contentRect.width());
+
+    painter->save();
+    {
+      auto font = painter->font();
+      font.setUnderline(true);
+      painter->setFont(font);
+      painter->setPen(linkColor);
+      painter->drawText(contentRect, Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+    }
+    painter->restore();
+  }
+
+  bool editorEvent(
+    QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index) override {
+    const auto type = event->type();
+    switch (type) {
+      case QEvent::MouseButtonPress: {
+        const auto* mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+          pressedIndex = index;
+        }
+      } break;
+      case QEvent::MouseButtonRelease: {
+        const auto* mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+          if (pressedIndex == index) {
+            pressedIndex = {};
+            const auto link = index.data(Qt::DisplayRole).toString();
+            QDesktopServices::openUrl(QUrl{ link });
+            return true;
+          } else {
+            pressedIndex = {};
+          }
+        }
+      } break;
+      default:
+        break;
+    }
+
+    return false;
+  }
+};
+
+class CustomTableView : public QTableView {
+private:
+  QMap<int, Qt::CursorShape> _cursorForRowMap;
+
+public:
+  explicit CustomTableView(const QMap<int, Qt::CursorShape>& map, QWidget* parent = nullptr)
+    : QTableView(parent)
+    , _cursorForRowMap(map) {}
+
+protected:
+  bool viewportEvent(QEvent* event) override {
+    if (event->type() == QEvent::MouseMove) {
+      const auto* mouseEvent = static_cast<QMouseEvent*>(event);
+      const auto index = indexAt(mouseEvent->pos());
+      if (index.isValid()) {
+        const auto row = index.row();
+        const auto it = _cursorForRowMap.constFind(row);
+        if (it != _cursorForRowMap.constEnd()) {
+          setCursor(it.value());
+        } else {
+          unsetCursor();
+        }
+      } else {
+        unsetCursor();
+      }
+    }
+    return QTableView::viewportEvent(event);
+  }
+};
 
 class QuestPropsModel : public QAbstractTableModel {
 public:
   using QAbstractTableModel::QAbstractTableModel;
-
-  enum TableColumn {
-    Value,
-    ColumnCount,
-  };
-
-  enum TableRow {
-    Title,
-    // Description,
-    Authors,
-    InitialReleaseDate,
-    LatestReleaseDate,
-    Version,
-    EngineVersion,
-    Licenses,
-    Languages,
-    Players,
-    Genres,
-    Website,
-    Age,
-    Controls,
-    RowCount,
-  };
 
 public:
   QuestData quest;
@@ -134,31 +261,6 @@ public:
     return {};
   }
 
-  QString rowLabel(int row) const {
-    static const QMap<TableRow, QString> labels{
-      { TableRow::Title, "Title" },
-      { TableRow::Authors, "Author(s)" },
-      { TableRow::InitialReleaseDate, "Release Date" },
-      { TableRow::LatestReleaseDate, "Latest Update" },
-      // { TableRow::Description, "Description" },
-      { TableRow::Version, "Version" },
-      { TableRow::EngineVersion, "Solarus Version" },
-      { TableRow::Licenses, "License(s)" },
-      { TableRow::Languages, "Language(s)" },
-      { TableRow::Players, "Players" },
-      { TableRow::Genres, "Genre(s)" },
-      { TableRow::Website, "Website" },
-      { TableRow::Age, "Age" },
-      { TableRow::Controls, "Controls" },
-    };
-
-    if (row >= TableRow() && row < TableRow::RowCount) {
-      return labels.value(static_cast<TableRow>(row), QString());
-    } else {
-      return QString();
-    }
-  }
-
   QString rowValue(int row) const {
     if (!quest.isValid)
       return QString();
@@ -172,8 +274,6 @@ public:
         return quest.initialReleaseDate.toString(Qt::DateFormat::ISODateWithMs);
       case TableRow::LatestReleaseDate:
         return quest.latestReleaseDate.toString(Qt::DateFormat::ISODateWithMs);
-      // case TableRow::Description:
-      //   return quest.description;
       case TableRow::Version:
         return quest.version.toString();
       case TableRow::EngineVersion:
@@ -187,7 +287,7 @@ public:
       case TableRow::Genres:
         return quest.genres.join(", ");
       case TableRow::Website:
-        return makeHtmlLink(quest.website);
+        return quest.website.toString();
       case TableRow::Age:
         return i18n::ageToString(quest.ageRating);
       case TableRow::Controls:
@@ -209,7 +309,7 @@ public:
 
   QVariant headerData(int section, Qt::Orientation orientation, int role) const override {
     if (role == Qt::ItemDataRole::DisplayRole && orientation == Qt::Orientation::Vertical) {
-      return rowLabel(section);
+      return i18n::tableRowHeader(section);
     }
     return {};
   }
@@ -253,7 +353,11 @@ void QuestPropertiesPanel::setupUi() {
   // Quest properties.
   _tableModel = new QuestPropsModel(this);
 
-  _tableView = new QTableView(scrollAreaContent);
+  _tableView = new CustomTableView(
+    {
+      { TableRow::Website, Qt::PointingHandCursor },
+    },
+    scrollAreaContent);
   if (auto* qlementine = qobject_cast<oclero::qlementine::QlementineStyle*>(_tableView->style())) {
     qlementine->setAutoIconColor(_tableView, oclero::qlementine::AutoIconColor::None);
   }
@@ -276,7 +380,11 @@ void QuestPropertiesPanel::setupUi() {
   _tableView->setTextElideMode(Qt::TextElideMode::ElideNone);
   _tableView->setLineWidth(0);
   _tableView->setAlternatingRowColors(true);
+
   layout->addWidget(_tableView);
+
+  auto* linkDelegate = new LinkDelegate(_tableView);
+  _tableView->setItemDelegateForRow(TableRow::Website, linkDelegate);
 
   updateUi(_model->currentQuest());
   QObject::connect(_model, &QuestListModel::currentQuestChanged, this, &QuestPropertiesPanel::updateUi);
@@ -289,8 +397,7 @@ void QuestPropertiesPanel::updateUi(const QModelIndex& index) {
   _descriptionLabel->setText(quest.description);
 
   if (auto* hHeader = _tableView->horizontalHeader()) {
-    // hHeader->setSectionResizeMode(QuestPropsModel::TableColumn::Label, QHeaderView::ResizeToContents);
-    hHeader->setSectionResizeMode(QuestPropsModel::TableColumn::Value, QHeaderView::Stretch);
+    hHeader->setSectionResizeMode(TableColumn::Value, QHeaderView::Stretch);
   }
   if (auto* vHeader = _tableView->verticalHeader()) {
     vHeader->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);

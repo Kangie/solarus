@@ -417,39 +417,104 @@
         <translation>An unknown error occurred to the quest process.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="23"/>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="50"/>
         <source>All</source>
         <translation>All Ages</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="25"/>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="52"/>
         <source>Restricted</source>
         <translation>Restricted Audience</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="27"/>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="54"/>
         <source>Warning</source>
         <translation>Warning</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="36"/>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="63"/>
         <source>Joypad</source>
         <translation>Joypad</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="38"/>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="65"/>
         <source>Keyboard</source>
         <translation>Keyboard</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="40"/>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="67"/>
         <source>Mouse</source>
         <translation>Mouse</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="42"/>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="69"/>
         <source>Other</source>
         <translation>Other</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="78"/>
+        <source>Title</source>
+        <translation>Title</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="80"/>
+        <source>Authors</source>
+        <translation>Developer</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="82"/>
+        <source>Release Date</source>
+        <translation>Release Date</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="84"/>
+        <source>Latest Update</source>
+        <translation>Latest Update</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="86"/>
+        <source>Version</source>
+        <translation>Version</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="88"/>
+        <source>Solarus Version</source>
+        <translation>Solarus Version</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="90"/>
+        <source>License</source>
+        <translation>License</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="92"/>
+        <source>Languages</source>
+        <translation>Languages</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="94"/>
+        <source>Players</source>
+        <translation>Players</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="96"/>
+        <source>Genres</source>
+        <translation>Genres</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="98"/>
+        <source>Website</source>
+        <translation>Website</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="100"/>
+        <source>Age</source>
+        <translation>Age</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestPropertiesPanel.cpp" line="102"/>
+        <source>Controls</source>
+        <translation>Controls</translation>
     </message>
 </context>
 </TS>
