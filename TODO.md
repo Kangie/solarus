@@ -1,3 +1,2 @@
-- JSON themes with Solarus colors
+- JSON themes with Solarus colors : WIP
 - Windows installer
-- QSortFilterProxyModel: index from wrong model passed to mapToSource --> quest sync issues

@@ -143,10 +143,11 @@ void MenuBar::setupUi() {
 
     fileMenu->addSeparator();
 
-    fileMenu->addAction(makeIcon(Icons16::Navigation_Settings, macOS), i18n::preferences(),
+    auto* preferencesAction = fileMenu->addAction(makeIcon(Icons16::Navigation_Settings, macOS), i18n::preferences(),
       QKeySequence::StandardKey::Preferences, [this]() {
         _controller->openPreferencesDialog();
       });
+    preferencesAction->setMenuRole(QAction::MenuRole::PreferencesRole);
 
     fileMenu->addSeparator();
 
@@ -156,9 +157,10 @@ void MenuBar::setupUi() {
 #else
     const auto quitShortcut = QKeySequence(QKeySequence::Quit);
 #endif
-    fileMenu->addAction(makeIcon(Icons16::Action_Close, macOS), i18n::quit(), quitShortcut, []() {
+    auto* quitAction = fileMenu->addAction(makeIcon(Icons16::Action_Close, macOS), i18n::quit(), quitShortcut, []() {
       qApp->quit();
     });
+    quitAction->setMenuRole(QAction::MenuRole::QuitRole);
   }
 
   auto* viewMenu = addMenu(i18n::viewMenu());
@@ -261,9 +263,11 @@ void MenuBar::setupUi() {
         });
     }
 
-    helpMenu->addAction(makeIcon(Icons16::Misc_Info, macOS), i18n::about(), QKeySequence{}, [this]() {
-      _controller->openAboutDialog();
-    });
+    auto* aboutAction =
+      helpMenu->addAction(makeIcon(Icons16::Misc_Info, macOS), i18n::about(), QKeySequence{}, [this]() {
+        _controller->openAboutDialog();
+      });
+    aboutAction->setMenuRole(QAction::MenuRole::AboutRole);
   }
 }
 } // namespace solarus::launcher

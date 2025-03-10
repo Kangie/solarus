@@ -232,7 +232,8 @@ void QuestListModel::removeQuest(const QModelIndex& index) {
   if (!index.isValid())
     return;
 
-  const auto row = index.row();
+  const auto sourceIndex = index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
+  const auto row = sourceIndex.row();
   if (row >= 0 && row < _quests.size()) {
     beginRemoveRows({}, row, row);
     _quests.removeAt(row);
@@ -244,7 +245,7 @@ void QuestListModel::removeQuest(const QModelIndex& index) {
 }
 
 QString QuestListModel::questFilePath(const QModelIndex& index) const {
-  const auto row = index.row();
+  const auto row = getRow(index);
   if (row >= 0 && row < static_cast<int>(_quests.size())) {
     const auto& quest = _quests.at(row);
     return quest.path;
@@ -254,7 +255,7 @@ QString QuestListModel::questFilePath(const QModelIndex& index) const {
 
 const QuestData& QuestListModel::questDataAt(const QModelIndex& index) const {
   static const QuestData invalid;
-  const auto row = index.row();
+  const auto row = getRow(index);
   if (row >= 0 && row < static_cast<int>(_quests.size())) {
     const auto& quest = _quests.at(row);
     return quest;
@@ -262,7 +263,7 @@ const QuestData& QuestListModel::questDataAt(const QModelIndex& index) const {
   return invalid;
 }
 
-int QuestListModel::rowCount(const QModelIndex& parent) const {
+int QuestListModel::rowCount(const QModelIndex&) const {
   return static_cast<int>(_quests.size());
 }
 
@@ -291,8 +292,9 @@ const QModelIndex& QuestListModel::currentQuest() const {
 }
 
 void QuestListModel::setCurrentQuest(const QModelIndex& index) {
-  if (index != _currentQuest) {
-    _currentQuest = index;
+  const auto sourceIndex = index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
+  if (sourceIndex != _currentQuest) {
+    _currentQuest = sourceIndex;
     emit currentQuestChanged(_currentQuest);
   }
 }
@@ -316,7 +318,7 @@ QModelIndex QuestListModel::questOfPath(const QString& path) const {
 
 QStringList QuestListModel::questPathList() const {
   QStringList result(_quests.count());
-  for (auto i = 0; i <result.count(); ++i) {
+  for (auto i = 0; i < result.count(); ++i) {
     result[i] = _quests.at(i).path;
   }
   return result;
@@ -331,5 +333,11 @@ void QuestListModel::setQuestPathList(const QStringList& list) {
   endResetModel();
   emit rowCountChanged();
   emit questListChanged();
+}
+
+int QuestListModel::getRow(const QModelIndex& index) const {
+  const auto sourceIndex = index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
+  const auto row = sourceIndex.row();
+  return row;
 }
 } // namespace solarus::launcher

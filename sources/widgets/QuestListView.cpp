@@ -51,22 +51,32 @@ void QuestListView::setupUi() {
   setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerPixel);
   setUniformItemSizes(true);
 
+  // Delegate.
   auto* listDelegate = new QuestListItemDelegate(this);
   setItemDelegate(listDelegate);
 
+  // Model.
   setModel(_controller->model()->proxyModel());
 
+  setCurrentIndex(_controller->model()->proxyModel()->index(0, 0));
+
+  // Synchronize everyone.
   QObject::connect(selectionModel(), &QItemSelectionModel::currentRowChanged, this,
     [this](const QModelIndex& current, const QModelIndex&) {
       _controller->model()->setCurrentQuest(current);
     });
 
+  QObject::connect(_controller->model(), &QuestListModel::currentQuestChanged, this, [this](const QModelIndex& index) {
+    const auto proxyIndex = _controller->model()->proxyModel()->mapFromSource(index);
+    setCurrentIndex(proxyIndex);
+  });
+
+  // Commands.
   QObject::connect(this, &QListView::doubleClicked, this, [this](const QModelIndex& index) {
     _controller->playQuest(index);
   });
 
-  setCurrentIndex(_controller->model()->index(0));
-
+  // Quest's context menu.
   setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
   QObject::connect(this, &QListView::customContextMenuRequested, this, [this](const QPoint& pos) {
     const auto index = indexAt(pos);
@@ -188,5 +198,16 @@ void QuestListView::mouseMoveEvent(QMouseEvent* event) {
 void QuestListView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
   QListView::currentChanged(current, previous);
   _controller->model()->setCurrentQuest(current);
+}
+
+void QuestListView::keyReleaseEvent(QKeyEvent* event) {
+  if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return || event->key() == Qt::Key_Space) {
+    const auto currentIndex = this->currentIndex();
+    if (currentIndex.isValid()) {
+      _controller->playQuest(currentIndex);
+    }
+  } else {
+    QListView::keyReleaseEvent(event);
+  }
 }
 } // namespace solarus::launcher

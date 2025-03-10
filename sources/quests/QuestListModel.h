@@ -37,6 +37,8 @@ public:
   QStringList questPathList() const;
   void setQuestPathList(const QStringList& list);
 
+  int getRow(const QModelIndex& index) const;
+
 public:
   int rowCount(const QModelIndex& parent) const override;
   QVariant data(const QModelIndex& index, int role) const override;
