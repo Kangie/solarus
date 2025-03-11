@@ -302,7 +302,8 @@ public:
     }
 
     // Make it selected.
-    get_map_view().set_only_selected_entity(index_before);
+    get_map_view().clear_selection();
+    get_map_view().set_selected_entity_and_group(index_before);
   }
 
   void redo() override {
@@ -339,7 +340,8 @@ public:
     map.add_entities(std::move(addable_entities));
 
     // Make the new one selected.
-    get_map_view().set_only_selected_entity(index_after);
+    get_map_view().clear_selection();
+    get_map_view().set_selected_entity_and_group(index_after);
   }
 
   EntityIndex get_index_before() const { return index_before; }

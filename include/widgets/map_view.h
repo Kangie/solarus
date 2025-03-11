@@ -94,8 +94,9 @@ public:
   int get_num_selected_entities() const;
   EntityIndexes get_selected_entities() const;
   void set_selected_entities(const EntityIndexes& indexes);
-  void set_only_selected_entity(const EntityIndex& index);
-  void select_entity(const EntityIndex& index, bool selected);
+  void set_selected_entity_and_group(const EntityIndex& index);
+  void set_entity_and_group_selected(const EntityIndex& index, bool selected);
+  void clear_selection();
   EntityModels clone_selected_entities() const;
 
   // Information about entities.

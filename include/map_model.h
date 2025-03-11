@@ -128,6 +128,7 @@ public:
   bool is_entity_locked(const EntityIndex& index) const;
   void set_entity_locked(const EntityIndex& index, bool locked);
   int get_entity_group(const EntityIndex& index) const;
+  EntityIndexes get_entities_in_group(int group) const;
   int create_group(const EntityIndexes& indexes);
   void destroy_group(int group);
   int get_entity_user_property_count(const EntityIndex& index) const;

@@ -59,6 +59,7 @@ protected:
              QWidget* widget = nullptr) override;
 
 private:
+  QColor get_line_color() const;
 
   EntityModel& entity;      /**< The entity represented. */
   QSize size;               /**< Current size of the item.

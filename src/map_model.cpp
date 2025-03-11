@@ -57,11 +57,15 @@ MapModel::MapModel(
     set_tileset(quest.get_tileset(tileset_id));
   }
 
-  // Create entities.
+  // Create entities and groups.
   for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {
     for (int i = 0; i < get_num_entities(layer); ++i) {
       EntityIndex index = { layer, i };
-      entities[layer].emplace_back(EntityModel::create(*this, index));
+      EntityModelPtr entity = EntityModel::create(*this, index);
+      if (entity->get_group() != 0) {
+        groups[entity->get_group()].append(index);
+      }
+      entities[layer].emplace_back(std::move(entity));
     }
   }
 }
@@ -1469,6 +1473,15 @@ int MapModel::get_entity_group(const EntityIndex& index) const {
   }
 
   return get_entity(index).get_group();
+}
+
+/**
+ * @brief Returns the indexes of entities in the given group.
+ * @param group The group to get.
+ * @return Indexes of entities in the group.
+ */
+EntityIndexes MapModel::get_entities_in_group(int group) const {
+  return groups.value(group);
 }
 
 /**

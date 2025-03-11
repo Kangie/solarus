@@ -955,7 +955,7 @@ QImage MapView::export_to_image() {
 
   // Clear the selection first (we don't want selection markers.
   EntityIndexes selected_indexes = get_selected_entities();
-  set_selected_entities(EntityIndexes());
+  clear_selection();
 
   // Create the image.
   QImage image(map->get_size(), QImage::Format_ARGB32);
@@ -1479,19 +1479,17 @@ void MapView::set_selected_entities(const EntityIndexes& indexes) {
     return;
   }
 
-  scene->set_selected_entities(indexes);
+  scene->select_only_entities(indexes);
 }
 
 /**
  * @brief Selects the specified entity and unselects the rest.
  * @param index Index of the entity to make selecteded.
  */
-void MapView::set_only_selected_entity(const EntityIndex& index) {
+void MapView::set_selected_entity_and_group(const EntityIndex& index) {
 
-  EntityIndexes indexes;
-  indexes << index;
-
-  set_selected_entities(indexes);
+  clear_selection();
+  set_entity_and_group_selected(index, true);
 }
 
 /**
@@ -1499,13 +1497,22 @@ void MapView::set_only_selected_entity(const EntityIndex& index) {
  * @param entity The entity to change.
  * @param selected @c true to select it.
  */
-void MapView::select_entity(const EntityIndex& index, bool selected) {
+void MapView::set_entity_and_group_selected(const EntityIndex& index, bool selected) {
 
   if (scene == nullptr) {
     return;
   }
 
-  scene->select_entity(index, selected);
+  const int group = get_map()->get_entity_group(index);
+  EntityIndexes indexes = group != 0 ? get_map()->get_entities_in_group(group) : EntityIndexes{ index };
+  scene->set_entities_selected(indexes, selected);
+}
+
+/**
+ * @brief Unselects all entities.
+ */
+void MapView::clear_selection() {
+  set_selected_entities({});
 }
 
 /**
@@ -1958,7 +1965,7 @@ void IdleState::mouse_pressed(const QMouseEvent& event) {
       }
       if (!item->isSelected()) {
         // Select the item if not locked.
-        view.select_entity(index, true);
+        view.set_entity_and_group_selected(index, true);
       }
       // Allow to move selected items.
       view.start_state_moving_entities(event.pos());
@@ -1975,7 +1982,7 @@ void IdleState::mouse_pressed(const QMouseEvent& event) {
         // Select the right-clicked item.
         if (!view.get_view_settings()->is_layer_locked(index.layer) &&
             !map.is_entity_locked(index)) {
-          view.select_entity(index, true);
+          view.set_entity_and_group_selected(index, true);
         }
       }
     }
@@ -2026,14 +2033,14 @@ void IdleState::mouse_released(const QMouseEvent& event) {
         const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
         if (control_or_shift) {
           // Releasing the mouse while control or shift is pressed: unselect the clicked entity.
-          view.select_entity(entity_item->get_index(), false);
+          view.set_entity_and_group_selected(entity_item->get_index(), false);
           selection_delayed = false;
         }
       }
     } else {
       const bool layer_locked = view.get_view_settings()->is_layer_locked(entity_item->get_index().layer);
       if (!layer_locked) {
-        view.select_entity(entity_item->get_index(), true);
+        view.set_entity_and_group_selected(entity_item->get_index(), true);
       }
     }
   }
@@ -2132,7 +2139,7 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
   const ViewSettings& view_settings = *view.get_view_settings();
   for (const EntityIndex& index : selected_indexes) {
     if (view_settings.is_layer_locked(index.layer)) {
-      view.select_entity(index, false);
+      view.set_entity_and_group_selected(index, false);  // TODO-126
     }
   }
 
@@ -2146,7 +2153,7 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
       scene.blockSignals(was_blocked);
     }
 
-    view.select_entity(entity_item->get_index(), true);
+    view.set_entity_and_group_selected(entity_item->get_index(), true);  // TODO-126
   }
 }
 

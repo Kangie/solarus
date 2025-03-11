@@ -52,8 +52,8 @@ public:
   void update_entity_type_visibility(EntityType type, const ViewSettings& view_settings);
 
   EntityIndexes get_selected_entities();
-  void set_selected_entities(const EntityIndexes& indexes);
-  void select_entity(const EntityIndex& index, bool selected);
+  void select_only_entities(const EntityIndexes& indexes);
+  void set_entities_selected(const EntityIndexes& indexes, bool selected);
   void select_all();
   void select_all_except_locked();
   void unselect_all();
@@ -81,6 +81,7 @@ private slots:
   void entity_xy_changed(const EntityIndex& index, const QPoint& xy);
   void entity_size_changed(const EntityIndex& index, const QSize& size);
   void entity_locked_changed(const EntityIndex& index, bool locked);
+  void entity_group_changed(const EntityIndex& index, int group);
 
 private:
 

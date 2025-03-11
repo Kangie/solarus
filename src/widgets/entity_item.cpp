@@ -129,7 +129,7 @@ void EntityItem::paint(QPainter* painter,
 
   // Add our selection marker.
   if (selected) {
-    QColor line_color = entity.is_locked() ? Qt::gray : Qt::green;
+    QColor line_color = get_line_color();
     QRect bounding_rect = boundingRect().toRect();
 
     // Draw both a thick line and a a line with thickness zero
@@ -143,6 +143,23 @@ void EntityItem::paint(QPainter* painter,
     painter->setPen(QPen(line_color, 0, Qt::SolidLine));
     painter->drawRect(bounding_rect);
   }
+}
+
+/**
+ * @brief Returns an appropriate line color for the entity item.
+ * @return A line color.
+ */
+QColor EntityItem::get_line_color() const {
+
+  if (entity.is_locked()) {
+    return QColor(Qt::gray);
+  }
+
+  if (entity.get_group() != 0) {
+    return QColor(Qt::cyan);
+  }
+
+  return QColor(Qt::green);
 }
 
 }

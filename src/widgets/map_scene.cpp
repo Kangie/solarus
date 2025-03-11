@@ -56,6 +56,8 @@ MapScene::MapScene(MapModel& map, QObject* parent) :
           this, &MapScene::entity_size_changed);
   connect(&map, &MapModel::entity_locked_changed,
           this, &MapScene::entity_locked_changed);
+  connect(&map, &MapModel::entity_group_changed,
+          this, &MapScene::entity_group_changed);
 }
 
 /**
@@ -578,11 +580,29 @@ void MapScene::entity_size_changed(const EntityIndex& index, const QSize& size) 
  * Its item on the scene is updated accordingly.
  *
  * @param index Index of an entity.
- * @param locked @c true if the entity was just locked
+ * @param locked @c true if the entity was just locked or unlocked.
  */
 void MapScene::entity_locked_changed(const EntityIndex& index, bool locked) {
 
   Q_UNUSED(locked);
+
+  EntityItem* item = get_entity_item(index);
+  Q_ASSERT(item != nullptr);
+
+  item->update();
+}
+
+/**
+ * @brief Slot called when the group of an entity has changed.
+ *
+ * Its item on the scene is updated accordingly.
+ *
+ * @param index Index of an entity.
+ * @param group The new group.
+ */
+void MapScene::entity_group_changed(const EntityIndex& index, int group) {
+
+  Q_UNUSED(group);
 
   EntityItem* item = get_entity_item(index);
   Q_ASSERT(item != nullptr);
@@ -618,7 +638,7 @@ EntityIndexes MapScene::get_selected_entities() {
  * @brief Selects the specified entities and unselects the rest.
  * @param indexes Indexes of the entities to make selecteded.
  */
-void MapScene::set_selected_entities(const EntityIndexes& indexes) {
+void MapScene::select_only_entities(const EntityIndexes& indexes) {
 
   // Is there a change?
   bool changed = false;
@@ -642,31 +662,29 @@ void MapScene::set_selected_entities(const EntityIndexes& indexes) {
   }
 
   clearSelection();
+  set_entities_selected(indexes, true);
+}
+
+/**
+ * @brief Selects or unselects a list of entities.
+ * @param entities The entities to change.
+ * @param selected @c true to select them.
+ */
+void MapScene::set_entities_selected(const EntityIndexes& indexes, bool selected) {
+
   const bool was_blocked = signalsBlocked();
   blockSignals(true);
-  for (const EntityIndex& index : indexes) {
+  for (const EntityIndex& index: indexes) {
     EntityItem* item = get_entity_item(index);
     Q_ASSERT(item != nullptr);
     if (item == nullptr) {
       continue;
     }
-    item->setSelected(true);
+    item->setSelected(selected);
   }
   blockSignals(was_blocked);
 
   emit selectionChanged();
-}
-
-/**
- * @brief Selects or unselects an entity.
- * @param entity The entity to change.
- * @param selected @c true to select it.
- */
-void MapScene::select_entity(const EntityIndex& index, bool selected) {
-
-  EntityItem* item = get_entity_item(index);
-  Q_ASSERT(item != nullptr);
-  item->setSelected(selected);
 }
 
 /**
