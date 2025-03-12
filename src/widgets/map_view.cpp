@@ -1933,17 +1933,14 @@ void IdleState::mouse_pressed(const QMouseEvent& event) {
         selection_delayed = true;
         return;
       }
+      if (view.get_view_settings()->is_layer_locked(index.layer) || map.is_entity_locked(index)) {
+        // Left click on a locked layer or entity: don't select it yet.
+        selection_delayed = true;
+        return;
+      }
       if (!item->isSelected()) {
         // Select the item if not locked.
-        if (index.is_valid()) {
-          if (view.get_view_settings()->is_layer_locked(index.layer) || map.is_entity_locked(index)) {
-            // Left click on a locked layer or entity: don't select it yet.
-            selection_delayed = true;
-            return;
-          } else {
-            view.select_entity(index, true);
-          }
-        }
+        view.select_entity(index, true);
       }
       // Allow to move selected items.
       view.start_state_moving_entities(event.pos());
@@ -1973,7 +1970,7 @@ void IdleState::mouse_pressed(const QMouseEvent& event) {
 void IdleState::mouse_moved(const QMouseEvent& event) {
 
   MapView& view = get_view();
-  if (selection_delayed && view.is_selection_empty()) {
+  if (selection_delayed && (event.buttons() & Qt::LeftButton)) {
     // Start a selection rectangle after a small distance threshold.
     QPoint current_point = event.pos();
     if ((current_point - mouse_pressed_point).manhattanLength() >= 4) {
