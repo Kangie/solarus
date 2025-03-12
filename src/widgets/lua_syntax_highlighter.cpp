@@ -103,8 +103,8 @@ void LuaSyntaxHighlighter::create_rules() {
   // Avoid to highlight comments in strings,
   // and don't match --[[ or --]] markers.
   rule.pattern = QRegularExpression(
-        not_in_a_single_line_string +
-        R"((--([^\[\]]|\[[^\[]|\][^\]])[^\n]*$)$)"
+      not_in_a_single_line_string +
+      R"((--([^\[\]]|\[[^\[]|\][^\]])[^\n]*$)$)"
   );
   rule.format = single_line_comment_format;
   rules.append(rule);
@@ -126,17 +126,22 @@ void LuaSyntaxHighlighter::highlightBlock(const QString& text) {
   for (const HighlightingRule& rule : std::as_const(rules)) {
     QRegularExpression pattern(rule.pattern);
     QRegularExpressionMatch match = pattern.match(text);
-    int index = match.capturedStart(0);
 
-    while (match.hasMatch()) {
-      int length = match.capturedLength(0);
-      if (match.lastCapturedIndex() > 0) {
-        const QStringList captures = match.capturedTexts();
-        length = captures.first().size();
+    if (!match.hasMatch()) {
+      continue;
+    }
+
+    if (match.lastCapturedIndex() == 0) {
+      // Only the full regexp matched.
+      setFormat(match.capturedStart(0), match.capturedLength(0), rule.format);
+    } else {
+      // There are some inner captures: only highlight them and not the full regexp.
+      for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
+        int index = match.capturedStart(i);
+        if (index != -1) {
+          setFormat(index, match.capturedLength(i), rule.format);
+        }
       }
-      setFormat(index, length, rule.format);
-      match = pattern.match(text, index + length);
-      index = match.capturedStart(0);
     }
   }
   setCurrentBlockState(0);
