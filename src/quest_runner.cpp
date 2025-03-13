@@ -93,7 +93,7 @@ QStringList QuestRunner::create_arguments(
   }
 
   // Enable or disable audio.
-  if (settings.get_value_bool(EditorSettings::no_audio)) {
+  if (!settings.get_value_bool(EditorSettings::audio)) {
     arguments << "-no-audio";
   }
 
