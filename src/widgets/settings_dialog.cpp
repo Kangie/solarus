@@ -64,8 +64,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, &SettingsDialog::change_restore_last_files);
   connect(ui.save_files_field, qOverload<int>(&QComboBox::currentIndexChanged),
           this, &SettingsDialog::change_save_files);
-  connect(ui.no_audio_field, &QAbstractButton::toggled,
-          this, &SettingsDialog::change_no_audio);
+  connect(ui.audio_field, &QAbstractButton::toggled,
+          this, &SettingsDialog::change_audio);
   connect(ui.quest_size_check_box, &QAbstractButton::toggled,
           this, &SettingsDialog::change_quest_size);
   connect(ui.quest_size_field, &PairSpinBox::value_changed,
@@ -217,7 +217,7 @@ void SettingsDialog::update() {
   update_working_directory();
   update_restore_last_files();
   update_save_files();
-  update_no_audio();
+  update_audio();
   update_quest_size();
   update_force_software();
   update_suspend_unfocused();
@@ -419,19 +419,19 @@ void SettingsDialog::change_save_files() {
 }
 
 /**
- * @brief Updates the no audio field.
+ * @brief Updates the audio field.
  */
-void SettingsDialog::update_no_audio() {
+void SettingsDialog::update_audio() {
 
-  ui.no_audio_field->setChecked(settings.get_value_bool(EditorSettings::no_audio));
+  ui.audio_field->setChecked(settings.get_value_bool(EditorSettings::audio));
 }
 
 /**
- * @brief Slot called when the user changes the no audio.
+ * @brief Slot called when the user changes the audio.
  */
-void SettingsDialog::change_no_audio() {
+void SettingsDialog::change_audio() {
 
-  edited_settings[EditorSettings::no_audio] = ui.no_audio_field->isChecked();
+  edited_settings[EditorSettings::audio] = ui.audio_field->isChecked();
   update_buttons();
 }
 

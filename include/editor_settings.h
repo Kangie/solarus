@@ -37,7 +37,7 @@ public:
   static const QString last_file;
   static const QString restore_last_files;
   static const QString save_files_before_running;
-  static const QString no_audio;
+  static const QString audio;
   static const QString quest_size;
   static const QString force_software_rendering;
   static const QString suspend_unfocused;

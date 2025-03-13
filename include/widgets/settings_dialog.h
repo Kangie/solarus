@@ -55,8 +55,8 @@ public slots:
   void change_restore_last_files();
   void update_save_files();
   void change_save_files();
-  void update_no_audio();
-  void change_no_audio();
+  void update_audio();
+  void change_audio();
   void update_quest_size();
   void change_quest_size();
   void update_force_software();
