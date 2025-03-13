@@ -30,7 +30,7 @@ const QString EditorSettings::last_files = "last_files";
 const QString EditorSettings::last_file = "last_file";
 const QString EditorSettings::restore_last_files = "restore_last_files";
 const QString EditorSettings::save_files_before_running = "save_files_before_running";
-const QString EditorSettings::no_audio = "no_audio";
+const QString EditorSettings::audio = "audio";
 const QString EditorSettings::quest_size = "quest_size";
 const QString EditorSettings::force_software_rendering = "force_software_rendering";
 const QString EditorSettings::suspend_unfocused = "suspend_unfocused";
@@ -112,7 +112,7 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::last_file, "" },
   { EditorSettings::restore_last_files, true },
   { EditorSettings::save_files_before_running, "ask" },
-  { EditorSettings::no_audio, false },
+  { EditorSettings::audio, true },
   { EditorSettings::quest_size, QSize() },
   { EditorSettings::force_software_rendering, false },
   { EditorSettings::suspend_unfocused, true },

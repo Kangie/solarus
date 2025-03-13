@@ -165,9 +165,9 @@
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="no_audio_field">
+           <widget class="QCheckBox" name="audio_field">
             <property name="text">
-             <string>No audio</string>
+             <string>Audio</string>
             </property>
            </widget>
           </item>
