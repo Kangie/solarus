@@ -2,18 +2,16 @@
 
 - [Overview](#overview)
 - [External dependencies](#external-dependencies)
-  - [Notes on some dependencies](#notes-on-some-dependencies)
   - [Linux](#linux)
   - [macOS](#macos)
 - [Compilation instructions](#compilation-instructions)
+  - [Notes on some dependencies](#notes-on-some-dependencies)
   - [Configuring](#configuring)
   - [Building](#building)
   - [Installation](#installation)
-- [Running](#running)
-  - [Running the Solarus GUI](#running-the-solarus-gui)
-  - [Running a quest directly](#running-a-quest-directly)
+- [Running a quest](#running-a-quest)
 - [Platform-specific information](#platform-specific-information)
-  - [macOS](#macos-1)
+  - [Mac OS X](#mac-os-x)
   - [OpenPandora](#openpandora)
   - [GCW-Zero](#gcw-zero)
 
@@ -28,28 +26,14 @@ A short sample quest is provided in the directory `sample_quest`.
 
 Our quests can be found on the website: https://www.solarus-games.org
 
-The project is separated in two parts: **Solarus** and the **Solarus GUI**.
+This project is separated in mutliple parts: the core, its quest launcher and
+its quest editor. This repository contains only the core part.
 
-Compiling the core part (Solarus) generates:
+Compiling the core part generates:
 
 1. A dynamic library called `solarus`.
-2. An executable file called `solarus-run` that directly runs a quest.
-
-Compiling the GUI part (Solarus GUI) is _optional_ and generates:
-
-1. A dynamic library called `solarus-gui`.
-2. An executable file called `solarus-launcher`, providing a GUI window to run
-   quests.
-
-It is possible to play Solarus games without the GUI part: the `solarus-run`
-executable will directly run the quest in the current directory if any.
-The GUI part adds a user-friendly interface with menus that allow users to
-select quests and change some settings.
-
-The GUI mode is probably the preferred way for desktop systems, while the
-`solarus-run` mode may be better on mobile systems.
-If you don't want the GUI part, it is possible to disable it at configuration
-time, and then you don't require the Qt dependencies.
+2. An executable file called `solarus-run` that directly runs the quest passed
+   as argument.
 
 ## External dependencies
 
@@ -75,18 +59,11 @@ The following libraries are required to compile and execute Solarus:
 - Modplug (0.8.8.4 or greater)
 - Lua 5.1 or LuaJIT 2.0 (LuaJIT is recommended)
 - Physfs
-- Qt5 (only if you build the Solarus GUI too)
 
 Note that another library is directly embedded in the source code: `snes_spc`,
 an SPC (Nintendo SNES) music decoding library.
 
 ### Notes on some dependencies
-
-#### About Qt5
-
-You only need Qt if you want to build the Solarus GUI.
-If you want to disable the build of the Solarus GUI, set the CMake variable
-`SOLARUS_GUI` to `OFF` at the configuration step and then you don't need Qt.
 
 #### About Lua
 
@@ -114,7 +91,7 @@ Just install the corresponding packages.
 For example, in Ubuntu or Debian:
 
 ```bash
-build-essential cmake pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libvorbis-dev libmodplug-dev qtbase5-dev qttools5-dev qttools5-dev-tools libglm-dev
+build-essential cmake pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libvorbis-dev libmodplug-dev libglm-dev
 ```
 
 ### macOS
@@ -125,8 +102,8 @@ their authors, but we don't guarantee that they are up-to-date.
 The Lua documentation recommends to link statically against Lua, so you
 shouldn't embed it.
 
-Also, the OpenAL framework is already part of the macOS system since 10.4,
-so you don't have to embed this library either.
+Also, the OpenAL framework is already part of the macOS system since 10.4, so
+you don't have to embed this library either.
 You can use both `.dylib` or `.framework` for the other libraries, but just
 remember that you have to check the version number, runpath search,
 architecture and backward compatibility if you want to deploy your application.
@@ -135,12 +112,13 @@ architecture and backward compatibility if you want to deploy your application.
 
 The following are the instructions for configuring and building Solarus.
 
-Instructions for building for Windows using MSYS2 are in [`compilation.MSYS2.md`](compilation.MSYS2.md).
+Instructions for building for Windows using MSYS2 are in
+[`compilation.MSYS2.md`](compilation.MSYS2.md).
 
 ### Configuring
 
-Use CMake to generate the Makefiles or a project for your favorite IDE from
-the CMake GUI or from the command-line.
+Use CMake to generate the Makefiles or a project for your favorite IDE from the
+CMake GUI or from the command-line.
 
 #### Using the CMake GUI
 
@@ -200,9 +178,6 @@ Any build error messages will tell you which headers and libraries are missing
 
 Once the compilation is finished, you will obtain a dynamic library named
 `solarus` and an executable named `solarus-run`.
-If you built the Solarus GUI too, you will also have a `gui` directory that
-contains a dynamic library named `solarus-gui` and an executable
-named `solarus-launcher`.
 
 ### Installation
 
@@ -214,13 +189,11 @@ directory, or if you want to use the Solarus libraries in another project.
 
 #### Using a GUI
 
-Copy the `solarus` library, the `solarus-run` executable, the `solarus-gui`
-library and the `solarus-launcher` executable where you want them to be
-installed.
+Copy the `solarus` library and the `solarus-run` executable where you want them
+to be installed.
 
 If you intend to use the Solarus libraries from another project, you need to
-copy the whole include/solarus directory somewhere as well, and
-`gui/include/solarus` for the Solarus GUI library.
+copy the whole include/solarus directory somewhere as well.
 
 _Important:_ also copy the `build/include/solarus/config.h` file and place it
 with the other installed headers, next to `config.h.in`.
@@ -250,16 +223,7 @@ can also be changed in CMake.
 For this, set the variables `SOLARUS_EXECUTABLE_INSTALL_DESTINATION`,
 `SOLARUS_LIBRARY_INSTALL_DESTINATION` and `SOLARUS_HEADERS_INSTALL_DESTINATION`.
 
-## Running
-
-### Running the Solarus GUI
-
-To open the Solarus user-friendly GUI, run the `solarus` executable located
-in the `gui` directory.
-
-You can then choose the quest to run and change its settings.
-
-### Running a quest directly
+## Running a quest
 
 To directly execute a quest without a GUI, run the `solarus-run` executable.
 The quest path must be specified on the command line.
@@ -271,14 +235,6 @@ or an archive containing your quest files (content of the `data` directory).
 
 This means that if you run `solarus-run` without parameters, then a quest must
 exist in the current directory.
-
-#### Using a GUI
-
-Make a shortcut that runs the `solarus-run` executable with your quest path as
-parameter, or place the quest in the same directory as the `solarus-run`
-executable and run it wihout any parameters.
-
-#### Using the command-line
 
 Type from your build directory:
 
@@ -312,17 +268,8 @@ You can build the XCode project using CMake:
 cmake -G Xcode ..
 ```
 
-If you wish to build the solarus GUI, you might need to explicitly tell CMake the location of
-you Qt installation like this:
-
-```bash
-cmake \
-  -DCMAKE_PREFIX_PATH="<path_to_Qt>/Qt/<version>/clang_64/lib/cmake" \
-  -Wno-dev  ..
-```
-
-If you are compiling on an Apple Silicon architecture, Solarus will by default still compile
-an Intel x86_64 binary for better compatibility.
+If you are compiling on an Apple Silicon architecture, Solarus will by default
+still compile an Intel x86_64 binary for better compatibility.
 But for this to work, you need all your dependencies to be also x86_64.
 Alternatively, you can also build an actual Apple Silicen (arm64)
 binary by using the SOLARUS_ARCH CMake variable as follows:
@@ -364,11 +311,6 @@ or run this to update one of the other:
 ```bash
 install_name_tool -change <old_path> <new_path>
 ```
-
-> Note: If you wish to deploy the Solarus GUI instead of a standalone quest,
-> steps are the same except that you will use the `Solarus.app` package instead
-> of the `Solarus-run.app` one, and will copy `libsolarus-gui.dylib` and
-> `solarus-launcher` binaries instead of the `solarus-run` one and the quest.
 
 ### OpenPandora
 
