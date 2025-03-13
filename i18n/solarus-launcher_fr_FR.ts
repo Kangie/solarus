@@ -516,5 +516,10 @@
         <source>Controls</source>
         <translation>Contrôles</translation>
     </message>
+    <message>
+        <location filename="../sources/quests/QuestListItemDelegate.cpp" line="18"/>
+        <source>Playing</source>
+        <translation>En cours</translation>
+    </message>
 </context>
 </TS>

@@ -93,7 +93,6 @@ void QuestRunner::stop() {
     _questFilePath.clear();
     emit questChanged();
 
-
     _process.terminate();
   }
 }

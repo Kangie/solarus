@@ -56,9 +56,10 @@ void QuestListView::setupUi() {
   setItemDelegate(listDelegate);
 
   // Model.
-  setModel(_controller->model()->proxyModel());
+  auto* model = _controller->model();
+  setModel(model->proxyModel());
 
-  setCurrentIndex(_controller->model()->proxyModel()->index(0, 0));
+  setCurrentIndex(model->proxyModel()->index(0, 0));
 
   // Synchronize everyone.
   QObject::connect(selectionModel(), &QItemSelectionModel::currentRowChanged, this,
@@ -66,7 +67,7 @@ void QuestListView::setupUi() {
       _controller->model()->setCurrentQuest(current);
     });
 
-  QObject::connect(_controller->model(), &QuestListModel::currentQuestChanged, this, [this](const QModelIndex& index) {
+  QObject::connect(model, &QuestListModel::currentQuestChanged, this, [this](const QModelIndex& index) {
     const auto proxyIndex = _controller->model()->proxyModel()->mapFromSource(index);
     setCurrentIndex(proxyIndex);
   });
@@ -134,33 +135,6 @@ void QuestListView::mousePressEvent(QMouseEvent* event) {
     }
     return;
   }
-  // if (index.isValid()) {
-  //   const auto flags = index.flags();
-  //   if (flags.testFlag(Qt::ItemFlag::ItemIsSelectable) && flags.testFlag(Qt::ItemFlag::ItemIsEnabled)) {
-  //     if (auto* selectionModel = this->selectionModel()) {
-  //       const auto selectedIndexes = selectionModel->selectedIndexes();
-  //       {
-  //         QSignalBlocker _(this);
-  //         QListView::mousePressEvent(event);
-  //       }
-  //       emit pressed(index);
-  //       {
-  //         QSignalBlocker _(this);
-  //         for (auto& selectedIndex : selectedIndexes) {
-  //           selectionModel->select(selectedIndex, QItemSelectionModel::SelectCurrent);
-  //         }
-  //       }
-  //     }
-  //     return;
-  //   }
-  // } else {
-  //   // Ignore clicks on empty areas.
-  //   event->ignore();
-  //   if (focusPolicy() & Qt::FocusPolicy::ClickFocus) {
-  //     setFocus(Qt::FocusReason::MouseFocusReason);
-  //   }
-  //   return;
-  // }
 
   QListView::mousePressEvent(event);
 }

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QModelIndex>
 
 class QTranslator;
 
@@ -36,6 +37,7 @@ public:
   void removeCurrentQuest();
 
   void playQuest(const QModelIndex& index);
+  void stopQuest();
   void playCurrentQuest();
   void playStopQuest();
 
@@ -59,6 +61,7 @@ public:
 private:
   void setupThemeManager();
   void loadLanguages();
+  void startRunner(const QModelIndex& index);
 
 private:
   Preferences* _preferences{ nullptr };
@@ -66,7 +69,8 @@ private:
   QuestRunner* _runner{ nullptr };
   BasicUpdater* _updater{ nullptr };
   oclero::qlementine::ThemeManager* _themeManager{ nullptr };
-  QStringList _languages;
-  QTranslator* _translator;
+  QStringList _languages{};
+  QTranslator* _translator{ nullptr };
+  QModelIndex _pendingPlayingQuest{};
 };
 } // namespace solarus::launcher

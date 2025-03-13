@@ -232,7 +232,7 @@ void QuestListModel::removeQuest(const QModelIndex& index) {
   if (!index.isValid())
     return;
 
-  const auto sourceIndex = index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
+  const auto sourceIndex = this->sourceIndex(index);
   const auto row = sourceIndex.row();
   if (row >= 0 && row < _quests.size()) {
     beginRemoveRows({}, row, row);
@@ -282,6 +282,8 @@ QVariant QuestListModel::data(const QModelIndex& index, int role) const {
       return QVariant::fromValue(quest.title);
     case static_cast<int>(Qt::DecorationRole):
       return QVariant::fromValue(quest.thumbnail);
+    case static_cast<int>(DataRole::IsPlaying):
+      return index == _currentPlayingQuest;
     default:
       return {};
   }
@@ -292,10 +294,28 @@ const QModelIndex& QuestListModel::currentQuest() const {
 }
 
 void QuestListModel::setCurrentQuest(const QModelIndex& index) {
-  const auto sourceIndex = index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
+  const auto sourceIndex = this->sourceIndex(index);
   if (sourceIndex != _currentQuest) {
     _currentQuest = sourceIndex;
     emit currentQuestChanged(_currentQuest);
+  }
+}
+
+const QModelIndex& QuestListModel::currentPlayingQuest() const {
+  return _currentPlayingQuest;
+}
+
+void QuestListModel::setCurrentPlayingQuest(const QModelIndex& index) {
+  const auto sourceIndex = this->sourceIndex(index);
+  if (sourceIndex != _currentPlayingQuest) {
+    const auto backup = _currentPlayingQuest;
+
+    _currentPlayingQuest = sourceIndex;
+    emit currentPlayingQuestChanged(_currentPlayingQuest);
+
+    // Signal for old and new one.
+    emit dataChanged(backup, backup);
+    emit dataChanged(sourceIndex, sourceIndex);
   }
 }
 
@@ -336,8 +356,12 @@ void QuestListModel::setQuestPathList(const QStringList& list) {
 }
 
 int QuestListModel::getRow(const QModelIndex& index) const {
-  const auto sourceIndex = index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
+  const auto sourceIndex = this->sourceIndex(index);
   const auto row = sourceIndex.row();
   return row;
+}
+
+QModelIndex QuestListModel::sourceIndex(const QModelIndex& index) const {
+  return index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
 }
 } // namespace solarus::launcher

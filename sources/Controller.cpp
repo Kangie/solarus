@@ -102,6 +102,23 @@ Controller::Controller(QObject* parent)
     const auto questPathList = _model->questPathList();
     _preferences->setQuestList(questPathList);
   });
+
+  QObject::connect(_runner, &QuestRunner::stateChanged, this, [this]() {
+    const auto isPlaying = _runner->state() != QuestRunner::State::Stopped;
+    if (isPlaying) {
+      _pendingPlayingQuest = {};
+      _model->setCurrentPlayingQuest(_model->questOfPath(_runner->questFilePath()));
+    } else {
+      _model->setCurrentPlayingQuest({});
+
+      // Start new one, if pending.
+      if (_pendingPlayingQuest.isValid()) {
+        QTimer::singleShot(0, this, [this]() {
+          startRunner(_pendingPlayingQuest);
+        });
+      }
+    }
+  });
 }
 
 void Controller::setupThemeManager() {
@@ -206,15 +223,32 @@ void Controller::removeCurrentQuest() {
 }
 
 void Controller::playQuest(const QModelIndex& index) {
-  if (index.isValid()) {
-    const auto questFilePath = _model->questFilePath(index);
-    _runner->start(questFilePath);
+  const auto sourceIndex = _model->sourceIndex(index);
+  if (sourceIndex.isValid() && sourceIndex != _model->currentPlayingQuest()) {
+    if (_runner->state() == QuestRunner::State::Stopped) {
+      _pendingPlayingQuest = {};
+      startRunner(sourceIndex);
+    } else {
+      _pendingPlayingQuest = sourceIndex;
+      stopQuest();
+    }
   }
+}
+
+void Controller::stopQuest() {
+  _runner->stop();
+  _model->setCurrentPlayingQuest({});
 }
 
 void Controller::playCurrentQuest() {
   const auto index = _model->currentQuest();
   playQuest(index);
+}
+
+void Controller::startRunner(const QModelIndex& index) {
+  const auto questFilePath = _model->questFilePath(index);
+  _model->setCurrentPlayingQuest(index);
+  _runner->start(questFilePath);
 }
 
 void Controller::openQuestFolder(const QModelIndex& index) {
@@ -257,12 +291,9 @@ void Controller::openAboutDialog() {
 void Controller::playStopQuest() {
   if (_runner->state() == QuestRunner::State::Stopped) {
     const auto index = _model->currentQuest();
-    if (index.isValid()) {
-      const auto questFilePath = _model->questFilePath(index);
-      _runner->start(questFilePath);
-    }
+    playQuest(index);
   } else {
-    _runner->stop();
+    stopQuest();
   }
 }
 
