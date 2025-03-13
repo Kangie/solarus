@@ -32,3 +32,27 @@ endif()
 if(SOLARUS_PROFILING)
   find_package(easy_profiler REQUIRED)
 endif()
+
+# # Disable warnings on imported targets.
+# target_compile_options(SDL2::Core INTERFACE -w)
+# target_compile_options(SDL2::Image INTERFACE -w)
+# target_compile_options(SDL2::TTF INTERFACE -w)
+# target_compile_options(GLM::GLM INTERFACE -w)
+# target_compile_options(OpenAL::OpenAL INTERFACE -w)
+# target_compile_options(Vorbis::File INTERFACE -w)
+# target_compile_options(PhysFS::PhysFS INTERFACE -w)
+# target_compile_options(Ogg::Ogg INTERFACE -w)
+# target_compile_options(ModPlug::ModPlug INTERFACE -w)
+
+# if(OPENGL_FOUND)
+#   target_compile_options(OpenGL::GL INTERFACE -w)
+# endif()
+
+# if(LUA_FOUND)
+#   target_compile_options(Lua::Lua INTERFACE -w)
+# elseif(LUAJIT_FOUND)
+#   target_compile_options(Lua::LuaJIT INTERFACE -w)
+# endif()
+
+# These dependencies are managed internally.
+add_subdirectory(third_party)
