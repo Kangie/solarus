@@ -22,5 +22,6 @@ target_include_directories(hqx PUBLIC
 target_compile_options(hqx PRIVATE -w)
 set_target_properties(hqx PROPERTIES
   FOLDER "third_party"
+  POSITION_INDEPENDENT_CODE ON
 )
 add_library(HQX::HQX ALIAS hqx)

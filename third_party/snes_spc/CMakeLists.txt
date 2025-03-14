@@ -35,5 +35,6 @@ target_include_directories(snes_spc PUBLIC
 target_compile_options(snes_spc PRIVATE -w)
 set_target_properties(snes_spc PROPERTIES
   FOLDER "third_party"
+  POSITION_INDEPENDENT_CODE ON
 )
 add_library(SNES_SPC::SNES_SPC ALIAS snes_spc)

@@ -12,5 +12,6 @@ target_include_directories(glad PUBLIC
 target_link_libraries(glad PUBLIC KHR::KHR)
 set_target_properties(glad PROPERTIES
   FOLDER "third_party"
+  POSITION_INDEPENDENT_CODE ON
 )
 add_library(Glad::Glad ALIAS glad)
