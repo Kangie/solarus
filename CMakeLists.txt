@@ -5,7 +5,7 @@ find_program(NPROC_COMMAND nproc)
 if (NPROC_COMMAND)
   execute_process(COMMAND nproc OUTPUT_VARIABLE NUM_CORES OUTPUT_STRIP_TRAILING_WHITESPACE)
   set(CMAKE_BUILD_PARALLEL_LEVEL ${NUM_CORES})
-  message(STATUS "Building with ${NUM_CORES} parallel jobs.")
+  message(STATUS "Building with ${NUM_CORES} parallel jobs")
 endif()
 
 project("solarus-launcher"
@@ -49,6 +49,7 @@ endif()
 
 # Find Qt.
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network LinguistTools)
+message(STATUS "Using Qt ${Qt6_VERSION}")
 if (Qt6_VERSION VERSION_LESS 6.7)
   qt_standard_project_setup()
 else()
@@ -87,6 +88,7 @@ set_target_properties(qlementine
 # If this flag is set, CMake will download Solarus from its git repository
 # instead of using a locally pre-built version.
 if(SOLARUS_FETCHCONTENT)
+  message(STATUS "Solarus: Fetching from git repository")
   set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
   set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
   FetchContent_Declare(solarus
@@ -100,6 +102,7 @@ if(SOLARUS_FETCHCONTENT)
   )
 else()
   # Ensure that Solarus is found, one way or another.
+  message(STATUS "Solarus: Using from system")
   find_package(Solarus REQUIRED)
 endif()
 

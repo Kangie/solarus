@@ -15,4 +15,4 @@ linux-build:
     name: $CI_JOB_NAME
     paths:
       - build
-    expire_in: 1 week
+    expire_in: 1 day
