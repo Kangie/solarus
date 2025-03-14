@@ -2005,8 +2005,12 @@ void IdleState::mouse_released(const QMouseEvent& event) {
     const bool was_selected = item->isSelected();
     if (was_selected) {
       if (selection_delayed) {
-        view.select_entity(entity_item->get_index(), false);
-        selection_delayed = false;
+        const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
+        if (control_or_shift) {
+          // Releasing the mouse while control or shift is pressed: unselect the clicked entity.
+          view.select_entity(entity_item->get_index(), false);
+          selection_delayed = false;
+        }
       }
     } else {
       const bool layer_locked = view.get_view_settings()->is_layer_locked(entity_item->get_index().layer);
