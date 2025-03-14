@@ -2,8 +2,9 @@
 #include "editor_style.h"
 #include <map>
 #include <QApplication>
-#include <QWidget>
+#include <QStyleHints>
 #include <QStyleOptionComboBox>
+#include <QWidget>
 
 namespace SolarusEditor {
 
@@ -50,6 +51,9 @@ const std::map<Mode, ModeInfo> mode_info = {
  */
 EditorStyle::EditorStyle(QObject *parent):
   QlementineStyle(parent) {
+
+  connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,
+          this, &EditorStyle::osThemeChanged);
 
   EditorSettings settings;
   const QString& theme_name = settings.get_value_string(EditorSettings::theme);
@@ -109,9 +113,14 @@ const ModeInfo& EditorStyle::get_mode_info() {
  * @return @c Mode::LIGHT or @c Mode::DARK.
  */
 Mode EditorStyle::get_os_mode() {
+  return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark ? Mode::DARK : Mode::LIGHT;
+}
 
-  // TODO Qt6 return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark ? Theme::DARK : Theme::LIGHT;
-  return Mode::DARK;
+/**
+ * @brief Called when the operating system theme has changed (light or dark).
+ */
+void EditorStyle::osThemeChanged() {
+  set_mode(mode);
 }
 
 EditorStyle::Status EditorStyle::widgetStatus(QWidget const* widget) const {
