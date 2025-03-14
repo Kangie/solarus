@@ -84,6 +84,9 @@ int MusicSystem::get_global_volume() {
  */
 void MusicSystem::set_global_volume(int volume) {
   global_volume = std::min(100, std::max(0, volume)) / 100.0;
+  if (current_music != nullptr) {
+    current_music->notify_global_volume_changed();
+  }
   for (const MusicPtr& music: current_musics) {
     music->notify_global_volume_changed();
   }
