@@ -1,3 +1,4 @@
+---
 #------------------------------------------------------------------------------
 # GitLab CI/CD Configuration for the Solarus Engine
 #------------------------------------------------------------------------------
@@ -281,18 +282,11 @@ mingw-x64-package:
     PACKAGE_PREFIX: solarus-player-x64
     BINARIES: >-
       staging/bin/libsolarus.dll
-      staging/bin/libsolarus-gui.dll
       staging/bin/solarus-run.exe
-      staging/bin/solarus-launcher.exe
-    EXTRAS: >-
-      staging/share/solarus-gui/translations
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
     TEXT_FILES: >-
       changelog.md
       license
       license-details.md
-      cmake/win32/readme.txt
 
 #------------------------------------------------------------------------------
 # MinGW-based Minimal Package Job (64-bit)
@@ -329,18 +323,11 @@ mingw-x86-package:
     PACKAGE_PREFIX: solarus-player-x86
     BINARIES: >-
       staging/bin/libsolarus.dll
-      staging/bin/libsolarus-gui.dll
       staging/bin/solarus-run.exe
-      staging/bin/solarus-launcher.exe
-    EXTRAS: >-
-      staging/share/solarus-gui/translations
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
     TEXT_FILES: >-
       changelog.md
       license
       license-details.md
-      cmake/win32/readme.txt
   rules:
     - if: $CI_COMMIT_TAG
 
@@ -362,7 +349,6 @@ mingw-x86-min-package:
       changelog.md
       license
       license-details.md
-      cmake/win32/readme.txt
   rules:
     - if: $CI_COMMIT_TAG
 
