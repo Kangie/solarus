@@ -1,0 +1,13 @@
+variables:
+  IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
+  IMAGE_VERSION: 20250217
+  GIT_DEPTH: 10
+
+stages:
+  - build
+
+linux-build:
+  stage: build
+  image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
+  script:
+    - cmake --workflow --preset linux

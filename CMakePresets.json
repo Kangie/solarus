@@ -140,6 +140,20 @@
           "name": "macos"
         }
       ]
+    },
+    {
+      "name": "linux",
+      "displayName": "Linux",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "linux"
+        },
+        {
+          "type": "build",
+          "name": "linux"
+        }
+      ]
     }
   ]
 }
