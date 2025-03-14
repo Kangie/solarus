@@ -41,8 +41,8 @@
     {
       "name": "linux",
       "displayName": "Linux",
-      "description": "Makefile for Linux",
-      "generator": "Unix Makefiles",
+      "description": "Ninja project for Linux",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "SOLARUS_FETCHCONTENT": true

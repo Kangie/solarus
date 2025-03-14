@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.19.0)
 
+# Get the number of CPU cores available for building.
+find_program(NPROC_COMMAND nproc)
+if (NPROC_COMMAND)
+  execute_process(COMMAND nproc OUTPUT_VARIABLE NUM_CORES OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set(CMAKE_BUILD_PARALLEL_LEVEL ${NUM_CORES})
+  message(STATUS "Building with ${NUM_CORES} parallel jobs.")
+endif()
+
 project("solarus-launcher"
   LANGUAGES CXX
   VERSION 2.0.0
