@@ -41,10 +41,14 @@ endif()
 
 # Find Qt.
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network LinguistTools)
-qt_standard_project_setup(
-  I18N_TRANSLATED_LANGUAGES en_US fr_FR
-  I18N_SOURCE_LANGUAGE en_US
-)
+if (Qt6_VERSION VERSION_LESS 6.7)
+  qt_standard_project_setup()
+else()
+  qt_standard_project_setup(
+    I18N_TRANSLATED_LANGUAGES en_US fr_FR
+    I18N_SOURCE_LANGUAGE en_US
+  )
+endif()
 
 # Dependencies.
 include(FetchContent)
@@ -52,7 +56,7 @@ include(FetchContent)
 # Qlementine Icons: an SVG icon library made for Qt.
 FetchContent_Declare(qlementine-icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
-  GIT_TAG 4b582b20b3f9b39bb9889ad4bca680ba16357bc2 #v1.7.0
+  GIT_TAG ef40cebe94064f91fcfa600600afe263266fa51e #v1.7.1
 )
 FetchContent_MakeAvailable(qlementine-icons)
 set_target_properties(qlementine-icons
@@ -140,10 +144,17 @@ qt_add_resources(${PROJECT_NAME} "resources"
     resources/age_ratings/warning.svg
 )
 
-qt_add_translations(
-  TARGETS ${PROJECT_NAME}
-  TS_FILE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/i18n
-)
+if (Qt6_VERSION VERSION_LESS 6.7)
+  qt_add_translations(${PROJECT_NAME}
+    TS_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/i18n/${PROJECT_NAME}_en_US.ts
+      ${CMAKE_CURRENT_SOURCE_DIR}/i18n/${PROJECT_NAME}_fr_FR.ts
+  )
+else()
+  qt_add_translations(${PROJECT_NAME}
+    TS_FILE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/i18n
+  )
+endif()
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE

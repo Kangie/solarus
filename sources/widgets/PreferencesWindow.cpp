@@ -8,7 +8,7 @@
 
 #include <QApplication>
 #include <QBoxLayout>
-#include <QformLayout>
+#include <QFormLayout>
 #include <QComboBox>
 #include <QScrollArea>
 #include <QSpacerItem>
