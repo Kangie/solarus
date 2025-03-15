@@ -13,7 +13,7 @@ You'll find more information about Solarus on <https://www.solarus-games.org>, s
 
 ![Sample quest screenshot](images/solarus_screenshot.png)
 
-| Product                      | Description                  |
+| Application                  | Description                  |
 | ---------------------------- | ---------------------------- |
 | `solarus`                    | The C++ library.             |
 | `solarus-run`                | CLI to play Solarus games.   |
