@@ -88,10 +88,23 @@ variable `SOLARUS_GL_ES` to `ON` at the configuration step.
 ### Linux
 
 Just install the corresponding packages.
-For example, in Ubuntu or Debian:
+For example, in Ubuntu, Debian or any Debian derivative:
 
 ```bash
-build-essential cmake pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libvorbis-dev libmodplug-dev libglm-dev
+apt update
+apt install --no-install-recommends \
+    build-essential \
+    cmake \
+    pkgconf \
+    libsdl2-dev \
+    libsdl2-image-dev \
+    libsdl2-ttf-dev \
+    libglm-dev \
+    libluajit-5.1-dev \
+    libphysfs-dev \
+    libopenal-dev \
+    libvorbis-dev \
+    libmodplug-dev
 ```
 
 ### macOS
