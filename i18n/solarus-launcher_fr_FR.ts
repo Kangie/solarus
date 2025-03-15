@@ -92,29 +92,30 @@
         <translation>Jouer la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
         <source>Show Quest Information</source>
         <translation>Afficher les informations sur la quête</translation>
     </message>
     <message>
+        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="48"/>
         <source>Stop Quest</source>
         <translation>Arrêter la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="69"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="72"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="57"/>
         <source>Show/Hide Quest Information</source>
         <translation>Afficher/Masquer les informations sur la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="72"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="75"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="60"/>
         <source>Show/Hide Quest Console</source>
         <translation>Afficher/Masquer la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="75"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="78"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="51"/>
         <source>Search…</source>
         <translation>Rechercher…</translation>
@@ -192,7 +193,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="57"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="31"/>
         <source>Open Containing Folder</source>
         <translation>Ouvrir le dossier contenant</translation>
     </message>
@@ -200,6 +201,11 @@
         <location filename="../sources/widgets/MenuBar.cpp" line="63"/>
         <source>Reload Quests</source>
         <translation>Recharger les quêtes</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/MenuBar.cpp" line="69"/>
+        <source>Stop Currently Running Quest</source>
+        <translation>Stopper la quête en cours</translation>
     </message>
     <message>
         <location filename="../sources/Controller.cpp" line="51"/>
@@ -262,7 +268,7 @@
         <translation>Erreur lors de la vérification des mises à jour. Code d&apos;erreur&#xa0;: %1</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="78"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="81"/>
         <source>Check for Updates</source>
         <translation>Vérifier les mises à jour</translation>
     </message>

@@ -96,28 +96,12 @@ Controller::Controller(QObject* parent)
   , _updater(new BasicUpdater(this)) {
   setupThemeManager();
   loadLanguages();
+  setupRunner();
 
   // Save/load quest list from settings.
   QObject::connect(_model, &QuestListModel::questListChanged, this, [this]() {
     const auto questPathList = _model->questPathList();
     _preferences->setQuestList(questPathList);
-  });
-
-  QObject::connect(_runner, &QuestRunner::stateChanged, this, [this]() {
-    const auto isPlaying = _runner->state() != QuestRunner::State::Stopped;
-    if (isPlaying) {
-      _pendingPlayingQuest = {};
-      _model->setCurrentPlayingQuest(_model->questOfPath(_runner->questFilePath()));
-    } else {
-      _model->setCurrentPlayingQuest({});
-
-      // Start new one, if pending.
-      if (_pendingPlayingQuest.isValid()) {
-        QTimer::singleShot(0, this, [this]() {
-          startRunner(_pendingPlayingQuest);
-        });
-      }
-    }
   });
 }
 
@@ -136,6 +120,45 @@ void Controller::setupThemeManager() {
   QObject::connect(_themeManager, &oclero::qlementine::ThemeManager::currentThemeChanged, this, [this]() {
     const auto theme = _themeManager->currentTheme();
     _preferences->setAppTheme(theme);
+  });
+}
+
+void Controller::setupRunner() {
+  QObject::connect(_runner, &QuestRunner::stateChanged, this, [this]() {
+    const auto isPlaying = _runner->state() != QuestRunner::State::Stopped;
+    if (isPlaying) {
+      _pendingPlayingQuest = {};
+      _model->setCurrentPlayingQuest(_model->questOfPath(_runner->questFilePath()));
+    } else {
+      _model->setCurrentPlayingQuest({});
+
+      // Start new one, if pending.
+      if (_pendingPlayingQuest.isValid()) {
+        QTimer::singleShot(0, this, [this]() {
+          startRunner(_pendingPlayingQuest);
+        });
+      }
+    }
+  });
+
+  // Initialize.
+  _runner->setSuspendWhenUnfocused(_preferences->questSuspendWhenUnfocused());
+  _runner->setAudioEnabled(_preferences->questEnableAudio());
+  _runner->setFullScreen(_preferences->questFullScreen());
+  _runner->setForceSoftwareRendering(_preferences->questForceSoftwareRendering());
+
+  // Connect to changes.
+  QObject::connect(_preferences, &Preferences::questSuspendWhenUnfocusedChanged, this, [this]() {
+    _runner->setSuspendWhenUnfocused(_preferences->questSuspendWhenUnfocused());
+  });
+  QObject::connect(_preferences, &Preferences::questEnableAudioChanged, this, [this]() {
+    _runner->setAudioEnabled(_preferences->questEnableAudio());
+  });
+  QObject::connect(_preferences, &Preferences::questFullScreenChanged, this, [this]() {
+    _runner->setFullScreen(_preferences->questFullScreen());
+  });
+  QObject::connect(_preferences, &Preferences::questForceSoftwareRenderingChanged, this, [this]() {
+    _runner->setForceSoftwareRendering(_preferences->questForceSoftwareRendering());
   });
 }
 

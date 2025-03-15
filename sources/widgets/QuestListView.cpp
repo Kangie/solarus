@@ -21,6 +21,9 @@ static QString removeQuest() {
 static QString playQuest() {
   return QApplication::translate("SolarusLauncher", "Play Quest");
 }
+static QString stopQuest() {
+  return QApplication::translate("SolarusLauncher", "Stop Quest");
+}
 static QString showQuestInformation() {
   return QApplication::translate("SolarusLauncher", "Show Quest Information");
 }
@@ -82,8 +85,18 @@ void QuestListView::setupUi() {
   QObject::connect(this, &QListView::customContextMenuRequested, this, [this](const QPoint& pos) {
     const auto index = indexAt(pos);
     if (index.isValid()) {
+      const auto* model = _controller->model();
+      const auto isPlayingQuest = model->currentPlayingQuest() == model->sourceIndex(index);
+
       QMenu menu(this);
-      {
+      if (isPlayingQuest) {
+        auto* stopAction = new QAction(makeIcon(Icons16::Media_Stop), i18n::stopQuest(), &menu);
+        // stopAction->setShortcut(QKeySequence(Qt::Key_F5));
+        menu.addAction(stopAction);
+        QObject::connect(stopAction, &QAction::triggered, this, [this, index]() {
+          _controller->stopQuest();
+        });
+      } else {
         auto* playAction = new QAction(makeIcon(Icons16::Media_Play), i18n::playQuest(), &menu);
         playAction->setShortcut(QKeySequence(Qt::Key_F5));
         menu.addAction(playAction);
@@ -91,6 +104,7 @@ void QuestListView::setupUi() {
           _controller->playQuest(index);
         });
       }
+      menu.addSeparator();
       {
         auto* infoAction = new QAction(makeIcon(Icons16::Misc_Info), i18n::showQuestInformation(), &menu);
         menu.addAction(infoAction);

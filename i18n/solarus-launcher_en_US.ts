@@ -92,29 +92,30 @@
         <translation>Play Quest</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
         <source>Show Quest Information</source>
         <translation>Show Quest Information</translation>
     </message>
     <message>
+        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="48"/>
         <source>Stop Quest</source>
         <translation>Stop Quest</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="69"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="72"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="57"/>
         <source>Show/Hide Quest Information</source>
         <translation>Show/Hide Quest Information</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="72"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="75"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="60"/>
         <source>Show/Hide Quest Console</source>
         <translation>Show/Hide Quest Console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="75"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="78"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="51"/>
         <source>Search…</source>
         <translation>Search…</translation>
@@ -192,7 +193,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="57"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="31"/>
         <source>Open Containing Folder</source>
         <translation>Open Containing Folder</translation>
     </message>
@@ -200,6 +201,11 @@
         <location filename="../sources/widgets/MenuBar.cpp" line="63"/>
         <source>Reload Quests</source>
         <translation>Reload Quests</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/MenuBar.cpp" line="69"/>
+        <source>Stop Currently Running Quest</source>
+        <translation>Stop Currently Running Quest</translation>
     </message>
     <message>
         <location filename="../sources/Controller.cpp" line="51"/>
@@ -262,7 +268,7 @@
         <translation>Failed to check for updates. Error code: %1</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MenuBar.cpp" line="78"/>
+        <location filename="../sources/widgets/MenuBar.cpp" line="81"/>
         <source>Check for Updates</source>
         <translation>Check for Updates</translation>
     </message>

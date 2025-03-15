@@ -60,6 +60,7 @@ public:
 
 private:
   void setupThemeManager();
+  void setupRunner();
   void loadLanguages();
   void startRunner(const QModelIndex& index);
 

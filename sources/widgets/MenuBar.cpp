@@ -65,6 +65,9 @@ static QString reloadQuestsAction() {
 static QString playQuest() {
   return QApplication::translate("SolarusLauncher", "Play Quest");
 }
+static QString stopQuest() {
+  return QApplication::translate("SolarusLauncher", "Stop Currently Running Quest");
+}
 static QString showHideQuestInformation() {
   return QApplication::translate("SolarusLauncher", "Show/Hide Quest Information");
 }
@@ -127,9 +130,29 @@ void MenuBar::setupUi() {
 
     fileMenu->addSeparator();
 
-    fileMenu->addAction(makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
-      _controller->playCurrentQuest();
-    });
+    auto* playQuestAction = fileMenu->addAction(
+      makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
+        _controller->playCurrentQuest();
+      });
+
+    auto* stopQuestAction = fileMenu->addAction(
+      makeIcon(Icons16::Media_Stop, macOS), i18n::stopQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
+        _controller->stopQuest();
+      });
+
+    const auto updatePlayStopActions = [this, playQuestAction, stopQuestAction]() {
+      const auto* model = _controller->model();
+      const auto currentQuest = model->currentQuest();
+      const auto playingQuest = model->currentPlayingQuest();
+
+      playQuestAction->setEnabled(currentQuest != playingQuest);
+      stopQuestAction->setEnabled(playingQuest.isValid());
+    };
+    updatePlayStopActions();
+    QObject::connect(_controller->model(), &QuestListModel::currentQuestChanged, this, updatePlayStopActions);
+    QObject::connect(_controller->model(), &QuestListModel::currentPlayingQuestChanged, this, updatePlayStopActions);
+
+    fileMenu->addSeparator();
 
     fileMenu->addAction(
       makeIcon(Icons16::File_FolderOpen, macOS), i18n::showContaingFolder(), QKeySequence{}, [this]() {
