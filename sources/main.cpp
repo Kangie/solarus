@@ -4,6 +4,8 @@
 #include <oclero/qlementine.hpp>
 #include <oclero/qlementine/icons/QlementineIcons.hpp>
 
+#include <oclero/QtAppInstanceManager.hpp>
+
 #include <widgets/MainWindow.h>
 #include <Controller.h>
 
@@ -26,6 +28,10 @@ int runGUI(int argc, char* argv[]) {
   app.setQuitOnLastWindowClosed(true);
   solarus::launcher::MainWindow::setAppIcon();
 
+  // Initialize instance manager to force only one instance running.
+  oclero::QtAppInstanceManager instanceManager;
+  instanceManager.setMode(oclero::QtAppInstanceManager::Mode::SingleInstance);
+
   // Custom style that supports theming.
   auto* style = new oclero::qlementine::QlementineStyle(&app);
   style->setAnimationsEnabled(true);
@@ -40,7 +46,18 @@ int runGUI(int argc, char* argv[]) {
   // Main window.
   auto* controller = new solarus::launcher::Controller(qApp);
   auto window = std::make_unique<solarus::launcher::MainWindow>(controller);
+  auto window_ptr = QPointer(window.get());
   window->show();
+
+  // Raise main window if another instance is started but automatically closed.
+  QObject::connect(&instanceManager, &oclero::QtAppInstanceManager::secondaryInstanceMessageReceived, window.get(),
+    [window_ptr](const unsigned int id, QByteArray const& data) {
+      Q_UNUSED(id)
+      Q_UNUSED(data)
+      if (window_ptr) {
+        window_ptr->raise();
+      }
+    });
 
   return app.exec();
 }

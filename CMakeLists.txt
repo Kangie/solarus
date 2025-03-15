@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.19.0)
 
 # Get the number of CPU cores available for building.
-find_program(NPROC_COMMAND nproc)
-if (NPROC_COMMAND)
-  execute_process(COMMAND nproc OUTPUT_VARIABLE NUM_CORES OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set(CMAKE_BUILD_PARALLEL_LEVEL ${NUM_CORES})
-  message(STATUS "Building with ${NUM_CORES} parallel jobs")
-endif()
+include(ProcessorCount)
+ProcessorCount(NUM_CORES)
+set(CMAKE_BUILD_PARALLEL_LEVEL ${NUM_CORES})
+message(STATUS "Building with ${NUM_CORES} parallel jobs")
 
 project("solarus-launcher"
   LANGUAGES CXX
@@ -83,6 +81,12 @@ set_target_properties(qlementine
   PROPERTIES
     FOLDER dependencies
 )
+
+FetchContent_Declare(QtAppInstanceManager
+ GIT_REPOSITORY "https://github.com/oclero/qtappinstancemanager.git"
+ GIT_TAG 1d7de744735f68310c8ebef0c809c36178f0e070 #v1.3.0
+)
+FetchContent_MakeAvailable(QtAppInstanceManager)
 
 # Solarus: the engine.
 # If this flag is set, CMake will download Solarus from its git repository
@@ -175,6 +179,7 @@ target_link_libraries(${PROJECT_NAME}
     qlementine
     qlementine-icons
     solarus
+    oclero::QtAppInstanceManager
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
