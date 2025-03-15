@@ -1,20 +1,21 @@
 # Solarus compilation
 
-* [Overview](#overview)
-* [External dependencies](#external-dependencies)
-  * [Linux](#linux)
-  * [macOS](#macos)
-* [Compilation instructions](#compilation-instructions)
-  * [Configuring](#configuring)
-  * [Building](#building)
-  * [Installation](#installation)
-* [Running](#running)
-  * [Running the Solarus GUI](#running-the-solarus-gui)
-  * [Running a quest directly](#running-a-quest-directly)
-* [Platform-specific information](#platform-specific-information)
-  * [Mac OS X](#mac-os-x)
-  * [OpenPandora](#openpandora)
-  * [GCW-Zero](#gcw-zero)
+- [Overview](#overview)
+- [External dependencies](#external-dependencies)
+  - [Notes on some dependencies](#notes-on-some-dependencies)
+  - [Linux](#linux)
+  - [macOS](#macos)
+- [Compilation instructions](#compilation-instructions)
+  - [Configuring](#configuring)
+  - [Building](#building)
+  - [Installation](#installation)
+- [Running](#running)
+  - [Running the Solarus GUI](#running-the-solarus-gui)
+  - [Running a quest directly](#running-a-quest-directly)
+- [Platform-specific information](#platform-specific-information)
+  - [macOS](#macos-1)
+  - [OpenPandora](#openpandora)
+  - [GCW-Zero](#gcw-zero)
 
 ## Overview
 
@@ -34,11 +35,11 @@ Compiling the core part (Solarus) generates:
 1. A dynamic library called `solarus`.
 2. An executable file called `solarus-run` that directly runs a quest.
 
-Compiling the GUI part (Solarus GUI) is *optional* and generates:
+Compiling the GUI part (Solarus GUI) is _optional_ and generates:
 
 1. A dynamic library called `solarus-gui`.
 2. An executable file called `solarus-launcher`, providing a GUI window to run
-quests.
+   quests.
 
 It is possible to play Solarus games without the GUI part: the `solarus-run`
 executable will directly run the quest in the current directory if any.
@@ -79,6 +80,8 @@ The following libraries are required to compile and execute Solarus:
 Note that another library is directly embedded in the source code: `snes_spc`,
 an SPC (Nintendo SNES) music decoding library.
 
+### Notes on some dependencies
+
 #### About Qt5
 
 You only need Qt if you want to build the Solarus GUI.
@@ -88,7 +91,7 @@ If you want to disable the build of the Solarus GUI, set the CMake variable
 #### About Lua
 
 Solarus uses the Lua scripting language.
-LuaJIT, a *just-in-time* implementation of Lua, is used by default for optimal
+LuaJIT, a _just-in-time_ implementation of Lua, is used by default for optimal
 performance.
 However, if you want to use vanilla Lua rather than LuaJIT, set the CMake
 variable `SOLARUS_USE_LUAJIT` to `OFF` at the configuration step.
@@ -114,7 +117,7 @@ For example, in Ubuntu or Debian:
 build-essential cmake pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libvorbis-dev libmodplug-dev qtbase5-dev qttools5-dev qttools5-dev-tools libglm-dev
 ```
 
-### macOS users
+### macOS
 
 The directory `libraries/macOS` in the Solarus repository contains some
 required static and dynamic libraries that are not provided as binaries by
@@ -145,7 +148,7 @@ Run the CMake GUI, then select the source directory of Solarus (for example
 `C:\solarus`) and choose a build directory of your choice (for example
 `C:\solarus\build`).
 
-Click *Configure* and choose what kind of project you want CMake to generate
+Click _Configure_ and choose what kind of project you want CMake to generate
 Makefiles, a Code::Blocks project, a Visual Studio project, etc.
 
 If CMake does not automatically find a compiler, indicate its installation path
@@ -154,11 +157,11 @@ by creating a variable `CMAKE_PREFIX_PATH` with the appropriate value
 
 This prefix path should be a directory that contains include, lib and bin
 directories with all the required dependencies in them.
-After that, click *Configure* again. CMake should be now able to find all
+After that, click _Configure_ again. CMake should be now able to find all
 includes and libraries.
 If it does not, check that you have correctly installed them.
 
-Then click *Generate* to generate the project files.
+Then click _Generate_ to generate the project files.
 
 #### Using the CMake command-line
 
@@ -203,7 +206,7 @@ named `solarus-launcher`.
 
 ### Installation
 
-Installing Solarus is *optional*.
+Installing Solarus is _optional_.
 
 However, installing Solarus can be useful in some cases.
 If you want it in your `PATH` (on Unix), or if you want to remove the build
@@ -219,7 +222,7 @@ If you intend to use the Solarus libraries from another project, you need to
 copy the whole include/solarus directory somewhere as well, and
 `gui/include/solarus` for the Solarus GUI library.
 
-*Important:* also copy the `build/include/solarus/config.h` file and place it
+_Important:_ also copy the `build/include/solarus/config.h` file and place it
 with the other installed headers, next to `config.h.in`.
 The `config.h` file is a header generated at the configuration step, this is
 why it is in the build directory and not with the rest of source files.
@@ -285,7 +288,7 @@ Type from your build directory:
 
 ## Platform-specific information
 
-### Mac OS X
+### macOS
 
 #### Pre-requisites
 
@@ -363,9 +366,9 @@ install_name_tool -change <old_path> <new_path>
 ```
 
 > Note: If you wish to deploy the Solarus GUI instead of a standalone quest,
-steps are the same except that you will use the `Solarus.app` package instead
-of the `Solarus-run.app` one, and will copy `libsolarus-gui.dylib` and
-`solarus-launcher` binaries instead of the `solarus-run` one and the quest.
+> steps are the same except that you will use the `Solarus.app` package instead
+> of the `Solarus-run.app` one, and will copy `libsolarus-gui.dylib` and
+> `solarus-launcher` binaries instead of the `solarus-run` one and the quest.
 
 ### OpenPandora
 
