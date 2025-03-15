@@ -1,4 +1,3 @@
----
 #------------------------------------------------------------------------------
 # GitLab CI/CD Configuration for the Solarus Quest Editor
 #------------------------------------------------------------------------------
@@ -65,7 +64,7 @@ stages:
       - staging
     expire_in: 1 week
   variables:
-    GIT_STRATEGY: none # no repository content is needed
+    GIT_STRATEGY: none  # no repository content is needed
     SOLARUS_REPOSITORY: https://gitlab.com/solarus-games/solarus
 
 #------------------------------------------------------------------------------
@@ -161,18 +160,18 @@ stages:
     - 'echo "Package: $PACKAGE"'
   script:
     - find staging/share/solarus-quest-editor/assets/initial_quest
-      \( -iname "*.dat" -or -iname "*.lua" \)
-      -print0 | xargs -0 unix2dos -k -o
+        \( -iname "*.dat" -or -iname "*.lua" \)
+        -print0 | xargs -0 unix2dos -k -o
     - find sample-quest
-      \( -iname "*.txt" -or -iname "*.md" -or
-      -iname "*.dat" -or -iname "*.lua" \)
-      -print0 | xargs -0 unix2dos -k -o
+        \( -iname "*.txt" -or -iname "*.md" -or
+           -iname "*.dat" -or -iname "*.lua" \)
+        -print0 | xargs -0 unix2dos -k -o
     - rm -f sample-quest/.gitignore
     - mingw_make_pkg.sh $ARCH $PACKAGE $BASE_DIR $BINARIES
     - if [[ -n $EXTRAS ]]; then pkg_add.sh $PACKAGE $BASE_DIR $EXTRAS; fi
     - if [[ -n $TEXT_FILES ]]; then
-      unix2dos -k -o $TEXT_FILES;
-      pkg_add.sh $PACKAGE . $TEXT_FILES;
+        unix2dos -k -o $TEXT_FILES;
+        pkg_add.sh $PACKAGE . $TEXT_FILES;
       fi
     - pkg_add.sh $PACKAGE . sample-quest
     - TMP_DIR=$(mktemp -d)
@@ -255,7 +254,7 @@ docs-prepare:
       - solarus-doc
     expire_in: 1 week
   variables:
-    GIT_STRATEGY: none # no repository content is needed
+    GIT_STRATEGY: none  # no repository content is needed
     SOLARUS_REPOSITORY: https://gitlab.com/solarus-games/solarus
 
 #------------------------------------------------------------------------------
@@ -291,7 +290,7 @@ sample-quest-prepare:
       - sample-quest
     expire_in: 1 week
   variables:
-    GIT_STRATEGY: none # no repository content is needed
+    GIT_STRATEGY: none  # no repository content is needed
     SQUEST_REPOSITORY: https://gitlab.com/solarus-games/solarus-sample-quest
 
 #------------------------------------------------------------------------------
