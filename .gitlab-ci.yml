@@ -279,7 +279,7 @@ mingw-x64-package:
     - mingw-x64-install
   variables:
     ARCH: x86_64
-    PACKAGE_PREFIX: solarus-player-x64
+    PACKAGE_PREFIX: solarus-cli-x64
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
@@ -287,28 +287,6 @@ mingw-x64-package:
       changelog.md
       license
       license-details.md
-
-#------------------------------------------------------------------------------
-# MinGW-based Minimal Package Job (64-bit)
-#------------------------------------------------------------------------------
-
-mingw-x64-min-package:
-  extends: .mingw-package
-  dependencies:
-    - mingw-x64-install
-  variables:
-    ARCH: x86_64
-    PACKAGE_PREFIX: solarus-minimal-x64
-    BINARIES: >-
-      staging/bin/libsolarus.dll
-      staging/bin/solarus-run.exe
-    TEXT_FILES: >-
-      changelog.md
-      license
-      license-details.md
-      cmake/win32/readme.txt
-  rules:
-    - if: $CI_COMMIT_TAG
 
 #------------------------------------------------------------------------------
 # MinGW-based Package Job (32-bit)
@@ -320,28 +298,7 @@ mingw-x86-package:
     - mingw-x86-install
   variables:
     ARCH: i686
-    PACKAGE_PREFIX: solarus-player-x86
-    BINARIES: >-
-      staging/bin/libsolarus.dll
-      staging/bin/solarus-run.exe
-    TEXT_FILES: >-
-      changelog.md
-      license
-      license-details.md
-  rules:
-    - if: $CI_COMMIT_TAG
-
-#------------------------------------------------------------------------------
-# MinGW-based Minimal Package Job (32-bit)
-#------------------------------------------------------------------------------
-
-mingw-x86-min-package:
-  extends: .mingw-package
-  dependencies:
-    - mingw-x86-install
-  variables:
-    ARCH: i686
-    PACKAGE_PREFIX: solarus-minimal-x86
+    PACKAGE_PREFIX: solarus-cli-x86
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
