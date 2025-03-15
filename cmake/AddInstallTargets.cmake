@@ -20,8 +20,8 @@ install(TARGETS solarus solarus-run
 )
 # Install headers: useful for projects that use Solarus as a library.
 install(DIRECTORY
-  "${CMAKE_BINARY_DIR}/include/solarus"  # For config.h.
-  "${CMAKE_SOURCE_DIR}/include/solarus"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/solarus"  # For config.h.
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus"
   DESTINATION ${SOLARUS_HEADERS_INSTALL_DESTINATION}
 )
 # Linux Manpage
