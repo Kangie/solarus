@@ -368,12 +368,9 @@ mingw-x64-package:
     PACKAGE_PREFIX: solarus-x64
     BINARIES: >-
       staging/bin/libsolarus.dll
-      staging/bin/libsolarus-gui.dll
       staging/bin/solarus-run.exe
-      staging/bin/solarus-launcher.exe
       staging/bin/solarus-quest-editor.exe
     EXTRAS: >-
-      staging/share/solarus-gui/translations
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
@@ -401,12 +398,9 @@ mingw-x86-package:
     PACKAGE_PREFIX: solarus-x86
     BINARIES: >-
       staging/bin/libsolarus.dll
-      staging/bin/libsolarus-gui.dll
       staging/bin/solarus-run.exe
-      staging/bin/solarus-launcher.exe
       staging/bin/solarus-quest-editor.exe
     EXTRAS: >-
-      staging/share/solarus-gui/translations
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
