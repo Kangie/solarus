@@ -20,6 +20,9 @@ You'll find more information about Solarus on <https://www.solarus-games.org>, s
 | [Solarus Launcher](launcher) | GUI to play Solarus games.   |
 | [Solarus Editor](editor)     | GUI to create Solarus games. |
 
+[launcher]: https://gitlab.com/solarus-games/solarus-launcher-legacy
+[editor]: https://gitlab.com/solarus-games/solarus-quest-editor
+
 ## Compilation
 
 To compile Solarus, instructions can be found in the [compilation.md](compilation.md) file.
