@@ -32,6 +32,7 @@ target_sources(solarus
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Equipment.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/EquipmentItem.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/EquipmentItemUsage.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/FlagSet.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/FontResource.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Command.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Controls.h"

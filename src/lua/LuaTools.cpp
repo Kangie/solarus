@@ -718,6 +718,103 @@ std::string opt_string_field(
 }
 
 /**
+ * \brief Checks that a value is a string list and returns it.
+ *
+ * Throws a LuaException in case of error.
+ *
+ * \param l A Lua state.
+ * \param index Index of a value in the stack.
+ * \return The string list value.
+ */
+std::vector<std::string> check_string_list(
+    lua_State* l,
+    int index
+) {
+  std::vector<std::string> value;
+
+  if (lua_istable(l, index)) {
+    lua_pushnil(l);
+    while (lua_next(l, 2) != 0) {
+      value.push_back(check_string(l, 4));
+      lua_pop(l, 1);
+    }
+  } else if (!lua_isnil(l, 2)) {
+    type_error(l, 2, "table");
+  }
+  lua_pop(l, 1);
+
+  return value;
+}
+
+/**
+ * \brief Checks that a table field is a string list and returns it.
+ *
+ * \param l A Lua state.
+ * \param table_index Index of a table in the stack.
+ * \param key Key of the field to get in that table.
+ * \return The wanted field as a string list.
+ */
+std::vector<std::string> check_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key
+) {
+  lua_settop(l, 1);
+  lua_getfield(l, 1, key.c_str());
+  return check_string_list(l, 1);
+}
+
+/**
+ * \brief Like LuaTools::check_string_list() but with a default value.
+ *
+ * Throws a LuaException in case of error.
+ *
+ * \param l A Lua state.
+ * \param index Index of a value in the stack.
+ * \param default_value The default value to return if the value is \c nil.
+ * \return The wanted value as a string list.
+ */
+std::vector<std::string> opt_string_list(
+    lua_State* l,
+    int index,
+    const std::vector<std::string>& default_value
+) {
+  if (lua_isnoneornil(l, index)) {
+    return default_value;
+  }
+  return check_string_list(l, index);
+}
+
+/**
+ * \brief Like LuaTools::check_string_list_field() but with a default value.
+ *
+ * This function acts like lua_getfield() followed by LuaTools::opt_string_list().
+ *
+ * \param l A Lua state.
+ * \param table_index Index of a table in the stack.
+ * \param key Key of the field to get in that table.
+ * \param default_value The default value to return if the field is \c nil.
+ * \return The wanted field as a string list.
+ */
+std::vector<std::string> opt_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::vector<std::string>& default_value
+) {
+
+  lua_settop(l, 1);
+  lua_getfield(l, 1, key.c_str());
+
+  if (lua_isnil(l, -1)) {
+    lua_pop(l, 1);
+    return default_value;
+  }
+
+  return check_string_list(l, 1);
+}
+
+/**
  * \brief Checks that a value is a boolean and returns it.
  *
  * This function throws a LuaException in case of error.

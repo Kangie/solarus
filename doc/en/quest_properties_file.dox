@@ -50,14 +50,17 @@ Only \c solarus_version and \c title are mandatory, but
 - \c author (string, optional): Person or team who created the quest.
 - \c quest_version (string, optional): Current version of your quest.
 - \c release_date (string, optional): Date of your last quest release
-  (YYYY-MM-DD).
+  (YYYYMMDD).
+- \c initial_release_date (string, optional): Date of your first quest release
+  (YYYYMMDD).
 - \c website (string, optional): URL of your website.
 - \c write_dir (string, optional): Directory where Solarus will write
   savegames and setting files for your quest. It will be a subdirectory of
   <tt>'$HOME/.solarus/'</tt>, automatically created by the engine.
   Its name should identify your quest, to avoid confusion with
   other Solarus quests that might also be installed on the user's machine.
-  You must define it before you can use savegames or setting files.
+  You must define it before you can use savegames or setting files. It will
+  serve as a unique quest identifier.
 - \c subpixel_camera (boolean, optional): \c true to enable subpixel
   smoothing of camera movement.
   The default value is \c false.
@@ -70,13 +73,32 @@ Only \c solarus_version and \c title are mandatory, but
 - \c min_quest_size (string, optional): Minimum size of the logical screen in
   pixels. Example: \c "320x200".
   No value means the same value as \c normal_quest_size.
-- \c max_quest_size (table, optional): Maximum size of the logical screen in
+- \c max_quest_size (string, optional): Maximum size of the logical screen in
   pixels. Example: \c "400x240".
   No value means the same value as \c normal_quest_size.
   Note: For the vast majority of quests,
   \c min_quest_size and \c max_quest_size are the same as
   \c normal_quest_size. Changing them is only useful for quests that want to
   support a range of logical screen sizes.
+- \c license (string, optional): License of your quest. If multiple licenses are
+  invoked, use a coma to separate them.
+- \c languages (string table, optional): Languages supported by your quest. To
+  identify a language, use the ISO 639 naming convention.
+- \c genres (string table, optional): Video game genres your quest can be
+  classified in. If multiple genres are invoked, use a coma to separate them.
+- \c min_players (number, optional): Minimum simultaneous player number your
+  quest supports.
+- \c max_players (number, optional): Maximym simultaneous player number your
+  quest supports.
+- \c age (string, optional): Target audience age classification, based on the
+  difficulty of the game, and also the potentially shocking images and messages
+  it conveys. Possible values: "all" (your quest is suitable for all ages),
+  "warning" (Parental guidance is suggested) and "restricted" (Exclusively for
+  older audience).
+- \c controls (number, optional): Control schemes supported by your quest. It is
+  a bitwise combination of these possible values: Keyboard (1), Mouse (2),
+  Joypad (4) and Other (8). Add the numbers your quest supports to get this
+  field value.
 
 \section quest_properties_file_quest_size About the quest size
 
@@ -121,11 +143,21 @@ Travel the world and save the princess.
 You will encounter great characters, epic battles and awesome puzzles.]],
   author = "John Doe",
   quest_version = "1.0",
+  initial_release_date = "",
   release_date = "",
   website = "http://www.example.com",
   normal_quest_size = "320x240",
   min_quest_size = "320x240",
   max_quest_size = "320x240",
+  license = "GPL v3",
+  languages = { "fr", "en", "es" },
+  min_players = 1,
+  max_players = 2,
+  genres = { "Action", "Aventure", "RPG" },
+  age = "all",
+  controls = 7,
+  dynamic_timestep = false,
+  subpixel_camera = false,
 }
 \endverbatim
 
