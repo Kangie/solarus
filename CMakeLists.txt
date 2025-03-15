@@ -47,6 +47,18 @@ endif()
 
 # Find Qt.
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg Network LinguistTools)
+if (NOT Qt6LinguistTools_FOUND AND QT_HOST_PATH)
+  find_package(Qt6LinguistTools "6.4"
+               PATHS "${QT_HOST_PATH}" "${QT_HOST_PATH}/lib/cmake"
+               NO_CMAKE_FIND_ROOT_PATH NO_DEFAULT_PATH QUIET)
+endif()
+if (NOT Qt6LinguistTools_FOUND)
+  message(FATAL_ERROR "CMake module Qt6LinguistTools could not be found.")
+endif()
+if (Qt6_VERSION VERSION_LESS 6.4)
+  message(FATAL_ERROR "At least Qt 6.4 is needed for this project.")
+endif()
+
 message(STATUS "Using Qt ${Qt6_VERSION}")
 if (Qt6_VERSION VERSION_LESS 6.7)
   qt_standard_project_setup()

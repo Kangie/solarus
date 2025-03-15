@@ -4,22 +4,107 @@
 
 ### macOS
 
-Be sure to have Qt and Solarus' dependencies installed.
+1. Install dependencies.
 
-```bash
-brew install cmake ninja sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug physfs glm openal-soft qt@6
-```
+   ```sh
+   brew install
+     cmake \
+     ninja \
+     sdl2 \
+     sdl2_image \
+     sdl2_ttf \
+     luajit \
+     lua@5.1 \
+     libvorbis \
+     libmodplug \
+     physfs \
+     glm \
+     openal-soft \
+     qt@6
+   ```
 
-CMake presets are provided for ease of use.
+2. Configure and build the project. CMake presets are provided for ease of use.
 
-```bash
-cmake --preset macos
-cmake --build --preset macos
-cpack --preset macos
+   ```sh
+   cmake --preset macos
+   cmake --build --preset macos
+   cpack --preset macos
+   ```
 
-# or simply (one-liner to configure, build and package):
-cmake --workflow macos
-```
+   Alternatively, there is simply this one-liner to configure, build and package:
+
+   ```sh
+   cmake --workflow macos
+   ```
+
+### Windows (MinGW)
+
+1. Install dependencies.
+
+   ```sh
+   pacman --noconfirm --needed -S \
+       git \
+       mingw-w64-ucrt-x86_64-cmake \
+       mingw-w64-ucrt-x86_64-gcc \
+       mingw-w64-ucrt-x86_64-glm \
+       mingw-w64-ucrt-x86_64-libmodplug \
+       mingw-w64-ucrt-x86_64-libvorbis \
+       mingw-w64-ucrt-x86_64-luajit \
+       mingw-w64-ucrt-x86_64-ninja \
+       mingw-w64-ucrt-x86_64-openal \
+       mingw-w64-ucrt-x86_64-physfs \
+       mingw-w64-ucrt-x86_64-pkgconf \
+       mingw-w64-ucrt-x86_64-SDL2 \
+       mingw-w64-ucrt-x86_64-SDL2_image \
+       mingw-w64-ucrt-x86_64-SDL2_ttf \
+       mingw-w64-ucrt-x86_64-qt6-base \
+       mingw-w64-ucrt-x86_64-qt6-tools
+   ```
+
+2. Configure and build the project. CMake presets are provided for ease of use.
+
+   ```sh
+   cmake --preset mingw
+   cmake --build --preset mingw
+   cpack --preset mingw
+   ```
+
+   Alternatively, there is simply this one-liner to configure, build and package:
+
+   ```sh
+   cmake --workflow mingw
+   ```
+
+### Debian (Ubuntu, etc.)
+
+1. Install dependencies.
+
+   ```sh
+   apt update
+   apt install --no-install-recommends \
+       build-essential \
+       cmake \
+       pkgconf \
+       libsdl2-dev \
+       libsdl2-image-dev \
+       libsdl2-ttf-dev \
+       libglm-dev \
+       libluajit-5.1-dev \
+       libphysfs-dev \
+       libopenal-dev \
+       libvorbis-dev \
+       libmodplug-dev \
+       qt6-base-dev \
+       qt6-base-dev-tools \
+       qt6-tools-dev
+   ```
+
+2. Configure and build the project. CMake presets are provided for ease of use.
+
+   ```sh
+   cmake --preset linux
+   cmake --build --preset linux
+   ```
 
 ## Internationalization
 
@@ -34,13 +119,13 @@ cmake --workflow macos
 
 2. Configure the project with CMake.
 
-   ```bash
+   ```sh
    cmake --preset macos
    ```
 
 3. Update the `.ts` files by building the target that will internally call `lupdate`:
 
-   ```bash
+   ```sh
    cmake --build --preset macos-i18n
    ```
 
