@@ -19,6 +19,8 @@ private:
   void setupUi();
 
 private:
+  void saveConsoleContentToFile();
+
   QPointer<Controller> _controller;
   struct {
     Console* console{ nullptr };

@@ -241,6 +241,14 @@ void Console::set_quest_runner(QuestRunner* runner) {
 }
 
 /**
+ * @brief Returns the QPlainTextEdit where the logs are shown.
+ * @return The log view.
+ */
+QPlainTextEdit* Console::log_view() {
+  return ui.log_view;
+}
+
+/**
  * @brief Slot called when the quest execution begins.
  */
 void Console::quest_running() {

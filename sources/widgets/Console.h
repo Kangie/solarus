@@ -36,6 +36,8 @@ public:
 
   void set_quest_runner(QuestRunner* quest_runner);
 
+  QPlainTextEdit* log_view();
+
 signals:
 
   void setting_changed_in_quest(const QString& key, const QVariant& value);

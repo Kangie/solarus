@@ -42,6 +42,10 @@ public: // App preferences.
   void setAppLastOpenedPath(const QString& path);
   Q_SIGNAL void appLastOpenedPathChanged();
 
+  QString appLastConsoleSavePath() const;
+  void setAppLastConsoleSavePath(const QString& path);
+  Q_SIGNAL void appLastConsoleSavePathChanged();
+
   bool appWarnBeforeQuestRemoval() const;
   void setAppWarnBeforeQuestRemoval(bool value);
   Q_SIGNAL void appWarnBeforeQuestRemovalChanged();

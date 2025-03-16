@@ -12,6 +12,7 @@ constexpr auto key_appConsoleVisible{ "app/appConsoleVisible" };
 constexpr auto key_appTheme{ "app/theme" };
 constexpr auto key_appQuestList{ "app/questList" };
 constexpr auto key_appLastOpenedPath{ "app/lastOpenedPath" };
+constexpr auto key_appLastConsoleSavePath{ "app/lastConsoleSavePath" };
 constexpr auto key_appWarnBeforeQuestRemoval{ "app/warnBeforeQuestRemoval" };
 
 constexpr auto key_windowGeometry{ "window/geometry" };
@@ -34,6 +35,7 @@ constexpr auto default_questEnableAudio{ true };
 constexpr auto default_questSuspendWhenUnfocused{ true };
 
 static const auto default_lastOpenedPath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+static const auto default_lastConsoleSavePath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
 
 QString applicationName() {
 #if defined(Q_OS_WIN)
@@ -145,6 +147,17 @@ void Preferences::setAppLastOpenedPath(const QString& value) {
   if (value != appLastOpenedPath()) {
     _qSettings.setValue(key_appLastOpenedPath, value);
     emit appLastOpenedPathChanged();
+  }
+}
+
+QString Preferences::appLastConsoleSavePath() const {
+  return _qSettings.value(key_appLastConsoleSavePath, default_lastConsoleSavePath).toString();
+}
+
+void Preferences::setAppLastConsoleSavePath(const QString& value) {
+  if (value != appLastOpenedPath()) {
+    _qSettings.setValue(key_appLastConsoleSavePath, value);
+    emit appLastConsoleSavePathChanged();
   }
 }
 
