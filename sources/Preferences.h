@@ -42,6 +42,10 @@ public: // App preferences.
   void setAppLastOpenedPath(const QString& path);
   Q_SIGNAL void appLastOpenedPathChanged();
 
+  bool appWarnBeforeQuestRemoval() const;
+  void setAppWarnBeforeQuestRemoval(bool value);
+  Q_SIGNAL void appWarnBeforeQuestRemovalChanged();
+
 public: // Window preferences.
   QByteArray windowGeometry() const;
   void setWindowGeometry(const QByteArray& value);

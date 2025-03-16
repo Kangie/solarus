@@ -224,19 +224,28 @@ void Controller::openAddFolderDialog() {
 void Controller::removeQuest(const QModelIndex& index) {
   if (index.isValid()) {
     const auto questFilePath = _model->questFilePath(index);
-    auto* msgBox = new MessageBox(qApp->activeWindow());
-    msgBox->setType(MessageBox::Type::Warning);
-    msgBox->setTitle(i18n::questRemovalConfirmation());
-    msgBox->setText(i18n::questRemovalDescription() + QString("<br/><br/><b>%1</b>").arg(questFilePath));
-    msgBox->setButtons(MessageBox::Button::Cancel | MessageBox::Button::Yes);
-    msgBox->setButtonIcon(MessageBox::Button::Yes, makeIcon(Icons16::Action_Trash));
-    QObject::connect(msgBox, &MessageBox::finished, this, [this, questFilePath](int result) {
-      const auto button = MessageBox::buttonResult(result);
-      if (button == MessageBox::Yes) {
-        _model->removeQuest(questFilePath);
-      }
-    });
-    msgBox->show();
+    const auto showMsgBox = _preferences->appWarnBeforeQuestRemoval();
+    if (showMsgBox) {
+      auto msgBox = new MessageBox(qApp->activeWindow());
+      msgBox->setType(MessageBox::Type::Warning);
+      msgBox->setTitle(i18n::questRemovalConfirmation());
+      msgBox->setText(i18n::questRemovalDescription() + QString("<br/><br/><b>%1</b>").arg(questFilePath));
+      msgBox->setButtons(MessageBox::Button::Cancel | MessageBox::Button::Yes);
+      msgBox->setButtonIcon(MessageBox::Button::Yes, makeIcon(Icons16::Action_Trash));
+      msgBox->setCheckBox("Show this message next time", true);
+      QObject::connect(msgBox, &MessageBox::finished, this, [this, questFilePath, msgBox](int result) {
+        const auto button = MessageBox::buttonResult(result);
+        if (button == MessageBox::Yes) {
+          const auto showMsgBoxNextTime = msgBox->checkBoxChecked();
+          _preferences->setAppWarnBeforeQuestRemoval(showMsgBoxNextTime);
+
+          _model->removeQuest(questFilePath);
+        }
+      });
+      msgBox->show();
+    } else {
+      _model->removeQuest(questFilePath);
+    }
   }
 }
 

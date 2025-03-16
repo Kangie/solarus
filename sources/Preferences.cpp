@@ -12,6 +12,7 @@ constexpr auto key_appConsoleVisible{ "app/appConsoleVisible" };
 constexpr auto key_appTheme{ "app/theme" };
 constexpr auto key_appQuestList{ "app/questList" };
 constexpr auto key_appLastOpenedPath{ "app/lastOpenedPath" };
+constexpr auto key_appWarnBeforeQuestRemoval{ "app/warnBeforeQuestRemoval" };
 
 constexpr auto key_windowGeometry{ "window/geometry" };
 constexpr auto key_windowSplitterState{ "window/splitterState" };
@@ -25,6 +26,7 @@ constexpr auto default_appLanguage{ "" };
 constexpr auto default_appPropertiesPanelVisible{ false };
 constexpr auto default_appConsoleVisible{ false };
 constexpr auto default_appTheme{ "Dark" };
+constexpr auto default_appWarnBeforeQuestRemoval{ true };
 
 constexpr auto default_questForceSoftwareRendering{ false };
 constexpr auto default_questFullScreen{ false };
@@ -63,6 +65,7 @@ void Preferences::resetToDefaults() {
   setAppPropertiesPanelVisible(default_appPropertiesPanelVisible);
   setAppConsoleVisible(default_appConsoleVisible);
   setAppTheme(default_appTheme);
+  setAppWarnBeforeQuestRemoval(default_appWarnBeforeQuestRemoval);
 
   setQuestEnableAudio(default_questEnableAudio);
   setQuestForceSoftwareRendering(default_questForceSoftwareRendering);
@@ -142,6 +145,17 @@ void Preferences::setAppLastOpenedPath(const QString& value) {
   if (value != appLastOpenedPath()) {
     _qSettings.setValue(key_appLastOpenedPath, value);
     emit appLastOpenedPathChanged();
+  }
+}
+
+bool Preferences::appWarnBeforeQuestRemoval() const {
+  return _qSettings.value(key_appWarnBeforeQuestRemoval, default_appWarnBeforeQuestRemoval).toBool();
+}
+
+void Preferences::setAppWarnBeforeQuestRemoval(bool value) {
+  if (value != appWarnBeforeQuestRemoval()) {
+    _qSettings.setValue(key_appWarnBeforeQuestRemoval, value);
+    emit appWarnBeforeQuestRemovalChanged();
   }
 }
 

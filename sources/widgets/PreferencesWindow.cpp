@@ -50,6 +50,12 @@ static QString appConsoleVisible() {
 static QString appConsoleVisibleCaption() {
   return QApplication::translate("SolarusLauncher", "Very useful to spot bugs.");
 }
+static QString appWarnBeforeQuestRemoval() {
+  return QApplication::translate("SolarusLauncher", "Ask before removing a quest");
+}
+static QString appWarnBeforeQuestRemovalCaption() {
+  return QApplication::translate("SolarusLauncher", "Quests are only removed from the app's index, not from disk.");
+}
 static QString appTheme() {
   return QApplication::translate("SolarusLauncher", "Theme");
 }
@@ -175,6 +181,7 @@ void PreferencesWindow::setupUi() {
   formLayout->setRowWrapPolicy(QFormLayout::RowWrapPolicy::DontWrapRows);
   scrollAreaContent->setLayout(formLayout);
 
+  // ---- App ----
   {
     auto* title = new oclero::qlementine::Label(this);
     title->setRole(oclero::qlementine::TextRole::H4);
@@ -256,8 +263,25 @@ void PreferencesWindow::setupUi() {
     });
   }
   {
+    auto* warnBeforeRemovalSwitch = new oclero::qlementine::Switch(this);
+    formLayout->addRow(makeRowLabel(i18n::appWarnBeforeQuestRemoval(), i18n::appWarnBeforeQuestRemovalCaption(), this),
+      warnBeforeRemovalSwitch);
+
+    warnBeforeRemovalSwitch->setChecked(_controller->preferences()->appWarnBeforeQuestRemoval());
+    QObject::connect(warnBeforeRemovalSwitch, &QAbstractButton::clicked, this, [this](bool checked) {
+      _controller->preferences()->setAppWarnBeforeQuestRemoval(checked);
+    });
+    QObject::connect(_controller->preferences(), &Preferences::appWarnBeforeQuestRemovalChanged, this,
+      [this, warnBeforeRemovalSwitch]() {
+        QSignalBlocker _(warnBeforeRemovalSwitch);
+        const auto value = _controller->preferences()->appWarnBeforeQuestRemoval();
+        warnBeforeRemovalSwitch->setChecked(value);
+      });
+  }
+  {
     formLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
   }
+  // ---- Quests ----
   {
     auto* title = new oclero::qlementine::Label(this);
     title->setRole(oclero::qlementine::TextRole::H4);

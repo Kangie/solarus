@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QApplication>
 #include <QPainter>
+#include <QCheckBox>
 
 #include <optional>
 
@@ -88,6 +89,7 @@ void MessageBox::setupUi() {
 
   _ui.statusBadge = new oclero::qlementine::StatusBadgeWidget(this);
   topLayout->addWidget(_ui.statusBadge);
+  topLayout->setAlignment(_ui.statusBadge, Qt::AlignCenter);
 
   _ui.titleLabel = new oclero::qlementine::Label(this);
   _ui.titleLabel->setWordWrap(true);
@@ -96,6 +98,7 @@ void MessageBox::setupUi() {
 
   _ui.textLabel = new QLabel(this);
   _ui.textLabel->setWordWrap(true);
+  _ui.textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   topLayout->addWidget(_ui.textLabel);
 
   ensurePolished();
@@ -110,17 +113,38 @@ void MessageBox::setupUi() {
     });
   }
 
+  _ui.checkBox = new QCheckBox(this);
+  _ui.checkBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  _ui.checkBox->setChecked(false);
+  _ui.checkBox->setVisible(false);
+  topLayout->addWidget(_ui.checkBox);
+
   topLayout->addStretch();
 
   auto* bottomWidget = new BottomWidget(this);
+  bottomWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   rootLayout->addWidget(bottomWidget);
 
   _ui.buttonsLayout = new QHBoxLayout(bottomWidget);
   bottomWidget->setLayout(_ui.buttonsLayout);
   _ui.buttonsLayout->setContentsMargins(32, 16, 32, 16);
   _ui.buttonsLayout->setSpacing(16);
+}
 
-  setFixedWidth(380);
+void MessageBox::showEvent(QShowEvent* evt) {
+  QDialog::showEvent(evt);
+
+  _ui.checkBox->setVisible(!_ui.checkBox->text().isEmpty());
+
+  constexpr auto defaultWidth = 380;
+  setFixedWidth(defaultWidth);
+  const auto h = heightForWidth(defaultWidth);
+  setFixedHeight(h);
+}
+
+void MessageBox::hideEvent(QHideEvent* evt) {
+  QDialog::hideEvent(evt);
+  deleteLater();
 }
 
 MessageBox::Type MessageBox::type() const {
@@ -210,6 +234,27 @@ QIcon MessageBox::iconForButton(Button button) const {
     default:
       return QIcon{};
   }
+}
+
+void MessageBox::setCheckBox(const QString& text, bool checked) {
+  _ui.checkBox->setText(text);
+  _ui.checkBox->setChecked(checked);
+}
+
+void MessageBox::setCheckBoxText(const QString& text) {
+  _ui.checkBox->setText(text);
+}
+
+void MessageBox::setCheckBoxChecked(bool checked) {
+  _ui.checkBox->setChecked(checked);
+}
+
+QString MessageBox::checkBoxText() const {
+  return _ui.checkBox->text();
+}
+
+bool MessageBox::checkBoxChecked() const {
+  return _ui.checkBox->isChecked();
 }
 
 MessageBox::Button MessageBox::exec(

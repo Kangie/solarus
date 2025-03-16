@@ -6,6 +6,7 @@
 
 class QLayout;
 class QLabel;
+class QCheckBox;
 
 namespace oclero::qlementine {
 class Label;
@@ -13,8 +14,10 @@ class StatusBadgeWidget;
 } // namespace oclero::qlementine
 
 namespace solarus::launcher {
+/// Reimplementation of QMessageBox, but prettier.
 class MessageBox : public QDialog {
   Q_OBJECT
+
 public:
   enum class Type {
     None,
@@ -51,13 +54,23 @@ public:
   void setButtons(Buttons value);
 
   void setButtonIcon(Button, const QIcon& icon);
+  QIcon iconForButton(Button button) const;
 
-  virtual QIcon iconForButton(Button button) const;
+  void setCheckBox(const QString& text, bool checked);
+  void setCheckBoxText(const QString& text);
+  void setCheckBoxChecked(bool checked);
+
+  QString checkBoxText() const;
+  bool checkBoxChecked() const;
 
   static Button exec(
     QWidget* parent, Type type, const QString& title, const QString& text, const Buttons buttons = { Ok | Cancel });
 
   static Button buttonResult(int result);
+
+protected:
+  void showEvent(QShowEvent*) override;
+  void hideEvent(QHideEvent*) override;
 
 private:
   void setupUi();
@@ -69,6 +82,7 @@ private:
     oclero::qlementine::StatusBadgeWidget* statusBadge{ nullptr };
     oclero::qlementine::Label* titleLabel{ nullptr };
     QLabel* textLabel{ nullptr };
+    QCheckBox* checkBox{ nullptr };
     QLayout* buttonsLayout{ nullptr };
   } _ui;
   Buttons _buttons{ Button::None };
