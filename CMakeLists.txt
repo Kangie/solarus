@@ -28,6 +28,10 @@ set(LINKS_CONTACT "https://www.solarus-games.org/about/contact")
 set(LINKS_RELEASES "https://gitlab.com/api/v4/projects/solarus-games%2Fsolarus-launcher-legacy/releases")
 set(LINKS_UPDATE_ENDPOINT "https://gitlab.com/api/v4/projects/solarus-games%2Fsolarus-launcher-legacy/releases/permalink/latest")
 
+set(DOCUMENT_NAME "Solarus Quest")
+set(DOCUMENT_EXTENSION "solarus")
+set(DOCUMENT_TYPE_IDENTIFIER "org.solarus-games.solarus-quest")
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -123,10 +127,17 @@ else()
 endif()
 
 # Icon.
-set(MACOSX_BUNDLE_ICON_FILE solarus_launcher_icon.icns)
-set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/${MACOSX_BUNDLE_ICON_FILE}")
-set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(MACOSX_BUNDLE_ICON_FILE "solarus_launcher_icon.icns")
+  set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/${MACOSX_BUNDLE_ICON_FILE}")
+  set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
+  set(MACOSX_DOCUMENT_ICON_FILE "solarus_document_icon.icns")
+  set(DOCUMENT_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/document_icon/macos/${MACOSX_DOCUMENT_ICON_FILE}")
+  set_source_files_properties(${DOCUMENT_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+endif()
+
+# Get all sources.
 file(GLOB_RECURSE SOURCES
   "${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/sources/*.h"
@@ -134,7 +145,8 @@ file(GLOB_RECURSE SOURCES
 
 # Target.
 qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
-  ${APP_ICON_MACOS}
+  $<$<PLATFORM_ID:Darwin>:${APP_ICON_MACOS}>
+  $<$<PLATFORM_ID:Darwin>:${DOCUMENT_ICON_MACOS}>
   ${SOURCES}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sources)
@@ -253,6 +265,15 @@ install(TARGETS ${PROJECT_NAME}
   #RUNTIME DESTINATION $<TARGET_FILE_NAME:${PROJECT_NAME}>.app/Contents/MacOS COMPONENT ${PROJECT_NAME}
 )
 install(SCRIPT "${DEPLOY_SCRIPT}" COMPONENT ${PROJECT_NAME})
+
+# Add Info.plist to the macOS bundle only on macOS.
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(EXECUTABLE_NAME ${APP_NAME})
+  configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macOS/Info.plist.in" "${MACOSX_BUNDLE_INFO_PLIST}" @ONLY)
+  set(MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
+  set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${MACOSX_BUNDLE_INFO_PLIST}")
+  target_sources(${PROJECT_NAME} PRIVATE "${MACOSX_BUNDLE_INFO_PLIST}")
+endif()
 
 qt_finalize_executable(${PROJECT_NAME})
 
