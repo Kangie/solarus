@@ -51,6 +51,7 @@ public:
 
   Q_SIGNAL void focusOnListViewRequested(Qt::FocusReason reason);
   Q_SIGNAL void focusOnSearchFieldRequested(Qt::FocusReason reason);
+  Q_SIGNAL void mainWindowRaiseRequested();
 
   Preferences* preferences();
   QuestListModel* model();

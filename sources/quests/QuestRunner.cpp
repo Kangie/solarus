@@ -23,13 +23,6 @@ QuestRunner::QuestRunner(QObject* parent)
   constexpr auto timerDelay = 100; // ms
   QObject::connect(&_timer, &QTimer::timeout, this, &QuestRunner::onTimerTimeout);
   _timer.start(timerDelay);
-
-  // QObject::connect(&_questOutputHandler, &QuestOutputHandler::htmlProduced, this, [this](const auto& html) {
-  //   _questFullOutput.append(html);
-  // });
-  // QObject::connect(&_questOutputHandler, &QuestOutputHandler::outputCleared, this, [this]() {
-  //   _questFullOutput.clear();
-  // });
 }
 
 QuestRunner::~QuestRunner() {

@@ -43,6 +43,10 @@ MainWindow::MainWindow(Controller* controller, QWidget* parent)
     _ui.listView->setFocus(reason);
   });
 
+  QObject::connect(_controller, &Controller::mainWindowRaiseRequested, this, [this]() {
+    raise();
+  });
+
   // Check for updates.
   QTimer::singleShot(1000, this, [this]() {
     _controller->checkForUpdates();

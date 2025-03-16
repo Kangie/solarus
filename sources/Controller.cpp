@@ -59,6 +59,27 @@ static QString themeName(const QString themeId) {
     return themeId;
   }
 }
+static QString questRunnerErrorTitle() {
+  return QApplication::translate("SolarusLauncher", "An error occurred while running the quest");
+}
+static QString questRunnerErrorText(const QuestRunner::ErrorCode error) {
+  switch (error) {
+    case QuestRunner::ErrorCode::ProcessReadError:
+      return QApplication::translate("SolarusLauncher", "The process had a read error.");
+    case QuestRunner::ErrorCode::ProcessWriteError:
+      return QApplication::translate("SolarusLauncher", "The process had a write error.");
+    case QuestRunner::ErrorCode::ProcessCrashed:
+      return QApplication::translate("SolarusLauncher", "The process crashed.");
+    case QuestRunner::ErrorCode::ProcessFailedToStart:
+      return QApplication::translate("SolarusLauncher", "The process failed to start.");
+    case QuestRunner::ErrorCode::ProcessTimedOut:
+      return QApplication::translate("SolarusLauncher", "The process no longer responds.");
+    case QuestRunner::ErrorCode::UnknownError:
+      return QApplication::translate("SolarusLauncher", "Unknown error.");
+    default:
+      return "";
+  }
+}
 } // namespace i18n
 
 namespace {
@@ -160,6 +181,20 @@ void Controller::setupRunner() {
   QObject::connect(_preferences, &Preferences::questForceSoftwareRenderingChanged, this, [this]() {
     _runner->setForceSoftwareRendering(_preferences->questForceSoftwareRendering());
   });
+
+  // Handle errors and crashes.
+  QObject::connect(_runner, &QuestRunner::errorRaised, this, [this](QuestRunner::ErrorCode errorCode) {
+    emit mainWindowRaiseRequested();
+
+    QTimer::singleShot(0, this, [this, errorCode]() {
+      auto* msgBox = new MessageBox(qApp->activeWindow());
+      msgBox->setType(MessageBox::Type::Error);
+      msgBox->setTitle(i18n::questRunnerErrorTitle());
+      msgBox->setButtons(MessageBox::Button::Ok);
+      msgBox->setText(i18n::questRunnerErrorText(errorCode));
+      msgBox->show();
+    });
+  });
 }
 
 void Controller::loadLanguages() {
@@ -226,7 +261,7 @@ void Controller::removeQuest(const QModelIndex& index) {
     const auto questFilePath = _model->questFilePath(index);
     const auto showMsgBox = _preferences->appWarnBeforeQuestRemoval();
     if (showMsgBox) {
-      auto msgBox = new MessageBox(qApp->activeWindow());
+      auto* msgBox = new MessageBox(qApp->activeWindow());
       msgBox->setType(MessageBox::Type::Warning);
       msgBox->setTitle(i18n::questRemovalConfirmation());
       msgBox->setText(i18n::questRemovalDescription() + QString("<br/><br/><b>%1</b>").arg(questFilePath));
