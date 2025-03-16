@@ -97,15 +97,17 @@ void MenuBar::setupUi() {
   {
     fileMenu->setSeparatorsCollapsible(true);
 
-    fileMenu->addAction(
+    auto* addQuestAction = fileMenu->addAction(
       makeIcon(Icons16::Action_PlusCircle, macOS), i18n::addQuestAction(), QKeySequence::StandardKey::New, [this]() {
         _controller->openAddQuestDialog();
       });
+    addQuestAction->setAutoRepeat(false);
 
-    fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS), i18n::addQuestFolderAction(),
+    auto* addFolderAction = fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS), i18n::addQuestFolderAction(),
       QKeySequence::StandardKey::Open, [this]() {
         _controller->openAddFolderDialog();
       });
+    addFolderAction->setAutoRepeat(false);
 
 #ifdef __APPLE__
     const auto removeQuestShortcut = QKeySequence(Qt::Key_Backspace);
@@ -117,16 +119,18 @@ void MenuBar::setupUi() {
       fileMenu->addAction(makeIcon(Icons16::Action_Trash, macOS), i18n::removeQuest(), removeQuestShortcut, [this]() {
         _controller->removeCurrentQuest();
       });
+    removeQuestAction->setAutoRepeat(false);
     removeQuestAction->setEnabled(_controller->model()->currentQuest().isValid());
     QObject::connect(
       _controller->model(), &QuestListModel::currentQuestChanged, this, [removeQuestAction](const QModelIndex& index) {
         removeQuestAction->setEnabled(index.isValid());
       });
 
-    fileMenu->addAction(makeIcon(Icons16::Action_Refresh, macOS), i18n::reloadQuestsAction(),
+    auto* refreshAction = fileMenu->addAction(makeIcon(Icons16::Action_Refresh, macOS), i18n::reloadQuestsAction(),
       QKeySequence(Qt::SHIFT | Qt::Key_R), [this]() {
         _controller->loadQuests();
       });
+    refreshAction->setAutoRepeat(false);
 
     fileMenu->addSeparator();
 
@@ -134,11 +138,13 @@ void MenuBar::setupUi() {
       makeIcon(Icons16::Media_Play, macOS), i18n::playQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
         _controller->playCurrentQuest();
       });
+    playQuestAction->setAutoRepeat(false);
 
     auto* stopQuestAction = fileMenu->addAction(
       makeIcon(Icons16::Media_Stop, macOS), i18n::stopQuest(), QKeySequence{ Qt::Key_F5 }, [this]() {
         _controller->stopQuest();
       });
+    stopQuestAction->setAutoRepeat(false);
 
     const auto updatePlayStopActions = [this, playQuestAction, stopQuestAction]() {
       const auto* model = _controller->model();
@@ -154,15 +160,17 @@ void MenuBar::setupUi() {
 
     fileMenu->addSeparator();
 
-    fileMenu->addAction(
+    auto* showContainingFolderAction = fileMenu->addAction(
       makeIcon(Icons16::File_FolderOpen, macOS), i18n::showContaingFolder(), QKeySequence{}, [this]() {
         _controller->openCurrentQuestFolder();
       });
+    showContainingFolderAction->setAutoRepeat(false);
 
-    fileMenu->addAction(
+    auto* searchAction = fileMenu->addAction(
       makeIcon(Icons16::Navigation_Search, macOS), i18n::search(), QKeySequence::StandardKey::Find, [this]() {
         emit _controller->focusOnSearchFieldRequested(Qt::ShortcutFocusReason);
       });
+    searchAction->setAutoRepeat(false);
 
     fileMenu->addSeparator();
 
@@ -171,6 +179,7 @@ void MenuBar::setupUi() {
         _controller->openPreferencesDialog();
       });
     preferencesAction->setMenuRole(QAction::MenuRole::PreferencesRole);
+    preferencesAction->setAutoRepeat(false);
 
     fileMenu->addSeparator();
 
@@ -184,6 +193,7 @@ void MenuBar::setupUi() {
       qApp->quit();
     });
     quitAction->setMenuRole(QAction::MenuRole::QuitRole);
+    quitAction->setAutoRepeat(false);
   }
 
   auto* viewMenu = addMenu(i18n::viewMenu());
@@ -207,6 +217,7 @@ void MenuBar::setupUi() {
       auto* action = themeMenu->addAction(icon, text);
       action->setData(name);
       action->setCheckable(true);
+      action->setAutoRepeat(false);
       themeActionGroup->addAction(action);
       action->setChecked(name == currentTheme);
 
@@ -221,9 +232,10 @@ void MenuBar::setupUi() {
       });
     }
 
-    viewMenu->addAction(makeIcon(Icons16::Action_Swap, macOS), i18n::switchTheme(), { Qt::CTRL | Qt::Key_T }, [this]() {
+    auto* swapThemeAction = viewMenu->addAction(makeIcon(Icons16::Action_Swap, macOS), i18n::switchTheme(), { Qt::CTRL | Qt::Key_T }, [this]() {
       _controller->themeManager()->setNextTheme();
     });
+    swapThemeAction->setAutoRepeat(false);
 
     viewMenu->addSeparator();
 
@@ -233,6 +245,7 @@ void MenuBar::setupUi() {
           _controller->preferences()->setAppConsoleVisible(checked);
         });
       action->setCheckable(true);
+      action->setAutoRepeat(false);
       action->setChecked(_controller->preferences()->appConsoleVisible());
 
       QObject::connect(_controller->preferences(), &Preferences::appConsoleVisibleChanged, this, [this, action]() {
@@ -247,6 +260,7 @@ void MenuBar::setupUi() {
           _controller->preferences()->setAppPropertiesPanelVisible(checked);
         });
       action->setCheckable(true);
+      action->setAutoRepeat(false);
       action->setChecked(_controller->preferences()->appPropertiesPanelVisible());
 
       QObject::connect(
@@ -261,12 +275,15 @@ void MenuBar::setupUi() {
   {
     helpMenu->setSeparatorsCollapsible(true);
 
-    helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, [this]() {
+    auto* contactAction = helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, [this]() {
       _controller->openContactPage();
     });
-    helpMenu->addAction(makeIcon(Icons16::File_FileScript, macOS), i18n::sourceCode(), QKeySequence{}, [this]() {
+    contactAction->setAutoRepeat(false);
+
+    auto* sourceCodeAction = helpMenu->addAction(makeIcon(Icons16::File_FileScript, macOS), i18n::sourceCode(), QKeySequence{}, [this]() {
       _controller->openSourceCodePage();
     });
+    sourceCodeAction->setAutoRepeat(false);
 
     helpMenu->addSeparator();
 
@@ -276,6 +293,7 @@ void MenuBar::setupUi() {
           _controller->checkForUpdates();
         });
       checkForUpdateAction->setMenuRole(QAction::MenuRole::ApplicationSpecificRole);
+      checkForUpdateAction->setAutoRepeat(false);
 
       QObject::connect(_controller->updater(), &BasicUpdater::checkStarted, this, [this, checkForUpdateAction]() {
         checkForUpdateAction->setEnabled(false);
@@ -291,6 +309,7 @@ void MenuBar::setupUi() {
         _controller->openAboutDialog();
       });
     aboutAction->setMenuRole(QAction::MenuRole::AboutRole);
+    aboutAction->setAutoRepeat(false);
   }
 }
 } // namespace solarus::launcher

@@ -175,6 +175,7 @@ void MainWindow::setupUi() {
   auto* closeWindowShortcut = new QShortcut(QKeySequence::StandardKey::Close, this, [this]() {
     close();
   });
+  closeWindowShortcut->setAutoRepeat(false);
   Q_UNUSED(closeWindowShortcut) // make clang-analyzer happy.
 }
 
