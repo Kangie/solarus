@@ -983,20 +983,25 @@ public:
   SetEntitiesLockedCommand(MapEditor& editor, const EntityIndexes& indexes, bool locked) :
       MapEditorCommand(editor, locked ? MapEditor::tr("Lock") : MapEditor::tr("Unlock")),
       indexes(indexes),
-      locked(locked) {
+      locked_after(locked) {
   }
 
   void undo() override {
-    for (const EntityIndex& index: indexes) {
-      get_map().set_entity_locked(index, !locked);
+    int i = 0;
+    for (const EntityIndex& index : indexes) {
+      get_map().set_entity_locked(index, locked_before.at(i));
+      ++i;
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes);
   }
 
   void redo() override {
-    for (const EntityIndex& index: indexes) {
-      get_map().set_entity_locked(index, locked);
+    MapModel& map = get_map();
+    locked_before.clear();
+    for (const EntityIndex& index : indexes) {
+      locked_before.append(map.is_entity_locked(index));
+      map.set_entity_locked(index, locked_after);
     }
     // Select impacted entities.
     get_map_view().set_selected_entities(indexes);
@@ -1004,7 +1009,8 @@ public:
 
 private:
   EntityIndexes indexes;          // Indexes of entites to change.
-  bool locked;                    // Whether to lock or unlock.
+  QList<int> locked_before;       // Locked states before the change.
+  bool locked_after = false;      // Whether to lock or unlock.
 };
 
 /**
