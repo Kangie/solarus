@@ -1493,7 +1493,7 @@ void MapView::set_selected_entity_and_group(const EntityIndex& index) {
 }
 
 /**
- * @brief Selects or unselects an entity.
+ * @brief Selects or unselects an entity and its group.
  * @param entity The entity to change.
  * @param selected @c true to select it.
  */

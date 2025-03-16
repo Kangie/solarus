@@ -1027,25 +1027,27 @@ public:
   }
 
   void undo() override {
-    get_map().destroy_group(group_after);
-    // Select impacted entities.
+    MapModel& map = get_map();
+    int i = 0;
+    for (const EntityIndex& index : indexes) {
+      map.set_entity_group(index, groups_before.at(i));
+      ++i;
+    }
     get_map_view().set_selected_entities(indexes);
   }
 
   void redo() override {
-
-    // For now, entities have to be all ungrouped initially.
-    Q_ASSERT(!indexes.isEmpty());
+    MapModel& map = get_map();
     for (const EntityIndex& index : indexes) {
-      Q_ASSERT(get_map().get_entity_group(index) == 0);
+      groups_before.append(map.get_entity_group(index));
     }
-
-    group_after = get_map().create_group(indexes);
+    group_after = map.create_group(indexes);
     get_map_view().set_selected_entities(indexes);
   }
 
 private:
   EntityIndexes indexes;
+  QList<int> groups_before;
   int group_after = 0;
 };
 
@@ -1061,26 +1063,27 @@ public:
   }
 
   void undo() override {
-    const int group = get_map().create_group(indexes);
-    Q_ASSERT(group == group_before);
+    MapModel& map = get_map();
+    int i = 0;
+    for (const EntityIndex& index : indexes) {
+      map.set_entity_group(index, groups_before.at(i));
+      ++i;
+    }
     get_map_view().set_selected_entities(indexes);
   }
 
   void redo() override {
-
-    // Entities have to be in the same group initially.
-    Q_ASSERT(!indexes.isEmpty());
-    group_before = get_map().get_entity_group(indexes.first());
-    Q_ASSERT(group_before != 0);
+    MapModel& map = get_map();
     for (const EntityIndex& index : indexes) {
-      Q_ASSERT(get_map().get_entity_group(index) == group_before);
+      groups_before.append(map.get_entity_group(index));
+      map.set_entity_group(index, 0);
     }
-    get_map().destroy_group(group_before);
     get_map_view().set_selected_entities(indexes);
   }
 
+private:
   EntityIndexes indexes;
-  int group_before = 0;
+  QList<int> groups_before;
 };
 
 /**

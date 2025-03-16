@@ -63,7 +63,7 @@ MapModel::MapModel(
       EntityIndex index = { layer, i };
       EntityModelPtr entity = EntityModel::create(*this, index);
       if (entity->get_group() != 0) {
-        groups[entity->get_group()].append(index);
+        groups[entity->get_group()].insert(index);
       }
       entities[layer].emplace_back(std::move(entity));
     }
@@ -1481,11 +1481,12 @@ int MapModel::get_entity_group(const EntityIndex& index) const {
  * @return Indexes of entities in the group.
  */
 EntityIndexes MapModel::get_entities_in_group(int group) const {
-  return groups.value(group);
+  const std::set<EntityIndex> index_set = groups.value(group);
+  return { index_set.begin(), index_set.end() };
 }
 
 /**
- * @brief Sets he group of an entity.
+ * @brief Sets the group of an entity.
  * @param index An entity index.
  * @param group The group or 0.
  */
@@ -1500,13 +1501,24 @@ void MapModel::set_entity_group(const EntityIndex& index, int group) {
     // No change.
     return;
   }
-  get_entity(index).set_group(group);
+
+  int old_group = entity.get_group();
+  if (old_group != 0) {
+    groups[old_group].erase(index);
+    if (groups[old_group].empty()) {
+      groups.remove(old_group);
+    }
+  }
+  entity.set_group(group);
+  groups[group].insert(index);
+
   emit entity_group_changed(index, group);
 }
 
 /**
  * @brief Groups some entities together.
  * @param indexes Indexes to group.
+ * @return Key of the created group.
  */
 int MapModel::create_group(const EntityIndexes& indexes) {
 
@@ -1514,24 +1526,7 @@ int MapModel::create_group(const EntityIndexes& indexes) {
   for (const EntityIndex& index : indexes) {
     set_entity_group(index, group);
   }
-  groups[group] = indexes;
   return group;
-}
-
-/**
- * @brief Ungroups some entities.
- * @param group The group to remove.
- */
-void MapModel::destroy_group(int group) {
-
-  const EntityIndexes& indexes = groups.value(group);
-  if (indexes.isEmpty()) {
-    return;
-  }
-  for (const EntityIndex& index: indexes) {
-    set_entity_group(index, 0);
-  }
-  groups.remove(group);
 }
 
 /**
@@ -1859,7 +1854,7 @@ void MapModel::rebuild_entity_indexes(int layer) {
     index.order = i;
 
     if (entity->get_group() != 0) {
-      groups[entity->get_group()].append(index);
+      groups[entity->get_group()].insert(index);
     }
 
     entity->index_changed(index);

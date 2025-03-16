@@ -19,6 +19,7 @@
 
 #include "entities/entity_model.h"
 #include "sprite_model.h"
+#include <set>
 
 namespace SolarusEditor {
 
@@ -130,7 +131,7 @@ public:
   int get_entity_group(const EntityIndex& index) const;
   EntityIndexes get_entities_in_group(int group) const;
   int create_group(const EntityIndexes& indexes);
-  void destroy_group(int group);
+  void set_entity_group(const EntityIndex& index, int group);
   int get_entity_user_property_count(const EntityIndex& index) const;
   QPair<QString, QString> get_entity_user_property(const EntityIndex& index, int property_index) const;
   void set_entity_user_property(const EntityIndex& index, int property_index, const QPair<QString, QString>& property);
@@ -186,7 +187,6 @@ public slots:
 private:
 
   void set_tileset(QPointer<TilesetModel> tileset);
-  void set_entity_group(const EntityIndex& index, int group);
   void rebuild_entity_indexes(int layer);
 
   Quest& quest;                   /**< The quest the tileset belongs to. */
@@ -196,7 +196,7 @@ private:
       tileset;                    /**< Tileset of this map. nullptr if not set. */
   std::map<int, EntityModels>
       entities;                   /**< All entities by layer. */
-  QMap<int, EntityIndexes>
+  QMap<int, std::set<EntityIndex>>
       groups;                     /**< Grouped entities, by group id. */
   bool bulk_mode;                 /**< Whether a bulk change is in progress. */
 };
