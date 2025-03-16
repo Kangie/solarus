@@ -124,7 +124,10 @@ else()
   # Ensure that Solarus is found, one way or another.
   message(STATUS "Solarus: Using from system")
   find_package(Solarus REQUIRED)
+  set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
 endif()
+
+message(STATUS "Solarus: ${SOLARUS_ARCH} architecture")
 
 # Icon.
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
