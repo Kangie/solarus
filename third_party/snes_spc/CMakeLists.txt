@@ -43,4 +43,11 @@ set_target_properties(snes_spc
     POSITION_INDEPENDENT_CODE ON
 )
 
+install(
+  FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/spc.h"
+  DESTINATION
+    "${SOLARUS_HEADERS_INSTALL_DESTINATION}/solarus/third_party"
+)
+
 add_library(SNES_SPC::SNES_SPC ALIAS snes_spc)

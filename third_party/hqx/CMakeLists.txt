@@ -29,4 +29,11 @@ set_target_properties(hqx
     POSITION_INDEPENDENT_CODE ON
 )
 
+install(
+  DIRECTORY
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/hqx"
+  DESTINATION
+    "${SOLARUS_HEADERS_INSTALL_DESTINATION}/solarus/third_party"
+)
+
 add_library(HQX::HQX ALIAS hqx)

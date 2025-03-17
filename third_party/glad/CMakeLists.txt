@@ -20,4 +20,12 @@ set_target_properties(glad
     POSITION_INDEPENDENT_CODE ON
 )
 
+install(
+  DIRECTORY
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/glad"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/KHR"
+  DESTINATION
+    "${SOLARUS_HEADERS_INSTALL_DESTINATION}/solarus/third_party"
+)
+
 add_library(Glad::Glad ALIAS glad)
