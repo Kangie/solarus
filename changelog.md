@@ -13,6 +13,7 @@
 * Allow to set author and license when creating folders, Lua and GLSL scripts.
 * Show two license fields when creating a new map.
 * Map editor: allow to run the current map for testing purposes (#517).
+* Map editor: allow to group and ungroup entities (#126).
 * Map editor: allow to lock entities to prevent moving or resizing (#462).
 * Map editor: create teletransporters with scrolling if on the edge (#473).
 * Map editor: allow custom entities of any size (#538).

@@ -149,21 +149,7 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
   quest(quest),
   file_path(file_path),
   title(get_file_name()),
-  undo_stack(new QUndoStack(this)),
-  common_actions(),
-  save_supported(true),
-  select_all_supported(false),
-  run_map_supported(false),
-  find_supported(false),
-  zoom_supported(false),
-  grid_supported(false),
-  min_layer_supported(0),
-  max_layer_supported(-1),
-  traversables_visibility_supported(false),
-  obstacles_visibility_supported(false),
-  entity_type_visibility_supported(false),
-  export_to_image_supported(false),
-  view_settings() {
+  undo_stack(new QUndoStack(this)) {
 
   setFocusPolicy(Qt::StrongFocus);
 
@@ -555,10 +541,24 @@ void Editor::paste() {
 }
 
 /**
+ * @brief Returns whether grouping and ungrouping are supported.
+ * @return @c true if this editor supports grouping and ungrouping.
+ */
+bool Editor::is_grouping_supported() const {
+  return grouping_supported;
+}
+
+/**
+ * @brief Sets whether grouping and ungrouping are supported.
+ * @param grouping_supported @c true to make this editor support grouping and ungrouping.
+ */
+void Editor::set_grouping_supported(bool grouping_supported) {
+  this->grouping_supported = grouping_supported;
+}
+
+/**
  * @brief Returns whether a group action is currently possible.
- *
- * The default implementation returns false, meaning that grouping
- * not supported.
+ * @return @c true if grouping is currently possible.
  */
 bool Editor::can_group() const {
   return false;
@@ -575,9 +575,7 @@ void Editor::group() {
 
 /**
  * @brief Returns whether an ungroup action is currently possible.
- *
- * The default implementation returns false, meaning that ungrouping
- * not supported.
+ * @return @c true if ungrouping is currently possible.
  */
 bool Editor::can_ungroup() const {
   return false;

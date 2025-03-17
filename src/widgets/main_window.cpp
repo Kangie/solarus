@@ -235,10 +235,8 @@ MainWindow::MainWindow(QWidget* parent) :
           ui.action_copy, &QAction::setEnabled);
   connect(ui.tab_widget, &EditorTabs::can_paste_changed,
           ui.action_paste, &QAction::setEnabled);
-  connect(ui.tab_widget, &EditorTabs::can_group_changed,
-          this, &MainWindow::can_group_changed);
-  connect(ui.tab_widget, &EditorTabs::can_ungroup_changed,
-          this, &MainWindow::can_ungroup_changed);
+  connect(ui.tab_widget, &EditorTabs::can_group_ungroup_changed,
+          this, &MainWindow::update_grouping_actions);
   connect(ui.tab_widget, &EditorTabs::refactoring_requested,
           this, &MainWindow::refactoring_requested);
   connect(ui.tab_widget, &EditorTabs::clear_console,
@@ -1759,28 +1757,20 @@ void MainWindow::update_entity_types_visibility() {
 }
 
 /**
- * @brief Updates the state of the group action.
+ * @brief Updates the state of the grouping actions.
  */
-void MainWindow::can_group_changed() {
+void MainWindow::update_grouping_actions() {
 
   Editor* editor = get_current_editor();
-  if (editor == nullptr) {
+  if (editor == nullptr || !editor->is_grouping_supported()) {
+    ui.action_group->setVisible(false);
+    ui.action_ungroup->setVisible(false);
     return;
   }
 
+  ui.action_group->setVisible(true);
+  ui.action_ungroup->setVisible(true);
   ui.action_group->setEnabled(editor->can_group());
-}
-
-/**
- * @brief Updates the state of the group action.
- */
-void MainWindow::can_ungroup_changed() {
-
-  Editor* editor = get_current_editor();
-  if (editor == nullptr) {
-    return;
-  }
-
   ui.action_ungroup->setEnabled(editor->can_ungroup());
 }
 

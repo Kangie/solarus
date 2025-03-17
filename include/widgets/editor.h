@@ -63,6 +63,7 @@ public:
 
   bool is_save_supported() const;
   bool is_select_all_supported() const;
+  bool is_grouping_supported() const;
   bool is_run_map_supported() const;
   bool is_find_supported() const;
   bool is_zoom_supported() const;
@@ -100,8 +101,7 @@ signals:
   void can_cut_changed(bool can_cut);
   void can_copy_changed(bool can_copy);
   void can_paste_changed(bool can_paste);
-  void can_group_changed();
-  void can_ungroup_changed();
+  void can_group_ungroup_changed();
   void open_file_requested(Quest& quest, const QString& path);
   void refactoring_requested(const Refactoring& refactoring);
   void run_map_requested(const QString& map_id);
@@ -118,6 +118,7 @@ protected:
   void set_icon(const QIcon& icon);
   void set_save_supported(bool save_supported);
   void set_select_all_supported(bool select_all_supported);
+  void set_grouping_supported(bool grouping_supported);
   void set_run_map_supported(bool run_map_supported);
   void set_find_supported(bool find_supported);
   void set_zoom_supported(bool zoom_supported);
@@ -147,21 +148,22 @@ private:
   QString title;                            /**< Title of the file. */
   QIcon icon;                               /**< Icon representing the file. */
   QString close_confirm_message;            /**< Message proposing to save changes when closing. */
-  QUndoStack* undo_stack;                   /**< The undo/redo history of editing this file. */
+  QUndoStack* undo_stack = nullptr;         /**< The undo/redo history of editing this file. */
   QMap<QString, QAction*> common_actions;   /**< Actions available to all editors. */
-  bool save_supported;                      /**< Whether the editor supports saving the file. */
-  bool select_all_supported;                /**< Whether the editor supports selecting all. */
-  bool run_map_supported;                   /**< Whether the editor supports running a map. */
-  bool find_supported;                      /**< Whether the editor supports finding. */
-  bool zoom_supported;                      /**< Whether the editor supports zooming. */
-  bool grid_supported;                      /**< Whether the editor supports showing/hiding a grid. */
-  int min_layer_supported;                  /**< Lowest layer if the editor supports showing/hiding layers. */
-  int max_layer_supported;                  /**< Highest layer if the editor supports showing/hiding layers,
+  bool save_supported = true;               /**< Whether the editor supports saving the file. */
+  bool select_all_supported = false;        /**< Whether the editor supports selecting all. */
+  bool grouping_supported = false;          /**< Whether the editor supports grouping and ungrouping. */
+  bool run_map_supported = false;           /**< Whether the editor supports running a map. */
+  bool find_supported = false;              /**< Whether the editor supports finding. */
+  bool zoom_supported = false;              /**< Whether the editor supports zooming. */
+  bool grid_supported = false;              /**< Whether the editor supports showing/hiding a grid. */
+  int min_layer_supported = 0;              /**< Lowest layer if the editor supports showing/hiding layers. */
+  int max_layer_supported = -1;             /**< Highest layer if the editor supports showing/hiding layers,
                                              * -1 otherwise. */
-  bool traversables_visibility_supported;   /**< Whether the editor supports showing/hiding traversables. */
-  bool obstacles_visibility_supported;      /**< Whether the editor supports showing/hiding obstacles. */
-  bool entity_type_visibility_supported;    /**< Whether the editor supports showing/hiding entity types. */
-  bool export_to_image_supported;           /**< Whether the editor supports exporting to an image. */
+  bool traversables_visibility_supported = false;   /**< Whether the editor supports showing/hiding traversables. */
+  bool obstacles_visibility_supported = false;      /**< Whether the editor supports showing/hiding obstacles. */
+  bool entity_type_visibility_supported = false;    /**< Whether the editor supports showing/hiding entity types. */
+  bool export_to_image_supported = false;           /**< Whether the editor supports exporting to an image. */
   ViewSettings view_settings;               /**< What is shown and how. */
 
 };

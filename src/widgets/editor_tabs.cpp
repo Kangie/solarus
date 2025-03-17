@@ -463,10 +463,8 @@ void EditorTabs::insert_editor(std::unique_ptr<Editor> editor, int index) {
           this, &EditorTabs::can_copy_changed);
   connect(editor.get(), &Editor::can_paste_changed,
           this, &EditorTabs::can_paste_changed);
-  connect(editor.get(), &Editor::can_group_changed,
-          this, &EditorTabs::can_group_changed);
-  connect(editor.get(), &Editor::can_ungroup_changed,
-          this, &EditorTabs::can_ungroup_changed);
+  connect(editor.get(), &Editor::can_group_ungroup_changed,
+          this, &EditorTabs::can_group_ungroup_changed);
   connect(editor.get(), &Editor::clear_console,
           this, &EditorTabs::clear_console);
   connect(editor.get(), &Editor::log_message_to_console,
@@ -856,16 +854,14 @@ void EditorTabs::current_editor_changed(int index) {
     emit can_cut_changed(false);
     emit can_copy_changed(false);
     emit can_paste_changed(false);
-    emit can_group_changed();
-    emit can_ungroup_changed();
+    emit can_group_ungroup_changed();
   }
   else {
     get_undo_group().setActiveStack(&editor->get_undo_stack());
     emit can_cut_changed(editor->can_cut());
     emit can_copy_changed(editor->can_copy());
     emit can_paste_changed(editor->can_paste());
-    emit can_group_changed();
-    emit can_ungroup_changed();
+    emit can_group_ungroup_changed();
     editor->setFocus();
   }
 }

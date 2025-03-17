@@ -1034,8 +1034,7 @@ public:
       ++i;
     }
     get_map_view().set_selected_entities(indexes);
-    emit get_editor().can_group_changed();
-    emit get_editor().can_ungroup_changed();
+    emit get_editor().can_group_ungroup_changed();
   }
 
   void redo() override {
@@ -1045,8 +1044,7 @@ public:
     }
     group_after = map.create_group(indexes);
     get_map_view().set_selected_entities(indexes);
-    emit get_editor().can_group_changed();
-    emit get_editor().can_ungroup_changed();
+    emit get_editor().can_group_ungroup_changed();
   }
 
 private:
@@ -1074,8 +1072,7 @@ public:
       ++i;
     }
     get_map_view().set_selected_entities(indexes);
-    emit get_editor().can_group_changed();
-    emit get_editor().can_ungroup_changed();
+    emit get_editor().can_group_ungroup_changed();
   }
 
   void redo() override {
@@ -1085,8 +1082,7 @@ public:
       map.set_entity_group(index, 0);
     }
     get_map_view().set_selected_entities(indexes);
-    emit get_editor().can_group_changed();
-    emit get_editor().can_ungroup_changed();
+    emit get_editor().can_group_ungroup_changed();
   }
 
 private:
@@ -1213,6 +1209,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   set_close_confirm_message(
         tr("Map '%1' has been modified. Save changes?").arg(map_id));
   set_select_all_supported(true);
+  set_grouping_supported(true);
   set_run_map_supported(true);
   set_zoom_supported(true);
   set_grid_supported(true);
@@ -2120,8 +2117,7 @@ void MapEditor::map_selection_changed() {
   MapModel& map = get_map();
 
   // Update whether group/ungroup are available.
-  emit can_group_changed();
-  emit can_ungroup_changed();
+  emit can_group_ungroup_changed();
 
   // Update the tileset view with the selected tile patterns.
   // See if all selected tiles have the same tileset.

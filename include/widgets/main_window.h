@@ -109,8 +109,7 @@ private slots:
   void update_obstacles_visibility();
   void update_entity_type_visibility(EntityType entity_type);
   void update_entity_types_visibility();
-  void can_group_changed();
-  void can_ungroup_changed();
+  void update_grouping_actions();
 
   void update_run_quest();
   void quest_running();
