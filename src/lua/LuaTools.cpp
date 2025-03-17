@@ -756,7 +756,7 @@ std::vector<std::string> check_string_list(
  */
 std::vector<std::string> check_string_list_field(
     lua_State* l,
-    int table_index,
+    int /*table_index*/,
     const std::string& key
 ) {
   lua_settop(l, 1);
@@ -798,7 +798,7 @@ std::vector<std::string> opt_string_list(
  */
 std::vector<std::string> opt_string_list_field(
     lua_State* l,
-    int table_index,
+    int /*table_index*/,
     const std::string& key,
     const std::vector<std::string>& default_value
 ) {
