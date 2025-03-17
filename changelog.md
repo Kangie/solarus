@@ -87,15 +87,14 @@ See the migration guide for more detailed instructions.
 * Add methods `npc:get/set_subtype()` (#1398).
 * Add methods `switch:get/set_subtype()` (#1667).
 * Add methods `enemy:get/set_immobilization_duration()` (#463).
+* Add new quest properties: `initial_release_date`, `license`, `languages`,
+`min_players`, `max_players`, `genres`, `age`, `controls`, `dynamic_timestep`, `subpixel_camera`.
 
 ### Solarus launcher GUI changes
 
 * Fix Quest Runner not working on Windows when binaries are under Unicode paths.
 * Add error reporting to the Quest Runner process manager.
-* Use monospaced font consistently across platforms in the GUI console.
-* Wrap lines with `<pre/>` tags to preserve spaces in the GUI console.
-* Preserve empty lines from the engine in the GUI console.
-* Only remove _trailing_ '\n' characters in the GUI console.
+* Remove Solarus Launcher from this repository.
 
 ## Solarus 1.6.5 (2021-04-06)
 

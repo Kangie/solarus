@@ -39,6 +39,8 @@ target_sources(solarus
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/EquipmentItemUsage.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/FRectangle.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/FRectangle.inl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/FlagSet.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/FlagSet.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/FontResource.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Game.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Geometry.h"

@@ -1,6 +1,7 @@
 # Sources in the 'src/tests' directory that are a test with a main() function
 list(APPEND TEST_SOURCES
   src/tests/Initialization.cpp
+  src/tests/QuestProperties.cpp
   src/tests/MapData.cpp
   src/tests/LanguageData.cpp
   src/tests/PathFinding.cpp
@@ -18,7 +19,7 @@ function(_add_test)
   add_test(${ARGN})
   if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set_tests_properties(${ARGV0} PROPERTIES
-      ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}\\;$ENV{PATH}"
+      ENVIRONMENT "PATH=${CMAKE_CURRENT_BINARY_DIR}\\;$ENV{PATH}"
     )
   endif()
 endfunction(_add_test)
