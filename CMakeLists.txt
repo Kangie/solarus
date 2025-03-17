@@ -7,6 +7,7 @@ project(solarus-engine VERSION 2.0.0)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include(cmake/AddGitRevision.cmake)
+include(cmake/AddInstallDirs.cmake)
 include(cmake/AddOptions.cmake)
 include(cmake/AddCompilationFlags.cmake)
 include(cmake/AddCodeCoverage.cmake)
