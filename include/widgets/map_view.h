@@ -178,8 +178,6 @@ signals:
       const EntityIndexes& indexes);
   void set_entities_locked_requested(
       const EntityIndexes& indexes, bool locked);
-  void set_entities_grouped_requested(
-      const EntityIndexes& indexes, bool grouped);
   void add_entities_requested(
       AddableEntities& entities,
       bool replace_selection);
@@ -234,8 +232,6 @@ private:
   QAction* bring_to_back_action;   /**< Action of bringing selected entities to back. */
   QAction* lock_action;            /**< Action of locking entities. */
   QAction* unlock_action;          /**< Action of unlocking entities. */
-  QAction* group_action;           /**< Action of grouping entities. */
-  QAction* ungroup_action;         /**< Action of ungrouping entities. */
   QAction* remove_action;          /**< Action of deleting selected entities. */
   QAction* cancel_action;          /**< Action of stopping the current state. */
 

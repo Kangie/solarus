@@ -1034,6 +1034,8 @@ public:
       ++i;
     }
     get_map_view().set_selected_entities(indexes);
+    emit get_editor().can_group_changed();
+    emit get_editor().can_ungroup_changed();
   }
 
   void redo() override {
@@ -1043,6 +1045,8 @@ public:
     }
     group_after = map.create_group(indexes);
     get_map_view().set_selected_entities(indexes);
+    emit get_editor().can_group_changed();
+    emit get_editor().can_ungroup_changed();
   }
 
 private:
@@ -1070,6 +1074,8 @@ public:
       ++i;
     }
     get_map_view().set_selected_entities(indexes);
+    emit get_editor().can_group_changed();
+    emit get_editor().can_ungroup_changed();
   }
 
   void redo() override {
@@ -1079,6 +1085,8 @@ public:
       map.set_entity_group(index, 0);
     }
     get_map_view().set_selected_entities(indexes);
+    emit get_editor().can_group_changed();
+    emit get_editor().can_ungroup_changed();
   }
 
 private:
@@ -1368,8 +1376,6 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::bring_entities_to_back_requested);
   connect(ui.map_view, &MapView::set_entities_locked_requested,
           this, &MapEditor::set_entities_locked_requested);
-  connect(ui.map_view, &MapView::set_entities_grouped_requested,
-          this, &MapEditor::set_entities_grouped_requested);
   connect(ui.map_view, &MapView::add_entities_requested,
           this, &MapEditor::add_entities_requested);
   connect(ui.map_view, &MapView::remove_entities_requested,
@@ -1552,6 +1558,37 @@ bool MapEditor::can_paste() const {
 void MapEditor::paste() {
 
   ui.map_view->paste();
+}
+
+/**
+ * @copydoc Editor::can_group
+ */
+bool MapEditor::can_group() const {
+
+  const EntityIndexes& indexes = ui.map_view->get_selected_entities();
+  return map != nullptr && indexes.size() > 1 && map->get_entities_group(indexes) <= 0;
+}
+
+/**
+ * @copydoc Editor::group
+ */
+void MapEditor::group() {
+  set_entities_grouped_requested(ui.map_view->get_selected_entities(), true);
+}
+
+/**
+ * @copydoc Editor::can_ungroup
+ */
+bool MapEditor::can_ungroup() const {
+  const EntityIndexes& indexes = ui.map_view->get_selected_entities();
+  return map != nullptr && indexes.size() > 1 && map->get_entities_group(indexes) != 0;
+}
+
+/**
+ * @copydoc Editor::ungroup
+ */
+void MapEditor::ungroup() {
+  set_entities_grouped_requested(ui.map_view->get_selected_entities(), false);
 }
 
 /**
@@ -2079,11 +2116,15 @@ void MapEditor::map_selection_changed() {
   emit can_cut_changed(!empty_selection);
   emit can_copy_changed(!empty_selection);
 
-  // Update the tileset view with the selected tile patterns.
   const EntityIndexes& entity_indexes = ui.map_view->get_selected_entities();
-
-  // See if all selected tiles have the same tileset.
   MapModel& map = get_map();
+
+  // Update whether group/ungroup are available.
+  emit can_group_changed();
+  emit can_ungroup_changed();
+
+  // Update the tileset view with the selected tile patterns.
+  // See if all selected tiles have the same tileset.
   QString optional_tileset_id = entity_indexes.isEmpty() ? QString() : map.get_entity_field(entity_indexes.first(), "tileset").toString();
   for (const EntityIndex& entity_index : entity_indexes) {
     EntityType entity_type = map.get_entity_type(entity_index);
@@ -2553,7 +2594,6 @@ void MapEditor::set_entities_grouped_requested(const EntityIndexes& indexes, boo
     return;
   }
 
-  // TODO check that they are all in the same group.
   if (grouped) {
     try_command(new GroupEntitiesCommand(*this, indexes));
   } else {

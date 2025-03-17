@@ -69,7 +69,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>37</height>
+     <height>34</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_quest">
@@ -99,6 +99,8 @@
     <addaction name="action_cut"/>
     <addaction name="action_copy"/>
     <addaction name="action_paste"/>
+    <addaction name="action_group"/>
+    <addaction name="action_ungroup"/>
     <addaction name="separator"/>
     <addaction name="action_select_all"/>
     <addaction name="action_unselect_all"/>
@@ -179,6 +181,8 @@
    <addaction name="action_show_layer_0"/>
    <addaction name="action_show_layer_1"/>
    <addaction name="action_show_layer_2"/>
+   <addaction name="action_group"/>
+   <addaction name="action_ungroup"/>
    <addaction name="action_show_traversables"/>
    <addaction name="action_show_obstacles"/>
    <addaction name="action_export_to_image"/>
@@ -264,9 +268,6 @@
    </property>
    <property name="text">
     <string>Show grid</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="action_show_layer_0">
@@ -513,6 +514,42 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+T</string>
+   </property>
+  </action>
+  <action name="action_group">
+   <property name="icon">
+    <iconset resource="../../resources/images.qrc">
+     <normaloff>:/images/icon_group.png</normaloff>:/images/icon_group.png</iconset>
+   </property>
+   <property name="text">
+    <string>Group</string>
+   </property>
+   <property name="toolTip">
+    <string>Group</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="action_ungroup">
+   <property name="icon">
+    <iconset resource="../../resources/images.qrc">
+     <normaloff>:/images/icon_ungroup.png</normaloff>:/images/icon_ungroup.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ungroup</string>
+   </property>
+   <property name="toolTip">
+    <string>Ungroup</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+G</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>

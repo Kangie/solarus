@@ -84,6 +84,10 @@ public:
   virtual void copy();
   virtual bool can_paste() const;
   virtual void paste();
+  virtual bool can_group() const;
+  virtual void group();
+  virtual bool can_ungroup() const;
+  virtual void ungroup();
   virtual void select_all();
   virtual void unselect_all();
   virtual void run_map();
@@ -96,6 +100,8 @@ signals:
   void can_cut_changed(bool can_cut);
   void can_copy_changed(bool can_copy);
   void can_paste_changed(bool can_paste);
+  void can_group_changed();
+  void can_ungroup_changed();
   void open_file_requested(Quest& quest, const QString& path);
   void refactoring_requested(const Refactoring& refactoring);
   void run_map_requested(const QString& map_id);

@@ -1476,6 +1476,26 @@ int MapModel::get_entity_group(const EntityIndex& index) const {
 }
 
 /**
+ * @brief Returns the common group of the given entities, if any.
+ * @param indexes Indexes of entities to check.
+ * @return Their common group (possibly 0), or -1 if they have different groups.
+ */
+int MapModel::get_entities_group(const EntityIndexes& indexes) const {
+
+  if (indexes.isEmpty()) {
+    return -1;
+  }
+
+  const int common_group = get_entity_group(indexes.first());
+  for (const EntityIndex& index: indexes) {
+    if (get_entity_group(index) != common_group) {
+      return -1;
+    }
+  }
+  return common_group;
+}
+
+/**
  * @brief Returns the indexes of entities in the given group.
  * @param group The group to get.
  * @return Indexes of entities in the group.

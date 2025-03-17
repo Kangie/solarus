@@ -129,6 +129,7 @@ public:
   bool is_entity_locked(const EntityIndex& index) const;
   void set_entity_locked(const EntityIndex& index, bool locked);
   int get_entity_group(const EntityIndex& index) const;
+  int get_entities_group(const EntityIndexes& indexes) const;
   EntityIndexes get_entities_in_group(int group) const;
   int create_group(const EntityIndexes& indexes);
   void set_entity_group(const EntityIndex& index, int group);

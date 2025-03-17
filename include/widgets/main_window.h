@@ -71,6 +71,8 @@ private slots:
   void on_action_cut_triggered();
   void on_action_copy_triggered();
   void on_action_paste_triggered();
+  void on_action_group_triggered();
+  void on_action_ungroup_triggered();
   void on_action_select_all_triggered();
   void on_action_unselect_all_triggered();
   void on_action_find_triggered();
@@ -107,6 +109,8 @@ private slots:
   void update_obstacles_visibility();
   void update_entity_type_visibility(EntityType entity_type);
   void update_entity_types_visibility();
+  void can_group_changed();
+  void can_ungroup_changed();
 
   void update_run_quest();
   void quest_running();

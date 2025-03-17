@@ -87,6 +87,8 @@ signals:
   void can_cut_changed(bool can_cut);
   void can_copy_changed(bool can_copy);
   void can_paste_changed(bool can_paste);
+  void can_group_changed();
+  void can_ungroup_changed();
   void refactoring_requested(const Refactoring& refactoring);
   void run_map_requested(const QString& map_id);
   void clear_console();

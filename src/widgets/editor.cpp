@@ -555,6 +555,44 @@ void Editor::paste() {
 }
 
 /**
+ * @brief Returns whether a group action is currently possible.
+ *
+ * The default implementation returns false, meaning that grouping
+ * not supported.
+ */
+bool Editor::can_group() const {
+  return false;
+}
+
+/**
+ * @brief Groups the selection.
+ *
+ * The default implementation does nothing, meaning that grouping
+ * is not supported.
+ */
+void Editor::group() {
+}
+
+/**
+ * @brief Returns whether an ungroup action is currently possible.
+ *
+ * The default implementation returns false, meaning that ungrouping
+ * not supported.
+ */
+bool Editor::can_ungroup() const {
+  return false;
+}
+
+/**
+ * @brief Ungroups the selection.
+ *
+ * The default implementation does nothing, meaning that ungrouping
+ * is not supported.
+ */
+void Editor::ungroup() {
+}
+
+/**
  * @brief Returns whether this editor supports exporting to an image.
  * @return @c true if exporting to an image is supported.
  */

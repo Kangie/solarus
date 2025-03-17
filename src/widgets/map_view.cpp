@@ -221,8 +221,6 @@ MapView::MapView(QWidget* parent) :
   bring_to_back_action(nullptr),
   lock_action(nullptr),
   unlock_action(nullptr),
-  group_action(nullptr),
-  ungroup_action(nullptr),
   remove_action(nullptr),
   cancel_action(nullptr) {
 
@@ -644,20 +642,6 @@ void MapView::build_context_menu_actions() {
   });
   addAction(unlock_action);
 
-  group_action = new QAction(
-      QIcon(":/images/icon_group.png"), tr("Group"), this);
-  connect(group_action, &QAction::triggered, this, [this]() {
-    emit set_entities_grouped_requested(get_selected_entities(), true);
-  });
-  addAction(group_action);
-
-  ungroup_action = new QAction(
-      QIcon(":/images/icon_ungroup.png"), tr("Ungroup"), this);
-  connect(ungroup_action, &QAction::triggered, this, [this]() {
-    emit set_entities_grouped_requested(get_selected_entities(), false);
-  });
-  addAction(ungroup_action);
-
   remove_action = new QAction(
         QIcon(":/images/icon_delete.png"), tr("Delete"), this);
   remove_action->setShortcut(QKeySequence::Delete);
@@ -846,8 +830,12 @@ QMenu* MapView::create_context_menu() {
     unlock_action->setEnabled(has_locked);
     menu->addAction(lock_action);
     menu->addAction(unlock_action);
-    menu->addAction(group_action);
-    menu->addAction(ungroup_action);
+
+    if (common_actions != nullptr) {
+      menu->addAction(common_actions->value("group"));
+      menu->addAction(common_actions->value("ungroup"));
+    }
+
     menu->addSeparator();
 
     // Remove.

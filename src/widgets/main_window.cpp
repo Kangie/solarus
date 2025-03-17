@@ -171,6 +171,8 @@ MainWindow::MainWindow(QWidget* parent) :
   common_actions["paste"] = ui.action_paste;
   common_actions["undo"] = undo_action;
   common_actions["redo"] = redo_action;
+  common_actions["group"] = ui.action_group;
+  common_actions["ungroup"] = ui.action_ungroup;
 
   // Set standard keyboard shortcuts.
   ui.action_new_quest->setShortcut(QKeySequence::New);
@@ -233,6 +235,10 @@ MainWindow::MainWindow(QWidget* parent) :
           ui.action_copy, &QAction::setEnabled);
   connect(ui.tab_widget, &EditorTabs::can_paste_changed,
           ui.action_paste, &QAction::setEnabled);
+  connect(ui.tab_widget, &EditorTabs::can_group_changed,
+          this, &MainWindow::can_group_changed);
+  connect(ui.tab_widget, &EditorTabs::can_ungroup_changed,
+          this, &MainWindow::can_ungroup_changed);
   connect(ui.tab_widget, &EditorTabs::refactoring_requested,
           this, &MainWindow::refactoring_requested);
   connect(ui.tab_widget, &EditorTabs::clear_console,
@@ -1015,6 +1021,28 @@ void MainWindow::on_action_paste_triggered() {
 }
 
 /**
+ * @brief Called when the user triggers the "Group" action.
+ */
+void MainWindow::on_action_group_triggered() {
+
+  Editor* editor = get_current_editor();
+  if (editor != nullptr) {
+    editor->group();
+  }
+}
+
+/**
+ * @brief Called when the user triggers the "Ungroup" action.
+ */
+void MainWindow::on_action_ungroup_triggered() {
+
+  Editor* editor = get_current_editor();
+  if (editor != nullptr) {
+    editor->ungroup();
+  }
+}
+
+/**
  * @brief Slot called when the user triggers the "Select all" action.
  */
 void MainWindow::on_action_select_all_triggered() {
@@ -1314,11 +1342,11 @@ void MainWindow::on_action_about_triggered() {
 /**
  * @brief Helper that offers to go online for documentation.
  */
-static void offer_online_docs(MainWindow * parent) {
+static void offer_online_docs(MainWindow *parent) {
 
   QMessageBox::StandardButton answer = QMessageBox::question(
       parent,
-      MainWindow::tr("Local Documentation Not Found"),
+      MainWindow::tr("Local documentation not found"),
       MainWindow::tr(
           "The local copy of Solarus Documentation could not be found. "
           "Would you like to try going on line to find the documentaion?"),
@@ -1728,6 +1756,32 @@ void MainWindow::update_entity_types_visibility() {
       action->setChecked(view_settings.is_entity_type_visible(entity_type));
     }
   }
+}
+
+/**
+ * @brief Updates the state of the group action.
+ */
+void MainWindow::can_group_changed() {
+
+  Editor* editor = get_current_editor();
+  if (editor == nullptr) {
+    return;
+  }
+
+  ui.action_group->setEnabled(editor->can_group());
+}
+
+/**
+ * @brief Updates the state of the group action.
+ */
+void MainWindow::can_ungroup_changed() {
+
+  Editor* editor = get_current_editor();
+  if (editor == nullptr) {
+    return;
+  }
+
+  ui.action_ungroup->setEnabled(editor->can_ungroup());
 }
 
 /**

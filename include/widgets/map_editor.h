@@ -46,6 +46,10 @@ public:
   void copy() override;
   bool can_paste() const override;
   void paste() override;
+  bool can_group() const override;
+  void group() override;
+  bool can_ungroup() const override;
+  void ungroup() override;
   void select_all() override;
   void unselect_all() override;
   void run_map() override;
