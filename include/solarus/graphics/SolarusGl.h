@@ -21,7 +21,7 @@
 #include <stdio.h>
 #define SOLARUS_GL_ES
 #else
-#include "solarus/third_party/glad/glad.h" // Only include glad to have GL work
+#include <glad/glad.h> // Only include glad to have GL work
 #include <SDL_video.h>
 #endif
 

@@ -32,3 +32,6 @@ endif()
 if(SOLARUS_PROFILING)
   find_package(easy_profiler REQUIRED)
 endif()
+
+# These dependencies are managed internally.
+add_subdirectory(third_party)

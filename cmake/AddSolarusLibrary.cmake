@@ -16,6 +16,11 @@ endif()
 # Declare the public/private libraries that "solarus" depends on
 target_link_libraries(solarus
   PUBLIC
+    # Third-party libs managed within the project.
+    Glad::Glad
+    SNES_SPC::SNES_SPC
+    HQX::HQX
+    # External dependencies.
     SDL2::Core
     SDL2::Image
     SDL2::TTF
