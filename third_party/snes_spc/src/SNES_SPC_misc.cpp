@@ -143,9 +143,10 @@ void SNES_SPC::ram_loaded()
 	load_regs( &RAM [0xF0] );
 	
 	// Put STOP instruction around memory to catch PC underflow/overflow
-	memset( m.ram.padding1, cpu_pad_fill, sizeof m.ram.padding1 );
-	memset( m.ram.ram + 0x10000, cpu_pad_fill, sizeof m.ram.ram - 0x10000 );
+	memset( m.ram.padding1,      cpu_pad_fill, sizeof m.ram.padding1 );
+	memset( m.ram.ram + 0x10000, cpu_pad_fill, sizeof m.ram.padding1 );
 }
+
 // Registers were just loaded. Applies these new values.
 void SNES_SPC::regs_loaded()
 {
@@ -247,6 +248,8 @@ blargg_err_t SNES_SPC::load_spc( void const* data, long size )
 
 void SNES_SPC::clear_echo()
 {
+// Allows playback of dodgy Super Mario World mod SPCs
+#ifndef SPC_ISOLATED_ECHO_BUFFER
 	if ( !(dsp.read( SPC_DSP::r_flg ) & 0x20) )
 	{
 		int addr = 0x100 * dsp.read( SPC_DSP::r_esa );
@@ -255,6 +258,7 @@ void SNES_SPC::clear_echo()
 			end = 0x10000;
 		memset( &RAM [addr], 0xFF, end - addr );
 	}
+#endif
 }
 
 
@@ -302,7 +306,7 @@ void SNES_SPC::set_output( sample_t* out, int size )
 			assert( out <= out_end );
 		}
 		
-		dsp.set_output( out, int(out_end - out) );
+		dsp.set_output( out, out_end - out );
 	}
 	else
 	{

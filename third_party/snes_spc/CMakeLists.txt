@@ -23,18 +23,14 @@ target_sources(snes_spc
     "${CMAKE_CURRENT_SOURCE_DIR}/src/spc.cpp"
 )
 
-# The SNES SPC emulator has a complex code made of tangling switch cases and macros.
-# Adding [[fallthrough]] without breaking something would be too complicated.
-set_source_files_properties(
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/SNES_SPC.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/SNES_SPC.cpp"
-  PROPERTIES
-    COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-implicit-fallthrough>"
-)
-
 target_include_directories(snes_spc
   PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+
+target_compile_options(snes_spc
+  PRIVATE
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-implicit-fallthrough>"
 )
 
 set_target_properties(snes_spc
