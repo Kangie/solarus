@@ -39,6 +39,7 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QtMath>
+#include <set>
 
 namespace SolarusEditor {
 
@@ -85,6 +86,8 @@ public:
   void mouse_released(const QMouseEvent& event) override;
 
 private:
+  void remove_incomplete_groups(std::set<EntityIndex>& indexes);
+
   QPoint initial_point;                     /**< Point where the drawing started, in scene coordinates. */
   QPoint current_point;                     /**< Point where the dragging currently is, in scene coordinates. */
   QGraphicsRectItem* current_area_item;     /**< Graphic item of the rectangle the user is drawing
@@ -2109,12 +2112,6 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
   QRect area = Rectangle::from_two_points(initial_point, current_point);
   current_area_item->setRect(area);
 
-  bool was_blocked = scene.signalsBlocked();
-  if (!initial_selection.isEmpty()) {
-    // Block QGraphicsScene::selectionChanged() signal for individual selects.
-    scene.blockSignals(true);
-  }
-
   // Select items strictly in the rectangle.
   scene.clearSelection();
   QPainterPath path;
@@ -2124,24 +2121,69 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
 
   // But don't select locked entities.
   const EntityIndexes selected_indexes = scene.get_selected_entities();
+  std::set<EntityIndex> index_set{ selected_indexes.begin(), selected_indexes.end() };
+
   const ViewSettings& view_settings = *view.get_view_settings();
   for (const EntityIndex& index : selected_indexes) {
     if (view_settings.is_layer_locked(index.layer)) {
-      view.set_entity_and_group_selected(index, false);  // TODO-126
+      index_set.erase(index);
     }
   }
 
   // Also restore the initial selection.
   for (int i = 0; i < initial_selection.size(); ++i) {
     const EntityItem* entity_item = qgraphicsitem_cast<const EntityItem*>(initial_selection[i]);
+    if (entity_item != nullptr) {
+      index_set.insert(entity_item->get_index());
+    }
+  }
 
-    // Unblock signals before the last select.
-    if (i == initial_selection.size() - 1 ) {
-      // Last element.
-      scene.blockSignals(was_blocked);
+  // Remove any incomplete groups from the selection.
+  remove_incomplete_groups(index_set);
+
+  view.set_selected_entities(EntityIndexes{index_set.begin(), index_set.end()});
+}
+
+/**
+ * @brief Removes indexes that are in incomplete groups.
+ *
+ * Any index belonging to a group is removed, unless the whole group is present.
+ *
+ * @param index_set The indexes to check.
+ */
+void DrawingRectangleState::remove_incomplete_groups(std::set<EntityIndex>& index_set) {
+
+  MapModel& map = get_map();
+  std::set<int> incomplete_groups;  // Groups found as incomplete.
+
+  // First pass: identify incomplete groups.
+  for (const EntityIndex& index : index_set) {
+    int group = map.get_entity_group(index);
+    if (group == 0) {
+      // No group, no problem.
+      continue;
+    }
+    if (incomplete_groups.find(group) != incomplete_groups.end()) {
+      // The group is already marked as incomplete.
+      continue;
     }
 
-    view.set_entity_and_group_selected(entity_item->get_index(), true);  // TODO-126
+    // Check if any member of this group is missing from selection.
+    const EntityIndexes& indexes_in_group = map.get_entities_in_group(group);
+    for (const EntityIndex& index_in_group : indexes_in_group) {
+      if (index_set.find(index_in_group) == index_set.end()) {
+        incomplete_groups.insert(group);
+        break;
+      }
+    }
+  }
+
+  // Second pass: remove entities from identified incomplete groups.
+  for (int group : incomplete_groups) {
+    const EntityIndexes& indexes_in_group = map.get_entities_in_group(group);
+    for (const EntityIndex& index_in_group : indexes_in_group) {
+      index_set.erase(index_in_group);
+    }
   }
 }
 
