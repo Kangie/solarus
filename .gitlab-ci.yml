@@ -9,9 +9,9 @@ stages:
   - build
   - package
 
-###############################################################################
+#-------------------------------------------------------------------------------
 # Linux jobs
-###############################################################################
+#-------------------------------------------------------------------------------
 
 linux-configure:
   stage: configure
@@ -27,6 +27,8 @@ linux-configure:
 linux-build:
   stage: build
   image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
+  dependencies:
+    - linux-configure
   script:
     - cmake --build --preset linux
   artifacts:
@@ -35,9 +37,9 @@ linux-build:
       - build
     expire_in: 1 day
 
-###############################################################################
+#-------------------------------------------------------------------------------
 # macOS jobs
-###############################################################################
+#-------------------------------------------------------------------------------
 
 .macos_saas_runners:
   tags:
@@ -50,10 +52,11 @@ macos-configure:
   extends: .macos_saas_runners
   stage: configure
   image: $MACOS_IMAGE
-  script:
+  before_script:
     - brew update
     # - brew upgrade
     - brew install coreutils cmake ninja pkg-config sdl2 sdl2_image sdl2_ttf luajit libvorbis libmodplug physfs glm openal-soft qt@6
+  script:
     - cmake --preset macos
   artifacts:
     name: $CI_JOB_NAME
@@ -65,6 +68,8 @@ macos-build:
   extends: .macos_saas_runners
   stage: build
   image: $MACOS_IMAGE
+  dependencies:
+    - macos-configure
   script:
     - cmake --build --preset macos
   artifacts:
@@ -77,6 +82,8 @@ macos-package:
   extends: .macos_saas_runners
   stage: package
   image: $MACOS_IMAGE
+  dependencies:
+    - macos-build
   script:
     - cpack --preset macos
   artifacts:
