@@ -2,7 +2,7 @@ variables:
   IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
   IMAGE_VERSION: 20250217
   GIT_DEPTH: 1
-  MACOS_IMAGE: macos-14-xcode-15
+  MACOS_IMAGE: macos-15-xcode-16
 
 stages:
   - configure
@@ -52,8 +52,8 @@ macos-configure:
   image: $MACOS_IMAGE
   script:
     - brew update
-    - brew upgrade
-    - brew install coreutils cmake ninja pkg-config sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug physfs glm openal-soft qt@6
+    # - brew upgrade
+    - brew install coreutils cmake ninja pkg-config sdl2 sdl2_image sdl2_ttf luajit libvorbis libmodplug physfs glm openal-soft qt@6
     - cmake --preset macos
   artifacts:
     name: $CI_JOB_NAME
