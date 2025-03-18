@@ -1,26 +1,22 @@
 # Add hqx as a library.
 add_library(hqx STATIC)
 
+# Note: 'hqx.c' implements a command-line tool which is not required for Solarus.
+# It is not included in the sources below because it requires another third-party library.
 target_sources(hqx
   PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/hqx/common.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/hqx/hqx.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/hqx.h"
   PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/common.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hq2x.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hq3x.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hq4x.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/init.c"
 )
 
-# Some calls to std::abs() on unsigned integers.
-set_source_files_properties(
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/hqx/common.h"
-  PROPERTIES
-    COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-absolute-value>"
-)
-
-target_include_directories(hqx PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+target_include_directories(hqx
+  PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
 set_target_properties(hqx
@@ -30,8 +26,8 @@ set_target_properties(hqx
 )
 
 install(
-  DIRECTORY
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/hqx"
+  FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/hqx.h"
   DESTINATION
     "${SOLARUS_HEADERS_INSTALL_DESTINATION}/solarus/third_party"
 )

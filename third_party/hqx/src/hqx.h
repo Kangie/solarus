@@ -17,9 +17,6 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifndef __HQX_H_
 #define __HQX_H_
@@ -36,19 +33,31 @@ extern "C" {
     #define HQX_CALLCONV
 #endif
 
-#define HQX_API
-
-HQX_API void HQX_CALLCONV hqxInit(void);
-HQX_API void HQX_CALLCONV hq2x_32( uint32_t * src, uint32_t * dest, int width, int height );
-HQX_API void HQX_CALLCONV hq3x_32( uint32_t * src, uint32_t * dest, int width, int height );
-HQX_API void HQX_CALLCONV hq4x_32( uint32_t * src, uint32_t * dest, int width, int height );
-
-HQX_API void HQX_CALLCONV hq2x_32_rb( uint32_t * src, uint32_t src_rowBytes, uint32_t * dest, uint32_t dest_rowBytes, int width, int height );
-HQX_API void HQX_CALLCONV hq3x_32_rb( uint32_t * src, uint32_t src_rowBytes, uint32_t * dest, uint32_t dest_rowBytes, int width, int height );
-HQX_API void HQX_CALLCONV hq4x_32_rb( uint32_t * src, uint32_t src_rowBytes, uint32_t * dest, uint32_t dest_rowBytes, int width, int height );
-
+#if defined(_WIN32) && defined(HQX_BUILD_SHARED)
+    #ifdef DLL_EXPORT
+        #define HQX_API __declspec(dllexport)
+    #else
+        #define HQX_API __declspec(dllimport)
+    #endif
+#else
+    #define HQX_API
 #endif
 
 #ifdef __cplusplus
+extern "C" {
+#endif
+
+HQX_API void HQX_CALLCONV hqxInit(void);
+HQX_API void HQX_CALLCONV hq2x_32( const uint32_t * src, uint32_t * dest, int width, int height );
+HQX_API void HQX_CALLCONV hq3x_32( const uint32_t * src, uint32_t * dest, int width, int height );
+HQX_API void HQX_CALLCONV hq4x_32( const uint32_t * src, uint32_t * dest, int width, int height );
+
+HQX_API void HQX_CALLCONV hq2x_32_rb( const uint32_t * src, uint32_t src_rowBytes, uint32_t * dest, uint32_t dest_rowBytes, int width, int height );
+HQX_API void HQX_CALLCONV hq3x_32_rb( const uint32_t * src, uint32_t src_rowBytes, uint32_t * dest, uint32_t dest_rowBytes, int width, int height );
+HQX_API void HQX_CALLCONV hq4x_32_rb( const uint32_t * src, uint32_t src_rowBytes, uint32_t * dest, uint32_t dest_rowBytes, int width, int height );
+
+#ifdef __cplusplus
 }
+#endif
+
 #endif
