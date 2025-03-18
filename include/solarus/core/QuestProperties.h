@@ -169,10 +169,10 @@ class SOLARUS_API QuestProperties : public LuaData {
     uint64_t max_players = 1;            /**< Maximum quest player count. */
     std::vector<std::string> genres;     /**< Genres of the quest. */
     AgeRating age = AgeRating::All;      /**< Age rating of the target audience (PEGI/ESRB-like) */
-    FlagSet<Control> controls;       /**< Supported control schemes by the quest. */
+    FlagSet<Control> controls;           /**< Supported control schemes by the quest. */
 
-    bool use_dynamic_timestep = false; /**< Quest requests engine in dynamic timestep */
-    bool use_subpixel_camera = false;  /**< Quest requests engine to do subpixel camera movement */
+    bool use_dynamic_timestep = false;   /**< Quest requests engine in dynamic timestep */
+    bool use_subpixel_camera = false;    /**< Quest requests engine to do subpixel camera movement */
 };
 
 template <>
