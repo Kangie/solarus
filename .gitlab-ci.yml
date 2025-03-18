@@ -9,6 +9,13 @@ stages:
   - build
   - package
 
+.macos_saas_runners:
+  tags:
+    - saas-macos-medium-m1
+  image: $MACOS_IMAGE
+  before_script:
+    - echo "started by ${GITLAB_USER_NAME} / @${GITLAB_USER_LOGIN}"
+
 linux-configure:
   stage: configure
   image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
@@ -32,6 +39,7 @@ linux-build:
     expire_in: 1 day
 
 macos-configure:
+  extends: .macos_saas_runners
   stage: configure
   image: $MACOS_IMAGE
   script:
@@ -44,6 +52,7 @@ macos-configure:
     expire_in: 1 day
 
 macos-build:
+  extends: .macos_saas_runners
   stage: build
   image: $MACOS_IMAGE
   script:
@@ -55,6 +64,7 @@ macos-build:
     expire_in: 1 day
 
 macos-package:
+  extends: .macos_saas_runners
   stage: package
   image: $MACOS_IMAGE
   script:
