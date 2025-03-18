@@ -51,7 +51,7 @@ macos-configure:
   stage: configure
   image: $MACOS_IMAGE
   script:
-    - brew install cmake ninja pkg-config sdl2 sdl2_image sdl2_ttf luajit lua@5.3 libvorbis libmodplug physfs glm openal-soft qt@6
+    - brew install coreutils cmake ninja pkg-config sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug physfs glm openal-soft qt@6
     - cmake --preset macos
   artifacts:
     name: $CI_JOB_NAME
