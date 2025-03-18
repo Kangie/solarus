@@ -3,6 +3,6 @@
   "include": [
     "cmake/presets/linux.json",
     "cmake/presets/macos.json",
-    "cmake/presets/Windows.json"
+    "cmake/presets/windows.json"
   ]
 }
