@@ -1,0 +1,39 @@
+{
+  "version": 6,
+  "include": ["base.json"],
+  "configurePresets": [
+    {
+      "name": "windows",
+      "displayName": "Windows",
+      "description": "Visual Studio project for Windows",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.8.2/msvc2022_64/lib/cmake/Qt6",
+        "SOLARUS_FETCHCONTENT": true
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows",
+      "displayName": "Windows",
+      "configurePreset": "windows",
+      "description": "Release build with Visual Studio for Windows",
+      "targets": ["solarus-launcher"],
+      "configuration": "Release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "packagePresets": [],
+  "workflowPresets": []
+}

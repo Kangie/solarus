@@ -38,6 +38,10 @@ _build/
 
 # Temporary files.
 tmp/
+tmp.sh
 
 # Solarus files.
 error.txt
+
+# CMake.
+CMakeUserPresets.json

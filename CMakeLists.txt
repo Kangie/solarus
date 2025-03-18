@@ -1,17 +1,20 @@
 cmake_minimum_required(VERSION 3.19.0)
 
+project("solarus-launcher"
+  LANGUAGES CXX
+  VERSION 2.0.0
+  HOMEPAGE_URL "https://www.solarus-games.org"
+  DESCRIPTION "Game Launcher for Solarus Quests"
+)
+
+include(GNUInstallDirs)
+
 # Get the number of CPU cores available for building.
 include(ProcessorCount)
 ProcessorCount(NUM_CORES)
 set(CMAKE_BUILD_PARALLEL_LEVEL ${NUM_CORES})
 message(STATUS "Building with ${NUM_CORES} parallel jobs")
-
-project("solarus-launcher"
-  LANGUAGES CXX
-  VERSION 2.0.0
-  HOMEPAGE_URL "https://www.solarus-games.org"
-  DESCRIPTION "Legacy Launcher for Solarus Quests"
-)
+message(STATUS "Architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
 set(APP_NAME "Solarus Launcher")
@@ -110,10 +113,9 @@ FetchContent_MakeAvailable(QtAppInstanceManager)
 if(SOLARUS_FETCHCONTENT)
   message(STATUS "Solarus: Fetching from git repository")
   set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
-  set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG b0aeefdae8c80b3cf91614d68c4b264640c4265b #new-launcher
+    GIT_TAG 93ac211a0b8518bc485fa7f3fbd83121d903be10 # dev
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
@@ -124,10 +126,14 @@ else()
   # Ensure that Solarus is found, one way or another.
   message(STATUS "Solarus: Using from system")
   find_package(Solarus REQUIRED)
-  set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
 endif()
 
-message(STATUS "Solarus: ${SOLARUS_ARCH} architecture")
+# Disable warnings for Solarus.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  target_compile_options(solarus PRIVATE -w)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  target_compile_options(solarus PRIVATE /w)
+endif()
 
 # Icon.
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -210,7 +216,9 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  set_target_properties(${PROJECT_NAME}
+  set(CMAKE_MACOSX_RPATH ON)
+  set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks")
+  set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_ICON_FILE ${MACOSX_BUNDLE_ICON_FILE}
   )
 endif()
@@ -229,7 +237,22 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
   XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
   XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual"
   XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS OFF
+  XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS ""
 )
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  if(CODE_SIGN_IDENTITY)
+    message(STATUS "Code signing with identity: ${CODE_SIGN_IDENTITY}")
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+      XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED ON
+      XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${CODE_SIGN_IDENTITY}"
+      XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application"
+      XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS "--timestamp=http://timestamp.apple.com/ts01  --options=runtime,library"
+    )
+  else()
+    message(STATUS "Code signing is disabled")
+  endif()
+endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_VERSION="${PROJECT_VERSION}"
@@ -252,35 +275,53 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 set(EXECUTABLE_PATH "$<TARGET_FILE:${PROJECT_NAME}>")
-# set(DEPLOY_TOOL_OPTIONS_ARG "-codesign=${CODESIGNING_NAME}") # tmp
-qt_generate_deploy_script(
-    TARGET ${PROJECT_NAME}
-    OUTPUT_SCRIPT DEPLOY_SCRIPT
-    CONTENT "
-qt_deploy_runtime_dependencies(
-    EXECUTABLE \"${EXECUTABLE_PATH}\"
-    BIN_DIR .
-    DEPLOY_TOOL_OPTIONS \"${DEPLOY_TOOL_OPTIONS_ARG}\"
-    GENERATE_QT_CONF
-    VERBOSE
-    NO_APP_STORE_COMPLIANCE
-)")
 
-include(GNUInstallDirs)
+if(CODE_SIGN_IDENTITY)
+  set(DEPLOY_TOOL_OPTIONS_ARG "-codesign=${CODE_SIGN_IDENTITY}")
+  qt_generate_deploy_script(
+      TARGET ${PROJECT_NAME}
+      OUTPUT_SCRIPT DEPLOY_SCRIPT
+      CONTENT "
+  qt_deploy_runtime_dependencies(
+      EXECUTABLE \"${EXECUTABLE_PATH}\"
+      BIN_DIR .
+      DEPLOY_TOOL_OPTIONS \"${DEPLOY_TOOL_OPTIONS_ARG}\"
+      GENERATE_QT_CONF
+      VERBOSE
+      NO_APP_STORE_COMPLIANCE
+  )")
+else()
+  qt_generate_deploy_script(
+      TARGET ${PROJECT_NAME}
+      OUTPUT_SCRIPT DEPLOY_SCRIPT
+      CONTENT "
+  qt_deploy_runtime_dependencies(
+      EXECUTABLE \"${EXECUTABLE_PATH}\"
+      BIN_DIR .
+      GENERATE_QT_CONF
+      VERBOSE
+      NO_APP_STORE_COMPLIANCE
+  )")
+endif()
+
 install(TARGETS ${PROJECT_NAME}
   BUNDLE DESTINATION . COMPONENT ${PROJECT_NAME}
   LIBRARY DESTINATION $<TARGET_FILE_NAME:${PROJECT_NAME}>.app/Contents/Frameworks COMPONENT ${PROJECT_NAME}
-  #RUNTIME DESTINATION $<TARGET_FILE_NAME:${PROJECT_NAME}>.app/Contents/MacOS COMPONENT ${PROJECT_NAME}
+  RUNTIME DESTINATION $<$<PLATFORM_ID:Windows>:bin> COMPONENT ${PROJECT_NAME}
 )
 install(SCRIPT "${DEPLOY_SCRIPT}" COMPONENT ${PROJECT_NAME})
 
 # Add Info.plist to the macOS bundle only on macOS.
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(EXECUTABLE_NAME ${APP_NAME})
-  configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macOS/Info.plist.in" "${MACOSX_BUNDLE_INFO_PLIST}" @ONLY)
   set(MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
-  set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${MACOSX_BUNDLE_INFO_PLIST}")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macOS/Info.plist.in"
+    "${MACOSX_BUNDLE_INFO_PLIST}"
+    @ONLY
+  )
   target_sources(${PROJECT_NAME} PRIVATE "${MACOSX_BUNDLE_INFO_PLIST}")
+  set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${MACOSX_BUNDLE_INFO_PLIST}")
 endif()
 
 qt_finalize_executable(${PROJECT_NAME})
