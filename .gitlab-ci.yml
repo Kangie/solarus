@@ -9,12 +9,9 @@ stages:
   - build
   - package
 
-.macos_saas_runners:
-  tags:
-    - saas-macos-medium-m1
-  image: $MACOS_IMAGE
-  before_script:
-    - echo "started by ${GITLAB_USER_NAME} / @${GITLAB_USER_LOGIN}"
+###############################################################################
+# Linux jobs
+###############################################################################
 
 linux-configure:
   stage: configure
@@ -38,12 +35,23 @@ linux-build:
       - build
     expire_in: 1 day
 
+###############################################################################
+# macOS jobs
+###############################################################################
+
+.macos_saas_runners:
+  tags:
+    - saas-macos-medium-m1
+  image: $MACOS_IMAGE
+  before_script:
+    - echo "started by ${GITLAB_USER_NAME} / @${GITLAB_USER_LOGIN}"
+
 macos-configure:
   extends: .macos_saas_runners
   stage: configure
   image: $MACOS_IMAGE
   script:
-    - brew install cmake ninja pkg-config sdl2 sdl2_image sdl2_ttf luajit lua@5.1 libvorbis libmodplug phyfs glm openal-soft qt@6
+    - brew install cmake ninja pkg-config sdl2 sdl2_image sdl2_ttf luajit lua@5.3 libvorbis libmodplug phyfs glm openal-soft qt@6
     - cmake --preset macos
   artifacts:
     name: $CI_JOB_NAME
