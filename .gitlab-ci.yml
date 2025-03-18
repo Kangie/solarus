@@ -2,7 +2,7 @@ variables:
   IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
   IMAGE_VERSION: 20250217
   GIT_DEPTH: 1
-  MACOS_IMAGE: macos-15-xcode-16
+  MACOS_IMAGE: macos-14-xcode-15
 
 stages:
   - configure
