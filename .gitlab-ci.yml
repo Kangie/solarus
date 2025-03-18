@@ -4,13 +4,25 @@ variables:
   GIT_DEPTH: 1
 
 stages:
+  - configure
   - build
+
+linux-configure:
+  stage: configure
+  image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
+  script:
+    - cmake --preset linux
+  artifacts:
+    name: $CI_JOB_NAME
+    paths:
+      - build
+    expire_in: 1 day
 
 linux-build:
   stage: build
   image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
   script:
-    - cmake --workflow --preset linux
+    - cmake --build --preset linux
   artifacts:
     name: $CI_JOB_NAME
     paths:
