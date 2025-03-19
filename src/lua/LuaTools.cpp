@@ -731,17 +731,17 @@ std::vector<std::string> check_string_list(
     int index
 ) {
   std::vector<std::string> value;
+    index = get_positive_index(l, index);
 
   if (lua_istable(l, index)) {
     lua_pushnil(l);
-    while (lua_next(l, 2) != 0) {
-      value.push_back(check_string(l, 4));
+    while (lua_next(l, index) != 0) {
+      value.push_back(check_string(l, -1));
       lua_pop(l, 1);
     }
-  } else if (!lua_isnil(l, 2)) {
-    type_error(l, 2, "table");
+  } else if (!lua_isnil(l, index)) {
+    type_error(l, index, "table");
   }
-  lua_pop(l, 1);
 
   return value;
 }
@@ -756,12 +756,13 @@ std::vector<std::string> check_string_list(
  */
 std::vector<std::string> check_string_list_field(
     lua_State* l,
-    int /*table_index*/,
+    int table_index,
     const std::string& key
 ) {
-  lua_settop(l, 1);
-  lua_getfield(l, 1, key.c_str());
-  return check_string_list(l, 1);
+  lua_getfield(l, table_index, key.c_str());
+  std::vector<std::string> result = check_string_list(l, -1);
+  lua_pop(l, 1);
+  return result;
 }
 
 /**
@@ -798,20 +799,20 @@ std::vector<std::string> opt_string_list(
  */
 std::vector<std::string> opt_string_list_field(
     lua_State* l,
-    int /*table_index*/,
+    int table_index,
     const std::string& key,
     const std::vector<std::string>& default_value
 ) {
-
-  lua_settop(l, 1);
-  lua_getfield(l, 1, key.c_str());
+  lua_getfield(l, table_index, key.c_str());
 
   if (lua_isnil(l, -1)) {
     lua_pop(l, 1);
     return default_value;
   }
 
-  return check_string_list(l, 1);
+  std::vector<std::string> result = check_string_list(l, -1);
+  lua_pop(l, 1);
+  return result;
 }
 
 /**
