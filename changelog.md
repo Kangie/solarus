@@ -33,6 +33,7 @@
 * Map editor: update contour selector when the tileset file has changed.
 * Dialogs editor: prevent invalid custom property keys (#352).
 * Dialogs editor: remove the margin display broken feature.
+* Script editor: fix crash when indenting the last line (#546).
 * Fix zoom clamping in map, tileset, sprite and image views (#513).
 * Initial quest: fix item icon amount displaying.
 * Initial quest: fix item icon still showing unequiped items.
