@@ -59,13 +59,15 @@ MapModel::MapModel(
 
   // Create entities and groups.
   for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {
+    entities.try_emplace(layer);
     for (int i = 0; i < get_num_entities(layer); ++i) {
       EntityIndex index = { layer, i };
       EntityModelPtr entity = EntityModel::create(*this, index);
-      if (entity->get_group() != 0) {
-        groups[entity->get_group()].insert(index);
-      }
       entities[layer].emplace_back(std::move(entity));
+      const int group = get_entity(index).get_group();
+      if (group != 0) {
+        groups[group].insert(index);
+      }
     }
   }
 }
@@ -486,12 +488,8 @@ bool MapModel::entity_exists(const EntityIndex& index) const {
     return false;
   }
 
-  bool exists_in_solarus = map.entity_exists(index);
-  bool exists_in_model = (index.order >= 0 && index.order < (int) entities.at(index.layer).size());
-  Q_UNUSED(exists_in_solarus);
-  Q_ASSERT(exists_in_model == exists_in_solarus);
-
-  return exists_in_model;
+  return index.order >= 0 &&
+      index.order < static_cast<int>(entities.at(index.layer).size());
 }
 
 /**
@@ -781,8 +779,7 @@ EntityIndex MapModel::set_entity_layer(const EntityIndex& index_before, int laye
   entity_after->index_changed(index_after);
 
   // FIXME set_entities_layer() for performance
-  rebuild_entity_indexes(layer_before);
-  rebuild_entity_indexes(layer_after);
+  rebuild_entity_indexes({layer_before, layer_after});
 
   emit entity_layer_changed(index_before, index_after);
 
@@ -936,7 +933,7 @@ void MapModel::set_entity_order(const EntityIndex& index_before, int order_after
   Q_UNUSED(entity_before);
   entity_after->index_changed(index_after);
 
-  rebuild_entity_indexes(layer);
+  rebuild_entity_indexes({ layer });
 
   emit entity_order_changed(index_before, order_after);
 }
@@ -1741,7 +1738,7 @@ void MapModel::add_entities(AddableEntities&& entities) {
   emit entities_about_to_be_added(indexes);
 
   // Add each entity in ascending order.
-  QSet<int> layers_with_dirty_indexes;
+  std::set<int> layers_with_dirty_indexes;
   for (AddableEntity& addable_entity : entities) {
 
     EntityModelPtr& entity(addable_entity.entity);
@@ -1768,20 +1765,20 @@ void MapModel::add_entities(AddableEntities&& entities) {
     // Update the entity model and the entity list in the map editor.
     int layer = index.layer;
     int i = index.order;
+    const int group = entity->get_group();
+    if (group != 0) {
+      groups[group].insert(index);
+    }
     auto it = this->entities[layer].begin() + i;
     this->entities[layer].emplace(it, std::move(entity));
     get_entity(index).added_to_map(index);
 
-    // Other indexes are now dirty, unless the entity was appended.
-    if (i < (int) this->entities[layer].size() - 1) {
-      layers_with_dirty_indexes.insert(layer);
-    }
+    // Other indexes are now dirty.
+    layers_with_dirty_indexes.insert(layer);
   }
 
   // Each entity stores its own index, so they might get shifted.
-  for (int layer : layers_with_dirty_indexes) {
-    rebuild_entity_indexes(layer);
-  }
+  rebuild_entity_indexes(layers_with_dirty_indexes);
 
   // Notify people now that indexes are clean.
   emit entities_added(indexes);
@@ -1807,7 +1804,7 @@ AddableEntities MapModel::remove_entities(const EntityIndexes& indexes) {
 
   emit entities_about_to_be_removed(indexes);
 
-  QSet<int> layers_with_dirty_indexes;
+  std::set<int> layers_with_dirty_indexes;
 
   AddableEntities entities;
   // Remove entities in descending order so that indexes to remove don't shift.
@@ -1828,22 +1825,22 @@ AddableEntities MapModel::remove_entities(const EntityIndexes& indexes) {
     entity->about_to_be_removed_from_map();
     this->entities[layer].erase(it2);
 
+    if (entity->get_group() != 0) {
+      groups[entity->get_group()].erase(index);
+    }
+
     // Remove the entity on the Solarus side.
     map.remove_entity(index);
 
-    // Other indexes are now dirty, unless the entity was the last element.
-    if (i < (int) this->entities[layer].size()) {
-      layers_with_dirty_indexes.insert(layer);
-    }
+    // Other indexes are now dirty.
+    layers_with_dirty_indexes.insert(layer);
 
     // Return the removed entity to the caller.
     entities.emplace_front(std::move(entity), index);
   }
 
   // Each entity stores its own index, so they might get shifted.
-  for (int layer : layers_with_dirty_indexes) {
-    rebuild_entity_indexes(layer);
-  }
+  rebuild_entity_indexes(layers_with_dirty_indexes);
 
   // Notify people now that indexes are clean.
   emit entities_removed(indexes);
@@ -1852,33 +1849,70 @@ AddableEntities MapModel::remove_entities(const EntityIndexes& indexes) {
 }
 
 /**
- * @brief Sets the indexes of all entities on a layer from their rank in the
+ * @brief Sets the indexes of all entities on gives layers from their rank in the
  * entities list.
  *
  * This function should be called when entities are added, moved or removed
  * because each entity stores its own index.
- * All entities of the layer should already know their correct layer,
- * only the order on this layer is updated.
+ * All entities of the layers should already know their correct layer.
+ * The groups cache is also updated because it is based on entity indexes.
  *
- * @param layer Layer to update.
+ * @param layers Layers to update.
  */
-void MapModel::rebuild_entity_indexes(int layer) {
+void MapModel::rebuild_entity_indexes(const std::set<int>& layers) {
 
-  int i = 0;
-  groups.clear();
-  for (auto it = entities[layer].begin(); it != entities[layer].end(); ++it) {
+  // At this point:
+  // - The Solarus library has the correct indexes.
+  // - MapModel::entities has the correct indexes.
+  // - EntityModel::index is outdated.
+  // - MapModel::groups is outdated.
+  std::set<int> dirty_groups;
+  for (int layer : layers) {
+    int i = 0;
+    for (auto it = entities[layer].begin(); it != entities[layer].end(); ++it) {
+      const EntityModelPtr& entity = *it;
+      Q_ASSERT(entity != nullptr);
+      EntityIndex index = entity->get_index();
+      index.order = i;
 
-    const EntityModelPtr& entity = *it;
-    Q_ASSERT(entity != nullptr);
-    EntityIndex index = entity->get_index();
-    index.order = i;
+      entity->index_changed(index);
 
-    if (entity->get_group() != 0) {
-      groups[entity->get_group()].insert(index);
+      const int group = entity->get_group();  // The index is now up to date, we can safely know the group.
+      if (group != 0) {
+        dirty_groups.insert(group);
+      }
+      ++i;
     }
+  }
 
-    entity->index_changed(index);
-    ++i;
+  // Indexes are now updated. We need to rebuild groups.
+  for (int group : dirty_groups) {
+    std::set<EntityIndex>& indexes = groups[group];
+    for (auto it = indexes.begin(); it != indexes.end();) {
+      if (layers.find(it->layer) != layers.end()) {
+        // Remove from the group cache all entities dirty layers.
+        it = indexes.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  }
+  // Re-add entities to their group with their new index.
+  for (int layer : layers) {
+    int i = 0;
+    for (auto it = entities[layer].begin(); it != entities[layer].end(); ++it) {
+      const EntityModelPtr& entity = *it;
+      Q_ASSERT(entity != nullptr);
+      const EntityIndex& index = entity->get_index();
+      Q_ASSERT(index.layer == layer);
+      Q_ASSERT(index.order == i);
+      Q_UNUSED(i);
+      const int group = entity->get_group();
+      if (group != 0) {
+        groups[group].insert(index);
+      }
+      ++i;
+    }
   }
 }
 

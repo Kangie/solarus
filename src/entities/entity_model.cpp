@@ -67,22 +67,7 @@ EntityModel::EntityModel(
   map(&map),
   index(index),
   stub(type),
-  name(),
-  origin(0, 0),
-  size(16, 16),
-  base_size(16, 16),
-  resize_mode(ResizeMode::NONE),
-  has_preferred_layer(false),
-  preferred_layer(0),
-  num_directions(1),
-  no_direction_allowed(false),
   no_direction_text(MapModel::tr("No direction")),
-  traversable(true),
-  draw_sprite_info(),
-  sprite_model(nullptr),
-  sprite_image(),
-  draw_shape_info(),
-  draw_image_info(),
   icon() {
 
 }
@@ -394,6 +379,8 @@ void EntityModel::about_to_be_removed_from_map() {
 
   stub = map->get_internal_entity(index);  // Save the data.
   index = EntityIndex();  // Set an invalid index.
+
+  Q_ASSERT(!index.is_valid());
 }
 
 /**
@@ -1034,7 +1021,12 @@ void EntityModel::set_locked(bool locked) {
  * @return The group or 0.
  */
 int EntityModel::get_group() const {
-  return get_entity().get_group();
+
+  if (!index.is_valid() || !map->entity_exists(index)) {
+    // Maybe the entity is not on the map yet or its index is changing.
+    return stub.get_group();
+  }
+  return get_entity().get_group();  // Need to store it in case the index changes.
 }
 
 /**

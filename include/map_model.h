@@ -188,7 +188,7 @@ public slots:
 private:
 
   void set_tileset(QPointer<TilesetModel> tileset);
-  void rebuild_entity_indexes(int layer);
+  void rebuild_entity_indexes(const std::set<int>& layer);
 
   Quest& quest;                   /**< The quest the tileset belongs to. */
   const QString map_id;           /**< Id of the map. */

@@ -264,16 +264,16 @@ private:
                                    * When invalid, the entity is not added to the map yet. */
   Solarus::EntityData stub;       /**< Stub of entity, used before it gets added to the map. */
   QString name;                   /**< Name of the entity. */
-  QPoint origin;                  /**< Origin point of the entity relative to its top-left corner. */
-  QSize size;                     /**< Size of the entity for the editor. */
-  QSize base_size;                /**< Reference size when resizing. */
+  QPoint origin = { 0 , 0 };      /**< Origin point of the entity relative to its top-left corner. */
+  QSize size = { 16, 16 };        /**< Size of the entity for the editor. */
+  QSize base_size = { 16, 16 };   /**< Reference size when resizing. */
   ResizeMode resize_mode;         /**< How the entity can be resized. */
-  bool has_preferred_layer;       /**< Whether the entity has a preferred layer when added to the map. */
-  int preferred_layer;            /**< The preferred layer if has_preferred_layer is true. */
-  int num_directions;             /**< Number of possible directions (except the possible special one -1). */
-  bool no_direction_allowed;      /**< Whether the special no-value -1 is an allowed direction. */
+  bool has_preferred_layer = false;       /**< Whether the entity has a preferred layer when added to the map. */
+  int preferred_layer = 0;        /**< The preferred layer if has_preferred_layer is true. */
+  int num_directions = 1;         /**< Number of possible directions (except the possible special one -1). */
+  bool no_direction_allowed = false;      /**< Whether the special no-value -1 is an allowed direction. */
   QString no_direction_text;      /**< The text to show in a GUI for the special no-value -1 (if allowed). */
-  bool traversable;               /**< Whether this entity is assumed to be traversable. */
+  bool traversable = true;        /**< Whether this entity is assumed to be traversable. */
   SubtypeList subtypes;           /**< Existing subtypes of this entity type. */
 
   // Displaying.
