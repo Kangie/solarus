@@ -19,6 +19,11 @@ target_include_directories(hqx
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
+target_compile_options(hqx
+  PRIVATE
+    "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-absolute-value>"
+)
+
 set_target_properties(hqx
   PROPERTIES
     FOLDER "third_party"
