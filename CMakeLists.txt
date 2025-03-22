@@ -115,7 +115,7 @@ if(SOLARUS_FETCHCONTENT)
   set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG 93ac211a0b8518bc485fa7f3fbd83121d903be10 # dev
+    GIT_TAG d49c5ef5cd1d614e59ef075e7815c3f6f9a8da31 # dev
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
@@ -217,7 +217,6 @@ target_link_libraries(${PROJECT_NAME}
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(CMAKE_MACOSX_RPATH ON)
-  set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks")
   set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_ICON_FILE ${MACOSX_BUNDLE_ICON_FILE}
   )
