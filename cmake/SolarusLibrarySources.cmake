@@ -435,7 +435,6 @@ target_sources(solarus
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/TextSurfaceApi.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/TimerApi.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/lua/VideoApi.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/main/Main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/movements/CircleMovement.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/movements/FallingOnFloorMovement.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/movements/JumpMovement.cpp"

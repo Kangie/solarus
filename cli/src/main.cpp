@@ -14,8 +14,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SOLARUS_NOMAIN
-
 #include "solarus/core/Arguments.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/MainLoop.h"
@@ -94,26 +92,7 @@ void print_help(const Arguments& args) {
 /**
  * \brief Usual entry point of the program.
  *
- * Usage: solarus [options] [quest_path]
- *
- * The quest path is the name of a directory that contains either the data
- * directory ("data") or the data archive ("data.solarus" or
- * "data.solarus.zip").
- * If the quest path is not specified, it is set to the preprocessor constant
- * SOLARUS_DEFAULT_QUEST, which is the current directory "." by default.
- * In all cases, this quest path is relative to the working directory,
- * or to the solarus executable directory if no quest is found in the working
- * directory.
- *
- * The following options are supported:
- *   -help                             Shows a help message.
- *   -no-audio                         Disables sounds and musics.
- *   -no-video                         Disables displaying (used for unit tests).
- *   -quest-size=<width>x<height>      Sets the size of the drawing area (if compatible with the quest).
- *   -lua-console=yes|no               Accepts lines from standard input as Lua commands (default: yes).
- *   -turbo=yes|no                     Runs as fast as possible rather than simulating real time (default: no).
- *   -lag=X                            (Advanced) Artificially slows down each frame of X milliseconds
- *                                     to simulate slower systems for debugging (default: 0).
+ * Refer to print_help() above for more information.
  *
  * \param argc Number of command-line arguments.
  * \param argv Command-line arguments.
@@ -139,6 +118,3 @@ int main(int argc, char** argv) {
 
   return 0;
 }
-
-#endif
-
