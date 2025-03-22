@@ -19,7 +19,9 @@
 #ifdef __ANDROID__
 #include <SDL_opengles2.h>
 #include <stdio.h>
+#ifndef SOLARUS_GL_ES
 #define SOLARUS_GL_ES
+#endif
 #else
 #include <glad/glad.h> // Only include glad to have GL work
 #include <SDL_video.h>

@@ -49,6 +49,11 @@ if(OPENGL_FOUND)
   target_link_libraries(solarus PUBLIC OpenGL::GL)
 endif()
 
+# Add Android-specific libraries
+if(ANDROID)
+  target_link_libraries(solarus PUBLIC android log EGL GLESv1_CM GLESv2)
+endif()
+
 # Add Lua or LuaJIT imported target to "solarus" declared dependencies
 if(LUA_FOUND)
   target_link_libraries(solarus PUBLIC Lua::Lua)

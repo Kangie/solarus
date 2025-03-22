@@ -18,7 +18,6 @@ target_sources(solarus
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/containers/VecMap.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Ability.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/AbilityInfo.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/AndroidConfig.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/AppleInterface.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Arguments.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/core/Command.h"
