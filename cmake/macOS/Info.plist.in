@@ -37,6 +37,12 @@
         </array>
         <key>CFBundleTypeIconFile</key>
         <string>@MACOSX_DOCUMENT_ICON_FILE@</string>
+        <key>CFBundleTypeExtensions</key>
+        <array>
+          <string>@DOCUMENT_EXTENSION@</string>
+        </array>
+        <key>CFBundleTypeMIMETypes</key>
+        <string>application/octet-stream</string>
       </dict>
     </array>
     <key>UTExportedTypeDeclarations</key>
