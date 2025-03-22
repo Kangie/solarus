@@ -33,14 +33,18 @@ int printHelp(int argc, char* argv[]) {
   return EXIT_SUCCESS;
 }
 
+int printVersion() {
+  std::cout << PROJECT_VERSION << std::endl;
+  return EXIT_SUCCESS;
+}
+
 int main(int argc, char** argv) {
   if (argc > 1) {
     const auto arg1 = std::string{ argv[1] };
     if (arg1 == "--help" || arg1 == "-h") {
       return printHelp(argc, argv);
     } else if (arg1 == "--version" || arg1 == "-v") {
-      std::cout << "2.0.0" << std::endl;
-      return EXIT_SUCCESS;
+      return printVersion();
     } else {
       return runCLI(argc, argv);
     }
