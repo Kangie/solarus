@@ -120,6 +120,7 @@ set_target_properties(QtAppInstanceManager
 # Solarus: the engine.
 # If this flag is set, CMake will download Solarus from its git repository
 # instead of using a locally pre-built version.
+set(SOLARUS_FETCHCONTENT OFF CACHE BOOL "Enable downloading of Solarus from its git repository")
 if(SOLARUS_FETCHCONTENT)
   message(STATUS "Solarus: Fetching from git repository")
   set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
@@ -228,11 +229,14 @@ target_link_libraries(${PROJECT_NAME}
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(CMAKE_MACOSX_RPATH ON)
+  set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks")
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
   set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_ICON_FILE ${MACOSX_BUNDLE_ICON_FILE}
   )
 endif()
 
+set(CODE_SIGN_IDENTITY "" CACHE STRING "Code signing identity")
 set_target_properties(${PROJECT_NAME} PROPERTIES
   # ${BUNDLE_ID_OPTION}
   OUTPUT_NAME ${APP_NAME}
@@ -244,10 +248,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
   MACOSX_BUNDLE TRUE
   WIN32_EXECUTABLE TRUE
   XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED OFF
-  XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
+  XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${CODE_SIGN_IDENTITY}"
   XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual"
   XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS OFF
   XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS ""
+  INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks"
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -314,11 +319,16 @@ else()
   )")
 endif()
 
-install(TARGETS ${PROJECT_NAME}
-  BUNDLE DESTINATION . COMPONENT ${PROJECT_NAME}
-  LIBRARY DESTINATION $<TARGET_FILE_NAME:${PROJECT_NAME}>.app/Contents/Frameworks COMPONENT ${PROJECT_NAME}
-  RUNTIME DESTINATION $<$<PLATFORM_ID:Windows>:bin> COMPONENT ${PROJECT_NAME}
-)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  install(TARGETS ${PROJECT_NAME}
+    BUNDLE DESTINATION . COMPONENT ${PROJECT_NAME}
+    LIBRARY DESTINATION $<TARGET_FILE_NAME:${PROJECT_NAME}>.app/Contents/Frameworks COMPONENT ${PROJECT_NAME}
+  )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin COMPONENT ${PROJECT_NAME}
+  )
+endif()
 install(SCRIPT "${DEPLOY_SCRIPT}" COMPONENT ${PROJECT_NAME})
 
 # Add Info.plist to the macOS bundle only on macOS.
@@ -358,12 +368,18 @@ qt_finalize_executable(${PROJECT_NAME})
 
 # Packaging.
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(DMG_SCRIPT ON CACHE BOOL "Enable DMG customization with AppleScript")
+
   set(BUNDLE_NAME "${APP_NAME}.app")
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMGSetup.applescript.in
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpack/DragNDrop/DMGSetup.applescript
-    @ONLY
-  )
+  if(DMG_SCRIPT)
+    set(DMG_APPLESCRIPT "${CMAKE_CURRENT_BINARY_DIR}/DMGSetup.applescript")
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMGSetup.applescript.in
+      ${DMG_APPLESCRIPT}
+      @ONLY
+    )
+  endif()
+
   set(CPACK_GENERATOR "DragNDrop")
   set(CPACK_PACKAGE_VENDOR "${APP_ORGANISATION}")
   set(CPACK_PACKAGE_FILE_NAME "${APP_NAME} Installer")
@@ -371,7 +387,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(CPACK_BUNDLE_NAME "${APP_NAME}")
   set(CPACK_DMG_VOLUME_NAME "${APP_NAME} Installer")
   set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMGBackground@2x.png")
-  set(CPACK_DMG_DS_STORE_SETUP_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/cmake/cpack/DragNDrop/DMGSetup.applescript")
+  if(DMG_APPLESCRIPT)
+    set(CPACK_DMG_DS_STORE_SETUP_SCRIPT "${DMG_APPLESCRIPT}")
+  endif()
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_CURRENT_BINARY_DIR};${PROJECT_NAME};${PROJECT_NAME};/")
   # Components.
   set(CPACK_COMPONENTS_ALL ${PROJECT_NAME})

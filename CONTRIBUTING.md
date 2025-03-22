@@ -37,6 +37,12 @@
    cmake --workflow macos
    ```
 
+   Available options when configuring with cmake:
+
+   - `-DSOLARUS_FETCHCONTENT=ON`: Will clone Solarus' repo instead of trying to finding it in the system's installed libraries.
+   - `-DCODE_SIGN_IDENTITY=<YOUR_ID>`: Organization's id to use with macOS's `codesign`.
+   - `-DDMG_SCRIPT=OFF`: Skip the long AppleScript call when building the `.dmg`. Useful when debugging. Default is `ON`.
+
 ### Windows (MinGW)
 
 1. Install dependencies.

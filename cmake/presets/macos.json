@@ -10,7 +10,8 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "Qt6_DIR": "/opt/homebrew/opt/qt/lib/cmake/Qt6",
-        "SOLARUS_FETCHCONTENT": true
+        "SOLARUS_FETCHCONTENT": true,
+        "DMG_SCRIPT": false
       },
       "condition": {
         "type": "equals",
