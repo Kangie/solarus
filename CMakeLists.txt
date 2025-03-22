@@ -7,6 +7,10 @@ project("solarus-launcher"
   DESCRIPTION "Game Launcher for Solarus Quests"
 )
 
+if(NOT PROJECT_VERSION_TWEAK)
+  set(PROJECT_VERSION_TWEAK 0)
+endif()
+
 include(GNUInstallDirs)
 
 # Get the number of CPU cores available for building.
@@ -22,6 +26,7 @@ set(APP_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} Solarus Labs.")
 set(APP_IDENTIFIER "org.solarus-games.solarus-launcher")
 set(APP_ORGANISATION "Solarus Labs")
 set(APP_ORGANISATION_DOMAIN "solarus-games.org")
+set(APP_TRADEMARKS "Licensed under GPL v3 and CC-BY-SA 4.0.")
 set(LINKS_X "https://x.com/solarusgames")
 set(LINKS_MASTODON "https://mastodon.gamedev.place/@solarus")
 set(LINKS_YOUTUBE "https://www.youtube.com/c/ChristophoZS")
@@ -30,6 +35,7 @@ set(LINKS_SOURCE_CODE "https://www.gitlab.com/solarus-games")
 set(LINKS_CONTACT "https://www.solarus-games.org/about/contact")
 set(LINKS_RELEASES "https://gitlab.com/api/v4/projects/solarus-games%2Fsolarus-launcher-legacy/releases")
 set(LINKS_UPDATE_ENDPOINT "https://gitlab.com/api/v4/projects/solarus-games%2Fsolarus-launcher-legacy/releases/permalink/latest")
+set(LINKS_HELP "https://docs.solarus-games.org")
 
 set(DOCUMENT_NAME "Solarus Quest")
 set(DOCUMENT_EXTENSION "solarus")
@@ -146,8 +152,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/${MACOSX_BUNDLE_ICON_FILE}")
   set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
-  set(MACOSX_DOCUMENT_ICON_FILE "solarus_document_icon.icns")
-  set(DOCUMENT_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/document_icon/macos/${MACOSX_DOCUMENT_ICON_FILE}")
+  set(MACOSX_DOCUMENT_ICON_FILE "macos_doc_icon.icns")
+  set(DOCUMENT_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/doc_icon/macos/${MACOSX_DOCUMENT_ICON_FILE}")
   set_source_files_properties(${DOCUMENT_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 endif()
 
@@ -328,6 +334,26 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${MACOSX_BUNDLE_INFO_PLIST}")
 endif()
 
+# Add the resources.rc file to the Windows exe only on Windows.
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  # Generate the manifest file.
+  set(EXECUTABLE_NAME "$<TARGET_FILE_NAME:${PROJECT_NAME}>")
+  set(APPLICATION_MANIFEST_ABSOLUTE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}.manifest")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/App.exe.manifest.in"
+    "${APPLICATION_MANIFEST_ABSOLUTE_PATH}"
+  )
+
+  # We embed both the app icon and its document icon in the exe.
+  set(APPLICATION_ICON_ABSOLUTE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.ico")
+  set(FILE_ICON_ABSOLUTE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/doc_icon/windows/win_doc_icon.ico")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/Resources.rc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/Resources.rc"
+  )
+  target_sources(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+endif()
+
 qt_finalize_executable(${PROJECT_NAME})
 
 # Packaging.
@@ -347,6 +373,47 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMGBackground@2x.png")
   set(CPACK_DMG_DS_STORE_SETUP_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/cmake/cpack/DragNDrop/DMGSetup.applescript")
   set(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_CURRENT_BINARY_DIR};${PROJECT_NAME};${PROJECT_NAME};/")
+  # Components.
+  set(CPACK_COMPONENTS_ALL ${PROJECT_NAME})
+
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(CPACK_GENERATOR "NSIS")
+  set(CPACK_PACKAGE_VENDOR "${APP_ORGANISATION}")
+  set(CPACK_NSIS_DISPLAY_NAME "${PROJECT_NAME}")
+  set(CPACK_NSIS_PACKAGE_NAME "${PROJECT_NAME} Installer")
+  set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+  set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/cmake/cpack/NSIS/NSISInstallerIcon.ico")
+  set(CPACK_NSIS_MUI_UNICON "${CPACK_NSIS_MUI_ICON}")
+  set(CPACK_NSIS_INSTALLED_ICON_NAME "${CPACK_NSIS_MUI_ICON}")
+  set(CPACK_NSIS_HELP_LINK "${LINKS_HELP}")
+  set(CPACK_NSIS_URL_INFO_ABOUT "${PROJECT_HOMEPAGE_URL}")
+  set(CPACK_NSIS_CONTACT "${LINKS_CONTACT}")
+  set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${CMAKE_SOURCE_DIR}/cmake/cpack/NSIS/NSISWelcomeImage.bmp")
+  set(CPACK_NSIS_MUI_HEADERIMAGE "${CMAKE_SOURCE_DIR}/cmake/cpack/NSIS/NSISHeaderImage.bmp")
+  set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP}")
+  set(CPACK_NSIS_COMPRESSOR "/SOLID /FINAL lzma")
+  set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+  set(CPACK_NSIS_MODIFY_PATH OFF)
+  set(CPACK_NSIS_MANIFEST_DPI_AWARE ON)
+  set(CPACK_NSIS_BRANDING_TEXT "v${PROJECT_VERSION}")
+  set(CPACK_NSIS_IGNORE_LICENSE_PAGE ON)
+
+  # Set the file extension for the document type.
+  set(EXECUTABLE_NAME "$<TARGET_FILE_NAME:${PROJECT_NAME}>")
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+    WriteRegStr HKCR \".${FILE_EXTENSION}\" \"\" \"${DOCUMENT_TYPE_IDENTIFIER}\"
+    WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\" \"\" \"${DOCUMENT_NAME}\"
+    WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\\DefaultIcon\" \"\" \"$INSTDIR\\${EXECUTABLE_NAME},1\"
+    WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\\shell\\open\\command\" \"\" \"$INSTDIR\\${EXECUTABLE_NAME} \\\"%1\\\"\"
+    DetailPrint \"Registry modified: file association added\"
+  ")
+  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+    DeleteRegKey HKCR \".${FILE_EXTENSION}\"
+    DeleteRegKey HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\"
+  ")
+
+  # Components.
   set(CPACK_COMPONENTS_ALL ${PROJECT_NAME})
 endif()
+
 include(CPack)

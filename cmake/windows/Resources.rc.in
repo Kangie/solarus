@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+// Sets the code page to UTF-8.
+#pragma code_page(65001)
+
+// Define the application's version information
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION ${PROJECT_VERSION_MAJOR},${PROJECT_VERSION_MINOR},${PROJECT_VERSION_PATCH},${PROJECT_VERSION_TWEAK}
+PRODUCTVERSION ${PROJECT_VERSION_MAJOR},${PROJECT_VERSION_MINOR},${PROJECT_VERSION_PATCH},${PROJECT_VERSION_TWEAK}
+FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+FILEFLAGS 0x1L
+#else
+FILEFLAGS 0x0L
+#endif
+FILEOS 0x4L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", "${APP_ORGANISATION}\0"
+            VALUE "FileDescription", "${PROJECT_DESCRIPTION}\0"
+            VALUE "FileVersion", "${PROJECT_VERSION}\0"
+            VALUE "InternalName", "${APP_NAME}\0"
+            VALUE "LegalCopyright", "${APP_COPYRIGHT}\0"
+            VALUE "LegalTrademarks", "${APP_TRADEMARKS}\0"
+            VALUE "OriginalFilename", "${APP_NAME}.exe\0"
+            VALUE "ProductName", "${APP_NAME}\0"
+            VALUE "ProductVersion", "${PROJECT_VERSION}\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+// Define the application's manifest.
+ID_MANIFEST RT_MANIFEST "${APPLICATION_MANIFEST_ABSOLUTE_PATH}"
+
+// Define the application's icon.
+IDI_ICON1 ICON DISCARDABLE "${APPLICATION_ICON_ABSOLUTE_PATH}"
+IDI_ICON2 ICON DISCARDABLE "${FILE_ICON_ABSOLUTE_PATH}"
