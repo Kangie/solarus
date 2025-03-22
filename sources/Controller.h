@@ -36,6 +36,7 @@ public:
   void removeQuest(const QModelIndex& index);
   void removeCurrentQuest();
 
+  void playQuest(const QString& path);
   void playQuest(const QModelIndex& index);
   void stopQuest();
   void playCurrentQuest();
@@ -63,6 +64,7 @@ private:
   void setupThemeManager();
   void setupRunner();
   void loadLanguages();
+  void startRunner(const QString& questFilePath);
   void startRunner(const QModelIndex& index);
 
 private:
@@ -73,6 +75,6 @@ private:
   oclero::qlementine::ThemeManager* _themeManager{ nullptr };
   QStringList _languages{};
   QTranslator* _translator{ nullptr };
-  QModelIndex _pendingPlayingQuest{};
+  QString _pendingPlayingQuestPath{};
 };
 } // namespace solarus::launcher

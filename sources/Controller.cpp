@@ -148,15 +148,15 @@ void Controller::setupRunner() {
   QObject::connect(_runner, &QuestRunner::stateChanged, this, [this]() {
     const auto isPlaying = _runner->state() != QuestRunner::State::Stopped;
     if (isPlaying) {
-      _pendingPlayingQuest = {};
+      _pendingPlayingQuestPath = {};
       _model->setCurrentPlayingQuest(_model->questOfPath(_runner->questFilePath()));
     } else {
       _model->setCurrentPlayingQuest({});
 
       // Start new one, if pending.
-      if (_pendingPlayingQuest.isValid()) {
+      if (!_pendingPlayingQuestPath.isEmpty()) {
         QTimer::singleShot(0, this, [this]() {
-          startRunner(_pendingPlayingQuest);
+          startRunner(_pendingPlayingQuestPath);
         });
       }
     }
@@ -289,17 +289,19 @@ void Controller::removeCurrentQuest() {
   removeQuest(index);
 }
 
-void Controller::playQuest(const QModelIndex& index) {
-  const auto sourceIndex = _model->sourceIndex(index);
-  if (sourceIndex.isValid() && sourceIndex != _model->currentPlayingQuest()) {
-    if (_runner->state() == QuestRunner::State::Stopped) {
-      _pendingPlayingQuest = {};
-      startRunner(sourceIndex);
-    } else {
-      _pendingPlayingQuest = sourceIndex;
-      stopQuest();
-    }
+void Controller::playQuest(const QString& path) {
+  if (_runner->state() == QuestRunner::State::Stopped) {
+    _pendingPlayingQuestPath = {};
+    startRunner(path);
+  } else if (_runner->questFilePath() != path) {
+    _pendingPlayingQuestPath = path;
+    stopQuest();
   }
+}
+
+void Controller::playQuest(const QModelIndex& index) {
+  const auto questFilePath = _model->questFilePath(index);
+  playQuest(questFilePath);
 }
 
 void Controller::stopQuest() {
@@ -312,10 +314,24 @@ void Controller::playCurrentQuest() {
   playQuest(index);
 }
 
+void Controller::startRunner(const QString& questFilePath) {
+  // Find the index of the quest. If not found, it means that the quest
+  // is not indexed but started from a doube-click on the file.
+  const auto index = _model->questOfPath(questFilePath);
+  if (index.isValid()) {
+    _model->setCurrentPlayingQuest(index);
+  } else {
+    _model->setCurrentPlayingQuest({});
+  }
+
+  // Check if the file exists and is a quest file.
+  if (QFile::exists(questFilePath) && questFilePath.endsWith(".solarus")) {
+    _runner->start(questFilePath);
+  }
+}
+
 void Controller::startRunner(const QModelIndex& index) {
-  const auto questFilePath = _model->questFilePath(index);
-  _model->setCurrentPlayingQuest(index);
-  _runner->start(questFilePath);
+  startRunner(_model->questFilePath(index));
 }
 
 void Controller::openQuestFolder(const QModelIndex& index) {
