@@ -48,13 +48,17 @@ Application::Application(int& argc, char** argv)
   _mainWindow->show();
 
   // Raise main window if another instance is started but automatically closed.
+  // If that other instance was started with a quest as arg, start it in this instance instead.
   QObject::connect(&_instanceManager, &oclero::QtAppInstanceManager::secondaryInstanceMessageReceived, this,
     [this](const unsigned int id, QByteArray const& data) {
       Q_UNUSED(id)
-      Q_UNUSED(data)
-      qDebug() << data;
       if (_mainWindow) {
         _mainWindow->raise();
+      }
+      const auto secondaryInstanceArgs = QString::fromUtf8(data).split(' ');
+      if (secondaryInstanceArgs.size() > 0) {
+        const auto questFilePath = secondaryInstanceArgs[0];
+        _controller->playQuest(questFilePath);
       }
     });
 }
