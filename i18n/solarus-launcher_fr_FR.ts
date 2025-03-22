@@ -4,17 +4,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../sources/widgets/MessageBox.cpp" line="24"/>
+        <location filename="../sources/widgets/MessageBox.cpp" line="25"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MessageBox.cpp" line="26"/>
+        <location filename="../sources/widgets/MessageBox.cpp" line="27"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/MessageBox.cpp" line="28"/>
+        <location filename="../sources/widgets/MessageBox.cpp" line="29"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
@@ -182,7 +182,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="51"/>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="54"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="60"/>
         <source>Theme</source>
         <translation>Thème</translation>
     </message>
@@ -213,24 +213,49 @@
         <translation>Quêtes Solarus</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/BottomPanel.cpp" line="23"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="27"/>
         <source>Playing:</source>
         <translation>En cours:</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/BottomPanel.cpp" line="26"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="30"/>
         <source>Close console</source>
         <translation>Fermer la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/BottomPanel.cpp" line="29"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="33"/>
         <source>Clear console</source>
         <translation>Effacer la console</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/BottomPanel.cpp" line="32"/>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="36"/>
         <source>No quest playing</source>
         <translation>Pas de quête en cours</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="39"/>
+        <source>Copy</source>
+        <translation>Copier</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="42"/>
+        <source>Select All</source>
+        <translation>Tout sélectionner</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="45"/>
+        <source>Clear</source>
+        <translation>Effacer</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="48"/>
+        <source>Close</source>
+        <translation>Fermer</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/BottomPanel.cpp" line="51"/>
+        <source>Save To File…</source>
+        <translation>Enregistrer dans un fichier…</translation>
     </message>
     <message>
         <location filename="../sources/Controller.cpp" line="32"/>
@@ -293,6 +318,41 @@
         <translation>Sous licences GPL v3 et CC-BY-SA 4.0.</translation>
     </message>
     <message>
+        <location filename="../sources/Controller.cpp" line="63"/>
+        <source>An error occurred while running the quest</source>
+        <translation>Une erreur inconnue s&apos;est produite lors du processus de quête</translation>
+    </message>
+    <message>
+        <location filename="../sources/Controller.cpp" line="68"/>
+        <source>The process had a read error.</source>
+        <translation>Le processus a une une erreur de lecture.</translation>
+    </message>
+    <message>
+        <location filename="../sources/Controller.cpp" line="70"/>
+        <source>The process had a write error.</source>
+        <translation>Le procesus a eu une erreur d&apos;écriture.</translation>
+    </message>
+    <message>
+        <location filename="../sources/Controller.cpp" line="72"/>
+        <source>The process crashed.</source>
+        <translation>Le processus a crashé.</translation>
+    </message>
+    <message>
+        <location filename="../sources/Controller.cpp" line="74"/>
+        <source>The process failed to start.</source>
+        <translation>Le processus n&apos;a pas pu démarrer.</translation>
+    </message>
+    <message>
+        <location filename="../sources/Controller.cpp" line="76"/>
+        <source>The process no longer responds.</source>
+        <translation>Le processus ne répond plus.</translation>
+    </message>
+    <message>
+        <location filename="../sources/Controller.cpp" line="78"/>
+        <source>Unknown error.</source>
+        <translation>Erreur inconnue.</translation>
+    </message>
+    <message>
         <location filename="../sources/widgets/PreferencesWindow.cpp" line="29"/>
         <source>%1 Preferences</source>
         <translation>Préférences de %1</translation>
@@ -333,62 +393,72 @@
         <translation>Très pratique pour déceler des bugs.</translation>
     </message>
     <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="54"/>
+        <source>Ask before removing a quest</source>
+        <translation>Demander avant de supprimer une quête</translation>
+    </message>
+    <message>
         <location filename="../sources/widgets/PreferencesWindow.cpp" line="57"/>
+        <source>Quests are only removed from the app&apos;s index, not from disk.</source>
+        <translation>Les quêtes sont seulement supprimées de l&apos;index de l&apos;application, pas du disque.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="63"/>
         <source>Change the app&apos;s look. No need to restart.</source>
         <translation>Changer l&apos;apparence de l&apos;application. Pas besoin de redémarrer.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="60"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="66"/>
         <source>Quests</source>
         <translation>Quêtes</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="63"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="69"/>
         <source>Audio Enabled</source>
         <translation>Audio activé</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="66"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="72"/>
         <source>Plays the quest audio.</source>
         <translation>Jouer l&apos;audio des quêtes.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="69"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="75"/>
         <source>Force Software Rendering</source>
         <translation>Forcer le rendu logiciel</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="72"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="78"/>
         <source>Enable this if your machine doesn&apos;t support OpenGL.</source>
         <translation>Activez ceci si votre ordinateur ne supporte pas OpenGL.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="75"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="81"/>
         <source>Full Screen</source>
         <translation>Plein écran</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="78"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="84"/>
         <source>Start the quest as full screen.</source>
         <translation>Démarrer les quêtes en plein écran.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="81"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="87"/>
         <source>Suspend Quest when unfocused</source>
         <translation>Mettre la quête en pause quand elle n&apos;a pas le focus</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="84"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="90"/>
         <source>Pauses the game when the window is no longer active.</source>
         <translation>Met le jeu en pause quand la fenêtre n&apos;est plus active.</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="87"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="93"/>
         <source>Reset</source>
         <translation>Réinitialiser</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/PreferencesWindow.cpp" line="90"/>
+        <location filename="../sources/widgets/PreferencesWindow.cpp" line="96"/>
         <source>Reset to factory defaults.</source>
         <translation>Réinitialiser aux paramètres d&apos;usine.</translation>
     </message>
