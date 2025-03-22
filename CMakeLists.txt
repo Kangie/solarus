@@ -113,6 +113,7 @@ FetchContent_MakeAvailable(QtAppInstanceManager)
 if(SOLARUS_FETCHCONTENT)
   message(STATUS "Solarus: Fetching from git repository")
   set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
+  set(SOLARUS_FILE_LOGGING OFF)
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
     GIT_TAG d49c5ef5cd1d614e59ef075e7815c3f6f9a8da31 # dev
