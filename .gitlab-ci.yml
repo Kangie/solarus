@@ -34,6 +34,7 @@ stages:
   - install
   - package
   - trigger
+  - deploy
 
 #------------------------------------------------------------------------------
 # Template for Generic Build Jobs
@@ -205,24 +206,46 @@ mingw-x86-build:
 #------------------------------------------------------------------------------
 # Documentation Build Job
 #
-# An artifact is generated with the contents of the `doc/build` directory that
+# An artifact is generated with the contents of the `public` directory that
 # expires one month after creation unless the pipeline is for the most recent
 # commit on a branch or tag.
+#
+# The docuemntation is built using MkDocs and deployed to GitLab Pages.
+# GitLab Pages requires a `public` directory at the root of the repository.
+# The deployement will be done automatically by GitLab Pages (enabled in the
+# project settings), and only for default branch (dev).
+#
+# The built website will be available at https://solarus-games.gitlab.io/solarus
+# and mirrored at https://docs.solarus-games.org.
 #------------------------------------------------------------------------------
 
 docs-build:
+  image: python:latest
   stage: build
-  image: $IMAGE_REPOSITORY/docs-build-env:$IMAGE_VERSION
+  pages: false
   script:
-    - cd doc/en
-    - doxygen Doxyfile
-    - cd ../build/latex
-    - make
+    - cd doc
+    - pip install -r requirements.txt
+    - mkdocs build --site-dir public
   artifacts:
     name: $CI_JOB_NAME
     paths:
-      - doc/build
+      - $CI_PROJECT_DIR/doc/public
     expire_in: 1 month
+
+docs-deploy:
+  image: alpine:latest
+  stage: deploy
+  pages: true
+  dependencies:
+    - docs-build
+  script:
+    - mv doc/public public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
 
 #------------------------------------------------------------------------------
 # Linux-based Test Job (64-bit)
