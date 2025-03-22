@@ -106,6 +106,10 @@ FetchContent_Declare(QtAppInstanceManager
  GIT_TAG 1d7de744735f68310c8ebef0c809c36178f0e070 #v1.3.0
 )
 FetchContent_MakeAvailable(QtAppInstanceManager)
+set_target_properties(QtAppInstanceManager
+  PROPERTIES
+    FOLDER dependencies
+)
 
 # Solarus: the engine.
 # If this flag is set, CMake will download Solarus from its git repository
