@@ -230,7 +230,7 @@ target_link_libraries(${PROJECT_NAME}
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(CMAKE_MACOSX_RPATH ON)
-  # set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
   # set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks")
   set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_ICON_FILE ${MACOSX_BUNDLE_ICON_FILE}
@@ -291,15 +291,13 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 set(EXECUTABLE_PATH "$<TARGET_FILE:${PROJECT_NAME}>")
+set(BUNDLE_PATH "$<TARGET_BUNDLE_DIR:${PROJECT_NAME}>")
+
 set(CODE_SIGN_IDENTITY "" CACHE STRING "Codesigning identity (`security find-identity -v -p codesigning`)")
+set(ENABLE_NOTARIZE OFF CACHE BOOL "Enable notarization")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(DEPLOY_TOOL_OPTIONS_ARG "-libpath=/opt/homebrew/lib")
-
-  # Arguments for macdeployqt.
-  if(CODE_SIGN_IDENTITY)
-    set(DEPLOY_TOOL_OPTIONS_ARG "-sign-for-notarization=${CODE_SIGN_IDENTITY} ${DEPLOY_TOOL_OPTIONS_ARG}")
-  endif()
 endif()
 
 qt_generate_deploy_script(
@@ -313,7 +311,43 @@ qt_deploy_runtime_dependencies(
     GENERATE_QT_CONF
     VERBOSE
     NO_APP_STORE_COMPLIANCE
-)")
+)
+
+if(\"${CMAKE_SYSTEM_NAME}\" MATCHES \"Darwin\" AND NOT \"${CODE_SIGN_IDENTITY}\" STREQUAL \"\")
+  message(STATUS \"Executing codesign with ${CODE_SIGN_IDENTITY}\")
+  execute_process(COMMAND xcrun codesign
+    --force
+    --deep
+    --options runtime
+    --timestamp
+    --sign \"${CODE_SIGN_IDENTITY}\"
+    \"${BUNDLE_PATH}\"
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+
+  if(ENABLE_NOTARIZE)
+    set(TMP_ZIP_PATH \"/tmp/$<TARGET_FILE_NAME:${PROJECT_NAME}>.zip\")
+
+    execute_process(COMMAND ditto -c -k --keepParent
+      \"${BUNDLE_PATH}\"
+      \"${TMP_ZIP_PATH}\"
+      COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND xcrun notarytool submit --wait
+      ${CODE_SIGN_IDENTITY}
+      --keychain-profile \"notarytool-password\"
+      \"${TMP_ZIP_PATH}\"
+      COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    execute_process(COMMAND xcrun stapler staple
+      \"${BUNDLE_PATH}\"
+      COMMAND_ERROR_IS_FATAL ANY
+    )
+  endif()
+endif()
+")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   install(TARGETS ${PROJECT_NAME}
