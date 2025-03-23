@@ -247,7 +247,7 @@ docs-prepare:
     - wget -O $TMP_FILE $SOLDOC_JOB_ARTIFACT
     - TMP_DIR=$(mktemp -d)
     - 7za x -o$TMP_DIR $TMP_FILE
-    - mv $TMP_DIR/doc/build/html solarus-doc
+    - mv $TMP_DIR/doc/public solarus-doc
   artifacts:
     name: $CI_JOB_NAME
     paths:
