@@ -17,6 +17,10 @@ class QuestListModel;
 class QuestRunner;
 class BasicUpdater;
 
+/**
+ * @brief The controller of the Solarus Launcher.
+ * Manages the main actions of the application.
+ */
 class Controller : public QObject {
   Q_OBJECT
 

@@ -8,6 +8,12 @@
 #include <string>
 #include <iostream>
 
+/**
+ * @brief Runs the Solarus Launcher GUI.
+ * @param argc The number of arguments.
+ * @param argv The arguments.
+ * @return int The exit status.
+ */
 int runGUI(int argc, char* argv[]) {
   // Run the QApplication event loop.
   solarus::launcher::configureQApplication();
@@ -16,6 +22,12 @@ int runGUI(int argc, char* argv[]) {
   return app.exec();
 }
 
+/**
+ * @brief Runs the Solarus Launcher as a CLI, i.e. takes a quest file as argument.
+ * @param argc The number of arguments.
+ * @param argv The arguments.
+ * @return int The exit status.
+ */
 int runCLI(int argc, char* argv[]) {
   Solarus::Debug::set_abort_on_die(true);
   Solarus::Debug::set_show_popup_on_die(false);
@@ -27,17 +39,33 @@ int runCLI(int argc, char* argv[]) {
   return EXIT_SUCCESS;
 }
 
+/**
+ * @brief Prints the help message.
+ * @param argc The number of arguments.
+ * @param argv The arguments.
+ * @return int The exit status.
+ */
 int printHelp(int argc, char* argv[]) {
   const auto binary_name = std::string{ (argc > 0) ? argv[0] : "solarus-launcher" };
   std::cout << "Usage:\n" << binary_name << " [--version] [--help] [<path/to/quest.solarus>]" << std::endl;
   return EXIT_SUCCESS;
 }
 
+/**
+ * @brief Prints the version of the Solarus Launcher.
+ * @return int The exit status.
+ */
 int printVersion() {
   std::cout << PROJECT_VERSION << std::endl;
   return EXIT_SUCCESS;
 }
 
+/**
+ * @brief The main entry point of the Solarus Launcher. It can be run as a GUI or as a CLI.
+ * @param argc The number of arguments.
+ * @param argv The arguments.
+ * @return int The exit status.
+ */
 int main(int argc, char** argv) {
   if (argc > 1) {
     const auto arg1 = std::string{ argv[1] };

@@ -127,16 +127,21 @@ Console::Console(QWidget* parent)
   , output_command_id(-1) {
   setupUi();
 
-  if (const auto* style = qobject_cast<oclero::qlementine::QlementineStyle*>(this->style())) {
-    QObject::connect(style, &oclero::qlementine::QlementineStyle::themeChanged, this, [this, style]() {
+  // Theming.
+  const auto update_theme = [this]() {
+    if (const auto* qlementine = qobject_cast<oclero::qlementine::QlementineStyle*>(this->style())) {
       // Recompute the theme.
-      theme = themeFromStyleTheme(style->theme());
+      theme = themeFromStyleTheme(qlementine->theme());
 
       // Recompute all colorization.
       ui.log_view->clear();
       last_new_message_index = -1;
       update_ui_with_new_messages();
-    });
+    }
+  };
+  update_theme();
+  if (const auto* qlementine = qobject_cast<oclero::qlementine::QlementineStyle*>(this->style())) {
+    QObject::connect(qlementine, &oclero::qlementine::QlementineStyle::themeChanged, this, update_theme);
   }
 }
 

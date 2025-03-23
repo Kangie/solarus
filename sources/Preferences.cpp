@@ -4,6 +4,8 @@
 #include <QGuiApplication>
 #include <QStandardPaths>
 
+#include <Common.h>
+
 namespace solarus::launcher {
 namespace {
 constexpr auto key_appLanguage{ "app/language" };
@@ -23,10 +25,10 @@ constexpr auto key_questFullScreen{ "quests/fullScreen" };
 constexpr auto key_questEnableAudio{ "quests/enableAudio" };
 constexpr auto key_questSuspendWhenUnfocused{ "quests/suspendWhenUnFocused" };
 
-constexpr auto default_appLanguage{ "" };
+constexpr auto default_appLanguage{ "en_US" };
 constexpr auto default_appPropertiesPanelVisible{ false };
 constexpr auto default_appConsoleVisible{ false };
-constexpr auto default_appTheme{ "Dark" };
+static const auto default_appTheme{ Common::darkThemeId() };
 constexpr auto default_appWarnBeforeQuestRemoval{ true };
 
 constexpr auto default_questForceSoftwareRendering{ false };

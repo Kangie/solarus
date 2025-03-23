@@ -253,10 +253,10 @@ void ToolBar::setupUi() {
 
     const auto updateThemeSwitch = [this, themeSwitch]() {
       QSignalBlocker _(themeSwitch);
-      themeSwitch->setChecked(_controller->preferences()->appTheme() == "Dark");
+      themeSwitch->setChecked(_controller->preferences()->appTheme() == Common::darkThemeId());
     };
     QObject::connect(themeSwitch, &oclero::qlementine::Switch::clicked, this, [this](auto checked) {
-      _controller->preferences()->setAppTheme(checked ? "Dark" : "Light");
+      _controller->preferences()->setAppTheme(checked ? Common::darkThemeId() : Common::lightThemeId());
     });
     QObject::connect(_controller->preferences(), &Preferences::appThemeChanged, this, updateThemeSwitch);
 

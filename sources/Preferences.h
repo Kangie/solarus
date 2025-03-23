@@ -7,6 +7,9 @@
 #include <QByteArray>
 
 namespace solarus::launcher {
+/**
+ * @brief Unique entry point for the application preferences.
+ */
 class Preferences : public QObject {
   Q_OBJECT
 

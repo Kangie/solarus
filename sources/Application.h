@@ -15,9 +15,16 @@ class QlementineStyle;
 namespace solarus::launcher {
 class Controller;
 
-// Must be done before creating a QApplication.
+/**
+ * @brief Configures the QApplication metadata.
+ * Must be done before creating the QApplication instance.
+ */
 void configureQApplication();
 
+/**
+ * @brief The Solarus Launcher application.
+ * Wraps the QApplication instance and manages the main window.
+ */
 class Application : public QApplication {
   Q_OBJECT
 

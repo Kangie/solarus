@@ -35,6 +35,9 @@ public:
   static QString languageName(const QString& langCode);
   static QIcon languageIcon(const QString& langCode);
 
+  static QString darkThemeId();
+  static QString lightThemeId();
+
 private:
   Common() = delete;
 };

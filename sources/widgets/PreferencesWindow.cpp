@@ -218,7 +218,7 @@ void PreferencesWindow::setupUi() {
 
     for (const auto& theme : themes) {
       const auto text = Controller::themeName(theme.meta.name);
-      const auto icon = makeIcon(theme.meta.name == "Dark" ? Icons16::Misc_Moon : Icons16::Misc_Sun);
+      const auto icon = makeIcon(theme.meta.name == Common::darkThemeId() ? Icons16::Misc_Moon : Icons16::Misc_Sun);
       themeComboBox->addItem(icon, text, QString(theme.meta.name));
     }
 

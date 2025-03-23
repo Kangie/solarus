@@ -51,9 +51,9 @@ static QString solarusQuests() {
   return QApplication::translate("SolarusLauncher", "Solarus Quests");
 }
 static QString themeName(const QString themeId) {
-  if (themeId == "Dark") {
+  if (themeId == Common::darkThemeId()) {
     return QApplication::translate("SolarusLauncher", "Dark");
-  } else if (themeId == "Light") {
+  } else if (themeId == Common::lightThemeId()) {
     return QApplication::translate("SolarusLauncher", "Light");
   } else {
     return themeId;
@@ -218,6 +218,7 @@ void Controller::loadLanguages() {
 
   // Find best language.
   const auto userLang = findBestLanguage(_preferences->appLanguage(), _languages);
+  _preferences->setAppLanguage(userLang);
   _translator = new QTranslator(this);
   if (_translator->load(QLocale(userLang), sourceDirectory.absolutePath() + "/" + fileName, separator, sourceDirPath)) {
     qApp->installTranslator(_translator);

@@ -103,8 +103,8 @@ void MenuBar::setupUi() {
       });
     addQuestAction->setAutoRepeat(false);
 
-    auto* addFolderAction = fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS), i18n::addQuestFolderAction(),
-      QKeySequence::StandardKey::Open, [this]() {
+    auto* addFolderAction = fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS),
+      i18n::addQuestFolderAction(), QKeySequence::StandardKey::Open, [this]() {
         _controller->openAddFolderDialog();
       });
     addFolderAction->setAutoRepeat(false);
@@ -212,7 +212,8 @@ void MenuBar::setupUi() {
 
     for (const auto& theme : themes) {
       const auto name = theme.meta.name;
-      const auto icon = name == "Dark" ? makeIcon(Icons16::Misc_Moon, macOS) : makeIcon(Icons16::Misc_Sun, macOS);
+      const auto icon =
+        name == Common::darkThemeId() ? makeIcon(Icons16::Misc_Moon, macOS) : makeIcon(Icons16::Misc_Sun, macOS);
       const auto text = Controller::themeName(theme.meta.name);
       auto* action = themeMenu->addAction(icon, text);
       action->setData(name);
@@ -232,9 +233,10 @@ void MenuBar::setupUi() {
       });
     }
 
-    auto* swapThemeAction = viewMenu->addAction(makeIcon(Icons16::Action_Swap, macOS), i18n::switchTheme(), { Qt::CTRL | Qt::Key_T }, [this]() {
-      _controller->themeManager()->setNextTheme();
-    });
+    auto* swapThemeAction = viewMenu->addAction(
+      makeIcon(Icons16::Action_Swap, macOS), i18n::switchTheme(), { Qt::CTRL | Qt::Key_T }, [this]() {
+        _controller->themeManager()->setNextTheme();
+      });
     swapThemeAction->setAutoRepeat(false);
 
     viewMenu->addSeparator();
@@ -275,14 +277,16 @@ void MenuBar::setupUi() {
   {
     helpMenu->setSeparatorsCollapsible(true);
 
-    auto* contactAction = helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, [this]() {
-      _controller->openContactPage();
-    });
+    auto* contactAction =
+      helpMenu->addAction(makeIcon(Icons16::Misc_Mail, macOS), i18n::contact(), QKeySequence{}, [this]() {
+        _controller->openContactPage();
+      });
     contactAction->setAutoRepeat(false);
 
-    auto* sourceCodeAction = helpMenu->addAction(makeIcon(Icons16::File_FileScript, macOS), i18n::sourceCode(), QKeySequence{}, [this]() {
-      _controller->openSourceCodePage();
-    });
+    auto* sourceCodeAction =
+      helpMenu->addAction(makeIcon(Icons16::File_FileScript, macOS), i18n::sourceCode(), QKeySequence{}, [this]() {
+        _controller->openSourceCodePage();
+      });
     sourceCodeAction->setAutoRepeat(false);
 
     helpMenu->addSeparator();

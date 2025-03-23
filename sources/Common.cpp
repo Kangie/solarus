@@ -39,4 +39,12 @@ QIcon Common::ageIcon(const Common::AgeRating value) {
       return QIcon();
   }
 }
+
+QString Common::darkThemeId() {
+  return "Dark";
+}
+
+QString Common::lightThemeId() {
+  return "Light";
+}
 } // namespace solarus::launcher
