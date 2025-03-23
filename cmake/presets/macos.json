@@ -26,7 +26,7 @@
       "displayName": "macOS",
       "configurePreset": "macos",
       "description": "Release build with Ninja for macOS",
-      "targets": ["solarus-launcher"],
+      "targets": ["solaruslauncher"],
       "configuration": "Release",
       "condition": {
         "type": "equals",

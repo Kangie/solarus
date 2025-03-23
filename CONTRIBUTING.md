@@ -43,7 +43,9 @@
    - `-DCODE_SIGN_IDENTITY=<YOUR_ID>`: Organization's id to use with macOS's `codesign`.
    - `-DDMG_SCRIPT=OFF`: Skip the long AppleScript call when building the `.dmg`. Useful when debugging. Default is `ON`.
 
-### Windows (MinGW)
+### Windows (MSYS2)
+
+On Windows, we use MSYS2, a Unix-like environment that makes installing dependencies and compiling much simpler.
 
 1. Install dependencies.
 
@@ -70,15 +72,15 @@
 2. Configure and build the project. CMake presets are provided for ease of use.
 
    ```sh
-   cmake --preset mingw
-   cmake --build --preset mingw
-   cpack --preset mingw
+   cmake --preset msys2
+   cmake --build --preset msys2
+   cpack --preset msys2
    ```
 
    Alternatively, there is simply this one-liner to configure, build and package:
 
    ```sh
-   cmake --workflow mingw
+   cmake --workflow msys2
    ```
 
 ### Debian (Ubuntu, etc.)

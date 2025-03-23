@@ -46,7 +46,7 @@ int runCLI(int argc, char* argv[]) {
  * @return int The exit status.
  */
 int printHelp(int argc, char* argv[]) {
-  const auto binary_name = std::string{ (argc > 0) ? argv[0] : "solarus-launcher" };
+  const auto binary_name = std::string{ (argc > 0) ? argv[0] : PROJECT_APP_EXECUTABLE_NAME };
   std::cout << "Usage:\n" << binary_name << " [--version] [--help] [<path/to/quest.solarus>]" << std::endl;
   return EXIT_SUCCESS;
 }

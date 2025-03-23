@@ -1,2 +1,0 @@
-- JSON themes with Solarus colors : WIP
-- Windows installer

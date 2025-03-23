@@ -199,7 +199,7 @@ void Controller::setupRunner() {
 
 void Controller::loadLanguages() {
   constexpr auto sourceDirPath = ":/i18n/";
-  constexpr auto fileName = "solarus-launcher";
+  constexpr auto fileName = PROJECT_APP_EXECUTABLE_NAME;
   constexpr auto separator = "_";
 
   constexpr auto filterFlags = QDir::Filter::NoDotAndDotDot | QDir::Filter::Files | QDir::Filter::Readable;

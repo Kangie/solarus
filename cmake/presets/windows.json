@@ -3,14 +3,14 @@
   "include": ["base.json"],
   "configurePresets": [
     {
-      "name": "windows",
-      "displayName": "Windows",
-      "description": "Visual Studio project for Windows",
-      "generator": "Visual Studio 17 2022",
+      "name": "msys2",
+      "displayName": "MSYS2 (Windows)",
+      "description": "MSYS2 for Windows",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "C:/Qt/6.8.2/msvc2022_64/lib/cmake/Qt6",
-        "SOLARUS_FETCHCONTENT": true
+        "SOLARUS_FETCHCONTENT": true,
+        "SOLARUS_DIR": "C:/msys64/ucrt64/include/solarus/"
       },
       "condition": {
         "type": "equals",
@@ -21,11 +21,11 @@
   ],
   "buildPresets": [
     {
-      "name": "windows",
-      "displayName": "Windows",
-      "configurePreset": "windows",
-      "description": "Release build with Visual Studio for Windows",
-      "targets": ["solarus-launcher"],
+      "name": "msys2",
+      "displayName": "MSYS2 (Windows)",
+      "configurePreset": "msys2",
+      "description": "Release build for Windows with MSYS2 and Ninja",
+      "targets": ["solaruslauncher"],
       "configuration": "Release",
       "condition": {
         "type": "equals",
@@ -34,6 +34,38 @@
       }
     }
   ],
-  "packagePresets": [],
-  "workflowPresets": []
+  "packagePresets": [
+    {
+      "name": "msys2",
+      "displayName": "MSYS2 (Windows)",
+      "configurePreset": "msys2",
+      "description": "NSIS packaging for Windows with MSYS2 and Ninha",
+      "generators": ["NSIS"],
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "msys2",
+      "displayName": "MSYS2 (Windows)",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "msys2"
+        },
+        {
+          "type": "build",
+          "name": "msys2"
+        },
+        {
+          "type": "package",
+          "name": "msys2"
+        }
+      ]
+    }
+  ]
 }

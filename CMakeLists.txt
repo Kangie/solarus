@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19.0)
 
-project("solarus-launcher"
+project("solaruslauncher"
   LANGUAGES CXX
   VERSION 2.0.0
   HOMEPAGE_URL "https://www.solarus-games.org"
@@ -24,9 +24,12 @@ string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
 set(APP_NAME "Solarus Launcher")
 set(APP_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} Solarus Labs.")
 set(APP_IDENTIFIER "org.solarus-games.solarus-launcher")
+set(APP_GLOBAL_PROJECT "Solarus")
 set(APP_ORGANISATION "Solarus Labs")
 set(APP_ORGANISATION_DOMAIN "solarus-games.org")
 set(APP_TRADEMARKS "Licensed under GPL v3 and CC-BY-SA 4.0.")
+set(APP_EMAIL "solarus-labs@solarus-games.org")
+set(APP_LICENSE "GPL v3")
 set(LINKS_X "https://x.com/solarusgames")
 set(LINKS_MASTODON "https://mastodon.gamedev.place/@solarus")
 set(LINKS_YOUTUBE "https://www.youtube.com/c/ChristophoZS")
@@ -136,17 +139,16 @@ if(SOLARUS_FETCHCONTENT)
     PROPERTIES
       FOLDER dependencies
   )
+  # Disable warnings for Solarus.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    target_compile_options(solarus PRIVATE -w)
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(solarus PRIVATE /w)
+  endif()
 else()
   # Ensure that Solarus is found, one way or another.
   message(STATUS "Solarus: Using from system")
   find_package(Solarus REQUIRED)
-endif()
-
-# Disable warnings for Solarus.
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-  target_compile_options(solarus PRIVATE -w)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  target_compile_options(solarus PRIVATE /w)
 endif()
 
 # Icon.
@@ -238,7 +240,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   )
 endif()
 
-set(CODE_SIGN_IDENTITY "" CACHE STRING "Code signing identity")
 set_target_properties(${PROJECT_NAME} PROPERTIES
   # ${BUNDLE_ID_OPTION}
   OUTPUT_NAME ${APP_NAME}
@@ -257,25 +258,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
   # INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks"
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  if(CODE_SIGN_IDENTITY)
-    message(STATUS "Code signing with identity: ${CODE_SIGN_IDENTITY}")
-    # set_target_properties(${PROJECT_NAME} PROPERTIES
-    #   XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED ON
-    #   XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${CODE_SIGN_IDENTITY}"
-    #   XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application"
-    #   XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS "--timestamp=http://timestamp.apple.com/ts01  --options=runtime,library"
-    # )
-  else()
-    message(STATUS "Code signing is disabled")
-  endif()
-endif()
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_VERSION="${PROJECT_VERSION}"
   PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
   PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
   PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+  PROJECT_APP_EXECUTABLE_NAME="${PROJECT_NAME}"
   PROJECT_APP_NAME="${APP_NAME}"
   PROJECT_APP_COPYRIGHT="${APP_COPYRIGHT}"
   PROJECT_APP_ORGANISATION="${APP_ORGANISATION}"
@@ -293,8 +281,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 set(EXECUTABLE_PATH "$<TARGET_FILE:${PROJECT_NAME}>")
-set(BUNDLE_PATH "$<TARGET_BUNDLE_DIR:${PROJECT_NAME}>")
-
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(BUNDLE_PATH "$<TARGET_BUNDLE_DIR:${PROJECT_NAME}>")
+endif()
 set(CODE_SIGN_IDENTITY "" CACHE STRING "Codesigning identity (`security find-identity -v -p codesigning`)")
 set(ENABLE_NOTARIZE OFF CACHE BOOL "Enable notarization")
 
@@ -358,14 +347,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION bin COMPONENT ${PROJECT_NAME}
+    LIBRARY DESTINATION . COMPONENT ${COMPONENT_NAME}
+    RUNTIME DESTINATION . COMPONENT ${PROJECT_NAME}
   )
 endif()
 install(SCRIPT "${DEPLOY_SCRIPT}" COMPONENT ${PROJECT_NAME})
 
 # Add Info.plist to the macOS bundle only on macOS.
+set(EXECUTABLE_NAME ${APP_NAME})
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  set(EXECUTABLE_NAME ${APP_NAME})
   set(MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macOS/Info.plist.in"
@@ -379,7 +369,6 @@ endif()
 # Add the resources.rc file to the Windows exe only on Windows.
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   # Generate the manifest file.
-  set(EXECUTABLE_NAME "$<TARGET_FILE_NAME:${PROJECT_NAME}>")
   set(APPLICATION_MANIFEST_ABSOLUTE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}.manifest")
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/App.exe.manifest.in"
@@ -393,12 +382,21 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/Resources.rc.in"
     "${CMAKE_CURRENT_BINARY_DIR}/Resources.rc"
   )
-  target_sources(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/resources.rc")
+  target_sources(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/Resources.rc")
 endif()
 
 qt_finalize_executable(${PROJECT_NAME})
 
 # Packaging.
+set(CPACK_PACKAGE_NAME "${APP_NAME}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+set(CPACK_PACKAGE_VENDOR "${APP_ORGANISATION}")
+set(CPACK_PACKAGE_CONTACT "${APP_EMAIL}")
+set(CPACK_PACKAGE_LICENSE "${APP_LICENSE}")
+set(CPACK_COMPONENTS_ALL ${COMPONENT_NAME})
+set(CPACK_PACKAGE_FILE_NAME "${APP_NAME} Installer v${PROJECT_VERSION}")
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(DMG_SCRIPT ON CACHE BOOL "Enable DMG customization with AppleScript")
 
@@ -438,29 +436,35 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(CPACK_NSIS_HELP_LINK "${LINKS_HELP}")
   set(CPACK_NSIS_URL_INFO_ABOUT "${PROJECT_HOMEPAGE_URL}")
   set(CPACK_NSIS_CONTACT "${LINKS_CONTACT}")
-  set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${CMAKE_SOURCE_DIR}/cmake/cpack/NSIS/NSISWelcomeImage.bmp")
-  set(CPACK_NSIS_MUI_HEADERIMAGE "${CMAKE_SOURCE_DIR}/cmake/cpack/NSIS/NSISHeaderImage.bmp")
+
+  # TODO: It seems that MUI on Msys2 needs windows native paths, but the images are not shown...
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/NSIS/NSISWelcomeImage.bmp" CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP)
   set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP}")
+  file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/NSIS/NSISHeaderImage.bmp" CPACK_NSIS_MUI_HEADERIMAGE)
+
+  # set(CPACK_NSIS_MUI_HEADERIMAGE "${CMAKE_SOURCE_DIR}/cmake/cpack/NSIS/NSISHeaderImage.bmp")
+
   set(CPACK_NSIS_COMPRESSOR "/SOLID /FINAL lzma")
   set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
   set(CPACK_NSIS_MODIFY_PATH OFF)
   set(CPACK_NSIS_MANIFEST_DPI_AWARE ON)
   set(CPACK_NSIS_BRANDING_TEXT "v${PROJECT_VERSION}")
   set(CPACK_NSIS_IGNORE_LICENSE_PAGE ON)
+  set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES\\\\${APP_GLOBAL_PROJECT}")
 
   # Set the file extension for the document type.
-  set(EXECUTABLE_NAME "$<TARGET_FILE_NAME:${PROJECT_NAME}>")
-  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-    WriteRegStr HKCR \".${FILE_EXTENSION}\" \"\" \"${DOCUMENT_TYPE_IDENTIFIER}\"
-    WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\" \"\" \"${DOCUMENT_NAME}\"
-    WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\\DefaultIcon\" \"\" \"$INSTDIR\\${EXECUTABLE_NAME},1\"
-    WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\\shell\\open\\command\" \"\" \"$INSTDIR\\${EXECUTABLE_NAME} \\\"%1\\\"\"
-    DetailPrint \"Registry modified: file association added\"
-  ")
-  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
-    DeleteRegKey HKCR \".${FILE_EXTENSION}\"
-    DeleteRegKey HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\"
-  ")
+  # set(EXECUTABLE_NAME "$<TARGET_FILE_NAME:${PROJECT_NAME}>")
+  # set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+  #   WriteRegStr HKCR \".${FILE_EXTENSION}\" \"\" \"${DOCUMENT_TYPE_IDENTIFIER}\"
+  #   WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\" \"\" \"${DOCUMENT_NAME}\"
+  #   WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\\DefaultIcon\" \"\" \"$INSTDIR\\${EXECUTABLE_NAME},1\"
+  #   WriteRegStr HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\\shell\\open\\command\" \"\" \"$INSTDIR\\${EXECUTABLE_NAME} \\\"%1\\\"\"
+  #   DetailPrint \"Registry modified: file association added\"
+  # ")
+  # set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+  #   DeleteRegKey HKCR \".${FILE_EXTENSION}\"
+  #   DeleteRegKey HKCR \"${DOCUMENT_TYPE_IDENTIFIER}\"
+  # ")
 
   # Components.
   set(CPACK_COMPONENTS_ALL ${PROJECT_NAME})
