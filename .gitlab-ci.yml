@@ -33,8 +33,8 @@ stages:
   - test
   - install
   - package
-  - trigger
   - deploy
+  - trigger
 
 #------------------------------------------------------------------------------
 # Template for Generic Build Jobs
@@ -311,20 +311,6 @@ mingw-x86-package:
     - if: $CI_COMMIT_TAG
 
 #------------------------------------------------------------------------------
-# Trigger CI/CD pipeline for the Solarus Quest Editor
-#
-# Only the 'dev' or 'master' branches are used for this trigger.
-#------------------------------------------------------------------------------
-
-quest-editor-trigger:
-  stage: trigger
-  trigger:
-    project: solarus-games/solarus-quest-editor
-    branch: $CI_COMMIT_BRANCH
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
-
-#------------------------------------------------------------------------------
 # Documentation Deploy Job
 #
 # The documentation is built using MkDocs and deployed to GitLab Pages.
@@ -343,10 +329,24 @@ docs-deploy:
   dependencies:
     - docs-build
   script:
-    - echo 'Deploying documentation to GitLab Pages'
+    - true  # no script action is necessary for this job
   pages:
     publish: doc/public
   variables:
     GIT_STRATEGY: none  # no repository content is needed
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
+#------------------------------------------------------------------------------
+# Trigger CI/CD pipeline for the Solarus Quest Editor
+#
+# Only the 'dev' or 'master' branches are used for this trigger.
+#------------------------------------------------------------------------------
+
+quest-editor-trigger:
+  stage: trigger
+  trigger:
+    project: solarus-games/solarus-quest-editor
+    branch: $CI_COMMIT_BRANCH
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
