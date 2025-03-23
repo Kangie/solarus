@@ -5,9 +5,9 @@ site_description: "Official documentation for the Solarus game engine: Lua API, 
 copyright: Copyright &copy; 2006 - 2025 Solarus Labs
 
 # Repository.
-repo_url: https://gitlab.com/solarus-games/solarus-website-docs
-repo_name: solarus-website-docs
-edit_uri: edit/master/docs/
+repo_url: https://gitlab.com/solarus-games/solarus
+repo_name: solarus
+edit_uri: edit/dev/doc/docs/
 
 # Theme.
 theme:
@@ -23,7 +23,6 @@ theme:
 extra_css:
   - stylesheets/extra.css
 extra:
-  # homepage: https://docs.solarus-games.org
   social:
     - icon: fontawesome/solid/globe
       link: https://www.solarus-games.org
