@@ -135,8 +135,8 @@ void ToolBar::setupUi() {
     });
 
     QObject::connect(
-      _controller->model(), &QuestListModel::currentQuestChanged, this, [removeQuestButton](const QModelIndex& index) {
-        removeQuestButton->setEnabled(index.isValid());
+      _controller->model(), &QuestListModel::currentQuestChanged, this, [removeQuestButton](const QString& path) {
+        removeQuestButton->setEnabled(!path.isEmpty());
       });
   }
 
@@ -165,7 +165,7 @@ void ToolBar::setupUi() {
     });
 
     const auto updatePlayStopButton = [this, playStopQuestButton]() {
-      const auto hasCurrent = _controller->model()->currentQuest().isValid();
+      const auto hasCurrent = !_controller->model()->currentQuest().isEmpty();
 
       switch (_controller->runner()->state()) {
         case QuestRunner::State::Stopped:

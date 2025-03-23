@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
+
 #include <QWidget>
 #include <QPointer>
 
@@ -32,6 +33,8 @@ private:
 protected:
   void resizeEvent(QResizeEvent* event) override;
   void closeEvent(QCloseEvent* event) override;
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 private:
   QPointer<Controller> _controller{ nullptr };

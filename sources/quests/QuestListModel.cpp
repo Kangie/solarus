@@ -224,16 +224,7 @@ void QuestListModel::addQuestFolder(const QString& path) {
 }
 
 void QuestListModel::removeQuest(const QString& path) {
-  const auto index = questOfPath(path);
-  removeQuest(index);
-}
-
-void QuestListModel::removeQuest(const QModelIndex& index) {
-  if (!index.isValid())
-    return;
-
-  const auto sourceIndex = this->sourceIndex(index);
-  const auto row = sourceIndex.row();
+  const auto row = questRow(path);
   if (row >= 0 && row < _quests.size()) {
     beginRemoveRows({}, row, row);
     _quests.removeAt(row);
@@ -244,18 +235,9 @@ void QuestListModel::removeQuest(const QModelIndex& index) {
   }
 }
 
-QString QuestListModel::questFilePath(const QModelIndex& index) const {
-  const auto row = getRow(index);
-  if (row >= 0 && row < static_cast<int>(_quests.size())) {
-    const auto& quest = _quests.at(row);
-    return quest.path;
-  }
-  return {};
-}
-
-const QuestData& QuestListModel::questDataAt(const QModelIndex& index) const {
+const QuestData& QuestListModel::questData(const QString& path) const {
   static const QuestData invalid;
-  const auto row = getRow(index);
+  const auto row = questRow(path);
   if (row >= 0 && row < static_cast<int>(_quests.size())) {
     const auto& quest = _quests.at(row);
     return quest;
@@ -272,7 +254,7 @@ QVariant QuestListModel::data(const QModelIndex& index, int role) const {
     return {};
 
   const auto row = index.row();
-  if (row >= static_cast<int>(_quests.size()))
+  if (row < 0 || row >= static_cast<int>(_quests.size()))
     return {};
 
   const auto& quest = _quests.at(row);
@@ -282,40 +264,43 @@ QVariant QuestListModel::data(const QModelIndex& index, int role) const {
       return QVariant::fromValue(quest.title);
     case static_cast<int>(Qt::DecorationRole):
       return QVariant::fromValue(quest.thumbnail);
+    case static_cast<int>(DataRole::QuestPath):
+      return QVariant::fromValue(quest.path);
     case static_cast<int>(DataRole::IsPlaying):
-      return index == _currentPlayingQuest;
+      return QVariant::fromValue(quest.path == _currentPlayingQuest);
     default:
       return {};
   }
 }
 
-const QModelIndex& QuestListModel::currentQuest() const {
+const QString& QuestListModel::currentQuest() const {
   return _currentQuest;
 }
 
-void QuestListModel::setCurrentQuest(const QModelIndex& index) {
-  const auto sourceIndex = this->sourceIndex(index);
-  if (sourceIndex != _currentQuest) {
-    _currentQuest = sourceIndex;
+void QuestListModel::setCurrentQuest(const QString& path) {
+  if (path != _currentQuest) {
+    _currentQuest = path;
     emit currentQuestChanged(_currentQuest);
   }
 }
 
-const QModelIndex& QuestListModel::currentPlayingQuest() const {
+const QString& QuestListModel::currentPlayingQuest() const {
   return _currentPlayingQuest;
 }
 
-void QuestListModel::setCurrentPlayingQuest(const QModelIndex& index) {
-  const auto sourceIndex = this->sourceIndex(index);
-  if (sourceIndex != _currentPlayingQuest) {
-    const auto backup = _currentPlayingQuest;
+void QuestListModel::setCurrentPlayingQuest(const QString& path) {
+  if (path != _currentPlayingQuest) {
+    const auto oldIndex = index(questRow(_currentPlayingQuest));
 
-    _currentPlayingQuest = sourceIndex;
+    _currentPlayingQuest = path;
     emit currentPlayingQuestChanged(_currentPlayingQuest);
 
     // Signal for old and new one.
-    emit dataChanged(backup, backup);
-    emit dataChanged(sourceIndex, sourceIndex);
+    if (oldIndex.isValid()) {
+      emit dataChanged(oldIndex, oldIndex);
+    }
+    const auto newIndex = index(questRow(_currentPlayingQuest));
+    emit dataChanged(newIndex, newIndex);
   }
 }
 
@@ -323,17 +308,15 @@ QSortFilterProxyModel* QuestListModel::proxyModel() {
   return _proxyModel;
 }
 
-QModelIndex QuestListModel::questOfPath(const QString& path) const {
+int QuestListModel::questRow(const QString& path) const {
   const auto it = std::find_if(_quests.begin(), _quests.end(), [&path](const QuestData& other) {
     return other.path == path;
   });
-
   if (it != _quests.end()) {
     const auto row = std::distance(_quests.begin(), it);
-    return index(row);
+    return row;
   }
-
-  return {};
+  return -1;
 }
 
 QStringList QuestListModel::questPathList() const {
@@ -353,15 +336,5 @@ void QuestListModel::setQuestPathList(const QStringList& list) {
   endResetModel();
   emit rowCountChanged();
   emit questListChanged();
-}
-
-int QuestListModel::getRow(const QModelIndex& index) const {
-  const auto sourceIndex = this->sourceIndex(index);
-  const auto row = sourceIndex.row();
-  return row;
-}
-
-QModelIndex QuestListModel::sourceIndex(const QModelIndex& index) const {
-  return index.model() == _proxyModel ? _proxyModel->mapToSource(index) : index;
 }
 } // namespace solarus::launcher

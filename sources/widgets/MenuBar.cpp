@@ -120,10 +120,11 @@ void MenuBar::setupUi() {
         _controller->removeCurrentQuest();
       });
     removeQuestAction->setAutoRepeat(false);
-    removeQuestAction->setEnabled(_controller->model()->currentQuest().isValid());
+    const auto canRemove = !_controller->model()->currentQuest().isEmpty();
+    removeQuestAction->setEnabled(canRemove);
     QObject::connect(
-      _controller->model(), &QuestListModel::currentQuestChanged, this, [removeQuestAction](const QModelIndex& index) {
-        removeQuestAction->setEnabled(index.isValid());
+      _controller->model(), &QuestListModel::currentQuestChanged, this, [removeQuestAction](const QString& path) {
+        removeQuestAction->setEnabled(!path.isEmpty());
       });
 
     auto* refreshAction = fileMenu->addAction(makeIcon(Icons16::Action_Refresh, macOS), i18n::reloadQuestsAction(),
@@ -152,7 +153,7 @@ void MenuBar::setupUi() {
       const auto playingQuest = model->currentPlayingQuest();
 
       playQuestAction->setEnabled(currentQuest != playingQuest);
-      stopQuestAction->setEnabled(playingQuest.isValid());
+      stopQuestAction->setEnabled(!playingQuest.isEmpty());
     };
     updatePlayStopActions();
     QObject::connect(_controller->model(), &QuestListModel::currentQuestChanged, this, updatePlayStopActions);

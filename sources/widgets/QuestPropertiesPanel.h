@@ -20,7 +20,7 @@ public:
 
 private:
   void setupUi();
-  void updateUi(const QModelIndex& index);
+  void updateUi(const QString& questPath);
 
 private:
   QuestListModel* _model{ nullptr };

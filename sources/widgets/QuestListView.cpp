@@ -67,17 +67,23 @@ void QuestListView::setupUi() {
   // Synchronize everyone.
   QObject::connect(selectionModel(), &QItemSelectionModel::currentRowChanged, this,
     [this](const QModelIndex& current, const QModelIndex&) {
-      _controller->model()->setCurrentQuest(current);
+      const auto path = this->model()->data(current, QuestListModel::DataRole::QuestPath).toString();
+      _controller->model()->setCurrentQuest(path);
     });
 
-  QObject::connect(model, &QuestListModel::currentQuestChanged, this, [this](const QModelIndex& index) {
-    const auto proxyIndex = _controller->model()->proxyModel()->mapFromSource(index);
-    setCurrentIndex(proxyIndex);
+  QObject::connect(model, &QuestListModel::currentQuestChanged, this, [this](const QString& path) {
+    const auto sourceRow = _controller->model()->questRow(path);
+    const auto sourceIndex = _controller->model()->index(sourceRow);
+    if (sourceIndex.isValid()) {
+      const auto proxyIndex = _controller->model()->proxyModel()->mapFromSource(sourceIndex);
+      setCurrentIndex(proxyIndex);
+    }
   });
 
   // Commands.
   QObject::connect(this, &QListView::doubleClicked, this, [this](const QModelIndex& index) {
-    _controller->playQuest(index);
+    const auto path = this->model()->data(index, QuestListModel::DataRole::QuestPath).toString();
+    _controller->playQuest(path);
   });
 
   // Quest's context menu.
@@ -85,23 +91,23 @@ void QuestListView::setupUi() {
   QObject::connect(this, &QListView::customContextMenuRequested, this, [this](const QPoint& pos) {
     const auto index = indexAt(pos);
     if (index.isValid()) {
-      const auto* model = _controller->model();
-      const auto isPlayingQuest = model->currentPlayingQuest() == model->sourceIndex(index);
+      const auto questPath = this->model()->data(index, QuestListModel::DataRole::QuestPath).toString();
+      const auto isPlayingQuest = questPath == _controller->model()->currentPlayingQuest();
 
       QMenu menu(this);
       if (isPlayingQuest) {
         auto* stopAction = new QAction(makeIcon(Icons16::Media_Stop), i18n::stopQuest(), &menu);
         // stopAction->setShortcut(QKeySequence(Qt::Key_F5));
         menu.addAction(stopAction);
-        QObject::connect(stopAction, &QAction::triggered, this, [this, index]() {
+        QObject::connect(stopAction, &QAction::triggered, this, [this]() {
           _controller->stopQuest();
         });
       } else {
         auto* playAction = new QAction(makeIcon(Icons16::Media_Play), i18n::playQuest(), &menu);
         playAction->setShortcut(QKeySequence(Qt::Key_F5));
         menu.addAction(playAction);
-        QObject::connect(playAction, &QAction::triggered, this, [this, index]() {
-          _controller->playQuest(index);
+        QObject::connect(playAction, &QAction::triggered, this, [this, questPath]() {
+          _controller->playQuest(questPath);
         });
       }
       menu.addSeparator();
@@ -116,8 +122,8 @@ void QuestListView::setupUi() {
       {
         auto* folderAction = new QAction(makeIcon(Icons16::File_FolderOpen), i18n::showContaingFolder(), &menu);
         menu.addAction(folderAction);
-        QObject::connect(folderAction, &QAction::triggered, this, [this, index]() {
-          _controller->openQuestFolder(index);
+        QObject::connect(folderAction, &QAction::triggered, this, [this, questPath]() {
+          _controller->openQuestFolder(questPath);
         });
       }
       menu.addSeparator();
@@ -129,8 +135,8 @@ void QuestListView::setupUi() {
         removeAction->setShortcut(QKeySequence::StandardKey::Delete);
 #endif
         menu.addAction(removeAction);
-        QObject::connect(removeAction, &QAction::triggered, this, [this, index]() {
-          _controller->removeQuest(index);
+        QObject::connect(removeAction, &QAction::triggered, this, [this, questPath]() {
+          _controller->removeQuest(questPath);
         });
       }
 
@@ -185,17 +191,38 @@ void QuestListView::mouseMoveEvent(QMouseEvent* event) {
 
 void QuestListView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
   QListView::currentChanged(current, previous);
-  _controller->model()->setCurrentQuest(current);
+  const auto path = model()->data(current, QuestListModel::DataRole::QuestPath).toString();
+  _controller->model()->setCurrentQuest(path);
+}
+
+void QuestListView::keyPressEvent(QKeyEvent* event) {
+  if (!hasFocus() || !isActiveWindow())
+    return;
+
+  const auto key = event->key();
+  if (key == Qt::Key_Enter || key == Qt::Key_Return || key == Qt::Key_Space) {
+    _pressedKey = key;
+  } else {
+    QListView::keyPressEvent(event);
+  }
 }
 
 void QuestListView::keyReleaseEvent(QKeyEvent* event) {
-  if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return || event->key() == Qt::Key_Space) {
+  if (!hasFocus() || !isActiveWindow())
+    return;
+
+  const auto key = event->key();
+  if (key == _pressedKey && (key == Qt::Key_Enter || key == Qt::Key_Return || key == Qt::Key_Space)
+      && !event->isAutoRepeat()) {
     const auto currentIndex = this->currentIndex();
     if (currentIndex.isValid()) {
-      _controller->playQuest(currentIndex);
+      const auto path = model()->data(currentIndex, QuestListModel::DataRole::QuestPath).toString();
+      _controller->playQuest(path);
     }
   } else {
     QListView::keyReleaseEvent(event);
   }
+
+  _pressedKey = Qt::Key::Key_unknown;
 }
 } // namespace solarus::launcher

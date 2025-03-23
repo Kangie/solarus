@@ -15,6 +15,7 @@ class QuestListModel : public QAbstractListModel {
 public:
   enum DataRole {
     IsPlaying = Qt::UserRole + 1,
+    QuestPath,
   };
 
 public:
@@ -24,30 +25,24 @@ public:
 public:
   void addQuest(const QString& path);
   void addQuestFolder(const QString& path);
-
   void removeQuest(const QString& path);
-  void removeQuest(const QModelIndex& index);
 
-  QString questFilePath(const QModelIndex& index) const;
-  const QuestData& questDataAt(const QModelIndex& index) const;
+  const QuestData& questData(const QString& path) const;
 
-  const QModelIndex& currentQuest() const;
-  void setCurrentQuest(const QModelIndex& index);
-  Q_SIGNAL void currentQuestChanged(const QModelIndex& index);
+  const QString& currentQuest() const;
+  void setCurrentQuest(const QString& path);
+  Q_SIGNAL void currentQuestChanged(const QString& path);
 
-  const QModelIndex& currentPlayingQuest() const;
-  void setCurrentPlayingQuest(const QModelIndex& index);
-  Q_SIGNAL void currentPlayingQuestChanged(const QModelIndex& index);
+  const QString& currentPlayingQuest() const;
+  void setCurrentPlayingQuest(const QString& path);
+  Q_SIGNAL void currentPlayingQuestChanged(const QString& index);
 
   QSortFilterProxyModel* proxyModel();
-
-  QModelIndex questOfPath(const QString& path) const;
 
   QStringList questPathList() const;
   void setQuestPathList(const QStringList& list);
 
-  int getRow(const QModelIndex& index) const;
-  QModelIndex sourceIndex(const QModelIndex& index) const;
+  int questRow(const QString& path) const;
 
 public:
   int rowCount(const QModelIndex& parent) const override;
@@ -60,8 +55,8 @@ signals:
 private:
   QList<QuestData> _quests;
   QFileSystemWatcher* _watcher{ nullptr };
-  QModelIndex _currentQuest;
-  QModelIndex _currentPlayingQuest;
+  QString _currentQuest;
+  QString _currentPlayingQuest;
   QSortFilterProxyModel* _proxyModel{ nullptr };
 };
 } // namespace solarus::launcher

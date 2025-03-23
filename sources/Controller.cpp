@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QDesktopServices>
 #include <QTranslator>
+#include <QMimeData>
 
 namespace solarus::launcher {
 namespace i18n {
@@ -94,8 +95,8 @@ QString findBestLanguage(const QString& desiredLanguage, const QStringList& avai
              // Fallback to English (US).
              QLocale(QLocale::English, QLocale::UnitedStates).name(),
            }) {
-        const auto index = availableLanguages.indexOf(desiredLanguage);
-        if (index != -1) {
+        const auto languageIndex = availableLanguages.indexOf(desiredLanguage);
+        if (languageIndex != -1) {
           return desiredLanguage;
         }
       }
@@ -149,7 +150,7 @@ void Controller::setupRunner() {
     const auto isPlaying = _runner->state() != QuestRunner::State::Stopped;
     if (isPlaying) {
       _pendingPlayingQuestPath = {};
-      _model->setCurrentPlayingQuest(_model->questOfPath(_runner->questFilePath()));
+      _model->setCurrentPlayingQuest(_pendingPlayingQuestPath);
     } else {
       _model->setCurrentPlayingQuest({});
 
@@ -239,7 +240,7 @@ void Controller::openAddQuestDialog() {
       _preferences->appLastOpenedPath(), solarusFiles.arg(i18n::solarusQuests()));
     if (!filePath.isEmpty()) {
       QTimer::singleShot(500, this, [this, filePath]() {
-        _model->addQuest(filePath);
+        addQuestOrFolder(filePath);
       });
     }
     _preferences->setAppLastOpenedPath(filePath);
@@ -251,15 +252,23 @@ void Controller::openAddFolderDialog() {
     const auto dirPath = QFileDialog::getExistingDirectory(
       qApp->activeWindow(), i18n::addQuestFolder(), _preferences->appLastOpenedPath());
     if (!dirPath.isEmpty()) {
-      _model->addQuestFolder(dirPath);
+      addQuestOrFolder(dirPath);
     }
     _preferences->setAppLastOpenedPath(dirPath);
   });
 }
 
-void Controller::removeQuest(const QModelIndex& index) {
-  if (index.isValid()) {
-    const auto questFilePath = _model->questFilePath(index);
+void Controller::addQuestOrFolder(const QString& path) {
+  const QFileInfo fileInfo(path);
+  if (fileInfo.isFile() && path.endsWith(".solarus")) {
+    _model->addQuest(path);
+  } else if (fileInfo.isDir()) {
+    _model->addQuestFolder(path);
+  }
+}
+
+void Controller::removeQuest(const QString& questFilePath) {
+  if (!questFilePath.isEmpty()) {
     const auto showMsgBox = _preferences->appWarnBeforeQuestRemoval();
     if (showMsgBox) {
       auto* msgBox = new MessageBox(qApp->activeWindow());
@@ -286,23 +295,18 @@ void Controller::removeQuest(const QModelIndex& index) {
 }
 
 void Controller::removeCurrentQuest() {
-  const auto index = _model->currentQuest();
-  removeQuest(index);
+  const auto questFilePath = _model->currentQuest();
+  removeQuest(questFilePath);
 }
 
-void Controller::playQuest(const QString& path) {
+void Controller::playQuest(const QString& questFilePath) {
   if (_runner->state() == QuestRunner::State::Stopped) {
     _pendingPlayingQuestPath = {};
-    startRunner(path);
-  } else if (_runner->questFilePath() != path) {
-    _pendingPlayingQuestPath = path;
+    startRunner(questFilePath);
+  } else if (_runner->questFilePath() != questFilePath) {
+    _pendingPlayingQuestPath = questFilePath;
     stopQuest();
   }
-}
-
-void Controller::playQuest(const QModelIndex& index) {
-  const auto questFilePath = _model->questFilePath(index);
-  playQuest(questFilePath);
 }
 
 void Controller::stopQuest() {
@@ -311,33 +315,28 @@ void Controller::stopQuest() {
 }
 
 void Controller::playCurrentQuest() {
-  const auto index = _model->currentQuest();
-  playQuest(index);
+  const auto questFilePath = _model->currentQuest();
+  playQuest(questFilePath);
 }
 
 void Controller::startRunner(const QString& questFilePath) {
   // Find the index of the quest. If not found, it means that the quest
   // is not indexed but started from a doube-click on the file.
-  const auto index = _model->questOfPath(questFilePath);
-  if (index.isValid()) {
-    _model->setCurrentPlayingQuest(index);
+  const auto row = _model->questRow(questFilePath);
+  if (row >= 0) {
+    _model->setCurrentPlayingQuest(questFilePath);
   } else {
     _model->setCurrentPlayingQuest({});
   }
 
   // Check if the file exists and is a quest file.
-  if (QFile::exists(questFilePath) && questFilePath.endsWith(".solarus")) {
+  if (QFile::exists(questFilePath) && questFilePath.endsWith("." PROJECT_DOCUMENT_EXTENSION)) {
     _runner->start(questFilePath);
   }
 }
 
-void Controller::startRunner(const QModelIndex& index) {
-  startRunner(_model->questFilePath(index));
-}
-
-void Controller::openQuestFolder(const QModelIndex& index) {
-  if (index.isValid()) {
-    const auto questFilePath = _model->questFilePath(index);
+void Controller::openQuestFolder(const QString& questFilePath) {
+  if (!questFilePath.isEmpty()) {
     const auto questFileInfo = QFileInfo(questFilePath);
     const auto questDirUrl = QUrl::fromLocalFile(questFileInfo.absoluteDir().absolutePath());
     QDesktopServices::openUrl(questDirUrl);
@@ -345,8 +344,8 @@ void Controller::openQuestFolder(const QModelIndex& index) {
 }
 
 void Controller::openCurrentQuestFolder() {
-  const auto index = _model->currentQuest();
-  openQuestFolder(index);
+  const auto questFilePath = _model->currentQuest();
+  openQuestFolder(questFilePath);
 }
 
 void Controller::openPreferencesDialog() {
@@ -374,8 +373,8 @@ void Controller::openAboutDialog() {
 
 void Controller::playStopQuest() {
   if (_runner->state() == QuestRunner::State::Stopped) {
-    const auto index = _model->currentQuest();
-    playQuest(index);
+    const auto questFilePath = _model->currentQuest();
+    playQuest(questFilePath);
   } else {
     stopQuest();
   }
@@ -399,6 +398,26 @@ const QStringList& Controller::languages() const {
 
 QString Controller::themeName(const QString& themeId) {
   return i18n::themeName(themeId);
+}
+
+bool Controller::isMimeDataValid(const QMimeData* mimeData) const {
+  auto result = false;
+  if (mimeData) {
+    const auto containFiles = mimeData->hasUrls();
+    if (containFiles) {
+      const auto& urls = mimeData->urls();
+      const auto atLeastAValidPath = std::any_of(urls.begin(), urls.end(), [](const QUrl& url) {
+        if (url.isLocalFile()) {
+          const auto path = url.toLocalFile();
+          const auto fileInfo = QFileInfo(path);
+          return fileInfo.isDir() || (fileInfo.isFile() && path.endsWith("." PROJECT_DOCUMENT_EXTENSION));
+        }
+        return false;
+      });
+      result = atLeastAValidPath;
+    }
+  }
+  return result;
 }
 
 Preferences* Controller::preferences() {

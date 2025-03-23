@@ -6,6 +6,7 @@
 #include <QModelIndex>
 
 class QTranslator;
+class QMimeData;
 
 namespace oclero::qlementine {
 class ThemeManager;
@@ -31,22 +32,22 @@ public:
   void loadQuests();
   void openAddQuestDialog();
   void openAddFolderDialog();
+  void addQuestOrFolder(const QString& path);
   void openPreferencesDialog();
   void openAboutDialog();
   void openContactPage();
   void openSourceCodePage();
   void openQuestPropertiesPanel();
 
-  void removeQuest(const QModelIndex& index);
+  void removeQuest(const QString& path);
   void removeCurrentQuest();
 
   void playQuest(const QString& path);
-  void playQuest(const QModelIndex& index);
   void stopQuest();
   void playCurrentQuest();
   void playStopQuest();
 
-  void openQuestFolder(const QModelIndex& index);
+  void openQuestFolder(const QString& path);
   void openCurrentQuestFolder();
 
   void checkForUpdates();
@@ -58,6 +59,8 @@ public:
   Q_SIGNAL void focusOnSearchFieldRequested(Qt::FocusReason reason);
   Q_SIGNAL void mainWindowRaiseRequested();
 
+  bool isMimeDataValid(const QMimeData* mimeData) const;
+
   Preferences* preferences();
   QuestListModel* model();
   QuestRunner* runner();
@@ -68,8 +71,7 @@ private:
   void setupThemeManager();
   void setupRunner();
   void loadLanguages();
-  void startRunner(const QString& questFilePath);
-  void startRunner(const QModelIndex& index);
+  void startRunner(const QString& path);
 
 private:
   Preferences* _preferences{ nullptr };

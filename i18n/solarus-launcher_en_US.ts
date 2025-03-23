@@ -45,13 +45,13 @@
 <context>
     <name>SolarusLauncher</name>
     <message>
-        <location filename="../sources/Controller.cpp" line="26"/>
+        <location filename="../sources/Controller.cpp" line="27"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="27"/>
         <source>Add Quest</source>
         <translation>Add Quest</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="29"/>
+        <location filename="../sources/Controller.cpp" line="30"/>
         <source>Add Quest Folder</source>
         <translation>Add Quest Folder</translation>
     </message>
@@ -208,7 +208,7 @@
         <translation>Stop Currently Running Quest</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="51"/>
+        <location filename="../sources/Controller.cpp" line="52"/>
         <source>Solarus Quests</source>
         <translation>Solarus Quests</translation>
     </message>
@@ -258,12 +258,12 @@
         <translation>Save To File…</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="32"/>
+        <location filename="../sources/Controller.cpp" line="33"/>
         <source>Do you want to remove this Solarus Quest?</source>
         <translation>Do you want to remove this Solarus Quest?</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="35"/>
+        <location filename="../sources/Controller.cpp" line="36"/>
         <source>The quest will be removed from Solarus Launcher index, but will be kept on disk.</source>
         <translation>The quest will be removed from Solarus Launcher index, but will be kept on disk.</translation>
     </message>
@@ -298,57 +298,57 @@
         <translation>Check for Updates</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="39"/>
+        <location filename="../sources/Controller.cpp" line="40"/>
         <source>About %1</source>
         <translation>About %1</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="42"/>
+        <location filename="../sources/Controller.cpp" line="43"/>
         <source>All rights reserved.</source>
         <translation>All rights reserved.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="45"/>
+        <location filename="../sources/Controller.cpp" line="46"/>
         <source>A graphical user interface to launch and manage Solarus quests.</source>
         <translation>A graphical user interface to launch and manage Solarus quests.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="48"/>
+        <location filename="../sources/Controller.cpp" line="49"/>
         <source>Licensed under GPL v3 and CC-BY-SA 4.0.</source>
         <translation>Licensed under GPL v3 and CC-BY-SA 4.0.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="63"/>
+        <location filename="../sources/Controller.cpp" line="64"/>
         <source>An error occurred while running the quest</source>
         <translation>An error occurred while running the quest</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="68"/>
+        <location filename="../sources/Controller.cpp" line="69"/>
         <source>The process had a read error.</source>
         <translation>The process had a read error.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="70"/>
+        <location filename="../sources/Controller.cpp" line="71"/>
         <source>The process had a write error.</source>
         <translation>The process had a write error.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="72"/>
+        <location filename="../sources/Controller.cpp" line="73"/>
         <source>The process crashed.</source>
         <translation>The process crashed.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="74"/>
+        <location filename="../sources/Controller.cpp" line="75"/>
         <source>The process failed to start.</source>
         <translation>The process failed to start.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="76"/>
+        <location filename="../sources/Controller.cpp" line="77"/>
         <source>The process no longer responds.</source>
         <translation>The process no longer responds.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="78"/>
+        <location filename="../sources/Controller.cpp" line="79"/>
         <source>Unknown error.</source>
         <translation>Unknown error.</translation>
     </message>
@@ -463,12 +463,12 @@
         <translation>Reset to factory defaults.</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="55"/>
+        <location filename="../sources/Controller.cpp" line="56"/>
         <source>Dark</source>
         <translation>Dark</translation>
     </message>
     <message>
-        <location filename="../sources/Controller.cpp" line="57"/>
+        <location filename="../sources/Controller.cpp" line="58"/>
         <source>Light</source>
         <translation>Light</translation>
     </message>

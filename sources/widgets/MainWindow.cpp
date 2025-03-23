@@ -23,6 +23,10 @@
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QShortcut>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QDropEvent>
+#include <QFileInfo>
 
 #include <oclero/qlementine/utils/WidgetUtils.hpp>
 #include <oclero/qlementine/widgets/Expander.hpp>
@@ -56,6 +60,9 @@ MainWindow::MainWindow(Controller* controller, QWidget* parent)
   QTimer::singleShot(0, this, [this]() {
     _controller->loadQuests();
   });
+
+  // Enable drag n' drop.
+  setAcceptDrops(true);
 }
 
 void MainWindow::setAppIcon() {
@@ -189,5 +196,32 @@ void MainWindow::closeEvent(QCloseEvent* event) {
   QWidget::closeEvent(event);
   _controller->preferences()->setWindowGeometry(saveGeometry());
   _controller->preferences()->setWindowSplitterState(_ui.splitter->saveState());
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
+  const auto action = event->proposedAction();
+  if ((action == Qt::CopyAction || action == Qt::LinkAction)) {
+    const auto accept = _controller->isMimeDataValid(event->mimeData());
+    if (accept) {
+      event->acceptProposedAction();
+    }
+  }
+}
+
+void MainWindow::dropEvent(QDropEvent* event) {
+  const auto action = event->proposedAction();
+  if ((action == Qt::CopyAction || action == Qt::LinkAction)) {
+    const auto accept = _controller->isMimeDataValid(event->mimeData());
+    if (accept) {
+      event->acceptProposedAction();
+      const auto urls = event->mimeData()->urls();
+      for (const auto& url : std::as_const(urls)) {
+        if (url.isLocalFile()) {
+          const auto path = url.toLocalFile();
+          _controller->addQuestOrFolder(path);
+        }
+      }
+    }
+  }
 }
 } // namespace solarus::launcher

@@ -22,9 +22,11 @@ protected:
   void mouseReleaseEvent(QMouseEvent* event) override;
   void mouseMoveEvent(QMouseEvent* event) override;
   void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
+  void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
 
 private:
   QPointer<Controller> _controller;
+  int _pressedKey{ Qt::Key::Key_unknown };
 };
 } // namespace solarus::launcher

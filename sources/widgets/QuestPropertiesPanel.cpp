@@ -390,8 +390,8 @@ void QuestPropertiesPanel::setupUi() {
   QObject::connect(_model, &QuestListModel::currentQuestChanged, this, &QuestPropertiesPanel::updateUi);
 }
 
-void QuestPropertiesPanel::updateUi(const QModelIndex& index) {
-  const auto& quest = _model->questDataAt(index);
+void QuestPropertiesPanel::updateUi(const QString& path) {
+  const auto& quest = _model->questData(path);
   _tableModel->setQuest(quest);
   _thumbnailLabel->setPixmap(_tableModel->quest.thumbnail);
   _descriptionLabel->setText(quest.description);
