@@ -52,6 +52,8 @@ plugins:
       enable_creation_date: false
       type: date
   - search
+  - offline:
+      enabled: !ENV [OFFLINE, false]
 
 # Page tree
 nav:

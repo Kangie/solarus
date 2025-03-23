@@ -217,10 +217,12 @@ docs-build:
   script:
     - cd doc
     - mkdocs build --site-dir public
+    - OFFLINE=true mkdocs build --site-dir offline
   artifacts:
     name: $CI_JOB_NAME
     paths:
       - doc/public
+      - doc/offline
     expire_in: 1 month
 
 #------------------------------------------------------------------------------
@@ -337,6 +339,7 @@ quest-editor-trigger:
 
 docs-deploy:
   stage: deploy
+  image: $IMAGE_REPOSITORY/utilities-env:$IMAGE_VERSION
   dependencies:
     - docs-build
   script:
