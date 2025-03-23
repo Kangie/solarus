@@ -21,7 +21,7 @@ target_include_directories(hqx
 
 target_compile_options(hqx
   PRIVATE
-    "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-absolute-value>"
+    "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-w>"
 )
 
 set_target_properties(hqx

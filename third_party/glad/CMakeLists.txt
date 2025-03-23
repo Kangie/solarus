@@ -14,6 +14,11 @@ target_include_directories(glad
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
+target_compile_options(glad
+  PRIVATE
+    "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-w>"
+)
+
 set_target_properties(glad
   PROPERTIES
     FOLDER "third_party"
