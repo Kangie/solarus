@@ -30,7 +30,7 @@ target_include_directories(snes_spc
 
 target_compile_options(snes_spc
   PRIVATE
-    "$<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-implicit-fallthrough>"
+    "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-w>"
 )
 
 set_target_properties(snes_spc
