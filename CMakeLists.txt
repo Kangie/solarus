@@ -127,7 +127,7 @@ if(SOLARUS_FETCHCONTENT)
   set(SOLARUS_FILE_LOGGING OFF)
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG d49c5ef5cd1d614e59ef075e7815c3f6f9a8da31 # dev
+    GIT_TAG 955ba61fe851e36a75f8b2111edc9d2010bdff10 # dev
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
@@ -142,7 +142,8 @@ endif()
 
 # Disable warnings for Solarus.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(solarus PRIVATE -w)
+  target_compile_options(solarus PUBLIC -w)
+  target_compile_options(HQX::HQX PUBLIC -w) # Temporary.
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options(solarus PRIVATE /w)
 endif()
@@ -229,8 +230,8 @@ target_link_libraries(${PROJECT_NAME}
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(CMAKE_MACOSX_RPATH ON)
-  set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks")
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+  # set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+  # set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks")
   set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_ICON_FILE ${MACOSX_BUNDLE_ICON_FILE}
   )
@@ -248,22 +249,22 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
   MACOSX_BUNDLE TRUE
   WIN32_EXECUTABLE TRUE
   XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED OFF
-  XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "${CODE_SIGN_IDENTITY}"
+  XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
   XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual"
   XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS OFF
   XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS ""
-  INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks"
+  # INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks"
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   if(CODE_SIGN_IDENTITY)
     message(STATUS "Code signing with identity: ${CODE_SIGN_IDENTITY}")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-      XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED ON
-      XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${CODE_SIGN_IDENTITY}"
-      XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application"
-      XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS "--timestamp=http://timestamp.apple.com/ts01  --options=runtime,library"
-    )
+    # set_target_properties(${PROJECT_NAME} PROPERTIES
+    #   XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED ON
+    #   XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${CODE_SIGN_IDENTITY}"
+    #   XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application"
+    #   XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS "--timestamp=http://timestamp.apple.com/ts01  --options=runtime,library"
+    # )
   else()
     message(STATUS "Code signing is disabled")
   endif()
@@ -290,34 +291,29 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 set(EXECUTABLE_PATH "$<TARGET_FILE:${PROJECT_NAME}>")
+set(CODE_SIGN_IDENTITY "" CACHE STRING "Codesigning identity (`security find-identity -v -p codesigning`)")
 
-if(CODE_SIGN_IDENTITY)
-  set(DEPLOY_TOOL_OPTIONS_ARG "-codesign=${CODE_SIGN_IDENTITY}")
-  qt_generate_deploy_script(
-      TARGET ${PROJECT_NAME}
-      OUTPUT_SCRIPT DEPLOY_SCRIPT
-      CONTENT "
-  qt_deploy_runtime_dependencies(
-      EXECUTABLE \"${EXECUTABLE_PATH}\"
-      BIN_DIR .
-      DEPLOY_TOOL_OPTIONS \"${DEPLOY_TOOL_OPTIONS_ARG}\"
-      GENERATE_QT_CONF
-      VERBOSE
-      NO_APP_STORE_COMPLIANCE
-  )")
-else()
-  qt_generate_deploy_script(
-      TARGET ${PROJECT_NAME}
-      OUTPUT_SCRIPT DEPLOY_SCRIPT
-      CONTENT "
-  qt_deploy_runtime_dependencies(
-      EXECUTABLE \"${EXECUTABLE_PATH}\"
-      BIN_DIR .
-      GENERATE_QT_CONF
-      VERBOSE
-      NO_APP_STORE_COMPLIANCE
-  )")
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(DEPLOY_TOOL_OPTIONS_ARG "-libpath=/opt/homebrew/lib")
+
+  # Arguments for macdeployqt.
+  if(CODE_SIGN_IDENTITY)
+    set(DEPLOY_TOOL_OPTIONS_ARG "-sign-for-notarization=${CODE_SIGN_IDENTITY} ${DEPLOY_TOOL_OPTIONS_ARG}")
+  endif()
 endif()
+
+qt_generate_deploy_script(
+    TARGET ${PROJECT_NAME}
+    OUTPUT_SCRIPT DEPLOY_SCRIPT
+    CONTENT "
+qt_deploy_runtime_dependencies(
+    EXECUTABLE \"${EXECUTABLE_PATH}\"
+    BIN_DIR .
+    DEPLOY_TOOL_OPTIONS ${DEPLOY_TOOL_OPTIONS_ARG}
+    GENERATE_QT_CONF
+    VERBOSE
+    NO_APP_STORE_COMPLIANCE
+)")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   install(TARGETS ${PROJECT_NAME}
