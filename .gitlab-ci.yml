@@ -346,5 +346,7 @@ docs-deploy:
     - echo 'Deploying documentation to GitLab Pages'
   pages:
     publish: doc/public
+  variables:
+    GIT_STRATEGY: none  # no repository content is needed
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
