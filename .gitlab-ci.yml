@@ -329,7 +329,7 @@ docs-deploy:
   dependencies:
     - docs-build
   script:
-    - true  # no script action is necessary for this job
+    - 'true'  # no script action is necessary for this job
   pages:
     publish: doc/public
   variables:
