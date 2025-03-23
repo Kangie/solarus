@@ -147,17 +147,16 @@ void Controller::setupThemeManager() {
 
 void Controller::setupRunner() {
   QObject::connect(_runner, &QuestRunner::stateChanged, this, [this]() {
-    const auto isPlaying = _runner->state() != QuestRunner::State::Stopped;
-    if (isPlaying) {
-      _pendingPlayingQuestPath = {};
-      _model->setCurrentPlayingQuest(_pendingPlayingQuestPath);
-    } else {
-      _model->setCurrentPlayingQuest({});
-
-      // Start new one, if pending.
-      if (!_pendingPlayingQuestPath.isEmpty()) {
-        QTimer::singleShot(0, this, [this]() {
-          startRunner(_pendingPlayingQuestPath);
+    const auto isStopped = _runner->state() == QuestRunner::State::Stopped;
+    if (isStopped) {
+      if (_pendingPlayingQuestPath.isEmpty()) {
+        _model->setCurrentPlayingQuest({});
+      } else {
+        _model->setCurrentPlayingQuest(_pendingPlayingQuestPath);
+        const auto toStart = _pendingPlayingQuestPath;
+        _pendingPlayingQuestPath = {};
+        QTimer::singleShot(0, this, [this, toStart]() {
+          startRunner(toStart);
         });
       }
     }

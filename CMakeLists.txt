@@ -129,7 +129,7 @@ if(SOLARUS_FETCHCONTENT)
   set(SOLARUS_FILE_LOGGING OFF)
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG 955ba61fe851e36a75f8b2111edc9d2010bdff10 # dev
+    GIT_TAG 0d9e3d6e773051b9043aa3e595cacf1f47fd4150 # dev
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
@@ -143,9 +143,8 @@ else()
 endif()
 
 # Disable warnings for Solarus.
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  target_compile_options(solarus PUBLIC -w)
-  target_compile_options(HQX::HQX PUBLIC -w) # Temporary.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  target_compile_options(solarus PRIVATE -w)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   target_compile_options(solarus PRIVATE /w)
 endif()

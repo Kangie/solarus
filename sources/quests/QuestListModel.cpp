@@ -291,7 +291,6 @@ const QString& QuestListModel::currentPlayingQuest() const {
 void QuestListModel::setCurrentPlayingQuest(const QString& path) {
   if (path != _currentPlayingQuest) {
     const auto oldIndex = index(questRow(_currentPlayingQuest));
-
     _currentPlayingQuest = path;
     emit currentPlayingQuestChanged(_currentPlayingQuest);
 

@@ -69,7 +69,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="60"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="19"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="22"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="36"/>
         <source>Remove Quest</source>
         <translation>Remove Quest</translation>
@@ -86,18 +86,23 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="66"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="22"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="45"/>
         <source>Play Quest</source>
         <translation>Play Quest</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="31"/>
         <source>Show Quest Information</source>
         <translation>Show Quest Information</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="37"/>
+        <source>No Solarus Quests added yet.</source>
+        <translation>No Solarus Quests added yet.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="48"/>
         <source>Stop Quest</source>
         <translation>Stop Quest</translation>
@@ -193,7 +198,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="57"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="31"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="34"/>
         <source>Open Containing Folder</source>
         <translation>Open Containing Folder</translation>
     </message>
@@ -596,6 +601,16 @@
         <location filename="../sources/quests/QuestListItemDelegate.cpp" line="18"/>
         <source>Playing</source>
         <translation>Playing</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/DropArea.cpp" line="15"/>
+        <source>Drop Files Here</source>
+        <translation>Drop Files Here</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/DropArea.cpp" line="18"/>
+        <source>Accepts folders and Solarus Quests</source>
+        <translation>Accepts folders and Solarus Quests</translation>
     </message>
 </context>
 </TS>

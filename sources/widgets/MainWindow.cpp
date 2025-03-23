@@ -11,6 +11,7 @@
 #include <widgets/MenuBar.h>
 #include <widgets/QuestListView.h>
 #include <widgets/QuestPropertiesPanel.h>
+#include <widgets/DropArea.h>
 
 #include <quests/QuestListModel.h>
 #include <quests/QuestRunner.h>
@@ -184,12 +185,16 @@ void MainWindow::setupUi() {
   });
   closeWindowShortcut->setAutoRepeat(false);
   Q_UNUSED(closeWindowShortcut) // make clang-analyzer happy.
+
+  _ui.dropArea = new DropArea(this);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
   _controller->preferences()->setWindowGeometry(saveGeometry());
   _controller->preferences()->setWindowSplitterState(_ui.splitter->saveState());
+
+  _ui.dropArea->setGeometry(QRect(0, 0, width(), height()));
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
@@ -199,6 +204,8 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
+  _ui.dropArea->animateVisibility(true);
+
   const auto action = event->proposedAction();
   if ((action == Qt::CopyAction || action == Qt::LinkAction)) {
     const auto accept = _controller->isMimeDataValid(event->mimeData());
@@ -208,7 +215,12 @@ void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
   }
 }
 
+void MainWindow::dragLeaveEvent(QDragLeaveEvent* event) {
+  _ui.dropArea->animateVisibility(false);
+}
+
 void MainWindow::dropEvent(QDropEvent* event) {
+  _ui.dropArea->animateVisibility(false);
   const auto action = event->proposedAction();
   if ((action == Qt::CopyAction || action == Qt::LinkAction)) {
     const auto accept = _controller->isMimeDataValid(event->mimeData());

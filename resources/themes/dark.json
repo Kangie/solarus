@@ -40,9 +40,9 @@
   "primaryColorForegroundPressed": "#ffffff",
   "primaryColorForegroundDisabled": "#674B41",
 
-  "secondaryColor": "#ffffff",
-  "secondaryColorHovered": "#CDCDD2",
-  "secondaryColorPressed": "#E7E7EA",
+  "secondaryColor": "#F1F4FF",
+  "secondaryColorHovered": "#EAE9EC",
+  "secondaryColorPressed": "#D3D2D7",
   "secondaryColorDisabled": "#36384D",
 
   "secondaryAlternativeColor": "#5D628F",

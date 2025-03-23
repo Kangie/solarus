@@ -17,6 +17,7 @@ class CustomSplitter;
 class StatusBar;
 class BottomPanel;
 class QuestPropertiesPanel;
+class DropArea;
 
 class MainWindow : public QWidget {
   Q_OBJECT
@@ -34,6 +35,7 @@ protected:
   void resizeEvent(QResizeEvent* event) override;
   void closeEvent(QCloseEvent* event) override;
   void dragEnterEvent(QDragEnterEvent* event) override;
+  void dragLeaveEvent(QDragLeaveEvent* event) override;
   void dropEvent(QDropEvent* event) override;
 
 private:
@@ -47,6 +49,7 @@ private:
     BottomPanel* bottomPanel{ nullptr };
     QuestPropertiesPanel* propertiesPanel{ nullptr };
     oclero::qlementine::Expander* propertiesPanelExpander{ nullptr };
+    DropArea* dropArea{ nullptr };
   } _ui;
 };
 } // namespace solarus::launcher

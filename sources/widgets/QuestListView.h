@@ -24,6 +24,7 @@ protected:
   void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
   void keyPressEvent(QKeyEvent* event) override;
   void keyReleaseEvent(QKeyEvent* event) override;
+  void paintEvent(QPaintEvent* event) override;
 
 private:
   QPointer<Controller> _controller;

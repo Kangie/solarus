@@ -12,6 +12,9 @@
 #include <QSortFilterProxyModel>
 #include <QMenu>
 #include <QApplication>
+#include <QPainter>
+
+#include <oclero/qlementine/style/QlementineStyle.hpp>
 
 namespace solarus::launcher {
 namespace i18n {
@@ -29,6 +32,9 @@ static QString showQuestInformation() {
 }
 static QString showContaingFolder() {
   return QApplication::translate("SolarusLauncher", "Open Containing Folder");
+}
+static QString noQuestAdded() {
+  return QApplication::translate("SolarusLauncher", "No Solarus Quests added yet.");
 }
 } // namespace i18n
 
@@ -224,5 +230,28 @@ void QuestListView::keyReleaseEvent(QKeyEvent* event) {
   }
 
   _pressedKey = Qt::Key::Key_unknown;
+}
+
+void QuestListView::paintEvent(QPaintEvent* event) {
+  QListView::paintEvent(event);
+
+  if (model() && model()->rowCount() == 0) {
+    QPainter painter(viewport());
+    painter.setRenderHint(QPainter::RenderHint::Antialiasing, true);
+
+    const auto* qlementine = qobject_cast<oclero::qlementine::QlementineStyle*>(style());
+    const auto& theme = qlementine ? qlementine->theme() : oclero::qlementine::Theme{};
+
+    const auto rect = viewport()->rect();
+    const auto titleText = i18n::noQuestAdded();
+    const auto& titleFont = theme.fontH2;
+    const auto& titleColor = theme.secondaryAlternativeColor;
+    const auto titleRect = rect;
+
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(titleColor);
+    painter.setFont(titleFont);
+    painter.drawText(titleRect, titleText, { Qt::AlignCenter });
+  }
 }
 } // namespace solarus::launcher

@@ -69,7 +69,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="60"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="19"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="22"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="36"/>
         <source>Remove Quest</source>
         <translation>Supprimer la quête</translation>
@@ -86,18 +86,23 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="66"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="22"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="45"/>
         <source>Play Quest</source>
         <translation>Jouer la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="31"/>
         <source>Show Quest Information</source>
         <translation>Afficher les informations sur la quête</translation>
     </message>
     <message>
-        <location filename="../sources/widgets/QuestListView.cpp" line="25"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="37"/>
+        <source>No Solarus Quests added yet.</source>
+        <translation>Aucune quête Solarus n&apos;a encore été ajoutée.</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/QuestListView.cpp" line="28"/>
         <location filename="../sources/widgets/ToolBar.cpp" line="48"/>
         <source>Stop Quest</source>
         <translation>Arrêter la quête</translation>
@@ -193,7 +198,7 @@
     </message>
     <message>
         <location filename="../sources/widgets/MenuBar.cpp" line="57"/>
-        <location filename="../sources/widgets/QuestListView.cpp" line="31"/>
+        <location filename="../sources/widgets/QuestListView.cpp" line="34"/>
         <source>Open Containing Folder</source>
         <translation>Ouvrir le dossier contenant</translation>
     </message>
@@ -596,6 +601,16 @@
         <location filename="../sources/quests/QuestListItemDelegate.cpp" line="18"/>
         <source>Playing</source>
         <translation>En cours</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/DropArea.cpp" line="15"/>
+        <source>Drop Files Here</source>
+        <translation>Déposez les fichiers ici</translation>
+    </message>
+    <message>
+        <location filename="../sources/widgets/DropArea.cpp" line="18"/>
+        <source>Accepts folders and Solarus Quests</source>
+        <translation>Sont acceptés les dossiers et les quêtes Solarus</translation>
     </message>
 </context>
 </TS>
