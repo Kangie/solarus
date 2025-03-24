@@ -84,7 +84,7 @@ QString ansi_to_html(const QString& text) {
       result += QString("<span style=\"color:%1;\">").arg(ansi_to_html_colors[color_code]);
       in_span = true;
     }
-    last_position = match.capturedEnd();
+    last_position = static_cast<int>(match.capturedEnd());
   }
 
   // Append the remaining text after the last escape code.

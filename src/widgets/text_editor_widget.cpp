@@ -581,7 +581,7 @@ void TextEditorWidget::remove_tab() {
                  !cursor.atBlockEnd() &&
                  cursor.selectedText().length() <= tab_length);
 
-        int length = cursor.selectedText().length() - 1;
+        const int length = static_cast<int>(cursor.selectedText().length()) - 1;
 
         // Select and remove the space(s).
         if (length > 0) {
@@ -630,7 +630,7 @@ void TextEditorWidget::remove_tab() {
         cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
       } while (cursor.selectedText().startsWith(" ") && !cursor.atStart());
 
-      int space_count = cursor.selectedText().length() - 1;
+      const int space_count = static_cast<int>(cursor.selectedText().length()) - 1;
       // Select and remove previous space(s).
       if (space_count > 0) {
         int length = space_count;

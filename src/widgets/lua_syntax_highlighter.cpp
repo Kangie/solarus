@@ -133,13 +133,13 @@ void LuaSyntaxHighlighter::highlightBlock(const QString& text) {
 
     if (match.lastCapturedIndex() == 0) {
       // Only the full regexp matched.
-      setFormat(match.capturedStart(0), match.capturedLength(0), rule.format);
+      setFormat(static_cast<int>(match.capturedStart(0)), static_cast<int>(match.capturedLength(0)), rule.format);
     } else {
       // There are some inner captures: only highlight them and not the full regexp.
       for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
-        int index = match.capturedStart(i);
+        const int index = static_cast<int>(match.capturedStart(i));
         if (index != -1) {
-          setFormat(index, match.capturedLength(i), rule.format);
+          setFormat(index, static_cast<int>(match.capturedLength(i)), rule.format);
         }
       }
     }
@@ -148,25 +148,25 @@ void LuaSyntaxHighlighter::highlightBlock(const QString& text) {
 
   int start_index = 0;
   if (previousBlockState() != 1) {
-    start_index = comment_start_pattern.match(text).capturedStart(0);
+    start_index = static_cast<int>(comment_start_pattern.match(text).capturedStart(0));
   }
 
   while (start_index >= 0) {
     QRegularExpressionMatch match = comment_end_pattern.match(text);
-    int end_index = match.capturedStart(start_index);
+    const int end_index = static_cast<int>(match.capturedStart(start_index));
     int comment_length;
     if (end_index == -1) {
       setCurrentBlockState(1);
-      comment_length = text.length() - start_index;
+      comment_length = static_cast<int>(text.length()) - start_index;
     } else {
       comment_length = end_index - start_index
-          + match.capturedLength();
+          +  static_cast<int>(match.capturedLength());
     }
     QTextCharFormat multi_line_comment_format;
     multi_line_comment_format.setForeground(EditorStyle::get_mode_info().comment_color);
     setFormat(start_index, comment_length, multi_line_comment_format);
     match = comment_start_pattern.match(text);
-    start_index = match.capturedStart(start_index + comment_length);
+    start_index = static_cast<int>(match.capturedStart(start_index + comment_length));
   }
 }
 

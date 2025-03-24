@@ -85,8 +85,8 @@ QString QuestProperties::get_solarus_version_without_patch() const {
     return version;
   }
 
-  int dot_index_1 = version.indexOf('.');
-  int dot_index_2 = version.indexOf('.', dot_index_1 + 1);
+  int dot_index_1 = static_cast<int>(version.indexOf('.'));
+  int dot_index_2 = static_cast<int>(version.indexOf('.', dot_index_1 + 1));
   if (dot_index_2 != -1) {
     // Remove the patch version (it does not break compatibility).
     version = version.section('.', 0, -2);

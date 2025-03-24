@@ -65,7 +65,7 @@ int BorderSetModel::rowCount(const QModelIndex& parent) const {
 
   if (!parent.isValid()) {
     // Root item.
-    return border_set_indexes.size();
+    return static_cast<int>(border_set_indexes.size());
   }
 
   if (is_border_set_index(parent)) {
@@ -512,7 +512,7 @@ void BorderSetModel::border_set_created(const QString& border_set_id) {
 
   // TODO only works if only one was created
   const QStringList& border_set_ids = tileset.get_border_set_ids();
-  int row = border_set_ids.indexOf(border_set_id);
+  const int row = static_cast<int>(border_set_ids.indexOf(border_set_id));
 
   Q_ASSERT(row != -1);
 
@@ -558,7 +558,7 @@ void BorderSetModel::border_set_id_changed(const QString& old_id, const QString&
   endRemoveRows();
 
   const QStringList& border_set_ids = tileset.get_border_set_ids();
-  int new_row = border_set_ids.indexOf(new_id);
+  const int new_row = static_cast<int>(border_set_ids.indexOf(new_id));
   Q_ASSERT(new_row != -1);
 
   beginInsertRows(QModelIndex(), new_row, new_row);

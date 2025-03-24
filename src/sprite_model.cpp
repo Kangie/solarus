@@ -224,7 +224,7 @@ int SpriteModel::rowCount(const QModelIndex& parent) const {
 
   if (!parent.isValid()) {
     // in the root
-    return animations.size();
+    return static_cast<int>(animations.size());
   }
 
   Index* index = static_cast<Index*>(parent.internalPointer());
@@ -1069,7 +1069,7 @@ void SpriteModel::move_direction(const Index& index, int new_direction_nb) {
   animations[animation_nb].directions.move(index.direction_nb, new_direction_nb);
 
   // Update direction model indexes.
-  int num_dir = animations[animation_nb].directions.size();
+  const int num_dir = static_cast<int>(animations[animation_nb].directions.size());
   for (int nb = 0; nb < num_dir; nb++) {
     animations[animation_nb].directions[nb].index->direction_nb = nb;
   }

@@ -874,7 +874,7 @@ void MapModel::undo_set_entities_layer(
     entities.append(&get_entity(index_after));
   }
 
-  for (int i = entities.size() - 1; i >= 0; --i) {
+  for (int i = static_cast<int>(entities.size()) - 1; i >= 0; --i) {
     EntityModel* entity = entities.at(i);
     const EntityIndex& index_before_gradual = indexes_before_gradual.at(i);
     EntityIndex index_after = entity->get_index();  // The entity knows its own updated index.
