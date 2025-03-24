@@ -328,43 +328,41 @@ StringsEditor::StringsEditor(
   update();
 
   // Make connections.
-  connect(&get_database(),
-          SIGNAL(element_description_changed(ResourceType, const QString&, const QString&)),
-          this, SLOT(update_description_to_gui()));
-  connect(ui.description_field, SIGNAL(editingFinished()),
-          this, SLOT(set_description_from_gui()));
+  connect(&get_database(), &QuestDatabase::element_description_changed,
+         this, &StringsEditor::update_description_to_gui);
+  connect(ui.description_field, &QLineEdit::editingFinished,
+         this, &StringsEditor::set_description_from_gui);
 
-  connect(ui.create_button, SIGNAL(clicked()),
-          this, SLOT(create_string_requested()));
-  connect(ui.strings_tree_view, SIGNAL(create_string_requested()),
-          this, SLOT(create_string_requested()));
+  connect(ui.create_button, &QPushButton::clicked,
+         this, &StringsEditor::create_string_requested);
+  connect(ui.strings_tree_view, &StringsTreeView::create_string_requested,
+         this, &StringsEditor::create_string_requested);
 
-  connect(ui.duplicate_button, SIGNAL(clicked()),
-          this, SLOT(duplicate_string_requested()));
-  connect(ui.strings_tree_view, SIGNAL(duplicate_string_requested()),
-          this, SLOT(duplicate_string_requested()));
+  connect(ui.duplicate_button, &QPushButton::clicked,
+         this, &StringsEditor::duplicate_string_requested);
+  connect(ui.strings_tree_view, &StringsTreeView::duplicate_string_requested,
+         this, &StringsEditor::duplicate_string_requested);
 
-  connect(ui.set_key_button, SIGNAL(clicked()),
-          this, SLOT(change_string_key_requested()));
-  connect(ui.strings_tree_view, SIGNAL(set_string_key_requested()),
-          this, SLOT(change_string_key_requested()));
+  connect(ui.set_key_button, &QPushButton::clicked,
+         this, &StringsEditor::change_string_key_requested);
+  connect(ui.strings_tree_view, &StringsTreeView::set_string_key_requested,
+         this, &StringsEditor::change_string_key_requested);
 
-  connect(ui.delete_button, SIGNAL(clicked()),
-          this, SLOT(delete_string_requested()));
-  connect(ui.strings_tree_view, SIGNAL(delete_string_requested()),
-          this, SLOT(delete_string_requested()));
+  connect(ui.delete_button, &QPushButton::clicked,
+         this, &StringsEditor::delete_string_requested);
+  connect(ui.strings_tree_view, &StringsTreeView::delete_string_requested,
+         this, &StringsEditor::delete_string_requested);
 
-  connect(&model->get_selection_model(),
-          SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_selection()));
+  connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
+         this, &StringsEditor::update_selection);
 
-  connect(model, SIGNAL(set_value_requested(QString,QString)),
-          this, SLOT(set_value_requested(QString,QString)));
+  connect(model, &StringsModel::set_value_requested,
+         this, &StringsEditor::set_value_requested);
 
-  connect(ui.translation_field, SIGNAL(activated(QString)),
-          this, SLOT(translation_selector_activated()));
-  connect(ui.translation_refresh_button, SIGNAL(clicked()),
-          this, SLOT(translation_refresh_requested()));
+  connect(ui.translation_field, &ResourceSelector::activated,
+          this, &StringsEditor::translation_selector_activated);
+  connect(ui.translation_refresh_button, &QToolButton::clicked,
+         this, &StringsEditor::translation_refresh_requested);
 }
 
 /**

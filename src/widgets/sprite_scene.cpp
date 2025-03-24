@@ -82,22 +82,22 @@ SpriteScene::SpriteScene(SpriteModel& model, QObject* parent) :
   rebuild();
 
   // Synchronize the scene selection with the sprite selection model.
-  connect(&model.get_selection_model(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_selection_to_scene(QItemSelection, QItemSelection)));
-  connect(this, SIGNAL(selectionChanged()),
-          this, SLOT(set_selection_from_scene()));
+  connect(&model.get_selection_model(), &QItemSelectionModel::selectionChanged,
+          this, &SpriteScene::update_selection_to_scene);
+  connect(this, &SpriteScene::selectionChanged,
+          this, &SpriteScene::set_selection_from_scene);
 
   // Watch direction geometry changes.
-  connect(&model, SIGNAL(direction_position_changed(Index,QPoint)),
-          this, SLOT(update_direction_position(Index,QPoint)));
-  connect(&model, SIGNAL(direction_size_changed(Index,QSize)),
-          this, SLOT(update_direction_rect(Index)));
-  connect(&model, SIGNAL(direction_num_frames_changed(Index,int)),
-          this, SLOT(update_direction_rect(Index)));
-  connect(&model, SIGNAL(direction_num_columns_changed(Index,int)),
-          this, SLOT(update_direction_rect(Index)));
-  connect(&model, SIGNAL(animation_image_changed(Index,QString)),
-          this, SLOT(update_image()));
+  connect(&model, &SpriteModel::direction_position_changed,
+          this, &SpriteScene::update_direction_position);
+  connect(&model, &SpriteModel::direction_size_changed,
+          this, &SpriteScene::update_direction_rect);
+  connect(&model, &SpriteModel::direction_num_frames_changed,
+          this, &SpriteScene::update_direction_rect);
+  connect(&model, &SpriteModel::direction_num_columns_changed,
+          this, &SpriteScene::update_direction_rect);
+  connect(&model, &SpriteModel::animation_image_changed,
+          this, &SpriteScene::update_image);
 }
 
 /**

@@ -805,111 +805,109 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   update();
 
   // Make connections.
-  connect(&get_database(),
-          SIGNAL(element_description_changed(ResourceType, const QString&, const QString&)),
-          this, SLOT(update_description_to_gui()));
-  connect(ui.description_field, SIGNAL(editingFinished()),
-          this, SLOT(set_description_from_gui()));
+  connect(&get_database(), &QuestDatabase::element_description_changed,
+          this, &SpriteEditor::update_description_to_gui);
+  connect(ui.description_field, &QLineEdit::editingFinished,
+          this, &SpriteEditor::set_description_from_gui);
 
-  connect(model.get(), SIGNAL(animation_image_changed(Index ,QString)),
-          this, SLOT(update_animation_source_image_field()));
+  connect(model.get(), &SpriteModel::animation_image_changed,
+          this, &SpriteEditor::update_animation_source_image_field);
 
-  connect(ui.src_image_button, SIGNAL(clicked()),
-          this, SLOT(change_animation_source_image_requested()));
-  connect(ui.src_image_refresh_button, SIGNAL(clicked(bool)),
-          this, SLOT(refresh_animation_source_image()));
+  connect(ui.src_image_button, &QToolButton::clicked,
+          this, &SpriteEditor::change_animation_source_image_requested);
+  connect(ui.src_image_refresh_button, &QToolButton::clicked,
+          this, &SpriteEditor::refresh_animation_source_image);
 
-  connect(ui.tileset_field, SIGNAL(activated(QString)),
-          this, SLOT(tileset_selector_activated()));
+  connect(ui.tileset_field, &ResourceSelector::activated,
+          this, &SpriteEditor::tileset_selector_activated);
 
-  connect(model.get(), SIGNAL(default_animation_changed(QString, QString)),
-          this, SLOT(update_default_animation_field()));
-  connect(ui.default_animation_value, SIGNAL(clicked()),
-          this, SLOT(change_default_animation_requested()));
+  connect(model.get(), &SpriteModel::default_animation_changed,
+          this, &SpriteEditor::update_default_animation_field);
+  connect(ui.default_animation_value, &QCheckBox::clicked,
+          this, &SpriteEditor::change_default_animation_requested);
 
-  connect(model.get(), SIGNAL(animation_frame_delay_changed(Index, uint32_t)),
-          this, SLOT(update_animation_frame_delay_field()));
-  connect(ui.frame_delay_field, SIGNAL(editingFinished()),
-          this, SLOT(change_animation_frame_delay_requested()));
+  connect(model.get(), &SpriteModel::animation_frame_delay_changed,
+          this, &SpriteEditor::update_animation_frame_delay_field);
+  connect(ui.frame_delay_field, &QSpinBox::editingFinished,
+          this, &SpriteEditor::change_animation_frame_delay_requested);
 
-  connect(model.get(), SIGNAL(animation_loop_on_frame_changed(Index,int)),
-          this, SLOT(update_animation_loop_on_frame_field()));
-  connect(ui.loop_on_frame_check_box, SIGNAL(clicked()),
-          this, SLOT(change_animation_loop_on_frame_requested()));
-  connect(ui.loop_on_frame_field, SIGNAL(editingFinished()),
-          this, SLOT(change_animation_loop_on_frame_requested()));
+  connect(model.get(), &SpriteModel::animation_loop_on_frame_changed,
+          this, &SpriteEditor::update_animation_loop_on_frame_field);
+  connect(ui.loop_on_frame_check_box, &QCheckBox::clicked,
+          this, &SpriteEditor::change_animation_loop_on_frame_requested);
+  connect(ui.loop_on_frame_field, &QSpinBox::editingFinished,
+          this, &SpriteEditor::change_animation_loop_on_frame_requested);
 
-  connect(model.get(), SIGNAL(direction_size_changed(Index,QSize)),
-          this, SLOT(update_direction_size_field()));
-  connect(ui.size_field, SIGNAL(editing_finished()),
-          this, SLOT(change_direction_size_requested()));
+  connect(model.get(), &SpriteModel::direction_size_changed,
+          this, &SpriteEditor::update_direction_size_field);
+  connect(ui.size_field, &PairSpinBox::editing_finished,
+          this, &SpriteEditor::change_direction_size_requested);
 
-  connect(model.get(), SIGNAL(direction_position_changed(Index ,QPoint)),
-          this, SLOT(update_direction_position_field()));
-  connect(ui.position_field, SIGNAL(editing_finished()),
-          this, SLOT(change_direction_position_requested_from_field()));
-  connect(ui.sprite_view, SIGNAL(change_selected_direction_position_requested(QPoint)),
-          this, SLOT(change_direction_position_requested(QPoint)));
+  connect(model.get(), &SpriteModel::direction_position_changed,
+          this, &SpriteEditor::update_direction_position_field);
+  connect(ui.position_field, &PairSpinBox::editing_finished,
+          this, &SpriteEditor::change_direction_position_requested_from_field);
+  connect(ui.sprite_view, &SpriteView::change_selected_direction_position_requested,
+          this, &SpriteEditor::change_direction_position_requested);
 
-  connect(model.get(), SIGNAL(direction_origin_changed(Index,QPoint)),
-          this, SLOT(update_direction_origin_field()));
-  connect(ui.origin_field, SIGNAL(editing_finished()),
-          this, SLOT(change_direction_origin_requested()));
+  connect(model.get(), &SpriteModel::direction_origin_changed,
+          this, &SpriteEditor::update_direction_origin_field);
+  connect(ui.origin_field, &PairSpinBox::editing_finished,
+          this, &SpriteEditor::change_direction_origin_requested);
 
-  connect(model.get(), SIGNAL(direction_num_frames_changed(Index,int)),
-          this, SLOT(update_direction_num_frames_field()));
-  connect(ui.num_frames_field, SIGNAL(editingFinished()),
-          this, SLOT(change_direction_num_frames_requested()));
+  connect(model.get(), &SpriteModel::direction_num_frames_changed,
+          this, &SpriteEditor::update_direction_num_frames_field);
+  connect(ui.num_frames_field, &QSpinBox::editingFinished,
+          this, &SpriteEditor::change_direction_num_frames_requested);
 
-  connect(model.get(), SIGNAL(direction_num_columns_changed(Index,int)),
-          this, SLOT(update_direction_num_columns_field()));
-  connect(ui.num_columns_field, SIGNAL(editingFinished()),
-          this, SLOT(change_direction_num_columns_requested()));
+  connect(model.get(), &SpriteModel::direction_num_columns_changed,
+          this, &SpriteEditor::update_direction_num_columns_field);
+  connect(ui.num_columns_field, &QSpinBox::editingFinished,
+          this, &SpriteEditor::change_direction_num_columns_requested);
 
-  connect(ui.create_button, SIGNAL(clicked()),
-          this, SLOT(create_requested()));
-  connect(create_animation, SIGNAL(triggered()),
-          this, SLOT(create_animation_requested()));
-  connect(create_direction, SIGNAL(triggered()),
-          this, SLOT(create_direction_requested()));
+  connect(ui.create_button, &QPushButton::clicked,
+          this, &SpriteEditor::create_requested);
+  connect(create_animation, &QAction::triggered,
+          this, &SpriteEditor::create_animation_requested);
+  connect(create_direction, &QAction::triggered,
+          this, &SpriteEditor::create_direction_requested);
 
-  connect(ui.sprite_view, SIGNAL(add_direction_requested(QRect,int,int)),
-          this, SLOT(add_direction_requested(QRect,int,int)));
-  connect(ui.sprite_view, SIGNAL(duplicate_selected_direction_requested(QPoint)),
-          this, SLOT(duplicate_selected_direction_requested(QPoint)));
-  connect(ui.sprite_view,
-          SIGNAL(change_direction_num_frames_columns_requested(int,int)),
-          this, SLOT(change_direction_num_frames_columns_requested(int,int)));
-  connect(ui.rename_button, SIGNAL(clicked()),
-          this, SLOT(rename_animation_requested()));
-  connect(ui.duplicate_button, SIGNAL(clicked()),
-          this, SLOT(duplicate_requested()));
-  connect(ui.up_button, SIGNAL(clicked(bool)),
-          this, SLOT(move_up_requested()));
-  connect(ui.down_button, SIGNAL(clicked(bool)),
-          this, SLOT(move_down_requested()));
-  connect(ui.delete_button, SIGNAL(clicked()), this, SLOT(delete_requested()));
-  connect(ui.sprite_view, SIGNAL(delete_selected_direction_requested()),
-          this, SLOT(delete_direction_requested()));
+  connect(ui.sprite_view, &SpriteView::add_direction_requested,
+          this, &SpriteEditor::add_direction_requested);
+  connect(ui.sprite_view, &SpriteView::duplicate_selected_direction_requested,
+          this, &SpriteEditor::duplicate_selected_direction_requested);
+  connect(ui.sprite_view, &SpriteView::change_direction_num_frames_columns_requested,
+          this, &SpriteEditor::change_direction_num_frames_columns_requested);
+  connect(ui.rename_button, &QPushButton::clicked,
+          this, &SpriteEditor::rename_animation_requested);
+  connect(ui.duplicate_button, &QPushButton::clicked,
+          this, &SpriteEditor::duplicate_requested);
+  connect(ui.up_button, &QPushButton::clicked,
+          this, &SpriteEditor::move_up_requested);
+  connect(ui.down_button, &QPushButton::clicked,
+          this, &SpriteEditor::move_down_requested);
+  connect(ui.delete_button, &QPushButton::clicked,
+          this, &SpriteEditor::delete_requested);
+  connect(ui.sprite_view, &SpriteView::delete_selected_direction_requested,
+          this, &SpriteEditor::delete_direction_requested);
 
-  connect(ui.sprite_tree_view, SIGNAL(create_animation_requested()),
-          this, SLOT(create_animation_requested()));
-  connect(ui.sprite_tree_view, SIGNAL(create_direction_requested()),
-          this, SLOT(create_direction_requested()));
-  connect(ui.sprite_tree_view, SIGNAL(rename_animation_requested()),
-          this, SLOT(rename_animation_requested()));
-  connect(ui.sprite_tree_view, SIGNAL(duplicate_requested()),
-          this, SLOT(duplicate_requested()));
-  connect(ui.sprite_tree_view, SIGNAL(move_up_requested()),
-          this, SLOT(move_up_requested()));
-  connect(ui.sprite_tree_view, SIGNAL(move_down_requested()),
-          this, SLOT(move_down_requested()));
-  connect(ui.sprite_tree_view, SIGNAL(delete_requested()),
-          this, SLOT(delete_requested()));
+  connect(ui.sprite_tree_view, &SpriteTreeView::create_animation_requested,
+          this, &SpriteEditor::create_animation_requested);
+  connect(ui.sprite_tree_view, &SpriteTreeView::create_direction_requested,
+          this, &SpriteEditor::create_direction_requested);
+  connect(ui.sprite_tree_view, &SpriteTreeView::rename_animation_requested,
+          this, &SpriteEditor::rename_animation_requested);
+  connect(ui.sprite_tree_view, &SpriteTreeView::duplicate_requested,
+          this, &SpriteEditor::duplicate_requested);
+  connect(ui.sprite_tree_view, &SpriteTreeView::move_up_requested,
+          this, &SpriteEditor::move_up_requested);
+  connect(ui.sprite_tree_view, &SpriteTreeView::move_down_requested,
+          this, &SpriteEditor::move_down_requested);
+  connect(ui.sprite_tree_view, &SpriteTreeView::delete_requested,
+          this, &SpriteEditor::delete_requested);
 
-  connect(&model->get_selection_model(),
-          SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_selection()));
+  connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
+          this, &SpriteEditor::update_selection);
 }
 
 /**

@@ -46,7 +46,8 @@ public:
     char_format.setFontFixedPitch(true);
     setCurrentCharFormat(char_format);
 
-    connect(this, SIGNAL(textChanged()), this, SLOT(handle_text_changed()));
+    connect(this, &QPlainTextEdit::textChanged,
+            this, &PlainTextEdit::handle_text_changed);
   }
 
   void set_show_margin(bool show_margin, int margin = 0) {
