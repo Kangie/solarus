@@ -880,7 +880,7 @@ void EditEntityDialog::initialize_destination_map() {
   ui.destination_map_field->set_resource_type(ResourceType::MAP);
   ui.destination_map_field->set_selected_id(entity_before.get_field(destination_map_field_name).toString());
 
-  connect(ui.destination_map_field, &QComboBox::currentTextChanged, [this](const QString&) {
+  connect(ui.destination_map_field, &QComboBox::currentTextChanged, this, [this](const QString&) {
     QString map_id = ui.destination_map_field->currentData().toString();
     ui.destination_field->set_map_id(get_quest(), map_id);
     ui.destination_field->build();
@@ -1696,11 +1696,11 @@ void EditEntityDialog::initialize_tileset() {
     ui.tileset_field->set_selected_id(tileset_id);
   }
 
-  connect(ui.tileset_from_map_radio, &QRadioButton::clicked, [this]() {
+  connect(ui.tileset_from_map_radio, &QRadioButton::clicked, this, [this]() {
     ui.tileset_field->setEnabled(false);
     update_pattern_chooser_tileset();
   });
-  connect(ui.tileset_other_radio, &QRadioButton::clicked, [this]() {
+  connect(ui.tileset_other_radio, &QRadioButton::clicked, this, [this]() {
     ui.tileset_field->setEnabled(true);
     update_pattern_chooser_tileset();
   });

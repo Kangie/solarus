@@ -119,7 +119,7 @@ void QuestTreeView::set_quest(Quest& quest) {
     connect(&quest, &Quest::file_renamed,
             this, &QuestTreeView::file_renamed);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged,
-            [this](const QItemSelection&, const QItemSelection&) {
+            this, [this](const QItemSelection&, const QItemSelection&) {
       emit selected_path_changed(get_selected_path());
     });
 

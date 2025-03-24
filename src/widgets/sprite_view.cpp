@@ -606,12 +606,12 @@ void SpriteView::end_state_drawing_rectangle() {
     // Context menu to create a direction.
     QMenu menu;
     QAction* new_direction_action = new QAction(tr("New direction"), this);
-    connect(new_direction_action, &QAction::triggered, [this, rectangle] {
+    connect(new_direction_action, &QAction::triggered, this, [this, rectangle] {
       emit add_direction_requested(rectangle, 1, 1);
     });
     QAction* new_multiframe_direction_action =
       new QAction(tr("New multiframe direction"), this);
-    connect(new_multiframe_direction_action, &QAction::triggered, [this] {
+    connect(new_multiframe_direction_action, &QAction::triggered, this, [this] {
       start_state_changing_num_frames_columns(
         // TODO: add settings to change the default mode.
         ChangingNumFramesColumnsMode::CHANGE_BOTH, true);
@@ -668,13 +668,13 @@ void SpriteView::end_state_moving_direction() {
     // Context menu to move the direction.
     QMenu menu;
     QAction* move_direction_action = new QAction(tr("Move here"), this);
-    connect(move_direction_action, &QAction::triggered, [this, box] {
+    connect(move_direction_action, &QAction::triggered, this, [this, box] {
       emit change_selected_direction_position_requested(box.topLeft());
     });
     menu.addAction(move_direction_action);
     QAction* duplicate_direction_action =
       new QAction(QIcon(":/images/icon_copy.png"), tr("Duplicate here"), this);
-    connect(duplicate_direction_action, &QAction::triggered, [this, box] {
+    connect(duplicate_direction_action, &QAction::triggered, this, [this, box] {
       emit duplicate_selected_direction_requested(box.topLeft());
     });
     menu.addAction(duplicate_direction_action);
