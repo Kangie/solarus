@@ -520,7 +520,7 @@ void MainLoop::fixed_run() {
     last_frame_duration = (System::get_real_time_ms() - time_dropped) - last_frame_date;
     if (last_frame_duration < System::fixed_timestep_ns && !turbo) {
       SOL_PBLOCK("Timestep sleep");
-      System::sleep((System::fixed_timestep_ns - last_frame_duration) / 1000000);
+      System::sleep(static_cast<uint32_t>((System::fixed_timestep_ns - last_frame_duration) / 1000000));
     }
   }
 }
