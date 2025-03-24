@@ -221,7 +221,7 @@ SDL_Surface_UniquePtr Surface::create_sdl_surface_from_memory(
     size_t data_len
     ) {
   SOL_PFUN(profiler::colors::Green);
-  SDL_RWops* rw = SDL_RWFromMem(data, data_len);
+  SDL_RWops* rw = SDL_RWFromMem(data, static_cast<int>(data_len));
   SDL_Surface* surface = IMG_Load_RW(rw, true);
   return SDL_Surface_UniquePtr{surface};
 }
@@ -236,7 +236,7 @@ bool Surface::save(const std::string& file_name) const {
   // First write into a memory buffer.
   std::string buffer;
   buffer.resize(get_width() * get_height() * 4 + 1024);  // Reserve more than enough space to be safe.
-  SDL_RWops* rw = SDL_RWFromMem(buffer.data(), buffer.size());
+  SDL_RWops* rw = SDL_RWFromMem(buffer.data(), static_cast<int>(buffer.size()));
   if (rw == nullptr) {
     Debug::error(std::string("Failed to allocate a memory buffer to save the surface: ") + SDL_GetError());
     return false;
