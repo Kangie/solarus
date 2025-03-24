@@ -418,7 +418,7 @@ QString Quest::get_font_path(
   static const QStringList extensions{ ".png", ".ttf", ".otf", ".ttc", ".fon" };
   for (const QString& extension : std::as_const(extensions)) {
     QString path = prefix + extension;
-    if (QFileInfo(path).exists()) {
+    if (QFileInfo::exists(path)) {
       return path;
     }
   }
@@ -517,7 +517,7 @@ QString Quest::get_music_path(
   static const QStringList extensions{ ".ogg", ".it", ".spc" };
   for (const QString& extension : std::as_const(extensions)) {
     QString path = prefix + extension;
-    if (QFileInfo(path).exists()) {
+    if (QFileInfo::exists(path)) {
       return path;
     }
   }
@@ -1242,7 +1242,7 @@ void Quest::check_is_in_root_path(const QString& path) const {
  */
 bool Quest::exists(const QString& path) const {
 
-  return is_in_root_path(path) && QFileInfo(path).exists();
+  return is_in_root_path(path) && QFileInfo::exists(path);
 }
 
 /**

@@ -241,7 +241,7 @@ void ImportDialog::find_source_paths_not_in_destination_quest(
   }
 
   QString destination_path = source_to_destination_path(source_path);
-  if (!QFileInfo(destination_path).exists()) {
+  if (!QFileInfo::exists(destination_path)) {
     // Found a missing one.
     missing_source_paths << source_path;
   }
