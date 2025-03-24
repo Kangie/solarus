@@ -29,7 +29,9 @@
 #include <QLibraryInfo>
 #include <QStyleFactory>
 #include <QTranslator>
-
+#include <QIcon>
+#include <QPixmap>
+#include <array>
 
 // SDLmain is required in some platforms, i.e. Windows, for proper initialization.
 // For instance, in Windows, SDLmain encodes argv in main() using UTF-8 by default.
@@ -38,6 +40,51 @@
 namespace SolarusEditor {
 
 namespace {
+
+/**
+ * @brief Sets the application metadata. Must be done before creating a QApplication.
+ */
+void setup_application_information() {
+
+  // Keep this one to preserve user settings before the renaming (2.0).
+  QApplication::setApplicationName("solarus-quest-editor");
+  QApplication::setApplicationDisplayName("Solarus Editor");
+  QApplication::setApplicationVersion(SOLARUSEDITOR_VERSION);
+  QApplication::setOrganizationName("Solarus Labs");
+  QApplication::setOrganizationDomain("org.solarus-games");
+  // Set desktop filename so that the QtWayland backend will report the correct AppID
+  // based on this and make the launcher icon and startup notification work.
+  QGuiApplication::setDesktopFileName(SOLARUSEDITOR_APP_ID ".desktop");
+}
+
+
+/**
+ * @brief Sets the QGuiApplication icon. Must done after creating a QApplication.
+ */
+void set_application_icon() {
+  static constexpr std::array<QIcon::Mode, 4> modes{
+      QIcon::Mode::Normal,
+      QIcon::Mode::Disabled,
+      QIcon::Mode::Active,
+      QIcon::Mode::Selected,
+  };
+  static constexpr std::array<int, 12> dimensions{ 16, 20, 24, 32, 40, 48, 64, 96, 128, 256, 512, 1024 };
+  static constexpr const char* path_base(":/app_icon/solarus-quest-editor");
+  static constexpr const char* path_ext("png");
+
+  QIcon app_icon;
+  for (const int dimension : dimensions) {
+    const QString path = QString("%1-%2x%2.%3").arg(path_base, QString::number(dimension), path_ext);
+    QPixmap pixmap(path);
+    if (pixmap.isNull())
+      continue;
+    for (const QIcon::Mode mode : modes) {
+      app_icon.addPixmap(pixmap, mode, QIcon::State::On);
+      app_icon.addPixmap(pixmap, mode, QIcon::State::Off);
+    }
+  }
+  QGuiApplication::setWindowIcon(app_icon);
+}
 
 /**
  * @brief Runs the quest editor GUI.
@@ -60,10 +107,6 @@ int run_editor_gui(int argc, char* argv[]) {
 
   // Set up the application.
   QApplication application(argc, argv);
-  application.setApplicationName("solarus-quest-editor");
-  application.setApplicationDisplayName("Solarus Quest Editor");
-  application.setApplicationVersion(SOLARUSEDITOR_VERSION);
-  application.setOrganizationName("solarus");
 
   // Get current system locale.
   const QLocale locale = QLocale::system();
@@ -90,6 +133,8 @@ int run_editor_gui(int argc, char* argv[]) {
   application.installTranslator(&app_translator);
 
   application.setStyle(new EditorStyle());
+
+  set_application_icon();
 
   MainWindow window(nullptr);
 
@@ -202,9 +247,7 @@ int run_quest(int argc, char* argv[]) {
  */
 int main(int argc, char* argv[]) {
 
-  // Set desktop filename so that the QtWayland backend will report the correct AppID
-  // based on this and make the launcher icon and startup notification work.
-  QGuiApplication::setDesktopFileName(SOLARUS_APP_ID ".QuestEditor.desktop");
+  SolarusEditor::setup_application_information();
 
   if (argc > 1 && QString(argv[1]) == "-run") {
     // Quest run mode.

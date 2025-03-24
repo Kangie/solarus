@@ -1,7 +1,8 @@
 # AppID to report to the window system on Linux/Wayland.
 # From a user PoV this also determines were the corresponding XDG metadata is installed in the system.
-set(SOLARUS_APP_ID "org.solarus_games.solarus" CACHE STRING "AppID base for installed XDG metadata on Linux/BSD.")
-add_definitions(-DSOLARUS_APP_ID=\"${SOLARUS_APP_ID}\")
+# Also used as the macOS bundle identifier.
+set(SOLARUSEDITOR_APP_ID "org.solarus-games.solarus-editor" CACHE STRING "Unique app identifier for XDG metadata on Linux/BSD and macOS")
+add_definitions(-DSOLARUSEDITOR_APP_ID=\"${SOLARUSEDITOR_APP_ID}\")
 
 # Add defines for the install path and the build path to help guess the assets
 # location at runtime.
