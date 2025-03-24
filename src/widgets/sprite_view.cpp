@@ -57,7 +57,7 @@ SpriteView::SpriteView(QWidget* parent) :
         QIcon(":/images/icon_copy.png"), tr("Duplicate..."), this);
   // TODO: set a shortcut to duplicate a direction
   connect(duplicate_direction_action, SIGNAL(triggered()),
-          this, SLOT(on_duplicate_selected_direction_requested()));
+          this, SLOT(duplicate_selected_direction()));
   addAction(duplicate_direction_action);
 
   change_num_frames_columns_action = new QAction(
@@ -242,14 +242,14 @@ void SpriteView::update_grid_visibility() {
 /**
  * @brief Slot called when the user asks for ducplicate the selected direction.
  */
-void SpriteView::on_duplicate_selected_direction_requested() {
+void SpriteView::duplicate_selected_direction() {
 
   SpriteModel::Index index = model->get_selected_index();
   if (!index.is_direction_index()) {
     return;
   }
-  QPoint posistion = model->get_direction_position(index);
-  emit duplicate_selected_direction_requested(posistion);
+  QPoint position = model->get_direction_position(index);
+  emit duplicate_selected_direction_requested(position);
 }
 
 /**
