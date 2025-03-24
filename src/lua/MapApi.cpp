@@ -2269,8 +2269,8 @@ int LuaContext::l_entity_iterator_next(lua_State* l) {
 
     // Get upvalues.
     const int table_index = lua_upvalueindex(1);
-    const int size = lua_tointeger(l, lua_upvalueindex(2));
-    int index = lua_tointeger(l, lua_upvalueindex(3));
+    const int size =  static_cast<int>(lua_tointeger(l, lua_upvalueindex(2)));
+    int index =  static_cast<int>(lua_tointeger(l, lua_upvalueindex(3)));
 
     if (index > size) {
       // Finished.

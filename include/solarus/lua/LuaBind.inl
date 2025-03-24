@@ -65,9 +65,9 @@ static inline T to_type(lua_State * L, int index) {
   } else if constexpr (std::is_same_v<double, T>) {
     return lua_tonumber(L, index);
   } else if constexpr (std::is_same_v<int, T>) {
-    return lua_tointeger(L, index);
+    return static_cast<int>(lua_tointeger(L, index));
   } else if constexpr (std::is_same_v<unsigned int, T>) {
-    return lua_tointeger(L, index);
+    return static_cast<unsigned int>(lua_tointeger(L, index));
   } else if constexpr (std::is_same_v<const char *, T>) {
     return lua_tostring(L, index);
   } else if constexpr (std::is_same_v<std::string, T>) {

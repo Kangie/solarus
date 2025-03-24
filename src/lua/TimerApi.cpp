@@ -542,7 +542,7 @@ void LuaContext::do_timer_callback(const TimerPtr& timer) {
       if (success) {
 
         if (lua_isnumber(l, -1)) {
-          interval = lua_tointeger(l, -1);
+          interval = static_cast<int>(lua_tointeger(l, -1));
           if (interval < 0) {
             std::ostringstream oss;
             oss << "Invalid timer duration: " + oss.str();
