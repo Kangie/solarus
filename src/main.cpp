@@ -178,7 +178,7 @@ int run_editor_gui(int argc, char* argv[]) {
     if (window.get_quest().is_valid()) {
 
       // Open the tabs.
-      for (const QString& file_path : file_paths) {
+      for (const QString& file_path : std::as_const(file_paths)) {
         window.open_file(window.get_quest(), file_path);
       }
       if (!active_file_path.isEmpty()) {

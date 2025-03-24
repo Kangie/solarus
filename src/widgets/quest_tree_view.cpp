@@ -119,7 +119,7 @@ void QuestTreeView::set_quest(Quest& quest) {
     connect(&quest, &Quest::file_renamed,
             this, &QuestTreeView::file_renamed);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged,
-            [this](const QItemSelection&, const QItemSelection&) {
+            this, [this](const QItemSelection&, const QItemSelection&) {
       emit selected_path_changed(get_selected_path());
     });
 
@@ -415,7 +415,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
           this);
   } else if (quest.is_image(path)) {
     // Image file: let the user create a sprite from it, unless it already exists.
-    const QRegularExpression pngExtension("\\.png$");
+    static const QRegularExpression pngExtension("\\.png$");
     QString sprite_path = path;
     sprite_path.replace(pngExtension, ".dat");
     if (quest.is_potential_resource_element(sprite_path, resource_type, element_id) &&
@@ -746,12 +746,12 @@ void QuestTreeView::new_element_action_triggered() {
     }
     else if (quest.is_image(path)) {
       // Creating a sprite from an image.
-      const QRegularExpression pngExtension("\\.png$");
+      static const QRegularExpression pngExtension("\\.png$");
       QString sprite_path = path;
       sprite_path.replace(pngExtension, ".dat");
       if (quest.is_potential_resource_element(sprite_path, resource_type, initial_id_value) &&
           resource_type == ResourceType::SPRITE) {
-        const QRegularExpression datExtension("\\.dat$");
+        static const QRegularExpression datExtension("\\.dat$");
         initial_description_value = QFileInfo(sprite_path).fileName().replace(datExtension, "");
       }
     }
@@ -900,7 +900,7 @@ void QuestTreeView::create_new_file(const QString& file_type) {
 
     // Open element if it's a file.
     if (is_file) {
-      open_file_requested(quest, path);
+      emit open_file_requested(quest, path);
     }
   }
   catch (const EditorException& ex) {
@@ -1182,7 +1182,7 @@ bool QuestTreeView::can_delete_paths(const QStringList& paths) {
   }
 
   const Quest& quest = model->get_quest();
-  for (QString path : paths) {
+  for (const QString& path : std::as_const(paths)) {
     if (path == quest.get_data_path()) {
       // We don't want to delete the data directory.
       return false;
@@ -1227,7 +1227,7 @@ void QuestTreeView::delete_action_triggered() {
 
   try {
     Quest& quest = model->get_quest();
-    for (QString path : paths) {
+    for (const QString& path : std::as_const(paths)) {
       ResourceType resource_type;
       QString element_id;
       if (quest.is_resource_element(path, resource_type, element_id)) {

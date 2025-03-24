@@ -389,7 +389,7 @@ QMenu* SpritePreviewer::create_zoom_menu() {
     QAction* action = new QAction(zoom.first, action_group);
     zoom_actions[zoom.second] = action;
     action->setCheckable(true);
-    connect(action, &QAction::triggered, [this, zoom]() {
+    connect(action, &QAction::triggered, this, [this, zoom]() {
       set_zoom(zoom.second);
     });
     zoom_menu->addAction(action);

@@ -334,7 +334,7 @@ bool BorderSetModel::dropMimeData(
     Q_ASSERT(pattern_ids.size() == 12);
     int row = static_cast<int>(border_kind);
 
-    for (const QString& dropped_pattern_id : dropped_pattern_ids) {
+    for (const QString& dropped_pattern_id : std::as_const(dropped_pattern_ids)) {
       pattern_ids[row] = dropped_pattern_id;
       ++row;
       if (row >= 12) {

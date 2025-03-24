@@ -23,7 +23,6 @@ class QUndoStack;
 #include "view_settings.h"
 #include <QIcon>
 #include <QWidget>
-#include <memory>
 
 namespace SolarusEditor {
 

@@ -993,7 +993,7 @@ void MapView::copy() {
   std::sort(indexes.begin(), indexes.end());
 
   QStringList entity_strings;
-  for (const EntityIndex& index : indexes) {
+  for (const EntityIndex& index : std::as_const(indexes)) {
     Q_ASSERT(map->entity_exists(index));
     const EntityModel& entity = map->get_entity(index);
     QString entity_string = entity.to_string();

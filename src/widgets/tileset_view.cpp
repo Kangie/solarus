@@ -1200,11 +1200,11 @@ void IdleState::mouse_pressed(const QMouseEvent& event) {
             // Toggle the selected state of the item.
 
             item->setSelected(!item->isSelected());
-            get_view().selection_changed_by_user();
+            emit get_view().selection_changed_by_user();
           } else {
             // Select the clicked item.
             item->setSelected(true);
-            get_view().selection_changed_by_user();
+            emit get_view().selection_changed_by_user();
           }
         }
       }
@@ -1214,7 +1214,7 @@ void IdleState::mouse_pressed(const QMouseEvent& event) {
     if (item != nullptr && !item->isSelected()) {
       // Select the right-clicked item.
       item->setSelected(true);
-      get_view().selection_changed_by_user();
+      emit get_view().selection_changed_by_user();
     }
   }
 }
@@ -1304,7 +1304,7 @@ void DrawingRectangleState::empty_rectangle_clicked(const QMouseEvent& event) {
 
     if (item == nullptr && selection_was_empty) {
       // The user clicked outside any item, to unselect everything.
-      get_view().selection_changed_by_user();
+      emit get_view().selection_changed_by_user();
     }
   }
 
@@ -1316,13 +1316,13 @@ void DrawingRectangleState::empty_rectangle_clicked(const QMouseEvent& event) {
   if (control_or_shift) {
     // Left-clicking an item while pressing control or shift: toggle it.
     item->setSelected(!item->isSelected());
-    get_view().selection_changed_by_user();
+    emit get_view().selection_changed_by_user();
   }
   else {
     if (!item->isSelected()) {
       // Select the item.
       item->setSelected(true);
-      get_view().selection_changed_by_user();
+      emit get_view().selection_changed_by_user();
     }
   }
 }
@@ -1398,7 +1398,7 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
     item->setSelected(true);
   }
 
-  get_view().selection_changed_by_user();
+  emit get_view().selection_changed_by_user();
 }
 
 MovingPatternsState::MovingPatternsState(TilesetView& view, const QPoint& initial_point):
@@ -1488,7 +1488,7 @@ void MovingPatternsState::apply_move() {
     QMenu menu;
     QAction* move_pattern_action = new QAction(TilesetView::tr("Move here"), view);
     view->connect(move_pattern_action, &QAction::triggered, view, [view, delta]() {
-      view->change_selected_patterns_position_requested(delta);
+      emit view->change_selected_patterns_position_requested(delta);
     });
     menu.addAction(move_pattern_action);
     QAction* duplicate_pattern_action = new QAction(
@@ -1496,7 +1496,7 @@ void MovingPatternsState::apply_move() {
     duplicate_pattern_action->setEnabled(
       view->get_items_intersecting_areas(current_area_items, false).isEmpty());
     view->connect(duplicate_pattern_action, &QAction::triggered, view, [view, delta]() {
-      view->duplicate_selected_patterns_requested(delta);
+      emit view->duplicate_selected_patterns_requested(delta);
     });
     menu.addAction(duplicate_pattern_action);
     menu.addSeparator();
@@ -1539,7 +1539,7 @@ void MovingPatternsState::drag_move(QDragMoveEvent& event) {
     QList<QGraphicsItem*> overlapping_item_list = get_scene().items(
         area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect);
     QSet<QGraphicsItem*> overlapping_items;
-    for (QGraphicsItem* overlapping_item : overlapping_item_list) {
+    for (QGraphicsItem* overlapping_item : std::as_const(overlapping_item_list)) {
         overlapping_items.insert(overlapping_item);
     }
 
@@ -1680,7 +1680,7 @@ void ResizingPatternState::apply_resize() {
       get_tileset().get_selection_count() == 1 &&
       !get_view().is_read_only() &&
       current_box != old_box) {
-    get_view().resize_selected_pattern_requested(current_box);
+    emit get_view().resize_selected_pattern_requested(current_box);
   }
   get_view().start_state_idle();
 }

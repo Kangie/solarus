@@ -19,7 +19,7 @@
 #include "quest_database.h"
 #include <QFile>
 #include <QTextStream>
-#include <QtConcurrent/QtConcurrent>
+#include <QtConcurrent/QtConcurrentRun>
 
 namespace SolarusEditor {
 
@@ -483,11 +483,11 @@ void QuestDatabase::check_deleted_file_info() {
 
   connect(&file_info_watcher, &QFutureWatcher<QStringList>::finished,
           this, [this]() {
-    QStringList deleted_files = file_info_watcher.result();
+    const QStringList deleted_files = file_info_watcher.result();
     if (deleted_files.isEmpty()) {
       return;
     }
-    for (QString deleted_file : deleted_files) {
+    for (const QString& deleted_file : std::as_const(deleted_files)) {
       database.clear_file_info(deleted_file.toStdString());
     }
     save();

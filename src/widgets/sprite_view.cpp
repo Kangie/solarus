@@ -57,7 +57,7 @@ SpriteView::SpriteView(QWidget* parent) :
         QIcon(":/images/icon_copy.png"), tr("Duplicate..."), this);
   // TODO: set a shortcut to duplicate a direction
   connect(duplicate_direction_action, SIGNAL(triggered()),
-          this, SLOT(duplicate_selected_direction_requested()));
+          this, SLOT(duplicate_selected_direction()));
   addAction(duplicate_direction_action);
 
   change_num_frames_columns_action = new QAction(
@@ -242,14 +242,14 @@ void SpriteView::update_grid_visibility() {
 /**
  * @brief Slot called when the user asks for ducplicate the selected direction.
  */
-void SpriteView::duplicate_selected_direction_requested() {
+void SpriteView::duplicate_selected_direction() {
 
   SpriteModel::Index index = model->get_selected_index();
   if (!index.is_direction_index()) {
     return;
   }
-  QPoint posistion = model->get_direction_position(index);
-  emit duplicate_selected_direction_requested(posistion);
+  QPoint position = model->get_direction_position(index);
+  emit duplicate_selected_direction_requested(position);
 }
 
 /**
@@ -606,12 +606,12 @@ void SpriteView::end_state_drawing_rectangle() {
     // Context menu to create a direction.
     QMenu menu;
     QAction* new_direction_action = new QAction(tr("New direction"), this);
-    connect(new_direction_action, &QAction::triggered, [this, rectangle] {
+    connect(new_direction_action, &QAction::triggered, this, [this, rectangle] {
       emit add_direction_requested(rectangle, 1, 1);
     });
     QAction* new_multiframe_direction_action =
       new QAction(tr("New multiframe direction"), this);
-    connect(new_multiframe_direction_action, &QAction::triggered, [this] {
+    connect(new_multiframe_direction_action, &QAction::triggered, this, [this] {
       start_state_changing_num_frames_columns(
         // TODO: add settings to change the default mode.
         ChangingNumFramesColumnsMode::CHANGE_BOTH, true);
@@ -668,13 +668,13 @@ void SpriteView::end_state_moving_direction() {
     // Context menu to move the direction.
     QMenu menu;
     QAction* move_direction_action = new QAction(tr("Move here"), this);
-    connect(move_direction_action, &QAction::triggered, [this, box] {
+    connect(move_direction_action, &QAction::triggered, this, [this, box] {
       emit change_selected_direction_position_requested(box.topLeft());
     });
     menu.addAction(move_direction_action);
     QAction* duplicate_direction_action =
       new QAction(QIcon(":/images/icon_copy.png"), tr("Duplicate here"), this);
-    connect(duplicate_direction_action, &QAction::triggered, [this, box] {
+    connect(duplicate_direction_action, &QAction::triggered, this, [this, box] {
       emit duplicate_selected_direction_requested(box.topLeft());
     });
     menu.addAction(duplicate_direction_action);

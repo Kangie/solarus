@@ -413,7 +413,7 @@ void StringsModel::create_string(const QString& key, const QString& value) {
     beginInsertRows(key_to_index(parent_key), index, index);
     endInsertRows();
   } else {
-    dataChanged(key_to_index(key), key_to_index(key, 2));
+    emit dataChanged(key_to_index(key), key_to_index(key, 2));
   }
 
   // Notify people.
@@ -434,7 +434,7 @@ bool StringsModel::can_duplicate_strings(
   const QString& prefix, const QString& new_prefix, QString& key) {
 
   const QStringList& keys = get_keys(prefix);
-  QRegularExpression regexp(QString("^") + prefix);
+  const QRegularExpression regexp(QString("^") + prefix);
   for (QString prefixed_key : keys) {
     prefixed_key.replace(regexp, new_prefix);
     if (string_exists(prefixed_key)) {
@@ -462,7 +462,7 @@ void StringsModel::duplicate_strings(
 
   // Duplicate strings.
   const QStringList& keys = get_keys(prefix);
-  QRegularExpression regexp(QString("^") + prefix);
+  const QRegularExpression regexp(QString("^") + prefix);
   for (QString key : keys) {
     QString value = get_string(key);
     key.replace(regexp, new_prefix);
@@ -548,7 +548,7 @@ QString StringsModel::set_string_key(const QString& key, const QString& new_key)
     string_tree.remove_key(key);
     endRemoveRows();
   } else if (string_tree.remove_key(key)) {
-    dataChanged(key_to_index(key), key_to_index(key, 2));
+    emit dataChanged(key_to_index(key), key_to_index(key, 2));
   }
 
   // Add to the indexed tree.
@@ -558,7 +558,7 @@ QString StringsModel::set_string_key(const QString& key, const QString& new_key)
     beginInsertRows(key_to_index(parent_key), index, index);
     endInsertRows();
   } else {
-    dataChanged(key_to_index(key), key_to_index(key, 2));
+    emit dataChanged(key_to_index(key), key_to_index(key, 2));
   }
 
   // Notify people.
@@ -580,7 +580,7 @@ bool StringsModel::can_set_string_key_prefix(
     const QString& old_prefix, const QString& new_prefix, QString& key) {
 
   const QStringList& keys = get_keys(old_prefix);
-  QRegularExpression regexp(QString("^") + old_prefix);
+  const QRegularExpression regexp(QString("^") + old_prefix);
   for (QString prefixed_key : keys) {
     prefixed_key.replace(regexp, new_prefix);
     if (string_exists(prefixed_key)) {
@@ -610,7 +610,7 @@ QList<QPair<QString, QString>> StringsModel::set_string_key_prefix(
   // change the string keys.
   QList<QPair<QString, QString>> list;
   const QStringList& old_keys = get_keys(old_prefix);
-  QRegularExpression regexp(QString("^") + old_prefix);
+  const QRegularExpression regexp(QString("^") + old_prefix);
   for (const QString& old_key : old_keys) {
     QString new_key = old_key;
     new_key.replace(regexp, new_prefix);
@@ -665,7 +665,7 @@ void StringsModel::delete_string(const QString& key) {
     // chance to know new indexes before receiving selection signals.
     endRemoveRows();
   } else if (string_tree.remove_key(key)) {
-    dataChanged(key_to_index(key), key_to_index(key, 2));
+    emit dataChanged(key_to_index(key), key_to_index(key, 2));
   }
 
   // Notify people.
@@ -776,7 +776,7 @@ void StringsModel::clear_translation() {
   translation_id = "";
   clear_translation_from_tree();
   translation_resources.clear();
-  headerDataChanged(Qt::Horizontal, 2, 2);
+  emit headerDataChanged(Qt::Horizontal, 2, 2);
 }
 
 /**
@@ -802,11 +802,11 @@ void StringsModel::reload_translation() {
       endInsertRows();
     } else {
       QModelIndex model_index = key_to_index(key, 2);
-      dataChanged(model_index, model_index);
+      emit dataChanged(model_index, model_index);
     }
   }
 
-  headerDataChanged(Qt::Horizontal, 2, 2);
+  emit headerDataChanged(Qt::Horizontal, 2, 2);
 }
 
 /**
@@ -899,11 +899,11 @@ void StringsModel::clear_translation_from_tree() {
         endRemoveRows();
       } else if (string_tree.remove_ref(key, true)) {
         QModelIndex model_index = key_to_index(key, 2);
-        dataChanged(model_index, model_index);
+        emit dataChanged(model_index, model_index);
       }
     } else if (string_tree.remove_ref(key, string_exists(key))) {
       QModelIndex model_index = key_to_index(key, 2);
-      dataChanged(model_index, model_index);
+      emit dataChanged(model_index, model_index);
     }
   }
 }

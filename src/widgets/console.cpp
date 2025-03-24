@@ -148,7 +148,7 @@ void Console::clear() {
  */
 void Console::add_message(const QString& log_level, const QString& message) {
 
-  QStringList lines = message.split("\n");
+  const QStringList lines = message.split("\n");
   for (QString line : lines) {
     if (!line.isEmpty()) {
       line = log_level + ": " + line;

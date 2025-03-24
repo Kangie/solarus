@@ -44,14 +44,14 @@ ResourceModel::ResourceModel(const Quest& quest, ResourceType resource_type, QOb
     add_element(id);
   }
 
-  connect(&database, SIGNAL(element_added(ResourceType, QString, QString)),
-          this, SLOT(element_added(ResourceType, QString, QString)));
-  connect(&database, SIGNAL(element_removed(ResourceType, QString)),
-          this, SLOT(element_removed(ResourceType, QString)));
-  connect(&database, SIGNAL(element_renamed(ResourceType, QString, QString)),
-          this, SLOT(element_renamed(ResourceType, QString, QString)));
-  connect(&database, SIGNAL(element_description_changed(ResourceType, QString, QString)),
-          this, SLOT(element_description_changed(ResourceType, QString, QString)));
+  connect(&database, &QuestDatabase::element_added,
+          this, &ResourceModel::element_added);
+  connect(&database, &QuestDatabase::element_removed,
+          this, &ResourceModel::element_removed);
+  connect(&database, &QuestDatabase::element_renamed,
+          this, &ResourceModel::element_renamed);
+  connect(&database, &QuestDatabase::element_description_changed,
+          this, &ResourceModel::element_description_changed);
 }
 
 /**
@@ -100,7 +100,7 @@ void ResourceModel::set_tileset_id(const QString& tileset_id) {
     icons.clear();  // Clear the icon cache.
     QVector<int> roles;
     roles << Qt::DecorationRole;
-    dataChanged(QModelIndex(), QModelIndex(), roles);
+    emit dataChanged(QModelIndex(), QModelIndex(), roles);
   }
 }
 

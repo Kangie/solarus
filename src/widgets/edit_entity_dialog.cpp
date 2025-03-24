@@ -566,7 +566,7 @@ void EditEntityDialog::initialize_simple_booleans() {
  */
 void EditEntityDialog::apply_simple_booleans() {
 
-  for (const SimpleBooleanField& field : simple_boolean_fields) {
+  for (const SimpleBooleanField& field : std::as_const(simple_boolean_fields)) {
     if (entity_before.has_field(field.field_name) && field.check_box != nullptr) {
       entity_after->set_field(field.field_name, field.check_box->isChecked());
     }
@@ -617,7 +617,7 @@ void EditEntityDialog::initialize_simple_integers() {
  */
 void EditEntityDialog::apply_simple_integers() {
 
-  for (const SimpleIntegerField& field : simple_integer_fields) {
+  for (const SimpleIntegerField& field : std::as_const(simple_integer_fields)) {
     if (entity_before.has_field(field.field_name) && field.spinbox != nullptr) {
       entity_after->set_field(field.field_name, field.spinbox->value());
     }
@@ -682,7 +682,7 @@ void EditEntityDialog::initialize_simple_strings() {
  */
 void EditEntityDialog::apply_simple_strings() {
 
-  for (const SimpleStringField& field : simple_string_fields) {
+  for (const SimpleStringField& field : std::as_const(simple_string_fields)) {
     if (entity_before.has_field(field.field_name) && field.line_edit != nullptr) {
       QString value;
       if (field.check_box == nullptr || field.check_box->isChecked()) {
@@ -880,7 +880,7 @@ void EditEntityDialog::initialize_destination_map() {
   ui.destination_map_field->set_resource_type(ResourceType::MAP);
   ui.destination_map_field->set_selected_id(entity_before.get_field(destination_map_field_name).toString());
 
-  connect(ui.destination_map_field, &QComboBox::currentTextChanged, [this](const QString&) {
+  connect(ui.destination_map_field, &QComboBox::currentTextChanged, this, [this](const QString&) {
     QString map_id = ui.destination_map_field->currentData().toString();
     ui.destination_field->set_map_id(get_quest(), map_id);
     ui.destination_field->build();
@@ -1696,11 +1696,11 @@ void EditEntityDialog::initialize_tileset() {
     ui.tileset_field->set_selected_id(tileset_id);
   }
 
-  connect(ui.tileset_from_map_radio, &QRadioButton::clicked, [this]() {
+  connect(ui.tileset_from_map_radio, &QRadioButton::clicked, this, [this]() {
     ui.tileset_field->setEnabled(false);
     update_pattern_chooser_tileset();
   });
-  connect(ui.tileset_other_radio, &QRadioButton::clicked, [this]() {
+  connect(ui.tileset_other_radio, &QRadioButton::clicked, this, [this]() {
     ui.tileset_field->setEnabled(true);
     update_pattern_chooser_tileset();
   });
@@ -1900,24 +1900,22 @@ void EditEntityDialog::apply_xy() {
  */
 void EditEntityDialog::initialize_user_properties() {
 
-  connect(ui.add_property_button, SIGNAL(clicked(bool)),
-          this, SLOT(add_user_property_requested()));
-  connect(ui.change_property_key_button, SIGNAL(clicked(bool)),
-          this, SLOT(change_user_property_key_requested()));
-  connect(ui.delete_property_button, SIGNAL(clicked(bool)),
-          this, SLOT(delete_user_property_requested()));
-  connect(ui.move_property_up_button, SIGNAL(clicked(bool)),
-          this, SLOT(move_up_user_property_requested()));
-  connect(ui.move_property_down_button, SIGNAL(clicked(bool)),
-          this, SLOT(move_down_user_property_requested()));
+  connect(ui.add_property_button, &QPushButton::clicked,
+          this, &EditEntityDialog::add_user_property_requested);
+  connect(ui.change_property_key_button, &QPushButton::clicked,
+          this, &EditEntityDialog::change_user_property_key_requested);
+  connect(ui.delete_property_button, &QPushButton::clicked,
+          this, &EditEntityDialog::delete_user_property_requested);
+  connect(ui.move_property_up_button, &QPushButton::clicked,
+          this, &EditEntityDialog::move_up_user_property_requested);
+  connect(ui.move_property_down_button, &QPushButton::clicked,
+          this, &EditEntityDialog::move_down_user_property_requested);
 
-  connect(ui.user_properties_table,
-          SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
-          this, SLOT(user_property_double_clicked(QTreeWidgetItem*, int)));
+  connect(ui.user_properties_table, &QTreeWidget::itemDoubleClicked,
+          this, &EditEntityDialog::user_property_double_clicked);
 
-  connect(ui.user_properties_table->selectionModel(),
-          SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-          this, SLOT(update_user_property_buttons()));
+  connect(ui.user_properties_table->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &EditEntityDialog::update_user_property_buttons);
 
   int count = entity_before.get_user_property_count();
   for (int i = 0; i < count; i++) {

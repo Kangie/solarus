@@ -368,7 +368,7 @@ public:
     allow_merge_to_previous(allow_merge_to_previous) { }
 
   void undo() override {
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       get_map().add_entity_xy(index, -translation);
     }
     // Select impacted entities.
@@ -376,7 +376,7 @@ public:
   }
 
   void redo() override {
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       get_map().add_entity_xy(index, translation);
     }
     // Select impacted entities.
@@ -513,7 +513,7 @@ public:
     AddableEntities dynamic_tiles;
 
     // Create the dynamic tiles.
-    for (const EntityIndex& index_before : indexes_before) {
+    for (const EntityIndex& index_before : std::as_const(indexes_before)) {
       EntityModelPtr dynamic_tile = DynamicTile::create_from_normal_tile(map, index_before);
       int layer = index_before.layer;
       EntityIndex index_after = { layer, -1 };
@@ -570,7 +570,7 @@ public:
     AddableEntities tiles;
 
     // Create the dynamic tiles.
-    for (const EntityIndex& index_before : indexes_before) {
+    for (const EntityIndex& index_before : std::as_const(indexes_before)) {
       EntityModelPtr tile = Tile::create_from_dynamic_tile(map, index_before);
       int layer = index_before.layer;
       EntityIndex index_after = { layer, -1 };
@@ -631,7 +631,7 @@ public:
   void undo() override {
     MapModel& map = get_map();
     int i = 0;
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       map.set_entity_field(index, "pattern", pattern_ids_before[i]);
       map.set_entity_size(index, sizes_before[i]);
       ++i;
@@ -642,7 +642,7 @@ public:
 
   void redo() override {
     MapModel& map = get_map();
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       map.set_entity_field(index, "pattern", pattern_id_after);
       const QSize& size = map.get_entity_closest_snapped_size(index);
       if (map.is_entity_size_valid(index, size)) {
@@ -677,7 +677,7 @@ public:
 
   void undo() override {
     int i = 0;
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       get_map().set_entity_direction(index, directions_before.at(i));
       get_map().set_entity_size(index, sizes_before.at(i));
       ++i;
@@ -693,7 +693,7 @@ public:
     // Change the direction.
     directions_before.clear();
     sizes_before.clear();
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       bool was_size_valid = map.is_entity_size_valid(index);
       directions_before.append(map.get_entity_direction(index));
       sizes_before.append(map.get_entity_size(index));
@@ -795,7 +795,7 @@ public:
   void redo() override {
 
     QList<int> layers_after;
-    for (const EntityIndex& index_before : indexes_before) {
+    for (const EntityIndex& index_before : std::as_const(indexes_before)) {
       int layer_after = std::min(index_before.layer + 1, get_map().get_max_layer());
       layers_after << layer_after;
     }
@@ -840,7 +840,7 @@ public:
   void redo() override {
 
     QList<int> layers_after;
-    for (const EntityIndex& index_before : indexes_before) {
+    for (const EntityIndex& index_before : std::as_const(indexes_before)) {
       int layer_after = std::max(index_before.layer - 1, get_map().get_min_layer());
       layers_after << layer_after;
     }
@@ -876,7 +876,7 @@ public:
 
     MapModel& map = get_map();
     QList<EntityModel*> entities;
-    for (const EntityIndex& index_after: indexes_after) {
+    for (const EntityIndex& index_after: std::as_const(indexes_after)) {
       entities.append(&map.get_entity(index_after));
     }
 
@@ -894,16 +894,16 @@ public:
 
     MapModel& map = get_map();
     QList<EntityModel*> entities;
-    for (const EntityIndex& index_before: indexes_before) {
+    for (const EntityIndex& index_before: std::as_const(indexes_before)) {
       entities.append(&map.get_entity(index_before));
     }
 
-    for (const EntityModel* entity : entities) {
+    for (const EntityModel* entity : std::as_const(entities)) {
       map.bring_entity_to_front(entity->get_index());
     }
 
     indexes_after.clear();
-    for (const EntityModel* entity : entities) {
+    for (const EntityModel* entity : std::as_const(entities)) {
       indexes_after.append(entity->get_index());
     }
 
@@ -934,7 +934,7 @@ public:
 
     MapModel& map = get_map();
     QList<EntityModel*> entities;
-    for (const EntityIndex& index_after: indexes_after) {
+    for (const EntityIndex& index_after : std::as_const(indexes_after)) {
       entities.append(&map.get_entity(index_after));
     }
 
@@ -951,7 +951,7 @@ public:
 
     MapModel& map = get_map();
     QList<EntityModel*> entities;
-    for (const EntityIndex& index_before: indexes_before) {
+    for (const EntityIndex& index_before : std::as_const(indexes_before)) {
       entities.append(&map.get_entity(index_before));
     }
 
@@ -963,7 +963,7 @@ public:
     }
 
     indexes_after.clear();
-    for (const EntityModel* entity : entities) {
+    for (const EntityModel* entity : std::as_const(entities)) {
       indexes_after.append(entity->get_index());
     }
 
@@ -990,7 +990,7 @@ public:
 
   void undo() override {
     int i = 0;
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       get_map().set_entity_locked(index, locked_before.at(i));
       ++i;
     }
@@ -1001,7 +1001,7 @@ public:
   void redo() override {
     MapModel& map = get_map();
     locked_before.clear();
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       locked_before.append(map.is_entity_locked(index));
       map.set_entity_locked(index, locked_after);
     }
@@ -1029,7 +1029,7 @@ public:
   void undo() override {
     MapModel& map = get_map();
     int i = 0;
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       map.set_entity_group(index, groups_before.at(i));
       ++i;
     }
@@ -1039,7 +1039,7 @@ public:
 
   void redo() override {
     MapModel& map = get_map();
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       groups_before.append(map.get_entity_group(index));
     }
     group_after = map.create_group(indexes);
@@ -1067,7 +1067,7 @@ public:
   void undo() override {
     MapModel& map = get_map();
     int i = 0;
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       map.set_entity_group(index, groups_before.at(i));
       ++i;
     }
@@ -1077,7 +1077,7 @@ public:
 
   void redo() override {
     MapModel& map = get_map();
-    for (const EntityIndex& index : indexes) {
+    for (const EntityIndex& index : std::as_const(indexes)) {
       groups_before.append(map.get_entity_group(index));
       map.set_entity_group(index, 0);
     }
@@ -1125,7 +1125,7 @@ public:
     get_map().add_entities(std::move(entities));
 
     EntityIndexes selected_indexes = indexes;
-    for (const EntityIndex& index : previous_selected_indexes) {
+    for (const EntityIndex& index : std::as_const(previous_selected_indexes)) {
       selected_indexes.append(index);
     }
     get_map_view().set_selected_entities(selected_indexes);

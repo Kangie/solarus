@@ -175,7 +175,7 @@ public:
 
   virtual void undo() override {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       QPoint position = get_model().get_pattern_frame(index).topLeft();
       get_model().set_pattern_position(index, position - delta);
     }
@@ -184,7 +184,7 @@ public:
 
   virtual void redo() override {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       QPoint position = get_model().get_pattern_frame(index).topLeft();
       get_model().set_pattern_position(index, position + delta);
     }
@@ -210,7 +210,7 @@ public:
     indexes(indexes),
     ground_after(ground) {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       grounds_before << get_model().get_pattern_ground(index);
     }
   }
@@ -218,7 +218,7 @@ public:
   virtual void undo() override {
 
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_ground(index, grounds_before[i]);
       ++i;
     }
@@ -227,7 +227,7 @@ public:
 
   virtual void redo() override {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_ground(index, ground_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -252,7 +252,7 @@ public:
     indexes(indexes),
     layer_after(layer) {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       layers_before << get_model().get_pattern_default_layer(index);
     }
   }
@@ -260,7 +260,7 @@ public:
   virtual void undo() override {
 
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_default_layer(index, layers_before[i]);
       ++i;
     }
@@ -269,7 +269,7 @@ public:
 
   virtual void redo() override {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_default_layer(index, layer_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -302,7 +302,7 @@ public:
   virtual void undo() override {
 
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_repeat_mode(index, repeat_modes_before[i]);
       ++i;
     }
@@ -311,7 +311,7 @@ public:
 
   virtual void redo() override {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_repeat_mode(index, repeat_mode_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -337,7 +337,7 @@ public:
     indexes(indexes),
     scrolling_after(scrolling) {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       scrollings_before << get_model().get_pattern_scrolling(index);
     }
   }
@@ -345,7 +345,7 @@ public:
   virtual void undo() override {
 
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_scrolling(index, scrollings_before[i]);
       ++i;
     }
@@ -355,7 +355,7 @@ public:
   virtual void redo() override {
 
     // TODO don't do anything if one fails.
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_scrolling(index, scrolling_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -381,21 +381,21 @@ public:
     indexes(indexes),
     separation_after(separation) {
 
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       separations_before << get_model().get_pattern_separation(index);
     }
   }
 
   virtual void undo() override {
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_separation(index, separations_before[i]);
     }
     get_model().set_selected_indexes(indexes);
   }
 
   virtual void redo() override {
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_separation(index, separation_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -427,7 +427,7 @@ public:
 
   virtual void undo() override {
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_num_frames(index, num_frames_before[i]);
       ++i;
     }
@@ -435,7 +435,7 @@ public:
   }
 
   virtual void redo() override {
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_num_frames(index, num_frames_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -467,7 +467,7 @@ public:
 
   virtual void undo() override {
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_frame_delay(index, frame_delays_before[i]);
       ++i;
     }
@@ -475,7 +475,7 @@ public:
   }
 
   virtual void redo() override {
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_frame_delay(index, frame_delay_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -507,7 +507,7 @@ public:
 
   virtual void undo() override {
     int i = 0;
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_mirror_loop(index, mirror_loops_before[i]);
       ++i;
     }
@@ -515,7 +515,7 @@ public:
   }
 
   virtual void redo() override {
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       get_model().set_pattern_mirror_loop(index, mirror_loop_after);
     }
     get_model().set_selected_indexes(indexes);
@@ -577,14 +577,14 @@ public:
       TilesetEditor& editor, const QList<int>& indexes, const QPoint& delta) :
     TilesetEditorCommand(editor, TilesetEditor::tr("Duplicate")),
     delta(delta) {
-    for (int index : indexes) {
+    for (int index : std::as_const(indexes)) {
       ids.append(get_model().index_to_id(index));
     }
   }
 
   virtual void undo() override {
 
-    for (QString new_id : new_ids) {
+    for (const QString& new_id : std::as_const(new_ids)) {
       get_model().delete_pattern(get_model().id_to_index(new_id));
     }
   }
@@ -594,7 +594,7 @@ public:
     get_model().clear_selection();
     new_ids.clear();
 
-    for (QString id : ids) {
+    for (const QString& id : std::as_const(ids)) {
 
       int index = get_model().id_to_index(id);
       QString new_id = get_model().get_unique_pattern_id(id);
@@ -659,7 +659,7 @@ public:
 
   virtual void undo() override {
 
-    for (const Pattern& pattern : patterns) {
+    for (const Pattern& pattern : std::as_const(patterns)) {
       int index = get_model().create_pattern(pattern.id, pattern.first_frame);
       get_model().set_pattern_ground(index, pattern.ground);
       get_model().set_pattern_default_layer(index, pattern.default_layer);
@@ -672,7 +672,7 @@ public:
     }
 
     QList<int> indexes;
-    for (const Pattern& pattern : patterns) {
+    for (const Pattern& pattern : std::as_const(patterns)) {
       indexes << get_model().id_to_index(pattern.id);
     }
     get_model().set_selected_indexes(indexes);
@@ -681,7 +681,7 @@ public:
   virtual void redo() override {
 
     QList<int> indexes;
-    for (const Pattern& pattern : patterns) {
+    for (const Pattern& pattern : std::as_const(patterns)) {
       indexes << get_model().id_to_index(pattern.id);
     }
     get_model().delete_patterns(indexes);
@@ -847,7 +847,7 @@ public:
 
   virtual void undo() override {
 
-    for (const BorderSet& border_set : border_sets) {
+    for (const BorderSet& border_set : std::as_const(border_sets)) {
       get_model().create_border_set(border_set.id);
       get_model().set_border_set_patterns(border_set.id, border_set.pattern_ids);
       get_model().set_border_set_inner(border_set.id, border_set.inner);
@@ -856,7 +856,7 @@ public:
 
   virtual void redo() override {
 
-    for (const BorderSet& border_set : border_sets) {
+    for (const BorderSet& border_set : std::as_const(border_sets)) {
       get_model().delete_border_set(border_set.id);
     }
   }
@@ -914,7 +914,7 @@ public:
     TilesetEditorCommand(editor, TilesetEditor::tr("Delete contour pattern")),
     patterns_deleted(patterns) {
 
-    for (const QPair<QString, BorderKind>& pattern : patterns_deleted) {
+    for (const QPair<QString, BorderKind>& pattern : std::as_const(patterns_deleted)) {
       pattern_ids_before << get_model().get_border_set_pattern(pattern.first, pattern.second);
     }
   }
@@ -922,7 +922,7 @@ public:
   virtual void undo() override {
 
     int i = 0;
-    for (const QPair<QString, BorderKind>& pattern : patterns_deleted) {
+    for (const QPair<QString, BorderKind>& pattern : std::as_const(patterns_deleted)) {
       get_model().set_border_set_pattern(pattern.first, pattern.second, pattern_ids_before[i]);
       ++i;
     }
@@ -930,7 +930,7 @@ public:
 
   virtual void redo() override {
 
-    for (const QPair<QString, BorderKind>& pattern : patterns_deleted) {
+    for (const QPair<QString, BorderKind>& pattern : std::as_const(patterns_deleted)) {
       get_model().set_border_set_pattern(pattern.first, pattern.second, "");
     }
   }

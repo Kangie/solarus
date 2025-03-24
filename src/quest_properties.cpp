@@ -28,8 +28,8 @@ namespace SolarusEditor {
 QuestProperties::QuestProperties(Quest& quest) :
   quest(quest) {
 
-  connect(&quest, SIGNAL(root_path_changed(const QString&)),
-          this, SLOT(reload()));
+  connect(&quest, &Quest::root_path_changed,
+          this, &QuestProperties::reload);
   reload();
 }
 

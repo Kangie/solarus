@@ -1744,7 +1744,7 @@ void MainWindow::update_entity_types_visibility() {
   }
 
   ViewSettings& view_settings = editor->get_view_settings();
-  for (QAction* action : show_entities_subactions) {
+  for (QAction* action : std::as_const(show_entities_subactions)) {
     if (action == nullptr) {
       qCritical() << tr("Missing show entity type action");
       return;
@@ -2113,7 +2113,7 @@ void MainWindow::refactoring_requested(const Refactoring& refactoring) {
     QStringList modified_paths = refactoring.execute();
 
     // See if some of the impacted files was open.
-    for (const QString& path : modified_paths) {
+    for (const QString& path : std::as_const(modified_paths)) {
       int editor_index = ui.tab_widget->find_editor(path);
       if (editor_index != -1) {
         // Reload the file.

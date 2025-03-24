@@ -52,8 +52,7 @@ static void create_blank_quest(const QString& quest_path) {
     // A very minimal version is created. Updating properties overwrites it.
     QTextStream out(&quest_file);
     out << QString("quest{ solarus_version = \"%1\", title = \"%2\", }\n")
-      .arg(SOLARUSEDITOR_VERSION_WITHOUT_PATCH)
-      .arg(QApplication::tr("Untitled Quest"));
+      .arg(SOLARUSEDITOR_VERSION_WITHOUT_PATCH, QApplication::tr("Untitled Quest"));
     quest_file.close();
   } else {
     throw EditorException(QApplication::tr(

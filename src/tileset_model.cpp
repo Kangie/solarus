@@ -1649,7 +1649,7 @@ void TilesetModel::set_selected_indexes(const QList<int>& indexes) {
   QModelIndexList selection = itemSelection.indexes();
 
   QSet<QModelIndex> selection_set;
-  for (const QModelIndex& index : selection) {
+  for (const QModelIndex& index : std::as_const(selection)) {
     selection_set.insert(index);
   }
   QSet<QModelIndex> current_selection_set;

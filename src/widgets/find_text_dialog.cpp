@@ -43,11 +43,11 @@ FindTextDialog::FindTextDialog(QWidget* parent) :
   QPushButton* replace_button = new QPushButton(tr("Replace"), this);
   ui.button_box->addButton(replace_button, QDialogButtonBox::ApplyRole);
 
-  connect(find_button, &QPushButton::pressed, [this]() {
+  connect(find_button, &QPushButton::pressed, this, [this]() {
     emit find_text_requested(ui.find_field->text());
   });
 
-  connect(replace_button, &QPushButton::pressed, [this]() {
+  connect(replace_button, &QPushButton::pressed, this, [this]() {
     emit replace_text_requested(ui.find_field->text(), ui.replace_field->text());
   });
 }
