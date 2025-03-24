@@ -466,7 +466,7 @@ void GlRenderer::restart_batch() {
       Debug::warning("InCONSISTENT state");
     }
     glBufferSubData(GL_ARRAY_BUFFER, 0, buffered_vertices()*sizeof(Vertex), vertex_buffer.data());
-    glDrawElements(GL_TRIANGLES, buffered_indices(), GL_UNSIGNED_SHORT, nullptr);
+    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(buffered_indices()), GL_UNSIGNED_SHORT, nullptr);
     //Orphan buffer to refill faster
     glBufferData(GL_ARRAY_BUFFER, vertex_buffer.size()*sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
 
@@ -570,7 +570,7 @@ void GlRenderer::set_state(const GlTexture *src, GlShader* shad, GlTexture* dst,
     }
     glUniform1i(
           current_shader->get_uniform_location(Shader::TIME_NAME),
-          System::now_ms());
+          static_cast<GLint>(System::now_ms()));
   }
 }
 
