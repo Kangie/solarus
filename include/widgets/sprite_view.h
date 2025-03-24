@@ -64,7 +64,7 @@ public slots:
 
 private slots:
 
-  void duplicate_selected_direction_requested();
+  void on_duplicate_selected_direction_requested();
   void change_num_frames_columns_requested();
   void change_num_columns_requested();
   void change_num_frames_requested();
