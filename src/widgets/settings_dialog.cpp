@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QFontDatabase>
 
 namespace SolarusEditor {
 
@@ -32,6 +33,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   QDialog(parent) {
 
   ui.setupUi(this);
+
+  // Select system font.
+  const QFont default_monospace_font = QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont);
+  ui.font_family_field->setCurrentFont(default_monospace_font);
 
   ui.quest_size_field->config("x", 0, 99999, 80);
   ui.map_grid_size_field->config("x", 8, 99999, 8);
@@ -506,8 +511,9 @@ void SettingsDialog::change_quest_size() {
  */
 void SettingsDialog::update_font_family() {
 
-  ui.font_family_field->setCurrentText(
-    settings.get_value_string(EditorSettings::font_family));
+  const QString font_family = settings.get_value_string(EditorSettings::font_family);
+  QFont font = QFont(font_family);
+  ui.font_family_field->setCurrentFont(font);
 }
 
 /**
@@ -515,7 +521,7 @@ void SettingsDialog::update_font_family() {
  */
 void SettingsDialog::change_font_family() {
 
-  edited_settings[EditorSettings::font_family] = ui.font_family_field->currentText();
+  edited_settings[EditorSettings::font_family] = ui.font_family_field->currentFont().family();
   update_buttons();
 }
 

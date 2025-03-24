@@ -274,13 +274,6 @@
             <property name="fontFilters">
              <set>QFontComboBox::MonospacedFonts</set>
             </property>
-            <property name="currentFont">
-             <font>
-              <family>DejaVu Sans Mono</family>
-              <pointsize>10</pointsize>
-              <bold>true</bold>
-             </font>
-            </property>
            </widget>
           </item>
          </layout>

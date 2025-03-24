@@ -18,6 +18,7 @@
 #include "editor_settings.h"
 #include <QPalette>
 #include <QSize>
+#include <QFontDatabase>
 
 namespace SolarusEditor {
 
@@ -127,7 +128,7 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   { EditorSettings::console_history, QStringList() },
 
   // Text editor.
-  { EditorSettings::font_family, "DejaVu Sans Mono" },
+  { EditorSettings::font_family, QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont).family() },
   { EditorSettings::font_size, 10 },
   { EditorSettings::tab_length, 2 },
   { EditorSettings::replace_tab_by_spaces, true },
