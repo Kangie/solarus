@@ -416,7 +416,7 @@ void DialogsModel::create_dialog(const QString& id, const DialogData& data) {
     endInsertRows();
   } else {
     QModelIndex model_index = id_to_index(id);
-    dataChanged(model_index, model_index);
+    emit dataChanged(model_index, model_index);
   }
 
   // Notify people.
@@ -612,7 +612,7 @@ QString DialogsModel::set_dialog_id(const QString& id, const QString& new_id) {
     endRemoveRows();
   } else if (dialog_tree.remove_key(id)) {
     QModelIndex model_index = id_to_index(id);
-    dataChanged(model_index, model_index);
+    emit dataChanged(model_index, model_index);
   }
 
   // Add to the indexed tree.
@@ -623,7 +623,7 @@ QString DialogsModel::set_dialog_id(const QString& id, const QString& new_id) {
     endInsertRows();
   } else {
     QModelIndex model_index = id_to_index(id);
-    dataChanged(model_index, model_index);
+    emit dataChanged(model_index, model_index);
   }
 
   // Notify people.
@@ -731,7 +731,7 @@ void DialogsModel::delete_dialog(const QString& id) {
     endRemoveRows();
   } else if (dialog_tree.remove_key(id)) {
     QModelIndex model_index = id_to_index(id);
-    dataChanged(model_index, model_index);
+    emit dataChanged(model_index, model_index);
   }
 
   // Notify people.

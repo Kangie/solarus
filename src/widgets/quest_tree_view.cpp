@@ -900,7 +900,7 @@ void QuestTreeView::create_new_file(const QString& file_type) {
 
     // Open element if it's a file.
     if (is_file) {
-      open_file_requested(quest, path);
+      emit open_file_requested(quest, path);
     }
   }
   catch (const EditorException& ex) {

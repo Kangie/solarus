@@ -100,7 +100,7 @@ void ResourceModel::set_tileset_id(const QString& tileset_id) {
     icons.clear();  // Clear the icon cache.
     QVector<int> roles;
     roles << Qt::DecorationRole;
-    dataChanged(QModelIndex(), QModelIndex(), roles);
+    emit dataChanged(QModelIndex(), QModelIndex(), roles);
   }
 }
 
