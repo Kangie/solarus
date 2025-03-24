@@ -19,7 +19,7 @@
 #include "quest_database.h"
 #include <QFile>
 #include <QTextStream>
-#include <QtConcurrent/QtConcurrent>
+#include <QtConcurrent/QtConcurrentRun>
 
 namespace SolarusEditor {
 
