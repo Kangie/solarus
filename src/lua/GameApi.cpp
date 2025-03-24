@@ -738,7 +738,7 @@ int LuaContext::game_api_get_values(lua_State* l) {
     Savegame& game = *check_game(l, 1);
     // ...
     const auto& saved_values = game.get_saved_values();
-    lua_createtable(l, 0, saved_values.size());
+    lua_createtable(l, 0, static_cast<int>(saved_values.size()));
     // ... table
     for (auto & pair : saved_values) {
       switch (pair.second.type) {

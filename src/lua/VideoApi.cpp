@@ -95,7 +95,7 @@ static LuaBind::OnStack get_modes(LuaContext& context) {
   const std::vector<const SoftwareVideoMode*>& modes =
       Video::get_video_modes();
 
-  lua_createtable(L, modes.size(), 0);
+  lua_createtable(L, static_cast<int>(modes.size()), 0);
   int i = 1;
   for (const SoftwareVideoMode* mode: modes) {
     lua_pushstring(L, mode->get_name().c_str());

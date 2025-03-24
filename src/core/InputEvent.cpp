@@ -1477,8 +1477,8 @@ int InputEvent::get_joypad_deadzone() {
  * @brief return the amount of connected joypads
  * @return the count
  */
-int InputEvent::get_jopad_count() {
-  return joypads.size();
+int InputEvent::get_joypad_count() {
+  return static_cast<int>(joypads.size());
 }
 
 /**

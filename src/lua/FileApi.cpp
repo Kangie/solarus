@@ -301,7 +301,7 @@ int LuaContext::file_api_list_dir(lua_State* l) {
 
     const std::vector<std::string>& files = QuestFiles::data_file_list_dir(dir_name);
 
-    lua_createtable(l, files.size(), 0);
+    lua_createtable(l, static_cast<int>(files.size()), 0);
     int i = 1;
     for (const std::string& file : files) {
       push_string(l, file);

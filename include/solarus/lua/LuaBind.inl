@@ -224,7 +224,7 @@ static inline void push_any(lua_State * L, T * ptr) {
 template<typename T>
 static inline void push_any(lua_State * L, const std::vector<T>& vec) {
   // Build a Lua table containing the vector content.
-  lua_createtable(L, vec.size(), 0);
+  lua_createtable(L, static_cast<int>(vec.size()), 0);
   int i = 1;
   for (const auto& v : vec) {
     push_any(L, v);
@@ -237,7 +237,7 @@ static inline void push_any(lua_State * L, const std::vector<T>& vec) {
 template<typename K, typename V>
 static inline void push_any(lua_State * L, const std::map<K, V>& map) {
   // Build a Lua table containing the map content.
-  lua_createtable(L, 0, map.size());
+  lua_createtable(L, 0, static_cast<int>(map.size()));
   for (const auto& [k, v] : map) {
     push_any(L, k);
     push_any(L, v);
