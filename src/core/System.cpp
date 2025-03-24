@@ -178,7 +178,7 @@ uint64_t System::now_ns() {
  * initialization.
  */
 uint32_t System::now_ms() {
-  return ticks / 1000000;
+  return static_cast<uint32_t>(ticks / 1000000);
 }
 
 /**
@@ -203,7 +203,7 @@ uint64_t System::get_real_time_ns() {
  * \return The number of milliseconds elapsed since the initialization.
  */
 uint32_t System::get_real_time_ms() {
-  return get_real_time_ns() / 1000000;
+  return static_cast<uint32_t>(get_real_time_ns() / 1000000);
 }
 
 /**
