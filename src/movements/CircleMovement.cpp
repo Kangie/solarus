@@ -253,7 +253,7 @@ void CircleMovement::set_clockwise(bool clockwise) {
  */
 uint32_t CircleMovement::get_duration() const {
 
-  return duration/1000000;
+  return static_cast<uint32_t>(duration / 1000000);
 }
 
 /**
@@ -267,7 +267,7 @@ uint32_t CircleMovement::get_duration() const {
  */
 void CircleMovement::set_duration(uint32_t duration) {
 
-  this->duration = duration*1000000;
+  this->duration = duration * 1000000;
   if (duration != 0 && is_started()) {
     this->end_movement_date = System::now_ns() + duration;
   }
@@ -315,7 +315,7 @@ void CircleMovement::set_max_rotations(int max_rotations) {
  */
 uint32_t CircleMovement::get_loop() const {
 
-  return loop_delay / 1000000;
+  return static_cast<uint32_t>(loop_delay / 1000000);
 }
 
 /**
@@ -324,7 +324,7 @@ uint32_t CircleMovement::get_loop() const {
  */
 void CircleMovement::set_loop(uint32_t delay) {
 
-  this->loop_delay = delay*10000000;
+  this->loop_delay = delay * 10000000;
   if (delay != 0 && is_stopped()) {
     this->restart_date = System::now_ns() + delay;
   }

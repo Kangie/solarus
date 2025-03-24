@@ -574,9 +574,9 @@ struct CheckStack<std::vector<T>> {
     auto len = lua_objlen(L, index);
     std::vector<T> vec; vec.reserve(len);
 
-    for(size_t i = 1; i < len+1; i++) {
-      lua_rawgeti(L, index, i);
-      vec.push_back(CheckStack<T>::call(L, -1, IndexContext(i, context)));
+    for(size_t i = 1; i < len + 1; i++) {
+      lua_rawgeti(L, index, static_cast<int>(i));
+      vec.push_back(CheckStack<T>::call(L, -1, IndexContext(static_cast<int>(i), context)));
       lua_pop(L, 1);
     }
 
