@@ -418,7 +418,7 @@ int check_int(
     type_error(l, index, "integer");
   }
 
-  return (int) lua_tointeger(l, index);
+  return static_cast<int>(lua_tointeger(l, index));
 }
 
 /**
@@ -441,7 +441,7 @@ int check_int_field(
     field_type_error(l, table_index, key, "integer");
   }
 
-  int value = (int) lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -494,7 +494,7 @@ int opt_int_field(
   if (!lua_isnumber(l, -1)) {
     field_type_error(l, table_index, key, "integer");
   }
-  int value = (int) lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -1024,7 +1024,7 @@ int check_layer(
     arg_error(l, index, oss.str());
   }
 
-  return lua_tointeger(l, index);
+  return static_cast<int>(lua_tointeger(l, index));
 }
 
 /**
@@ -1049,7 +1049,7 @@ int check_layer_field(
     field_type_error(l, table_index, key, "layer");
   }
 
-  int value = lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -1099,7 +1099,7 @@ int opt_layer_field(
   if (!is_layer(l, -1, map)) {
     field_type_error(l, table_index, key, "layer");
   }
-  int value = lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
