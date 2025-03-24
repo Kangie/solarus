@@ -415,7 +415,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
           this);
   } else if (quest.is_image(path)) {
     // Image file: let the user create a sprite from it, unless it already exists.
-    const QRegularExpression pngExtension("\\.png$");
+    static const QRegularExpression pngExtension("\\.png$");
     QString sprite_path = path;
     sprite_path.replace(pngExtension, ".dat");
     if (quest.is_potential_resource_element(sprite_path, resource_type, element_id) &&
@@ -746,12 +746,12 @@ void QuestTreeView::new_element_action_triggered() {
     }
     else if (quest.is_image(path)) {
       // Creating a sprite from an image.
-      const QRegularExpression pngExtension("\\.png$");
+      static const QRegularExpression pngExtension("\\.png$");
       QString sprite_path = path;
       sprite_path.replace(pngExtension, ".dat");
       if (quest.is_potential_resource_element(sprite_path, resource_type, initial_id_value) &&
           resource_type == ResourceType::SPRITE) {
-        const QRegularExpression datExtension("\\.dat$");
+        static const QRegularExpression datExtension("\\.dat$");
         initial_description_value = QFileInfo(sprite_path).fileName().replace(datExtension, "");
       }
     }
