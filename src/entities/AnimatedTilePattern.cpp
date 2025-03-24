@@ -78,9 +78,9 @@ void AnimatedTilePattern::draw(
   const SurfacePtr& tileset_image = tileset.get_tiles_image();
 
   int final_frame_index = frame_index;
-  int num_frames = frames.size();
+  const int num_frames = static_cast<int>(frames.size());
   if (mirror_loop && frame_index >= num_frames) {
-    final_frame_index = (2 * frames.size() - 2) - frame_index;
+    final_frame_index = (2 * num_frames - 2) - frame_index;
   }
   SOLARUS_REQUIRE(final_frame_index >= 0 && final_frame_index < num_frames,
       "Wrong frame index");

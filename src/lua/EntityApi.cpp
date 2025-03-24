@@ -2290,7 +2290,7 @@ int LuaContext::entity_api_get_properties(lua_State* l) {
     const Entity& entity = *check_entity(l, 1);
 
     const std::vector<Entity::UserProperty>& properties = entity.get_user_properties();
-    lua_createtable(l, properties.size(), 0);
+    lua_createtable(l, static_cast<int>(properties.size()), 0);
     int i = 1;
     for (const Entity::UserProperty& property : properties) {
       lua_createtable(l, 0, 2);

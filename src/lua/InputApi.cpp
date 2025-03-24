@@ -356,7 +356,7 @@ int LuaContext::input_api_simulate_key_released(lua_State* l) {
  */
 int LuaContext::input_api_get_joypad_count(lua_State* l) {
   return state_boundary_handle(l,[&]{
-    lua_pushnumber(l,InputEvent::get_jopad_count());
+    lua_pushnumber(l,InputEvent::get_joypad_count());
     return 1;
   });
 }

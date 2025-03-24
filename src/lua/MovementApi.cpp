@@ -374,7 +374,7 @@ static LuaBind::OnStack path_get_path(lua_State* l, PathMovement& movement) {
   const std::string& path = movement.get_path();
 
   // Build a Lua array containing the path.
-  lua_createtable(l, path.size(), 0);
+  lua_createtable(l, static_cast<int>(path.size()), 0);
   for (size_t i = 0 ; i < path.size() ; ++i) {
     int direction8 = (path[i] - '0');
     lua_pushinteger(l, direction8);

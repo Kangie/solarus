@@ -189,7 +189,7 @@ void NonAnimatedRegions::update() {
     }
   }
 
-  int num_cameras = map.get_entities().get_cameras().size();
+  int num_cameras = static_cast<int>(map.get_entities().get_cameras().size());
   for (auto [cell_index, vote] : indexes_to_clear) {
     if(vote >= num_cameras) {
       optimized_tiles_surfaces.erase(cell_index);
@@ -202,8 +202,8 @@ void NonAnimatedRegions::update() {
  */
 void NonAnimatedRegions::draw_on_map(const Camera &camera) {
   // Check all grid cells that overlap the camera.
-  const int num_rows = non_animated_tiles.get_num_rows();
-  const int num_columns = non_animated_tiles.get_num_columns();
+  const int num_rows = static_cast<int>(non_animated_tiles.get_num_rows());
+  const int num_columns = static_cast<int>(non_animated_tiles.get_num_columns());
   const Size& cell_size = non_animated_tiles.get_cell_size();
   const Rectangle& camera_position = camera.get_bounding_box();
 

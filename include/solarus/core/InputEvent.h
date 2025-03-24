@@ -236,7 +236,7 @@ class InputEvent {
     static bool get_global_finger_pressure(int finger_id, float& finger_pressure);
     static int get_joypad_deadzone();
 
-    static int get_jopad_count();
+    static int get_joypad_count();
     static const Joypads &get_joypads();
 
     // event type

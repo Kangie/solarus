@@ -483,7 +483,7 @@ static int get_entities_count(Map& map, const std::string& prefix) {
   }
   const EntityVector& entities =
       map.get_entities().get_entities_with_prefix(prefix);
-  return entities.size();
+  return static_cast<int>(entities.size());
 }
 
 /**

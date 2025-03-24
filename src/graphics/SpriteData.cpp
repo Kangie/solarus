@@ -294,7 +294,7 @@ void SpriteAnimationData::set_loop_on_frame(int loop_on_frame) {
  * \return The number of directions.
  */
 int SpriteAnimationData::get_num_directions() const {
-  return directions.size();
+  return static_cast<int>(directions.size());
 }
 
 /**
@@ -306,7 +306,7 @@ int SpriteAnimationData::get_num_directions() const {
 const SpriteAnimationDirectionData&
   SpriteAnimationData::get_direction(int direction_nb) const {
 
-  int size = directions.size();
+  int size = static_cast<int>(directions.size());
   SOLARUS_REQUIRE(direction_nb >= 0 && direction_nb < size,
     "No such direction");
 
@@ -325,7 +325,7 @@ const SpriteAnimationDirectionData&
 SpriteAnimationDirectionData&
   SpriteAnimationData::get_direction(int direction_nb) {
 
-  int size = directions.size();
+  int size = static_cast<int>(directions.size());
   SOLARUS_REQUIRE(direction_nb >= 0 && direction_nb < size,
     "No such direction");
 
@@ -366,7 +366,7 @@ void SpriteAnimationData::add_direction(
  */
 bool SpriteAnimationData::remove_direction(int direction_nb) {
 
-  int size = directions.size();
+  int size = static_cast<int>(directions.size());
   if (direction_nb >= size) {
     return false;
   }
@@ -383,7 +383,7 @@ bool SpriteAnimationData::remove_direction(int direction_nb) {
  */
 bool SpriteAnimationData::move_direction(int direction_nb, int new_direction_nb) {
 
-  int size = directions.size();
+  int size = static_cast<int>(directions.size());
 
   if (direction_nb < 0 || direction_nb >= size) {
     return false;
@@ -423,7 +423,7 @@ SpriteData::SpriteData() {
  * \return The number of animations.
  */
 int SpriteData::get_num_animations() const {
-  return animations.size();
+  return static_cast<int>(animations.size());
 }
 
 /**
