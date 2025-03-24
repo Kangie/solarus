@@ -13,7 +13,7 @@
 
 # Build architectures.
 if(NOT SOLARUS_ARCH)
-  set(SOLARUS_ARCH "x86_64")
+  set(SOLARUS_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
 endif()
 set(CMAKE_OSX_ARCHITECTURES "${SOLARUS_ARCH}" CACHE STRING "Build architecture" FORCE)
 
