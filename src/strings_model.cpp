@@ -434,7 +434,7 @@ bool StringsModel::can_duplicate_strings(
   const QString& prefix, const QString& new_prefix, QString& key) {
 
   const QStringList& keys = get_keys(prefix);
-  QRegularExpression regexp(QString("^") + prefix);
+  const QRegularExpression regexp(QString("^") + prefix);
   for (QString prefixed_key : keys) {
     prefixed_key.replace(regexp, new_prefix);
     if (string_exists(prefixed_key)) {
@@ -462,7 +462,7 @@ void StringsModel::duplicate_strings(
 
   // Duplicate strings.
   const QStringList& keys = get_keys(prefix);
-  QRegularExpression regexp(QString("^") + prefix);
+  const QRegularExpression regexp(QString("^") + prefix);
   for (QString key : keys) {
     QString value = get_string(key);
     key.replace(regexp, new_prefix);
@@ -580,7 +580,7 @@ bool StringsModel::can_set_string_key_prefix(
     const QString& old_prefix, const QString& new_prefix, QString& key) {
 
   const QStringList& keys = get_keys(old_prefix);
-  QRegularExpression regexp(QString("^") + old_prefix);
+  const QRegularExpression regexp(QString("^") + old_prefix);
   for (QString prefixed_key : keys) {
     prefixed_key.replace(regexp, new_prefix);
     if (string_exists(prefixed_key)) {
@@ -610,7 +610,7 @@ QList<QPair<QString, QString>> StringsModel::set_string_key_prefix(
   // change the string keys.
   QList<QPair<QString, QString>> list;
   const QStringList& old_keys = get_keys(old_prefix);
-  QRegularExpression regexp(QString("^") + old_prefix);
+  const QRegularExpression regexp(QString("^") + old_prefix);
   for (const QString& old_key : old_keys) {
     QString new_key = old_key;
     new_key.replace(regexp, new_prefix);
