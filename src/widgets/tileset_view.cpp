@@ -1539,7 +1539,7 @@ void MovingPatternsState::drag_move(QDragMoveEvent& event) {
     QList<QGraphicsItem*> overlapping_item_list = get_scene().items(
         area.adjusted(1, 1, -1, -1), Qt::IntersectsItemBoundingRect);
     QSet<QGraphicsItem*> overlapping_items;
-    for (QGraphicsItem* overlapping_item : overlapping_item_list) {
+    for (QGraphicsItem* overlapping_item : std::as_const(overlapping_item_list)) {
         overlapping_items.insert(overlapping_item);
     }
 

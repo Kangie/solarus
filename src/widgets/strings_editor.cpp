@@ -166,7 +166,7 @@ public:
 
   virtual void undo() override {
 
-    for (const auto& pair : edited_keys) {
+    for (const auto& pair : std::as_const(edited_keys)) {
       get_model().set_string_key(pair.second, pair.first);
     }
     if (!edited_keys.isEmpty()) {
@@ -233,7 +233,7 @@ public:
 
   virtual void undo() override {
 
-    for (const auto& pair : values) {
+    for (const auto& pair : std::as_const(values)) {
       get_model().create_string(pair.first, pair.second);
     }
     if (!values.isEmpty()) {

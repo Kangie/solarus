@@ -634,7 +634,7 @@ QString ImportDialog::source_to_destination_path(const QString& source_path) {
 void ImportDialog::select_recently_created_paths() {
 
   ui.destination_quest_tree_view->set_selected_paths(paths_to_select);
-  for (const QString& path : paths_to_select) {
+  for (const QString& path : std::as_const(paths_to_select)) {
     ui.destination_quest_tree_view->expand_to_path(path);
   }
 }

@@ -607,7 +607,7 @@ void EntityModel::ensure_name_unique() {
     else {
       words.removeLast();
       name = "";
-      for (const QString& word : words) {
+      for (const QString& word : std::as_const(words)) {
         name = name + word + "_";
       }
     }

@@ -1420,7 +1420,7 @@ void QuestFilesModel::ExtraPaths::rebuild_index_cache() {
 
   path_indexes.clear();
   int i = 0;
-  for (const ExtraPathColumnPtrs& columns : paths) {
+  for (const ExtraPathColumnPtrs& columns : std::as_const(paths)) {
     const QString& current_path = *columns[0];
     path_indexes.insert(current_path, i);
     ++i;

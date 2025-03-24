@@ -344,7 +344,7 @@ QMap<QString, QString> DialogsModel::get_dialog_properties(
     return map;
   }
 
-  for (auto kvp : resources.get_dialog(id.toStdString()).get_properties()) {
+  for (const auto& kvp : resources.get_dialog(id.toStdString()).get_properties()) {
     map.insert(
           QString::fromStdString(kvp.first),
           QString::fromStdString(kvp.second));
@@ -454,7 +454,7 @@ void DialogsModel::create_dialog(
   DialogData data;
   data.set_text(text.toStdString());
   const QStringList& keys = properties.keys();
-  for (QString key : keys) {
+  for (const QString& key : keys) {
     data.set_property(key.toStdString(), properties.value(key).toStdString());
   }
   create_dialog(id, data);
@@ -929,7 +929,7 @@ QMap<QString, QString> DialogsModel::get_translated_dialog_properties(
 
   auto properties =
       translation_resources.get_dialog(id.toStdString()).get_properties();
-  for (auto kvp : properties) {
+  for (const auto& kvp : properties) {
     map.insert(
           QString::fromStdString(kvp.first),
           QString::fromStdString(kvp.second));
@@ -982,7 +982,7 @@ bool DialogsModel::has_missing_translation(const QString& id) const {
   }
 
   const QStringList& sub_ids = get_translated_ids(id + ".");
-  for (QString sub_id : sub_ids) {
+  for (const QString& sub_id : std::as_const(sub_ids)) {
     if (!dialog_exists(sub_id)) {
       return true;
     }

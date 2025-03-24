@@ -621,12 +621,12 @@ void AutoTiler::compute_pattern_sizes() {
 void AutoTiler::compute_bounding_box() {
 
   bounding_box = QRect();
-  for (const QRect& rectangle : entity_rectangles) {
+  for (const QRect& rectangle : std::as_const(entity_rectangles)) {
     bounding_box |= rectangle;
   }
 
   QSize max_pattern_size;
-  for (const QSize& pattern_size : pattern_sizes) {
+  for (const QSize& pattern_size : std::as_const(pattern_sizes)) {
     max_pattern_size = max_pattern_size.expandedTo(pattern_size);
   }
 
@@ -645,7 +645,7 @@ void AutoTiler::compute_occupied_squares() {
   occupied_squares.clear();
   occupied_squares.assign(get_num_cells(), false);
 
-  for (const QRect& rectangle : entity_rectangles) {
+  for (const QRect& rectangle : std::as_const(entity_rectangles)) {
 
     for (int y = rectangle.y(); y < rectangle.y() + rectangle.height(); y += 8) {
       for (int x = rectangle.x(); x < rectangle.x() + rectangle.width(); x += 8) {
@@ -663,7 +663,7 @@ void AutoTiler::compute_borders() {
 
   which_borders.clear();
 
-  for (const QRect& rectangle : entity_rectangles) {
+  for (const QRect& rectangle : std::as_const(entity_rectangles)) {
 
     int num_cells_x = rectangle.width() / 8;
     int num_cells_y = rectangle.height() / 8;

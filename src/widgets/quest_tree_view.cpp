@@ -1182,7 +1182,7 @@ bool QuestTreeView::can_delete_paths(const QStringList& paths) {
   }
 
   const Quest& quest = model->get_quest();
-  for (QString path : paths) {
+  for (const QString& path : std::as_const(paths)) {
     if (path == quest.get_data_path()) {
       // We don't want to delete the data directory.
       return false;
@@ -1227,7 +1227,7 @@ void QuestTreeView::delete_action_triggered() {
 
   try {
     Quest& quest = model->get_quest();
-    for (QString path : paths) {
+    for (const QString& path : std::as_const(paths)) {
       ResourceType resource_type;
       QString element_id;
       if (quest.is_resource_element(path, resource_type, element_id)) {

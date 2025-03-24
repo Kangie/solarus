@@ -270,7 +270,7 @@ void TilesetScene::select_all() {
 
   const bool was_blocked = signalsBlocked();
   blockSignals(true);
-  for (PatternItem* item : pattern_items) {
+  for (PatternItem* item : std::as_const(pattern_items)) {
     if (item == nullptr) {
       continue;
     }
@@ -289,7 +289,7 @@ void TilesetScene::unselect_all() {
 
   const bool was_blocked = signalsBlocked();
   blockSignals(true);
-  for (PatternItem* item : pattern_items) {
+  for (PatternItem* item : std::as_const(pattern_items)) {
     if (item == nullptr) {
       continue;
     }

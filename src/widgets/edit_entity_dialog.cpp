@@ -566,7 +566,7 @@ void EditEntityDialog::initialize_simple_booleans() {
  */
 void EditEntityDialog::apply_simple_booleans() {
 
-  for (const SimpleBooleanField& field : simple_boolean_fields) {
+  for (const SimpleBooleanField& field : std::as_const(simple_boolean_fields)) {
     if (entity_before.has_field(field.field_name) && field.check_box != nullptr) {
       entity_after->set_field(field.field_name, field.check_box->isChecked());
     }
@@ -617,7 +617,7 @@ void EditEntityDialog::initialize_simple_integers() {
  */
 void EditEntityDialog::apply_simple_integers() {
 
-  for (const SimpleIntegerField& field : simple_integer_fields) {
+  for (const SimpleIntegerField& field : std::as_const(simple_integer_fields)) {
     if (entity_before.has_field(field.field_name) && field.spinbox != nullptr) {
       entity_after->set_field(field.field_name, field.spinbox->value());
     }
@@ -682,7 +682,7 @@ void EditEntityDialog::initialize_simple_strings() {
  */
 void EditEntityDialog::apply_simple_strings() {
 
-  for (const SimpleStringField& field : simple_string_fields) {
+  for (const SimpleStringField& field : std::as_const(simple_string_fields)) {
     if (entity_before.has_field(field.field_name) && field.line_edit != nullptr) {
       QString value;
       if (field.check_box == nullptr || field.check_box->isChecked()) {

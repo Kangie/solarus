@@ -306,7 +306,8 @@ QString Quest::get_resource_path(ResourceType resource_type) const {
 QString Quest::get_resource_element_path(ResourceType resource_type,
                                          const QString& element_id) const {
 
-  return get_resource_element_paths(resource_type, element_id).first();
+  const QStringList path_list = get_resource_element_paths(resource_type, element_id);
+  return path_list.first();
 }
 
 /**
@@ -414,9 +415,8 @@ QString Quest::get_font_path(
     const QString& font_id) const {
 
   QString prefix = get_data_path() + "/fonts/" + font_id;
-  QStringList extensions;
-  extensions << ".png" << ".ttf" << ".otf" << ".ttc" << ".fon";
-  for (const QString& extension : extensions) {
+  static const QStringList extensions{ ".png", ".ttf", ".otf", ".ttc", ".fon" };
+  for (const QString& extension : std::as_const(extensions)) {
     QString path = prefix + extension;
     if (QFileInfo(path).exists()) {
       return path;
@@ -514,9 +514,8 @@ QString Quest::get_music_path(
     const QString& music_id) const {
 
   QString prefix = get_data_path() + "/musics/" + music_id;
-  QStringList extensions;
-  extensions << ".ogg" << ".it" << ".spc";
-  for (const QString& extension : extensions) {
+  static const QStringList extensions{ ".ogg", ".it", ".spc" };
+  for (const QString& extension : std::as_const(extensions)) {
     QString path = prefix + extension;
     if (QFileInfo(path).exists()) {
       return path;
@@ -812,7 +811,7 @@ bool Quest::is_potential_resource_element(
     element_id = path_from_resource;
   }
   else {
-    for (const QString& extension : extensions) {
+    for (const QString& extension : std::as_const(extensions)) {
       if (path_from_resource.endsWith(extension)) {
         // Remove the extension.
         element_id = path_from_resource.section('.', 0, -2);
@@ -2073,7 +2072,7 @@ void Quest::rename_dir(const QString& old_path, const QString& new_path) {
     old_relative_path.remove(0, resource_path.size() + 1);
     QString new_relative_path = new_path;
     new_relative_path.remove(0, resource_path.size() + 1);
-    for (QString old_element_id : elements) {
+    for (const QString& old_element_id : std::as_const(elements)) {
       if (old_element_id.startsWith(old_relative_path + "/")) {
         QString end = old_element_id;
         end.remove(0, old_relative_path.size() + 1);
@@ -2286,7 +2285,7 @@ void Quest::delete_dir_recursive(const QString& path) {
     QString resource_path = get_resource_path(resource_type);
     QString relative_path = path;
     relative_path.remove(0, resource_path.size() + 1);
-    for (QString element_id : elements) {
+    for (const QString& element_id : std::as_const(elements)) {
       if (element_id.startsWith(relative_path + "/")) {
         QString end = element_id;
         end.remove(0, relative_path.size() + 1);
