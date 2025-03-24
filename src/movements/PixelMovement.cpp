@@ -106,7 +106,7 @@ void PixelMovement::set_trajectory(const std::string& trajectory_string) {
  * \return the delay between two moves, in milliseconds
  */
 uint32_t PixelMovement::get_delay() const {
-  return delay / 1000000;
+  return static_cast<uint32_t>(delay / 1000000);
 }
 
 /**
@@ -114,7 +114,7 @@ uint32_t PixelMovement::get_delay() const {
  * \param delay the new delay, in milliseconds
  */
 void PixelMovement::set_delay(uint32_t delay) {
-  this->delay = delay*1000000;
+  this->delay = delay * 1000000;
 }
 
 /**
