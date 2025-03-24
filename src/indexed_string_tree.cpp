@@ -63,7 +63,7 @@ int IndexedStringTree::get_row_count(const QString& key) const {
   if (node == nullptr) {
     return -1;
   }
-  return node->children.size();
+  return static_cast<int>(node->children.size());
 }
 
 /**

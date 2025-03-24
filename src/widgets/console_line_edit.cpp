@@ -73,7 +73,7 @@ ConsoleLineEdit::ConsoleLineEdit(QWidget* parent) :
   EditorSettings settings;
   history = settings.get_value_string_list(EditorSettings::console_history);
 
-  set_history_position(history.size());  // Start after the history.
+  set_history_position(static_cast<int>(history.size()));  // Start after the history.
 
   // Set a validator.
   setValidator(new LuaSyntaxValidator(this));
@@ -196,7 +196,7 @@ void ConsoleLineEdit::command_executed(const QString& command) {
 
   // Update the history position.
   current_command.clear();
-  set_history_position(history.size());
+  set_history_position(static_cast<int>(history.size()));
 
   // Update the completer.
   if (!completer_model->stringList().contains(command)) {

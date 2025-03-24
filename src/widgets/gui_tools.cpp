@@ -157,7 +157,7 @@ void draw_grid(QPainter &painter, const QRect &where, const QSize &size,
   }
 
   painter.setPen(pen);
-  painter.drawLines(lines.data(), lines.size());
+  painter.drawLines(lines.data(), static_cast<int>(lines.size()));
 }
 
 /**
@@ -179,7 +179,7 @@ void draw_grid_point(QPainter &painter, const QRect &where, const QSize &size,
   }
 
   painter.setPen(QPen(color, 1));
-  painter.drawPoints(points.data(), points.size());
+  painter.drawPoints(points.data(), static_cast<int>(points.size()));
 }
 
 /**

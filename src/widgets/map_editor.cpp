@@ -938,7 +938,7 @@ public:
       entities.append(&map.get_entity(index_after));
     }
 
-    for (int i = entities.size() - 1; i >= 0; --i) {
+    for (int i = static_cast<int>(entities.size()) - 1; i >= 0; --i) {
       EntityModel* entity = entities[i];
       map.set_entity_order(entity->get_index(), indexes_before[i].order);
     }

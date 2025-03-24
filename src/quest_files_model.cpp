@@ -1043,7 +1043,7 @@ int QuestFilesModel::get_num_extra_paths(const QModelIndex& parent) const {
   if (extra_paths == nullptr) {
     return 0;
   }
-  return extra_paths->paths.size();
+  return static_cast<int>(extra_paths->paths.size());
 }
 
 /**
@@ -1140,7 +1140,7 @@ void QuestFilesModel::compute_extra_paths(const QModelIndex& parent) const {
         all_extra_paths.insert(path_internal_ptr);
       }
       extra_paths.paths.append(columns);
-      extra_paths.path_indexes[current_path] = extra_paths.paths.size() - 1;
+      extra_paths.path_indexes[current_path] = static_cast<int>(extra_paths.paths.size()) - 1;
       extra_paths.element_ids.append(element_id);
     }
   }

@@ -1444,7 +1444,7 @@ int MapView::get_num_selected_entities() const {
     return 0;
   }
 
-  return scene->selectedItems().size();
+  return static_cast<int>(scene->selectedItems().size());
 }
 
 /**

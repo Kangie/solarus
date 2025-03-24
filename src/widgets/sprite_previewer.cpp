@@ -172,7 +172,8 @@ void SpritePreviewer::update_buttons() {
   bool active = timer.isActive();
   bool first_enabled = start_enabled && !active && current_frame > 0;
   bool last_enabled =
-      start_enabled && !active && current_frame < frames.size() - 1;
+      start_enabled && !active &&
+      current_frame < static_cast<int>(frames.size()) - 1;
 
   ui.start_button->setEnabled(start_enabled);
   ui.stop_button->setEnabled(start_enabled && active);
@@ -208,7 +209,7 @@ void SpritePreviewer::update_frames() {
 void SpritePreviewer::update_frame() {
 
   QPixmap pixmap;
-  int nb_frames = frames.size();
+  const int nb_frames = static_cast<int>(frames.size());
 
   if (current_frame < nb_frames) {
     pixmap = frames[current_frame];
@@ -224,7 +225,7 @@ void SpritePreviewer::update_frame() {
  */
 void SpritePreviewer::update_origin() {
 
-  bool show_origin = ui.origin_check_box->isChecked() && frames.size() > 0;
+  const bool show_origin = ui.origin_check_box->isChecked() && static_cast<int>(frames.size()) > 0;
 
   origin_h->setVisible(show_origin);
   origin_v->setVisible(show_origin);
@@ -247,7 +248,7 @@ void SpritePreviewer::timeout() {
 
   int next_frame = current_frame + 1;
 
-  if (next_frame >= frames.size()) {
+  if (next_frame >= static_cast<int>(frames.size())) {
     int loop_on_frame = model->get_animation_loop_on_frame(index);
     if (loop_on_frame >= 0) {
       next_frame = loop_on_frame;
@@ -321,7 +322,7 @@ void SpritePreviewer::previous() {
  */
 void SpritePreviewer::last() {
 
-  int nb_frames = frames.size();
+  const int nb_frames = static_cast<int>(frames.size());
   current_frame = nb_frames > 0 ? nb_frames - 1 : 0;
   update_frame();
   update_buttons();
@@ -332,7 +333,7 @@ void SpritePreviewer::last() {
  */
 void SpritePreviewer::next() {
 
-  if (current_frame + 1 >= frames.size()) {
+  if (current_frame + 1 >= static_cast<int>(frames.size())) {
     return;
   }
 

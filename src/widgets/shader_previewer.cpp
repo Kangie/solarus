@@ -518,8 +518,8 @@ void ShaderPreviewer::render_quad(QOpenGLShaderProgram& shader,  const Textures&
 
   for (size_t i = 0; i < textures.size(); ++i) {
     int tex_loc = shader.uniformLocation(textures[i].first);
-    gl->glUniform1i(tex_loc,i);
-    gl->glActiveTexture(GL_TEXTURE0 + i);
+    gl->glUniform1i(tex_loc, static_cast<GLint>(i));
+    gl->glActiveTexture(GL_TEXTURE0 + static_cast<GLint>(i));
     gl->glBindTexture(GL_TEXTURE_2D, textures[i].second);
     gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     gl->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -673,7 +673,7 @@ void ShaderPreviewer::initializeGL() {
                  Solarus::Rectangle(0, 1, 1, -1),
                  Solarus::Color::white);
   vertex_buffer->bind();
-  vertex_buffer->allocate(array.data(), array.vertex_count() * sizeof(Solarus::Vertex));
+  vertex_buffer->allocate(array.data(), static_cast<int>(array.vertex_count() * sizeof(Solarus::Vertex)));
   vertex_buffer->release();
   // Create empty vao for core profiles
   vao = new QOpenGLVertexArrayObject();
