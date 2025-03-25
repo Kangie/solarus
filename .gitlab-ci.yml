@@ -284,6 +284,8 @@ mingw-x64-package:
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
+    EXTRAS: >-
+      staging/share/solarus/gamecontrollerdb.txt
     TEXT_FILES: >-
       changelog.md
       license
@@ -303,6 +305,8 @@ mingw-x86-package:
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
+    EXTRAS: >-
+      staging/share/solarus/gamecontrollerdb.txt
     TEXT_FILES: >-
       changelog.md
       license
