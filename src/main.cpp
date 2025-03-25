@@ -51,7 +51,7 @@ void setup_application_information() {
   QApplication::setApplicationDisplayName("Solarus Editor");
   QApplication::setApplicationVersion(SOLARUSEDITOR_VERSION);
   QApplication::setOrganizationName("Solarus Labs");
-  QApplication::setOrganizationDomain("org.solarus-games");
+  QApplication::setOrganizationDomain("solarus-games.org");
   // Set desktop filename so that the QtWayland backend will report the correct AppID
   // based on this and make the launcher icon and startup notification work.
   QGuiApplication::setDesktopFileName(SOLARUSEDITOR_APP_ID ".desktop");
