@@ -17,6 +17,7 @@
 #include "solarus/audio/Sound.h"
 #include "solarus/core/FontResource.h"
 #include "solarus/core/InputEvent.h"
+#include "solarus/core/Logger.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/core/Random.h"
 #include "solarus/core/System.h"
@@ -24,6 +25,7 @@
 #include "solarus/graphics/Sprite.h"
 #include "solarus/graphics/Video.h"
 #include <chrono>
+#include <filesystem>
 #if _POSIX_C_SOURCE >= 200112L
 #  include <stdlib.h>
 #  include <string.h>
@@ -64,6 +66,36 @@ void System::initialize(const Arguments& args, ResourceProvider& resource_provid
   setenv("SDL_VIDEO_X11_WMCLASS", SOLARUS_APP_ID ".Runner", 1);
   setenv("SDL_VIDEO_WAYLAND_WMCLASS", SOLARUS_APP_ID ".Runner", 1);
 #endif
+
+  // configure a game controller database file if it exists
+  const auto gcdb_filename = "gamecontrollerdb.txt";
+  std::string gcdb_full_path;
+
+  // try the application base path first
+  if (gcdb_full_path.empty()) {
+    const auto base_path = SDL_GetBasePath();
+    if (base_path != nullptr) {
+      const auto full_path = std::string(base_path) + gcdb_filename;
+      if (std::filesystem::exists(full_path)) {
+        gcdb_full_path = full_path;
+      }
+    }
+  }
+
+#ifdef SOLARUS_DATADIR_PATH
+  // if still not found, try the installed data directory path
+  if (gcdb_full_path.empty()) {
+    const auto full_path = std::string(SOLARUS_DATADIR_PATH) + "/" + gcdb_filename;
+    if (std::filesystem::exists(full_path)) {
+      gcdb_full_path = full_path;
+    }
+  }
+#endif
+
+  if (!gcdb_full_path.empty()) {
+    Logger::info("Using game controller database file: " + gcdb_full_path);
+    SDL_SetHint(SDL_HINT_GAMECONTROLLERCONFIG_FILE, gcdb_full_path.c_str());
+  }
 
   // initialize SDL
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);

@@ -40,3 +40,5 @@ endif()
 if(SOLARUS_PROFILING)
   add_definitions(-DSOLARUS_PROFILING)
 endif()
+
+add_definitions(-DSOLARUS_DATADIR_PATH="${CMAKE_INSTALL_PREFIX}/${SOLARUS_INSTALL_DATADIR}")

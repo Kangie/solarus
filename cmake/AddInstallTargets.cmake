@@ -13,3 +13,8 @@ install(DIRECTORY
   "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus"
   DESTINATION ${SOLARUS_HEADERS_INSTALL_DESTINATION}
 )
+
+# Install the data directory for the library.
+install(DIRECTORY
+  DESTINATION ${SOLARUS_INSTALL_DATADIR}
+)
