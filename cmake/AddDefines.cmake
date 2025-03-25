@@ -1,8 +1,27 @@
 # AppID to report to the window system on Linux/Wayland.
 # From a user PoV this also determines were the corresponding XDG metadata is installed in the system.
 # Also used as the macOS bundle identifier.
-set(SOLARUSEDITOR_APP_ID "org.solarus-games.solarus-editor" CACHE STRING "Unique app identifier for XDG metadata on Linux/BSD and macOS")
+set(SOLARUSEDITOR_APP_ID "org.solarus-games.solarus-editor")
 add_definitions(-DSOLARUSEDITOR_APP_ID=\"${SOLARUSEDITOR_APP_ID}\")
+
+# Application display name.
+set(SOLARUSEDITOR_APP_DISPLAY_NAME "Solarus Editor")
+add_definitions(-DSOLARUSEDITOR_APP_DISPLAY_NAME=\"${SOLARUSEDITOR_APP_DISPLAY_NAME}\")
+
+# Executable name.
+set(SOLARUSEDITOR_EXECUTABLE_NAME "solarus-quest-editor")
+add_definitions(-DSOLARUSEDITOR_EXECUTABLE_NAME=\"${SOLARUSEDITOR_EXECUTABLE_NAME}\")
+
+# More metadata use on multiple platforms.
+string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
+set(SOLARUSEDITOR_ORGANISATION "Solarus Labs")
+add_definitions(-DSOLARUSEDITOR_ORGANISATION=\"${SOLARUSEDITOR_ORGANISATION}\")
+
+set(SOLARUSEDITOR_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} ${SOLARUSEDITOR_ORGANISATION}.")
+add_definitions(-DSOLARUSEDITOR_COPYRIGHT=\"${SOLARUSEDITOR_COPYRIGHT}\")
+
+set(SOLARUSEDITOR_WEBSITE "https://www.solarus-games.org")
+add_definitions(-DSOLARUSEDITOR_WEBSITE=\"${SOLARUSEDITOR_WEBSITE}\")
 
 # Add defines for the install path and the build path to help guess the assets
 # location at runtime.
