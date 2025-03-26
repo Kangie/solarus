@@ -2,7 +2,6 @@
 
 # UI files.
 set(solarus_quest_editor_FORMS
-  src/widgets/about_dialog.ui
   src/widgets/change_border_set_id_dialog.ui
   src/widgets/change_dialog_id_dialog.ui
   src/widgets/change_file_info_dialog.ui

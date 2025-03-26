@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "entities/entity_traits.h"
-#include "widgets/about_dialog.h"
 #include "widgets/change_resource_id_dialog.h"
 #include "widgets/editor.h"
 #include "widgets/enum_menus.h"
@@ -47,6 +46,8 @@
 #include <QMessageBox>
 #include <QToolButton>
 #include <QUndoGroup>
+
+#include <oclero/qlementine/widgets/AboutDialog.hpp>
 
 namespace SolarusEditor {
 
@@ -1340,8 +1341,27 @@ void MainWindow::on_action_website_triggered() {
  */
 void MainWindow::on_action_about_triggered() {
 
-  SolarusEditor::AboutDialog dialog(this);
-  dialog.exec();
+  auto* dialog = new oclero::qlementine::AboutDialog(qApp->activeWindow());
+  dialog->setWindowTitle(QApplication::translate("SolarusEditor::AboutDialog",
+     "About %0").arg(QApplication::applicationDisplayName()));
+  dialog->setWebsiteUrl(SOLARUSEDITOR_WEBSITE);
+  dialog->setDescription(QApplication::translate("SolarusEditor::AboutDialog",
+     "Integrated development environment for Solarus, a free and open-source ARPG 2D game engine."));
+  dialog->setLicense("GPL-3.0 and CC-BY-SA-4.0");
+  dialog->setCopyright(QString("%1 %2").arg(SOLARUSEDITOR_COPYRIGHT, tr("All rights reserved.")));
+
+  EditorStyle::setAutoIconColor(dialog, EditorStyle::AutoIconColor::ForegroundColor);
+
+  for (const auto& [tooltip, url, icon] : {
+         std::make_tuple("X", "https://twitter.com/solarusgames", ":/images/icon_x.svg"),
+         std::make_tuple("Mastodon", "https://mastodon.gamedev.place/@solarus", ":/images/icon_mastodon.svg"),
+         std::make_tuple("YouTube", "https://www.youtube.com/c/ChristophoZS", ":/images/icon_youtube.svg"),
+         std::make_tuple("GitLab", "https://gitlab.com/solarus-games", ":/images/icon_gitlab.svg"),
+       }) {
+    QIcon q_icon(icon);
+    dialog->addSocialMediaLink(tooltip, url, q_icon);
+  }
+  dialog->show();
 }
 
 /**
