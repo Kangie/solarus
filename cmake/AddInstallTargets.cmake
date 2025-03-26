@@ -13,3 +13,14 @@ install(DIRECTORY
   "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus"
   DESTINATION ${SOLARUS_HEADERS_INSTALL_DESTINATION}
 )
+
+# Install the data directory for the library.
+install(DIRECTORY
+  DESTINATION ${SOLARUS_INSTALL_DATADIR}
+)
+
+# Install the SDL game controller database into the data directory.
+install(FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt"
+  DESTINATION ${SOLARUS_INSTALL_DATADIR}
+)
