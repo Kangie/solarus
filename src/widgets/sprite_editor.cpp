@@ -20,6 +20,7 @@
 #include "widgets/sprite_editor.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "point.h"
 #include "quest.h"
 #include "quest_database.h"
@@ -752,7 +753,7 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   // Editor properties.
   set_title(tr("Sprite %1").arg(get_file_name_without_extension()));
-  set_icon(QIcon(":/images/icon_resource_sprite.png"));
+  set_icon(QIcon(":/images/icon_resource_sprite.svg"));
   set_close_confirm_message(
         tr("Sprite '%1' has been modified. Save changes?").arg(sprite_id));
   set_zoom_supported(true);
@@ -908,6 +909,20 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
           this, &SpriteEditor::update_selection);
+
+  // Qlementine-related stuff.
+  for (auto* widget : std::vector<QWidget*>{
+           ui.delete_button,
+           ui.duplicate_button,
+           ui.rename_button,
+           ui.create_button,
+           ui.down_button,
+           ui.up_button,
+           ui.src_image_button,
+           ui.src_image_refresh_button,
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 }
 
 /**

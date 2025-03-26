@@ -46,9 +46,8 @@ namespace {
  */
 void setup_application_information() {
 
-  // Keep this one to preserve user settings before the renaming (2.0).
-  QApplication::setApplicationName("solarus-quest-editor");
-  QApplication::setApplicationDisplayName("Solarus Editor");
+  QApplication::setApplicationName(SOLARUSEDITOR_EXECUTABLE_NAME);
+  QApplication::setApplicationDisplayName(SOLARUSEDITOR_APP_DISPLAY_NAME);
   QApplication::setApplicationVersion(SOLARUSEDITOR_VERSION);
   QApplication::setOrganizationName("Solarus Labs");
   QApplication::setOrganizationDomain("solarus-games.org");

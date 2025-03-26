@@ -189,21 +189,21 @@ QVariant DialogsModel::data(const QModelIndex& model_index, int role) const {
       case Qt::DecorationRole:
         if (dialog_exists(id)) {
           if (has_missing_translation(id)) {
-            return QIcon(":/images/icon_dialogs_missing.png");
+            return QIcon(":/images/icon_dialogs_missing.svg");
           } else if (dialog_tree.get_row_count(id) == 0) {
-            return QIcon(":/images/icon_dialog.png");
+            return QIcon(":/images/icon_dialog.svg");
           }
-          return QIcon(":/images/icon_dialogs.png");
+          return QIcon(":/images/icon_dialogs.svg");
         }
         else if (has_missing_translation(id)) {
           if (dialog_tree.get_row_count(id) == 0) {
-            return QIcon(":/images/icon_dialog_missing.png");
+            return QIcon(":/images/icon_dialog_missing.svg");
           } if (translated_dialog_exists(id)) {
-            return QIcon(":/images/icon_dialogs_missing.png");
+            return QIcon(":/images/icon_dialogs_missing.svg");
           }
-          return QIcon(":/images/icon_folder_open_missing.png");
+          return QIcon(":/images/icon_folder_open_missing.svg");
         }
-        return QIcon(":/images/icon_folder_open.png");
+        return QIcon(":/images/icon_folder_open.svg");
     }
   }
 

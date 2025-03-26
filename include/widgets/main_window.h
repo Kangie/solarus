@@ -124,6 +124,7 @@ private slots:
 protected:
 
   void closeEvent(QCloseEvent* event) override;
+  bool eventFilter(QObject* target, QEvent* evt) override;
 
 private:
 

@@ -25,8 +25,6 @@
 #include <QFile>
 #include <QUuid>
 
-#include <iostream>
-
 namespace SolarusEditor {
 
 namespace NewQuestBuilder {
@@ -70,27 +68,21 @@ static void create_blank_quest(const QString& quest_path) {
 
 /**
  * @brief Creates initial files of a new quest.
- * @param mode How to create the initial files.
- * @param quest_path Root path of the new quest.
- * The data directory will be created there.
- * @param quest_name Name of the new quest.
+ * @param config The configuration.
  * @throws EditorException If the files creation failed.
  */
-void create_initial_quest_files(
-    NewQuestMode mode,
-    const QString& quest_path,
-    const QString& quest_name) {
+void create_initial_quest_files(const NewQuestConfig& config) {
 
   // Create the quest directory if required.
-  QDir quest_dir(quest_path);
+  QDir quest_dir(config.quest_path);
   if (!quest_dir.exists()) {
-    FileTools::create_directories(quest_path);
+    FileTools::create_directories(config.quest_path);
   }
 
   // Create the data directory, quest properties and quest database.
-  switch (mode) {
+  switch (config.mode) {
   case BLANK_QUEST:
-    create_blank_quest(quest_path);
+    create_blank_quest(config.quest_path);
     break;
   case COPY_INITIAL_QUEST:
     {
@@ -99,13 +91,13 @@ void create_initial_quest_files(
       if (assets_path.isEmpty()) {
         throw EditorException(QApplication::tr("Could not find the assets directory.\nMake sure that Solarus Quest Editor is properly installed."));
       }
-      FileTools::copy_recursive(assets_path + "/initial_quest/data", quest_path + "/data");
+      FileTools::copy_recursive(assets_path + "/initial_quest/data", config.quest_path + "/data");
     }
     break;
   }
 
   // Make sure all resource directories exist.
-  Quest quest(quest_path);
+  Quest quest(config.quest_path);
   for (ResourceType resource_type : Solarus::EnumInfo<ResourceType>::enums()) {
     quest.create_dir_if_not_exists(quest.get_resource_path(resource_type));
   }
@@ -115,7 +107,7 @@ void create_initial_quest_files(
   QString uid_string = QUuid::createUuid().toString();
   uid_string = uid_string.mid(1, uid_string.size() - 2);
   properties.set_write_dir(uid_string);
-  properties.set_title(quest_name);
+  properties.set_title(config.quest_name);
   properties.save();
 }
 

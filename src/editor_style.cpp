@@ -5,6 +5,8 @@
 #include <QStyleHints>
 #include <QStyleOptionComboBox>
 #include <QWidget>
+#include <QLineEdit>
+#include <QPlainTextEdit>
 
 namespace SolarusEditor {
 
@@ -16,30 +18,34 @@ const std::map<Mode, ModeInfo> mode_info = {
         {
             Mode::LIGHT,
             ":/themes/light.json",
-            Qt::darkRed,                      // Lua keyword.
-            Qt::blue,                         // Literal string.
-            Qt::darkGreen,                    // Comment.
-            QColor(Qt::yellow).lighter(160),  // Current line.
-            QColor("#909090"),                // Debug log text.
-            QColor("#0000ff"),                // Info log text.
-            QColor("#b05000"),                // Warning log text.
-            Qt::red,                          // Error log text.
-        }
+            QColor(0xCB6C7E),     // Lua keyword.
+            QColor(0xFF9200),     // Literal string.
+            QColor(0x9486FF),     // Comment.
+            QColor(0xEEEDFA),     // Current line.
+            QColor(0x66608F),     // Debug log text.
+            QColor(0x4275F6),     // Info log text.
+            QColor(0xFF9749),     // Warning log text.
+            QColor(0xEE4D6E),     // Error log text.
+            QColor(0xFFE1B6),     // Lua console background when invalid.
+            QColor(0xFFBFC2),     // Lua console background when error.
+        },
     },
     {
         Mode::DARK,
         {
             Mode::DARK,
             ":/themes/dark.json",
-            QColor(255, 128, 128),  // Lua keyword.
-            Qt::cyan,               // Literal string.
-            QColor(128, 255, 128),  // Comment.
-            QColor(64, 64, 0),      // Current line.
-            QColor("#909090"),      // Debug log text.
-            QColor("#4ab9e9"),      // Info log text.
-            QColor("#ffcd1e"),      // Warning log text.
-            QColor("#ef5151"),      // Error log text.
-        }
+            QColor(0xff9197),     // Lua keyword.
+            QColor(0xfbc064),     // Literal string.
+            QColor(0xABA3E8),     // Comment.
+            QColor(0x2E3149),     // Current line.
+            QColor(0xd3d2d7),     // Debug log text.
+            QColor(0x6c89ff),     // Info log text.
+            QColor(0xfbc064),     // Warning log text.
+            QColor(0xe96b72),     // Error log text.
+            QColor(0x332C2A),     // Lua console background when invalid.
+            QColor(0x3E2731),     // Lua console background when error.
+        },
     },
 };
 
@@ -51,6 +57,8 @@ const std::map<Mode, ModeInfo> mode_info = {
  */
 EditorStyle::EditorStyle(QObject *parent):
   QlementineStyle(parent) {
+  // Do not color icons, except for the widgets it is explicitely set to do so.
+  setAutoIconColor(AutoIconColor::None);
 
   connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,
           this, &EditorStyle::osThemeChanged);
@@ -64,6 +72,23 @@ EditorStyle::EditorStyle(QObject *parent):
     mode = Mode::DARK;
   }
   set_mode(mode);
+
+  // Allows to customize the icons in the QLineEdit/QPlainTextEdit context menu.
+  setIconPathGetter([](const QString& freeDesktopName){
+    static const std::map<QString, QString> mapping{
+      {"edit-undo",":/images/icon_undo.svg"},
+      {"edit-redo",":/images/icon_redo.svg"},
+      {"edit-cut",":/images/icon_cut.svg"},
+      {"edit-copy",":/images/icon_copy.svg"},
+      {"edit-paste",":/images/icon_paste.svg"},
+      {"edit-delete",":/images/icon_delete.svg"},
+      {"edit-select-all",":/images/icon_select_all.svg"},
+      {"go-up",":/images/icon_go_up.svg"},
+      {"go-down",":/images/icon_go_down.svg"},
+    };
+    const auto it = mapping.find(freeDesktopName);
+    return it != mapping.end() ? it->second : "";
+  });
 }
 
 /**
@@ -123,6 +148,24 @@ void EditorStyle::osThemeChanged() {
   set_mode(mode);
 }
 
+void EditorStyle::polish(QWidget* w) {
+  QlementineStyle::polish(w);
+
+  // Tweak the icon colors in the text widget's menus.
+  if (auto* line_edit = qobject_cast<QLineEdit*>(w)) {
+    QlementineStyle::setAutoIconColor(line_edit, AutoIconColor::TextColor);
+  }
+  if (auto* plain_text_edit = qobject_cast<QPlainTextEdit*>(w)) {
+    QlementineStyle::setAutoIconColor(plain_text_edit, AutoIconColor::TextColor);
+  }
+}
+
+
+/**
+ * @brief Allows to get the Status property undirectly set on a widget.
+ * @param widget The widget to get the set Status.
+ * @return The widget's Status.
+ */
 EditorStyle::Status EditorStyle::widgetStatus(QWidget const* widget) const {
 
   if (widget == nullptr) {
@@ -132,13 +175,19 @@ EditorStyle::Status EditorStyle::widgetStatus(QWidget const* widget) const {
   return status.isValid() ? status.value<Status>() : Status::Default;
 }
 
+/**
+ * @brief Allows to get the background color property undirectly set on a text field.
+ * @param mouse The state of the widget.
+ * @param status The status of the widget.
+ * @return The text field background color.
+ */
 QColor const& EditorStyle::textFieldBackgroundColor(MouseState const mouse, Status const status) const {
 
   switch (status) {
   case Status::Error:
-    return theme().statusColorError;
+    return get_mode_info().console_background_error_color;
   case Status::Warning:
-    return get_mode_info().current_line_background_color;
+    return get_mode_info().console_background_invalid_color;
   case Status::Success:
   case Status::Info:
   case Status::Default:

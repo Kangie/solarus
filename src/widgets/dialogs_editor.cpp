@@ -20,6 +20,7 @@
 #include "editor_exception.h"
 #include "quest.h"
 #include "dialogs_model.h"
+#include "editor_style.h"
 #include <QUndoStack>
 #include <QMessageBox>
 #include <QInputDialog>
@@ -462,7 +463,7 @@ DialogsEditor::DialogsEditor(
 
   // Editor properties.
   set_title(tr("Dialogs %1").arg(language_id));
-  set_icon(QIcon(":/images/icon_dialogs.png"));
+  set_icon(QIcon(":/images/icon_dialogs.svg"));
   set_close_confirm_message(
         tr("Dialogs '%1' have been modified. Save changes?").arg(language_id));
 
@@ -551,6 +552,20 @@ DialogsEditor::DialogsEditor(
           this, &DialogsEditor::translation_selector_activated);
   connect(ui.translation_refresh_button, &QAbstractButton::clicked,
           this, &DialogsEditor::translation_refresh_requested);
+
+  // Qlementine-related stuff.
+  for (auto* widget : std::vector<QWidget*>{
+          ui.create_button,
+          ui.delete_button,
+          ui.set_id_button,
+          ui.duplicate_button,
+          ui.translation_refresh_button,
+          ui.set_property_key_button,
+          ui.delete_property_button,
+          ui.create_property_button,
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 }
 
 /**

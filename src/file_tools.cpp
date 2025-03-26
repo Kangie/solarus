@@ -281,7 +281,7 @@ bool replace_in_file(
 QString to_file_name(const QString& name) {
   // Characters that could cause problems in Linux, Mac and Windows.
   static const QString forbidden_characters =
-      QStringLiteral("()<>\\/\"\'|&:;.?");
+      QStringLiteral("()<>\\/\"\'|&:;.?*");
   QString path = name;
   for (QChar & ch : path) {
     ch = forbidden_characters.contains(ch) ? QChar(' ') : ch.toLower();
@@ -289,6 +289,95 @@ QString to_file_name(const QString& name) {
   path = path.simplified();
   path = path.replace(QChar(' '), QChar('-'));
   return path;
+}
+
+/**
+ * @brief Checks if the path is a valid Windows path.
+ * @param path The path to check.
+ * @return True if the path is a valid one for Windows.
+ */
+bool is_valid_windows_path(const QString &path) {
+  // List of invalid characters in Windows paths
+  static const QRegularExpression invalid_chars_regex(R"([<>:"/\\|?*\x00-\x1F])");
+
+  // Also check for reserved names (CON, PRN, AUX, NUL, COM1-9, LPT1-9, etc.)
+  static const QRegularExpression reserved_names(
+      R"((^|\\)(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..*)?($|\\))",
+      QRegularExpression::CaseInsensitiveOption);
+
+  return !path.contains(invalid_chars_regex) && !reserved_names.match(path).hasMatch();
+}
+
+/**
+ * @brief Checks if the path is a valid Unix path.
+ * @param path The path to check.
+ * @return True if the path is a valid one for Unix.
+ */
+bool is_valid_unix_path(const QString &path) {
+  static const QRegularExpression discouraged_chars(R"([\s*?\[\]$`"'|&;><!])");
+  return !path.contains(discouraged_chars);
+}
+
+bool is_path_valid(const QString& path) {
+#ifdef Q_OS_WIN
+  if (!isPathValidWindows(path))
+    return false;
+#else
+  if (!is_valid_unix_path(path))
+    return false;
+#endif
+
+  // Check for empty path
+  if (path.isEmpty())
+    return false;
+
+  // Check for relative path markers
+  if (path.contains("/./") || path.contains("/../"))
+    return false;
+
+  // Check for trailing spaces or periods (invalid on Windows)
+  if (path.endsWith(' ') || path.endsWith('.'))
+    return false;
+
+  return true;
+}
+
+NewQuestPathError check_new_quest_path(const QString& path) {
+
+  if (path.isEmpty()) {
+    return NewQuestPathError::EmptyPath;
+  }
+
+  QFileInfo file_info(path);
+  if (!file_info.isAbsolute()) {
+    return NewQuestPathError::PathNotAbsolute;
+  }
+
+  if (!FileTools::is_path_valid(path)) {
+    return NewQuestPathError::InvalidCharacters;
+  }
+
+  if (file_info.exists(path)) {
+    if (file_info.isFile()) {
+      return NewQuestPathError::PathIsAfile;
+    }
+    else {
+      QDir dir = QDir(path);
+      if (dir.cd("data")) {
+        if (dir.exists("quest.dat")) {
+          return NewQuestPathError::AlreadyAQuest;
+        }
+      }
+    }
+  }
+  else {
+    QDir dir = QDir(path);
+    if (!dir.cdUp()) {
+      return NewQuestPathError::ParentDirDoesNotExist;
+    }
+  }
+
+  return NewQuestPathError::NoError;
 }
 
 }  // namespace FileTools

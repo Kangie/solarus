@@ -46,6 +46,24 @@ QString get_assets_path();
 
 QString to_file_name(const QString& name);
 
+bool is_path_valid(const QString& path);
+
+/**
+ * @brief Possible errors when checking the path
+ * where the new quest folder will be created.
+ */
+enum class NewQuestPathError {
+  NoError,                /**< The path is a valid one for a new quest. */
+  ParentDirDoesNotExist,  /**< The path does not exist. */
+  PathIsAfile,            /**< The path exist but is a file, not a directory. */
+  AlreadyAQuest,          /**< A quest already exists in this path. */
+  PathNotAbsolute,        /**< The path is not absolute. */
+  EmptyPath,              /**< The path is empty. */
+  InvalidCharacters,      /**< The path contains invalid characters. */
+};
+
+NewQuestPathError check_new_quest_path(const QString& path);
+
 }
 
 }

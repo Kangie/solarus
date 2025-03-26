@@ -21,6 +21,7 @@
 #include "widgets/quest_tree_view.h"
 #include "audio.h"
 #include "editor_exception.h"
+#include "editor_style.h"
 #include "quest.h"
 #include "quest_files_model.h"
 #include <QContextMenuEvent>
@@ -33,6 +34,7 @@
 #include <QMessageBox>
 #include <QUrl>
 #include <QTimer>
+#include <QHeaderView>
 
 namespace SolarusEditor {
 
@@ -69,7 +71,7 @@ QuestTreeView::QuestTreeView(QWidget* parent) :
   addAction(open_action);
 
   rename_action = new QAction(
-        QIcon(":/images/icon_rename.png"), tr("Rename..."), this);
+        QIcon(":/images/icon_rename.svg"), tr("Rename..."), this);
   rename_action->setShortcut(tr("F2"));
   rename_action->setShortcutContext(Qt::WidgetShortcut);
   connect(rename_action, &QAction::triggered,
@@ -77,19 +79,25 @@ QuestTreeView::QuestTreeView(QWidget* parent) :
   addAction(rename_action);
 
   delete_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
+        QIcon(":/images/icon_delete.svg"), tr("Delete..."), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
   connect(delete_action, &QAction::triggered,
           this, &QuestTreeView::delete_action_triggered);
   addAction(delete_action);
 
-  change_file_info_action = new QAction(tr("Author and license..."), this);
+  change_file_info_action = new QAction(
+      QIcon(":/images/icon_author.svg"),tr("Author and license..."), this);
   change_file_info_action->setShortcut(tr("F6"));
   change_file_info_action->setShortcutContext(Qt::WidgetShortcut);
   connect(change_file_info_action, &QAction::triggered,
           this, &QuestTreeView::change_file_info_action_triggered);
   addAction(change_file_info_action);
+
+  header()->setSortIndicatorClearable(true);
+
+  // Tell Qlementine to not draw external borders.
+  setFrameShadow(QFrame::Shadow::Plain);
 }
 
 /**
@@ -332,6 +340,7 @@ void QuestTreeView::contextMenuEvent(QContextMenuEvent* event) {
     return;
   }
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
 
   build_context_menu_play(*menu, paths);
   build_context_menu_open(*menu, paths);
@@ -398,7 +407,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
     QString resource_type_lua_name = database.get_lua_name(resource_type);
 
     new_resource_element_action = new QAction(
-          QIcon(":/images/icon_resource_" + resource_type_lua_name + ".png"),
+          QIcon(":/images/symbolic_icon_resource_" + resource_type_lua_name + ".svg"),
           tr("Add to quest as %1...").arg(resource_type_friendly_name),
           this);
   }
@@ -410,7 +419,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
     QString resource_type_lua_name = database.get_lua_name(resource_type);
 
     new_resource_element_action = new QAction(
-          QIcon(":/images/icon_resource_" + resource_type_lua_name + ".png"),
+          QIcon(":/images/symbolic_icon_resource_" + resource_type_lua_name + ".svg"),
           resource_type_create_friendly_name,
           this);
   } else if (quest.is_image(path)) {
@@ -422,7 +431,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
         resource_type == ResourceType::SPRITE &&
         !quest.exists(sprite_path)) {
       new_resource_element_action = new QAction(
-            QIcon(":/images/icon_resource_sprite.png"),
+            QIcon(":/images/symbolic_icon_resource_sprite.svg"),
             tr("New sprite from image..."),
             this);
     }
@@ -436,7 +445,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
 
     if (is_dir && resource_type == ResourceType::SHADER) {
       QAction* action = new QAction(
-            QIcon(":/images/icon_shader_code.png"),
+            QIcon(":/images/symbolic_icon_shader_code.svg"),
             tr("New GLSL file..."),
             this);
       connect(action, &QAction::triggered,
@@ -451,7 +460,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
     // Any directory.
 
     QAction* action = new QAction(
-          QIcon(":/images/icon_folder_closed.png"),
+          QIcon(":/images/icon_add_folder.svg"),
           tr("New folder..."),
           this);
     connect(action, &QAction::triggered,
@@ -459,7 +468,7 @@ void QuestTreeView::build_context_menu_new(QMenu& menu, const QStringList& paths
     menu.addAction(action);
 
     action = new QAction(
-          QIcon(":/images/icon_script.png"),
+          QIcon(":/images/symbolic_icon_script.svg"),
           tr("New script..."),
           this);
     connect(action, &QAction::triggered,
@@ -492,11 +501,11 @@ void QuestTreeView::build_context_menu_play(QMenu& menu, const QStringList& path
     case ResourceType::MUSIC:
       play_action->setEnabled(quest.exists(path));
       if (Audio::is_playing_music(quest, element_id)) {
-        play_action->setIcon(QIcon(":/images/icon_stop.png"));
+        play_action->setIcon(QIcon(":/images/icon_stop.svg"));
         play_action->setText(tr("Stop"));
       }
       else {
-        play_action->setIcon(QIcon(":/images/icon_start.png"));
+        play_action->setIcon(QIcon(":/images/icon_start.svg"));
         play_action->setText(tr("Play"));
       }
       menu.addAction(play_action);
@@ -504,7 +513,7 @@ void QuestTreeView::build_context_menu_play(QMenu& menu, const QStringList& path
 
     case ResourceType::SOUND:
       play_action->setEnabled(quest.exists(path));
-      play_action->setIcon(QIcon(":/images/icon_start.png"));
+      play_action->setIcon(QIcon(":/images/icon_start.svg"));
       play_action->setText(tr("Play"));
       menu.addAction(play_action);
 
@@ -548,7 +557,7 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QStringList& path
 
     QString resource_type_lua_name = database.get_lua_name(resource_type);
     open_action->setIcon(
-          QIcon(":/images/icon_resource_" + resource_type_lua_name + ".png"));
+          QIcon(":/images/symbolic_icon_resource_" + resource_type_lua_name + ".svg"));
 
     switch (resource_type) {
 
@@ -558,7 +567,7 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QStringList& path
       menu.addAction(open_action);
 
       action = new QAction(
-            QIcon(":/images/icon_script_map.png"),
+            QIcon(":/images/symbolic_icon_script.svg"),
             tr("Open Script"),
             this
       );
@@ -571,17 +580,19 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QStringList& path
 
       // For a language, the user can open dialogs or strings.
       open_action->setText(tr("Open Dialogs"));
-      open_action->setIcon(QIcon(":/images/icon_dialogs.png"));
+      open_action->setIcon(QIcon(":/images/symbolic_icon_dialogs.svg"));
       menu.addAction(open_action);
 
       action = new QAction(
-            QIcon(":/images/icon_dialogs.png"),
+            QIcon(":/images/symbolic_icon_strings.svg"),
             tr("Open Strings"),
             this
       );
       connect(action, SIGNAL(triggered()),
               this, SLOT(open_language_strings_action_triggered()));
       menu.addAction(action);
+
+      menu.addSeparator();
       break;
 
     case ResourceType::TILESET:
@@ -604,27 +615,29 @@ void QuestTreeView::build_context_menu_open(QMenu& menu, const QStringList& path
   }
   else if (quest.is_image(path)) {
     // Open a PNG file.
-    open_action->setIcon(QIcon(":/images/icon_image.png"));
+    open_action->setIcon(QIcon(":/images/symbolic_icon_image.svg"));
     menu.addAction(open_action);
   }
   else if (quest.is_script(path)) {
     // Open a Lua script that is not a resource.
-    open_action->setIcon(QIcon(":/images/icon_script.png"));
+    open_action->setIcon(QIcon(":/images/symbolic_icon_script.svg"));
     menu.addAction(open_action);
   }
   else if (quest.is_shader_code_file(path)) {
     // Open a GLSL file.
-    open_action->setIcon(QIcon(":/images/icon_shader_code.png"));
+    open_action->setIcon(QIcon(":/images/symbolic_icon_shader_code.svg"));
     menu.addAction(open_action);
   }
   else if (quest.is_data_path(path)) {
     // Open quest properties file.
     open_action->setText(tr("Open Properties"));
+    open_action->setIcon(QIcon(":/images/icon_tool.svg"));
     menu.addAction(open_action);
   }
 
   if (quest.is_dir(path)) {
     QAction* explore_action = new QAction(
+          QIcon(":/images/icon_external_link.svg"),
           tr("Explore folder"),
           this
     );
@@ -674,7 +687,9 @@ void QuestTreeView::build_context_menu_rename(QMenu& menu, const QStringList& pa
 
     if (quest.is_resource_element(path, resource_type, element_id)) {
       // Resource element: additionally, allow to change the description.
-      QAction* action = new QAction(tr("Change description..."), this);
+      QAction* action = new QAction(
+          QIcon(":/images/icon_edit.svg"),
+          tr("Change description..."), this);
       connect(action, &QAction::triggered,
               this, &QuestTreeView::change_description_action_triggered);
       menu.addAction(action);

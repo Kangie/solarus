@@ -12,37 +12,56 @@ Images used in the editor are licensed under
 
 We give below the author or each image used in the editor.
 
-- Icons by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/):
+- Icons from [Qlementine Icons](https://github.com/oclero/qlemetine-icons):
+  - resources/images/icon_cut.svg
+  - resources/images/icon_copy.svg
+  - resources/images/icon_add.svg
+  - resources/images/icon_camera.svg
+  - resources/images/icon_cross.svg
+  - resources/images/icon_cross_small.svg
+  - resources/images/icon_delete.svg
+  - resources/images/icon_edit.svg
+  - resources/images/icon_first.svg
+  - resources/images/icon_glasses.svg
+  - resources/images/icon_inside.svg
+  - resources/images/icon_last.svg
+  - resources/images/icon_next.svg
+  - resources/images/icon_open.svg
+  - resources/images/icon_outside.svg
+  - resources/images/icon_paste.svg
+  - resources/images/icon_pause.svg
+  - resources/images/icon_previous.svg
+  - resources/images/icon_redo.svg
+  - resources/images/icon_refresh.svg
+  - resources/images/icon_remove.svg
+  - resources/images/icon_rename.svg
+  - resources/images/icon_resize_all.svg
+  - resources/images/icon_resize_horizontal.svg
+  - resources/images/icon_resize_none.svg
+  - resources/images/icon_resize_vertical.svg
+  - resources/images/icon_save.svg
+  - resources/images/icon_start.svg
+  - resources/images/icon_stop.svg
+  - resources/images/icon_undo.svg
+  - resources/images/icon_web.svg
+  - resources/images/icon_doc.svg
+  - resources/images/icon_up.svg
+  - resources/images/icon_down.svg
+  - resources/images/icon_layer_0.svg
+  - resources/images/icon_layer_1.svg
+  - resources/images/icon_layer_2.svg
+  - resources/images/icon_pause_music.svg
+  - resources/images/icon_play_music.png
+  - resources/images/icon_stop_music.svg
+
+- Icons by [Olivier Cléro](https://www.olivierclero.com/):
+  - resources/images/icon_script.png
   - resources/images/entity_custom_entity.png
   - resources/images/entity_tile.png
-  - resources/images/icon_add.png
-  - resources/images/icon_camera.png
-  - resources/images/icon_copy.png
-  - resources/images/icon_cross.png
-  - resources/images/icon_cross_small.png
-  - resources/images/icon_cut.png
-  - resources/images/icon_delete.png
-  - resources/images/icon_edit.png
-  - resources/images/icon_error.png
-  - resources/images/icon_folder_closed.png
   - resources/images/icon_folder_open.png
   - resources/images/icon_folder_open_music.png
   - resources/images/icon_file.png
-  - resources/images/icon_first.png
-  - resources/images/icon_glasses.png
   - resources/images/icon_image.png
-  - resources/images/icon_inside.png
-  - resources/images/icon_last.png
-  - resources/images/icon_next.png
-  - resources/images/icon_open.png
-  - resources/images/icon_outside.png
-  - resources/images/icon_paste.png
-  - resources/images/icon_pause.png
-  - resources/images/icon_previous.png
-  - resources/images/icon_redo.png
-  - resources/images/icon_refresh.png
-  - resources/images/icon_remove.png
-  - resources/images/icon_rename.png
   - resources/images/icon_resource_enemy.png
   - resources/images/icon_resource_entity.png
   - resources/images/icon_resource_font.png
@@ -53,26 +72,11 @@ We give below the author or each image used in the editor.
   - resources/images/icon_resource_sound.png
   - resources/images/icon_resource_sprite.png
   - resources/images/icon_resource_tileset.png
-  - resources/images/icon_resize_all.png
-  - resources/images/icon_resize_horizontal.png
-  - resources/images/icon_resize_none.png
-  - resources/images/icon_resize_vertical.png
-  - resources/images/icon_save.png
-  - resources/images/icon_script.png
-  - resources/images/icon_start.png
-  - resources/images/icon_stop.png
-  - resources/images/icon_undo.png
-  - resources/images/icon_web.png
-  - resources/images/icon_doc.png
   - resources/images/icon_string.png
   - resources/images/icon_strings.png
   - resources/images/icon_dialog.png
   - resources/images/icon_dialogs.png
   - resources/images/icon_property.png
-  - resources/images/icon_up.png
-  - resources/images/icon_down.png
-
-- Icons by Christopho, adapated from Yusuke Kamiyamane's icons:
   - resources/images/entity_tile_missing.png
   - resources/images/icon_dialog_missing.png
   - resources/images/icon_dialogs_missing.png
@@ -90,12 +94,7 @@ We give below the author or each image used in the editor.
   - resources/images/icon_folder_open_tileset.png
   - resources/images/icon_image_language.png
   - resources/images/icon_image_tileset.png
-  - resources/images/icon_layer_0.png
-  - resources/images/icon_layer_1.png
-  - resources/images/icon_layer_2.png
   - resources/images/icon_missing.png
-  - resources/images/icon_pause_music.png
-  - resources/images/icon_play_music.png
   - resources/images/icon_property_missing.png
   - resources/images/icon_resource_enemy_missing.png
   - resources/images/icon_resource_entity_missing.png
@@ -110,7 +109,6 @@ We give below the author or each image used in the editor.
   - resources/images/icon_resource_sprite_missing.png
   - resources/images/icon_resource_tileset_missing.png
   - resources/images/icon_script_map.png
-  - resources/images/icon_stop_music.png
   - resources/images/icon_string_missing.png
   - resources/images/icon_strings_missing.png
 

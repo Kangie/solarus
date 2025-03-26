@@ -69,7 +69,7 @@ QString EnumTraits<PatternRepeatMode>::get_friendly_name(PatternRepeatMode value
  * @return The corresponding icon.
  */
 QIcon EnumTraits<PatternRepeatMode>::get_icon(PatternRepeatMode value) {
-  return QIcon(":/images/icon_resize_" + get_lua_name(value) + ".png");
+  return QIcon(":/images/icon_resize_" + get_lua_name(value) + ".svg");
 }
 
 /**

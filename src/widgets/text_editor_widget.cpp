@@ -156,6 +156,8 @@ TextEditorWidget::TextEditorWidget(const QString& file_path, TextEditor& editor)
 
   update_line_number_area_width(0);
   highlight_current_line();
+
+  setFrameStyle(QFrame::Shape::Panel | QFrame::Shadow::Sunken);
 }
 
 /**
@@ -345,19 +347,28 @@ void TextEditorWidget::contextMenuEvent(QContextMenuEvent* event) {
 
   // Create our own context menu with correct undo/redo actions.
   QMenu menu;
+  EditorStyle::setAutoIconColor(&menu, EditorStyle::AutoIconColor::TextColor);
+
   QAction* action = nullptr;
 
   // Undo/Redo actions that use the undo stack.
   action = undo_stack.createUndoAction(this);
+  action->setIcon(QIcon(":/images/icon_undo.svg"));
   action->setShortcut(QKeySequence::Undo);
   menu.addAction(action);
+
   action = undo_stack.createRedoAction(this);
+  action->setIcon(QIcon(":/images/icon_redo.svg"));
   action->setShortcut(QKeySequence::Redo);
   menu.addAction(action);
 
-  // Cut/Copy/Paste.
+  // --- Separator. ---
   menu.addSeparator();
-  action = new QAction(tr("Cut"), this);
+
+  // Cut/Copy/Paste.
+  action = new QAction(
+      QIcon(":/images/icon_cut.svg"),
+      tr("Cut"), this);
   action->setShortcut(QKeySequence::Cut);
   if (textCursor().selectedText().isEmpty()) {
     action->setEnabled(false);
@@ -368,7 +379,9 @@ void TextEditorWidget::contextMenuEvent(QContextMenuEvent* event) {
   }
   menu.addAction(action);
 
-  action = new QAction(tr("Copy"), this);
+  action = new QAction(
+      QIcon(":/images/icon_copy.svg"),
+      tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   if (textCursor().selectedText().isEmpty()) {
     action->setEnabled(false);
@@ -379,7 +392,9 @@ void TextEditorWidget::contextMenuEvent(QContextMenuEvent* event) {
   }
   menu.addAction(action);
 
-  action = new QAction(tr("Paste"), this);
+  action = new QAction(
+      QIcon(":/images/icon_paste.svg"),
+      tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   if (!canPaste()) {
     action->setEnabled(false);
@@ -388,11 +403,15 @@ void TextEditorWidget::contextMenuEvent(QContextMenuEvent* event) {
     connect(action, SIGNAL(triggered()),
             this, SLOT(paste()));
   }
+  menu.addAction(action);
+
+  // --- Separator. ---
+  menu.addSeparator();
 
   // Select all.
-  menu.addAction(action);
-  menu.addSeparator();
-  action = new QAction(tr("Select all"), this);
+  action = new QAction(
+      QIcon(":/images/icon_select_all.svg"),
+      tr("Select all"), this);
   action->setShortcut(QKeySequence::SelectAll);
   connect(action, SIGNAL(triggered()),
           this, SLOT(selectAll()));

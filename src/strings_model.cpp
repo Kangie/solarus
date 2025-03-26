@@ -190,21 +190,21 @@ QVariant StringsModel::data(const QModelIndex& model_index, int role) const {
         case Qt::DecorationRole:
           if (string_exists(key)) {
             if (has_missing_translation(key)) {
-              return QIcon(":/images/icon_strings_missing.png");
+              return QIcon(":/images/icon_strings_missing.svg");
             } else if (string_tree.get_row_count(key) == 0) {
-              return QIcon(":/images/icon_string.png");
+              return QIcon(":/images/icon_string.svg");
             }
-            return QIcon(":/images/icon_strings.png");
+            return QIcon(":/images/icon_strings.svg");
           }
           else if (has_missing_translation(key)) {
             if (string_tree.get_row_count(key) == 0) {
-              return QIcon(":/images/icon_string_missing.png");
+              return QIcon(":/images/icon_string_missing.svg");
             } else if (translated_string_exists(key)) {
-              return QIcon(":/images/icon_strings_missing.png");
+              return QIcon(":/images/icon_strings_missing.svg");
             }
-            return QIcon(":/images/icon_folder_open_missing.png");
+            return QIcon(":/images/icon_folder_open_missing.svg");
           }
-          return QIcon(":/images/icon_folder_open.png");
+          return QIcon(":/images/icon_folder_open.svg");
       }
     }
   } else if (column == 1 && string_exists(key) &&

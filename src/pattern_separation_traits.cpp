@@ -60,10 +60,10 @@ QIcon EnumTraits<PatternSeparation>::get_icon(PatternSeparation value) {
   switch (value) {
 
   case PatternSeparation::HORIZONTAL:
-    return QIcon(":/images/animation_separation_horizontal.png");
+    return QIcon(":/images/icon_animation_separation_horizontal.svg");
 
   case PatternSeparation::VERTICAL:
-    return QIcon(":/images/animation_separation_vertical.png");
+    return QIcon(":/images/icon_animation_separation_vertical.svg");
 
   }
 

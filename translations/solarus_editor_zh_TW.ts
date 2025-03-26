@@ -4889,7 +4889,7 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
     </message>
     <message>
         <location filename="../src/widgets/settings_dialog.ui" line="30"/>
-        <source>Appaerance</source>
+        <source>Appearance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

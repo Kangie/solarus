@@ -107,7 +107,7 @@ QString EnumTraits<BorderKind>::get_friendly_name(BorderKind value) {
  * @return The corresponding icon.
  */
 QIcon EnumTraits<BorderKind>::get_icon(BorderKind value) {
-  return QIcon(QString(":/images/icon_border_kind_%1.png").arg(static_cast<int>(value)));
+  return QIcon(QString(":/images/icon_border_kind_%1.svg").arg(static_cast<int>(value)));
 }
 
 }

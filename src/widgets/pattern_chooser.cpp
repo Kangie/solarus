@@ -96,14 +96,14 @@ void PatternChooser::update_icon() {
 
   if (tileset == nullptr) {
     // No tileset: use the generic tile icon.
-    setIcon(QIcon(":/images/entity_tile.png"));
+    setIcon(QIcon(":/images/entity_tile.svg"));
     return;
   }
 
   const int pattern_index = tileset->id_to_index(get_pattern_id());
   if (pattern_index == -1) {
     // Unknown pattern: show an error icon.
-    setIcon(QIcon(":/images/entity_tile_missing.png"));
+    setIcon(QIcon(":/images/entity_tile_missing.svg"));
     return;
   }
 

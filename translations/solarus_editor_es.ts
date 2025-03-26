@@ -5207,7 +5207,7 @@ Esto será el espacio visible del mapa actual.</translation>
     </message>
     <message>
         <location filename="../src/widgets/settings_dialog.ui" line="30"/>
-        <source>Appaerance</source>
+        <source>Appearance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -20,6 +20,7 @@
 #include "widgets/text_editor.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "map_model.h"
 #include "quest.h"
 #include "shader_model.h"
@@ -161,7 +162,7 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   // Editor properties.
   set_title(tr("Shader %1").arg(get_file_name_without_extension()));
-  set_icon(QIcon(":/images/icon_resource_shader.png"));
+  set_icon(QIcon(":/images/icon_resource_shader.svg"));
   set_close_confirm_message(
         tr("Shader '%1' has been modified. Save changes?").arg(shader_id));
   set_zoom_supported(true);
@@ -306,6 +307,19 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, [this](const QString& message) {
     emit log_message_to_console("Warning", message);
   });
+
+  // Qlementine-related stuff.
+  for (auto* widget : std::vector<QWidget*>{
+           ui.fragment_file_browse_button,
+           // ui.fragment_file_new_button,
+           ui.fragment_file_save_button,
+           ui.vertex_file_browse_button,
+           ui.vertex_file_new_button,
+           ui.vertex_file_save_button,
+           ui.preview_picture_browse_button,
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 }
 
 /**

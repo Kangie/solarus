@@ -19,27 +19,39 @@
   <property name="windowTitle">
    <string>Solarus Quest Editor</string>
   </property>
+  <property name="documentMode">
+   <bool>true</bool>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="central_widget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="topMargin">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>3</number>
+     <number>0</number>
     </property>
     <item>
      <widget class="QSplitter" name="quest_tree_splitter">
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <property name="handleWidth">
-       <number>7</number>
+       <number>2</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="SolarusEditor::QuestTreeView" name="quest_tree_view">
        <property name="sizePolicy">
@@ -48,15 +60,28 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="verticalScrollMode">
+        <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+       </property>
+       <property name="horizontalScrollMode">
+        <enum>QAbstractItemView::ScrollMode::ScrollPerItem</enum>
+       </property>
       </widget>
       <widget class="QSplitter" name="console_splitter">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Orientation::Vertical</enum>
        </property>
        <property name="handleWidth">
-        <number>7</number>
+        <number>2</number>
        </property>
-       <widget class="SolarusEditor::EditorTabs" name="tab_widget"/>
+       <property name="childrenCollapsible">
+        <bool>false</bool>
+       </property>
+       <widget class="SolarusEditor::EditorTabs" name="tab_widget">
+        <property name="documentMode">
+         <bool>true</bool>
+        </property>
+       </widget>
        <widget class="SolarusEditor::Console" name="console_widget" native="true"/>
       </widget>
      </widget>
@@ -69,12 +94,15 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>34</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_quest">
     <property name="title">
      <string>File</string>
+    </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
     </property>
     <addaction name="action_new_quest"/>
     <addaction name="action_load_quest"/>
@@ -83,10 +111,13 @@
     <addaction name="action_reopen_closed_tab"/>
     <addaction name="action_close"/>
     <addaction name="action_close_all"/>
+    <addaction name="separator"/>
     <addaction name="action_save"/>
     <addaction name="action_save_all"/>
+    <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="action_open_quest_properties"/>
+    <addaction name="separator"/>
     <addaction name="action_package_quest"/>
     <addaction name="separator"/>
     <addaction name="action_exit"/>
@@ -95,10 +126,14 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
+    </property>
     <addaction name="separator"/>
     <addaction name="action_cut"/>
     <addaction name="action_copy"/>
     <addaction name="action_paste"/>
+    <addaction name="separator"/>
     <addaction name="action_group"/>
     <addaction name="action_ungroup"/>
     <addaction name="separator"/>
@@ -111,12 +146,18 @@
     <property name="title">
      <string>Run</string>
     </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
+    </property>
     <addaction name="action_run_quest"/>
     <addaction name="action_run_map"/>
    </widget>
    <widget class="QMenu" name="menu_view">
     <property name="title">
      <string>View</string>
+    </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
     </property>
     <addaction name="action_show_grid"/>
     <addaction name="action_show_console"/>
@@ -131,6 +172,9 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
+    </property>
     <addaction name="action_website"/>
     <addaction name="action_doc"/>
     <addaction name="separator"/>
@@ -140,12 +184,18 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
+    </property>
     <addaction name="action_export_to_image"/>
     <addaction name="action_settings"/>
    </widget>
    <widget class="QMenu" name="menuAudio">
     <property name="title">
      <string>Audio</string>
+    </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
     </property>
     <addaction name="action_stop_music"/>
    </widget>
@@ -159,6 +209,12 @@
   </widget>
   <widget class="QToolBar" name="tool_bar">
    <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::ToolBarArea::NoToolBarArea</set>
+   </property>
+   <property name="floatable">
     <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
@@ -208,7 +264,7 @@
   <action name="action_run_quest">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_start.png</normaloff>:/images/icon_start.png</iconset>
+     <normaloff>:/images/icon_start.svg</normaloff>:/images/icon_start.svg</iconset>
    </property>
    <property name="text">
     <string>Run quest</string>
@@ -220,7 +276,7 @@
   <action name="action_cut">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_cut.png</normaloff>:/images/icon_cut.png</iconset>
+     <normaloff>:/images/icon_cut.svg</normaloff>:/images/icon_cut.svg</iconset>
    </property>
    <property name="text">
     <string>Cut</string>
@@ -229,7 +285,7 @@
   <action name="action_copy">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_copy.png</normaloff>:/images/icon_copy.png</iconset>
+     <normaloff>:/images/icon_copy.svg</normaloff>:/images/icon_copy.svg</iconset>
    </property>
    <property name="text">
     <string>Copy</string>
@@ -238,7 +294,7 @@
   <action name="action_paste">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_paste.png</normaloff>:/images/icon_paste.png</iconset>
+     <normaloff>:/images/icon_paste.svg</normaloff>:/images/icon_paste.svg</iconset>
    </property>
    <property name="text">
     <string>Paste</string>
@@ -252,7 +308,7 @@
   <action name="action_save">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_save.png</normaloff>:/images/icon_save.png</iconset>
+     <normaloff>:/images/icon_save.svg</normaloff>:/images/icon_save.svg</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -264,7 +320,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_grid.png</normaloff>:/images/icon_grid.png</iconset>
+     <normaloff>:/images/icon_grid.svg</normaloff>:/images/icon_grid.svg</iconset>
    </property>
    <property name="text">
     <string>Show grid</string>
@@ -282,7 +338,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_layer_0.png</normaloff>:/images/icon_layer_0.png</iconset>
+     <normaloff>:/images/icon_layer_0.svg</normaloff>:/images/icon_layer_0.svg</iconset>
    </property>
    <property name="text">
     <string>Show layer 0</string>
@@ -303,7 +359,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_layer_1.png</normaloff>:/images/icon_layer_1.png</iconset>
+     <normaloff>:/images/icon_layer_1.svg</normaloff>:/images/icon_layer_1.svg</iconset>
    </property>
    <property name="text">
     <string>Show layer 1</string>
@@ -324,7 +380,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_layer_2.png</normaloff>:/images/icon_layer_2.png</iconset>
+     <normaloff>:/images/icon_layer_2.svg</normaloff>:/images/icon_layer_2.svg</iconset>
    </property>
    <property name="text">
     <string>Show layer 2</string>
@@ -339,7 +395,7 @@
   <action name="action_doc">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_doc.png</normaloff>:/images/icon_doc.png</iconset>
+     <normaloff>:/images/icon_doc.svg</normaloff>:/images/icon_doc.svg</iconset>
    </property>
    <property name="text">
     <string>Documentation</string>
@@ -351,7 +407,7 @@
   <action name="action_website">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_web.png</normaloff>:/images/icon_web.png</iconset>
+     <normaloff>:/images/icon_web.svg</normaloff>:/images/icon_web.svg</iconset>
    </property>
    <property name="text">
     <string>Website</string>
@@ -370,7 +426,7 @@
   <action name="action_select_all">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_select.png</normaloff>:/images/icon_select.png</iconset>
+     <normaloff>:/images/icon_select.svg</normaloff>:/images/icon_select.svg</iconset>
    </property>
    <property name="text">
     <string>Select all</string>
@@ -403,7 +459,7 @@
     <string>F12</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::WindowShortcut</enum>
+    <enum>Qt::ShortcutContext::WindowShortcut</enum>
    </property>
   </action>
   <action name="action_unselect_all">
@@ -419,7 +475,7 @@
   <action name="action_pause_music">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_pause_music.png</normaloff>:/images/icon_pause_music.png</iconset>
+     <normaloff>:/images/icon_pause_music.svg</normaloff>:/images/icon_pause_music.svg</iconset>
    </property>
    <property name="text">
     <string>Pause music</string>
@@ -428,7 +484,7 @@
   <action name="action_stop_music">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_stop_music.png</normaloff>:/images/icon_stop_music.png</iconset>
+     <normaloff>:/images/icon_stop_music.svg</normaloff>:/images/icon_stop_music.svg</iconset>
    </property>
    <property name="text">
     <string>Stop music</string>
@@ -440,7 +496,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/ground_traversable.png</normaloff>:/images/ground_traversable.png</iconset>
+     <normaloff>:/images/icon_traversable.svg</normaloff>:/images/icon_traversable.svg</iconset>
    </property>
    <property name="text">
     <string>Show traversable entities</string>
@@ -452,7 +508,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/ground_wall.png</normaloff>:/images/ground_wall.png</iconset>
+     <normaloff>:/images/icon_obstacle.svg</normaloff>:/images/icon_obstacle.svg</iconset>
    </property>
    <property name="text">
     <string>Show obstacle entities</string>
@@ -482,7 +538,7 @@
   <action name="action_export_to_image">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_camera.png</normaloff>:/images/icon_camera.png</iconset>
+     <normaloff>:/images/icon_camera.svg</normaloff>:/images/icon_camera.svg</iconset>
    </property>
    <property name="text">
     <string>Export to image...</string>
@@ -499,7 +555,7 @@
   <action name="action_run_map">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_start_map.png</normaloff>:/images/icon_start_map.png</iconset>
+     <normaloff>:/images/icon_start_map.svg</normaloff>:/images/icon_start_map.svg</iconset>
    </property>
    <property name="text">
     <string>Run current map</string>
@@ -522,7 +578,7 @@
   <action name="action_group">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_group.png</normaloff>:/images/icon_group.png</iconset>
+     <normaloff>:/images/icon_group.svg</normaloff>:/images/icon_group.svg</iconset>
    </property>
    <property name="text">
     <string>Group</string>
@@ -534,13 +590,13 @@
     <string>G</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="action_ungroup">
    <property name="icon">
     <iconset resource="../../resources/images.qrc">
-     <normaloff>:/images/icon_ungroup.png</normaloff>:/images/icon_ungroup.png</iconset>
+     <normaloff>:/images/icon_ungroup.svg</normaloff>:/images/icon_ungroup.svg</iconset>
    </property>
    <property name="text">
     <string>Ungroup</string>
@@ -552,22 +608,22 @@
     <string>Shift+G</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>SolarusEditor::QuestTreeView</class>
+   <extends>QTreeView</extends>
+   <header>widgets/quest_tree_view.h</header>
+  </customwidget>
+  <customwidget>
    <class>SolarusEditor::Console</class>
    <extends>QWidget</extends>
    <header>widgets/console.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SolarusEditor::QuestTreeView</class>
-   <extends>QTreeView</extends>
-   <header>widgets/quest_tree_view.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::EditorTabs</class>

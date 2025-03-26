@@ -31,7 +31,7 @@ Stream::Stream(MapModel& map, const EntityIndex& index) :
 
   // When no sprite is set, draw an image that depends on a direction.
   DrawImageInfo info;
-  QString file_name(":/images/entity_stream_all.png");
+  QString file_name(":/images/entity_stream_all.svg");
   for (int direction = 0; direction < 8; ++direction) {
     SubImage sub_image;
     sub_image.file_name = file_name;

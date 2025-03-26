@@ -19,6 +19,8 @@
 
 #include "widgets/editor.h"
 
+class QLabel;
+
 namespace SolarusEditor {
 
 class TextEditorWidget;
@@ -56,6 +58,7 @@ private slots:
   int find_text_requested(const QString& text);
   void replace_text_requested(const QString& text_search, const QString& text_replace);
   void open_map_requested();
+  void update_cursor_position_in_status_bar();
 
 private:
 
@@ -64,7 +67,7 @@ private:
   TextEditorWidget*
     text_widget;    /**< The text editing area contained. */
   QString map_id;   /**< The map id of this script (if it is a map script). */
-
+  QLabel* cursor_position_label; /**< Label in the status bar */
 };
 
 }

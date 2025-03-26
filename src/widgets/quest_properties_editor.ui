@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>843</width>
-    <height>679</height>
+    <height>1198</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,13 +17,25 @@
    </sizepolicy>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QScrollArea" name="scroll_area">
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -32,23 +44,23 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-517</y>
-        <width>804</width>
-        <height>1172</height>
+        <y>0</y>
+        <width>843</width>
+        <height>1198</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="leftMargin">
-        <number>0</number>
+        <number>16</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>16</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>16</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>16</number>
        </property>
        <item>
         <widget class="QGroupBox" name="quest_info_group_box">
@@ -65,10 +77,22 @@
           <item>
            <layout class="QFormLayout" name="formLayout">
             <property name="fieldGrowthPolicy">
-             <enum>QFormLayout::ExpandingFieldsGrow</enum>
+             <enum>QFormLayout::FieldGrowthPolicy::ExpandingFieldsGrow</enum>
             </property>
             <property name="verticalSpacing">
              <number>24</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
             </property>
             <item row="0" column="0">
              <widget class="QLabel" name="solarus_version_label">
@@ -79,16 +103,6 @@
               </property>
               <property name="text">
                <string>Solarus version</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="solarus_version_value">
-              <property name="toolTip">
-               <string>Version of the engine your data files are compatible with</string>
-              </property>
-              <property name="text">
-               <string/>
               </property>
              </widget>
             </item>
@@ -106,11 +120,33 @@
             </item>
             <item row="1" column="1">
              <layout class="QVBoxLayout" name="write_dir_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLineEdit" name="write_dir_field"/>
+               <widget class="QLineEdit" name="write_dir_field">
+                <property name="placeholderText">
+                 <string>your_quest_title</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Folder where to write savegames, relative to &quot;$HOME/.solarus/&quot;.
 Must identify your quest to avoid confusion with other quests.</string>
@@ -136,11 +172,33 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="2" column="1">
              <layout class="QVBoxLayout" name="title_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLineEdit" name="title_field"/>
+               <widget class="QLineEdit" name="title_field">
+                <property name="placeholderText">
+                 <string>Yout Quest Title</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_2">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>The name of your quest.</string>
                 </property>
@@ -162,11 +220,33 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="3" column="1">
              <layout class="QVBoxLayout" name="short_description_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLineEdit" name="short_description_field"/>
+               <widget class="QLineEdit" name="short_description_field">
+                <property name="placeholderText">
+                 <string>Summary</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_10">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>One line describing your quest.</string>
                 </property>
@@ -188,6 +268,21 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="4" column="1">
              <layout class="QVBoxLayout" name="long_description_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="SolarusEditor::PlainTextEdit" name="long_description_field">
                 <property name="sizePolicy">
@@ -202,10 +297,22 @@ Must identify your quest to avoid confusion with other quests.</string>
                   <height>100</height>
                  </size>
                 </property>
+                <property name="tabChangesFocus">
+                 <bool>true</bool>
+                </property>
+                <property name="plainText">
+                 <string notr="true"/>
+                </property>
+                <property name="placeholderText">
+                 <string>Description</string>
+                </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_12">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>A more detailed description of your quest.</string>
                 </property>
@@ -227,11 +334,29 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="5" column="1">
              <layout class="QVBoxLayout" name="author_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QLineEdit" name="author_field"/>
               </item>
               <item>
                <widget class="QLabel" name="label_14">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>People who develop this quest.</string>
                 </property>
@@ -253,11 +378,33 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="6" column="1">
              <layout class="QVBoxLayout" name="quest_version_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLineEdit" name="quest_version_field"/>
+               <widget class="QLineEdit" name="quest_version_field">
+                <property name="placeholderText">
+                 <string>0.0.1</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_18">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Current release of your quest.</string>
                 </property>
@@ -279,14 +426,60 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="7" column="1">
              <layout class="QVBoxLayout" name="verticalLayout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QRadioButton" name="release_status_progress_radio">
                   <property name="text">
                    <string>In progress</string>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Horizontal</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Policy::Fixed</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>16</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QRadioButton" name="release_status_released_radio">
@@ -311,12 +504,12 @@ Must identify your quest to avoid confusion with other quests.</string>
                 <item>
                  <spacer name="horizontalSpacer_4">
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
                  </spacer>
@@ -325,6 +518,9 @@ Must identify your quest to avoid confusion with other quests.</string>
               </item>
               <item>
                <widget class="QLabel" name="label_20">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Status and date of the current release.</string>
                 </property>
@@ -346,11 +542,33 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="8" column="1">
              <layout class="QVBoxLayout" name="website_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLineEdit" name="website_field"/>
+               <widget class="QLineEdit" name="website_field">
+                <property name="placeholderText">
+                 <string>https://www.website.com</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_16">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Official website of the quest.</string>
                 </property>
@@ -360,6 +578,13 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="9" column="1">
              <layout class="QVBoxLayout" name="flags_vlayout"/>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="solarus_version_value">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -381,7 +606,19 @@ Must identify your quest to avoid confusion with other quests.</string>
           <item>
            <layout class="QFormLayout" name="quest_info_form">
             <property name="fieldGrowthPolicy">
-             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
             </property>
             <item row="0" column="0">
              <widget class="QLabel" name="label_9">
@@ -392,6 +629,21 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="0" column="1">
              <layout class="QVBoxLayout" name="verticalLayout_9">
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QCheckBox" name="subpixel_camera">
                 <property name="text">
@@ -401,6 +653,9 @@ Must identify your quest to avoid confusion with other quests.</string>
               </item>
               <item>
                <widget class="QLabel" name="label_long_flags">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Enables subpixel smoothing of camera scrolling movement.</string>
                 </property>
@@ -408,6 +663,22 @@ Must identify your quest to avoid confusion with other quests.</string>
                  <bool>true</bool>
                 </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Policy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>0</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
                <widget class="QCheckBox" name="dynamic_timestep">
@@ -418,6 +689,9 @@ Must identify your quest to avoid confusion with other quests.</string>
               </item>
               <item>
                <widget class="QLabel" name="label_11">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Keeps the main loop update rate the same as the video refresh rate.</string>
                 </property>
@@ -439,8 +713,35 @@ Must identify your quest to avoid confusion with other quests.</string>
             </item>
             <item row="1" column="1">
              <layout class="QVBoxLayout" name="normal_quest_size_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QSpinBox" name="normal_size_width_field">
                   <property name="minimumSize">
@@ -489,12 +790,12 @@ Must identify your quest to avoid confusion with other quests.</string>
                 <item>
                  <spacer name="horizontalSpacer">
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
                  </spacer>
@@ -503,6 +804,9 @@ Must identify your quest to avoid confusion with other quests.</string>
               </item>
               <item>
                <widget class="QLabel" name="label_3">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Size of the logical game area (before any scaling).
 This will be the visible space of the current map.</string>
@@ -528,8 +832,35 @@ This will be the visible space of the current map.</string>
             </item>
             <item row="2" column="1">
              <layout class="QVBoxLayout" name="min_quest_size_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QSpinBox" name="min_size_width_field">
                   <property name="minimumSize">
@@ -578,12 +909,12 @@ This will be the visible space of the current map.</string>
                 <item>
                  <spacer name="horizontalSpacer_2">
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
                  </spacer>
@@ -592,6 +923,9 @@ This will be the visible space of the current map.</string>
               </item>
               <item>
                <widget class="QLabel" name="label_4">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Only useful to support a range of logical sizes.</string>
                 </property>
@@ -613,8 +947,35 @@ This will be the visible space of the current map.</string>
             </item>
             <item row="3" column="1">
              <layout class="QVBoxLayout" name="max_quest_size_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QSpinBox" name="max_size_width_field">
                   <property name="minimumSize">
@@ -663,12 +1024,12 @@ This will be the visible space of the current map.</string>
                 <item>
                  <spacer name="horizontalSpacer_3">
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
                  </spacer>
@@ -677,6 +1038,9 @@ This will be the visible space of the current map.</string>
               </item>
               <item>
                <widget class="QLabel" name="label_6">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Only useful to support a range of logical sizes.</string>
                 </property>
@@ -692,12 +1056,12 @@ This will be the visible space of the current map.</string>
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>

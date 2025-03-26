@@ -173,7 +173,7 @@ QVariant BorderSetModel::data(const QModelIndex& index, int role) const {
 
       case Qt::DecorationRole:
         // Icon representing the border kind.
-        return QIcon(QString(":/images/border_kind_%1.png").arg(row));
+        return QIcon(QString(":/images/border_kind_%1.svg").arg(row));
 
       case Qt::ToolTipRole:
         // Name of the border kind.

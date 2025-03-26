@@ -16,6 +16,7 @@
  */
 #include "widgets/sprite_tree_view.h"
 #include "sprite_model.h"
+#include "editor_style.h"
 #include <QAction>
 #include <QMenu>
 #include <QContextMenuEvent>
@@ -35,19 +36,19 @@ SpriteTreeView::SpriteTreeView(QWidget* parent) :
   setHeaderHidden(true);
 
   create_animation_action = new QAction(
-        QIcon(":/images/icon_add.png"), tr("Create animation"), this);
+        QIcon(":/images/icon_add.svg"), tr("Create animation"), this);
   connect(create_animation_action, SIGNAL(triggered()),
           this, SIGNAL(create_animation_requested()));
   addAction(create_animation_action);
 
   create_direction_action = new QAction(
-        QIcon(":/images/icon_add.png"), tr("Create direction"), this);
+        QIcon(":/images/icon_add.svg"), tr("Create direction"), this);
   connect(create_direction_action, SIGNAL(triggered()),
           this, SIGNAL(create_direction_requested()));
   addAction(create_direction_action);
 
   rename_animation_action = new QAction(
-        QIcon(":/images/icon_rename.png"), tr("Rename animation"), this);
+        QIcon(":/images/icon_rename.svg"), tr("Rename animation"), this);
   rename_animation_action->setShortcut(tr("F2"));
   rename_animation_action->setShortcutContext(Qt::WidgetShortcut);
   connect(rename_animation_action, SIGNAL(triggered()),
@@ -55,26 +56,26 @@ SpriteTreeView::SpriteTreeView(QWidget* parent) :
   addAction(rename_animation_action);
 
   duplicate_action = new QAction(
-        QIcon(":/images/icon_copy.png"), tr("Duplicate"), this);
+        QIcon(":/images/icon_copy.svg"), tr("Duplicate"), this);
   duplicate_action->setShortcutContext(Qt::WidgetShortcut);
   connect(duplicate_action, SIGNAL(triggered()),
           this, SIGNAL(duplicate_requested()));
   addAction(duplicate_action);
 
   move_up_action = new QAction(
-        QIcon(":/images/icon_up.png"), tr("Move up"), this);
+        QIcon(":/images/icon_up.svg"), tr("Move up"), this);
   connect(move_up_action, SIGNAL(triggered()),
           this, SIGNAL(move_up_requested()));
   addAction(move_up_action);
 
   move_down_action = new QAction(
-        QIcon(":/images/icon_down.png"), tr("Move down"), this);
+        QIcon(":/images/icon_down.svg"), tr("Move down"), this);
   connect(move_down_action, SIGNAL(triggered()),
           this, SIGNAL(move_down_requested()));
   addAction(move_down_action);
 
   delete_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete"), this);
+        QIcon(":/images/icon_delete.svg"), tr("Delete"), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
   connect(delete_action, SIGNAL(triggered()),
@@ -93,6 +94,8 @@ void SpriteTreeView::contextMenuEvent(QContextMenuEvent *event) {
   }
 
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
+
   menu->addAction(create_animation_action);
 
   SpriteModel::Index index = model->get_selected_index();

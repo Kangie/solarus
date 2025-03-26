@@ -26,6 +26,7 @@
 #include "auto_tiler.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "file_tools.h"
 #include "map_model.h"
 #include "point.h"
@@ -1205,7 +1206,7 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   // Editor properties.
   set_title(tr("Map %1").arg(get_file_name_without_extension()));
-  set_icon(QIcon(":/images/icon_resource_map.png"));
+  set_icon(QIcon(":/images/icon_resource_map.svg"));
   set_close_confirm_message(
         tr("Map '%1' has been modified. Save changes?").arg(map_id));
   set_select_all_supported(true);
@@ -1388,6 +1389,17 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::map_selection_changed);
   connect(map, &MapModel::bulk_mode_changed,
           this, &MapEditor::map_bulk_mode_changed);
+
+  // Qlementine-related stuff.
+  for (auto* widget : std::vector<QWidget*>{
+           ui.patterns_tileset_edit_button,
+           ui.tileset_edit_button,
+           ui.generate_borders_button,
+           ui.border_set_tileset_edit_button,
+           ui.tileset_tab_widget->tabBar(),
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 }
 
 /**

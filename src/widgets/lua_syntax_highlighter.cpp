@@ -87,32 +87,36 @@ void LuaSyntaxHighlighter::create_rules() {
   }
 
   // Strings.
-  QTextCharFormat string_format;
-  string_format.setForeground(mode_info.literal_string_color);
-  rule.pattern = QRegularExpression("\"[^\"]*\"");
-  rule.format = string_format;
-  rules.append(rule);
+  {
+    QTextCharFormat string_format;
+    string_format.setForeground(mode_info.literal_string_color);
+    rule.pattern = QRegularExpression("\"[^\"]*\"");
+    rule.format = string_format;
+    rules.append(rule);
 
-  rule.pattern = QRegularExpression("'[^']*'");
-  rule.format = string_format;
-  rules.append(rule);
+    rule.pattern = QRegularExpression("'[^']*'");
+    rule.format = string_format;
+    rules.append(rule);
+  }
 
   // Comments.
-  QTextCharFormat single_line_comment_format;
-  single_line_comment_format.setForeground(mode_info.comment_color);
-  // Avoid to highlight comments in strings,
-  // and don't match --[[ or --]] markers.
-  rule.pattern = QRegularExpression(
-      not_in_a_single_line_string +
-      R"((--([^\[\]]|\[[^\[]|\][^\]])[^\n]*$)$)"
-  );
-  rule.format = single_line_comment_format;
-  rules.append(rule);
+  {
+    QTextCharFormat single_line_comment_format;
+    single_line_comment_format.setForeground(mode_info.comment_color);
+    // Avoid to highlight comments in strings,
+    // and don't match --[[ or --]] markers.
+    rule.pattern = QRegularExpression(
+        not_in_a_single_line_string +
+        R"((--([^\[\]]|\[[^\[]|\][^\]])[^\n]*$)$)"
+    );
+    rule.format = single_line_comment_format;
+    rules.append(rule);
 
-  comment_start_pattern = QRegularExpression("--\\[\\[");
-  comment_end_pattern = QRegularExpression("--\\]\\]");
-  QTextCharFormat multi_line_comment_format;
-  multi_line_comment_format.setForeground(mode_info.comment_color);
+    comment_start_pattern = QRegularExpression("--\\[\\[");
+    comment_end_pattern = QRegularExpression("--\\]\\]");
+    QTextCharFormat multi_line_comment_format;
+    multi_line_comment_format.setForeground(mode_info.comment_color);
+  }
 
   rehighlight();
 }

@@ -19,6 +19,7 @@
 #include "widgets/sprite_scene.h"
 #include "widgets/sprite_view.h"
 #include "widgets/zoom_tool.h"
+#include "editor_style.h"
 #include "point.h"
 #include "view_settings.h"
 #include <QAction>
@@ -47,14 +48,14 @@ SpriteView::SpriteView(QWidget* parent) :
   current_area_item.setZValue(2);
 
   delete_direction_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
+        QIcon(":/images/icon_delete.svg"), tr("Delete..."), this);
   delete_direction_action->setShortcut(QKeySequence::Delete);
   delete_direction_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   connect(delete_direction_action, SIGNAL(triggered()),
           this, SIGNAL(delete_selected_direction_requested()));
   addAction(delete_direction_action);
   duplicate_direction_action = new QAction(
-        QIcon(":/images/icon_copy.png"), tr("Duplicate..."), this);
+        QIcon(":/images/icon_copy.svg"), tr("Duplicate..."), this);
   // TODO: set a shortcut to duplicate a direction
   connect(duplicate_direction_action, SIGNAL(triggered()),
           this, SLOT(duplicate_selected_direction()));
@@ -551,6 +552,7 @@ void SpriteView::show_context_menu(const QPoint& where) {
   }
 
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
 
   // Delete direction.
   menu->addAction(duplicate_direction_action);
@@ -673,7 +675,7 @@ void SpriteView::end_state_moving_direction() {
     });
     menu.addAction(move_direction_action);
     QAction* duplicate_direction_action =
-      new QAction(QIcon(":/images/icon_copy.png"), tr("Duplicate here"), this);
+      new QAction(QIcon(":/images/icon_copy.svg"), tr("Duplicate here"), this);
     connect(duplicate_direction_action, &QAction::triggered, this, [this, box] {
       emit duplicate_selected_direction_requested(box.topLeft());
     });

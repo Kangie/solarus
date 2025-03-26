@@ -96,6 +96,11 @@ ConsoleLineEdit::ConsoleLineEdit(QWidget* parent) :
   QCompleter* completer = new QCompleter(completer_model, this);
   completer->setCompletionMode(QCompleter::InlineCompletion);
   setCompleter(completer);
+
+  // Avoid rounded corners.
+  setFrame(false);
+
+  setPlaceholderText(tr("Type a Lua command"));
 }
 
 /**

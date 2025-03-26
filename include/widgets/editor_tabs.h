@@ -113,6 +113,7 @@ private slots:
   void current_editor_changed(int index);
   void current_editor_modification_state_changed(bool clean);
   void modification_state_changed(int index, bool clean);
+  void show_tabbar_context_menu(const QPoint& mouse_position);
 
 private:
 
