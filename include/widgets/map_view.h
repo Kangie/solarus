@@ -78,7 +78,6 @@ public:
   };
 
   explicit MapView(QWidget* parent = nullptr);
-  ~MapView();
 
   MapModel* get_map();
   MapScene* get_scene();

@@ -38,7 +38,7 @@ class SpriteView : public QGraphicsView {
 
 public:
 
-  SpriteView(QWidget* parent = nullptr);
+  explicit SpriteView(QWidget* parent = nullptr);
 
   SpriteScene* get_scene();
 

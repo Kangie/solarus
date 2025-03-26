@@ -1391,6 +1391,15 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
 }
 
 /**
+ * @copydoc Editor::about_to_be_closed
+ */
+void MapEditor::about_to_be_closed() {
+
+  Editor::about_to_be_closed();
+  unselect_all();  // Workaround for assert in destructor when there is an active selection.
+}
+
+/**
  * @brief Returns the map model being edited.
  * @return The map model.
  */

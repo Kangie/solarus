@@ -41,7 +41,6 @@ class Editor : public QWidget {
 public:
 
   Editor(Quest& quest, const QString& file_path, QWidget* parent = nullptr);
-  ~Editor();
 
   const Quest& get_quest() const;
   Quest& get_quest();
@@ -94,6 +93,7 @@ public:
   virtual void find();
   virtual void export_to_image();
   virtual void reload_settings();
+  virtual void about_to_be_closed();
 
 signals:
 

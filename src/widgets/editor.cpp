@@ -162,9 +162,9 @@ Editor::Editor(Quest& quest, const QString& file_path, QWidget* parent) :
 }
 
 /**
- * @brief Destructor.
+ * @brief Notifies this editor that it is about to be destroyed.
  */
-Editor::~Editor() {
+void Editor::about_to_be_closed() {
 
   // Make sure QUndoStack will not send signals from its destructor.
   disconnect(undo_stack, &QUndoStack::cleanChanged,

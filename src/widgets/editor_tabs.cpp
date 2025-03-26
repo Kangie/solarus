@@ -205,7 +205,7 @@ void EditorTabs::open_text_editor(
 
   EditorSettings settings;
 
-  if(settings.get_value_bool(EditorSettings::external_text_editor_enabled)) {
+  if (settings.get_value_bool(EditorSettings::external_text_editor_enabled)) {
       //Should open the external editor instead
       QString project_path = quest.get_root_path();
       QString cmd_str = settings.get_value_string(EditorSettings::external_text_editor_cmd);
@@ -486,6 +486,7 @@ void EditorTabs::insert_editor(std::unique_ptr<Editor> editor, int index) {
 void EditorTabs::remove_editor(int index) {
 
   Editor* editor = get_editor(index);
+  editor->about_to_be_closed();
   QString path = editor->get_file_path();
 
   undo_group->removeStack(&editor->get_undo_stack());

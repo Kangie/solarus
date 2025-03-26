@@ -56,6 +56,7 @@ public:
 
   void export_to_image() override;
   void reload_settings() override;
+  void about_to_be_closed() override;
 
 private slots:
 

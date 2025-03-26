@@ -18,7 +18,6 @@
 #include "widgets/gui_tools.h"
 #include "widgets/get_animation_name_dialog.h"
 #include "widgets/sprite_editor.h"
-#include "widgets/sprite_scene.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "point.h"
@@ -26,6 +25,7 @@
 #include "quest_database.h"
 #include "sprite_model.h"
 #include <QFileInfo>
+#include <QItemSelectionModel>
 #include <QUndoStack>
 
 namespace SolarusEditor {
@@ -908,6 +908,14 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
           this, &SpriteEditor::update_selection);
+}
+
+/**
+ * @copydoc Editor::about_to_be_closed
+ */
+void SpriteEditor::about_to_be_closed() {
+  // Workaround to avoid assert in destructor when there is a selection.
+  model->get_selection_model().clearSelection();
 }
 
 /**

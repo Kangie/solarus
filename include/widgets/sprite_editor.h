@@ -40,6 +40,7 @@ public:
 
   void save() override;
   void reload_settings() override;
+  void about_to_be_closed() override;
 
 public slots:
 
