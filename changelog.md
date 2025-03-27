@@ -35,6 +35,11 @@ with better support and customization features.
 * Fix crash when circle movement angular speed is 0 (#1657).
 * Fix `custom_entity:add_collision_test()` not always checking collisions (#1648).
 * Fix collisions when moving a sprite without moving the entity (#1535).
+* Add support for loading SDL Game Controller mapping database files.
+  * Allows the engine to properly support much more current and future controllers.
+  * For a better out of the box experience, the engine now also bundles a popular
+    [community-sourced database](https://github.com/mdqinc/SDL_GameControllerDB).
+  * Users can create and use their own custom controller mappings as well.
 
 ### Lua API changes
 
