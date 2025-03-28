@@ -269,6 +269,9 @@
    <property name="text">
     <string>Show grid</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
   </action>
   <action name="action_show_layer_0">
    <property name="checkable">
@@ -528,7 +531,7 @@
     <string>Group</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+G</string>
+    <string>G</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -546,7 +549,7 @@
     <string>Ungroup</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+G</string>
+    <string>Shift+G</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
