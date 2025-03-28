@@ -67,6 +67,7 @@ private:
   void detect_setting_change(const QString& log_level, const QString& message);
   QString colorize_line(const QString& line);
   void update_ui_with_new_messages();
+  void context_menu_requested(const QPoint& position);
 
   Ui::Console ui;                      /**< The widgets. */
   QPointer<QuestRunner> quest_runner;  /**< The quest execution. */

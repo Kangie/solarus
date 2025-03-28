@@ -21,6 +21,7 @@
 * Sprite editor: allow to create a sprite from an image (#527).
 * Add error reporting to the quest runner process.
 * Add support of ANSI color codes to the GUI console.
+* Allow to clear the console (#436).
 
 ### Bug fixes
 

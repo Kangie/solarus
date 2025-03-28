@@ -20,6 +20,7 @@
 #include "quest_runner.h"
 #include <QDebug>
 #include <QFont>
+#include <QMenu>
 #include <QRegularExpression>
 
 namespace SolarusEditor {
@@ -129,6 +130,10 @@ Console::Console(QWidget* parent) :
       update_ui_with_new_messages();
     });
   }
+
+  ui.log_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+  connect(ui.log_view, &QPlainTextEdit::customContextMenuRequested,
+          this, &Console::context_menu_requested);
 }
 
 /**
@@ -522,6 +527,24 @@ QString Console::colorize_line(const QString& message) {
   decorated_line = ansi_to_html(decorated_line);
 
   return decorated_line;
+}
+
+/**
+ * @brief Shows a context menu in the console.
+ * @param position Where to create the context menu.
+ */
+void Console::context_menu_requested(const QPoint& position) {
+
+  QMenu* menu = ui.log_view->createStandardContextMenu();
+
+  QAction* clear_action = new QAction("Clear", menu);
+  clear_action->setEnabled(!ui.log_view->toPlainText().isEmpty());
+  menu->addAction(clear_action);
+  QObject::connect(clear_action, &QAction::triggered, this, [this]() {
+    ui.log_view->clear();
+  });
+
+  menu->exec(ui.log_view->mapToGlobal(position));
 }
 
 }
