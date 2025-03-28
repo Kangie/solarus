@@ -302,7 +302,7 @@ void SettingsDialog::update_theme() {
   else if (value == "light") {
     index = 1;
   }
-  else if (value == "yes") {
+  else if (value == "dark") {
     index = 2;
   }
   ui.theme_field->setCurrentIndex(index);
