@@ -2971,6 +2971,8 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
   // Make entities ready to be added at their specific index.
   AddableEntities addable_entities;
   EntityIndex previous_index;
+  QMap<int, int> group_mapping;
+  int next_group_id = map.generate_group_id();
   for (EntityModelPtr& entity : entities) {
     Q_ASSERT(entity != nullptr);
     int layer = entity->get_layer();
@@ -2993,6 +2995,18 @@ void AddingEntitiesState::mouse_pressed(const QMouseEvent& event) {
       Q_ASSERT(index > previous_index);
     }
     previous_index = index;
+
+    // Create new groups for cloned and pasted entities.
+    int group = entity->get_group();
+    if (map.group_exists(group)) {
+      int new_group = group_mapping.value(group);
+      if (new_group == 0) {
+        new_group = next_group_id;
+        ++next_group_id;
+        group_mapping[group] = new_group;
+      }
+      entity->set_group(new_group);
+    }
 
     // Once we know where it is going, do context initialization and add it.
     entity->notify_being_added();

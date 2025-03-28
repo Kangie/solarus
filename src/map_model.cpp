@@ -1503,6 +1503,15 @@ EntityIndexes MapModel::get_entities_in_group(int group) const {
 }
 
 /**
+ * @brief Returns whether a group exists with entities in it.
+ * @param group A group id or 0.
+ * @return @c true if there is such a group.
+ */
+bool MapModel::group_exists(int group) const {
+  return group != 0 && !groups.value(group).empty();
+}
+
+/**
  * @brief Sets the group of an entity.
  * @param index An entity index.
  * @param group The group or 0.
@@ -1533,13 +1542,21 @@ void MapModel::set_entity_group(const EntityIndex& index, int group) {
 }
 
 /**
+ * @brief Generates an id for a group to be created.
+ * @return @c a group id not in use yet.
+ */
+int MapModel::generate_group_id() const {
+  return groups.isEmpty() ? 1 : groups.lastKey() + 1;
+}
+
+/**
  * @brief Groups some entities together.
  * @param indexes Indexes to group.
  * @return Key of the created group.
  */
 int MapModel::create_group(const EntityIndexes& indexes) {
 
-  const int group = groups.isEmpty() ? 1 : groups.lastKey() + 1;
+  const int group = generate_group_id();
   for (const EntityIndex& index : indexes) {
     set_entity_group(index, group);
   }

@@ -131,6 +131,8 @@ public:
   int get_entity_group(const EntityIndex& index) const;
   int get_entities_group(const EntityIndexes& indexes) const;
   EntityIndexes get_entities_in_group(int group) const;
+  bool group_exists(int group) const;
+  int generate_group_id() const;
   int create_group(const EntityIndexes& indexes);
   void set_entity_group(const EntityIndex& index, int group);
   int get_entity_user_property_count(const EntityIndex& index) const;
