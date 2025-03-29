@@ -154,7 +154,7 @@ Utility function that computes the distance in pixels between two points.
 : Y coordinate of the second point.
 
 Return value (number)
-: The distance in pixels.
+: The Euclidean distance in pixels, rounded down to the nearest integer.
 
 ### `sol.main.get_angle(x1, y1, x2, y2)`
 

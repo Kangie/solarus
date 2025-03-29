@@ -418,7 +418,7 @@ To compute the distance to a specified point:
 : Y coordinate of the point.
 
 Return value (number)
-: The distance in pixels between the origin point of this entity and the point.
+: The Euclidean distance in pixels between the origin point of this entity and the point. The result is rounded down to the nearest integer.
 
 To compute the distance to another map entity:
 
@@ -426,7 +426,7 @@ To compute the distance to another map entity:
 : The entity to compute the distance to.
 
 Return value (number)
-: The distance in pixels between the origin point of this entity and the origin point of the other entity.
+: The Euclidean distance in pixels between the origin point of this entity and the origin point of the other entity. The result is rounded down to the nearest integer.
 
 ### `entity:get_angle(x, y), entity:get_angle(other_entity)`
 
