@@ -52,21 +52,21 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
   if (${TEST_NAME} STREQUAL "lua-map")
     # Lua map test: add an individual test for each map
     foreach(MAP_ID ${LUA_TEST_MAPS})
-      _add_test("lua/${MAP_ID}" "bin/${TEST_TARGET}" -lua-console=no -no-audio -no-video -turbo=yes "-map=${MAP_ID}" "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
+      _add_test("lua/${MAP_ID}" "bin/${TEST_TARGET}" -no-audio -no-video -turbo=yes "-map=${MAP_ID}" "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
     endforeach()
 
     # Lua map test: add an individual test for each non-fatal map
     foreach(MAP_ID ${LUA_TEST_MAPS_NON_FATAL})
-      _add_test("lua/${MAP_ID}" "bin/${TEST_TARGET}" -lua-console=no -no-audio -no-video -turbo=yes -fatal-errors=no "-map=${MAP_ID}" "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
+      _add_test("lua/${MAP_ID}" "bin/${TEST_TARGET}" -no-audio -no-video -turbo=yes -fatal-errors=no "-map=${MAP_ID}" "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
     endforeach()
 
     # Lua map test: add an individual test for each map that requires a window to run
     foreach(MAP_ID ${LUA_TEST_MAPS_REQUIRE_WINDOW})
-      _add_test("lua/${MAP_ID}" "bin/${TEST_TARGET}" -lua-console=no -no-audio -turbo=yes "-map=${MAP_ID}" "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
+      _add_test("lua/${MAP_ID}" "bin/${TEST_TARGET}" -no-audio -turbo=yes "-map=${MAP_ID}" "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
     endforeach()
   else()
     # Standard C++ test: for engine testing
-    _add_test("${TEST_NAME}" "bin/${TEST_TARGET}" -lua-console=no -no-audio -no-video -turbo=yes "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
+    _add_test("${TEST_NAME}" "bin/${TEST_TARGET}" -no-audio -no-video -turbo=yes "${CMAKE_CURRENT_SOURCE_DIR}/testing_quest")
   endif()
 
   # Add install targets for "initialization" and "lua-map" tests

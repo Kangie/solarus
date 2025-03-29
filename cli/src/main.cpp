@@ -59,7 +59,7 @@ void print_help(const Arguments& args) {
     << std::endl
     << "  -quest-size=<width>x<height>  sets the size of the drawing area (if compatible with the quest)"
     << std::endl
-    << "  -lua-console=yes|no           accepts standard input lines as Lua commands (default yes)"
+    << "  -lua-console=yes|no           accepts standard input lines as Lua commands (default no)"
     << std::endl
     << "  -turbo=yes|no                 runs as fast as possible rather than simulating real time (default no)"
     << std::endl

@@ -135,7 +135,7 @@ MainLoop::MainLoop(const Arguments& args):
   resetting(false),
   exiting(false),
   debug_lag(0),
-  lua_console_enabled(true),
+  lua_console_enabled(false),
   suspend_unfocused(true),
   suspended(false),
   turbo(false),
@@ -163,7 +163,7 @@ MainLoop::MainLoop(const Arguments& args):
   const std::string& suspend_unfocused_arg = args.get_argument_value("-suspend-unfocused");
   suspend_unfocused = suspend_unfocused_arg.empty() || suspend_unfocused_arg == "yes";
   const std::string& lua_console_arg = args.get_argument_value("-lua-console");
-  lua_console_enabled = lua_console_arg.empty() || lua_console_arg == "yes";
+  lua_console_enabled = lua_console_arg == "yes";
   lua_script_arg = args.get_argument_value("-s");
 
   // Try to open the quest.
@@ -786,6 +786,9 @@ void MainLoop::initialize_lua_console() {
     std::string line;
     while (!is_exiting()) {
 
+      // Note: don't enable the console on Windows when stdin is the default,
+      // it continuously receives false positives and eats tons of CPU.
+      // This should rather be used with a pipe typically from the editor.
       if (std::getline(std::cin, line)) {
 
         while (!line.empty() && std::isspace(line.at(line.size() - 1))) {
