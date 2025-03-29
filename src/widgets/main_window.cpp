@@ -1081,7 +1081,7 @@ void MainWindow::on_action_run_quest_triggered() {
 }
 
 /**
- * @brief Slot called when the user triggers the "Run quest" action.
+ * @brief Slot called when the user triggers the "Run current map" action.
  */
 void MainWindow::on_action_run_map_triggered() {
   Editor* editor = get_current_editor();
