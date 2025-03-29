@@ -713,6 +713,7 @@ QMenu* MapView::create_context_menu() {
     // Direction.
     QMenu* direction_menu = create_direction_context_menu(indexes);
     Q_ASSERT(direction_menu != nullptr);
+    connect(direction_menu, &QMenu::aboutToHide, menu, &QMenu::close);
     menu->addMenu(direction_menu);
     menu->addSeparator();
 

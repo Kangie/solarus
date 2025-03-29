@@ -666,21 +666,25 @@ void TilesetView::show_context_menu(const QPoint& where) {
   // Ground.
   QMenu* ground_menu = new QMenu(tr("Ground"), this);
   build_context_menu_ground(*ground_menu, selected_indexes);
+  connect(ground_menu, &QMenu::aboutToHide, menu, &QMenu::close);
   menu->addMenu(ground_menu);
 
   // Default layer.
   QMenu* layer_menu = new QMenu(tr("Default layer"), this);
   build_context_menu_layer(*layer_menu, selected_indexes);
+  connect(layer_menu, &QMenu::aboutToHide, menu, &QMenu::close);
   menu->addMenu(layer_menu);
 
   // Repeat mode.
   QMenu* repeat_mode_menu = new QMenu(tr("Repeatable"), this);
   build_context_menu_repeat_mode(*repeat_mode_menu, selected_indexes);
+  connect(repeat_mode_menu, &QMenu::aboutToHide, menu, &QMenu::close);
   menu->addMenu(repeat_mode_menu);
 
   // Animation.
   QMenu* scrolling_menu = new QMenu(tr("Scrolling"), this);
   build_context_menu_scrolling(*scrolling_menu, selected_indexes);
+  connect(scrolling_menu, &QMenu::aboutToHide, menu, &QMenu::close);
   menu->addMenu(scrolling_menu);
 
   // Border set.
@@ -1343,8 +1347,9 @@ void DrawingRectangleState::valid_rectangle_clicked(const QMouseEvent& /* event 
     // Context menu to create a pattern.
     QMenu menu;
     EnumMenus<Ground>::create_actions(
-          menu, EnumMenuCheckableOption::NON_CHECKABLE, [this, rectangle](Ground ground) {
+          menu, EnumMenuCheckableOption::NON_CHECKABLE, [this, rectangle, &menu](Ground ground) {
       get_view().create_pattern_with_auto_id(rectangle, ground);
+      menu.close();
     });
 
     // Put most actions in a submenu to make the context menu smaller.
