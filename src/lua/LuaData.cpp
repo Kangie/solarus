@@ -287,7 +287,7 @@ std::string LuaData::to_lua_string_list(const std::vector<std::string>& value) {
 
   const std::string string_list = std::accumulate(++value.begin(), value.end(),
     to_lua_string(*value.begin()),
-    [](std::string&& a, std::string&& b) -> std::string& {
+    [](std::string a, const std::string& b) -> std::string {
       a += list_separator;
       a += to_lua_string(b);
       return a;
