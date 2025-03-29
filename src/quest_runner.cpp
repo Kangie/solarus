@@ -87,6 +87,9 @@ QStringList QuestRunner::create_arguments(
   // Tell that we want to run the quest.
   arguments << "-run";
 
+  // Enable the Lua console to ease debugging.
+  arguments << "-lua-console=yes";
+
   // Run a specific map if any.
   if (!map_id.isEmpty()) {
     arguments << QString("-map=%1").arg(map_id);
