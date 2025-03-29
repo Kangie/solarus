@@ -279,14 +279,15 @@ std::string LuaData::to_lua_string(const std::string& value) {
  * \return The exportable string value.
  */
 std::string LuaData::to_lua_string_list(const std::vector<std::string>& value) {
-  constexpr auto list_separator = ", ";
+  constexpr const char* list_separator = ", ";
 
-  if (value.empty())
-    return "";
+  if (value.empty()) {
+    return "{}";
+  }
 
-  const auto string_list = std::accumulate(++value.begin(), value.end(),
+  const std::string string_list = std::accumulate(++value.begin(), value.end(),
     to_lua_string(*value.begin()),
-    [&list_separator](auto&& a, auto&& b) -> auto& {
+    [](std::string&& a, std::string&& b) -> std::string& {
       a += list_separator;
       a += to_lua_string(b);
       return a;
