@@ -33,6 +33,8 @@ To build Solarus Quest Editor, you need:
     - qt6-base-dev
     - qt6-base-dev-tools
     - qt6-tools-dev
+    - qt6-tools-dev-tools
+    - qt6-l10n-tools
     - libqt6opengl6-dev
     - libqt6svg6-dev
 - Solarus and its dependencies:

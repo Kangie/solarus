@@ -267,7 +267,8 @@ private:
   QPoint origin = { 0 , 0 };      /**< Origin point of the entity relative to its top-left corner. */
   QSize size = { 16, 16 };        /**< Size of the entity for the editor. */
   QSize base_size = { 16, 16 };   /**< Reference size when resizing. */
-  ResizeMode resize_mode;         /**< How the entity can be resized. */
+  ResizeMode resize_mode =
+      ResizeMode::NONE;           /**< How the entity can be resized. */
   bool has_preferred_layer = false;       /**< Whether the entity has a preferred layer when added to the map. */
   int preferred_layer = 0;        /**< The preferred layer if has_preferred_layer is true. */
   int num_directions = 1;         /**< Number of possible directions (except the possible special one -1). */
