@@ -304,6 +304,11 @@ void MainWindow::update_recent_quests_menu() {
   const QStringList& last_quests = settings.get_value_string_list(EditorSettings::last_quests);
 
   // Clear previous actions.
+  const QList<QAction*> old_actions = recent_quests_menu->actions();
+  for (QAction* action : old_actions) {
+    // Let enough time to properly delete FlashActionHelper.
+    action->deleteLater();
+  }
   recent_quests_menu->clear();
 
   // Disable if there is no recent quest.
@@ -312,7 +317,7 @@ void MainWindow::update_recent_quests_menu() {
   // Create new actions.
   for (const QString& quest_path : last_quests) {
 
-    QAction* action = new QAction(quest_path, recent_quests_menu);
+    QAction* action = new QAction(quest_path, this);
     connect(action, &QAction::triggered, this, [this, quest_path]() {
 
       // Close the previous quest and open the new one.
@@ -320,6 +325,8 @@ void MainWindow::update_recent_quests_menu() {
         close_quest();
         open_quest(quest_path);
       }
+
+      ui.menu_quest->close();
     });
 
     recent_quests_menu->addAction(action);
