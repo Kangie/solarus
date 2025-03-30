@@ -45,6 +45,11 @@
 * Preserve empty lines from the engine in the GUI console.
 * Only remove trailing '\n' characters in the GUI console.
 
+### Other changes
+
+* The sample quest is no longer included with the Solarus Quest Editor. It has not been
+  updated in a long time and became outdated for the current version of the editor.
+
 ## Solarus Quest Editor 1.6.5 (2021-04-06)
 
 * Map editor: fix crash when generating contours with missing patterns (#494).
