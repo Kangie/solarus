@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>1619</height>
+    <width>618</width>
+    <height>1602</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -22,6 +22,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <layout class="QFormLayout" name="form_layout">
+     <property name="rowWrapPolicy">
+      <enum>QFormLayout::RowWrapPolicy::DontWrapRows</enum>
+     </property>
      <property name="leftMargin">
       <number>0</number>
      </property>
@@ -81,7 +84,11 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLineEdit" name="name_field"/>
+        <widget class="QLineEdit" name="name_field">
+         <property name="placeholderText">
+          <string>Name</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="name_update_teletransporters_check_box">
@@ -338,7 +345,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="savegame_variable_field"/>
+         <widget class="QLineEdit" name="savegame_variable_field">
+          <property name="placeholderText">
+           <string>Variable name</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -421,13 +432,6 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="save_treasure_check_box">
-          <property name="text">
-           <string>Save the treasure state</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="horizontal_layout_4">
           <property name="leftMargin">
            <number>0</number>
@@ -442,6 +446,13 @@
            <number>0</number>
           </property>
           <item>
+           <widget class="QCheckBox" name="save_treasure_check_box">
+            <property name="text">
+             <string>Save the treasure state</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="treasure_savegame_variable_label">
             <property name="text">
              <string>in variable</string>
@@ -449,7 +460,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="treasure_savegame_variable_field"/>
+           <widget class="QLineEdit" name="treasure_savegame_variable_field">
+            <property name="minimumSize">
+             <size>
+              <width>180</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Variable name</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -753,7 +774,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="opening_condition_savegame_variable_field"/>
+           <widget class="QLineEdit" name="opening_condition_savegame_variable_field">
+            <property name="minimumSize">
+             <size>
+              <width>180</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Variable name</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -928,7 +959,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="behavior_dialog_field"/>
+           <widget class="QLineEdit" name="behavior_dialog_field">
+            <property name="placeholderText">
+             <string>Dialog id</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -1109,7 +1144,7 @@
        <item>
         <widget class="QTreeWidget" name="user_properties_table">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+          <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1269,6 +1304,19 @@
       </layout>
      </item>
     </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="button_box">
