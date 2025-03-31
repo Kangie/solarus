@@ -37,13 +37,14 @@ Destination::Destination(MapModel& map, const EntityIndex& index) :
   // Draw an image that depends on a direction.
   DrawImageInfo info;
   QString file_name(":/images/entity_destination_all.png");
-  info.scale = 2.0;
+  constexpr int length = 128;
+  info.scale = 8.0;
   info.image_no_direction.file_name = file_name;
-  info.image_no_direction.src_rect = QRect(0, 0, 32, 32);
+  info.image_no_direction.src_rect = QRect(0, 0, length, length);
   for (int direction = 0; direction < 4; ++direction) {
     SubImage sub_image;
     sub_image.file_name = file_name;
-    sub_image.src_rect = QRect((direction + 1) * 32, 0, 32, 32);
+    sub_image.src_rect = QRect((direction + 1) * length, 0, length, length);
     info.images_by_direction.append(sub_image);
   }
   set_draw_image_info(info);

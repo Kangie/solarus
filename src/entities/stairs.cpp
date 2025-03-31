@@ -63,16 +63,17 @@ void Stairs::update_drawing_info() {
   bool ok = false;
   int subtype_index = subtype.toInt(&ok);
   Q_ASSERT(ok);
-  int x = subtype_index * 32;
+  constexpr int length = 128;
+  int x = subtype_index * length;
 
   DrawImageInfo info;
   for (int i = 0; i < 4; ++i) {
-    int y = i * 32;
+    int y = i * length;
     SubImage sub_image;
     sub_image.file_name = ":/images/entity_stairs_all.png";
-    sub_image.src_rect = QRect(x, y, 32, 32);
+    sub_image.src_rect = QRect(x, y, length, length);
     info.images_by_direction << sub_image;
-    info.scale = 2.0;
+    info.scale = 8.0;
   }
   set_draw_image_info(info);
 }

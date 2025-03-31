@@ -34,7 +34,7 @@ Teletransporter::Teletransporter(MapModel& map, const EntityIndex& index) :
   info.enabled = true;
   info.background_color = QColor(240, 200, 80);
   info.between_border_color = QColor(240, 215, 142);
-  info.pixmap = QPixmap(":/images/entity_teletransporter_resizable.svg");
+  info.pixmap = QPixmap(":/images/entity_teletransporter_resizable.png");
   set_draw_shape_info(info);
 }
 

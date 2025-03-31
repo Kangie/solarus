@@ -1857,27 +1857,26 @@ bool EntityModel::draw_as_shape(QPainter& painter) const {
   if (!draw_shape_info.pixmap.isNull()) {
 
     // We will draw the pixmap with a double resolution.
-    painter.scale(0.5, 0.5);
+    painter.scale(0.125, 0.125);
 
     const QPixmap& pixmap = draw_shape_info.pixmap;
     if (draw_shape_info.tiled_pixmap) {
       // Repeat the pixmap pattern.
-      painter.drawTiledPixmap(0, 0, get_width() * 2, get_height() * 2, pixmap);
+      painter.drawTiledPixmap(0, 0, get_width() * 8, get_height() * 8, pixmap);
     }
     else {
       // Draw the pixmap centered in the entity.
-      int x = get_width() - pixmap.width() / 2;  // Actually get_width() * 2 / 2 - pixmap.width() / 2
-                                                 // because we want the double size.
-      int y = get_height() - pixmap.height() / 2;
       int width = pixmap.width();
       int height = pixmap.height();
+      int x = get_width() * 8 / 2 - width / 2;
+      int y = get_height() * 8 / 2 - height / 2;
       if (x >= 0 && y >= 0) {
         // Only draw the pixmap if the entity is big enough.
         painter.drawPixmap(x, y, width, height, pixmap);
       }
     }
 
-    painter.scale(2, 2);
+    painter.scale(8, 8);
   }
 
   // Border.
@@ -1952,11 +1951,10 @@ bool EntityModel::draw_as_icon(QPainter& painter) const {
     icon = QPixmap(QString(":/images/entity_%1.png").arg(get_type_name()));
   }
 
-  // We draw a 32x32 icon on a 16x16 square.
-  // It will have a better resolution than tiles and sprites.
-  painter.scale(0.5, 0.5);
-  painter.drawTiledPixmap(0, 0, get_width() * 2, get_height() * 2, icon);
-  painter.scale(2, 2);
+  // We draw a 128x128 icon on a 16x16 square.
+  painter.scale(0.125, 0.125);
+  painter.drawTiledPixmap(0, 0, get_width() * 8, get_height() * 8, icon);
+  painter.scale(8, 8);
 
   return true;
 }

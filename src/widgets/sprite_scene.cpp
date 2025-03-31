@@ -85,7 +85,7 @@ SpriteScene::SpriteScene(SpriteModel& model, QObject* parent) :
   // NB: this connection is kept old-style because there is an assert that is triggered.
   // https://forum.qt.io/topic/137452/called-object-is-not-of-the-correct-type-class-destructor-may-have-already-run-what-is-it-o-o/15
   // It looks like there is an issue with the lifetime of some objects.
-  connect(&model.get_selection_model(), SIGNAL(selectionChanged),
+  connect(&model.get_selection_model(), SIGNAL(selectionChanged()),
           this, SLOT(update_selection_to_scene));
 
   connect(this, &SpriteScene::selectionChanged,
