@@ -68,7 +68,9 @@ public:
   void setCurrentPage(Page page, const QString& text = "", const QString& tooltip = "") {
     const auto page_int = static_cast<int>(page);
     if (page_int != currentIndex()) {
-      killTimer(timerId);
+      if (timerId != -1) {
+        killTimer(timerId);
+      }
       timerId = -1;
       switch (page) {
         case Page::Loading:
@@ -111,7 +113,9 @@ protected:
   void timerEvent(QTimerEvent* evt) override {
     QStackedWidget::timerEvent(evt);
     if (evt->timerId() == timerId) {
-      killTimer(timerId);
+      if (timerId != -1) {
+        killTimer(timerId);
+      }
       timerId = -1;
       setCurrentPage(Page::Empty);
     }
