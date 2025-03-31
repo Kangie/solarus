@@ -17,6 +17,7 @@
 #include "widgets/find_text_dialog.h"
 #include "editor_settings.h"
 #include <QPushButton>
+#include <QTextDocument>
 
 namespace SolarusEditor {
 
@@ -35,15 +36,22 @@ FindTextDialog::FindTextDialog(QWidget* parent) :
   ui.find_field->setText(settings.get_value_string(EditorSettings::last_text_searched));
   ui.find_field->selectAll();
 
-  QPushButton* find_button = new QPushButton(tr("Find"), this);
-  ui.button_box->addButton(find_button, QDialogButtonBox::ApplyRole);
+  QPushButton* find_previous_button = new QPushButton(tr("Find Previous"), this);
+  ui.button_box->addButton(find_previous_button, QDialogButtonBox::ApplyRole);
 
-  find_button->setDefault(true);
+  QPushButton* find_next_button = new QPushButton(tr("Find Next"), this);
+  ui.button_box->addButton(find_next_button, QDialogButtonBox::ApplyRole);
+
+  find_next_button->setDefault(true);
 
   QPushButton* replace_button = new QPushButton(tr("Replace"), this);
   ui.button_box->addButton(replace_button, QDialogButtonBox::ApplyRole);
 
-  connect(find_button, &QPushButton::pressed, this, [this]() {
+  connect(find_previous_button, &QPushButton::pressed, this, [this]() {
+    emit find_text_requested(ui.find_field->text(), QTextDocument::FindBackward);
+  });
+
+  connect(find_next_button, &QPushButton::pressed, this, [this]() {
     emit find_text_requested(ui.find_field->text());
   });
 

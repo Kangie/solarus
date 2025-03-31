@@ -32,6 +32,7 @@
 #include <QUndoStack>
 #include <QStatusBar>
 #include <QLabel>
+#include <QTextDocument>
 
 namespace SolarusEditor {
 
@@ -267,18 +268,22 @@ void TextEditor::settings_changed() {
  * @param text The text to find.
  * @return integer: 1 if text found, 0 else
  */
-int TextEditor::find_text_requested(const QString& text) {
+int TextEditor::find_text_requested(const QString& text, QTextDocument::FindFlags flags) {
 
   EditorSettings settings;
   settings.set_value(EditorSettings::last_text_searched, text);
 
-  if (!text_widget->find(text)) {
-    // Text not found: search back from the beginning.
+  if (!text_widget->find(text, flags)) {
+    // Text not found: search back from the beginning/end based on direction selected.
     QTextCursor cursor = text_widget->textCursor();
     int scroll_x = text_widget->horizontalScrollBar()->value();
     int scroll_y = text_widget->verticalScrollBar()->value();
-    text_widget->moveCursor(QTextCursor::Start);
-    if (!text_widget->find(text)) {
+    if (flags & QTextDocument::FindBackward) {
+      text_widget->moveCursor(QTextCursor::End);
+    } else {
+      text_widget->moveCursor(QTextCursor::Start);
+    }
+    if (!text_widget->find(text, flags)) {
       // Still not found: restore the cursor position and scrollbars.
       text_widget->setTextCursor(cursor);
       text_widget->horizontalScrollBar()->setValue(scroll_x);

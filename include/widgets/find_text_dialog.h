@@ -19,6 +19,7 @@
 
 #include "ui_find_text_dialog.h"
 #include <QDialog>
+#include <QTextDocument>
 
 namespace SolarusEditor {
 
@@ -34,7 +35,8 @@ public:
 
 signals:
 
-  void find_text_requested(const QString& text);
+  void find_text_requested(const QString& text, 
+    QTextDocument::FindFlags flags = QTextDocument::FindFlags());
   void replace_text_requested(const QString& text_search, const QString& text_replace);
 
 private:

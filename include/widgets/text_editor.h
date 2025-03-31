@@ -18,6 +18,7 @@
 #define SOLARUSEDITOR_TEXT_EDITOR_H
 
 #include "widgets/editor.h"
+#include <QTextDocument>
 
 class QLabel;
 
@@ -55,7 +56,8 @@ public:
 
 private slots:
 
-  int find_text_requested(const QString& text);
+  int find_text_requested(const QString& text,
+    QTextDocument::FindFlags flags = QTextDocument::FindFlags());
   void replace_text_requested(const QString& text_search, const QString& text_replace);
   void open_map_requested();
   void update_cursor_position_in_status_bar();
