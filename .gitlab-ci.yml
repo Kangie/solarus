@@ -162,7 +162,6 @@ stages:
     - find staging/share/solarus-quest-editor/assets/initial_quest
         \( -iname "*.dat" -or -iname "*.lua" \)
         -print0 | xargs -0 unix2dos -k -o
-    - cp "staging/bin/Solarus Editor.exe" staging/bin/SolarusEditor.exe
     - mingw_make_pkg.sh $ARCH $PACKAGE $BASE_DIR $BINARIES
     - if [[ -n $EXTRAS ]]; then pkg_add.sh $PACKAGE $BASE_DIR $EXTRAS; fi
     - if [[ -n $TEXT_FILES ]]; then
@@ -327,7 +326,7 @@ mingw-x64-package:
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
-      staging/bin/SolarusEditor.exe
+      staging/bin/solarus-editor.exe
     EXTRAS: >-
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
@@ -356,7 +355,7 @@ mingw-x86-package:
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
-      staging/bin/SolarusEditor.exe
+      staging/bin/solarus-editor.exe
     EXTRAS: >-
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations

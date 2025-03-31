@@ -21,4 +21,8 @@ if(WIN32)
   elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-mwindows ${CMAKE_CXX_FLAGS}")
   endif()
+
+  set_target_properties(solarus-quest-editor PROPERTIES
+    OUTPUT_NAME ${SOLARUSEDITOR_EXECUTABLE_NAME}
+  )
 endif()
