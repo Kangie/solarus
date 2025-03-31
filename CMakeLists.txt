@@ -21,7 +21,8 @@ message(STATUS "Building with ${NUM_CORES} parallel jobs")
 message(STATUS "Architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
-set(APP_NAME "Solarus Launcher")
+set(DISPLAY_NAME "Solarus Launcher")
+set(EXECUTABLE_NAME "solarus-launcher")
 set(APP_COPYRIGHT "© 2006-${PROJECT_BUILD_YEAR} Solarus Labs.")
 set(APP_IDENTIFIER "org.solarus-games.solarus-launcher")
 set(APP_GLOBAL_PROJECT "Solarus")
@@ -128,6 +129,7 @@ set_target_properties(QtAppInstanceManager
 # If this flag is set, CMake will download Solarus from its git repository
 # instead of using a locally pre-built version.
 set(SOLARUS_FETCHCONTENT OFF CACHE BOOL "Enable downloading of Solarus from its git repository")
+set(SOLARUS_CLI OFF)
 if(SOLARUS_FETCHCONTENT)
   message(STATUS "Solarus: Fetching from git repository")
   set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
@@ -244,9 +246,9 @@ endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
   # ${BUNDLE_ID_OPTION}
-  OUTPUT_NAME ${APP_NAME}
+  OUTPUT_NAME ${EXECUTABLE_NAME} 
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-  MACOSX_BUNDLE_BUNDLE_NAME ${APP_NAME}
+  MACOSX_BUNDLE_BUNDLE_NAME ${DISPLAY_NAME}
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
   MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_IDENTIFIER}
   MACOSX_BUNDLE_COPYRIGHT ${APP_COPYRIGHT}
@@ -265,12 +267,13 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
   PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
   PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
-  PROJECT_APP_EXECUTABLE_NAME="${PROJECT_NAME}"
-  PROJECT_APP_NAME="${APP_NAME}"
+  PROJECT_APP_EXECUTABLE_NAME="${EXECUTABLE_NAME}"
+  PROJECT_DISPLAY_NAME="${DISPLAY_NAME}"
   PROJECT_APP_COPYRIGHT="${APP_COPYRIGHT}"
   PROJECT_APP_ORGANISATION="${APP_ORGANISATION}"
   PROJECT_APP_ORGANISATION_DOMAIN="${APP_ORGANISATION_DOMAIN}"
   PROJECT_HOMEPAGE_URL="${PROJECT_HOMEPAGE_URL}"
+  PROJECT_APP_IDENTIFIER="${APP_IDENTIFIER}"
   PROJECT_LINKS_X="${LINKS_X}"
   PROJECT_LINKS_MASTODON="${LINKS_MASTODON}"
   PROJECT_LINKS_YOUTUBE="${LINKS_YOUTUBE}"
@@ -293,54 +296,57 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(DEPLOY_TOOL_OPTIONS_ARG "-libpath=/opt/homebrew/lib")
 endif()
 
-qt_generate_deploy_script(
-    TARGET ${PROJECT_NAME}
-    OUTPUT_SCRIPT DEPLOY_SCRIPT
-    CONTENT "
-qt_deploy_runtime_dependencies(
-    EXECUTABLE \"${EXECUTABLE_PATH}\"
-    BIN_DIR .
-    DEPLOY_TOOL_OPTIONS ${DEPLOY_TOOL_OPTIONS_ARG}
-    GENERATE_QT_CONF
-    VERBOSE
-    NO_APP_STORE_COMPLIANCE
-)
-
-if(\"${CMAKE_SYSTEM_NAME}\" MATCHES \"Darwin\" AND NOT \"${CODE_SIGN_IDENTITY}\" STREQUAL \"\")
-  message(STATUS \"Executing codesign with ${CODE_SIGN_IDENTITY}\")
-  execute_process(COMMAND xcrun codesign
-    --force
-    --deep
-    --options runtime
-    --timestamp
-    --sign \"${CODE_SIGN_IDENTITY}\"
-    \"${BUNDLE_PATH}\"
-    COMMAND_ERROR_IS_FATAL ANY
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  qt_generate_deploy_script(
+      TARGET ${PROJECT_NAME}
+      OUTPUT_SCRIPT DEPLOY_SCRIPT
+      CONTENT "
+  qt_deploy_runtime_dependencies(
+      EXECUTABLE \"${EXECUTABLE_PATH}\"
+      BIN_DIR .
+      DEPLOY_TOOL_OPTIONS ${DEPLOY_TOOL_OPTIONS_ARG}
+      GENERATE_QT_CONF
+      VERBOSE
+      NO_APP_STORE_COMPLIANCE
   )
 
-  if(ENABLE_NOTARIZE)
-    set(TMP_ZIP_PATH \"/tmp/$<TARGET_FILE_NAME:${PROJECT_NAME}>.zip\")
-
-    execute_process(COMMAND ditto -c -k --keepParent
-      \"${BUNDLE_PATH}\"
-      \"${TMP_ZIP_PATH}\"
-      COMMAND_ERROR_IS_FATAL ANY
-    )
-
-    execute_process(COMMAND xcrun notarytool submit --wait
-      ${CODE_SIGN_IDENTITY}
-      --keychain-profile \"notarytool-password\"
-      \"${TMP_ZIP_PATH}\"
-      COMMAND_ERROR_IS_FATAL ANY
-    )
-
-    execute_process(COMMAND xcrun stapler staple
+  if(\"${CMAKE_SYSTEM_NAME}\" MATCHES \"Darwin\" AND NOT \"${CODE_SIGN_IDENTITY}\" STREQUAL \"\")
+    message(STATUS \"Executing codesign with ${CODE_SIGN_IDENTITY}\")
+    execute_process(COMMAND xcrun codesign
+      --force
+      --deep
+      --options runtime
+      --timestamp
+      --sign \"${CODE_SIGN_IDENTITY}\"
       \"${BUNDLE_PATH}\"
       COMMAND_ERROR_IS_FATAL ANY
     )
+
+    if(ENABLE_NOTARIZE)
+      set(TMP_ZIP_PATH \"/tmp/$<TARGET_FILE_NAME:${PROJECT_NAME}>.zip\")
+
+      execute_process(COMMAND ditto -c -k --keepParent
+        \"${BUNDLE_PATH}\"
+        \"${TMP_ZIP_PATH}\"
+        COMMAND_ERROR_IS_FATAL ANY
+      )
+
+      execute_process(COMMAND xcrun notarytool submit --wait
+        ${CODE_SIGN_IDENTITY}
+        --keychain-profile \"notarytool-password\"
+        \"${TMP_ZIP_PATH}\"
+        COMMAND_ERROR_IS_FATAL ANY
+      )
+
+      execute_process(COMMAND xcrun stapler staple
+        \"${BUNDLE_PATH}\"
+        COMMAND_ERROR_IS_FATAL ANY
+      )
+    endif()
   endif()
+  ")
 endif()
-")
+
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   install(TARGETS ${PROJECT_NAME}
@@ -353,10 +359,12 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     RUNTIME DESTINATION . COMPONENT ${PROJECT_NAME}
   )
 endif()
-install(SCRIPT "${DEPLOY_SCRIPT}" COMPONENT ${PROJECT_NAME})
+if(DEPLOY_SCRIPT)
+  install(SCRIPT "${DEPLOY_SCRIPT}" COMPONENT ${PROJECT_NAME})
+endif()
 
 # Add Info.plist to the macOS bundle only on macOS.
-set(EXECUTABLE_NAME ${APP_NAME})
+set(EXECUTABLE_NAME ${EXECUTABLE_NAME})
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
   configure_file(
@@ -398,22 +406,82 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   target_sources(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/Resources.rc")
 endif()
 
+if(UNIX AND NOT APPLE)
+  # Executable.
+  install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin
+  )
+
+  # Desktop environment metadata.
+  set(DESKTOP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${APP_IDENTIFIER}.desktop)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/linux/app.desktop.in
+    ${DESKTOP_FILE}
+    @ONLY
+  )
+  install(FILES ${DESKTOP_FILE}
+    DESTINATION share/applications
+  )
+
+  # AppStream Metadata metadata (for Gnome Software Center).
+  set(METAINFO_FILE ${CMAKE_CURRENT_BINARY_DIR}/${APP_IDENTIFIER}.metainfo.xml)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/linux/app.metainfo.xml.in
+    ${METAINFO_FILE}
+    @ONLY
+  )
+  install(FILES ${METAINFO_FILE}
+    DESTINATION share/metainfo
+  )
+
+  # Raster images for icon sizes under 48x48 pixels.
+  foreach(SIZE IN ITEMS 16 20 24 32 40 48)
+    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon_${SIZE}.png
+      DESTINATION share/icons/hicolor/${SIZE}x${SIZE}/apps RENAME ${APP_IDENTIFIER}.png
+    )
+  endforeach(SIZE)
+
+  # Raster image for desktops that don't support multiple sizes.
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon_512.png
+    DESTINATION share/pixmaps RENAME ${APP_IDENTIFIER}.png
+  )
+
+  # Vector images, automatically chosen for icon sizes above 48x48 pixels
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.svg
+    DESTINATION share/icons/hicolor/scalable/apps RENAME ${APP_IDENTIFIER}.svg
+  )
+
+  # Monochromatic vector image for some desktop environments that need it.
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon_symbolic.svg
+    DESTINATION share/icons/hicolor/symbolic/apps RENAME ${APP_IDENTIFIER}.svg
+  )
+
+  # Register a .solarus extension.
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/linux/solarus.xml DESTINATION share/mime/packages)
+
+  # Association to files wth the "".solarus" extension.
+  install(CODE "execute_process(COMMAND update-mime-database /usr/share/mime)")
+  install(CODE "execute_process(COMMAND update-desktop-database /usr/share/applications)")
+  install(CODE "execute_process(COMMAND mkdir -p /root/.config)") # Ensure the .config directory exists.
+  install(CODE "execute_process(COMMAND touch /root/.config/mimeapps.list)") # Ensure the mimeapps.list file exists.
+  install(CODE "execute_process(COMMAND xdg-mime default ${APP_IDENTIFIER}.desktop application/x-solarus)")
+
+endif() 
+
 qt_finalize_executable(${PROJECT_NAME})
 
 # Packaging.
-set(CPACK_PACKAGE_NAME "${APP_NAME}")
+set(CPACK_PACKAGE_NAME "${DISPLAY_NAME}")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
 set(CPACK_PACKAGE_VENDOR "${APP_ORGANISATION}")
 set(CPACK_PACKAGE_CONTACT "${APP_EMAIL}")
 set(CPACK_PACKAGE_LICENSE "${APP_LICENSE}")
 set(CPACK_COMPONENTS_ALL ${COMPONENT_NAME})
-set(CPACK_PACKAGE_FILE_NAME "${APP_NAME} Installer v${PROJECT_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "${DISPLAY_NAME} Installer v${PROJECT_VERSION}")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(DMG_SCRIPT ON CACHE BOOL "Enable DMG customization with AppleScript")
 
-  set(BUNDLE_NAME "${APP_NAME}.app")
+  set(BUNDLE_NAME "${DISPLAY_NAME}.app")
   if(DMG_SCRIPT)
     set(DMG_APPLESCRIPT "${CMAKE_CURRENT_BINARY_DIR}/DMGSetup.applescript")
     configure_file(
@@ -425,10 +493,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
   set(CPACK_GENERATOR "DragNDrop")
   set(CPACK_PACKAGE_VENDOR "${APP_ORGANISATION}")
-  set(CPACK_PACKAGE_FILE_NAME "${APP_NAME} Installer")
+  set(CPACK_PACKAGE_FILE_NAME "${DISPLAY_NAME} Installer")
   set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMGVolumeIcon.icns")
-  set(CPACK_BUNDLE_NAME "${APP_NAME}")
-  set(CPACK_DMG_VOLUME_NAME "${APP_NAME} Installer")
+  set(CPACK_BUNDLE_NAME "${DISPLAY_NAME}")
+  set(CPACK_DMG_VOLUME_NAME "${DISPLAY_NAME} Installer")
   set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpack/DragNDrop/DMGBackground@2x.png")
   if(DMG_APPLESCRIPT)
     set(CPACK_DMG_DS_STORE_SETUP_SCRIPT "${DMG_APPLESCRIPT}")

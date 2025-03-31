@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=@APP_NAME@
+Name=@DISPLAY_NAME@
 GenericName=Launcher for Solarus video games
 GenericName[es]=Lanzador de videojuegos Solarus
 GenericName[fr]=Lecteur de jeux vidéos Solarus
@@ -11,9 +11,8 @@ Icon=@APP_IDENTIFIER@
 Type=Application
 Terminal=false
 StartupNotify=true
-Icon=@SOLARUSEDITOR_APP_ID@
 Categories=Game;Emulator;
 Keywords=game;videogame;video game;solarus;player;launcher;
 Keywords[es]=juego;videojuego;video juego;solarus;player;launcher;lanzador;
 Keywords[fr]=jeu;jeuvidéo;jeu vidéo;solarus;player;lanceur;lecteur;launcher;
-MimeType=application/x-solarus;
+MimeType=application/x-solarus

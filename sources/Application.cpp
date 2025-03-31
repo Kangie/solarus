@@ -14,12 +14,12 @@
 
 namespace solarus::launcher {
 void configureQApplication() {
-  QGuiApplication::setApplicationName(PROJECT_APP_NAME);
-  QGuiApplication::setApplicationDisplayName(PROJECT_APP_NAME);
+  QGuiApplication::setApplicationName(PROJECT_DISPLAY_NAME);
+  QGuiApplication::setApplicationDisplayName(PROJECT_DISPLAY_NAME);
   QGuiApplication::setOrganizationName(PROJECT_APP_ORGANISATION);
   QGuiApplication::setOrganizationDomain(PROJECT_APP_ORGANISATION_DOMAIN);
   QGuiApplication::setApplicationVersion(PROJECT_VERSION);
-  QGuiApplication::setDesktopFileName(PROJECT_APP_NAME ".desktop");
+  QGuiApplication::setDesktopFileName(PROJECT_APP_IDENTIFIER ".desktop");
 }
 
 Application::Application(int& argc, char** argv)
