@@ -7,54 +7,7 @@ Solarus now supports multiple maps, cameras, heroes and game controllers.
 This release comes with a new game controller API and an improved audio API
 with better support and customization features.
 
-### Engine changes
-
-* Fix crash when teletransporting to a map without the same layer (#1419).
-* Fix crash when a moving custom entity activates a stream (#1562).
-* Fix crash when a sprite is synchronized to a sprite with more frames (#1117).
-* Fix crash when calling `hero:set_direction()` with an invalid value (#1628).
-* Fix crash when entering a map with tileset-specific sprites nearby.
-* Fix crash when resetting the game from the update step (#1583).
-* Fix crash when loading an invalid savegame file (#1503).
-* Fix crash when assigning a non-assignable item (#1641).
-* Fix return of invalid sprite object with bad sprite id (#1423).
-* Fix separator region detection corner cases (#1425).
-* Fix error reporting when creating entities with a non-existent model (#1494).
-* Fix `entity:overlaps()` returning true even with removed entities (#1611).
-* Fix custom state direction control when the movement is disallowed (#1565).
-* Fix missing equipement for second heroes (#1576).
-* Fix `hero.set_invincible` not suspended with the game (#1554).
-* Fix NPC keeping animation `walking` after movement:stop() (#1652).
-* Fix custom entity still interacting when moved or disabled (#1056, #1407).
-* Fix unhelpful error when a destructible has no sprite.
-* Fix thrown objects destruction animation position (#1508).
-* Fix camera stuck on entities other than separators (#1619).
-* Fix crash when loading a save file with Lua keywords (#1609).
-* Fix crash when a dialog starts during another dialog (#988, #1582).
-* Fix speed of target movement outside a game (#1297).
-* Fix crash when circle movement angular speed is 0 (#1657).
-* Fix `custom_entity:add_collision_test()` not always checking collisions (#1648).
-* Fix collisions when moving a sprite without moving the entity (#1535).
-* Fix abnormal CPU consumption on Windows (#533).
-* The -lua-console parameter is now false by default.
-* Add support for loading SDL Game Controller mapping database files.
-  * Allows the engine to properly support much more current and future controllers.
-  * For a better out of the box experience, the engine now also bundles a popular
-    [community-sourced database](https://github.com/mdqinc/SDL_GameControllerDB).
-  * Users can create and use their own custom controller mappings as well.
-
 ### Lua API changes
-
-#### Changes that introduce incompatibilities
-
-Solarus 2.0 can still run quests in 1.5 and 1.6 format.
-The following list of incompatibilities only affect quests in the 2.0 format.
-See the migration guide for more detailed instructions.
-
-* Joypad input events now provide button names instead of numbers.
-* Controls are no longer saved by default, see `game:set_legacy_controls_storage()`.
-* `hero:teleport()` now also teleports the camera instead of recreating one.
-* `hero:get_sword_sound_id()` now returns `nil` if there is no sword sound.
 
 #### Changes that do not introduce incompatibilities
 
@@ -96,6 +49,57 @@ See the migration guide for more detailed instructions.
 * Add methods `enemy:get/set_immobilization_duration()` (#463).
 * Add new quest properties: `initial_release_date`, `license`, `languages`,
 `min_players`, `max_players`, `genres`, `age`, `controls`, `dynamic_timestep`, `subpixel_camera`.
+
+#### Changes that introduce incompatibilities
+
+Solarus 2.0 can still run quests in 1.5 and 1.6 format.
+The following list of incompatibilities only affect quests in the 2.0 format.
+See the migration guide for more detailed instructions.
+
+* Joypad input events now provide button names instead of numbers.
+* Controls are no longer saved by default, see `game:set_legacy_controls_storage()`.
+* `hero:teleport()` now also teleports the camera instead of recreating one.
+* `hero:get_sword_sound_id()` now returns `nil` if there is no sword sound.
+
+### Engine bug fixes
+
+* Fix crash when teletransporting to a map without the same layer (#1419).
+* Fix crash when a moving custom entity activates a stream (#1562).
+* Fix crash when a sprite is synchronized to a sprite with more frames (#1117).
+* Fix crash when calling `hero:set_direction()` with an invalid value (#1628).
+* Fix crash when entering a map with tileset-specific sprites nearby.
+* Fix crash when resetting the game from the update step (#1583).
+* Fix crash when loading an invalid savegame file (#1503).
+* Fix crash when assigning a non-assignable item (#1641).
+* Fix return of invalid sprite object with bad sprite id (#1423).
+* Fix separator region detection corner cases (#1425).
+* Fix error reporting when creating entities with a non-existent model (#1494).
+* Fix `entity:overlaps()` returning true even with removed entities (#1611).
+* Fix custom state direction control when the movement is disallowed (#1565).
+* Fix missing equipement for second heroes (#1576).
+* Fix `hero.set_invincible` not suspended with the game (#1554).
+* Fix NPC keeping animation `walking` after movement:stop() (#1652).
+* Fix custom entity still interacting when moved or disabled (#1056, #1407).
+* Fix unhelpful error when a destructible has no sprite.
+* Fix thrown objects destruction animation position (#1508).
+* Fix camera stuck on entities other than separators (#1619).
+* Fix crash when loading a save file with Lua keywords (#1609).
+* Fix crash when a dialog starts during another dialog (#988, #1582).
+* Fix speed of target movement outside a game (#1297).
+* Fix crash when circle movement angular speed is 0 (#1657).
+* Fix `custom_entity:add_collision_test()` not always checking collisions (#1648).
+* Fix collisions when moving a sprite without moving the entity (#1535).
+* Fix abnormal CPU consumption on Windows (#533).
+* Fix master volume being too loud.
+
+### Other engine changes
+
+* The -lua-console parameter is now false by default.
+* Add support for loading SDL Game Controller mapping database files.
+  * Allows the engine to properly support much more current and future controllers.
+  * For a better out of the box experience, the engine now also bundles a popular
+    [community-sourced database](https://github.com/mdqinc/SDL_GameControllerDB).
+  * Users can create and use their own custom controller mappings as well.
 
 ### Solarus launcher GUI changes
 

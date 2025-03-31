@@ -21,7 +21,6 @@
 #include "solarus/audio/SpcDecoder.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/QuestFiles.h"
-#include "solarus/core/String.h"
 #include "solarus/lua/LuaContext.h"
 #include <lua.hpp>
 #include <algorithm>

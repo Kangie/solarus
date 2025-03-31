@@ -102,6 +102,7 @@ void Sound::initialize(const Arguments& args, ResourceProvider* resource_provide
   }
 
   alGenBuffers(0, nullptr);  // Necessary on some systems to avoid errors with the first sound loaded.
+  alListenerf(AL_GAIN, 0.7);  // Reduce master volume, too loud by default.
 
   // initialize the music system
   MusicSystem::initialize();
