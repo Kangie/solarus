@@ -326,7 +326,7 @@ mingw-x64-package:
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
-      "staging/bin/Solarus Editor.exe"
+      staging/bin/Solarus\ Editor.exe
     EXTRAS: >-
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
@@ -355,7 +355,7 @@ mingw-x86-package:
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
-      "staging/bin/Solarus Editor.exe"
+      staging/bin/Solarus\ Editor.exe
     EXTRAS: >-
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
