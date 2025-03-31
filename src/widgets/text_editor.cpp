@@ -273,7 +273,7 @@ int TextEditor::find_text_requested(const QString& text, QTextDocument::FindFlag
   EditorSettings settings;
   settings.set_value(EditorSettings::last_text_searched, text);
 
-  if (!text_widget->find(text)) {
+  if (!text_widget->find(text, flags)) {
     // Text not found: search back from the beginning/end based on direction selected.
     QTextCursor cursor = text_widget->textCursor();
     int scroll_x = text_widget->horizontalScrollBar()->value();
@@ -283,7 +283,7 @@ int TextEditor::find_text_requested(const QString& text, QTextDocument::FindFlag
     } else {
       text_widget->moveCursor(QTextCursor::Start);
     }
-    if (!text_widget->find(text)) {
+    if (!text_widget->find(text, flags)) {
       // Still not found: restore the cursor position and scrollbars.
       text_widget->setTextCursor(cursor);
       text_widget->horizontalScrollBar()->setValue(scroll_x);
