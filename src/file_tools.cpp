@@ -298,7 +298,7 @@ QString to_file_name(const QString& name) {
  */
 bool is_valid_windows_path(const QString &path) {
   // List of invalid characters in Windows paths
-  static const QRegularExpression invalid_chars_regex(R"([<>"/\\|?*\x00-\x1F])");
+  static const QRegularExpression invalid_chars_regex(R"([<>"\\|?*\x00-\x1F])");
 
   // Also check for reserved names (CON, PRN, AUX, NUL, COM1-9, LPT1-9, etc.)
   static const QRegularExpression reserved_names(
