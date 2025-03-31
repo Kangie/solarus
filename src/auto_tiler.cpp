@@ -1124,10 +1124,12 @@ AddableEntities AutoTiler::generate_border_tiles() {
   }
 
   const EntityModelPtr& first_tile = *tiles.begin();
-  int layer = first_tile->get_layer();
+  const int layer = first_tile->get_layer();
   int order = map.get_num_tiles(layer);
+  const int group = map.generate_group_id();
   AddableEntities addable_tiles;
   for (EntityModelPtr& tile : tiles) {
+    tile->set_group(group);
     EntityIndex index = { layer, order };
     addable_tiles.emplace_back(std::move(tile), index);
     ++order;
