@@ -51,14 +51,14 @@ SpriteView::SpriteView(QWidget* parent) :
         QIcon(":/images/icon_delete.svg"), tr("Delete..."), this);
   delete_direction_action->setShortcut(QKeySequence::Delete);
   delete_direction_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  connect(delete_direction_action, SIGNAL(triggered()),
-          this, SIGNAL(delete_selected_direction_requested()));
+  connect(delete_direction_action, &QAction::triggered,
+          this, &SpriteView::delete_selected_direction_requested);
   addAction(delete_direction_action);
   duplicate_direction_action = new QAction(
         QIcon(":/images/icon_copy.svg"), tr("Duplicate..."), this);
   // TODO: set a shortcut to duplicate a direction
-  connect(duplicate_direction_action, SIGNAL(triggered()),
-          this, SLOT(duplicate_selected_direction()));
+  connect(duplicate_direction_action, &QAction::triggered,
+          this, &SpriteView::duplicate_selected_direction);
   addAction(duplicate_direction_action);
 
   change_num_frames_columns_action = new QAction(
@@ -66,22 +66,22 @@ SpriteView::SpriteView(QWidget* parent) :
   change_num_frames_columns_action->setShortcut(tr("R"));
   change_num_frames_columns_action->setShortcutContext(
     Qt::WidgetWithChildrenShortcut);
-  connect(change_num_frames_columns_action, SIGNAL(triggered()),
-          this, SLOT(change_num_frames_columns_requested()));
+  connect(change_num_frames_columns_action, &QAction::triggered,
+          this, &SpriteView::change_num_frames_columns_requested);
   addAction(change_num_frames_columns_action);
 
   change_num_frames_action = new QAction(
         tr("Change the number of frames"), this);
   // TODO: set a shortcut to changing the number of frames
-  connect(change_num_frames_action, SIGNAL(triggered()),
-          this, SLOT(change_num_frames_requested()));
+  connect(change_num_frames_action, &QAction::triggered,
+          this, &SpriteView::change_num_frames_requested);
   addAction(change_num_frames_action);
 
   change_num_columns_action = new QAction(
         tr("Change the number of columns"), this);
   // TODO: set a shortcut to changing the number of columns
-  connect(change_num_columns_action, SIGNAL(triggered()),
-          this, SLOT(change_num_columns_requested()));
+  connect(change_num_columns_action, &QAction::triggered,
+          this, &SpriteView::change_num_columns_requested);
   addAction(change_num_columns_action);
 
   ViewSettings* view_settings = new ViewSettings(this);
@@ -146,14 +146,14 @@ void SpriteView::set_view_settings(ViewSettings& view_settings) {
           this, SLOT(update_zoom()));
   update_zoom();
 
-  connect(this->view_settings, SIGNAL(grid_visibility_changed(bool)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_size_changed(QSize)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_style_changed(GridStyle)),
-          this, SLOT(update_grid_visibility()));
-  connect(this->view_settings, SIGNAL(grid_color_changed(QColor)),
-          this, SLOT(update_grid_visibility()));
+  connect(this->view_settings.data(), &ViewSettings::grid_visibility_changed,
+          this, &SpriteView::update_grid_visibility);
+  connect(this->view_settings.data(), &ViewSettings::grid_size_changed,
+          this, &SpriteView::update_grid_visibility);
+  connect(this->view_settings.data(), &ViewSettings::grid_style_changed,
+          this, &SpriteView::update_grid_visibility);
+  connect(this->view_settings.data(), &ViewSettings::grid_color_changed,
+          this, &SpriteView::update_grid_visibility);
   update_grid_visibility();
 
   horizontalScrollBar()->setValue(0);
