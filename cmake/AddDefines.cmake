@@ -9,7 +9,7 @@ set(SOLARUSEDITOR_APP_DISPLAY_NAME "Solarus Editor")
 add_definitions(-DSOLARUSEDITOR_APP_DISPLAY_NAME=\"${SOLARUSEDITOR_APP_DISPLAY_NAME}\")
 
 # Executable name.
-set(SOLARUSEDITOR_EXECUTABLE_NAME "solarus-quest-editor")
+set(SOLARUSEDITOR_EXECUTABLE_NAME "solarus-editor")
 add_definitions(-DSOLARUSEDITOR_EXECUTABLE_NAME=\"${SOLARUSEDITOR_EXECUTABLE_NAME}\")
 
 # More metadata use on multiple platforms.

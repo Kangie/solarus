@@ -23,7 +23,3 @@ target_link_libraries(solarus-quest-editor
   "${MODPLUG_LIBRARY}"
   qlementine
 )
-
-set_target_properties(solarus-quest-editor PROPERTIES
-  OUTPUT_NAME ${SOLARUSEDITOR_APP_DISPLAY_NAME}
-)
