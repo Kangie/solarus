@@ -95,7 +95,7 @@ include(FetchContent)
 # Qlementine Icons: an SVG icon library made for Qt.
 FetchContent_Declare(qlementine-icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
-  GIT_TAG ef40cebe94064f91fcfa600600afe263266fa51e #v1.7.1
+  GIT_TAG v1.8.0
 )
 FetchContent_MakeAvailable(qlementine-icons)
 set_target_properties(qlementine-icons
@@ -106,7 +106,7 @@ set_target_properties(qlementine-icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG 5f4ea6fd571f53f34e82a77062913a228910a5c5 #dev
+  GIT_TAG 8dd75f67f626f33130652bbd801c778d4462a4f0 #dev
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -116,7 +116,7 @@ set_target_properties(qlementine
 
 FetchContent_Declare(QtAppInstanceManager
  GIT_REPOSITORY "https://github.com/oclero/qtappinstancemanager.git"
- GIT_TAG 1d7de744735f68310c8ebef0c809c36178f0e070 #v1.3.0
+ GIT_TAG v1.3.0
 )
 FetchContent_MakeAvailable(QtAppInstanceManager)
 set_target_properties(QtAppInstanceManager
@@ -134,7 +134,7 @@ if(SOLARUS_FETCHCONTENT)
   set(SOLARUS_FILE_LOGGING OFF)
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG 0d9e3d6e773051b9043aa3e595cacf1f47fd4150 # dev
+    GIT_TAG 7cd7d55137f41566c78fa59c081cf7ad8d962b25 # dev
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
