@@ -19,6 +19,7 @@
 * Map editor: allow custom entities of any size (#538).
 * Tileset editor: allow to resize tile patterns (#159).
 * Sprite editor: allow to create a sprite from an image (#527).
+* Add a "Find previous" button to text editor search (#353).
 * Add error reporting to the quest runner process.
 * Add support of ANSI color codes to the GUI console.
 * Allow to clear the console (#436).
