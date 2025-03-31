@@ -11,7 +11,8 @@
       "cacheVariables": {
         "Qt6_DIR": "/opt/homebrew/opt/qt/lib/cmake/Qt6",
         "SOLARUS_FETCHCONTENT": true,
-        "DMG_SCRIPT": false
+        "ENABLE_QTDEPLOY": true,
+        "ENABLE_CPACK": true
       },
       "condition": {
         "type": "equals",
