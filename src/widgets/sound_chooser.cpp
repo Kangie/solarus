@@ -32,8 +32,7 @@ SoundChooser::SoundChooser(QWidget* parent) :
   quest() {
 
   sound_selector.set_resource_type(ResourceType::SOUND);
-  play_sound_button.setIconSize(QSize(24, 24));
-  play_sound_button.setIcon(QIcon(":/images/icon_start.png"));
+  play_sound_button.setIcon(QIcon(":/images/icon_start.svg"));
   play_sound_button.setToolTip(tr("Play sound"));
 
   QHBoxLayout* layout = new QHBoxLayout(this);
@@ -55,10 +54,10 @@ void SoundChooser::set_quest(Quest& quest) {
 
   sound_selector.set_quest(quest);
 
-  connect(&play_sound_button, SIGNAL(clicked(bool)),
-          this, SLOT(play_sound_button_clicked()));
-  connect(&sound_selector, SIGNAL(activated(QString)),
-          this, SLOT(sound_selector_activated(QString)));
+  connect(&play_sound_button, &QAbstractButton::clicked,
+          this, &SoundChooser::play_sound_button_clicked);
+  connect(&sound_selector, &QComboBox::textActivated,
+          this, &SoundChooser::sound_selector_activated);
 
   update_play_button();
 }

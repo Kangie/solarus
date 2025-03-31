@@ -14,25 +14,28 @@
    <string>Map editor</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="handleWidth">
-      <number>7</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="map_side_view" native="true">
       <property name="sizePolicy">
@@ -57,10 +60,10 @@
        <item>
         <widget class="QSplitter" name="map_side_splitter">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="handleWidth">
-          <number>7</number>
+          <number>2</number>
          </property>
          <widget class="QScrollArea" name="map_properties_scroll_area">
           <property name="widgetResizable">
@@ -71,8 +74,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>446</width>
-             <height>529</height>
+             <width>457</width>
+             <height>503</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -83,16 +86,16 @@
            </property>
            <layout class="QFormLayout" name="formLayout">
             <property name="leftMargin">
-             <number>12</number>
+             <number>16</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>8</number>
             </property>
             <property name="rightMargin">
-             <number>12</number>
+             <number>16</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>16</number>
             </property>
             <item row="0" column="0">
              <widget class="QLabel" name="map_id_label">
@@ -106,6 +109,18 @@
             </item>
             <item row="0" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QLabel" name="map_id_field">
                 <property name="sizePolicy">
@@ -121,7 +136,7 @@
                  <string/>
                 </property>
                 <property name="textInteractionFlags">
-                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                 </property>
                </widget>
               </item>
@@ -135,13 +150,7 @@
                 </property>
                 <property name="icon">
                  <iconset resource="../../resources/images.qrc">
-                  <normaloff>:/images/icon_script.png</normaloff>:/images/icon_script.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
+                  <normaloff>:/images/icon_script.svg</normaloff>:/images/icon_script.svg</iconset>
                 </property>
                </widget>
               </item>
@@ -168,6 +177,12 @@
               <property name="toolTip">
                <string>User-friendly description to show in the editor</string>
               </property>
+              <property name="placeholderText">
+               <string>Description</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item row="2" column="0">
@@ -189,6 +204,18 @@
             </item>
             <item row="3" column="1">
              <layout class="QHBoxLayout" name="horizontal_layout_6">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QSpinBox" name="min_layer_field">
                 <property name="minimumSize">
@@ -240,7 +267,7 @@
               <item>
                <spacer name="horizontal_spacer">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -254,6 +281,12 @@
             </item>
             <item row="4" column="0">
              <widget class="QCheckBox" name="world_check_box">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Set a world</string>
               </property>
@@ -264,10 +297,22 @@
               <property name="toolTip">
                <string>A name to group maps together</string>
               </property>
+              <property name="placeholderText">
+               <string>World</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item row="5" column="0">
              <widget class="QCheckBox" name="floor_check_box">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Set a floor</string>
               </property>
@@ -275,6 +320,18 @@
             </item>
             <item row="5" column="1">
              <layout class="QHBoxLayout" name="horizontal_layout_4">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QSpinBox" name="floor_field">
                 <property name="minimumSize">
@@ -303,7 +360,7 @@
               <item>
                <spacer name="horizontal_spacer_3">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -319,6 +376,9 @@
              <widget class="QLabel" name="location_label">
               <property name="text">
                <string>Location in its world</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -344,6 +404,18 @@
             </item>
             <item row="9" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="SolarusEditor::ResourceSelector" name="tileset_field">
                 <property name="toolTip">
@@ -358,56 +430,69 @@
                 </property>
                 <property name="icon">
                  <iconset resource="../../resources/images.qrc">
-                  <normaloff>:/images/icon_edit.png</normaloff>:/images/icon_edit.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
+                  <normaloff>:/images/icon_edit.svg</normaloff>:/images/icon_edit.svg</iconset>
                 </property>
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="10" column="0" colspan="2">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Policy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
          </widget>
          <widget class="QTabWidget" name="tileset_tab_widget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
+          </property>
+          <property name="documentMode">
+           <bool>true</bool>
           </property>
           <widget class="QWidget" name="patterns_tab">
            <attribute name="icon">
             <iconset resource="../../resources/images.qrc">
-             <normaloff>:/images/entity_tile.png</normaloff>:/images/entity_tile.png</iconset>
+             <normaloff>:/images/icon_tile.svg</normaloff>:/images/icon_tile.svg</iconset>
            </attribute>
            <attribute name="title">
             <string>Patterns</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout">
             <property name="leftMargin">
-             <number>0</number>
+             <number>16</number>
             </property>
             <property name="topMargin">
-             <number>0</number>
+             <number>16</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>16</number>
             </property>
             <property name="bottomMargin">
-             <number>0</number>
+             <number>19</number>
             </property>
             <item>
              <layout class="QHBoxLayout" name="horizontal_layout_8">
               <property name="leftMargin">
-               <number>3</number>
+               <number>0</number>
               </property>
               <property name="topMargin">
-               <number>3</number>
+               <number>0</number>
               </property>
               <property name="rightMargin">
-               <number>3</number>
+               <number>0</number>
               </property>
               <property name="bottomMargin">
                <number>0</number>
@@ -429,13 +514,7 @@
                 </property>
                 <property name="icon">
                  <iconset resource="../../resources/images.qrc">
-                  <normaloff>:/images/icon_edit.png</normaloff>:/images/icon_edit.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
+                  <normaloff>:/images/icon_edit.svg</normaloff>:/images/icon_edit.svg</iconset>
                 </property>
                 <property name="shortcut">
                  <string>Ctrl+T</string>
@@ -459,20 +538,56 @@
           <widget class="QWidget" name="border_sets_tab">
            <attribute name="icon">
             <iconset resource="../../resources/images.qrc">
-             <normaloff>:/images/border_set.png</normaloff>:/images/border_set.png</iconset>
+             <normaloff>:/images/icon_border_set.svg</normaloff>:/images/icon_border_set.svg</iconset>
            </attribute>
            <attribute name="title">
             <string>Contour generator</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="leftMargin">
+             <number>16</number>
+            </property>
+            <property name="topMargin">
+             <number>16</number>
+            </property>
+            <property name="rightMargin">
+             <number>16</number>
+            </property>
+            <property name="bottomMargin">
+             <number>19</number>
+            </property>
             <item>
              <widget class="QGroupBox" name="groupBox">
               <property name="title">
                <string>Generate contour tiles around the selection</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="leftMargin">
+                <number>8</number>
+               </property>
+               <property name="topMargin">
+                <number>8</number>
+               </property>
+               <property name="rightMargin">
+                <number>8</number>
+               </property>
+               <property name="bottomMargin">
+                <number>8</number>
+               </property>
                <item>
                 <layout class="QFormLayout" name="formLayout_2">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_2">
                    <property name="text">
@@ -482,6 +597,18 @@
                  </item>
                  <item row="0" column="1">
                   <layout class="QHBoxLayout" name="horizontal_layout_7">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="SolarusEditor::ResourceSelector" name="border_set_tileset_field">
                      <property name="toolTip">
@@ -499,13 +626,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="../../resources/images.qrc">
-                       <normaloff>:/images/icon_edit.png</normaloff>:/images/icon_edit.png</iconset>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>24</width>
-                       <height>24</height>
-                      </size>
+                       <normaloff>:/images/icon_edit.svg</normaloff>:/images/icon_edit.svg</iconset>
                      </property>
                      <property name="shortcut">
                       <string>Ctrl+T</string>
@@ -531,30 +652,26 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <spacer name="verticalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Fixed</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>0</width>
-                     <height>10</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
                 </layout>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <spacer name="horizontalSpacer">
                    <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                    <enum>Qt::Orientation::Horizontal</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
@@ -572,11 +689,9 @@
                    <property name="text">
                     <string>Generate tiles</string>
                    </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>24</width>
-                     <height>24</height>
-                    </size>
+                   <property name="icon">
+                    <iconset resource="../../resources/images.qrc">
+                     <normaloff>:/images/icon_stars.svg</normaloff>:/images/icon_stars.svg</iconset>
                    </property>
                   </widget>
                  </item>
@@ -588,7 +703,7 @@
             <item>
              <spacer name="verticalSpacer">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -607,6 +722,21 @@
      </widget>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="entity_creation_layout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="SolarusEditor::MapView" name="map_view"/>
        </item>
@@ -618,6 +748,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>SolarusEditor::ResourceSelector</class>
+   <extends>QComboBox</extends>
+   <header>include/widgets/resource_selector.h</header>
+  </customwidget>
+  <customwidget>
    <class>SolarusEditor::PairSpinBox</class>
    <extends>QWidget</extends>
    <header>widgets/pair_spin_box.h</header>
@@ -627,11 +762,6 @@
    <class>SolarusEditor::TilesetView</class>
    <extends>QGraphicsView</extends>
    <header>widgets/tileset_view.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SolarusEditor::ResourceSelector</class>
-   <extends>QComboBox</extends>
-   <header>include/widgets/resource_selector.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::MapView</class>

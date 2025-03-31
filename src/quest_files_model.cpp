@@ -674,7 +674,7 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
 
   // Quest data directory.
   if (is_quest_data_index(index)) {
-    icon_file_name = "icon_solarus.png";
+    icon_file_name = "icon_solarus.svg";
   }
 
   // Resource element (possibly a directory for languages).
@@ -683,22 +683,22 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
     QString resource_type_name = get_quest().get_database().get_lua_name(resource_type);
     if (get_quest().exists(get_quest().get_resource_element_path(resource_type, element_id))) {
       // Resource declared and present on the filesystem.
-      icon_file_name = "icon_resource_" + resource_type_name + ".png";
+      icon_file_name = "icon_resource_" + resource_type_name + ".svg";
     }
     else {
       // Resource declared but whose file is missing.
-      icon_file_name = "icon_resource_" + resource_type_name + "_missing.png";
+      icon_file_name = "icon_resource_" + resource_type_name + "_missing.svg";
     }
   }
 
   // Dialogs file (under a language resource element).
   else if (get_quest().is_dialogs_file(file_path, element_id)) {
-    icon_file_name = "icon_dialogs.png";
+    icon_file_name = "icon_dialogs.svg";
   }
 
   // Strings file (under a language resource element).
   else if (get_quest().is_strings_file(file_path, element_id)) {
-    icon_file_name = "icon_strings.png";
+    icon_file_name = "icon_strings.svg";
   }
 
   // Directory icon.
@@ -706,10 +706,10 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
 
     if (get_quest().is_resource_path(file_path, resource_type)) {
       QString resource_type_name = get_quest().get_database().get_lua_name(resource_type);
-      icon_file_name = "icon_folder_open_" + resource_type_name + ".png";
+      icon_file_name = "icon_folder_open_" + resource_type_name + ".svg";
     }
     else {
-      icon_file_name = "icon_folder_open.png";
+      icon_file_name = "icon_folder_open.svg";
     }
   }
 
@@ -718,17 +718,17 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
 
     if (get_quest().is_map_script(file_path, element_id)) {
       // A map script.
-      icon_file_name = "icon_script_map.png";
+      icon_file_name = "icon_script_map.svg";
     }
     else {
       // Another script.
-      icon_file_name = "icon_script.png";
+      icon_file_name = "icon_script.svg";
     }
   }
 
   // Shader code icon.
   else if (get_quest().is_shader_code_file(file_path)) {
-    icon_file_name = "icon_shader_code.png";
+    icon_file_name = "icon_shader_code.svg";
   }
 
   // Image icon.
@@ -736,19 +736,19 @@ QIcon QuestFilesModel::get_quest_file_icon(const QModelIndex& index) const {
 
     if (get_quest().is_tileset_tiles_file(file_path, element_id) ||
         get_quest().is_tileset_entities_file(file_path, element_id)) {
-      icon_file_name = "icon_image_tileset.png";
+      icon_file_name = "icon_image_tileset.svg";
     }
     else if (get_quest().is_language_image_file(file_path, element_id)) {
-      icon_file_name = "icon_image_language.png";
+      icon_file_name = "icon_image_language.svg";
     }
     else {
-      icon_file_name = "icon_image.png";
+      icon_file_name = "icon_image.svg";
     }
   }
 
   // Generic icon for a file not known by the quest.
   else {
-    icon_file_name = "icon_file_unknown.png";
+    icon_file_name = "icon_file_unknown.svg";
   }
 
   if (icon_file_name.isEmpty()) {

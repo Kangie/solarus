@@ -17,7 +17,7 @@
 #ifndef SOLARUSEDITOR_NEW_QUEST_BUILDER_H
 #define SOLARUSEDITOR_NEW_QUEST_BUILDER_H
 
-class QString;
+#include <QString>
 
 namespace SolarusEditor {
 
@@ -28,8 +28,13 @@ enum NewQuestMode {
   BLANK_QUEST,
 };
 
-void create_initial_quest_files(NewQuestMode mode,
-    const QString& quest_path, const QString& quest_name);
+struct NewQuestConfig {
+  NewQuestMode mode{ NewQuestMode::COPY_INITIAL_QUEST };
+  QString quest_path;
+  QString quest_name;
+};
+
+void create_initial_quest_files(const NewQuestConfig& config);
 
 }
 

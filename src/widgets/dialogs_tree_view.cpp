@@ -16,6 +16,7 @@
  */
 #include "widgets/dialogs_tree_view.h"
 #include "dialogs_model.h"
+#include "editor_style.h"
 #include <QAction>
 #include <QMenu>
 #include <QContextMenuEvent>
@@ -34,19 +35,19 @@ DialogsTreeView::DialogsTreeView(QWidget* parent) :
   setHeaderHidden(true);
 
   create_action = new QAction(
-        QIcon(":/images/icon_add.png"), tr("New dialog..."), this);
+        QIcon(":/images/icon_add.svg"), tr("New dialog..."), this);
   connect(create_action, SIGNAL(triggered()),
           this, SIGNAL(create_dialog_requested()));
   addAction(create_action);
 
   duplicate_action = new QAction(
-        QIcon(":/images/icon_copy.png"), tr("Duplicate dialog(s)..."), this);
+        QIcon(":/images/icon_copy.svg"), tr("Duplicate dialog(s)..."), this);
   connect(duplicate_action, SIGNAL(triggered()),
           this, SIGNAL(duplicate_dialog_requested()));
   addAction(duplicate_action);
 
   set_id_action = new QAction(
-        QIcon(":/images/icon_rename.png"), tr("Change id..."), this);
+        QIcon(":/images/icon_rename.svg"), tr("Change id..."), this);
   set_id_action->setShortcut(tr("F2"));
   set_id_action->setShortcutContext(Qt::WidgetShortcut);
   connect(set_id_action, SIGNAL(triggered()),
@@ -54,7 +55,7 @@ DialogsTreeView::DialogsTreeView(QWidget* parent) :
   addAction(set_id_action);
 
   delete_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
+        QIcon(":/images/icon_delete.svg"), tr("Delete..."), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
   connect(delete_action, SIGNAL(triggered()),
@@ -73,6 +74,8 @@ void DialogsTreeView::contextMenuEvent(QContextMenuEvent *event) {
   }
 
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
+
   menu->addAction(create_action);
 
   QString id = model->get_selected_id();

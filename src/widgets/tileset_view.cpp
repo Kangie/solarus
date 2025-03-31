@@ -25,6 +25,7 @@
 #include "rectangle.h"
 #include "tileset_model.h"
 #include "view_settings.h"
+#include "editor_style.h"
 #include <QAction>
 #include <QApplication>
 #include <QDrag>
@@ -154,6 +155,7 @@ TilesetView::TilesetView(QWidget* parent) :
   setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
   resize_pattern_action = new QAction(
+      QIcon(":/images/icon_resize_all.svg"),
       tr("Resize"),
       this
   );
@@ -164,7 +166,7 @@ TilesetView::TilesetView(QWidget* parent) :
   addAction(resize_pattern_action);
 
   create_border_set_action = new QAction(
-      QIcon(":/images/border_kind_5.png"),
+      QIcon(":/images/icon_border_set.svg"),
       tr("Create contour..."),
       this
   );
@@ -179,7 +181,7 @@ TilesetView::TilesetView(QWidget* parent) :
   addAction(create_border_set_action);
 
   change_pattern_id_action = new QAction(
-      QIcon(":/images/icon_edit.png"), tr("Change id..."), this);
+      QIcon(":/images/icon_edit.svg"), tr("Change id..."), this);
   change_pattern_id_action->setShortcut(tr("F2"));
   change_pattern_id_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   connect(change_pattern_id_action, &QAction::triggered,
@@ -187,7 +189,7 @@ TilesetView::TilesetView(QWidget* parent) :
   addAction(change_pattern_id_action);
 
   delete_patterns_action = new QAction(
-      QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
+      QIcon(":/images/icon_delete.svg"), tr("Delete..."), this);
   delete_patterns_action->setShortcut(QKeySequence::Delete);
   delete_patterns_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   connect(delete_patterns_action, &QAction::triggered,
@@ -659,6 +661,7 @@ void TilesetView::show_context_menu(const QPoint& where) {
   }
 
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
 
   // Resize.
   menu->addAction(resize_pattern_action);
@@ -757,7 +760,8 @@ void TilesetView::build_context_menu_layer(
   // (If more layers are necessary, the user can still use the spinbox
   // in the patterns properties view.)
   for (int i = 0; i < 3; ++i) {
-    QAction* action = new QAction(tr("Layer %1").arg(i), &menu);
+    const QIcon icon = i >= 0 && i <= 3 ? QIcon(QString(":/images/icon_layer_%1.svg").arg(i)) : QIcon{};
+    QAction* action = new QAction(icon, tr("Layer %1").arg(i), &menu);
     action->setCheckable(true);
     menu.addAction(action);
     connect(action, &QAction::triggered, this, [this, i]() {
@@ -769,6 +773,7 @@ void TilesetView::build_context_menu_layer(
     }
   }
 
+  EditorStyle::setAutoIconColor(&menu, EditorStyle::AutoIconColor::TextColor);
 }
 
 /**
@@ -794,6 +799,8 @@ void TilesetView::build_context_menu_repeat_mode(
     QAction* checked_action = set_repeat_mode_actions[repeat_mode_index];
     checked_action->setChecked(true);
   }
+
+  EditorStyle::setAutoIconColor(&menu, EditorStyle::AutoIconColor::TextColor);
 }
 
 /**
@@ -1497,7 +1504,7 @@ void MovingPatternsState::apply_move() {
     });
     menu.addAction(move_pattern_action);
     QAction* duplicate_pattern_action = new QAction(
-        QIcon(":/images/icon_copy.png"), TilesetView::tr("Duplicate here"), view);
+        QIcon(":/images/icon_copy.svg"), TilesetView::tr("Duplicate here"), view);
     duplicate_pattern_action->setEnabled(
       view->get_items_intersecting_areas(current_area_items, false).isEmpty());
     view->connect(duplicate_pattern_action, &QAction::triggered, view, [view, delta]() {

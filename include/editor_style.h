@@ -48,6 +48,9 @@ struct ModeInfo {
   QColor log_info_color;        /**< Text color for info log level. */
   QColor log_warning_color;     /**< Text color for warning log level. */
   QColor log_error_color;       /**< Text color for error log level. */
+
+  QColor console_background_invalid_color;  /**< Bakcground of the Lua console when invalid */
+  QColor console_background_error_color;    /**< Bakcground of the Lua console when error */
 };
 
 /**
@@ -77,6 +80,8 @@ signals:
   void actual_mode_changed(Mode mode);
 
 protected:
+  void polish(QWidget* w) override;
+
   Status widgetStatus(QWidget const* widget) const override;
   QColor const& textFieldBackgroundColor(MouseState const mouse, Status const status) const override;
 

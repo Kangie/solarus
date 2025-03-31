@@ -19,6 +19,7 @@
 #include "widgets/new_string_dialog.h"
 #include "widgets/change_string_key_dialog.h"
 #include "editor_exception.h"
+#include "editor_style.h"
 #include "quest.h"
 #include "strings_model.h"
 #include <QUndoStack>
@@ -310,7 +311,7 @@ StringsEditor::StringsEditor(
 
   // Editor properties.
   set_title(tr("Strings %1").arg(language_id));
-  set_icon(QIcon(":/images/icon_strings.png"));
+  set_icon(QIcon(":/images/icon_strings.svg"));
   set_close_confirm_message(
         tr("Strings '%1' have been modified. Save changes?").arg(language_id));
 
@@ -363,6 +364,17 @@ StringsEditor::StringsEditor(
           this, &StringsEditor::translation_selector_activated);
   connect(ui.translation_refresh_button, &QToolButton::clicked,
          this, &StringsEditor::translation_refresh_requested);
+
+  // Qlementine-related stuff.
+  for (auto* widget : std::vector<QWidget*>{
+           ui.create_button,
+           ui.delete_button,
+           ui.set_key_button,
+           ui.duplicate_button,
+           ui.translation_refresh_button,
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 }
 
 /**

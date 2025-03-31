@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "audio.h"
+#include "editor_style.h"
 #include "quest.h"
 #include "widgets/music_chooser.h"
 #include <QHBoxLayout>
@@ -33,7 +34,6 @@ MusicChooser::MusicChooser(QWidget* parent) :
   quest() {
 
   music_selector.set_resource_type(ResourceType::MUSIC);
-  play_music_button.setIconSize(QSize(24, 24));
 
   QHBoxLayout* layout = new QHBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
@@ -42,6 +42,8 @@ MusicChooser::MusicChooser(QWidget* parent) :
   layout->addWidget(&play_music_button);
 
   update_play_button();
+
+  EditorStyle::setAutoIconColor(&play_music_button, EditorStyle::AutoIconColor::ForegroundColor);
 }
 
 /**
@@ -157,7 +159,7 @@ void MusicChooser::quest_music_changed(const QString& music_id) {
  */
 void MusicChooser::update_play_button() {
 
-  play_music_button.setIcon(QIcon(":/images/icon_start.png"));
+  play_music_button.setIcon(QIcon(":/images/icon_start.svg"));
   play_music_button.setToolTip(tr("Play music"));
 
   if (quest == nullptr) {
@@ -178,7 +180,7 @@ void MusicChooser::update_play_button() {
     play_music_button.setEnabled(true);
     const QString& music_playing_id = Audio::get_current_music_id(*quest);
     if (music_playing_id == selected_music_id) {
-      play_music_button.setIcon(QIcon(":/images/icon_stop.png"));
+      play_music_button.setIcon(QIcon(":/images/icon_stop.svg"));
       play_music_button.setToolTip(tr("Stop music"));
     }
   }

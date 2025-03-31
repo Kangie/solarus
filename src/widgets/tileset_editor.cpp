@@ -21,6 +21,7 @@
 #include "widgets/tileset_scene.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "quest.h"
 #include "quest_database.h"
 #include "refactoring.h"
@@ -968,7 +969,7 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
 
   // Editor properties.
   set_title(tr("Tileset %1").arg(get_file_name_without_extension()));
-  set_icon(QIcon(":/images/icon_resource_tileset.png"));
+  set_icon(QIcon(":/images/icon_resource_tileset.svg"));
   set_close_confirm_message(
         tr("Tileset '%1' has been modified. Save changes?").arg(tileset_id));
   set_select_all_supported(true);
@@ -1106,6 +1107,21 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
 
   connect(model, &TilesetModel::tileset_data_file_changed,
           this, &TilesetEditor::tileset_data_file_changed);
+
+  // Qlementine-related stuff.
+  for (auto* widget : std::vector<QWidget*>{
+           ui.create_border_set_button,
+           ui.delete_border_set_button,
+           ui.border_set_id_button,
+           ui.rename_border_set_button,
+           ui.pattern_id_button,
+           ui.border_set_inner_field,
+           ui.animation_separation_field,
+           ui.patterns_border_sets_tab_widget->tabBar(),
+           ui.repeat_mode_field,
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 }
 
 /**

@@ -112,7 +112,7 @@ QString EnumTraits<Ground>::get_friendly_name(Ground value) {
  * @return The corresponding icon.
  */
 QIcon EnumTraits<Ground>::get_icon(Ground value) {
-  return QIcon(":/images/ground_" + get_lua_name(value) + ".png");
+  return QIcon(":/images/ground_" + get_lua_name(value) + ".svg");
 }
 
 /**

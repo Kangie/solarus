@@ -34,7 +34,7 @@ ResourceModel::ResourceModel(const Quest& quest, ResourceType resource_type, QOb
   resource_type(resource_type),
   items(),
   icons(),
-  directory_icon(":/images/icon_folder_open.png"),
+  directory_icon(":/images/icon_folder_open.svg"),
   tileset_id() {
 
   const QuestDatabase& database = get_database();
@@ -327,7 +327,7 @@ QIcon ResourceModel::create_icon(const QString& element_id) const {
 
   // Return an icon representing the resource type.
   QString resource_type_name = quest.get_database().get_lua_name(resource_type);
-  return QIcon(":/images/icon_resource_" + resource_type_name + ".png");
+  return QIcon(":/images/icon_resource_" + resource_type_name + ".svg");
 }
 
 /**

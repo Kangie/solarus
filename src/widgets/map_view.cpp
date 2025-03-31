@@ -23,6 +23,7 @@
 #include "widgets/mouse_coordinates_tracking_tool.h"
 #include "widgets/pan_tool.h"
 #include "widgets/zoom_tool.h"
+#include "editor_style.h"
 #include "point.h"
 #include "quest.h"
 #include "rectangle.h"
@@ -537,6 +538,7 @@ bool MapView::are_entities_resizable(const EntityIndexes& indexes) const {
 void MapView::build_context_menu_actions() {
 
   edit_action = new QAction(
+        QIcon(":/images/icon_edit.svg"),
         tr("Edit"), this);
   edit_action->setShortcut(Qt::Key_Return);
   edit_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -545,6 +547,7 @@ void MapView::build_context_menu_actions() {
   addAction(edit_action);
 
   resize_action = new QAction(
+        QIcon(":/images/icon_resize_all.svg"),
         tr("Resize"), this);
   resize_action->setShortcut(tr("R"));
   resize_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -553,12 +556,14 @@ void MapView::build_context_menu_actions() {
   addAction(resize_action);
 
   convert_tiles_action = new QAction(
+        QIcon(":/images/icon_dynamic_tile.svg"),
         tr("Convert to dynamic tile"), this);
   connect(convert_tiles_action, &QAction::triggered,
           this, &MapView::convert_selected_tiles);
   addAction(convert_tiles_action);
 
   change_pattern_action = new QAction(
+        QIcon(":/images/icon_tile.svg"),
         tr("Change pattern..."), this);
   connect(change_pattern_action, &QAction::triggered, this, [this]() {
     emit change_tiles_pattern_requested(get_selected_entities());
@@ -566,12 +571,14 @@ void MapView::build_context_menu_actions() {
   addAction(change_pattern_action);
 
   change_pattern_all_action = new QAction(
+        QIcon(":/images/icon_tile.svg"),
         tr("Change pattern of similar tiles..."), this);
   connect(change_pattern_all_action, &QAction::triggered,
           this, &MapView::change_pattern_of_similar_tiles);
   addAction(change_pattern_action);
 
   add_border_action = new QAction(
+        QIcon(":/images/icon_border_set.svg"),
         tr("Generate borders around selection"), this);
   add_border_action->setShortcut(tr("Ctrl+B"));
   add_border_action->setShortcutContext(Qt::WindowShortcut);
@@ -582,6 +589,7 @@ void MapView::build_context_menu_actions() {
   addAction(add_border_action);
 
   up_one_layer_action = new QAction(
+        QIcon(":/images/icon_go_up.svg"),
         tr("One layer up"), this);
   up_one_layer_action->setShortcut(tr("+"));
   up_one_layer_action->setShortcutContext(Qt::WindowShortcut);
@@ -592,6 +600,7 @@ void MapView::build_context_menu_actions() {
   addAction(up_one_layer_action);
 
   down_one_layer_action = new QAction(
+        QIcon(":/images/icon_go_down.svg"),
         tr("One layer down"), this);
   down_one_layer_action->setShortcut(tr("-"));
   down_one_layer_action->setShortcutContext(Qt::WindowShortcut);
@@ -602,6 +611,7 @@ void MapView::build_context_menu_actions() {
   addAction(down_one_layer_action);
 
   bring_to_front_action = new QAction(
+        QIcon(":/images/icon_bring_to_front.svg"),
         tr("Bring to front"), this);
   bring_to_front_action->setShortcut(tr("T"));
   bring_to_front_action->setShortcutContext(Qt::WindowShortcut);
@@ -612,6 +622,7 @@ void MapView::build_context_menu_actions() {
   addAction(bring_to_front_action);
 
   bring_to_back_action = new QAction(
+        QIcon(":/images/icon_bring_to_back.svg"),
         tr("Bring to back"), this);
   bring_to_back_action->setShortcut(tr("B"));
   bring_to_back_action->setShortcutContext(Qt::WindowShortcut);
@@ -622,21 +633,21 @@ void MapView::build_context_menu_actions() {
   addAction(bring_to_back_action);
 
   lock_action = new QAction(
-      QIcon(":/images/icon_lock.png"), tr("Lock"), this);
+      QIcon(":/images/icon_lock.svg"), tr("Lock"), this);
   connect(lock_action, &QAction::triggered, this, [this]() {
     emit set_entities_locked_requested(get_selected_entities(), true);
   });
   addAction(lock_action);
 
   unlock_action = new QAction(
-      QIcon(":/images/icon_unlock.png"), tr("Unlock"), this);
+      QIcon(":/images/icon_unlock.svg"), tr("Unlock"), this);
   connect(unlock_action, &QAction::triggered, this, [this]() {
     emit set_entities_locked_requested(get_selected_entities(), false);
   });
   addAction(unlock_action);
 
   remove_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete"), this);
+        QIcon(":/images/icon_delete.svg"), tr("Delete"), this);
   remove_action->setShortcut(QKeySequence::Delete);
   remove_action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   connect(remove_action, &QAction::triggered,
@@ -672,7 +683,8 @@ void MapView::build_context_menu_layer_actions() {
   set_layer_actions_group = new QActionGroup(this);
   set_layer_actions_group->setExclusive(true);
   for (int layer = get_map()->get_min_layer(); layer <= get_map()->get_max_layer(); ++layer) {
-    QAction* action = new QAction(tr("Layer %1").arg(layer), set_layer_actions_group);
+    const QIcon icon = layer >= 0 && layer <= 3 ? QIcon(QString(":/images/icon_layer_%1.svg").arg(layer)) : QIcon{};
+    QAction* action = new QAction(icon, tr("Layer %1").arg(layer), set_layer_actions_group);
     action->setCheckable(true);
     connect(action, &QAction::triggered, this, [this, layer]() {
       emit set_entities_layer_requested(get_selected_entities(), layer);
@@ -698,6 +710,8 @@ QMenu* MapView::create_context_menu() {
   // Delete
 
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
+
   const EntityIndexes& indexes = get_selected_entities();
 
   if (!is_selection_empty()) {
@@ -806,6 +820,8 @@ QMenu* MapView::create_context_menu() {
     menu->addAction(bring_to_front_action);
     menu->addAction(bring_to_back_action);
 
+    menu->addSeparator();
+
     bool has_locked = false;
     bool has_unlocked = false;
     for (const EntityIndex& index: indexes) {
@@ -824,6 +840,8 @@ QMenu* MapView::create_context_menu() {
     unlock_action->setEnabled(has_locked);
     menu->addAction(lock_action);
     menu->addAction(unlock_action);
+
+    menu->addSeparator();
 
     if (common_actions != nullptr) {
       menu->addAction(common_actions->value("group"));
@@ -850,6 +868,7 @@ QMenu* MapView::create_context_menu() {
 QMenu* MapView::create_direction_context_menu(const EntityIndexes& indexes) {
 
   QMenu* menu = new QMenu(tr("Direction"), this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
 
   int num_directions = 0;
   QString no_direction_text;

@@ -16,6 +16,7 @@
  */
 #include "widgets/strings_tree_view.h"
 #include "strings_model.h"
+#include "editor_style.h"
 #include <QAction>
 #include <QMenu>
 #include <QContextMenuEvent>
@@ -31,22 +32,21 @@ StringsTreeView::StringsTreeView(QWidget* parent) :
   model(nullptr) {
 
   setSelectionMode(QAbstractItemView::SingleSelection);
-  setAlternatingRowColors(true);
 
   create_action = new QAction(
-        QIcon(":/images/icon_add.png"), tr("New string..."), this);
+        QIcon(":/images/icon_add.svg"), tr("New string..."), this);
   connect(create_action, SIGNAL(triggered()),
           this, SIGNAL(create_string_requested()));
   addAction(create_action);
 
   duplicate_action = new QAction(
-        QIcon(":/images/icon_copy.png"), tr("Duplicate string(s)..."), this);
+        QIcon(":/images/icon_copy.svg"), tr("Duplicate string(s)..."), this);
   connect(duplicate_action, SIGNAL(triggered()),
           this, SIGNAL(duplicate_string_requested()));
   addAction(duplicate_action);
 
   set_key_action = new QAction(
-        QIcon(":/images/icon_rename.png"), tr("Change key..."), this);
+        QIcon(":/images/icon_rename.svg"), tr("Change key..."), this);
   set_key_action->setShortcut(tr("F2"));
   set_key_action->setShortcutContext(Qt::WidgetShortcut);
   connect(set_key_action, SIGNAL(triggered()),
@@ -54,7 +54,7 @@ StringsTreeView::StringsTreeView(QWidget* parent) :
   addAction(set_key_action);
 
   delete_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
+        QIcon(":/images/icon_delete.svg"), tr("Delete..."), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
   connect(delete_action, SIGNAL(triggered()),
@@ -73,6 +73,8 @@ void StringsTreeView::contextMenuEvent(QContextMenuEvent *event) {
   }
 
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
+
   menu->addAction(create_action);
 
   QString key = model->get_selected_key();

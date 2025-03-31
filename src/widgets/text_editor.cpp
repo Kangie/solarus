@@ -30,6 +30,8 @@
 #include <QAction>
 #include <QTextStream>
 #include <QUndoStack>
+#include <QStatusBar>
+#include <QLabel>
 
 namespace SolarusEditor {
 
@@ -50,10 +52,24 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
 
   QVBoxLayout* layout = new QVBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
+  layout->setSpacing(0);
   setLayout(layout);
 
   text_widget = new TextEditorWidget(file_path, *this);
   layout->addWidget(text_widget);
+
+  // Setup status bar.
+  QStatusBar* status_bar = new QStatusBar(this);
+  layout->addWidget(status_bar);
+
+  cursor_position_label = new QLabel(status_bar);
+  cursor_position_label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+  status_bar->addPermanentWidget(cursor_position_label);
+  cursor_position_label->setFont(QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont));
+
+  update_cursor_position_in_status_bar();
+  QObject::connect(text_widget, &TextEditorWidget::cursorPositionChanged,
+                   this, &TextEditor::update_cursor_position_in_status_bar);
 
   // Open map shortcut.
   QAction* open_map_action = new QAction(this);
@@ -301,6 +317,19 @@ void TextEditor::open_map_requested() {
       get_quest(), get_quest().get_map_data_file_path(map_id));
   }
 }
+
+/**
+ * @brief Updates the cursor position label in the text editor's status bar.
+ */
+void TextEditor::update_cursor_position_in_status_bar() {
+
+  const QTextCursor text_cursor = text_widget->textCursor();
+  const int line = text_cursor.blockNumber() + 1;
+  const int column = text_cursor.columnNumber() + 1;
+
+  cursor_position_label->setText(QString("%1:%2").arg(line).arg(column));
+}
+
 /**
  * @brief Chooses an appropriate title for this editor.
  * @return A title.
@@ -334,25 +363,25 @@ QIcon TextEditor::create_icon() const {
   if (get_quest().is_resource_element(path, resource_type, element_id)) {
     // A resource element that is a Lua file (enemy, custom entity or item).
     QString resource_lua_name = get_database().get_lua_name(resource_type);
-    return QIcon(":/images/icon_resource_" + resource_lua_name + ".png");
+    return QIcon(":/images/icon_resource_" + resource_lua_name + ".svg");
   }
 
   if (get_quest().is_map_script(path, element_id)) {
     // A map Lua script.
-    return QIcon(":/images/icon_script_map.png");
+    return QIcon(":/images/icon_script_map.svg");
   }
 
   if (get_quest().is_script(path)) {
     // Another Lua script.
-    return QIcon(":/images/icon_script.png");
+    return QIcon(":/images/icon_script.svg");
   }
 
   if (get_quest().is_shader_code_file(path)) {
     // A GLSL file.
-    return QIcon(":/images/icon_shader_code.png");
+    return QIcon(":/images/icon_shader_code.svg");
   }
 
-  return QIcon(":/images/icon_file.png");
+  return QIcon(":/images/icon_file.svg");
 }
 
 }

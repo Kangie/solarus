@@ -312,6 +312,8 @@ bool SpriteModel::hasChildren(const QModelIndex& parent) const {
  */
 QVariant SpriteModel::data(const QModelIndex& model_index, int role) const {
 
+  static const QIcon folder_icon = QIcon(":/images/icon_folder_open.svg");
+
   if (!model_index.isValid()) {
     return QVariant();
   }
@@ -329,7 +331,7 @@ QVariant SpriteModel::data(const QModelIndex& model_index, int role) const {
         } break;
 
         case Qt::DecorationRole:
-          return QIcon(":/images/icon_folder_open.png");
+          return folder_icon;
 
         case Qt::FontRole: {
           if (index->animation_name == get_default_animation_name()) {

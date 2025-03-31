@@ -16,6 +16,7 @@
  */
 #include "widgets/gui_tools.h"
 #include "widgets/sprite_previewer.h"
+#include "editor_style.h"
 #include <QActionGroup>
 #include <QMenu>
 
@@ -72,6 +73,19 @@ SpritePreviewer::SpritePreviewer(QWidget *parent) :
 
   connect(ui.origin_check_box, &QCheckBox::clicked,
           this, &SpritePreviewer::update_origin);
+
+  // Qlementine-related stuff.
+  for (auto* widget : std::vector<QWidget*>{
+           ui.last_button,
+           ui.first_button,
+           ui.previous_button,
+           ui.next_button,
+           ui.start_button,
+           ui.stop_button,
+           ui.zoom_button,
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 }
 
 /**
@@ -185,10 +199,10 @@ void SpritePreviewer::update_buttons() {
   ui.next_button->setEnabled(last_enabled);
 
   if (active) {
-    ui.start_button->setIcon(QIcon(":/images/icon_pause.png"));
+    ui.start_button->setIcon(QIcon(":/images/icon_pause.svg"));
     ui.start_button->setToolTip(tr("Pause"));
   } else {
-    ui.start_button->setIcon(QIcon(":/images/icon_start.png"));
+    ui.start_button->setIcon(QIcon(":/images/icon_start.svg"));
     ui.start_button->setToolTip(tr("Start"));
   }
 }

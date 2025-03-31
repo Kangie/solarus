@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "widgets/closable_tab_bar.h"
 #include "widgets/dialogs_editor.h"
 #include "widgets/editor_tabs.h"
 #include "widgets/gui_tools.h"
@@ -28,6 +27,7 @@
 #include "widgets/tileset_editor.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "quest.h"
 #include <QFileInfo>
 #include <QKeyEvent>
@@ -35,6 +35,7 @@
 #include <QUndoGroup>
 #include <QUndoStack>
 #include <QProcess>
+#include <QTabBar>
 
 namespace SolarusEditor {
 
@@ -46,23 +47,27 @@ EditorTabs::EditorTabs(QWidget* parent):
   QTabWidget(parent),
   undo_group(new QUndoGroup(this)) {
 
-  ClosableTabBar* tab_bar = new ClosableTabBar();
+  QTabBar* tab_bar = new QTabBar();
+  tab_bar->setTabsClosable(true);
+
   setTabBar(tab_bar);
 
   setMovable(true);
   setFocusPolicy(Qt::StrongFocus);
 
-  connect(tab_bar, &ClosableTabBar::tabCloseRequested,
+  connect(tab_bar, &QTabBar::tabCloseRequested,
           this, &EditorTabs::close_file_requested);
-  connect(tab_bar, &ClosableTabBar::currentChanged,
+  connect(tab_bar, &QTabBar::currentChanged,
           this, &EditorTabs::current_editor_changed);
+
+  connect(tab_bar, &QTabBar::customContextMenuRequested, this, &EditorTabs::show_tabbar_context_menu);
 }
 
 /**
  * @brief Destructor.
  */
 EditorTabs::~EditorTabs() {
-  disconnect(tabBar(), &ClosableTabBar::currentChanged,
+  disconnect(tabBar(), &QTabBar::currentChanged,
              nullptr, nullptr);
 }
 
@@ -915,6 +920,38 @@ void EditorTabs::modification_state_changed(int index, bool clean) {
     title += '*';
   }
   setTabText(index, title);
+}
+
+/**
+ * @brief Slot called when the context menu of the QTabBar needs to be displayed.
+ * @param mouse_position The mouse position relative to the QTabBar.
+ */
+void EditorTabs::show_tabbar_context_menu(const QPoint& mouse_position) {
+  QTabBar* tab_bar = tabBar();
+  const int index = tab_bar->tabAt(mouse_position);
+  if (index != -1) {
+    QMenu menu(this);
+
+    EditorStyle::setAutoIconColor(&menu, EditorStyle::AutoIconColor::TextColor);
+
+    QAction *action_close = new QAction(
+        QIcon(":/images/icon_close_tab.svg"),
+        tr("Close"), &menu);
+    // action_close->setShortcut({QKeySequence::StandardKey::Close});
+    connect(action_close, &QAction::triggered, this, [this, index]() {
+      emit close_file_requested(index);
+    });
+
+    QAction *action_close_all = new QAction(
+        QIcon(":/images/icon_close_all_tabs.svg"),
+        "Close All", &menu);
+    action_close_all->setShortcut(QKeyCombination{Qt::ControlModifier | Qt::ShiftModifier, Qt::Key_W});
+    connect(action_close_all, &QAction::triggered, this, &EditorTabs::close_all_files_requested);
+
+    menu.addAction(action_close);
+    menu.addAction(action_close_all);
+    menu.exec(tab_bar->mapToGlobal(mouse_position));
+  }
 }
 
 /**

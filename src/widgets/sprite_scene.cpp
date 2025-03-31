@@ -24,7 +24,6 @@
 #include <QPainter>
 #include <QPalette>
 #include <QStyleOptionGraphicsItem>
-#include <memory>
 
 namespace SolarusEditor {
 
@@ -84,6 +83,7 @@ SpriteScene::SpriteScene(SpriteModel& model, QObject* parent) :
   // Synchronize the scene selection with the sprite selection model.
   connect(&model.get_selection_model(), &QItemSelectionModel::selectionChanged,
           this, &SpriteScene::update_selection_to_scene);
+
   connect(this, &SpriteScene::selectionChanged,
           this, &SpriteScene::set_selection_from_scene);
 

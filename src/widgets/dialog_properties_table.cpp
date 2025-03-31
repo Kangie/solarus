@@ -16,6 +16,7 @@
  */
 #include "widgets/dialog_properties_table.h"
 #include "dialogs_model.h"
+#include "editor_style.h"
 #include <QAction>
 #include <QMenu>
 #include <QContextMenuEvent>
@@ -32,13 +33,13 @@ DialogPropertiesTable::DialogPropertiesTable(QWidget* parent) :
   model(nullptr) {
 
   create_action = new QAction(
-        QIcon(":/images/icon_add.png"), tr("New property..."), this);
+        QIcon(":/images/icon_add.svg"), tr("New property..."), this);
   connect(create_action, &QAction::triggered,
           this, &DialogPropertiesTable::create_property_requested);
   addAction(create_action);
 
   set_key_action = new QAction(
-        QIcon(":/images/icon_rename.png"), tr("Change key..."), this);
+        QIcon(":/images/icon_rename.svg"), tr("Change key..."), this);
   set_key_action->setShortcut(tr("F2"));
   set_key_action->setShortcutContext(Qt::WidgetShortcut);
   connect(set_key_action, &QAction::triggered,
@@ -46,7 +47,7 @@ DialogPropertiesTable::DialogPropertiesTable(QWidget* parent) :
   addAction(set_key_action);
 
   delete_action = new QAction(
-        QIcon(":/images/icon_delete.png"), tr("Delete..."), this);
+        QIcon(":/images/icon_delete.svg"), tr("Delete..."), this);
   delete_action->setShortcut(QKeySequence::Delete);
   delete_action->setShortcutContext(Qt::WidgetShortcut);
   connect(delete_action, &QAction::triggered,
@@ -54,7 +55,7 @@ DialogPropertiesTable::DialogPropertiesTable(QWidget* parent) :
   addAction(delete_action);
 
   set_action = new QAction(
-        QIcon(":/images/icon_paste.png"), tr("Set from translation..."), this);
+        QIcon(":/images/icon_paste.svg"), tr("Set from translation..."), this);
   connect(set_action, &QAction::triggered,
           this, &DialogPropertiesTable::set_from_translation_requested);
   addAction(set_action);
@@ -76,6 +77,8 @@ void DialogPropertiesTable::contextMenuEvent(QContextMenuEvent *event) {
   }
 
   QMenu* menu = new QMenu(this);
+  EditorStyle::setAutoIconColor(menu, EditorStyle::AutoIconColor::ForegroundColor);
+
   menu->addAction(create_action);
 
   QString key = get_selected_property();
@@ -202,7 +205,7 @@ void DialogPropertiesTable::dialog_property_created(
     insertTopLevelItem(topLevelItemCount(), item);
   }
 
-  item->setIcon(0, QIcon(":/images/icon_property.png"));
+  item->setIcon(0, QIcon(":/images/icon_property.svg"));
   item->setData(VALUE_COLUMN, Qt::DisplayRole, value);
 }
 
@@ -224,7 +227,7 @@ void DialogPropertiesTable::dialog_property_deleted(
     delete item;
   }
   else {
-    item->setIcon(0, QIcon(":/images/icon_property_missing.png"));
+    item->setIcon(0, QIcon(":/images/icon_property_missing.svg"));
     item->setData(VALUE_COLUMN, Qt::DisplayRole, "");
   }
 }
@@ -299,7 +302,7 @@ void DialogPropertiesTable::add_translation_property(
     items[key]->setData(TRANSLATION_COLUMN, Qt::DisplayRole, value);
   } else {
     QTreeWidgetItem* item = new QTreeWidgetItem();
-    item->setIcon(0, QIcon(":/images/icon_property_missing.png"));
+    item->setIcon(0, QIcon(":/images/icon_property_missing.svg"));
     item->setData(KEY_COLUMN, Qt::DisplayRole, key);
     item->setData(TRANSLATION_COLUMN, Qt::DisplayRole, value);
     items.insert(key, item);

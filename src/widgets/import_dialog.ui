@@ -23,13 +23,16 @@
       </sizepolicy>
      </property>
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="handleWidth">
-      <number>7</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="vertical_layout_2">
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
        <item>
         <widget class="QLabel" name="source_quest_label">
          <property name="text">
@@ -39,6 +42,18 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontal_layout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLineEdit" name="source_quest_browse_field">
            <property name="readOnly">
@@ -51,6 +66,13 @@
            <property name="text">
             <string>...</string>
            </property>
+           <property name="icon">
+            <iconset resource="../../resources/images.qrc">
+             <normaloff>:/images/icon_open.svg</normaloff>:/images/icon_open.svg</iconset>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
+           </property>
           </widget>
          </item>
         </layout>
@@ -62,6 +84,18 @@
      </widget>
      <widget class="QWidget" name="layoutWidget_2">
       <layout class="QVBoxLayout" name="vertical_layout">
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="destination_quest_label">
          <property name="text">
@@ -85,6 +119,18 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontal_layout_3">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QPushButton" name="find_missing_button">
        <property name="text">
@@ -92,7 +138,7 @@
        </property>
        <property name="icon">
         <iconset resource="../../resources/images.qrc">
-         <normaloff>:/images/icon_zoom.png</normaloff>:/images/icon_zoom.png</iconset>
+         <normaloff>:/images/icon_zoom.svg</normaloff>:/images/icon_zoom.svg</iconset>
        </property>
       </widget>
      </item>
@@ -106,7 +152,7 @@
      <item>
       <spacer name="horizontal_spacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -121,10 +167,10 @@
    <item>
     <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close</set>
      </property>
     </widget>
    </item>

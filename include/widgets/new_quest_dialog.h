@@ -16,95 +16,51 @@
  */
 #ifndef SOLARUSEDITOR_NEW_QUEST_DIALOG_H
 #define SOLARUSEDITOR_NEW_QUEST_DIALOG_H
-
-#include "ui_new_quest_dialog.h"
-#include "ui_new_quest_dialog_contents_page.h"
-#include "ui_new_quest_dialog_directory_page.h"
-#include "ui_new_quest_dialog_title_page.h"
 #include "new_quest_builder.h"
-#include <QWizard>
+#include "ui_new_quest_dialog.h"
+#include <QDialog>
 
 namespace SolarusEditor {
 
-using NewQuestMode = NewQuestBuilder::NewQuestMode;
+class NewQuestDialogTitlePage;
+class NewQuestDialogDirectoryPage;
+class NewQuestDialogContentsPage;
 
 /**
  * @brief A dialog used to create a new quest in the editor.
  */
-class NewQuestDialog final : public QWizard {
-
-public:
-
-  explicit NewQuestDialog(
-    const QString& directory = QString(),
-    QWidget* parent = nullptr,
-    Qt::WindowFlags flags = Qt::WindowFlags());
-
-  NewQuestMode get_new_quest_mode() const;
-  QString get_quest_directory() const;
-  QString get_quest_title() const;
-
-private:
-
-  Ui::NewQuestDialog ui; ///< The widgets.
-};
-
-/**
- * @brief New quest dialog page that asks for the title of the quest.
- */
-class NewQuestDialogTitlePage : public QWizardPage {
-
-public:
-
-  explicit NewQuestDialogTitlePage(QWidget* parent = nullptr);
-
-private:
-
-  Ui::NewQuestDialogTitlePage ui;
-};
-
-/**
- * @brief New quest dialog page that asks for the quest directory.
- */
-class NewQuestDialogDirectoryPage : public QWizardPage {
+class NewQuestDialog : public QDialog {
   Q_OBJECT
 
 public:
 
-  explicit NewQuestDialogDirectoryPage(
+  explicit NewQuestDialog(
     const QString& directory,
     QWidget* parent = nullptr);
 
-  void initializePage() override;
-  bool validatePage() override;
-  bool isComplete() const override;
-
-private slots:
-
-  void browse_directories();
-  void update_is_complete();
+  const NewQuestBuilder::NewQuestConfig& get_new_quest_config() const;
 
 private:
 
-  Ui::NewQuestDialogDirectoryPage ui;
+  void update_page_buttons();
 
-  const QString directory;
+  void initialize_from_config(int page_index);
+  bool next_button_enabled(int page_index) const;
+
+  void on_quest_title_changed();
+  void on_quest_path_changed();
+  void on_contents_mode_changed();
+  void update_next_button();
+  void update_config(int page_index);
+
+  void on_browse_button_clicked();
+  bool confirm_non_empty_dir() const;
+
+  Ui::NewQuestDialog ui;
+  NewQuestBuilder::NewQuestConfig config;
+  const QString start_directory;
 };
 
-/**
- * @brief New quest dialog page that asks for the initial quest contents.
- */
-class NewQuestDialogContentsPage : public QWizardPage {
-
-public:
-
-  explicit NewQuestDialogContentsPage(QWidget* parent = nullptr);
-
-private:
-
-  Ui::NewQuestDialogContentsPage ui;
-};
-
-}
+} // namespace SolarusEditor
 
 #endif

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
-    <height>1528</height>
+    <width>618</width>
+    <height>1602</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -22,6 +22,21 @@
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <layout class="QFormLayout" name="form_layout">
+     <property name="rowWrapPolicy">
+      <enum>QFormLayout::RowWrapPolicy::DontWrapRows</enum>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="type_label">
        <property name="text">
@@ -31,9 +46,14 @@
      </item>
      <item row="0" column="1">
       <widget class="QLabel" name="type_field">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>24</height>
+        </size>
+       </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -51,8 +71,24 @@
      </item>
      <item row="1" column="1">
       <layout class="QVBoxLayout" name="name_layout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QLineEdit" name="name_field"/>
+        <widget class="QLineEdit" name="name_field">
+         <property name="placeholderText">
+          <string>Name</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="name_update_teletransporters_check_box">
@@ -107,12 +143,12 @@
         <item>
          <spacer name="layer_spacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -178,12 +214,12 @@
         <item>
          <spacer name="direction_spacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>129</width>
-            <height>22</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -225,6 +261,18 @@
      </item>
      <item row="7" column="1">
       <layout class="QVBoxLayout" name="sprite_layout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="SolarusEditor::ResourceSelector" name="sprite_field"/>
        </item>
@@ -297,7 +345,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="savegame_variable_field"/>
+         <widget class="QLineEdit" name="savegame_variable_field">
+          <property name="placeholderText">
+           <string>Variable name</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -329,6 +381,18 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontal_layout_3">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QLabel" name="treasure_variant_label">
             <property name="text">
@@ -355,12 +419,12 @@
           <item>
            <spacer name="horizontal_spacer_4">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>0</width>
+              <height>0</height>
              </size>
             </property>
            </spacer>
@@ -368,14 +432,26 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="save_treasure_check_box">
-          <property name="text">
-           <string>Save the treasure state</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="horizontal_layout_4">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="save_treasure_check_box">
+            <property name="text">
+             <string>Save the treasure state</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QLabel" name="treasure_savegame_variable_label">
             <property name="text">
@@ -384,7 +460,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="treasure_savegame_variable_field"/>
+           <widget class="QLineEdit" name="treasure_savegame_variable_field">
+            <property name="minimumSize">
+             <size>
+              <width>180</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Variable name</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -489,12 +575,12 @@
         <item>
          <spacer name="weight_spacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -550,12 +636,12 @@
         <item>
          <spacer name="damage_on_enemies_spacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -572,6 +658,63 @@
      </item>
      <item row="20" column="1">
       <widget class="SolarusEditor::EnumSelector&lt;SolarusEditor::Ground&gt;" name="ground_field"/>
+     </item>
+     <item row="21" column="1">
+      <widget class="QWidget" name="max_moves_layout" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="max_moves_check_box">
+          <property name="text">
+           <string>Maximum moves</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="max_moves_field">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="maximum">
+           <number>999999</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontal_spacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>184</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item row="22" column="0">
       <widget class="QLabel" name="opening_method_label">
@@ -611,6 +754,18 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="opening_condition_savegame_variable_layout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="opening_method_savegame_variable_radio">
             <property name="text">
@@ -619,24 +774,49 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="opening_condition_savegame_variable_field"/>
+           <widget class="QLineEdit" name="opening_condition_savegame_variable_field">
+            <property name="minimumSize">
+             <size>
+              <width>180</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Variable name</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
          <layout class="QHBoxLayout" name="opening_condition_savegame_variable_consumed_layout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <spacer name="opening_condition_savegame_variable_consumed_spacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
+             <enum>QSizePolicy::Policy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>32</width>
+              <height>0</height>
              </size>
             </property>
            </spacer>
@@ -652,6 +832,18 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="opening_condition_item_layout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="opening_method_item_radio">
             <property name="text">
@@ -673,18 +865,33 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="opening_condition_item_consumed_layout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <spacer name="opening_condition_item_consumed_spacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
+             <enum>QSizePolicy::Policy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>32</width>
+              <height>0</height>
              </size>
             </property>
            </spacer>
@@ -732,6 +939,18 @@
         </property>
         <item>
          <layout class="QHBoxLayout" name="behavior_dialog_layout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="behavior_dialog_radio">
             <property name="text">
@@ -740,7 +959,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="behavior_dialog_field"/>
+           <widget class="QLineEdit" name="behavior_dialog_field">
+            <property name="placeholderText">
+             <string>Dialog id</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -753,6 +976,18 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="behavior_item_layout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="behavior_item_radio">
             <property name="text">
@@ -834,6 +1069,18 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontal_layout_5">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="tileset_other_radio">
             <property name="text">
@@ -856,6 +1103,20 @@
        </layout>
       </widget>
      </item>
+     <item row="27" column="0">
+      <widget class="QLabel" name="enabled_at_start_label">
+       <property name="text">
+        <string>Initial state</string>
+       </property>
+      </widget>
+     </item>
+     <item row="27" column="1">
+      <widget class="QCheckBox" name="enabled_at_start_field">
+       <property name="text">
+        <string>Enabled at start</string>
+       </property>
+      </widget>
+     </item>
      <item row="28" column="0">
       <widget class="QLabel" name="user_properties_label">
        <property name="text">
@@ -864,9 +1125,30 @@
       </widget>
      </item>
      <item row="28" column="1">
-      <layout class="QHBoxLayout" name="custom_properties_layout">
+      <layout class="QHBoxLayout" name="custom_properties_layout" stretch="1,0">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QTreeWidget" name="user_properties_table">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="indentation">
           <number>10</number>
          </property>
@@ -893,6 +1175,18 @@
        </item>
        <item>
         <layout class="QVBoxLayout" name="user_properties_buttons_layout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="add_property_button">
            <property name="maximumSize">
@@ -909,13 +1203,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/images.qrc">
-             <normaloff>:/images/icon_add.png</normaloff>:/images/icon_add.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
+             <normaloff>:/images/icon_add.svg</normaloff>:/images/icon_add.svg</iconset>
            </property>
           </widget>
          </item>
@@ -938,13 +1226,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/images.qrc">
-             <normaloff>:/images/icon_rename.png</normaloff>:/images/icon_rename.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
+             <normaloff>:/images/icon_rename.svg</normaloff>:/images/icon_rename.svg</iconset>
            </property>
           </widget>
          </item>
@@ -967,13 +1249,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/images.qrc">
-             <normaloff>:/images/icon_delete.png</normaloff>:/images/icon_delete.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
+             <normaloff>:/images/icon_delete.svg</normaloff>:/images/icon_delete.svg</iconset>
            </property>
           </widget>
          </item>
@@ -996,13 +1272,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/images.qrc">
-             <normaloff>:/images/icon_up.png</normaloff>:/images/icon_up.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
+             <normaloff>:/images/icon_up.svg</normaloff>:/images/icon_up.svg</iconset>
            </property>
           </widget>
          </item>
@@ -1025,13 +1295,7 @@
            </property>
            <property name="icon">
             <iconset resource="../../resources/images.qrc">
-             <normaloff>:/images/icon_down.png</normaloff>:/images/icon_down.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
+             <normaloff>:/images/icon_down.svg</normaloff>:/images/icon_down.svg</iconset>
            </property>
           </widget>
          </item>
@@ -1039,80 +1303,28 @@
        </item>
       </layout>
      </item>
-     <item row="21" column="1">
-      <widget class="QWidget" name="max_moves_layout" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QCheckBox" name="max_moves_check_box">
-          <property name="text">
-           <string>Maximum moves</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="max_moves_field">
-          <property name="maximumSize">
-           <size>
-            <width>70</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="maximum">
-           <number>999999</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontal_spacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="27" column="1">
-      <widget class="QCheckBox" name="enabled_at_start_field">
-       <property name="text">
-        <string>Enabled at start</string>
-       </property>
-      </widget>
-     </item>
-     <item row="27" column="0">
-      <widget class="QLabel" name="enabled_at_start_label">
-       <property name="text">
-        <string>Initial state</string>
-       </property>
-      </widget>
-     </item>
     </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
      <property name="centerButtons">
       <bool>false</bool>
@@ -1125,7 +1337,7 @@
   <customwidget>
    <class>SolarusEditor::ResourceSelector</class>
    <extends>QComboBox</extends>
-   <header>widgets/resource_selector.h</header>
+   <header>include/widgets/resource_selector.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::PairSpinBox</class>

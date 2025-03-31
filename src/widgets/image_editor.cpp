@@ -31,7 +31,7 @@ ImageEditor::ImageEditor(Quest& quest, const QString& file_path, QWidget* parent
   Editor(quest, file_path, parent),
   image_view(nullptr) {
 
-  set_icon(QIcon(":/images/icon_image.png"));
+  set_icon(QIcon(":/images/icon_image.svg"));
   set_save_supported(false);
   set_zoom_supported(true);
 

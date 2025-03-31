@@ -24,7 +24,6 @@ set(solarus_quest_editor_SOURCES
   include/entities/teletransporter.h
   include/entities/tile.h
   include/entities/wall.h
-  include/widgets/about_dialog.h
   include/widgets/border_set_selector.h
   include/widgets/border_set_tree_view.h
   include/widgets/change_border_set_id_dialog.h
@@ -33,7 +32,6 @@ set(solarus_quest_editor_SOURCES
   include/widgets/change_resource_id_dialog.h
   include/widgets/change_source_image_dialog.h
   include/widgets/change_string_key_dialog.h
-  include/widgets/closable_tab_bar.h
   include/widgets/color_chooser.h
   include/widgets/console_line_edit.h
   include/widgets/console.h
@@ -164,7 +162,6 @@ set(solarus_quest_editor_SOURCES
   src/entities/teletransporter.cpp
   src/entities/tile.cpp
   src/entities/wall.cpp
-  src/widgets/about_dialog.cpp
   src/widgets/border_set_selector.cpp
   src/widgets/border_set_tree_view.cpp
   src/widgets/change_border_set_id_dialog.cpp
@@ -173,7 +170,6 @@ set(solarus_quest_editor_SOURCES
   src/widgets/change_resource_id_dialog.cpp
   src/widgets/change_source_image_dialog.cpp
   src/widgets/change_string_key_dialog.cpp
-  src/widgets/closable_tab_bar.cpp
   src/widgets/color_chooser.cpp
   src/widgets/console_line_edit.cpp
   src/widgets/console.cpp

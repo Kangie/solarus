@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>733</height>
+    <height>1049</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,24 +15,24 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="leftMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>3</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="handleWidth">
-      <number>8</number>
+      <number>2</number>
      </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
@@ -46,8 +46,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>596</width>
-         <height>725</height>
+         <width>600</width>
+         <height>1047</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -56,30 +56,30 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
         <property name="leftMargin">
-         <number>9</number>
+         <number>16</number>
         </property>
         <property name="topMargin">
-         <number>9</number>
+         <number>8</number>
         </property>
         <property name="rightMargin">
-         <number>9</number>
+         <number>16</number>
         </property>
         <property name="bottomMargin">
-         <number>9</number>
+         <number>16</number>
         </property>
         <item>
          <widget class="QWidget" name="tileset_properties_group_box" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <layout class="QFormLayout" name="formLayout">
            <property name="fieldGrowthPolicy">
-            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+            <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
            </property>
            <property name="leftMargin">
             <number>0</number>
@@ -105,6 +105,12 @@
            </item>
            <item row="0" column="1">
             <widget class="QLabel" name="tileset_id_field">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Filename of the tileset (without extension)</string>
              </property>
@@ -112,7 +118,7 @@
               <string/>
              </property>
              <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -137,9 +143,12 @@
              <property name="toolTip">
               <string>User-friendly description to show in the editor</string>
              </property>
+             <property name="placeholderText">
+              <string>Description</string>
+             </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="background_label">
              <property name="toolTip">
               <string/>
@@ -149,7 +158,7 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
+           <item row="2" column="1">
             <widget class="SolarusEditor::ColorChooser" name="background_field">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -180,14 +189,33 @@
            <attribute name="title">
             <string>Patterns</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout">
+          <attribute name="icon">
+            <iconset resource="../../resources/images.qrc">
+             <normaloff>:/images/icon_tile.svg</normaloff>:/images/icon_tile.svg</iconset>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+            <property name="spacing">
+             <number>8</number>
+            </property>
+            <property name="leftMargin">
+             <number>8</number>
+            </property>
+            <property name="topMargin">
+             <number>8</number>
+            </property>
+            <property name="rightMargin">
+             <number>8</number>
+            </property>
+            <property name="bottomMargin">
+             <number>8</number>
+            </property>
             <item>
              <widget class="SolarusEditor::TilePatternsListView" name="patterns_list_view"/>
             </item>
             <item>
              <widget class="QGroupBox" name="pattern_properties_group_box">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -197,7 +225,7 @@
               </property>
               <layout class="QFormLayout" name="formLayout_2">
                <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::ExpandingFieldsGrow</enum>
+                <enum>QFormLayout::FieldGrowthPolicy::ExpandingFieldsGrow</enum>
                </property>
                <item row="0" column="0">
                 <widget class="QLabel" name="pattern_id_label">
@@ -246,14 +274,14 @@
                       </property>
                       <property name="icon">
                        <iconset resource="../../resources/images.qrc">
-                        <normaloff>:/images/icon_rename.png</normaloff>:/images/icon_rename.png</iconset>
+                        <normaloff>:/images/icon_rename.svg</normaloff>:/images/icon_rename.svg</iconset>
                       </property>
                      </widget>
                     </item>
                     <item>
                      <spacer name="horizontal_spacer">
                       <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
+                       <enum>Qt::Orientation::Horizontal</enum>
                       </property>
                       <property name="sizeHint" stdset="0">
                        <size>
@@ -304,7 +332,7 @@
                <item row="2" column="1">
                 <widget class="QSpinBox" name="default_layer_field">
                  <property name="buttonSymbols">
-                  <enum>QAbstractSpinBox::UpDownArrows</enum>
+                  <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
                  </property>
                  <property name="minimum">
                   <number>-9999</number>
@@ -424,33 +452,67 @@
            <attribute name="title">
             <string>Contours</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <attribute name="icon">
+            <iconset resource="../../resources/images.qrc">
+             <normaloff>:/images/icon_border_set.svg</normaloff>:/images/icon_border_set.svg</iconset>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0">
+            <property name="spacing">
+             <number>8</number>
+            </property>
             <property name="leftMargin">
-             <number>9</number>
+             <number>8</number>
             </property>
             <property name="topMargin">
-             <number>9</number>
+             <number>8</number>
             </property>
             <property name="rightMargin">
-             <number>9</number>
+             <number>8</number>
             </property>
             <property name="bottomMargin">
-             <number>9</number>
+             <number>8</number>
             </property>
             <item>
              <layout class="QHBoxLayout" name="border_sets_layout">
+              <property name="spacing">
+               <number>8</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="SolarusEditor::BorderSetTreeView" name="border_sets_tree_view"/>
               </item>
               <item>
                <layout class="QVBoxLayout" name="border_sets_buttons_layout">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QPushButton" name="create_border_set_button">
-                  <property name="maximumSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
                   <property name="toolTip">
                    <string>Create contour</string>
@@ -460,29 +522,17 @@
                   </property>
                   <property name="icon">
                    <iconset resource="../../resources/images.qrc">
-                    <normaloff>:/images/icon_add.png</normaloff>:/images/icon_add.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>24</width>
-                    <height>24</height>
-                   </size>
+                    <normaloff>:/images/icon_add.svg</normaloff>:/images/icon_add.svg</iconset>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="rename_border_set_button">
-                  <property name="minimumSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
                   <property name="toolTip">
                    <string>Rename (F2)</string>
@@ -492,13 +542,7 @@
                   </property>
                   <property name="icon">
                    <iconset resource="../../resources/images.qrc">
-                    <normaloff>:/images/icon_rename.png</normaloff>:/images/icon_rename.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>24</width>
-                    <height>24</height>
-                   </size>
+                    <normaloff>:/images/icon_rename.svg</normaloff>:/images/icon_rename.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -510,18 +554,6 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
                   <property name="toolTip">
                    <string>Delete</string>
                   </property>
@@ -530,25 +562,19 @@
                   </property>
                   <property name="icon">
                    <iconset resource="../../resources/images.qrc">
-                    <normaloff>:/images/icon_cross.png</normaloff>:/images/icon_cross.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>24</width>
-                    <height>24</height>
-                   </size>
+                    <normaloff>:/images/icon_delete.svg</normaloff>:/images/icon_delete.svg</iconset>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <spacer name="border_sets_buttons_spacer">
                   <property name="orientation">
-                   <enum>Qt::Vertical</enum>
+                   <enum>Qt::Orientation::Vertical</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>20</width>
-                    <height>40</height>
+                    <width>0</width>
+                    <height>0</height>
                    </size>
                   </property>
                  </spacer>
@@ -559,6 +585,12 @@
             </item>
             <item>
              <widget class="QGroupBox" name="border_set_properties_group_box">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="title">
                <string>Contour properties</string>
               </property>
@@ -572,6 +604,18 @@
                </item>
                <item row="0" column="1">
                 <layout class="QHBoxLayout" name="border_set_id_layout">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QLabel" name="border_set_id_value">
                    <property name="text">
@@ -589,7 +633,7 @@
                    </property>
                    <property name="icon">
                     <iconset resource="../../resources/images.qrc">
-                     <normaloff>:/images/icon_rename.png</normaloff>:/images/icon_rename.png</iconset>
+                     <normaloff>:/images/icon_rename.svg</normaloff>:/images/icon_rename.svg</iconset>
                    </property>
                    <property name="shortcut">
                     <string>F2</string>
@@ -599,12 +643,12 @@
                  <item>
                   <spacer name="horizontal_spacer_3">
                    <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                    <enum>Qt::Orientation::Horizontal</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>40</width>
-                     <height>20</height>
+                     <width>0</width>
+                     <height>0</height>
                     </size>
                    </property>
                   </spacer>
@@ -620,6 +664,18 @@
                </item>
                <item row="1" column="1">
                 <layout class="QHBoxLayout" name="border_set_inner_layout">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QComboBox" name="border_set_inner_field">
                    <item>
@@ -628,7 +684,7 @@
                     </property>
                     <property name="icon">
                      <iconset resource="../../resources/images.qrc">
-                      <normaloff>:/images/icon_outside.png</normaloff>:/images/icon_outside.png</iconset>
+                      <normaloff>:/images/icon_outside.svg</normaloff>:/images/icon_outside.svg</iconset>
                     </property>
                    </item>
                    <item>
@@ -637,7 +693,7 @@
                     </property>
                     <property name="icon">
                      <iconset resource="../../resources/images.qrc">
-                      <normaloff>:/images/icon_inside.png</normaloff>:/images/icon_inside.png</iconset>
+                      <normaloff>:/images/icon_inside.svg</normaloff>:/images/icon_inside.svg</iconset>
                     </property>
                    </item>
                   </widget>
@@ -645,12 +701,12 @@
                  <item>
                   <spacer name="horizontal_spacer_2">
                    <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                    <enum>Qt::Orientation::Horizontal</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>40</width>
-                     <height>20</height>
+                     <width>0</width>
+                     <height>0</height>
                     </size>
                    </property>
                   </spacer>
@@ -674,14 +730,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SolarusEditor::ColorChooser</class>
-   <extends>QPushButton</extends>
-   <header>widgets/color_chooser.h</header>
-  </customwidget>
-  <customwidget>
    <class>SolarusEditor::TilesetView</class>
    <extends>QGraphicsView</extends>
    <header>widgets/tileset_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SolarusEditor::ColorChooser</class>
+   <extends>QPushButton</extends>
+   <header>widgets/color_chooser.h</header>
   </customwidget>
   <customwidget>
    <class>SolarusEditor::EnumSelector&lt;SolarusEditor::Ground&gt;</class>

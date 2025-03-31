@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "entities/entity_traits.h"
-#include "widgets/about_dialog.h"
 #include "widgets/change_resource_id_dialog.h"
 #include "widgets/editor.h"
 #include "widgets/enum_menus.h"
@@ -28,6 +27,7 @@
 #include "widgets/package_dialog.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
+#include "editor_style.h"
 #include "file_tools.h"
 #include "map_model.h"
 #include "new_quest_builder.h"
@@ -47,6 +47,8 @@
 #include <QMessageBox>
 #include <QToolButton>
 #include <QUndoGroup>
+
+#include <oclero/qlementine/widgets/AboutDialog.hpp>
 
 namespace SolarusEditor {
 
@@ -81,14 +83,6 @@ MainWindow::MainWindow(QWidget* parent) :
   // Title.
   update_title();
 
-  // Icon.
-  QStringList icon_sizes = { "16", "32", "48", "256" };
-  QIcon icon;
-  for (const QString& size : icon_sizes) {
-    icon.addPixmap(":/images/icon_quest_editor_" + size + ".png");
-  }
-  setWindowIcon(icon);
-
   // Quest tree splitter.
   const int tree_width = 300;
   ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
@@ -110,9 +104,9 @@ MainWindow::MainWindow(QWidget* parent) :
 
   QUndoGroup& undo_group = ui.tab_widget->get_undo_group();
   QAction* undo_action = undo_group.createUndoAction(this);
-  undo_action->setIcon(QIcon(":/images/icon_undo.png"));
+  undo_action->setIcon(QIcon(":/images/icon_undo.svg"));
   QAction* redo_action = undo_group.createRedoAction(this);
-  redo_action->setIcon(QIcon(":/images/icon_redo.png"));
+  redo_action->setIcon(QIcon(":/images/icon_redo.svg"));
   ui.menu_edit->insertAction(ui.action_cut, undo_action);
   ui.menu_edit->insertAction(ui.action_cut, redo_action);
   ui.menu_edit->insertSeparator(ui.action_cut);
@@ -126,7 +120,7 @@ MainWindow::MainWindow(QWidget* parent) :
   update_music_actions();
 
   zoom_button = new QToolButton();
-  zoom_button->setIcon(QIcon(":/images/icon_zoom.png"));
+  zoom_button->setIcon(QIcon(":/images/icon_zoom.svg"));
   zoom_button->setToolTip(tr("Zoom"));
   zoom_menu = create_zoom_menu();
   zoom_button->setMenu(zoom_menu);
@@ -145,7 +139,7 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.action_show_layer_1->setShortcutContext(Qt::WidgetShortcut);
   ui.action_show_layer_2->setShortcutContext(Qt::WidgetShortcut);
   show_layers_button = new QToolButton();
-  show_layers_button->setIcon(QIcon(":/images/icon_layer_more.png"));
+  show_layers_button->setIcon(QIcon(":/images/icon_layer_more.svg"));
   show_layers_button->setToolTip(show_layers_button->text());
   show_layers_menu = new QMenu(tr("Show/hide more layers"));
   show_layers_button->setMenu(show_layers_menu);
@@ -158,7 +152,7 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.menu_view->insertSeparator(ui.action_show_traversables);
 
   show_entities_button = new QToolButton();
-  show_entities_button->setIcon(QIcon(":/images/icon_glasses.png"));
+  show_entities_button->setIcon(QIcon(":/images/icon_glasses.svg"));
   show_entities_button->setToolTip(tr("Show/hide entity types"));
   show_entities_menu = create_show_entities_menu();
   show_entities_button->setMenu(show_entities_menu);
@@ -270,6 +264,14 @@ MainWindow::MainWindow(QWidget* parent) :
                               "Some features like creating a new quest will not be available.\n"
                               "Please make sure that Solarus Quest Editor is correctly installed."));
   }
+
+  // Exceptions for automatic icon coloring.
+  EditorStyle::setAutoIconColor(ui.tool_bar, EditorStyle::AutoIconColor::ForegroundColor);
+
+  // Prevent Qt's default toolbar context menu that allows to hide the QToolBar.
+  // It should NOT be able to hide.
+  ui.tool_bar->installEventFilter(this);
+
 }
 
 /**
@@ -413,7 +415,7 @@ void MainWindow::update_show_layers_menu() {
       QAction* action = new QAction(tr("Show layer %1").arg(i), this);
       if (i >= 0 && i < 3) {
         // Layers 0, 1 and 2 have an icon.
-        QString file_name = QString(":/images/icon_layer_%1.png").arg(i);
+        QString file_name = QString(":/images/icon_layer_%1.svg").arg(i);
         action->setIcon(QIcon(file_name));
       }
       // Layers -4 to 5 have a shortcut.
@@ -434,6 +436,8 @@ void MainWindow::update_show_layers_menu() {
       });
     }
   }
+
+  // set_menu_bar_menu_icons_visibility(show_layers_menu, !menuBar()->isNativeMenuBar());
 }
 
 /**
@@ -481,6 +485,8 @@ void MainWindow::update_lock_layers_menu() {
       });
     }
   }
+
+  // set_menu_bar_menu_icons_visibility(lock_layers_menu, !menuBar()->isNativeMenuBar());
 }
 
 /**
@@ -518,7 +524,8 @@ QMenu* MainWindow::create_show_entities_menu() {
   }
 
   // Add special actions Show all and Hide all.
-  QAction* show_all_action = new QAction(tr("Show all entities"), this);
+  QAction* show_all_action = new QAction(
+      tr("Show all entities"), this);
   show_entities_subactions["action_show_all"] = show_all_action;
   menu->insertAction(entity_actions.first(), show_all_action);
   connect(show_all_action, &QAction::triggered, this, [this]() {
@@ -528,7 +535,8 @@ QMenu* MainWindow::create_show_entities_menu() {
     }
   });
 
-  QAction* hide_all_action = new QAction(tr("Hide all entities"), this);
+  QAction* hide_all_action = new QAction(
+      tr("Hide all entities"), this);
   show_entities_subactions["action_hide_all"] = hide_all_action;
   menu->insertAction(entity_actions.first(), hide_all_action);
   connect(hide_all_action, &QAction::triggered, this, [this]() {
@@ -831,11 +839,9 @@ void MainWindow::on_action_new_quest_triggered() {
 
   try {
     // Create the quest directory and its contents.
-    NewQuestMode mode = new_quest_dialog.get_new_quest_mode();
-    const QString& quest_path = new_quest_dialog.get_quest_directory();
-    const QString& quest_name = new_quest_dialog.get_quest_title();
-    NewQuestBuilder::create_initial_quest_files(mode, quest_path, quest_name);
-    if (open_quest(quest_path)) {
+    const NewQuestBuilder::NewQuestConfig& config = new_quest_dialog.get_new_quest_config();
+    NewQuestBuilder::create_initial_quest_files(config);
+    if (open_quest(config.quest_path)) {
       // Open the quest properties editor initially.
       open_file(quest, quest.get_data_path());
     }
@@ -1340,8 +1346,27 @@ void MainWindow::on_action_website_triggered() {
  */
 void MainWindow::on_action_about_triggered() {
 
-  SolarusEditor::AboutDialog dialog(this);
-  dialog.exec();
+  auto* dialog = new oclero::qlementine::AboutDialog(qApp->activeWindow());
+  dialog->setWindowTitle(QApplication::translate("SolarusEditor::AboutDialog",
+     "About %0").arg(QApplication::applicationDisplayName()));
+  dialog->setWebsiteUrl(SOLARUSEDITOR_WEBSITE);
+  dialog->setDescription(QApplication::translate("SolarusEditor::AboutDialog",
+     "Integrated development environment for Solarus, a free and open-source ARPG 2D game engine."));
+  dialog->setLicense("GPL-3.0 and CC-BY-SA-4.0");
+  dialog->setCopyright(QString("%1 %2").arg(SOLARUSEDITOR_COPYRIGHT, tr("All rights reserved.")));
+
+  EditorStyle::setAutoIconColor(dialog, EditorStyle::AutoIconColor::ForegroundColor);
+
+  for (const auto& [tooltip, url, icon] : {
+         std::make_tuple("X", "https://x.com/solarusgames", ":/images/icon_x.svg"),
+         std::make_tuple("Mastodon", "https://mastodon.gamedev.place/@solarus", ":/images/icon_mastodon.svg"),
+         std::make_tuple("YouTube", "https://www.youtube.com/c/ChristophoZS", ":/images/icon_youtube.svg"),
+         std::make_tuple("GitLab", "https://gitlab.com/solarus-games", ":/images/icon_gitlab.svg"),
+       }) {
+    QIcon q_icon(icon);
+    dialog->addSocialMediaLink(tooltip, url, q_icon);
+  }
+  dialog->show();
 }
 
 /**
@@ -1360,8 +1385,7 @@ static void offer_online_docs(MainWindow *parent) {
   );
 
   if (QMessageBox::Ok == answer) {
-    QDesktopServices::openUrl(
-          QUrl("http://www.solarus-games.org/doc/latest/index.html"));
+    QDesktopServices::openUrl(QUrl("https://docs.solarus-games.org"));
   }
 }
 
@@ -1787,11 +1811,11 @@ void MainWindow::update_grouping_actions() {
 void MainWindow::update_run_quest() {
 
   if (quest_runner.is_started()) {
-    ui.action_run_quest->setIcon(QIcon(":/images/icon_stop.png"));
+    ui.action_run_quest->setIcon(QIcon(":/images/icon_stop.svg"));
     ui.action_run_quest->setToolTip(tr("Stop quest"));
     ui.action_run_map->setEnabled(false);
   } else {
-    ui.action_run_quest->setIcon(QIcon(":/images/icon_start.png"));
+    ui.action_run_quest->setIcon(QIcon(":/images/icon_start.svg"));
     ui.action_run_quest->setToolTip(tr("Run quest"));
     const Editor* editor = get_current_editor();
     ui.action_run_map->setEnabled(editor != nullptr && editor->is_run_map_supported());
@@ -1840,15 +1864,15 @@ void MainWindow::update_music_actions() {
     // A music is being played.
     ui.action_stop_music->setEnabled(true);
     ui.action_stop_music->setText(tr("Stop music"));
-    ui.action_stop_music->setIcon(QIcon(":/images/icon_stop_music.png"));
+    ui.action_stop_music->setIcon(QIcon(":/images/icon_stop_music.svg"));
 
     ui.action_pause_music->setEnabled(true);
     ui.action_pause_music->setText(tr("Pause music"));
-    ui.action_pause_music->setIcon(QIcon(":/images/icon_pause_music.png"));
+    ui.action_pause_music->setIcon(QIcon(":/images/icon_pause_music.svg"));
   }
   else {
     ui.action_stop_music->setText(tr("Play selected music"));
-    ui.action_stop_music->setIcon(QIcon(":/images/icon_start_music.png"));
+    ui.action_stop_music->setIcon(QIcon(":/images/icon_start_music.svg"));
     ui.action_pause_music->setEnabled(false);
     ui.action_pause_music->setText(tr("Pause music"));
     const QString& selected_path = ui.quest_tree_view->get_selected_path();
@@ -1908,6 +1932,26 @@ void MainWindow::closeEvent(QCloseEvent* event) {
   else {
     event->ignore();
   }
+}
+
+/**
+ * @brief
+ * @param target
+ * @param evt
+ * @return
+ */
+bool MainWindow::eventFilter(QObject* target, QEvent* evt) {
+
+  if (target == ui.tool_bar) {
+    const QEvent::Type event_type = evt->type();
+
+    // Prevent right-click.
+    if (event_type == QEvent::Type::ContextMenu) {
+      return true;
+    }
+  }
+
+  return QMainWindow::eventFilter(target, evt);
 }
 
 /**

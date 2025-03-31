@@ -35,7 +35,8 @@ Stream::Stream(MapModel& map, const EntityIndex& index) :
   for (int direction = 0; direction < 8; ++direction) {
     SubImage sub_image;
     sub_image.file_name = file_name;
-    sub_image.src_rect = QRect(direction * 16, 0, 16, 16);
+    sub_image.src_rect = QRect(direction * 64, 0, 64, 64);
+    info.scale = 4;
     info.images_by_direction.append(sub_image);
   }
   set_draw_image_info(info);
