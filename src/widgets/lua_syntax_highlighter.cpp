@@ -46,12 +46,6 @@ void LuaSyntaxHighlighter::create_rules() {
   rules.clear();
   HighlightingRule rule;
 
-  // The following awful regexp beginning can be used to match things that are
-  // not in a string.
-  // To do that, we check that the number of quotes and double-quotes is even.
-  // (Keeping state information would probably be more readable.)
-  QString not_in_a_single_line_string = "^[^\"']*(?:\"[^\"]*\"[^\"'']*|\'[^\']*\'[^\"']*)*";
-
   // Keywords.
   QTextCharFormat keyword_format;
   keyword_format.setForeground(mode_info.lua_keyword_color);
@@ -106,8 +100,7 @@ void LuaSyntaxHighlighter::create_rules() {
     // Avoid to highlight comments in strings,
     // and don't match --[[ or --]] markers.
     rule.pattern = QRegularExpression(
-        not_in_a_single_line_string +
-        R"((--([^\[\]]|\[[^\[]|\][^\]])[^\n]*$)$)"
+        R"((?<![-\\])--(?!\[\[|\]\])(?![^\n]*?(?:\\["']))[^\n]*)"
     );
     rule.format = single_line_comment_format;
     rules.append(rule);
