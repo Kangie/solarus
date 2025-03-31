@@ -4,12 +4,13 @@
 #include <QWidget>
 #include <QPointer>
 
+#include <Controller.h>
+
 namespace oclero::qlementine {
 class Expander;
 } // namespace oclero::qlementine
 
 namespace solarus::launcher {
-class Controller;
 class MenuBar;
 class ToolBar;
 class QuestListView;
