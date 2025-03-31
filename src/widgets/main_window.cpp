@@ -266,7 +266,19 @@ MainWindow::MainWindow(QWidget* parent) :
   }
 
   // Exceptions for automatic icon coloring.
-  EditorStyle::setAutoIconColor(ui.tool_bar, EditorStyle::AutoIconColor::ForegroundColor);
+  for (QWidget* widget : std::vector<QWidget*>{
+           ui.tool_bar,
+           ui.menu_bar,
+           ui.menu_tools,
+           ui.menuAudio,
+           ui.menu_help,
+           ui.menu_edit,
+           ui.menu_run,
+           ui.menu_view,
+           ui.menu_quest,
+       }) {
+    EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
+  }
 
   // Prevent Qt's default toolbar context menu that allows to hide the QToolBar.
   // It should NOT be able to hide.
