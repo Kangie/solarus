@@ -298,7 +298,7 @@ QString to_file_name(const QString& name) {
  */
 bool is_valid_windows_path(const QString &path) {
   // List of invalid characters in Windows paths
-  static const QRegularExpression invalid_chars_regex(R"([<>:"/\\|?*\x00-\x1F])");
+  static const QRegularExpression invalid_chars_regex(R"([<>"/\\|?*\x00-\x1F])");
 
   // Also check for reserved names (CON, PRN, AUX, NUL, COM1-9, LPT1-9, etc.)
   static const QRegularExpression reserved_names(
@@ -318,6 +318,11 @@ bool is_valid_unix_path(const QString &path) {
   return !path.contains(discouraged_chars);
 }
 
+/**
+ * @brief Checks is a path is valid for the current operating system.
+ * @param path The path to check.
+ * @return @c true if the path is a valid one.
+ */
 bool is_path_valid(const QString& path) {
 #ifdef Q_OS_WIN
   if (!is_valid_windows_path(path)) {
@@ -347,6 +352,11 @@ bool is_path_valid(const QString& path) {
   return true;
 }
 
+/**
+ * @brief Checks whether a string is a valid path for a new quest.
+ * @param path The path to check.
+ * @return @c true if it is valid.
+ */
 NewQuestPathError check_new_quest_path(const QString& path) {
 
   if (path.isEmpty()) {
