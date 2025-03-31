@@ -131,7 +131,7 @@ stages:
 # Template for MinGW-based Package Jobs
 #------------------------------------------------------------------------------
 # An artifact is generated with binaries, libraries and assets required to
-# run the Solarus Quest Editor that expires one month after creation unless
+# run the Solarus Editor that expires one month after creation unless
 # the pipeline is for the most recent commit on a branch or tag.
 #
 # Jobs must define a `BINARIES` variable with a list of all binary objects
@@ -172,10 +172,20 @@ stages:
     - mkdir $TMP_DIR/assets
     - mv solarus-doc $TMP_DIR/assets/doc
     - pkg_add.sh $PACKAGE $BASE_DIR $TMP_DIR/assets
+    # Create directories for Qt plugins
+    - mkdir -p qt_plugins/imageformats
+    - mkdir -p qt_plugins/iconengines
+    # Copy the DLL files to the correct locations
+    - cp /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats/qsvg.dll qt_plugins/imageformats/
+    - cp /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines/qsvgicon.dll qt_plugins/iconengines/
+    # Add the plugin directories to the package
+    - pkg_add.sh $PACKAGE $BASE_DIR qt_plugins/imageformats
+    - pkg_add.sh $PACKAGE $BASE_DIR qt_plugins/iconengines
     # START-HOTFIX: ensure that the LuaJIT library is used in the package
     - cp /usr/$ARCH-w64-mingw32/bin/luajit-2.1.dll lua51.dll
     - pkg_add.sh $PACKAGE $BASE_DIR lua51.dll
-    # END-HOTFIX: will be properly fixed in mingw_make_pkg.sh later  artifacts:
+    # END-HOTFIX: will be properly fixed in mingw_make_pkg.sh later
+
   artifacts:
     name: $CI_JOB_NAME
     paths:
@@ -332,8 +342,6 @@ mingw-x64-package:
       staging/share/solarus-quest-editor/translations
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats/qsvg.dll
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines/qsvgicon.dll
       cmake/win32/bzip2.dll
       cmake/win32/zip.exe
     TEXT_FILES: >-
@@ -363,8 +371,6 @@ mingw-x86-package:
       staging/share/solarus-quest-editor/translations
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats/qsvg.dll
-      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines/qsvgicon.dll
       cmake/win32/bzip2.dll
       cmake/win32/zip.exe
     TEXT_FILES: >-
