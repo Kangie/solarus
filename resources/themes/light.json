@@ -11,39 +11,39 @@
   "backgroundColorMain4": "#E0DFE8",
 
   "backgroundColorWorkspace": "#ffffff",
-  "backgroundColorTabBar": "#D0CFD9",
+  "backgroundColorTabBar": "#DEDDE4",
 
   "borderColor": "#BFBDCB",
   "borderColorHovered": "#908DA6",
   "borderColorPressed": "#797593",
   "borderColorDisabled": "#DFDEE5",
 
-  "focusColor": "#ff7b0066",
+  "focusColor": "#5600ff4c",
 
   "neutralColor": "#C7C5D4",
   "neutralColorHovered": "#D3D1DE",
   "neutralColorPressed": "#DBDAE6",
-  "neutralColorDisabled": "#EBEBF0",
+  "neutralColorDisabled": "#E2E1E8",
 
-  "primaryColor": "#ff7b00",
-  "primaryColorHovered": "#ff8e00",
-  "primaryColorPressed": "#FF9B00",
-  "primaryColorDisabled": "#F1D6C1",
+  "primaryColor": "#8456FF",
+  "primaryColorHovered": "#936BFF",
+  "primaryColorPressed": "#A07DFF",
+  "primaryColorDisabled": "#D6C9F4",
 
-  "primaryAlternativeColor": "#F04E00",
-  "primaryAlternativeColorHovered": "#F66700",
-  "primaryAlternativeColorPressed": "#F97C00",
-  "primaryAlternativeColorDisabled": "#F1BB9A",
+  "primaryAlternativeColor": "#A07DFF",
+  "primaryAlternativeColorHovered": "#AF91FF",
+  "primaryAlternativeColorPressed": "#C3ADFF",
+  "primaryAlternativeColorDisabled": "#C9B5FC",
 
   "primaryColorForeground": "#ffffff",
   "primaryColorForegroundHovered": "#ffffff",
   "primaryColorForegroundPressed": "#ffffff",
-  "primaryColorForegroundDisabled": "#F8EBE0",
+  "primaryColorForegroundDisabled": "#E3DBF7",
 
   "secondaryColor": "#454066",
   "secondaryColorHovered": "#59537C",
   "secondaryColorPressed": "#66608F",
-  "secondaryColorDisabled": "#CCCAD5",
+  "secondaryColorDisabled": "#BBB9C7",
 
   "secondaryAlternativeColor": "#8984AE",
   "secondaryAlternativeColorHovered": "#665F93",
