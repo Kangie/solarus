@@ -19,3 +19,7 @@ install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus-quest-edit
 configure_file (resources/app.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/resources/${SOLARUSEDITOR_APP_ID}.desktop @ONLY)
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/resources/${SOLARUSEDITOR_APP_ID}.desktop
   DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/applications)
+
+set_target_properties(solarus-quest-editor PROPERTIES
+  OUTPUT_NAME ${SOLARUSEDITOR_EXECUTABLE_NAME}
+)
