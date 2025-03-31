@@ -314,7 +314,7 @@ bool is_valid_windows_path(const QString &path) {
  * @return True if the path is a valid one for Unix.
  */
 bool is_valid_unix_path(const QString &path) {
-  static const QRegularExpression discouraged_chars(R"([\s*?\[\]$`"'|&;><!])");
+  static const QRegularExpression discouraged_chars(R"([*?\[\]$`"'|&;><!])");
   return !path.contains(discouraged_chars);
 }
 
