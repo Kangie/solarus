@@ -13,11 +13,6 @@ endif()
 
 include(GNUInstallDirs)
 
-# Get the number of CPU cores available for building.
-include(ProcessorCount)
-ProcessorCount(NUM_CORES)
-set(CMAKE_BUILD_PARALLEL_LEVEL ${NUM_CORES})
-message(STATUS "Building with ${NUM_CORES} parallel jobs")
 message(STATUS "Architecture: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 string(TIMESTAMP PROJECT_BUILD_YEAR "%Y")
