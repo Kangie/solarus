@@ -369,17 +369,17 @@ void QuestPropertiesPanel::setupUi() {
   _tableView->setCornerButtonEnabled(false);
   _tableView->horizontalHeader()->hide();
   _tableView->verticalHeader()->show();
-  _tableView->setGridStyle(Qt::PenStyle::NoPen);
   _tableView->setWordWrap(true);
   _tableView->setModel(_tableModel);
   _tableView->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
   _tableView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
   _tableView->setDragEnabled(false);
   _tableView->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerPixel);
-  _tableView->setFrameStyle(QFrame::NoFrame);
   _tableView->setTextElideMode(Qt::TextElideMode::ElideNone);
   _tableView->setLineWidth(0);
   _tableView->setAlternatingRowColors(true);
+  _tableView->setFrameShape(QFrame::Shape::NoFrame);
+  _tableView->setFrameShadow(QFrame::Shadow::Plain);
 
   layout->addWidget(_tableView);
 
