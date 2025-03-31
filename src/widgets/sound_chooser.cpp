@@ -32,7 +32,6 @@ SoundChooser::SoundChooser(QWidget* parent) :
   quest() {
 
   sound_selector.set_resource_type(ResourceType::SOUND);
-  play_sound_button.setIconSize(QSize(24, 24));
   play_sound_button.setIcon(QIcon(":/images/icon_start.svg"));
   play_sound_button.setToolTip(tr("Play sound"));
 
