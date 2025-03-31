@@ -21,6 +21,38 @@
 
 namespace SolarusEditor {
 
+namespace {
+
+/**
+ * @brief Converts a vector of strings to a QStringList (QVector<QString>).
+ * @param list The vector to convert.
+ * @return The QStringList.
+ */
+QStringList to_qstring_list(const std::vector<std::string>& list) {
+
+  QStringList result;
+  result.reserve(list.size());
+  std::transform(list.begin(), list.end(), std::back_inserter(result),
+                 [](const std::string &str) { return QString::fromStdString(str); });
+  return result;
+}
+
+/**
+ * @brief Converts a QStringList (QVector<QString>) to a vector of strings.
+ * @param list The QStringList to convert.
+ * @return The vector of strings.
+ */
+std::vector<std::string> to_string_vector(const QStringList& list) {
+
+  std::vector<std::string> result;
+  result.reserve(list.size());
+  std::transform(list.begin(), list.end(), std::back_inserter(result),
+                 [](const QString &str) { return str.toStdString(); });
+  return result;
+}
+
+} // anynomous namespace
+
 /**
  * @brief Creates quest properties for the specified quest.
  * @param quest The quest.
@@ -239,6 +271,36 @@ void QuestProperties::set_quest_version(const QString& quest_version) {
 }
 
 /**
+ * @brief Returns the quest initial release date.
+ * @return The release date or an invalid date.
+ */
+QDate QuestProperties::get_initial_release_date() const {
+
+  QString date_string = QString::fromStdString(properties.get_initial_release_date());
+  return QDate::fromString(date_string, "yyyyMMdd");
+}
+
+
+/**
+ * @brief Changes the quest initial release date.
+ * @param release_date The release date or an invalid date.
+ */
+void QuestProperties::set_initial_release_date(const QDate &initial_release_date) {
+
+  const QDate old_intial_release_date = get_initial_release_date();
+  if (initial_release_date == old_intial_release_date) {
+    return;
+  }
+
+  QString date_string;
+  if (initial_release_date.isValid()) {
+    date_string = initial_release_date.toString("yyyyMMdd");
+  }
+  properties.set_initial_release_date(date_string.toStdString());
+  emit initial_release_date_changed(initial_release_date);
+}
+
+/**
  * @brief Returns the website of the quest.
  * @return The website.
  */
@@ -361,6 +423,133 @@ void QuestProperties::set_max_quest_size(const QSize& size) {
 
   properties.set_max_quest_size(Size::to_solarus_size(size));
   emit max_size_changed(size);
+}
+
+/**
+ * @brief Returns the license of the quest.
+ * @return The quest license.
+ */
+QString QuestProperties::get_license() const {
+
+  return QString::fromStdString(properties.get_license());
+}
+
+/**
+ * @brief Changes the license of the quest.
+ * @param license The quest license.
+ */
+void QuestProperties::set_license(const QString &license) {
+
+  const QString old_license = get_license();
+  if (old_license == license) {
+    return;
+  }
+
+  properties.set_license(license.toStdString());
+  emit license_changed(license);
+}
+
+/**
+ * @brief Returns the languages officially supported by the quest.
+ * @return the quest languages.
+ */
+QStringList QuestProperties::get_languages() const {
+
+  QStringList languages;
+  const std::vector<std::string> quest_languages = properties.get_languages();
+  languages.reserve(quest_languages.size());
+  std::transform(quest_languages.begin(), quest_languages.end(), std::back_inserter(languages),
+                 [] (const std::string &quest_language){
+                   return QString::fromStdString(quest_language);
+  });
+  return languages;
+}
+
+/**
+ * @brief Changes the languages of the quest.
+ * @param languages The quest languages.
+ */
+void QuestProperties::set_languages(const QStringList &languages) {
+
+  const QStringList old_languages = get_languages();
+  if (old_languages == languages) {
+    return;
+  }
+
+  properties.set_languages(to_string_vector(languages));
+  emit languages_changed(languages);
+}
+
+/**
+ * @brief Returns the minimum players needed to play the quest.
+ * @return The quest minimum players.
+ */
+int QuestProperties::get_min_players() const {
+
+  return static_cast<int>(properties.get_min_players());
+}
+
+/**
+ * @brief Changes the minimum players needed to play the quest.
+ * @param min_players The quest minimum players.
+ */
+void QuestProperties::set_min_players(int min_players) {
+
+  const int old_min_players = get_min_players();
+  if (old_min_players == min_players) {
+    return;
+  }
+
+  properties.set_min_players(std::max(1, min_players));
+  emit min_players_changed(min_players);
+}
+
+/**
+ * @brief Returns the maximum players allowed to play the quest.
+ * @return The quest maximum players.
+ */
+int QuestProperties::get_max_players() const {
+
+  return static_cast<int>(properties.get_max_players());
+}
+
+/**
+ * @brief Changes the maximum players allowed to play the quest.
+ * @param max_players The quest maximum players.
+ */
+void QuestProperties::set_max_players(int max_players) {
+
+  const int old_max_players = get_max_players();
+  if (old_max_players == max_players) {
+    return;
+  }
+
+  properties.set_max_players(std::max(1, max_players));
+  emit max_players_changed(max_players);
+}
+
+/**
+ * @brief Returns the genres of the quest.
+ * @return The quest genres.
+ */
+QStringList QuestProperties::get_genres() const {
+
+  return to_qstring_list(properties.get_genres());
+}
+
+/**
+ * @brief Changes the genres of the quest.
+ * @param genres The quest genres.
+ */
+void QuestProperties::set_genres(const QStringList &genres) {
+
+  const QStringList old_genres = get_genres();
+  if (old_genres == genres) {
+    return;
+  }
+
+  properties.set_genres(to_string_vector(genres));
+  emit genres_changed(genres);
 }
 
 /**

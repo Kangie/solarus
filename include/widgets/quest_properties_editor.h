@@ -67,6 +67,18 @@ private slots:
   void change_subpixel_camera_requested();
   void update_dynamic_timestep_field();
   void change_dynamic_timestep_requested();
+  void update_initial_release_date_field();
+  void change_initial_release_date_requested();
+  void update_license_field();
+  void change_license_requested();
+  void update_language_field();
+  void change_language_requested();
+  void update_min_players_field();
+  void change_min_players_requested();
+  void update_max_players_field();
+  void change_max_players_requested();
+  void update_genres_field();
+  void change_genres_requested();
 
 private:
 

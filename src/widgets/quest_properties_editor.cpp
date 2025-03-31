@@ -19,6 +19,7 @@
 #include "quest.h"
 #include <QRegularExpressionValidator>
 #include <QUndoStack>
+#include <QButtonGroup>
 
 namespace SolarusEditor {
 
@@ -439,7 +440,197 @@ class SetDynamicTimestepCommand : public QuestPropertiesEditorCommand {
   bool enabled_after;
 };
 
+/**
+ * @brief Changing the initial release date.
+ */
+class SetInitialReleaseDateCommand : public QuestPropertiesEditorCommand {
+
+public:
+
+  SetInitialReleaseDateCommand(QuestPropertiesEditor& editor, const QDate& initial_release_date) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Change initial release date")),
+      initial_release_date_before(get_model().get_initial_release_date()),
+      initial_release_date_after(initial_release_date) {
+  }
+
+  void undo() override {
+    get_model().set_initial_release_date(initial_release_date_before);
+  }
+
+  void redo() override {
+    get_model().set_initial_release_date(initial_release_date_after);
+  }
+
+private:
+
+  QDate initial_release_date_before;
+  QDate initial_release_date_after;
+};
+
+/**
+ * @brief Changing the license.
+ */
+class SetLicenseCommand : public QuestPropertiesEditorCommand {
+
+public:
+
+  SetLicenseCommand(QuestPropertiesEditor& editor, const QString& license) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Change license")),
+      license_before(get_model().get_license()),
+      license_after(license) {
+  }
+
+  virtual void undo() override {
+
+    get_model().set_license(license_before);
+  }
+
+  virtual void redo() override {
+
+    get_model().set_license(license_after);
+  }
+
+private:
+
+  QString license_before;
+  QString license_after;
+};
+
+/**
+ * @brief Changing the min players.
+ */
+class SetMinPlayersCommand : public QuestPropertiesEditorCommand {
+
+public:
+
+  SetMinPlayersCommand(QuestPropertiesEditor& editor, int min_players) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Change maximum players")),
+      min_players_before(get_model().get_min_players()),
+      min_players_after(min_players) {
+  }
+
+  virtual void undo() override {
+
+    get_model().set_min_players(min_players_before);
+  }
+
+  virtual void redo() override {
+
+    get_model().set_min_players(min_players_after);
+  }
+
+private:
+
+  int min_players_before;
+  int min_players_after;
+};
+
+/**
+ * @brief Changing the max players.
+ */
+class SetMaxPlayersCommand : public QuestPropertiesEditorCommand {
+
+  public:
+
+  SetMaxPlayersCommand(QuestPropertiesEditor& editor, int max_players) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Change maximum players")),
+      max_players_before(get_model().get_max_players()),
+      max_players_after(max_players) {
+  }
+
+  virtual void undo() override {
+
+    get_model().set_max_players(max_players_before);
+  }
+
+  virtual void redo() override {
+
+    get_model().set_max_players(max_players_after);
+  }
+
+  private:
+
+  int max_players_before;
+  int max_players_after;
+};
+
+/**
+ * @brief Changing the langauges.
+ */
+class SetLanguagesCommand : public QuestPropertiesEditorCommand {
+
+  public:
+
+  SetLanguagesCommand(QuestPropertiesEditor& editor, const QStringList& languages) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Change languages")),
+      languages_before(get_model().get_license()),
+      languages_after(languages) {
+  }
+
+  virtual void undo() override {
+
+    get_model().set_languages(languages_before);
+  }
+
+  virtual void redo() override {
+
+    get_model().set_languages(languages_after);
+  }
+
+  private:
+
+  QStringList languages_before;
+  QStringList languages_after;
+};
+
+/**
+ * @brief Changing the genres.
+ */
+class SetGenresCommand : public QuestPropertiesEditorCommand {
+
+  public:
+
+  SetGenresCommand(QuestPropertiesEditor& editor, const QStringList& genres) :
+      QuestPropertiesEditorCommand(
+          editor, QuestPropertiesEditor::tr("Change genres")),
+      genres_before(get_model().get_genres()),
+      genres_after(genres) {
+  }
+
+  virtual void undo() override {
+
+    get_model().set_genres(genres_before);
+  }
+
+  virtual void redo() override {
+
+    get_model().set_genres(genres_after);
+  }
+
+  private:
+
+  QStringList genres_before;
+  QStringList genres_after;
+};
+
+/**
+ * @brief Splits the QString into elements separated by a commo. Spaces are ignored.
+ * @param str The string to split.
+ * @return The QStringList with the elements.
+ */
+QStringList split_string_with_comma(const QString& str) {
+  static const QRegularExpression re(R"(\s*,\s*)");
+  const QString text = str.simplified();
+  const QStringList list = text.split(re, Qt::SkipEmptyParts);
+  return list;
 }
+
+} // anonymous namespace
 
 /**
  * @brief Creates a quest properties editor.
@@ -451,7 +642,18 @@ QuestPropertiesEditor::QuestPropertiesEditor(Quest& quest, QWidget* parent) :
   model(quest) {
 
   ui.setupUi(this);
+  ui.initial_release_date_field->setDate(QDate::currentDate());
   ui.release_date_field->setDate(QDate::currentDate());
+
+  QButtonGroup* release_date_button_group = new QButtonGroup(this);
+  release_date_button_group->setExclusive(true);
+  release_date_button_group->addButton(ui.release_status_progress_radio);
+  release_date_button_group->addButton(ui.release_status_released_radio);
+
+  QButtonGroup* initial_release_date_button_group = new QButtonGroup(this);
+  initial_release_date_button_group->setExclusive(true);
+  initial_release_date_button_group->addButton(ui.initial_release_status_progress_radio);
+  initial_release_date_button_group->addButton(ui.initial_release_status_released_radio);
 
   // Don't allow slashes or backslashes in the write dir field.
   ui.write_dir_field->setValidator(
@@ -541,6 +743,40 @@ QuestPropertiesEditor::QuestPropertiesEditor(Quest& quest, QWidget* parent) :
           this, SLOT(update_dynamic_timestep_field()));
   connect(ui.dynamic_timestep, SIGNAL(clicked(bool)),
           this, SLOT(change_dynamic_timestep_requested()));
+
+  connect(&model, &QuestProperties::initial_release_date_changed,
+          this, &QuestPropertiesEditor::update_initial_release_date_field);
+  connect(ui.initial_release_status_progress_radio, &QRadioButton::clicked,
+          this, &QuestPropertiesEditor::change_initial_release_date_requested);
+  connect(ui.initial_release_status_released_radio, &QRadioButton::clicked,
+          this, &QuestPropertiesEditor::change_initial_release_date_requested);
+  connect(ui.initial_release_date_field, &QDateEdit::dateChanged,
+          this, &QuestPropertiesEditor::change_initial_release_date_requested);
+
+  connect(&model, &QuestProperties::license_changed,
+          this, &QuestPropertiesEditor::update_license_field);
+  connect(ui.license_field, &QLineEdit::editingFinished,
+          this, &QuestPropertiesEditor::change_license_requested);
+
+  connect(&model, &QuestProperties::languages_changed,
+          this, &QuestPropertiesEditor::update_language_field);
+  connect(ui.languages_field, &QLineEdit::editingFinished,
+          this, &QuestPropertiesEditor::change_language_requested);
+
+  connect(&model, &QuestProperties::min_players_changed,
+          this, &QuestPropertiesEditor::update_min_players_field);
+  connect(ui.min_players_field, &QSpinBox::editingFinished,
+          this, &QuestPropertiesEditor::change_min_players_requested);
+
+  connect(&model, &QuestProperties::max_players_changed,
+          this, &QuestPropertiesEditor::update_max_players_field);
+  connect(ui.max_players_field, &QSpinBox::editingFinished,
+          this, &QuestPropertiesEditor::change_max_players_requested);
+
+  connect(&model, &QuestProperties::genres_changed,
+          this, &QuestPropertiesEditor::update_genres_field);
+  connect(ui.genres_field, &QLineEdit::editingFinished,
+          this, &QuestPropertiesEditor::change_genres_requested);
 }
 
 /**
@@ -580,6 +816,12 @@ void QuestPropertiesEditor::update() {
   update_max_size_field();
   update_subpixel_camera_field();
   update_dynamic_timestep_field();
+  update_initial_release_date_field();
+  update_license_field();
+  update_language_field();
+  update_min_players_field();
+  update_max_players_field();
+  update_genres_field();
 }
 
 /**
@@ -919,6 +1161,135 @@ void QuestPropertiesEditor::set_max_size_values() {
 
   ui.min_size_width_field->setMaximum(size.width());
   ui.min_size_height_field->setMaximum(size.height());
+}
+
+/**
+ * @brief Updates the initial relase date.
+ */
+void QuestPropertiesEditor::update_initial_release_date_field() {
+
+  QDate date = model.get_initial_release_date();
+  if (!date.isValid()) {
+    ui.initial_release_status_progress_radio->setChecked(true);
+    ui.initial_release_date_field->setEnabled(false);
+  }
+  else {
+    ui.initial_release_status_released_radio->setChecked(true);
+    ui.initial_release_date_field->setEnabled(true);
+    ui.initial_release_date_field->setDate(date);
+  }
+}
+
+/**
+ * @brief Slot called when the user changes the initial relase date.
+ */
+void QuestPropertiesEditor::change_initial_release_date_requested() {
+
+  QDate initial_release_date;
+  if (ui.initial_release_status_released_radio->isChecked()) {
+    initial_release_date = ui.initial_release_date_field->date();
+  }
+  QDate old_initial_release_date = model.get_initial_release_date();
+  if (initial_release_date == old_initial_release_date) {
+    return;
+  }
+
+  try_command(new SetInitialReleaseDateCommand(*this, initial_release_date));
+} 
+
+/**
+ * @brief Updates the license.
+ */
+void QuestPropertiesEditor::update_license_field() {
+
+  ui.license_field->setText(model.get_license());
+}
+
+/**
+ * @brief Slot called when the user changes the license.
+ */
+void QuestPropertiesEditor::change_license_requested() {
+
+  const QString value = ui.license_field->text();
+  try_command(new SetLicenseCommand(*this, value));
+}
+
+/**
+ * @brief Updates the languages.
+ */
+void QuestPropertiesEditor::update_language_field() {
+
+  ui.languages_field->setText(model.get_languages().join(','));
+} 
+
+/**
+ * @brief Slot called when the user changes the languages.
+ */
+void QuestPropertiesEditor::change_language_requested() {
+
+  const QStringList value = split_string_with_comma(ui.languages_field->text());
+  try_command(new SetLanguagesCommand(*this, value));
+}
+
+/**
+ * @brief Updates the min players.
+ */
+void QuestPropertiesEditor::update_min_players_field() {
+
+  ui.min_players_field->setValue(model.get_min_players());
+} 
+
+/**
+ * @brief Slot called when the user changes the min players.
+ */
+void QuestPropertiesEditor::change_min_players_requested() {
+
+  const int min_value = ui.min_players_field->value();
+  try_command(new SetMinPlayersCommand(*this, min_value));
+
+  const int max_value = ui.max_players_field->value();
+  if (min_value > max_value) {
+    try_command(new SetMaxPlayersCommand(*this, min_value));
+  }
+}
+
+/**
+ * @brief Updates the max players.
+ */
+void QuestPropertiesEditor::update_max_players_field() {
+
+  ui.max_players_field->setValue(model.get_max_players());
+} 
+
+/**
+ * @brief Slot called when the user changes the max players.
+ */
+void QuestPropertiesEditor::change_max_players_requested() {
+
+  const int max_value = ui.max_players_field->value();
+  try_command(new SetMaxPlayersCommand(*this, max_value));
+
+  const int min_value = ui.min_players_field->value();
+  if (min_value > max_value) {
+    try_command(new SetMinPlayersCommand(*this, max_value));
+  }
+}
+
+/**
+ * @brief Updates the genre date.
+ */
+void QuestPropertiesEditor::update_genres_field() {
+
+  ui.genres_field->setText(model.get_genres().join(','));
+}
+
+/**
+ * @brief Slot called when the user changes the genres.
+ */
+void QuestPropertiesEditor::change_genres_requested() {
+
+  const QStringList value = split_string_with_comma(ui.genres_field->text());
+  try_command(new SetGenresCommand(*this, value));
 }
 
 }

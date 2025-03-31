@@ -20,6 +20,7 @@
 #include <solarus/core/QuestProperties.h>
 #include <QDate>
 #include <QObject>
+#include <QStringList>
 
 namespace SolarusEditor {
 
@@ -52,6 +53,8 @@ public:
   void set_author(const QString& author);
   QString get_quest_version() const;
   void set_quest_version(const QString& quest_version);
+  QDate get_initial_release_date() const;
+  void set_initial_release_date(const QDate& initial_release_date);
   QDate get_release_date() const;
   void set_release_date(const QDate& release_date);
   QString get_website() const;
@@ -62,6 +65,16 @@ public:
   void set_min_quest_size(const QSize& size);
   QSize get_max_quest_size() const;
   void set_max_quest_size(const QSize& size);
+  QString get_license() const;
+  void set_license(const QString& license);
+  QStringList get_languages() const;
+  void set_languages(const QStringList& languages);
+  int get_min_players() const;
+  void set_min_players(int min_players);
+  int get_max_players() const;
+  void set_max_players(int max_players);
+  QStringList get_genres() const;
+  void set_genres(const QStringList& genres);
   bool is_dynamic_timestep() const;
   void set_dynamic_timestep(bool enable);
   bool is_subpixel_camera() const;
@@ -75,11 +88,17 @@ signals:
   void long_description_changed(const QString& long_description);
   void author_changed(const QString& author);
   void quest_version_changed(const QString& quest_version);
+  void initial_release_date_changed(const QDate& initial_release_date);
   void release_date_changed(const QDate& release_date);
   void website_changed(const QString& website);
   void normal_size_changed(const QSize& size);
   void min_size_changed(const QSize& size);
   void max_size_changed(const QSize& size);
+  void license_changed(const QString& license);
+  void min_players_changed(int min_players);
+  void max_players_changed(int max_players);
+  void genres_changed(const QStringList& genres);
+  void languages_changed(const QStringList& languages);
   void dynamic_timestep_changed(bool enable);
   void subpixel_camera_changed(bool enable);
 
