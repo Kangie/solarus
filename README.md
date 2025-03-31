@@ -2,12 +2,12 @@
   <img alt="Solarus Launcher logo" src="branding/logo.svg" width="350px"/>
 </div>
 
-# Solarus Launcher (Legacy)
+# Solarus Launcher
 
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/copyleft/gpl.html)
 [![Qt version](https://img.shields.io/badge/Qt-6.8.1+-41CD52?logo=qt)](https://www.qt.io)
 
-**Solarus Launcher (Legacy)** is a game launcher and browser for [Solarus](https://gitlab.com/solarus-games/solarus). It is written in C++/QtWidgets, and is kept for compatibility before being replaced by the new QtQuick launcher..
+**Solarus Launcher** is a game launcher and browser for [Solarus](https://gitlab.com/solarus-games/solarus). It is written in C++/QtWidgets, and is kept for compatibility before being replaced by the new QtQuick launcher..
 
 ## Build Instructions
 
