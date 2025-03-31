@@ -207,7 +207,7 @@ void ToolBar::setupUi() {
       QKeySequence(QKeySequence::StandardKey::Find).toString(QKeySequence::SequenceFormat::NativeText);
     searchLineEdit->setPlaceholderText(QString("%1 (%2)").arg(i18n::search(), shortcut));
     searchLineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    searchLineEdit->setFixedWidth(150);
+    searchLineEdit->setFixedWidth(180);
     searchLineEdit->setClearButtonEnabled(true);
     searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     searchLineEdit->setIcon(makeIcon(Icons16::Navigation_Search));
