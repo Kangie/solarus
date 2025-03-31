@@ -52,8 +52,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
-message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER CMakeAutogenTargets)
 
@@ -124,11 +122,11 @@ set_target_properties(QtAppInstanceManager
 # If this flag is set, CMake will download Solarus from its git repository
 # instead of using a locally pre-built version.
 set(SOLARUS_FETCHCONTENT OFF CACHE BOOL "Enable downloading of Solarus from its git repository")
-set(SOLARUS_CLI OFF)
 if(SOLARUS_FETCHCONTENT)
   message(STATUS "Solarus: Fetching from git repository")
-  set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
+  set(SOLARUS_CLI OFF)
   set(SOLARUS_FILE_LOGGING OFF)
+  set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
     GIT_TAG 7cd7d55137f41566c78fa59c081cf7ad8d962b25 # dev
