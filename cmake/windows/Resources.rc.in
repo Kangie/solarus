@@ -1,6 +1,4 @@
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-
 #include <windows.h>
 
 // Sets the code page to UTF-8.
