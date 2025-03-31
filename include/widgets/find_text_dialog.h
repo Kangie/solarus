@@ -19,6 +19,7 @@
 
 #include "ui_find_text_dialog.h"
 #include <QDialog>
+#include <QTextDocument>
 
 namespace SolarusEditor {
 

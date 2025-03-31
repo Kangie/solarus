@@ -17,6 +17,7 @@
 #include "widgets/find_text_dialog.h"
 #include "editor_settings.h"
 #include <QPushButton>
+#include <QTextDocument>
 
 namespace SolarusEditor {
 

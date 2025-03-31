@@ -32,6 +32,7 @@
 #include <QUndoStack>
 #include <QStatusBar>
 #include <QLabel>
+#include <QTextDocument>
 
 namespace SolarusEditor {
 

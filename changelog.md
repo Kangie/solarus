@@ -22,6 +22,8 @@
 * Add error reporting to the quest runner process.
 * Add support of ANSI color codes to the GUI console.
 * Allow to clear the console (#436).
+* Script editor: find remembers last text searched (#426).
+* Script editor: allows search backwards (#353).
 
 ### Bug fixes
 

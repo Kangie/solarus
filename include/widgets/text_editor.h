@@ -18,6 +18,7 @@
 #define SOLARUSEDITOR_TEXT_EDITOR_H
 
 #include "widgets/editor.h"
+#include <QTextDocument>
 
 class QLabel;
 
