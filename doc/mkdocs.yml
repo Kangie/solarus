@@ -76,11 +76,13 @@ nav:
           - Nintendo Switch: tutorials/distribution/nintendo-switch.md
       - Migration:
           - Introduction: tutorials/migration/introduction.md
-          - From v1.0 to v1.1: tutorials/migration/from-v1-0-to-v1-1.md
-          - From v1.1 to v1.2: tutorials/migration/from-v1-1-to-v1-2.md
-          - From v1.2 to v1.3: tutorials/migration/from-v1-2-to-v1-3.md
-          - From v1.3 to v1.4: tutorials/migration/from-v1-3-to-v1-4.md
+          - From v1.6 to v2.0: tutorials/migration/from-v1-6-to-v2-0.md
+          - From v1.5 to v1.6: tutorials/migration/from-v1-5-to-v1-6.md
           - From v1.4 to v1.5: tutorials/migration/from-v1-4-to-v1-5.md
+          - From v1.3 to v1.4: tutorials/migration/from-v1-3-to-v1-4.md
+          - From v1.2 to v1.3: tutorials/migration/from-v1-2-to-v1-3.md
+          - From v1.1 to v1.2: tutorials/migration/from-v1-1-to-v1-2.md
+          - From v1.0 to v1.1: tutorials/migration/from-v1-0-to-v1-1.md
   - Lua API:
       - Introduction: lua-api/introduction.md
       - General Features: lua-api/general-features.md

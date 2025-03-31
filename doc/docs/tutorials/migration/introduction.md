@@ -14,11 +14,9 @@ Patch versions contain only bug fixes. They never introduce incompatibilities, s
 
 Therefore, when we talk about compatibility, only the major and minor numbers are considered. In your quest properties file `quest.dat`, the value `solarus_version` indicates the format of your quest, with only the major and minor numbers.
 
-For example, if `solarus_version` is `1.6`, your quest is compatible with Solarus `1.6.*`, where `*` is any patch version number.
+For example, if `solarus_version` is `2.0`, your quest can run with Solarus `2.0.*`, where `*` is any patch version number.
 
 To make your quest compatible with the latest version of Solarus, there are two steps:
 
-1. **Upgrading Data Files**: when your quest is obsolete, the editor shows a dialog that lets you automatically convert it to the latest version.
-2. **Upgrading scripts**: Lua scripts are programs, so there is no way to convert them automatically when something changes in the [Solarus Lua API](../../lua-api/introduction.md). The goal of this migration guide is to help you doing the upgrade.
-
-Each migration has its specificities. Be sure to not miss anything.
+1. **Upgrading Data Files**: when your quest is obsolete, the editor shows a dialog that lets you automatically convert it to the latest version. You have nothing to do, the editor converts data files for you.
+2. **Upgrading scripts**: Lua scripts are programs, so the editor does not convert them automatically when something changes in the [Solarus Lua API](../../lua-api/introduction.md). Our goal with this migration guide is to help you doing the upgrade.

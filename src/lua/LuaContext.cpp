@@ -1952,10 +1952,11 @@ bool LuaContext::on_joypad_button_pressed(const InputEvent& event) {
   if (find_method("on_joypad_button_pressed")) {
     JoyPadButton button = event.get_joypad_button();
 
-    if(CurrentQuest::is_format_at_least({2, 0}))
+    if (CurrentQuest::is_format_at_least({2, 0})) {
       push_string(current_l, enum_to_name(button));
-    else // Emulate old behaviour if quest is < 2.0
+    } else { // Emulate old behaviour if quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(button));
+    }
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(3, 1, "on_joypad_button_pressed");
     if (!success) {
@@ -1982,10 +1983,11 @@ bool LuaContext::on_joypad_button_released(const InputEvent& event) {
   if (find_method("on_joypad_button_released")) {
     JoyPadButton button = event.get_joypad_button();
 
-    if(CurrentQuest::is_format_at_least({2, 0}))
+    if (CurrentQuest::is_format_at_least({2, 0})) {
       push_string(current_l, enum_to_name(button));
-    else // Emulate old behaviour if quest is < 2.0
+    } else { // Emulate old behaviour if quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(button));
+    }
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(3, 1, "on_joypad_button_released");
     if (!success) {

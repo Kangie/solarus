@@ -231,7 +231,7 @@ Called when the user presses a joypad button while the handler is active.
 Return value (boolean)
 : Indicates whether the event was handled. If you return `true`, the event won't be propagated to other objects. If you return `false` or nothing, the event will continue its propagation.
 
-### `handler:on_joypad_button_released(button)`
+### `handler:on_joypad_button_released(button, joypad)`
 
 Called when the user releases a joypad button while the handler is active.
 
