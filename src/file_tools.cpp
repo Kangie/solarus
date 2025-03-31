@@ -320,24 +320,29 @@ bool is_valid_unix_path(const QString &path) {
 
 bool is_path_valid(const QString& path) {
 #ifdef Q_OS_WIN
-  if (!isPathValidWindows(path))
+  if (!is_valid_windows_path(path)) {
     return false;
+  }
 #else
-  if (!is_valid_unix_path(path))
+  if (!is_valid_unix_path(path)) {
     return false;
+  }
 #endif
 
-  // Check for empty path
-  if (path.isEmpty())
+  // Check for empty path.
+  if (path.isEmpty()) {
     return false;
+  }
 
-  // Check for relative path markers
-  if (path.contains("/./") || path.contains("/../"))
+  // Check for relative path markers.
+  if (path.contains("/./") || path.contains("/../")) {
     return false;
+  }
 
-  // Check for trailing spaces or periods (invalid on Windows)
-  if (path.endsWith(' ') || path.endsWith('.'))
+  // Check for trailing spaces or periods (invalid on Windows).
+  if (path.endsWith(' ') || path.endsWith('.')) {
     return false;
+  }
 
   return true;
 }
