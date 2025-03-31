@@ -332,6 +332,8 @@ mingw-x64-package:
       staging/share/solarus-quest-editor/translations
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats/qsvg.dll
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines/qsvgicon.dll
       cmake/win32/bzip2.dll
       cmake/win32/zip.exe
     TEXT_FILES: >-
@@ -361,6 +363,8 @@ mingw-x86-package:
       staging/share/solarus-quest-editor/translations
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats/qsvg.dll
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines/qsvgicon.dll
       cmake/win32/bzip2.dll
       cmake/win32/zip.exe
     TEXT_FILES: >-
