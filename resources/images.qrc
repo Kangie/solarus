@@ -82,8 +82,6 @@
         <file>images/icon_edit.svg</file>
         <file>images/icon_error.svg</file>
         <file>images/icon_external_link.svg</file>
-        <file>images/icon_eye.svg</file>
-        <file>images/icon_eye_crossed.svg</file>
         <file>images/icon_file_unknown.svg</file>
         <file>images/icon_file.svg</file>
         <file>images/icon_first.svg</file>
@@ -217,7 +215,6 @@
         <file>images/border_kind_9.svg</file>
         <file>images/border_kind_10.svg</file>
         <file>images/border_kind_11.svg</file>
-        
-        <file>images/icon_eldran.png</file>
+
     </qresource>
 </RCC>
