@@ -172,20 +172,10 @@ stages:
     - mkdir $TMP_DIR/assets
     - mv solarus-doc $TMP_DIR/assets/doc
     - pkg_add.sh $PACKAGE $BASE_DIR $TMP_DIR/assets
-    # Create directories for Qt plugins
-    - mkdir -p qt_plugins/imageformats
-    - mkdir -p qt_plugins/iconengines
-    # Copy the DLL files to the correct locations
-    - cp /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats/qsvg.dll qt_plugins/imageformats/
-    - cp /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines/qsvgicon.dll qt_plugins/iconengines/
-    # Add the plugin directories to the package
-    - pkg_add.sh $PACKAGE $BASE_DIR qt_plugins/imageformats
-    - pkg_add.sh $PACKAGE $BASE_DIR qt_plugins/iconengines
     # START-HOTFIX: ensure that the LuaJIT library is used in the package
     - cp /usr/$ARCH-w64-mingw32/bin/luajit-2.1.dll lua51.dll
     - pkg_add.sh $PACKAGE $BASE_DIR lua51.dll
     # END-HOTFIX: will be properly fixed in mingw_make_pkg.sh later
-
   artifacts:
     name: $CI_JOB_NAME
     paths:
@@ -340,6 +330,8 @@ mingw-x64-package:
     EXTRAS: >-
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
       cmake/win32/bzip2.dll
@@ -369,6 +361,8 @@ mingw-x86-package:
     EXTRAS: >-
       staging/share/solarus-quest-editor/assets
       staging/share/solarus-quest-editor/translations
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines
+      /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/styles
       cmake/win32/bzip2.dll
