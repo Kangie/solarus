@@ -285,11 +285,12 @@ endif()
 set(CODE_SIGN_IDENTITY "" CACHE STRING "Codesigning identity (`security find-identity -v -p codesigning`)")
 set(ENABLE_NOTARIZE OFF CACHE BOOL "Enable notarization")
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  set(DEPLOY_TOOL_OPTIONS_ARG "-libpath=/opt/homebrew/lib")
-endif()
+set(ENABLE_QTDEPLOY ON CACHE BOOL "Enable using Qt deploy tool")
+if(ENABLE_QTDEPLOY AND (CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "Windows"))
+  if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(DEPLOY_TOOL_OPTIONS_ARG "-libpath=/opt/homebrew/lib")
+  endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
   qt_generate_deploy_script(
       TARGET ${PROJECT_NAME}
       OUTPUT_SCRIPT DEPLOY_SCRIPT
@@ -346,7 +347,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     BUNDLE DESTINATION . COMPONENT ${PROJECT_NAME}
     LIBRARY DESTINATION $<TARGET_FILE_NAME:${PROJECT_NAME}>.app/Contents/Frameworks COMPONENT ${PROJECT_NAME}
   )
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT MINGW)
   install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION . COMPONENT ${COMPONENT_NAME}
     RUNTIME DESTINATION . COMPONENT ${PROJECT_NAME}
@@ -399,7 +400,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   target_sources(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/Resources.rc")
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE OR MINGW)
   # Executable.
   install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
