@@ -543,7 +543,6 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
       }
   }
 
-
   //All entities should be there, start the map if necessary
   if(!next_map->is_started()) {
     SOLARUS_REQUIRE(next_map->is_loaded(), "This map is not loaded");
@@ -769,7 +768,8 @@ void Game::teleport_hero(
                     + " cameras.");
     }
 
-    Debug::warning("Deprecated : Teleporting not tracked hero to unloaded map. Consider using camera:teleport or track hero.");
+    Debug::warning("Deprecated: Teleporting untracked hero to an unloaded map. Consider using camera:teleport() or track hero.");
+    set_suspended_by_script(false);  // Keep the pre 2.0 behavior
 
     // Relink unique camera to hero before teleportation
     auto cam = map.get_camera();

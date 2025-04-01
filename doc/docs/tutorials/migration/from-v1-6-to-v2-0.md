@@ -45,10 +45,16 @@ However, you can use [`game:set_legacy_controls_storage(true)`](../../lua-api/ga
 Quests with format 1.5 or 1.6, and quests that call [`game:set_legacy_controls_storage(true)`](../../lua-api/game.md#gameset_legacy_controls_storagelegacy_controls_storage) will still automatically load and save game commands for the main hero.
 This function is provided for quests that were designed before Solarus 2.0, and for quests that accept the limitations of this automatic commands storage.
 
+### Camera and hero teletransportation
+
+Teleportation is now driven by cameras, as there might be multiple heroes and multiple cameras.
+- [`hero:teleport()`](../../lua-api/map-entities/hero.md#map_iddestination_nametransition_style) now also teleports the linked camera instead of recreating one.
+  If no camera is tracking the hero when you call `hero:teleport()` (which can happen during cutscenes), then:
+  - If the destination map is already loaded (meaning you are using the new 2.0 multiplayer features), the camera stays on the previous map.
+  - If the destination map is not loaded yet, you will get a warning but the camera will automatically be re-linked to the hero for compatibility.
+
 ### Minor Incompatibilities
 
 The remaining incompatibilities in the Solarus API are less disruptive. They should not have any consequence in most games, and if they do, they should be easy to address. Yet, we provide them here for completeness.
-
-- `hero:teleport()` now also teleports the camera instead of recreating one.
 
 - `hero:get_sword_sound_id()` now returns `nil` if there is no sword sound.
