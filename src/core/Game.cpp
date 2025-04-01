@@ -843,11 +843,11 @@ void Game::teleport_camera(const CameraPtr& camera,
   ct.destination_name = destination_name;
   ct.transition_style = transition_style;
 
-  //Setup the transition
+  // Setup the transition.
   auto transition = std::unique_ptr<Transition>(Transition::create(
-                                                  transition_style,
-                                                  Transition::Direction::CLOSING
-                                              ));
+      started ? transition_style : Transition::Style::IMMEDIATE,
+      Transition::Direction::CLOSING
+  ));
 
   transition->start();
   ct.camera->set_transition(std::move(transition));
