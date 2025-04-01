@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus 2.0.0 (in progress)
+## Solarus 2.0.0 (2025-04-01)
 
 The multiplayer update!
 Solarus now supports multiple maps, cameras, heroes and game controllers.
