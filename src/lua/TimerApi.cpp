@@ -97,7 +97,7 @@ static Timer& start(LuaContext& lua_context) {
 
     Game* game = lua_context.get_main_loop().get_game();
     if (game != nullptr && game->has_current_map()) {
-      //TODO verify is default map is okay....
+      // Use the map that has the hero, it is our best guess.
       LuaContext::push_userdata(l, game->get_default_map());
     } else {
       LuaContext::push_main(l);

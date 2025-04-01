@@ -597,7 +597,7 @@ void Game::draw(const SurfacePtr& dst_surface, const SurfacePtr& screen_surface)
  */
 void Game::notify_window_size_changed(const Size& size) {
   for(const MapPtr& current_map : current_maps) {
-     current_map->notify_window_size_changed(size);
+    current_map->notify_window_size_changed(size);
   }
 }
 
@@ -609,6 +609,12 @@ void Game::notify_window_size_changed(const Size& size) {
  * @return
  */
 Map& Game::get_default_map() {
+  // If multiple maps are loaded, return the one where the default is.
+  // This best mimics the pre-Solarus 2.0 behavior.
+  const HeroPtr& default_hero = get_hero();
+  if (default_hero != nullptr && default_hero->is_on_map()) {
+    return default_hero->get_map();
+  }
   return *current_maps.front();
 }
 
