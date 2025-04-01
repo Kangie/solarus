@@ -10,6 +10,7 @@ This website features these sections:
 
 - [**Tutorial**](tutorials/introduction.md): A step-by-step guide to create a game with Solarus.
 - [**Lua API Reference**](lua-api/introduction.md): A reference of everything that Solarus offers to make your game.
+- [**Migration guide**](tutorials/migration/introduction.md): Instructions if you need to upgrade your game to the latest version of Solarus.
 - [**Files Specifications**](files-specs/introduction.md): The specification of the format of every file of your game.
 - [**Resources**](resources/introduction.md): Useful resources (scripts, graphics, music, etc.) for your game.
 
