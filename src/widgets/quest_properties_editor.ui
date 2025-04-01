@@ -194,7 +194,7 @@ Must identify your quest to avoid confusion with other quests.</string>
               <item>
                <widget class="QLineEdit" name="title_field">
                 <property name="placeholderText">
-                 <string>Yout Quest Title</string>
+                 <string>Your Quest Title</string>
                 </property>
                </widget>
               </item>
