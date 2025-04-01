@@ -15,26 +15,20 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/Debug.h"
-#include "solarus/core/Game.h"
-#include "solarus/core/Map.h"
 #include "solarus/core/PixelBits.h"
 #include "solarus/core/Size.h"
 #include "solarus/core/System.h"
-#include "solarus/graphics/Color.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/graphics/SpriteAnimation.h"
 #include "solarus/graphics/SpriteAnimationDirection.h"
 #include "solarus/graphics/SpriteAnimationSet.h"
 #include "solarus/graphics/Surface.h"
-#include "solarus/graphics/Shader.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
-#include "solarus/movements/Movement.h"
 #include <lua.hpp>
 #include <limits>
 #include <memory>
 #include <sstream>
-#include <iostream>
 
 namespace Solarus {
 
@@ -64,38 +58,32 @@ void Sprite::quit() {
  * The animation set may be created if it is new, or just retrieved from
  * memory if it way already used before.
  *
- * \param id id of the animation set
- * \return the corresponding animation set
+ * \param id Id of the animation set.
+ * \return The animation set, nullptr if it could not be created.
  */
 SpriteAnimationSet& Sprite::get_animation_set(const std::string& id) {
 
-  SpriteAnimationSet* animation_set = nullptr;
   auto it = all_animation_sets.find(id);
   if (it != all_animation_sets.end()) {
-    animation_set = it->second;
-  }
-  else {
-    animation_set = new SpriteAnimationSet(id);
-    all_animation_sets[id] = animation_set;
+    return *it->second;
   }
 
-  Debug::check_assertion(animation_set != nullptr, "No animation set");
-
+  SpriteAnimationSet* animation_set = new SpriteAnimationSet(id);
+  all_animation_sets[id] = animation_set;
   return *animation_set;
 }
 
 /**
- * \brief Creates a sprite with the specified animation set.
- * \param id name of an animation set
+ * \brief Creates a sprite with the given animation set.
+ * \param animation_set The animation set.
  */
-Sprite::Sprite(const std::string& id):
+Sprite::Sprite(SpriteAnimationSet& animation_set):
   Drawable(),
-  animation_set_id(id),
-  animation_set(get_animation_set(id)),
+  animation_set(animation_set),
   current_animation(nullptr),
   current_direction(0),
   current_frame(-1),
-  frame_changed(false),
+  changed(false),
   frame_delay(0),
   next_frame_date(0),
   ignore_suspend(false),
@@ -111,11 +99,34 @@ Sprite::Sprite(const std::string& id):
 }
 
 /**
+ * \brief Creates a sprite with the specified animation set.
+ *
+ * If the animation set is invalid, the created sprite will be invalid too.
+ *
+ * \param id Name of an animation set.
+ * \return Pointer to sprite created.
+ */
+SpritePtr Sprite::create(const std::string& id) {
+  return std::make_shared<Sprite>(get_animation_set(id));
+}
+
+/**
+ * \brief Returns whether this sprite is valid.
+ *
+ * A sprite is considered valid if it has a valid animation set.
+ *
+ * \return \c true if the sprite is valid.
+ */
+bool Sprite::is_valid() const {
+  return animation_set.is_valid();
+}
+
+/**
  * \brief Returns the id of the animation set of this sprite.
- * \return the animation set id of this sprite
+ * \return The animation set id of this sprite.
  */
 const std::string& Sprite::get_animation_set_id() const {
-  return animation_set_id;
+  return animation_set.get_id();
 }
 
 /**
@@ -197,13 +208,17 @@ Point Sprite::get_origin() const {
  * and direction.
  *
  * The rectangle is anchored to the origin point of the sprite,
- * so it has has negative top and left coordinates.
+ * so it has negative top and left coordinates.
  *
  * \return The maximum frame size.
  */
-const Rectangle& Sprite::get_max_bounding_box() const {
+Rectangle Sprite::get_max_bounding_box() const {
 
-  return animation_set.get_max_bounding_box();
+  Rectangle box = animation_set.get_max_bounding_box();
+  box.add_xy(get_xy());
+  // TODO Take into account scaling and rotation
+  // (can DrawInfos::dst_rectangle() help?)
+  return box;
 }
 
 /**
@@ -404,11 +419,11 @@ int Sprite::get_current_frame() const {
 void Sprite::set_current_frame(int current_frame, bool notify_script) {
 
   finished = false;
-  next_frame_date = System::now() + get_frame_delay();
+  next_frame_date = System::now_ms() + get_frame_delay();
 
   if (current_frame != this->current_frame) {
     this->current_frame = current_frame;
-    set_frame_changed(true);
+    set_changed(true);
 
     if (notify_script) {
       LuaContext* lua_context = get_lua_context();
@@ -434,20 +449,19 @@ Rectangle Sprite::get_current_frame_rectangle() const {
 }
 
 /**
- * \brief Returns whether the frame of this sprite has just changed.
- * \return true if the frame of this sprite has just changed.
+ * \brief Notifies this object that its position has changed.
  */
-bool Sprite::has_frame_changed() const {
-  return frame_changed;
+void Sprite::notify_position_changed() {
+  Drawable::notify_position_changed();
+  set_changed(true);  // Make sure collisions will be recomputed.
 }
 
 /**
- * \brief Sets whether the frame has just changed.
- * \param frame_changed true if the frame has just changed.
+ * \brief Sets whether the sprite has just changed.
+ * \param changed \c true if the frame or position have just changed.
  */
-void Sprite::set_frame_changed(bool frame_changed) {
-
-  this->frame_changed = frame_changed;
+void Sprite::set_changed(bool changed) {
+  this->changed = changed;
 }
 
 /**
@@ -508,7 +522,7 @@ void Sprite::set_suspended(bool suspended) {
 
     // compte next_frame_date if the animation is being resumed
     if (!suspended) {
-      uint32_t now = System::now();
+      uint32_t now = System::now_ms();
       next_frame_date = now + get_frame_delay();
       blink_next_change_date = now;
     }
@@ -562,7 +576,7 @@ void Sprite::set_paused(bool paused) {
 
     // compte next_frame_date if the animation is being resumed
     if (!paused) {
-      uint32_t now = System::now();
+      uint32_t now = System::now_ms();
       next_frame_date = now + get_frame_delay();
       blink_next_change_date = now;
     }
@@ -624,7 +638,7 @@ void Sprite::set_blinking(uint32_t blink_delay) {
 
   if (blink_delay > 0) {
     blink_is_sprite_visible = false;
-    blink_next_change_date = System::now();
+    blink_next_change_date = System::now_ms();
   }
 }
 
@@ -665,12 +679,19 @@ bool Sprite::test_collision(const Sprite& other, int x1, int y1, int x2, int y2)
   }
 
   const SpriteAnimationDirection& direction1 = current_animation->get_direction(current_direction);
+  if (!direction1.are_pixel_collisions_enabled()) {
+    // Possible when tileset-specific images are not loaded yet.
+    return false;
+  }
   const Point& origin1 = direction1.get_origin();
   Point location1 = { x1 - origin1.x, y1 - origin1.y };
   location1 += get_xy();
   const PixelBits& pixel_bits1 = direction1.get_pixel_bits(current_frame);
 
   const SpriteAnimationDirection& direction2 = other.current_animation->get_direction(other.current_direction);
+  if (!direction2.are_pixel_collisions_enabled()) {
+    return false;
+  }
   const Point& origin2 = direction2.get_origin();
   Point location2 = { x2 - origin2.x, y2 - origin2.y };
   location2 += other.get_xy();
@@ -682,28 +703,36 @@ bool Sprite::test_collision(const Sprite& other, int x1, int y1, int x2, int y2)
 }
 
 /**
- * \brief Checks whether the frame has to be changed.
- *
- * If the frame changes, next_frame_date is updated.
+ * \brief Updates the sprite.
  */
 void Sprite::update() {
+  bool changed = false;
+  update(changed);
+}
 
-  Drawable::update();
+/**
+ * \brief Same as Sprite::update, but tells whether there was a change.
+ * \param changed \c true if the position or frame have changed.
+ */
+void Sprite::update(bool &changed) {
+
+  changed = this->changed;  // Maybe the position was changed even before.
+  Drawable::update();  // This updates the transition and movement.
 
   if (is_suspended() || paused) {
+    set_changed(false);
     return;
   }
 
   LuaContext* lua_context = get_lua_context();
 
-  frame_changed = false;
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   // Update the current frame.
   if (synchronize_to == nullptr
       || current_animation_name != synchronize_to->get_current_animation()
-      || synchronize_to->get_current_direction() > get_nb_directions()
-      || synchronize_to->get_current_frame() > get_nb_frames()) {
+      || synchronize_to->get_current_direction() >= get_nb_directions()
+      || synchronize_to->get_current_frame() >= get_nb_frames()) {
 
     // Update frames normally (with time).
     while (!finished &&
@@ -729,7 +758,7 @@ void Sprite::update() {
           next_frame_date = std::numeric_limits<uint32_t>::max();
         }
       }
-      set_frame_changed(true);
+      changed = true;
 
       if (lua_context != nullptr) {
         lua_context->sprite_on_frame_changed(*this, current_animation_name, current_frame);
@@ -747,7 +776,7 @@ void Sprite::update() {
       if (other_frame != current_frame) {
         current_frame = other_frame;
         next_frame_date = now + get_frame_delay();
-        set_frame_changed(true);
+        changed = true;
 
         if (lua_context != nullptr) {
           lua_context->sprite_on_frame_changed(*this, current_animation_name, current_frame);
@@ -765,22 +794,10 @@ void Sprite::update() {
       blink_next_change_date += blink_delay;
     }
   }
-}
 
-/**
- * @brief Sprite::draw_intermediate
- * @param region
- * @param dst_surface
- * @param dst_position
- */
-/*void Sprite::draw_intermediate() const {
-    get_intermediate_surface().clear();
-    current_animation->draw(
-        get_intermediate_surface(),
-        get_origin(),
-        current_direction,
-        current_frame);
-}*/
+  set_changed(false);
+  return;
+}
 
 /**
  * \brief Draws the sprite on a surface, with its current animation,
@@ -945,7 +962,7 @@ const ScopedLuaRef& Sprite::get_finished_callback() const {
 void Sprite::set_finished_callback(const ScopedLuaRef& finished_callback_ref) {
 
   if (!finished_callback_ref.is_empty()) {
-    Debug::check_assertion(get_lua_context() != nullptr, "Undefined Lua context");
+    SOLARUS_REQUIRE(get_lua_context() != nullptr, "Undefined Lua context");
   }
 
   this->finished_callback_ref = finished_callback_ref;

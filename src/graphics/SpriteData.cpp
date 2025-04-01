@@ -294,7 +294,7 @@ void SpriteAnimationData::set_loop_on_frame(int loop_on_frame) {
  * \return The number of directions.
  */
 int SpriteAnimationData::get_num_directions() const {
-  return directions.size();
+  return static_cast<int>(directions.size());
 }
 
 /**
@@ -306,8 +306,8 @@ int SpriteAnimationData::get_num_directions() const {
 const SpriteAnimationDirectionData&
   SpriteAnimationData::get_direction(int direction_nb) const {
 
-  int size = directions.size();
-  Debug::check_assertion(direction_nb >= 0 && direction_nb < size,
+  int size = static_cast<int>(directions.size());
+  SOLARUS_REQUIRE(direction_nb >= 0 && direction_nb < size,
     "No such direction");
 
   return directions[direction_nb];
@@ -325,8 +325,8 @@ const SpriteAnimationDirectionData&
 SpriteAnimationDirectionData&
   SpriteAnimationData::get_direction(int direction_nb) {
 
-  int size = directions.size();
-  Debug::check_assertion(direction_nb >= 0 && direction_nb < size,
+  int size = static_cast<int>(directions.size());
+  SOLARUS_REQUIRE(direction_nb >= 0 && direction_nb < size,
     "No such direction");
 
   return directions[direction_nb];
@@ -366,7 +366,7 @@ void SpriteAnimationData::add_direction(
  */
 bool SpriteAnimationData::remove_direction(int direction_nb) {
 
-  int size = directions.size();
+  int size = static_cast<int>(directions.size());
   if (direction_nb >= size) {
     return false;
   }
@@ -383,7 +383,7 @@ bool SpriteAnimationData::remove_direction(int direction_nb) {
  */
 bool SpriteAnimationData::move_direction(int direction_nb, int new_direction_nb) {
 
-  int size = directions.size();
+  int size = static_cast<int>(directions.size());
 
   if (direction_nb < 0 || direction_nb >= size) {
     return false;
@@ -423,7 +423,7 @@ SpriteData::SpriteData() {
  * \return The number of animations.
  */
 int SpriteData::get_num_animations() const {
-  return animations.size();
+  return static_cast<int>(animations.size());
 }
 
 /**
@@ -454,7 +454,7 @@ const SpriteAnimationData& SpriteData::get_animation(
     const std::string& animation_name) const {
 
   const auto& it = animations.find(animation_name);
-  Debug::check_assertion(it != animations.end(),
+  SOLARUS_REQUIRE(it != animations.end(),
     std::string("No such animation: '") + animation_name + "'");
 
   return it->second;
@@ -473,7 +473,7 @@ SpriteAnimationData& SpriteData::get_animation(
     const std::string& animation_name) {
 
   const auto& it = animations.find(animation_name);
-  Debug::check_assertion(it != animations.end(),
+  SOLARUS_REQUIRE(it != animations.end(),
     std::string("No such animation: '") + animation_name + "'");
 
   return it->second;
@@ -600,17 +600,14 @@ int SpriteData::l_animation(lua_State* l) {
     int frame_to_loop_on = LuaTools::opt_int_field(l, 1, "frame_to_loop_on", -1);
 
     if (frame_to_loop_on < -1) {
-      LuaTools::arg_error(l, 1,
-          "Bad field 'frame_to_loop_on' (must be a positive number or -1)"
-      );
+      LuaTools::field_error(l, 1, "frame_to_loop_on",
+          "must be a non-negative integer or -1");
     }
 
     lua_settop(l, 1);
     lua_getfield(l, 1, "directions");
     if (lua_type(l, 2) != LUA_TTABLE) {
-      LuaTools::arg_error(l, 1,
-          std::string("Bad field 'directions' (table expected, got ")
-      + luaL_typename(l, -1) + ")");
+      LuaTools::field_type_error(l, 1, "directions", "table");
     }
 
     // Traverse the directions table.
@@ -621,10 +618,7 @@ int SpriteData::l_animation(lua_State* l) {
       ++i;
 
       if (lua_type(l, -1) != LUA_TTABLE) {
-        LuaTools::arg_error(l, 1,
-            std::string("Bad field 'directions' (expected table, got ")
-                + luaL_typename(l, -1)
-        );
+        LuaTools::field_type_error(l, 1, "directions", "table");
       }
 
       int x = LuaTools::check_int_field(l, -1, "x");
@@ -637,13 +631,13 @@ int SpriteData::l_animation(lua_State* l) {
       int num_columns = LuaTools::opt_int_field(l, -1, "num_columns", num_frames);
 
       if (num_columns < 1 || num_columns > num_frames) {
-        LuaTools::arg_error(l, 1,
-            "Bad field 'num_columns': must be between 1 and the number of frames");
+        LuaTools::field_error(l, 1, "num_columns",
+            "must be between 1 and the number of frames");
       }
 
       if (frame_to_loop_on >= num_frames) {
-        LuaTools::arg_error(l, 1,
-            "Bad field 'frame_to_loop_on': exceeds the number of frames");
+        LuaTools::field_error(l, 1, "frame_to_loop_on",
+            "exceeds the number of frames");
       }
 
       lua_pop(l, 1);

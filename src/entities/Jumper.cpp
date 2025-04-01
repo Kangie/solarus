@@ -46,18 +46,22 @@ Jumper::Jumper(const std::string& name,
 
   // check the size
   if (direction % 2 != 0) {
-    Debug::check_assertion(size.is_square(), "This jumper has a diagonal direction but is not square");
+    SOLARUS_ASSERT(size.is_square(),
+        "This jumper has a diagonal direction but is not square");
   }
   else {
     if (direction % 4 == 0) {
-      Debug::check_assertion(size.width == 8, "This jumper is horizontal but its height is not 8");
+      SOLARUS_ASSERT(size.width == 8,
+          "This jumper is horizontal but its height is not 8");
     }
     else {
-      Debug::check_assertion(size.height == 8, "This jumper is vertical but its width is not 8");
+      SOLARUS_ASSERT(size.height == 8,
+          "This jumper is vertical but its width is not 8");
     }
   }
   // check the jump length
-  Debug::check_assertion(jump_length > 0, "The jump distance of this jumper must be positive");
+  SOLARUS_ASSERT(jump_length > 0,
+      "The jump distance of this jumper must be positive");
 }
 
 /**
@@ -66,14 +70,6 @@ Jumper::Jumper(const std::string& name,
  */
 EntityType Jumper::get_type() const {
   return ThisType;
-}
-
-/**
- * \brief Returns whether entities of this type can be drawn.
- * \return true if this type of entity can be drawn
- */
-bool Jumper::can_be_drawn() const {
-  return false;
 }
 
 /**
@@ -234,6 +230,14 @@ bool Jumper::test_collision_custom(Entity& entity) {
  */
 int Jumper::get_jump_length() const {
   return jump_length;
+}
+
+/**
+ * \brief Sets the length of the jump to make with this jumper.
+ * \param length Length of the jump in pixels (usually a multiple of 8).
+ */
+void Jumper::set_jump_length(int length) {
+  this->jump_length = length;
 }
 
 /**

@@ -43,7 +43,7 @@ class Surface;
  * A surface can be drawn or blitted on another surface.
  * This class basically encapsulates a library-dependent surface object.
  */
-class Surface: public Drawable {
+class Surface final: public Drawable {
 
     friend class Shader;
     friend class VertexArray; // TODO find cleaner way
@@ -60,12 +60,15 @@ class Surface: public Drawable {
 
     explicit Surface(SurfaceImplPtr impl, bool premultiplied = false);
     explicit Surface(SDL_Surface_UniquePtr surf, bool premultiplied = false);
-    Surface(int width, int height, bool premultiplied = true);
+    Surface(int width, int height, bool premultiplied = true, int margin = 0);
 
     ~Surface();
 
+    // static information
+    static constexpr const char module_name[] = "sol.surface";
+
     static SurfacePtr create(int width, int height, bool premultiplied = true);
-    static SurfacePtr create(const Size& size, bool premultiplied = true);
+    static SurfacePtr create(const Size& size, bool premultiplied = true, int margin = 0);
     static SurfacePtr create(const std::string& file_name,
         ImageDirectory base_directory = DIR_SPRITES, bool premultiplied = false);
     static SurfacePtr create(SurfaceImplPtr impl, bool premultiplied = false);
@@ -74,11 +77,11 @@ class Surface: public Drawable {
     static SDL_Surface_UniquePtr create_sdl_surface_from_file(
         const std::string& file_name
     );
-
     static SDL_Surface_UniquePtr create_sdl_surface_from_memory(
         void* data,
         size_t data_len
     );
+    bool save(const std::string& file_name) const;
 
     int get_width() const;
     int get_height() const;
@@ -119,6 +122,13 @@ class Surface: public Drawable {
     const std::string& get_lua_type_name() const override;
 
     static void empty_cache();
+
+    void set_view(const View& view);
+    const View& get_view() const;
+    View& get_view();
+
+    void set_viewport(const Rectangle& viewport);
+    Rectangle get_viewport() const;
   private:
     static SurfaceImplPtr get_surface_from_file(
         const std::string& file_name,

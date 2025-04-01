@@ -43,6 +43,7 @@ const std::map<Chest::OpeningMethod, std::string> Chest::opening_method_names = 
 
 /**
  * \brief Creates a new chest with the specified treasure.
+ * \param game Current game.
  * \param name Name identifying this chest.
  * \param layer Layer of the chest to create on the map.
  * \param xy Coordinates of the chest to create.
@@ -51,6 +52,7 @@ const std::map<Chest::OpeningMethod, std::string> Chest::opening_method_names = 
  * \param treasure The treasure in the chest.
  */
 Chest::Chest(
+    Game& game,
     const std::string& name,
     int layer,
     const Point& xy,
@@ -59,11 +61,13 @@ Chest::Chest(
 
   Entity(name, 0, layer, xy, Size(16, 16)),
   treasure(treasure),
-  open(treasure.is_found()),
+  open(treasure.is_found(game.get_equipment())), //TODO find a way to make treasure empty if they were looted by other heroes than main
   treasure_given(open),
   treasure_date(0),
   opening_method(OpeningMethod::BY_INTERACTION),
-  opening_condition_consumed(false) {
+  opening_condition_consumed(false),
+  cannot_open_sound_id("wrong"),
+  opening_sound_id("chest_open") {
 
   set_collision_modes(CollisionMode::COLLISION_FACING);
 
@@ -94,9 +98,13 @@ void Chest::notify_enabled(bool enabled) {
 
   Entity::notify_enabled(enabled);
 
-  // Make sure the chest does not appear on the hero.
-  if (enabled && overlaps(get_hero())) {
-    get_hero().avoid_collision(*this, 3);
+  if (enabled && is_on_map()) {
+    // Make sure the chest does not appear on the heroes
+    for(const HeroPtr& hero: get_heroes()) {
+      if (overlaps(*hero)) {
+        hero->avoid_collision(*this, 3);
+      }
+    }
   }
 }
 
@@ -169,7 +177,7 @@ void Chest::set_open(bool open) {
  * \brief Returns whether the player is able to open this chest now.
  * \return \c true if this the player can open the chest.
  */
-bool Chest::can_open() {
+bool Chest::can_open(Hero& hero) {
 
   switch (get_opening_method()) {
 
@@ -208,7 +216,7 @@ bool Chest::can_open() {
       if (required_item_name.empty()) {
         return false;
       }
-      const EquipmentItem& item = get_equipment().get_item(required_item_name);
+      const EquipmentItem& item = hero.get_equipment().get_item(required_item_name);
       return item.is_saved()
         && item.get_variant() > 0
         && (!item.has_amount() || item.get_amount() > 0);
@@ -348,13 +356,51 @@ void Chest::set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id) 
 }
 
 /**
+ * \brief Returns the id of the sound played when the hero is unable to open the chest.
+ * 
+ * \return The id of the "cannot open" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+const std::string& Chest::get_cannot_open_sound_id() const {
+  return cannot_open_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the hero is unable to open the chest.
+ * \param sound_id The if of the "cannot open" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+void Chest::set_cannot_open_sound_id(const std::string& sound_id) {
+  cannot_open_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound played when the hero is opening the chest.
+ * 
+ * \return The id of the "opening" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+const std::string& Chest::get_opening_sound_id() const {
+  return opening_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the hero is opening the chest.
+ * \param sound_id The if of the "opening" sound for this chest
+ * (an empty string or nil means no sound).
+ */
+void Chest::set_opening_sound_id(const std::string& sound_id) {
+  opening_sound_id = sound_id;
+}
+
+/**
  * \brief Returns whether this entity is an obstacle for another one when
  * it is enabled.
  * \param other Another entity.
  * \return \c true if this entity is an obstacle for the other one.
  */
-bool Chest::is_obstacle_for(Entity& /* other */) {
-  return true;
+bool Chest::is_obstacle_for(Entity& other) {
+  return other.is_chest_obstacle(*this);
 }
 
 /**
@@ -380,7 +426,7 @@ void Chest::update() {
 
   if (is_open() && !is_suspended()) {
 
-    if (!treasure_given && treasure_date != 0 && System::now() >= treasure_date) {
+    if (!treasure_given && treasure_date != 0 && System::now_ms() >= treasure_date) {
 
       treasure_date = 0;
       treasure_given = true;
@@ -391,20 +437,21 @@ void Chest::update() {
       }
 
       // Notify scripts.
-      bool done = get_lua_context()->chest_on_opened(*this, treasure);
+      bool done = get_lua_context()->chest_on_opened(*this, treasure, *opening_hero);
       if (!done) {
         if (treasure.is_empty() ||
-            !treasure.is_obtainable()
+            !treasure.is_obtainable(opening_hero->get_equipment())
         ) {
           // No treasure and the script does not define any behavior:
           // unfreeze the hero.
-          get_hero().start_free();
+          opening_hero->start_free();
         }
         else {
           // Give the treasure to the player.
-          get_hero().start_treasure(treasure, ScopedLuaRef());
+          opening_hero->start_treasure(treasure, ScopedLuaRef());
         }
       }
+      opening_hero.reset();
     }
   }
 
@@ -414,30 +461,35 @@ void Chest::update() {
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool Chest::notify_action_command_pressed() {
-
+bool Chest::notify_action_command_pressed(Hero &hero) {
   if (is_enabled() &&
-      get_hero().is_free() &&
-      get_commands_effects().get_action_key_effect() != CommandsEffects::ACTION_KEY_NONE
+      hero.is_free() &&
+      hero.get_commands_effects().get_action_key_effect() != CommandsEffects::ACTION_KEY_NONE
   ) {
 
-    if (can_open()) {
-      Sound::play("chest_open");
-      set_open(true);
-      treasure_date = System::now() + 300;
+    if (can_open(hero)) {
+      if (!opening_sound_id.empty()) {
+        Sound::play(opening_sound_id);
+      }
 
-      get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
-      get_hero().start_frozen();
+      set_open(true);
+      treasure_date = System::now_ms() + 300;
+
+      hero.get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
+      hero.start_frozen();
+      opening_hero = hero.shared_from_this_cast<Hero>();
     }
     else if (!get_cannot_open_dialog_id().empty()) {
-      Sound::play("wrong");
+      if (!cannot_open_sound_id.empty()) {
+        Sound::play(cannot_open_sound_id);
+      }
       get_game().start_dialog(get_cannot_open_dialog_id(), ScopedLuaRef(), ScopedLuaRef());
     }
 
     return true;
   }
 
-  return Entity::notify_action_command_pressed();
+  return Entity::notify_action_command_pressed(hero);
 }
 
 /**
@@ -454,7 +506,7 @@ void Chest::set_suspended(bool suspended) {
 
   if (!suspended && treasure_date != 0) {
     // restore the timer
-    treasure_date = System::now() + (treasure_date - get_when_suspended());
+    treasure_date = System::now_ms() + (treasure_date - get_when_suspended());
   }
 }
 

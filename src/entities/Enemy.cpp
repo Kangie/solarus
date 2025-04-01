@@ -97,6 +97,7 @@ Enemy::Enemy(
   traversable(true),
   attacking_collision_mode(CollisionMode::COLLISION_SPRITE),
   obstacle_behavior(ObstacleBehavior::NORMAL),
+  immobilization_duration(5000),
   being_hurt(false),
   stop_hurt_date(0),
   invulnerable(false),
@@ -107,6 +108,12 @@ Enemy::Enemy(
   start_shaking_date(0),
   end_shaking_date(0),
   dying_animation_started(false),
+  attack_failure_sound_id("sword_tapping"),
+  falling_sound_id("jump"),
+  sinking_sound_id("splash"),
+  dying_sound_id("enemy_killed"),
+  exploding_sound_id("explosion"),
+  hurt_sound_id(""),
   treasure(treasure),
   exploding(false),
   nb_explosions(0),
@@ -530,6 +537,22 @@ void Enemy::set_obstacle_behavior(ObstacleBehavior obstacle_behavior) {
 }
 
 /**
+ * \brief Returns the duration of immobilization of this enemy.
+ * \return the duration in milliseconds.
+ */
+int Enemy::get_immobilization_duration() const {
+  return immobilization_duration;
+}
+
+/**
+ * \brief Sets the immobilization duration for this enemy.
+ * \param duration the duration in milliseconds.
+ */
+void Enemy::set_immobilization_duration(int duration) {
+  immobilization_duration = duration;
+}
+
+/**
  * \brief Returns whether this enemy is traversable by other entities.
  *
  * If the enemy is not traversable, is_obstacle_for() will always return
@@ -753,6 +776,16 @@ void Enemy::set_default_attack_consequences_sprite(const Sprite& sprite) {
 }
 
 /**
+ * \brief Returns the boolean variable indicating whether this enemy is killed,
+ * or an empty string if it is not saved
+ * \return the savegame variable.
+ */
+
+const std::string& Enemy::get_savegame_variable() const {
+  return savegame_variable;
+}
+
+/**
  * \brief Returns the current animation of the first sprite of the enemy.
  *
  * This function is useful when the enemy has several sprites.
@@ -794,7 +827,7 @@ void Enemy::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   if (being_hurt) {
 
@@ -848,7 +881,7 @@ void Enemy::update() {
   }
 
   if (exploding) {
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
     if (now >= next_explosion_date) {
 
       // create an explosion
@@ -858,7 +891,9 @@ void Enemy::update() {
       get_entities().add_entity(std::make_shared<Explosion>(
           "", get_map().get_max_layer(), xy, false
       ));
-      Sound::play("explosion");
+      if (!exploding_sound_id.empty()) {
+        Sound::play(exploding_sound_id);
+      }
 
       next_explosion_date = now + 200;
       nb_explosions++;
@@ -903,7 +938,7 @@ void Enemy::set_suspended(bool suspended) {
   Entity::set_suspended(suspended);
 
   if (!suspended) {
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     stop_hurt_date += diff;
     vulnerable_again_date += diff;
     if (can_attack_again_date != 0) {
@@ -1037,7 +1072,7 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
 
     bool hero_protected = false;
     if (minimum_shield_needed != 0
-        && get_equipment().has_ability(Ability::SHIELD, minimum_shield_needed)
+        && hero.get_equipment().has_ability(Ability::SHIELD, minimum_shield_needed)
         && hero.can_use_shield()) {
 
       // Compute the direction corresponding to the angle between the enemy and the hero.
@@ -1057,11 +1092,11 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
     }
 
     if (hero_protected) {
-      attack_stopped_by_hero_shield();
+      attack_stopped_by_hero_shield(hero);
     }
     else {
       // Let the enemy script handle this if it wants.
-      const bool handled = get_lua_context()->enemy_on_attacking_hero(
+      const bool handled = get_lua_context()->entity_on_attacking_hero(
           *this, hero, this_sprite
       );
       if (!handled) {
@@ -1078,40 +1113,42 @@ void Enemy::attack_hero(Hero& hero, Sprite* this_sprite) {
  *
  * By default, the shield sound is played and the enemy cannot attack again for a while.
  */
-void Enemy::attack_stopped_by_hero_shield() {
+void Enemy::attack_stopped_by_hero_shield(Hero& hero) {
 
   Sound::play("shield");
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   can_attack = false;
   can_attack_again_date = now + 1000;
 
-  get_equipment().notify_ability_used(Ability::SHIELD);
+  hero.get_equipment().notify_ability_used(Ability::SHIELD);
 }
 
 /**
  * \brief Plays the appropriate sound when the enemy is hurt.
  */
 void Enemy::play_hurt_sound() {
+  if (!has_set_hurt_sound) {
+    std::string sound_id = "";
+    switch (hurt_style) {
+      case HurtStyle::NORMAL:
+        sound_id = "enemy_hurt";
+        break;
 
-  std::string sound_id = "";
-  switch (hurt_style) {
+      case HurtStyle::MONSTER:
+        sound_id = "monster_hurt";
+        break;
 
-    case HurtStyle::NORMAL:
-      sound_id = "enemy_hurt";
-      break;
-
-    case HurtStyle::MONSTER:
-      sound_id = "monster_hurt";
-      break;
-
-    case HurtStyle::BOSS:
-      sound_id = (life > 0) ? "boss_hurt" : "boss_killed";
-      break;
-
+      case HurtStyle::BOSS:
+        sound_id = (life > 0) ? "boss_hurt" : "boss_killed";
+        break;
+    }
+    Sound::play(sound_id);
+  } else {
+    if (!hurt_sound_id.empty()) {
+      Sound::play(hurt_sound_id);
+    }
   }
-
-  Sound::play(sound_id);
 }
 
 /**
@@ -1187,14 +1224,16 @@ void Enemy::try_hurt(EnemyAttack attack, Entity& source, Sprite* this_sprite) {
       // Ideally, ReactionType::CUSTOM should not make the enemy invulnerable
       // either, but we don't want to break the behavior of existing scripts.
       invulnerable = true;
-      vulnerable_again_date = System::now() + 500;
+      vulnerable_again_date = System::now_ms() + 500;
   }
 
   switch (reaction.type) {
 
     case EnemyReaction::ReactionType::PROTECTED:
       // attack failure sound
-      Sound::play("sword_tapping");
+      if (!attack_failure_sound_id.empty()) {
+        Sound::play(attack_failure_sound_id);
+      }
       break;
 
     case EnemyReaction::ReactionType::IMMOBILIZED:
@@ -1242,7 +1281,7 @@ void Enemy::try_hurt(EnemyAttack attack, Entity& source, Sprite* this_sprite) {
         Hero& hero = static_cast<Hero&>(source);
 
         // Sword attacks only use pixel-precise collisions.
-        Debug::check_assertion(this_sprite != nullptr,
+        SOLARUS_REQUIRE(this_sprite != nullptr,
             "Missing enemy sprite for sword attack"
         );
 
@@ -1293,7 +1332,7 @@ void Enemy::try_hurt(EnemyAttack attack, Entity& source, Sprite* this_sprite) {
  */
 void Enemy::hurt(Entity& source, Sprite* this_sprite) {
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   // update the enemy state
   set_movement_notifications_enabled(false);
@@ -1371,7 +1410,7 @@ void Enemy::kill() {
     // A boss: create some explosions.
     exploding = true;
     nb_explosions = 0;
-    next_explosion_date = System::now() + 2000;
+    next_explosion_date = System::now_ms() + 2000;
   }
   else {
     // Replace the enemy sprites.
@@ -1383,7 +1422,9 @@ void Enemy::kill() {
         if (get_obstacle_behavior() != ObstacleBehavior::FLYING) {
           // TODO animation of falling into a hole.
           special_ground = true;
-          Sound::play("jump");
+          if (!falling_sound_id.empty()) {
+            Sound::play(falling_sound_id);
+          }
           clear_treasure();
         }
         break;
@@ -1393,7 +1434,9 @@ void Enemy::kill() {
             get_obstacle_behavior() != ObstacleBehavior::SWIMMING) {
           // TODO water animation.
           special_ground = true;
-          Sound::play("splash");
+          if (!sinking_sound_id.empty()) {
+            Sound::play(sinking_sound_id);
+          }
           clear_treasure();
         }
         break;
@@ -1403,7 +1446,9 @@ void Enemy::kill() {
             get_obstacle_behavior() != ObstacleBehavior::SWIMMING) {
           // TODO lava animation.
           special_ground = true;
-          Sound::play("splash");
+          if (!sinking_sound_id.empty()) {
+            Sound::play(sinking_sound_id);
+          }
           clear_treasure();
         }
         break;
@@ -1420,7 +1465,9 @@ void Enemy::kill() {
         }
         create_sprite(dying_sprite_id);
       }
-      Sound::play("enemy_killed");
+      if (!dying_sound_id.empty()) {
+        Sound::play(dying_sound_id);
+      }
     }
   }
 
@@ -1505,7 +1552,7 @@ void Enemy::set_treasure(const Treasure& treasure) {
  * \brief Sets the treasure dropped by this enemy to nothing.
  */
 void Enemy::clear_treasure() {
-  this->treasure = Treasure(get_game(), "", 1, "");
+  this->treasure = Treasure("", 1, "");
 }
 
 /**
@@ -1528,7 +1575,7 @@ bool Enemy::is_sprite_finished_or_looping() const {
 void Enemy::immobilize() {
 
   immobilized = true;
-  start_shaking_date = System::now() + 5000;
+  start_shaking_date = System::now_ms() + immobilization_duration;
 }
 
 /**
@@ -1558,6 +1605,111 @@ bool Enemy::is_immobilized() const {
 void Enemy::custom_attack(EnemyAttack attack, Sprite* this_sprite) {
 
   get_lua_context()->enemy_on_custom_attack_received(*this, attack, this_sprite);
+}
+
+/**
+ * \brief Returns the id of the sound to play when the attack against enemy failed.
+ * \return The id of the "attack failure" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_attack_failure_sound_id() const {
+  return attack_failure_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the attack against enemy failed.
+ * \param sound_id The id of the "attack failure" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_attack_failure_sound_id(const std::string& sound_id) {
+  attack_failure_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the enemy is falling into a hole.
+ * \return The id of the "falling" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the enemy is falling into a hole.
+ * \param sound_id The id of the "falling" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_falling_sound_id(const std::string& sound_id) {
+  falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the enemy is sinking into deep water or lava.
+ * \return The id of the "sinking" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the enemy is sinking into deep water or lava.
+ * \param sound_id The id of the "sinking" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the enemy is dying.
+ * \return The id of the "dying" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+const std::string& Enemy::get_dying_sound_id() const {
+  return dying_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the enemy is dying.
+ * \param sound_id The id of the "dying" sound for this enemy
+ * (an empty string or nil means no sound).
+ */
+void Enemy::set_dying_sound_id(const std::string& sound_id) {
+  dying_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is exploding.
+ * \return The exploding sound id or an empty string.
+ */
+const std::string& Enemy::get_exploding_sound_id() const {
+  return exploding_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is exploding.
+ * \param sound_id The exploding sound id or an empty string.
+ */
+void Enemy::set_exploding_sound_id(const std::string& sound_id) {
+  this->exploding_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is hurt.
+ * \return The hurt sound id or an empty string.
+ */
+const std::string& Enemy::get_hurt_sound_id() const {
+  return exploding_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is hurt.
+ * \param sound_id The hurt sound id or an empty string.
+ */
+void Enemy::set_hurt_sound_id(const std::string& sound_id) {
+  has_set_hurt_sound = true;
+  this->hurt_sound_id = sound_id;
 }
 
 }

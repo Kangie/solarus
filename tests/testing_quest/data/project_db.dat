@@ -57,6 +57,7 @@ map{ id = "bugs/1269_coroutines", description = "#1269: Coroutines make engine c
 map{ id = "bugs/1275_map_set_tileset", description = "#1275: map:set_tileset()" }
 map{ id = "bugs/1286_crash_state_set_can_traverse", description = "#1286: Crash in state:set_can_traverse()" }
 map{ id = "bugs/1291_hero_start_attack_loading", description = "#1291: hero:start_attack_loading" }
+map{ id = "bugs/1297_target_movement_speed", description = "#1297: Target movement wrong speed" }
 map{ id = "bugs/1299_crash_invalid_tile_pattern", description = "#1299: Crash when loading a map with an invalid tile pattern" }
 map{ id = "bugs/1301_state_set_can_be_hurt_function", description = "#1301: Allow to pass a function to state:set_can_be_hurt()" }
 map{ id = "bugs/1319_disabled_entity_timer_unsuspended", description = "#1319: Timers of disabled entity continue when the game is unsuspended" }
@@ -73,9 +74,15 @@ map{ id = "bugs/1381_jumpers_hero_16_8", description = "#1381: Jumpers not worki
 map{ id = "bugs/1383_blocks_hero_16_8", description = "#1383: Blocks not working with a 16x8 hero" }
 map{ id = "bugs/1392_carried_object_directions", description = "#1392: Allow carried objects to have 4 directions" }
 map{ id = "bugs/1395_large_map_memory_leak", description = "#1395: Memory leak when traversing a large map" }
+map{ id = "bugs/1402_sol_sprite_create_invalid", description = "#1402: sol.sprite.create() returns invalid sprite object" }
+map{ id = "bugs/1407_facing_entity_not_updated", description = "#1407: hero:get_facing_entity() still returns an entity that has moved" }
 map{ id = "bugs/1416_state_set_affected_by_ground_speed", description = "#1416: state:set_affected_by_ground() not working on grounds that alter the speed" }
 map{ id = "bugs/1418_state_set_can_be_hurt", description = "#1418: state:set_can_be_hurt() not working with touching attack mode" }
+map{ id = "bugs/1419_crash_teletransporting_to_invalid_layer/map_1" }
+map{ id = "bugs/1419_crash_teletransporting_to_invalid_layer/map_2" }
 map{ id = "bugs/1423_crash_carried_without_shadow", description = "#1423: Crash when carrying an object without shadow sprite" }
+map{ id = "bugs/1424_rawget_rawset", description = "#1424: Add a rawget() function that works on Solarus userdata" }
+map{ id = "bugs/1425_is_in_same_region_4_way_separators", description = "#1425: entity:is_in_same_region(other) : bug with 4-way crossing separators" }
 map{ id = "bugs/1428_movement_blocking", description = "#1428: straight movements blocking" }
 map{ id = "bugs/1436_thrown_object_shadow", description = "#1436: Unwanted shadow below thrown object " }
 map{ id = "bugs/1439_ground_sprite_ladder", description = "#1439: Ground sprite still shown on ladders" }
@@ -86,11 +93,44 @@ map{ id = "bugs/1458_ground_sprite_when_jumping", description = "#1458: Ground s
 map{ id = "bugs/1461_tileset_sprite", description = "#1461 : Tileset sprite dynamicaly created cause crash" }
 map{ id = "bugs/1471_pickable_wrong_layer", description = "#1471: Pickables fall to the wrong layer" }
 map{ id = "bugs/1476_crash_command_binding", description = "#1476: Crash in game:set_command_keyboard_binding()" }
+map{ id = "bugs/1494_no_error_nonexistant_model", description = "#1494: map:create_custom_entity, no error thrown if nonexistent model is passed" }
+map{ id = "bugs/1503_crash_invalid_save_file", description = "#1503: Crash when loading an invalid save file" }
+map{ id = "bugs/1508_carried_object_height", description = "#1508 Acessing the item_height value of Carried Objects" }
+map{ id = "bugs/1524_push_delay", description = "!1359 Push state delay" }
 map{ id = "bugs/1526_destructible_cut_method", description = "#1526: destructible:get/set_cut_method()" }
+map{ id = "bugs/1527_entity_set_name", description = "#1527: entity:set_name()" }
 map{ id = "bugs/1533_savegame_write_escape", description = "#1533: Keyboard key binds are not escaped properly when savegame file is written" }
 map{ id = "bugs/1534_unicode_filenames", description = "#1534: Cyrillic or Chinese characters in filepath cause sol.file.open to return nil" }
+map{ id = "bugs/1535_collision_moving_sprite", description = "#1535: Collision of a moving sprite when the entity does not move" }
+map{ id = "bugs/1547_teletransporter_on_activated_twice/map_1", description = "#1547 (1): Teletransporter on_activated Twice" }
+map{ id = "bugs/1547_teletransporter_on_activated_twice/map_2", description = "#1547 (2): Teletransporter on_activated Twice" }
+map{ id = "bugs/1550_use_bow", description = "#1550: Using bow crash" }
+map{ id = "bugs/1551_error_teletransporter_set_destination_map", description = "#1551: No Error Reported: teletransporter:set_destination_map(map_id)" }
+map{ id = "bugs/1552_entire_savegame_access", description = "#1552: Entire Savegame Access" }
+map{ id = "bugs/1556_boolean_parameters_treat_nil_as_true", description = "#1556: Boolean Parameters Treat Nil as True" }
+map{ id = "bugs/1562_crash_entity_on_stream", description = "#1562: Crash when throwing an entity on a stream" }
+map{ id = "bugs/1565_state_set_can_control_direction", description = "#1565: Custom state direction control without movement" }
+map{ id = "bugs/1583_crash_reset", description = "#1583: Crash when resetting the game" }
+map{ id = "bugs/1585_get_entity_by_name", description = "#1585: Get entity by name" }
+map{ id = "bugs/1600_map_loading_single_cam/map1" }
+map{ id = "bugs/1600_map_loading_single_cam/map2" }
+map{ id = "bugs/1609_crash_save_lua_keyword", description = "#1609: Crash when loading a save file with a Lua keyword" }
+map{ id = "bugs/1611_entity_overlaps_when_removed", description = "#1611: entity:overlaps() returns true even when an entity was removed" }
+map{ id = "bugs/1617_crash_disabled_chest", description = "#1617: Crash when starting a map with a disabled chest" }
+map{ id = "bugs/1619_camera_obstacles", description = "#1619: Entities should not block the camera" }
+map{ id = "bugs/1628_hero_set_direction_crash", description = "#1628: Crash when hero:set_direction() has an invalid parameter" }
+map{ id = "bugs/1635_timer_set_remaining_time", description = "#1635: timer:set_remaining_time()" }
+map{ id = "bugs/1637_multi_items", description = "#1637 - Multiheros items" }
+map{ id = "bugs/1639_destination_get_direction", description = "#1639: destination:get_direction()" }
+map{ id = "bugs/1641_crash_assign_item", description = "#1641: Crash when assigning an item the player does not have" }
+map{ id = "bugs/1644_random_movement_get_angle", description = "#1644 random_movement:get_angle()" }
+map{ id = "bugs/1648_custom_entities_collision_not_happening", description = "#1648: Collisions between custom entities" }
+map{ id = "bugs/1652_npc_movement_stop_animation", description = "Christopho" }
+map{ id = "bugs/1657_crash_circle_movement", description = "#1657 circle_movement:set_angular_speed(0) crashes the engine" }
+map{ id = "bugs/1680_music_volume", description = "#1680: Music volume" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
+map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
 map{ id = "bugs/526_get_entities_same_region", description = "#526: map:get_entities_in_same_region()" }
 map{ id = "bugs/630_change_resources", description = "#630: Allow to change the resource list dynamically" }
 map{ id = "bugs/633_straight_movement_speed_zero", description = "#633: Straight movements resets speed to zero when reaching an obstacle" }
@@ -110,6 +150,7 @@ map{ id = "bugs/748_entity_overlaps_collision_modes", description = "#748: entit
 map{ id = "bugs/754_entity_get_max_bounding_box", description = "#754: entity:get_max_bounding_box" }
 map{ id = "bugs/762_camera_entity", description = "#762: Camera as entity" }
 map{ id = "bugs/769_stuck_dynamic_tile_covered", description = "#769: Non-traversable dynamic tiles covered by traversable ones block the hero" }
+map{ id = "bugs/771_spin_attack_ability", description = "#1171: Spin attack ability" }
 map{ id = "bugs/779_get_entities_random_order", description = "#779: map:get_entities() returns entities in random order" }
 map{ id = "bugs/781_assert_teletransporter_same_map", description = "#781: Assertion error when a teletransporter leads to the same map" }
 map{ id = "bugs/794_custom_entity_set_can_traverse_ground", description = "#794: custom_entity:set_can_traverse_ground(\"traversable\", false) does not work" }
@@ -130,6 +171,7 @@ map{ id = "bugs/821_hero_start_attack", description = "#821: hero:start_attack()
 map{ id = "bugs/823_sprite_get_size_origin", description = "#823: sprite:get_size() and sprite:get_origin()" }
 map{ id = "bugs/827_ground_detection_after_unfreeze", description = "#827: Hero not falling in hole after unfreeze" }
 map{ id = "bugs/830_entity_get_ground_position", description = "#830: entity:get_ground_position() and entity:get_ground_below()" }
+map{ id = "bugs/840_movement_get_type", description = "#840: movement:get_type()" }
 map{ id = "bugs/844_camera_on_state_changed", description = "#844: camera:on_state_changed()" }
 map{ id = "bugs/845_game_set_suspended", description = "#845: game:set_suspended" }
 map{ id = "bugs/851_entity_get_sprites", description = "#851: entity:get_sprites()" }
@@ -160,6 +202,7 @@ map{ id = "bugs/955_enemy_get_set_dying_sprite_id", description = "#955: enemy:g
 map{ id = "bugs/967_blocks_max_moves", description = "#967: Allow to choose any maximum number of moves for blocks" }
 map{ id = "bugs/971_sol_file_list", description = "#971: sol.file.list()" }
 map{ id = "bugs/983_timer_delay", description = "#983: Allow to change the delay of timers" }
+map{ id = "bugs/988_crash_treasure_dialog", description = "#988: Crash when giving a treasure during a dialog" }
 map{ id = "custom_state/can_traverse", description = "state:set_can_traverse()" }
 map{ id = "custom_state/can_traverse_ground", description = "state:get/set_can_traverse_ground" }
 map{ id = "custom_state/carried_object", description = "State with carried object" }
@@ -171,8 +214,19 @@ map{ id = "custom_state/jumper", description = "get/set_can_take_jumper(), get_s
 map{ id = "custom_state/pushing", description = "get/set_can_push(), get/set_pushing_delay()" }
 map{ id = "custom_state/reuse_state", description = "Using the same state object a second time" }
 map{ id = "dynamic_tile_tests", description = "Dynamic tile tests" }
+map{ id = "event_order", description = "Checks event ordering" }
 map{ id = "jumper_tests", description = "Jumper tests" }
+map{ id = "lua_interface", description = "Lua Interface" }
+map{ id = "multiplayer/cameras", description = "Test multi cameras" }
+map{ id = "multiplayer/cameras2", description = "Second map for the cameras" }
+map{ id = "multiplayer/cameras3_1607", description = "Third map of the cameras test" }
+map{ id = "multiplayer/controls", description = "Check controls api" }
+map{ id = "multiplayer/friendly_fire", description = "Friendly Fire" }
+map{ id = "multiplayer/heroes", description = "Multiple heroes test" }
+map{ id = "multiplayer/heroes2", description = "Second heroes map" }
+map{ id = "multiplayer/heroes_game_over", description = "Heroes Transitions" }
 map{ id = "oriented_collisions", description = "Test rotation and scaled collisions" }
+map{ id = "straight_movement", description = "Test straight movement quirks" }
 map{ id = "surface_tests", description = "Surface tests" }
 map{ id = "teletransportation_tests/main", description = "Main map" }
 map{ id = "teletransportation_tests/start_in_deep_water_drown", description = "Start in deep water (drowning)" }
@@ -198,6 +252,7 @@ tileset{ id = "overworld", description = "Overworld" }
 
 sprite{ id = "16x16", description = "16x16 sprite" }
 sprite{ id = "16x24", description = "16x24 sprite" }
+sprite{ id = "1x1", description = "1x1 sprite" }
 sprite{ id = "blocks/block_brown", description = "Block (brown)" }
 sprite{ id = "chests/chest_brown", description = "Chest (brown)" }
 sprite{ id = "destructibles/vase", description = "Vase" }
@@ -213,6 +268,7 @@ sprite{ id = "entities/block", description = "Block (grey)" }
 sprite{ id = "entities/bomb", description = "Bomb" }
 sprite{ id = "entities/boomerang1", description = "Boomerang 1" }
 sprite{ id = "entities/chest", description = "Chest (brown)" }
+sprite{ id = "entities/conveyor_belt", description = "Conveyor belt" }
 sprite{ id = "entities/crystal", description = "Crystal" }
 sprite{ id = "entities/crystal_block", description = "Crystal block" }
 sprite{ id = "entities/explosion", description = "Explosion" }
@@ -243,6 +299,7 @@ sprite{ id = "shatter", description = "Shatter" }
 sprite{ id = "things/platform", description = "32x32 platform" }
 sprite{ id = "todo", description = "TODO image" }
 
+music{ id = "great_fairy", description = "great_fairy" }
 
 sound{ id = "arrow_hit", description = "arrow_hit" }
 sound{ id = "bird_chirp", description = "bird_chirp" }
@@ -363,6 +420,7 @@ sound{ id = "wrong2", description = "wrong2" }
 sound{ id = "wrong3", description = "wrong3" }
 
 item{ id = "bomb", description = "Bomb" }
+item{ id = "bombs_assignable", description = "Assignable bombs" }
 item{ id = "coroutine_handle", description = "coroutine_handle" }
 item{ id = "item_dialog_no_sprite", description = "Item with a dialog and no sprite" }
 item{ id = "item_dialog_sprite", description = "Item with a dialog and a sprite" }
@@ -393,6 +451,7 @@ file{ path = "enemies/test_flying_enemy.lua", author = "Christopho", license = "
 file{ path = "fonts/8_bit.png", author = "usr_share, Christopho", license = "Public domain" }
 file{ path = "fonts/enter_command.ttf", author = "Jeti", license = "CC BY 4.0" }
 file{ path = "items/bomb.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "items/bombs_assignable.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "items/coroutine_handle.lua", author = "std::gregwar", license = "GPL v3" }
 file{ path = "items/item_dialog_no_sprite.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "items/item_dialog_sprite.lua", author = "Christopho", license = "GPL v3" }
@@ -467,8 +526,8 @@ file{ path = "maps/bugs/1163_circular_movement_get_direction4.dat", author = "Ch
 file{ path = "maps/bugs/1163_circular_movement_get_direction4.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1171_sword_knowledge_on_ability_used.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1171_sword_knowledge_on_ability_used.lua", author = "Christopho", license = "GPL v3" }
-file{ path = "maps/bugs/1175_dynamic_tile_set_get_tileset.dat", author = "Christopho", license = "CC BY-SA 4.0" }
-file{ path = "maps/bugs/1175_dynamic_tile_set_get_tileset.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1175_dynamic_tile_set_get_tileset.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1175_dynamic_tile_set_get_tileset.lua", author = "Cluedrew", license = "GPL v3" }
 file{ path = "maps/bugs/1179_enemy_on_restarted_called_twice.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1179_enemy_on_restarted_called_twice.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1181_hurt_enemy_after_custom_attack.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -523,6 +582,8 @@ file{ path = "maps/bugs/1286_crash_state_set_can_traverse.dat", author = "Christ
 file{ path = "maps/bugs/1286_crash_state_set_can_traverse.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1297_target_movement_speed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1297_target_movement_speed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1299_crash_invalid_tile_pattern.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1299_crash_invalid_tile_pattern.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1301_state_set_can_be_hurt_function.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -555,12 +616,24 @@ file{ path = "maps/bugs/1392_carried_object_directions.dat", author = "Christoph
 file{ path = "maps/bugs/1392_carried_object_directions.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1395_large_map_memory_leak.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1395_large_map_memory_leak.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1402_sol_sprite_create_invalid.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1402_sol_sprite_create_invalid.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
+file{ path = "maps/bugs/1407_facing_entity_not_updated.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1407_facing_entity_not_updated.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1416_state_set_affected_by_ground_speed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1416_state_set_affected_by_ground_speed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1418_state_set_can_be_hurt.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1418_state_set_can_be_hurt.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1419_crash_teletransporting_to_invalid_layer/map_1.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1419_crash_teletransporting_to_invalid_layer/map_1.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1419_crash_teletransporting_to_invalid_layer/map_2.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1419_crash_teletransporting_to_invalid_layer/map_2.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1423_crash_carried_without_shadow.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1423_crash_carried_without_shadow.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1424_rawget_rawset.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1424_rawget_rawset.lua", author = "Cluedrew", license = "GPL v3" }
+file{ path = "maps/bugs/1425_is_in_same_region_4_way_separators.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1425_is_in_same_region_4_way_separators.lua", author = "Cluedrew", license = "GPL v3" }
 file{ path = "maps/bugs/1428_movement_blocking.dat", author = "stdgregwar", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1428_movement_blocking.lua", author = "stdgregwar", license = "GPL v3" }
 file{ path = "maps/bugs/1436_thrown_object_shadow.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -581,16 +654,83 @@ file{ path = "maps/bugs/1471_pickable_wrong_layer.dat", author = "Christopho", l
 file{ path = "maps/bugs/1471_pickable_wrong_layer.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1476_crash_command_binding.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1476_crash_command_binding.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1494_no_error_nonexistant_model.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1494_no_error_nonexistant_model.lua", author = "Cluedrew", license = "GPL v3" }
+file{ path = "maps/bugs/1503_crash_invalid_save_file.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1503_crash_invalid_save_file.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1508_carried_object_height.dat", author = "TwilCynder", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1508_carried_object_height.lua", author = "TwilCynder", license = "GPL v3" }
+file{ path = "maps/bugs/1524_push_delay.dat", author = "TwilCynder", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1524_push_delay.lua", author = "TwilCynder", license = "GPL v3" }
 file{ path = "maps/bugs/1526_destructible_cut_method.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1526_destructible_cut_method.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1527_entity_set_name.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1527_entity_set_name.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1533_savegame_write_escape.dat", author = "hhromic", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1533_savegame_write_escape.lua", author = "hhromic", license = "GPL v3" }
 file{ path = "maps/bugs/1534_unicode_filenames.dat", author = "hhromic", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1534_unicode_filenames.lua", author = "hhromic", license = "GPL v3" }
+file{ path = "maps/bugs/1535_collision_moving_sprite.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1535_collision_moving_sprite.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1547_teletransporter_on_activated_twice/map_1.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1547_teletransporter_on_activated_twice/map_1.lua", author = "Cluedrew", license = "GPL v3" }
+file{ path = "maps/bugs/1547_teletransporter_on_activated_twice/map_2.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1547_teletransporter_on_activated_twice/map_2.lua", author = "Cluedrew", license = "GPL v3" }
+file{ path = "maps/bugs/1550_use_bow.dat", author = "stdgregwar", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1550_use_bow.lua", author = "stdgregwar", license = "GPL v3" }
+file{ path = "maps/bugs/1551_error_teletransporter_set_destination_map.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1551_error_teletransporter_set_destination_map.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
+file{ path = "maps/bugs/1552_entire_savegame_access.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1552_entire_savegame_access.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
+file{ path = "maps/bugs/1556_boolean_parameters_treat_nil_as_true.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1556_boolean_parameters_treat_nil_as_true.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
+file{ path = "maps/bugs/1562_crash_entity_on_stream.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1562_crash_entity_on_stream.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1565_state_set_can_control_direction.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1565_state_set_can_control_direction.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1583_crash_reset.dat", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1583_crash_reset.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1585_get_entity_by_name.dat", author = "stdgregwar", license = "CC-BY-SA" }
+file{ path = "maps/bugs/1585_get_entity_by_name.lua", author = "stdgregwar", license = "GPL v3" }
+file{ path = "maps/bugs/1600_map_loading_single_cam", author = "stdgregwar", license = "CC-BY-SA" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map1.dat", author = "stdgregwar", license = "CC-BY" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map1.lua", author = "stdgregwar", license = "CC-BY" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map2.dat", author = "stdgregwar", license = "CC-BY" }
+file{ path = "maps/bugs/1600_map_loading_single_cam/map2.lua", author = "stdgregwar", license = "CC-BY" }
+file{ path = "maps/bugs/1609_crash_save_lua_keyword.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1609_crash_save_lua_keyword.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1611_entity_overlaps_when_removed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1611_entity_overlaps_when_removed.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1617_crash_disabled_chest.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1617_crash_disabled_chest.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1619_camera_obstacles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1619_camera_obstacles.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1628_hero_set_direction_crash.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1628_hero_set_direction_crash.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1635_timer_set_remaining_time.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1635_timer_set_remaining_time.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1637_multi_items.dat", author = "stdgregwar", license = "GPLv3" }
+file{ path = "maps/bugs/1637_multi_items.lua", author = "stdgregwar", license = "GPLv3" }
+file{ path = "maps/bugs/1639_destination_get_direction.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1639_destination_get_direction.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1641_crash_assign_item.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1641_crash_assign_item.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1644_random_movement_get_angle.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1644_random_movement_get_angle.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1648_custom_entities_collision_not_happening.dat", author = "Metallizer", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1648_custom_entities_collision_not_happening.lua", author = "Metallizer", license = "GPL v3" }
+file{ path = "maps/bugs/1652_npc_movement_stop_animation.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1652_npc_movement_stop_animation.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1657_crash_circle_movement.dat", author = "Metallizer", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/1657_crash_circle_movement.lua", author = "Metallizer", license = "GPL v3" }
+file{ path = "maps/bugs/1680_music_volume.dat", author = "Metallizer", }
+file{ path = "maps/bugs/1680_music_volume.lua", author = "Metallizer", }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/496_stream_speed_0.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/514_allow_x_y_parameters_to_entity_is_in_same_region.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/514_allow_x_y_parameters_to_entity_is_in_same_region.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
 file{ path = "maps/bugs/526_get_entities_same_region.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/526_get_entities_same_region.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/630_change_resources.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -629,6 +769,8 @@ file{ path = "maps/bugs/762_camera_entity.dat", author = "Christopho", license =
 file{ path = "maps/bugs/762_camera_entity.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/769_stuck_dynamic_tile_covered.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/769_stuck_dynamic_tile_covered.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/771_spin_attack_ability.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/771_spin_attack_ability.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/779_get_entities_random_order.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/779_get_entities_random_order.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/781_assert_teletransporter_same_map.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -670,6 +812,8 @@ file{ path = "maps/bugs/827_ground_detection_after_unfreeze.dat", author = "Chri
 file{ path = "maps/bugs/827_ground_detection_after_unfreeze.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/830_entity_get_ground_position.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/830_entity_get_ground_position.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/840_movement_get_type.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/840_movement_get_type.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/844_camera_on_state_changed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/844_camera_on_state_changed.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/845_game_set_suspended.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -730,6 +874,8 @@ file{ path = "maps/bugs/971_sol_file_list.dat", author = "Christopho", license =
 file{ path = "maps/bugs/971_sol_file_list.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/983_timer_delay.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/983_timer_delay.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/988_crash_treasure_dialog.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "maps/bugs/988_crash_treasure_dialog.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/custom_state/can_traverse.dat", author = "std::gregwar", license = "CC BY-SA 4.0" }
 file{ path = "maps/custom_state/can_traverse.lua", author = "std::gregwar", license = "GPL v3" }
 file{ path = "maps/custom_state/can_traverse_ground.dat", author = "std::gregwar", license = "CC BY-SA 4.0" }
@@ -752,10 +898,32 @@ file{ path = "maps/custom_state/reuse_state.dat", author = "std::gregwar", licen
 file{ path = "maps/custom_state/reuse_state.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/dynamic_tile_tests.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/dynamic_tile_tests.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/event_order.dat", author = "stdgregwar", license = "CC BY-SA" }
+file{ path = "maps/event_order.lua", author = "stdgregwar", license = "CC BY-SA" }
 file{ path = "maps/jumper_tests.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/jumper_tests.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/lua_interface.dat", author = "Cluedrew Kenfar Ink", license = "CC BY-SA 4.0" }
+file{ path = "maps/lua_interface.lua", author = "Cluedrew Kenfar Ink", license = "GPL v3" }
+file{ path = "maps/multiplayer/cameras.dat", author = "stdgregwar", license = "CC BY-SA" }
+file{ path = "maps/multiplayer/cameras.lua", author = "stdgregwar", license = "CC BY-SA" }
+file{ path = "maps/multiplayer/cameras2.dat", author = "stdgregwar", license = "CC BY-SA 4.0" }
+file{ path = "maps/multiplayer/cameras2.lua", author = "stdgregwar", license = "CC BY-SA 4.0" }
+file{ path = "maps/multiplayer/cameras3_1607.dat", author = "stdgregwar", license = "CC BY-SA 4.0 " }
+file{ path = "maps/multiplayer/cameras3_1607.lua", author = "stdgregwar", license = "GPLv3" }
+file{ path = "maps/multiplayer/controls.dat", author = "std::gregwar", license = "GPLv3" }
+file{ path = "maps/multiplayer/controls.lua", author = "std::gregwar", license = "GPLv3" }
+file{ path = "maps/multiplayer/friendly_fire.dat", author = "std::gregwar", license = "GPLv3" }
+file{ path = "maps/multiplayer/friendly_fire.lua", author = "std::gregwar", license = "GPLv3" }
+file{ path = "maps/multiplayer/heroes.dat", author = "stdgregwar", license = "CC BY-SA" }
+file{ path = "maps/multiplayer/heroes.lua", author = "stdgregwar", license = "CC BY-SA" }
+file{ path = "maps/multiplayer/heroes2.dat", author = "stdgregwar", license = "CC-BY-SA" }
+file{ path = "maps/multiplayer/heroes2.lua", author = "stdgregwar", license = "CC-BY-SA" }
+file{ path = "maps/multiplayer/heroes_game_over.dat", author = "stdgregwar", license = "CC by SA" }
+file{ path = "maps/multiplayer/heroes_game_over.lua", author = "stdgregwar", license = "CC by SA" }
 file{ path = "maps/oriented_collisions.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/oriented_collisions.lua", author = "std::gregwar", license = "GPL v3" }
+file{ path = "maps/straight_movement.dat", author = "std::gregwar", license = "CC-BY-SA" }
+file{ path = "maps/straight_movement.lua", author = "std::gregwar", license = "CC-BY-SA" }
 file{ path = "maps/surface_tests.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/surface_tests.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/teletransportation_tests/main.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -790,6 +958,7 @@ file{ path = "maps/text_predict.dat", author = "std::gregwar", license = "CC BY-
 file{ path = "maps/text_predict.lua", author = "std::gregwar", license = "GPL v3" }
 file{ path = "maps/traversable.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/traversable.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "musics/great_fairy.it", author = "Metallizer", }
 file{ path = "shaders/scale2x.dat", author = "Christopho", license = "GPL v3" }
 file{ path = "shaders/scale2x.frag.glsl", author = "Vlag", license = "GPL v3" }
 file{ path = "shaders/scale2x.vert.glsl", author = "Vlag", license = "GPL v3" }
@@ -916,6 +1085,7 @@ file{ path = "sprites/16x16.dat", author = "Christopho", license = "CC BY-SA 4.0
 file{ path = "sprites/16x16.png", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/16x24.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/16x24.png", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "sprites/1x1.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/blocks/block.png", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/blocks/block_brown.dat", license = "CC BY-SA 4.0" }
 file{ path = "sprites/chests/chest.png", author = "Diarandor", license = "CC BY-SA 4.0" }
@@ -939,6 +1109,8 @@ file{ path = "sprites/entities/block.dat", author = "Diarandor", license = "CC B
 file{ path = "sprites/entities/bomb.dat", author = "Bertram, hyptosis", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/boomerang1.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/chest.dat", author = "Diarandor", license = "CC BY-SA 4.0" }
+file{ path = "sprites/entities/conveyor_belt.dat", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "sprites/entities/conveyor_belt.png", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/crystal_block.dat", author = "Alex Gleason", license = "CC BY-SA 4.0" }
 file{ path = "sprites/entities/dark0.png", author = "Bertram", license = "CC BY-SA 4.0" }

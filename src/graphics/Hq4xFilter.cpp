@@ -15,7 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/graphics/Hq4xFilter.h"
-#include "solarus/third_party/hqx/hqx.h"
+#include <hqx.h>
 
 namespace Solarus {
 

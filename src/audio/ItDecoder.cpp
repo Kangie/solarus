@@ -16,8 +16,8 @@
  */
 #include "solarus/audio/ItDecoder.h"
 #include "solarus/core/Debug.h"
-#include <stdafx.h>  // These two headers are with the libmodplug ones.
-#include <sndfile.h>
+#include <libmodplug/stdafx.h>
+#include <libmodplug/sndfile.h>
 
 namespace Solarus {
 
@@ -41,9 +41,7 @@ ItDecoder::ItDecoder():
  */
 void ItDecoder::load(const std::string& sound_buffer) {
 
-  Debug::check_assertion(modplug_file == nullptr,
-      "IT data is already loaded"
-  );
+  SOLARUS_REQUIRE(modplug_file == nullptr, "IT data is already loaded");
 
   // Load the IT data into the IT library.
   modplug_file = ModPlugFileUniquePtr(
@@ -56,9 +54,7 @@ void ItDecoder::load(const std::string& sound_buffer) {
  */
 void ItDecoder::unload() {
 
-  Debug::check_assertion(modplug_file != nullptr,
-      "IT data is not loaded"
-  );
+  SOLARUS_REQUIRE(modplug_file != nullptr, "IT data is not loaded");
 
   modplug_file = nullptr;
 }
@@ -80,7 +76,7 @@ int ItDecoder::decode(void* decoded_data, int nb_samples) {
  * \return The number of channels.
  */
 int ItDecoder::get_num_channels() const {
-  return ModPlug_NumChannels(modplug_file.get());
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->m_nChannels;
 }
 
 /**
@@ -89,24 +85,10 @@ int ItDecoder::get_num_channels() const {
  * \return The volume of this channel.
  */
 int ItDecoder::get_channel_volume(int channel) const {
-
-  const int num_patterns = ModPlug_NumPatterns(modplug_file.get());
-
-  Debug::check_assertion(channel >= 0 && channel < get_num_channels(),
+  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
       "Invalid channel number");
 
-  if (num_patterns == 0) {
-    return 0;
-  }
-
-  unsigned int num_rows = 0;
-  ModPlugNote* notes = ModPlug_GetPattern(modplug_file.get(), 0, &num_rows);
-
-  if (num_rows == 0) {
-    return 0;
-  }
-
-  return notes[0].Volume;
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nGlobalVol;
 }
 
 /**
@@ -115,17 +97,34 @@ int ItDecoder::get_channel_volume(int channel) const {
  * \param volume The volume to set.
  */
 void ItDecoder::set_channel_volume(int channel, int volume) {
+  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
+      "Invalid channel number");
 
-  const unsigned int num_channels = get_num_channels();
-  const unsigned int num_patterns = ModPlug_NumPatterns(modplug_file.get());
+  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nGlobalVol = volume;
+}
 
-  for (unsigned int pattern = 0; pattern < num_patterns; ++pattern) {
-    unsigned int num_rows;
-    ModPlugNote* notes = ModPlug_GetPattern(modplug_file.get(), pattern, &num_rows);
-    for (unsigned int j = channel; j < num_rows * num_channels; j += num_channels) {
-      notes[j].Volume = volume;
-    }
-  }
+/**
+ * \brief Returns the pan of a channel.
+ * \param channel A channel index.
+ * \return The pan of this channel.
+ */
+int ItDecoder::get_channel_pan(int channel) const {
+  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
+      "Invalid channel number");
+
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nPan;
+}
+
+/**
+ * \brief Sets the pan of a channel.
+ * \param channel A channel index.
+ * \param pan The pan to set.
+ */
+void ItDecoder::set_channel_pan(int channel, int pan) {
+  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
+      "Invalid channel number");
+
+  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nPan = pan;
 }
 
 /**
@@ -144,28 +143,6 @@ int ItDecoder::get_tempo() const {
 void ItDecoder::set_tempo(int tempo) {
 
   reinterpret_cast<CSoundFile*>(modplug_file.get())->SetTempo(tempo);
-}
-
-/**
- * \brief Returns whether the decoder loops when reaching the end.
- */
-bool ItDecoder::loops() const {
-
-  ModPlug_Settings settings;
-  ModPlug_GetSettings(&settings);
-  return settings.mLoopCount == -1;  // -1 means looping forever.
-}
-
-/**
- * \brief Sets whether the decoder should loop when reaching the end.
- * \param loops \c true to make the decoder loop.
- */
-void ItDecoder::set_loops(bool loops) {
-
-  ModPlug_Settings settings;
-  ModPlug_GetSettings(&settings);
-  settings.mLoopCount = loops ? -1 : 0;
-  ModPlug_SetSettings(&settings);
 }
 
 }

@@ -70,7 +70,7 @@ TargetMovement::TargetMovement(
   sign_x(0),
   sign_y(0),
   moving_speed(moving_speed),
-  next_recomputation_date(System::now()),
+  next_recomputation_date(System::now_ms()),
   finished(false),
   recomputing_movement(false) {
 }
@@ -115,7 +115,7 @@ void TargetMovement::set_target(
   }
 
   recompute_movement();
-  next_recomputation_date = System::now() + recomputation_delay;
+  next_recomputation_date = System::now_ms() + recomputation_delay;
 }
 
 /**
@@ -144,7 +144,7 @@ void TargetMovement::update() {
     set_target(nullptr, target);
   }
 
-  if (System::now() >= next_recomputation_date) {
+  if (System::now_ms() >= next_recomputation_date) {
     recompute_movement();
     next_recomputation_date += recomputation_delay;
   }
@@ -180,8 +180,11 @@ void TargetMovement::recompute_movement() {
     sign_x = (dxy.x >= 0) ? 1 : -1;
     sign_y = (dxy.y >= 0) ? 1 : -1;
 
-    if (std::abs(angle - get_angle()) > 1E-6 || get_speed() < 1E-6) {
-      // The angle has changed or the movement was stopped.
+    if (std::abs(angle - get_angle()) > 1E-6 ||
+        std::abs(moving_speed - get_speed()) > 1E-6 ||
+        get_speed() < 1E-6
+    ) {
+      // The angle or speed has changed or the movement was stopped.
       set_speed(moving_speed);
       set_angle(angle);
       set_max_distance((int) Geometry::get_distance(get_xy(), target));

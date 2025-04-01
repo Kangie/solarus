@@ -61,7 +61,6 @@ class SOLARUS_API CustomEntity: public Entity {
     void update() override;
 
     // Direction.
-    int get_sprites_direction() const;
     void set_sprites_direction(int direction);
 
     // What can traverse this custom entity.
@@ -100,6 +99,7 @@ class SOLARUS_API CustomEntity: public Entity {
     bool is_enemy_obstacle(Enemy& enemy) override;
     bool is_jumper_obstacle(Jumper& jumper, const Rectangle& candidate_position) override;
     bool is_destructible_obstacle(Destructible& destructible) override;
+    bool is_chest_obstacle(Chest& chest) override;
     bool is_separator_obstacle(Separator& separator, const Rectangle& candidate_position) override;
 
     bool can_traverse_ground(Ground ground) const;
@@ -155,7 +155,7 @@ class SOLARUS_API CustomEntity: public Entity {
     void notify_collision_with_fire(Fire& fire, Sprite& sprite_overlapping) override;
     void notify_collision_with_enemy(Enemy& enemy, CollisionMode collision_mode) override;
     void notify_collision_with_enemy(Enemy& enemy, Sprite& this_sprite, Sprite& enemy_sprite) override;
-    bool notify_action_command_pressed() override;
+    bool notify_action_command_pressed(Hero& hero) override;
     bool notify_interaction_with_item(EquipmentItem& item) override;
 
     // Observing the ground.

@@ -28,11 +28,14 @@ namespace Solarus {
  *
  * TODO: inherit StraightMovement instead?
  */
-class JumpMovement: public PixelMovement {
+class JumpMovement final: public PixelMovement {
 
   public:
 
     JumpMovement(int direction8, int distance, int speed, bool ignore_obstacles);
+
+    // static information
+    static constexpr const char module_name[] = "sol.jump_movement";
 
     int get_direction8() const;
     void set_direction8(int direction8);

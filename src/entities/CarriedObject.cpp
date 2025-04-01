@@ -77,6 +77,10 @@ CarriedObject::CarriedObject(
   is_breaking(false),
   break_one_layer_above(false),
   destruction_sound_id(destruction_sound_id),
+  throwing_sound_id("throw"),
+  falling_sound_id("jump"),
+  sinking_sound_id("walk_on_water"),
+  exploding_sound_id("explosion"),
   damage_on_enemies(damage_on_enemies),
   shadow_sprite(nullptr),
   throwing_direction(0),
@@ -166,6 +170,27 @@ void CarriedObject::set_damage_on_enemies(int damage_on_enemies) {
 }
 
 /**
+ * \brief Returns the height this object will be displayed at, relative to the hero's carry height.
+ * \return The object height.
+ */
+
+int CarriedObject::get_object_height() const{
+  return item_height;
+}
+
+/**
+ * \brief Sets the height this object will be displayed at, relative to the hero's carry height.
+ * \param height The object height.
+ */
+void CarriedObject::set_object_height(int height) {
+
+  if (height != item_height){
+    this->item_height = height;
+    update_relative_movement();
+  }
+}
+
+/**
  * \brief Returns the id of the sound to play when this object is destroyed.
  * \return The destruction sound id or an empty string.
  */
@@ -179,6 +204,70 @@ const std::string& CarriedObject::get_destruction_sound() const {
  */
 void CarriedObject::set_destruction_sound(const std::string& destruction_sound_id) {
   this->destruction_sound_id = destruction_sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is thrown.
+ * \return The throwing sound id or an empty string.
+ */
+const std::string& CarriedObject::get_throwing_sound() const {
+  return throwing_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is thrown.
+ * \param sound_id The throwing sound id or an empty string.
+ */
+void CarriedObject::set_throwing_sound(const std::string& sound_id) {
+  this->throwing_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is falling into a hole.
+ * \return The falling sound id or an empty string.
+ */
+const std::string& CarriedObject::get_falling_sound() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is falling into a hole.
+ * \param sound_id The falling sound id or an empty string.
+ */
+void CarriedObject::set_falling_sound(const std::string& sound_id) {
+  this->falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is sinking into deep water or lava.
+ * \return The sinking sound id or an empty string.
+ */
+const std::string& CarriedObject::get_sinking_sound() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is sinking into deep water or lava.
+ * \param sound_id The sinking sound id or an empty string.
+ */
+void CarriedObject::set_sinking_sound(const std::string& sound_id) {
+  this->sinking_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is exploding.
+ * \return The exploding sound id or an empty string.
+ */
+const std::string& CarriedObject::get_exploding_sound_id() const {
+  return exploding_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is exploding.
+ * \param sound_id The exploding sound id or an empty string.
+ */
+void CarriedObject::set_exploding_sound_id(const std::string& sound_id) {
+  this->exploding_sound_id = sound_id;
 }
 
 /**
@@ -224,7 +313,9 @@ void CarriedObject::throw_item(int direction) {
   this->is_throwing = true;
 
   // play the sound
-  Sound::play("throw");
+  if (!throwing_sound_id.empty()) {
+    Sound::play(throwing_sound_id);
+  }
 
   // Set up sprites.
   if (main_sprite->has_animation("stopped")) {
@@ -242,8 +333,8 @@ void CarriedObject::throw_item(int direction) {
   set_movement(movement);
 
   this->y_increment = -2;
-  this->next_down_date = System::now() + 40;
-  this->item_height = 18;
+  this->next_down_date = System::now_ms() + 40;
+  this->item_height = item_height + hero->get_carry_height();
 
   get_lua_context()->carried_object_on_thrown(*this);
 }
@@ -269,7 +360,7 @@ bool CarriedObject::is_being_thrown() const {
  * \return true if the item is about to explode
  */
 bool CarriedObject::will_explode_soon()  const{
-  return can_explode() && System::now() >= explosion_date - 1500;
+  return can_explode() && System::now_ms() >= explosion_date - 1500;
 }
 
 /**
@@ -280,6 +371,7 @@ void CarriedObject::break_item() {
   if (is_throwing && throwing_direction != 3) {
     // destroy the item where it is actually drawn
     set_y(get_y() - item_height);
+    main_sprite->set_xy({0, 0});
   }
 
   if (get_movement() != nullptr) {
@@ -302,7 +394,9 @@ void CarriedObject::break_item() {
     get_entities().add_entity(std::make_shared<Explosion>(
         "", get_layer(), get_xy(), true
     ));
-    Sound::play("explosion");
+    if (!exploding_sound_id.empty()) {
+      Sound::play(exploding_sound_id);
+    }
     if (is_throwing) {
       remove_from_map(); // because if the item was still carried by the hero, then the hero class will destroy it
     }
@@ -342,13 +436,17 @@ void CarriedObject::break_item_on_ground() {
     }
 
     case Ground::HOLE:
-      Sound::play("jump");
+      if (!falling_sound_id.empty()) {
+        Sound::play(falling_sound_id);
+      }
       remove_from_map();
       break;
 
     case Ground::DEEP_WATER:
     case Ground::LAVA:
-      Sound::play("walk_on_water");
+      if (!sinking_sound_id.empty()) {
+        Sound::play(sinking_sound_id);  
+      }
       remove_from_map();
       break;
 
@@ -378,6 +476,23 @@ bool CarriedObject::can_explode() const {
   return explosion_date != 0;
 }
 
+/** 
+ * \brief Creates a new RelativeMovement with the current item_height (to be called when this value changes)
+ */
+
+void CarriedObject::update_relative_movement(){
+  if (!is_breaking && !is_throwing){
+    if (get_movement() != nullptr) clear_movement();
+
+    set_movement(std::make_shared<RelativeMovement>(
+      hero,
+      0,
+      -(item_height + hero->get_carry_height()),
+      true
+    ));
+  }
+}
+
 /**
  * \brief This function is called by the map when the game is suspended or resumed.
  * \param suspended true to suspend the entity, false to resume it
@@ -393,7 +508,7 @@ void CarriedObject::set_suspended(bool suspended) {
 
   if (!suspended && get_when_suspended() != 0) {
     // recalculate the timers
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     if (is_throwing) {
       next_down_date += diff;
     }
@@ -425,7 +540,7 @@ void CarriedObject::update() {
     set_movement(std::make_shared<RelativeMovement>(
         hero,
         0,
-        -18,
+        -(item_height + hero->get_carry_height()),
         true
     ));
     get_lua_context()->carried_object_on_lifted(*this);
@@ -434,7 +549,7 @@ void CarriedObject::update() {
   // when the item has finished flying, destroy it
   else if (can_explode() && !is_breaking) {
 
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
 
     if (now >= explosion_date) {
       break_item();
@@ -473,7 +588,7 @@ void CarriedObject::update() {
       break_item_on_ground();
     }
     else {
-      uint32_t now = System::now();
+      uint32_t now = System::now_ms();
       while (now >= next_down_date) {
         next_down_date += 40;
         item_height -= y_increment;

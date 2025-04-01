@@ -15,13 +15,11 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/Debug.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/core/Rectangle.h"
 #include "solarus/graphics/SpriteAnimation.h"
 #include "solarus/graphics/SpriteAnimationSet.h"
 #include "solarus/graphics/SpriteAnimationDirection.h"
 #include "solarus/graphics/SpriteData.h"
-#include "solarus/lua/LuaTools.h"
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -35,7 +33,6 @@ namespace Solarus {
  */
 SpriteAnimationSet::SpriteAnimationSet(const std::string& id):
   id(id) {
-
   load();
 }
 
@@ -44,7 +41,7 @@ SpriteAnimationSet::SpriteAnimationSet(const std::string& id):
  */
 void SpriteAnimationSet::load() {
 
-  Debug::check_assertion(animations.empty(),
+  SOLARUS_REQUIRE(animations.empty(),
       "Animation set already loaded");
 
   // Load the sprite data file.
@@ -58,6 +55,26 @@ void SpriteAnimationSet::load() {
       add_animation(kvp.first, kvp.second);
     }
   }
+}
+
+/**
+ * \brief Returns whether this sprite animation set is valid.
+ *
+ * A sprite animation set is considered valid if it was loaded successfully
+ * and has at least one animation.
+ *
+ * \return \c true if the sprite animation set is valid.
+ */
+bool SpriteAnimationSet::is_valid() const {
+  return !animations.empty();
+}
+
+/**
+ * \brief Get the id of the animation set.
+ * \return Constant reference to id.
+ */
+const std::string& SpriteAnimationSet::get_id() const {
+  return id;
 }
 
 /**
@@ -126,7 +143,7 @@ bool SpriteAnimationSet::has_animation(
 const SpriteAnimation& SpriteAnimationSet::get_animation(
     const std::string& animation_name) const {
 
-  Debug::check_assertion(has_animation(animation_name),
+  SOLARUS_REQUIRE(has_animation(animation_name),
       std::string("No animation '") + animation_name
       + "' in animation set '" + id + "'"
   );
@@ -142,7 +159,7 @@ const SpriteAnimation& SpriteAnimationSet::get_animation(
 SpriteAnimation& SpriteAnimationSet::get_animation(
     const std::string& animation_name) {
 
-  Debug::check_assertion(has_animation(animation_name),
+  SOLARUS_REQUIRE(has_animation(animation_name),
       std::string("No animation '") + animation_name
       + "' in animation set '" + id + "'"
   );

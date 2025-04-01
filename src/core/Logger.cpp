@@ -55,10 +55,11 @@ namespace {
  * \param out The output stream.
  */
 SOLARUS_API void print(const std::string& message, std::ostream& out) {
-#ifdef ANDROID
+#ifdef __ANDROID__
   SDL_Log("%s",message.c_str());
+  (void)out;
 #else
-  uint32_t simulated_time = System::now();
+  uint32_t simulated_time = System::now_ms();
   out << "[Solarus] [" << simulated_time << "] " << message << std::endl;
 #endif
 }

@@ -43,3 +43,6 @@ set(SOLARUS_FILE_LOGGING "ON" CACHE BOOL "Enable logging of errors to file.")
 set(SOLARUS_LUA_WIN_UNICODE_WORKAROUND "ON" CACHE BOOL "Enable Lua workaround for opening Unicode filenames on Windows")
 
 set(SOLARUS_OPENAL_EXTENSIONS_RECONNECT ${SOLARUS_INITIAL_OPENAL_EXTENSIONS_RECONNECT} CACHE BOOL "Use OpenAL extensions to automatically reconnect to the default audio device")
+
+# Profiling instrumentation
+set(SOLARUS_PROFILING "OFF" CACHE BOOL "Enable compiling with easy_profiler embedded")

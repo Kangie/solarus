@@ -87,7 +87,7 @@ Boomerang::Boomerang(
   movement->set_max_distance(max_distance);
   set_movement(movement);
 
-  next_sound_date = System::now();
+  next_sound_date = System::now_ms();
 }
 
 /**
@@ -96,14 +96,6 @@ Boomerang::Boomerang(
  */
 EntityType Boomerang::get_type() const {
   return ThisType;
-}
-
-/**
- * \brief Returns whether entities of this type can be drawn.
- * \return true if this type of entity can be drawn
- */
-bool Boomerang::can_be_drawn() const {
-  return true;
 }
 
 /**
@@ -237,7 +229,7 @@ bool Boomerang::is_going_back() const {
  */
 void Boomerang::go_back() {
 
-  Debug::check_assertion(!is_going_back(), "The boomerang is already going back");
+  SOLARUS_REQUIRE(!is_going_back(), "The boomerang is already going back");
 
   has_to_go_back = true;
 }
@@ -253,7 +245,7 @@ void Boomerang::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   if (now >= next_sound_date) {
     Sound::play("boomerang");
     next_sound_date = now + 150;

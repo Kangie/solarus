@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2018-2020 std::gregwar, Solarus - http://www.solarus-games.org
+ *
+ * Solarus is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Solarus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 #pragma once
 
 #include "solarus/core/Rectangle.h"
@@ -17,16 +33,13 @@ class GlTexture : public SurfaceImpl
 {
   friend class GlRenderer;
 public:
-  GlTexture(int width, int height, bool screen_tex = false);
+  GlTexture(int width, int height, bool screen_tex = false, int margin = 0);
   GlTexture(SDL_Surface_UniquePtr surface);
 
   GLuint get_texture() const;
   SDL_Surface* get_surface() const override;
 
   GlTexture& targetable();
-
-  int get_width() const override;
-  int get_height() const override;
 
   /**
    * @brief upload potentially modified surface
@@ -39,6 +52,7 @@ private:
   bool target = false;
   void release() const;
   void set_texture_params();
+  void create_surface() const;
   glm::mat3 uv_transform;
   mutable bool surface_dirty = true;
   GLuint tex_id = 0;

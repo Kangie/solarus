@@ -329,7 +329,7 @@ void Teletransporter::transport_hero(Hero& hero) {
 
   transporting_hero = true;
 
-  get_lua_context()->teletransporter_on_activated(*this);
+  get_lua_context()->teletransporter_on_activated(*this, hero);
 
   if (!is_enabled() || is_being_removed()) {
     // The teletransporter was just disabled: abort the teletransportation.
@@ -341,10 +341,23 @@ void Teletransporter::transport_hero(Hero& hero) {
     Sound::play(sound_id);
   }
 
-  get_game().set_current_map(destination_map_id, name, transition_style);
+  HeroPtr hero_ptr = std::static_pointer_cast<Hero>(hero.shared_from_this());
+
+  if(hero.get_linked_camera()) {
+    hero.set_suspended(true); //Suspend the traveling hero so that it does not trigger more tp
+    get_game().teleport_hero(hero_ptr, destination_map_id, name, transition_style);
+  } else {
+    // Handle edge case of StairsState Stairs::NORMAL_WAY
+    // trying to transport a hero without a camera,
+    // leaving the clipping rectangle indefinitely.
+    HeroSprites& sprites = hero.get_hero_sprites();
+    sprites.set_clipping_rectangle();
+  }
+
   transporting_hero = false;
-  hero.set_xy(hero_x, hero_y);
+  if(is_on_map_side()) {
+    hero.set_xy(hero_x, hero_y);
+  }
 }
 
 }
-

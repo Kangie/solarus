@@ -60,13 +60,16 @@ void Hero::HurtState::start(const State* previous_state) {
 
   Equipment& equipment = get_equipment();
 
-  Sound::play("hero_hurt");
-
   Hero& hero = get_entity();
   const uint32_t invincibility_duration = 2000;
   hero.set_invincible(true, invincibility_duration);
   get_sprites().set_animation_hurt();
   get_sprites().blink(invincibility_duration);
+
+  const std::string& hurt_sound_id = hero.get_hurt_sound_id();
+  if (!hurt_sound_id.empty()) {
+    Sound::play(hurt_sound_id);
+  }  
 
   if (has_source) {
     double angle = Geometry::get_angle(source_xy, hero.get_xy());
@@ -77,7 +80,7 @@ void Hero::HurtState::start(const State* previous_state) {
     movement->set_angle(angle);
     hero.set_movement(movement);
   }
-  end_hurt_date = System::now() + 200;
+  end_hurt_date = System::now_ms() + 200;
 
   // See if the script customizes how the hero takes damages.
   bool handled = get_lua_context().hero_on_taking_damage(hero, damage);
@@ -115,7 +118,7 @@ void Hero::HurtState::update() {
 
   Hero& hero = get_entity();
   if ((hero.get_movement() != nullptr && hero.get_movement()->is_finished())
-      || System::now() >= end_hurt_date) {
+      || System::now_ms() >= end_hurt_date) {
     // The movement may be finished, or the end date may be reached
     // when there is an obstacle or when there is no movement at all.
 
@@ -133,7 +136,7 @@ void Hero::HurtState::set_suspended(bool suspended) {
   HeroState::set_suspended(suspended);
 
   if (!suspended) {
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     end_hurt_date += diff;
   }
 }

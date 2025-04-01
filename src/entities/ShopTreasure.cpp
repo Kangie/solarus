@@ -57,8 +57,9 @@ ShopTreasure::ShopTreasure(
   treasure(treasure),
   price(price),
   dialog_id(dialog_id),
+  cannot_buy_sound_id("wrong"),
   treasure_sprite(treasure.create_sprite()),
-  rupee_icon_sprite(std::make_shared<Sprite>("entities/rupee_icon")),
+  rupee_icon_sprite(Sprite::create("entities/rupee_icon")),
   price_digits(0, 0, TextSurface::HorizontalAlignment::LEFT, TextSurface::VerticalAlignment::TOP) {
 
   set_collision_modes(CollisionMode::COLLISION_FACING);
@@ -85,7 +86,7 @@ ShopTreasure::ShopTreasure(
  * is not obtainable.
  */
 std::shared_ptr<ShopTreasure> ShopTreasure::create(
-    Game& /* game */,
+    Game& game,
     const std::string& name,
     int layer,
     const Point& xy,
@@ -95,7 +96,7 @@ std::shared_ptr<ShopTreasure> ShopTreasure::create(
     const std::string& dialog_id
 ) {
   // See if the item is not already bought and is obtainable.
-  if (treasure.is_found() || !treasure.is_obtainable()) {
+  if (treasure.is_found(game.get_equipment()) || !treasure.is_obtainable(game.get_equipment())) {
     return nullptr;
   }
 
@@ -138,6 +139,22 @@ const std::string& ShopTreasure::get_dialog_id() const {
 }
 
 /**
+ * \brief Returns the id of the sound played when the played cannot buy the item.
+ * \return The sound id.
+ */
+const std::string& ShopTreasure::get_cannot_buy_sound_id() const {
+  return cannot_buy_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the player cannot buy this item.
+ * \param sound_id The sound id.
+ */
+void ShopTreasure::set_cannot_buy_sound_id(const std::string& sound_id) {
+  cannot_buy_sound_id = sound_id;
+}
+
+/**
  * \brief Returns true if this entity does not react to the sword.
  *
  * If true is returned, nothing will happen when the hero taps this entity with the sword.
@@ -170,13 +187,13 @@ void ShopTreasure::notify_collision(
 
   if (entity_overlapping.is_hero() && !get_game().is_suspended()) {
 
-    Hero& hero = static_cast<Hero&>(entity_overlapping);
+    Hero& hero = entity_overlapping.as<Hero>();
 
-    if (get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_NONE
+    if (hero.get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_NONE
         && hero.is_free()) {
 
       // we show the 'look' icon
-      get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_LOOK);
+      hero.get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_LOOK);
     }
   }
 }
@@ -184,16 +201,16 @@ void ShopTreasure::notify_collision(
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool ShopTreasure::notify_action_command_pressed() {
+bool ShopTreasure::notify_action_command_pressed(Hero &hero) {
 
-  if (get_hero().is_free()
-      && get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_LOOK) {
+  if (hero.is_free()
+      && hero.get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_LOOK) {
 
-    get_lua_context()->notify_shop_treasure_interaction(*this);
+    get_lua_context()->notify_shop_treasure_interaction(*this, hero);
     return true;
   }
 
-  return Entity::notify_action_command_pressed();
+  return Entity::notify_action_command_pressed(hero);
 }
 
 /**
@@ -218,17 +235,17 @@ void ShopTreasure::built_in_draw(Camera& camera) {
 
   // draw the treasure
   treasure_sprite->draw(camera_surface,
-      x + 16 - camera.get_top_left_x(),
-      y + 13 - camera.get_top_left_y()
+      x + 16,
+      y + 13
   );
 
   // also draw the price
   price_digits.draw(camera_surface,
-      x + 12 - camera.get_top_left_x(),
-      y + 21 - camera.get_top_left_y());
+      x + 12,
+      y + 21);
   rupee_icon_sprite->draw(camera_surface,
-      x - camera.get_top_left_x(),
-      y + 22 - camera.get_top_left_y());
+      x,
+      y + 22);
 
   Entity::built_in_draw(camera);
 }

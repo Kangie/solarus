@@ -18,15 +18,18 @@
 #define SOLARUS_ENTITY_H
 
 #include "solarus/core/Rectangle.h"
-#include "solarus/core/GameCommand.h"
+#include "solarus/core/Command.h"
 #include "solarus/core/Common.h"
+#include "solarus/entities/HeroPtr.h"
 #include "solarus/entities/EntityType.h"
 #include "solarus/entities/Ground.h"
 #include "solarus/entities/CollisionMode.h"
 #include "solarus/entities/EnemyAttack.h"
 #include "solarus/entities/EnemyReaction.h"
 #include "solarus/graphics/SpritePtr.h"
+#include "solarus/graphics/SurfacePtr.h"
 #include "solarus/lua/ExportableToLua.h"
+#include "solarus/entities/EntityPtr.h"
 #include <list>
 #include <memory>
 #include <set>
@@ -53,7 +56,7 @@ class EquipmentItem;
 class Explosion;
 class Fire;
 class Game;
-class GameCommands;
+class Controls;
 class Hero;
 class Jumper;
 class LuaContext;
@@ -87,6 +90,9 @@ class SOLARUS_API Entity: public ExportableToLua {
 
   public:
 
+    // static information
+    static constexpr const char type_name[] = "entity";
+
     using UserProperty = std::pair<std::string, std::string>;
 
     struct NamedSprite {
@@ -112,23 +118,26 @@ class SOLARUS_API Entity: public ExportableToLua {
     Point get_ground_point() const;
     bool is_ground_modifier() const;
     virtual Ground get_modified_ground() const;
-    virtual bool can_be_drawn() const;
     virtual bool is_drawn_at_its_position() const;
 
-    virtual void notify_command_pressed(GameCommand command);
-    virtual void notify_command_released(GameCommand command);
+    virtual bool notify_control(const ControlEvent& event);
+
+    /*virtual void notify_command_pressed(Command command);
+    virtual void notify_command_released(Command command);*/
 
     // Adding to a map.
     bool is_initialized() const;
     bool is_on_map() const;
+    void place_on_map(Map& map);
     void set_map(Map& map);
     Map& get_map() const;
     virtual void notify_creating();
     virtual void notify_created();
     virtual void notify_map_starting(Map& map, const std::shared_ptr<Destination>& destination);
     virtual void notify_map_started(Map& map, const std::shared_ptr<Destination>& destination);
-    virtual void notify_map_opening_transition_finishing(Map& map, const std::shared_ptr<Destination>& destination);
-    virtual void notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination);
+    //virtual void notify_map_opening_transition_finishing(Map& map, const std::shared_ptr<Destination>& destination);
+    virtual void notify_map_opening_transition_finishing(Map& map, const std::string& destination_name, const HeroPtr &);
+    virtual void notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination, const HeroPtr&);
     virtual void notify_map_finished();
     virtual void notify_tileset_changed();
     Game& get_game();
@@ -169,6 +178,9 @@ class SOLARUS_API Entity: public ExportableToLua {
     void set_top_left_y(int y);
     void set_top_left_xy(int x, int y);
     void set_top_left_xy(const Point& xy);
+    int get_bottom_right_x() const;
+    int get_bottom_right_y() const;
+    Point get_bottom_right_xy() const;
 
     virtual Point get_facing_point() const;
     Point get_touching_point(int direction) const;
@@ -266,6 +278,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     Entity* get_facing_entity();
     const Entity* get_facing_entity() const;
     void set_facing_entity(Entity* facing_entity);
+    void update_facing_entity();
     virtual void notify_facing_entity_changed(Entity* facing_entity);
     static const Point& direction_to_xy_move(int direction8);
 
@@ -325,6 +338,7 @@ class SOLARUS_API Entity: public ExportableToLua {
 
     // Being detected by other entities.
     void check_collision_with_detectors();
+    void check_collision_with_detectors(std::vector<EntityPtr>& entities_nearby);
     void check_collision_with_detectors(Sprite& sprite);
 
     virtual void check_position();
@@ -347,6 +361,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     virtual void notify_collision_with_fire(Fire& fire, Sprite& sprite_overlapping);
     virtual void notify_collision_with_enemy(Enemy& enemy, CollisionMode collision_mode);
     virtual void notify_collision_with_enemy(Enemy& enemy, Sprite& this_sprite, Sprite& enemy_sprite);
+    virtual void notify_collision_with_hero(Hero& hero, Sprite& this_sprite, Sprite& hero_sprite);
     virtual void notify_attacked_enemy(
         EnemyAttack attack,
         Enemy& victim,
@@ -355,12 +370,12 @@ class SOLARUS_API Entity: public ExportableToLua {
         bool killed);
 
     // Interactions.
-    bool can_be_lifted() const;
+    bool can_be_lifted(Hero &hero) const;
     int get_weight() const;
     void set_weight(int weight);
-    virtual bool notify_action_command_pressed();
+    virtual bool notify_action_command_pressed(Hero &hero);
     virtual bool notify_interaction_with_item(EquipmentItem& item);
-    virtual bool start_movement_by_hero();
+    virtual bool start_movement_by_hero(Hero &);
     virtual void stop_movement_by_hero();
     virtual std::string get_sword_tapping_sound();
 
@@ -382,6 +397,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     virtual bool is_enemy_obstacle(Enemy& enemy);
     virtual bool is_jumper_obstacle(Jumper& jumper, const Rectangle& candidate_position);
     virtual bool is_destructible_obstacle(Destructible& destructible);
+    virtual bool is_chest_obstacle(Chest& chest);
     virtual bool is_separator_obstacle(Separator& separator, const Rectangle& candidate_position);
     virtual bool is_sword_ignored() const;
 
@@ -390,19 +406,85 @@ class SOLARUS_API Entity: public ExportableToLua {
     virtual void set_suspended(bool suspended);
     virtual void update();
     void draw(Camera& camera);
+
     virtual void built_in_draw(Camera& camera);
     void draw_sprites(Camera& camera, const Rectangle& clipping_area = Rectangle());
 
     // Easy access to various game objects.
     Entities& get_entities();
     const Entities& get_entities() const;
-    Equipment& get_equipment();
-    const Equipment& get_equipment() const;
-    CommandsEffects& get_commands_effects();
-    GameCommands& get_commands();
+    //Equipment& get_equipment();
+    //const Equipment& get_equipment() const;
+    /*CommandsEffects& get_commands_effects();
+    Commands& get_commands();*/
     Savegame& get_savegame();
     const Savegame& get_savegame() const;
-    Hero& get_hero();
+    Hero& get_default_hero();
+    const Heroes& get_heroes() const;
+
+    template<class F>
+    /**
+     * @brief find a hero on the map this entity belongs to
+     * @param pred predicate for eligible hero
+     * @return
+     */
+    inline std::pair<bool, Heroes::const_iterator> find_hero(const F& pred) const {
+      const auto& heroes = get_heroes();
+      auto it = std::find_if(heroes.begin(),
+                             heroes.end(),
+                             pred);
+      return {it != heroes.end(), it};
+    }
+
+    template<class F>
+    /**
+     * @brief like find hero but only checks for any
+     * @param pred
+     * @return
+     */
+    inline bool any_hero(const F& pred) const {
+      return find_hero(pred).first;
+    }
+
+    template<class F>
+    /**
+     * @brief apply an action for each hero
+     * @param action an action to do
+     */
+    inline void for_each_hero(const F& action) const {
+      const auto& heroes = get_heroes();
+      for(const HeroPtr& hero : heroes) {
+        action(hero);
+      }
+    }
+
+    template<class F>
+    /**
+     * @brief
+     * @param pred
+     * @return
+     */
+    inline bool all_heroes(const F& pred) const {
+      return !any_hero([&](const HeroPtr& hero){return !pred(hero);});
+    }
+
+    template<class E>
+    /**
+     * @brief static casts this entity
+     * @return
+     */
+    inline E& as() {
+      return static_cast<E&>(*this);
+    }
+
+    template<class E>
+    /**
+     * @brief static casts this entity, const version
+     * @return
+     */
+    const E& as() const {
+      return static_cast<const E&>(*this);
+    }
 
     /**
      * \name State.

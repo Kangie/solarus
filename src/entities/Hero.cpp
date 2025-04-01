@@ -24,7 +24,6 @@
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
 #include "solarus/entities/Block.h"
-#include "solarus/entities/Bomb.h"
 #include "solarus/entities/Boomerang.h"
 #include "solarus/entities/Chest.h"
 #include "solarus/entities/Crystal.h"
@@ -32,7 +31,6 @@
 #include "solarus/entities/Destructible.h"
 #include "solarus/entities/Enemy.h"
 #include "solarus/entities/Entities.h"
-#include "solarus/entities/GroundInfo.h"
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Jumper.h"
 #include "solarus/entities/Sensor.h"
@@ -71,10 +69,10 @@
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 #include "solarus/movements/StraightMovement.h"
+#include "solarus/core/Savegame.h"
 #include <lua.hpp>
 #include <algorithm>
 #include <sstream>
-#include <utility>
 
 namespace Solarus {
 
@@ -102,21 +100,42 @@ int l_solid_ground_callback(lua_State* l) {
 /**
  * \brief Creates a hero.
  * \param equipment the equipment (needed to build the sprites even outside a game)
+ * \param name name of this hero entity
+ * \param eq_prefix prefix for the equipement variables into the savegame
  */
-Hero::Hero(Equipment& equipment):
-  Entity("hero", 0, 0, Point(0, 0), Size(16, 16)),
+Hero::Hero(const EquipmentPtr &equipment, const std::string& name):
+  Entity(name, 0, 0, Point(0, 0), Size(16, 16)),
   invincible(false),
   end_invincible_date(0),
   normal_walking_speed(88),
   walking_speed(normal_walking_speed),
+  carry_height(18),
   delayed_teletransporter(nullptr),
   on_raised_blocks(false),
+  falling_sound_id("hero_falls"),
+  respawn_sound_id("message_end"),
+  landing_sound_id("hero_lands"),
+  jumping_sound_id("jump"),
+  hurt_sound_id("hero_hurt"),
+  sinking_sound_id("splash"),
+  swimming_sound_id("swim"),
+  lifting_sound_id("lift"),
+  running_sound_id("running"),
+  running_obstacle_sound_id("running_obstacle"),
+  spin_attack_load_sound_id("sword_spin_attack_load"),
+  spin_attack_release_sound_id("sword_spin_attack_release"),
+  victory_sound_id("victory"),
+  swimming_speed(44),
   last_solid_ground_coords(0, 0),
   last_solid_ground_layer(0),
   target_solid_ground_callback(),
   next_ground_date(0),
   next_ice_date(0),
-  ice_movement_direction8(0) {
+  ice_movement_direction8(0),
+  equipment(equipment),
+  push_delay(800)
+{
+  equipment->set_hero(this);
 
   // position
   set_origin(8, 13);
@@ -125,7 +144,11 @@ Hero::Hero(Equipment& equipment):
 
   // sprites
   set_drawn_in_y_order(true);
-  sprites = std::unique_ptr<HeroSprites>(new HeroSprites(*this, equipment));
+  sprites = std::unique_ptr<HeroSprites>(new HeroSprites(*this, get_equipment()));
+
+  //Allow hero to collide with other heroes
+  set_collision_modes(CollisionMode::COLLISION_OVERLAPPING |
+                      CollisionMode::COLLISION_SPRITE);
 }
 
 /**
@@ -161,7 +184,7 @@ void Hero::set_suspended(bool suspended) {
 
   if (!suspended) {
 
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     next_ground_date += diff;
 
     if (end_invincible_date != 0) {
@@ -184,6 +207,7 @@ void Hero::update() {
   update_movement();
   update_direction();
   sprites->update();
+  update_facing_entity();
 
   // Update the state now because it may be impacted by movements and sprites.
   update_state();
@@ -193,6 +217,8 @@ void Hero::update() {
     check_collision_with_detectors();
     check_gameover();
   }
+
+  update_commands_effects();
 }
 
 /**
@@ -225,7 +251,7 @@ void Hero::update_direction() {
  */
 void Hero::update_movement() {
 
-  if (!get_map().is_loaded()) {
+  if (!is_on_map()) {
     // Can happen during transitions.
     return;
   }
@@ -247,6 +273,29 @@ void Hero::update_movement() {
 }
 
 /**
+ * \brief Makes sure the keys effects are coherent with the hero's equipment and abilities.
+ */
+void Hero::update_commands_effects() {
+
+  // when the game is paused or a dialog box is shown, the sword key is not the usual one
+  if (get_game().is_paused() || get_game().is_dialog_enabled()) {
+    return; // if the game is interrupted for some other reason (e.g. a transition), let the normal sword icon
+  }
+
+  // make sure the sword key is coherent with having a sword
+  if (get_equipment().has_ability(Ability::SWORD)
+      && get_commands_effects().get_sword_key_effect() != CommandsEffects::ATTACK_KEY_SWORD) {
+
+    get_commands_effects().set_sword_key_effect(CommandsEffects::ATTACK_KEY_SWORD);
+  }
+  else if (!get_equipment().has_ability(Ability::SWORD)
+      && get_commands_effects().get_sword_key_effect() == CommandsEffects::ATTACK_KEY_SWORD) {
+
+    get_commands_effects().set_sword_key_effect(CommandsEffects::ATTACK_KEY_NONE);
+  }
+}
+
+/**
  * \brief Updates the effects (if any) of the ground below the hero.
  *
  * This function is called repeatedly.
@@ -254,7 +303,7 @@ void Hero::update_movement() {
 void Hero::update_ground_effects() {
 
   // see if it's time to do something (depending on the ground)
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   if (now >= next_ground_date) {
 
     if (is_ground_visible() && get_movement() != nullptr) {
@@ -314,7 +363,7 @@ void Hero::update_ground_effects() {
  */
 void Hero::update_ice() {
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   int wanted_movement_direction8 = get_wanted_movement_direction8();
   if (wanted_movement_direction8 == -1) {
     // The player wants to stop.
@@ -417,16 +466,16 @@ void Hero::check_gameover() {
   if (get_equipment().get_life() <= 0 &&
       get_state()->can_start_gameover_sequence()) {
     sprites->stop_blinking();
-    get_game().start_game_over();
+    get_game().start_game_over(shared_from_this_cast<Hero>());
   }
 }
 
 /**
  * \copydoc Entity::built_in_draw
  */
-void Hero::built_in_draw(Camera& /* camera */) {
+void Hero::built_in_draw(Camera&  camera) {
 
-  get_state()->draw_on_map();
+  get_state()->draw_on_map(camera);
 }
 
 /**
@@ -441,21 +490,18 @@ bool Hero::notify_input(const InputEvent& event) {
 }
 
 /**
- * \brief This function is called when a game command is pressed
- * and the game is not suspended.
- * \param command The command pressed.
+ * @copydoc Entity::notify_command
  */
-void Hero::notify_command_pressed(GameCommand command) {
-  get_state()->notify_command_pressed(command);
-}
+bool Hero::notify_control(const ControlEvent& event) {
 
-/**
- * \brief This function is called when a game command is released
- * if the game is not suspended.
- * \param command The command released.
- */
-void Hero::notify_command_released(GameCommand command) {
-  get_state()->notify_command_released(command);
+  //TODO filter events that aren't for this hero
+  if (!event.is_from(controls)) {
+    return false; //Don't handle events not destined to this hero
+  }
+
+  get_state()->notify_control(event);
+
+  return true; // TODO verify this
 }
 
 /**
@@ -558,12 +604,12 @@ void Hero::notify_map_started(Map& map, const std::shared_ptr<Destination>& dest
 /**
  * \copydoc Entity::notify_map_opening_transition_finishing
  */
-void Hero::notify_map_opening_transition_finishing(Map& map, const std::shared_ptr<Destination>& destination) {
+void Hero::notify_map_opening_transition_finishing(Map& map, const std::string &destination_name, const HeroPtr &hero) {
 
-  Entity::notify_map_opening_transition_finishing(map, destination);
+  Entity::notify_map_opening_transition_finishing(map, destination_name, hero);
 
-  int side = get_map().get_destination_side();
-  if (side != -1) {
+  int side = get_map().get_destination_side(destination_name);
+  if (side != -1 && hero.get() == this) {
     // the hero was placed on the side of the map:
     // there was a scrolling between the previous map and this one
 
@@ -598,9 +644,9 @@ void Hero::notify_map_opening_transition_finishing(Map& map, const std::shared_p
 /**
  * \copydoc Entity::notify_map_opening_transition_finished
  */
-void Hero::notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination) {
+void Hero::notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination, const HeroPtr& hero) {
 
-  Entity::notify_map_opening_transition_finished(map, destination);
+  Entity::notify_map_opening_transition_finished(map, destination, hero);
   get_state()->notify_map_opening_transition_finished(map, destination);
 }
 
@@ -639,18 +685,12 @@ void Hero::place_on_map(Map& map) {
     return;
   }
 
-  // Add the hero to the map.
-  const HeroPtr& shared_hero = std::static_pointer_cast<Hero>(shared_from_this());
-  map.get_entities().add_entity(shared_hero);
-
   last_solid_ground_coords = { -1, -1 };
   last_solid_ground_layer = 0;
   reset_target_solid_ground_callback();
   get_hero_sprites().set_clipping_rectangle();
 
-  get_state()->set_map(map);
-
-  Entity::set_map(map);
+  Entity::place_on_map(map);
 }
 
 /**
@@ -659,9 +699,9 @@ void Hero::place_on_map(Map& map) {
  * \param previous_map_location Position of the previous map in its world
  * (because the previous map is already destroyed).
  */
-void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location) {
+void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location, const std::string& destination_name) {
 
-  const std::string& destination_name = map.get_destination_name();
+  //const std::string& destination_name = map.get_destination_name();
 
   if (destination_name == "_same") {
 
@@ -690,7 +730,7 @@ void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location
     check_position();  // To appear initially swimming, for example.
   }
   else {
-    int side = map.get_destination_side();
+    int side = map.get_destination_side(destination_name);
 
     if (side != -1) {
 
@@ -743,7 +783,7 @@ void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location
 
       // Normal case: the location is specified by a destination point object.
 
-      const std::shared_ptr<Destination> destination = map.get_destination();
+      const std::shared_ptr<Destination> destination = map.get_destination(destination_name);
 
       if (destination == nullptr) {
         // This is embarrassing: there is no valid destination that we can use.
@@ -761,6 +801,7 @@ void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location
       }
       else {
         // Normal case.
+        set_layer(destination->get_layer());
         place_on_map(map);
         if (destination->get_direction() != -1) {
           sprites->set_animation_direction(destination->get_direction());
@@ -779,11 +820,7 @@ void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location
         boomerang->remove_from_map();
       }
 
-      if (destination != nullptr) {
-        get_lua_context()->destination_on_activated(*destination);
-      }
-
-      const std::shared_ptr<const Stairs> stairs = get_stairs_overlapping();
+      const std::shared_ptr<Stairs> stairs = get_stairs_overlapping();
       if (stairs != nullptr) {
         // The hero arrived on the map by stairs.
         set_state(std::make_shared<StairsState>(*this, stairs, Stairs::REVERSE_WAY));
@@ -814,7 +851,7 @@ void Hero::notify_facing_entity_changed(Entity* facing_entity) {
 
   CommandsEffects& commands_effects = get_commands_effects();
   if (facing_entity != nullptr) {
-    if (facing_entity->can_be_lifted() &&
+    if (facing_entity->can_be_lifted(*this) &&
         is_free() &&
         commands_effects.get_action_key_effect() == CommandsEffects::ACTION_KEY_NONE) {
       commands_effects.set_action_key_effect(CommandsEffects::ACTION_KEY_LIFT);
@@ -914,13 +951,13 @@ bool Hero::is_on_raised_blocks() const {
 
 /**
  * \brief Returns the stairs the hero may be currently overlapping.
- * \return the stairs the hero is currently overlapping, or nullptr
+ * \return The stairs the hero is currently overlapping, or nullptr.
  */
-std::shared_ptr<const Stairs> Hero::get_stairs_overlapping() const {
+std::shared_ptr<Stairs> Hero::get_stairs_overlapping() {
 
-  std::set<std::shared_ptr<const Stairs>> all_stairs =
+  std::set<std::shared_ptr<Stairs>> all_stairs =
       get_entities().get_entities_by_type<Stairs>(get_layer());
-  for (const std::shared_ptr<const Stairs>& stairs: all_stairs) {
+  for (const std::shared_ptr<Stairs>& stairs: all_stairs) {
 
     if (overlaps(*stairs)) {
       return stairs;
@@ -984,6 +1021,78 @@ void Hero::set_walking_speed(int walking_speed) {
     this->walking_speed = walking_speed;
     get_state()->notify_walking_speed_changed();
   }
+}
+
+/**
+ * \brief Returns the current speed applied to the hero's movements when he is swimming.
+ * \return The current swimming speed.
+ */
+int Hero::get_swimming_speed() const {
+  return swimming_speed;
+}
+
+/**
+ * \brief Sets the speed to apply to the hero's movements when he is walking.
+ * \param swimming_speed the new swimming speed
+ */
+void Hero::set_swimming_speed(int swimming_speed) {
+  if (swimming_speed != this->swimming_speed) {
+    this->swimming_speed = swimming_speed;
+    get_state()->notify_swimming_speed_changed();
+  }
+}
+
+/**
+ * \brief Returns true if the hero can swim faster in deep water by pressing action command.
+ * \return The ability to swim faster.
+ */
+bool Hero::get_can_swim_faster() const {
+  return can_swim_faster;
+}
+
+/**
+ * \brief Sets the ability to swim faster in deep water by pressing action command.
+ * \param can_swim_faster sets the ability to swim faster.
+ */
+void Hero::set_can_swim_faster(bool can_swim_faster) {
+  this->can_swim_faster = can_swim_faster;
+}
+ 	
+/**
+* \brief Returns the default height carried objects will be displayed at.
+* \return The height in pixels.
+*/
+int Hero::get_carry_height() const{
+  return carry_height;
+}
+
+/**
+* \brief Sets the default height carried objects will be displayed at.
+* \param carry_height The height in pixels.
+  */
+void Hero::set_carry_height(int carry_height) {
+  std::shared_ptr<CarriedObject> carried = get_carried_object();
+
+  this->carry_height = carry_height;
+
+  if (carried != nullptr) {
+    carried->update_relative_movement();
+  }
+}
+	
+/**
+* \brief Returns the delay between the moment the hero start pushing on an obstacle, and the moment he actually enters the push state.
+*/
+int Hero::get_push_delay() const {
+  return push_delay;
+}
+
+/**
+ * \brief Sets the delay between the moment the hero start pushing on an obstacle, and the moment he actually enters the push state.
+ * \param push_delay The new delay in ms.
+ */
+void Hero::set_push_delay(int push_delay) {
+  this->push_delay = push_delay;
 }
 
 /**
@@ -1246,7 +1355,9 @@ void Hero::check_position() {
           (new_ground == Ground::TRAVERSABLE
            || new_ground == Ground::GRASS
            || new_ground == Ground::LADDER)) {
-        Sound::play("hero_lands");
+        if (!landing_sound_id.empty()) {
+          Sound::play(landing_sound_id);
+        }
       }
     }
   }
@@ -1671,6 +1782,13 @@ bool Hero::is_separator_obstacle(Separator& separator, const Rectangle& /* candi
 }
 
 /**
+ * @copydoc Entity::notify_collision
+ */
+void Hero::notify_collision(Entity& other, Sprite& this_sprite, Sprite& other_sprite) {
+  other.notify_collision_with_hero(*this, other_sprite, this_sprite);
+}
+
+/**
  * \copydoc Entity::notify_collision_with_destructible
  */
 void Hero::notify_collision_with_destructible(
@@ -1722,6 +1840,65 @@ void Hero::notify_collision_with_enemy(
 
     if (overlaps(enemy_sprite_rectangle)) {
       enemy.attack_hero(*this, &enemy_sprite);
+    }
+  }
+}
+
+/**
+ * @brief notify_collision_with_hero
+ * @param hero
+ * @param this_sprite
+ * @param hero_sprite
+ */
+void Hero::notify_collision_with_hero(Hero& hero, Sprite& this_sprite, Sprite& hero_sprite) {
+  const std::string& this_sprite_id = this_sprite.get_animation_set_id();
+  const std::string& other_sprite_id = hero_sprite.get_animation_set_id();
+  if (this_sprite_id == get_hero_sprites().get_sword_sprite_id() && other_sprite_id == hero.get_hero_sprites().get_tunic_sprite_id()) {
+    // the hero's sword overlaps the enemy
+    attack_hero(hero, &this_sprite);
+  }
+}
+
+/**
+ * @brief Hero::attack_hero
+ * @param hero
+ * @param this_sprite
+ */
+void Hero::attack_hero(Hero& hero, Sprite* this_sprite) {
+  if (hero.can_be_hurt(this)) {
+    bool hero_protected = false;
+    if (hero.get_equipment().has_ability(Ability::SHIELD, 1)
+        && hero.can_use_shield()) {
+
+      // Compute the direction corresponding to the angle between the enemy and the hero.
+      double angle = hero.get_angle(*this, nullptr, this_sprite);
+      int protected_direction4 = (int) ((angle + Geometry::PI_OVER_2 / 2.0) * 4 / Geometry::TWO_PI);
+      protected_direction4 = (protected_direction4 + 4) % 4;
+
+      // Also get the direction of the enemy's sprite.
+      int sprite_opposite_direction4 = -1;
+      if (this_sprite != nullptr) {
+        sprite_opposite_direction4 = (this_sprite->get_current_direction() + 2) % 4;
+      }
+
+      // The hero is protected if he is facing the opposite of one of these directions.
+      hero_protected = hero.is_facing_direction4(protected_direction4) ||
+          hero.is_facing_direction4(sprite_opposite_direction4);
+    }
+
+    if (hero_protected) {
+      hero.get_equipment().notify_ability_used(Ability::SHIELD);
+    }
+    else {
+      // Let the enemy script handle this if it wants.
+      const bool handled = get_lua_context()->entity_on_attacking_hero(
+          *this, hero, this_sprite
+      );
+      if (!handled) {
+        // Scripts did not customize the attack:
+        // do the built-in hurt state of the hero.
+        hero.hurt(*this, this_sprite, get_sword_damage_factor());
+      }
     }
   }
 }
@@ -1901,8 +2078,8 @@ void Hero::notify_collision_with_stairs(
     // Check whether the hero is trying to move in the direction of the stairs.
     int correct_direction = stairs.get_movement_direction(stairs_way);
     if (is_moving_towards(correct_direction / 2)) {
-      std::shared_ptr<const Stairs> shared_stairs =
-          std::static_pointer_cast<const Stairs>(stairs.shared_from_this());
+      std::shared_ptr<Stairs> shared_stairs =
+          std::static_pointer_cast<Stairs>(stairs.shared_from_this());
       set_state(std::make_shared<StairsState>(*this, shared_stairs, stairs_way));
     }
   }
@@ -2207,7 +2384,7 @@ void Hero::set_invincible(bool invincible, uint32_t duration) {
   this->invincible = invincible;
   this->end_invincible_date = 0;
   if (invincible) {
-    this->end_invincible_date = (duration == 0) ? 0 : System::now() + duration;
+    this->end_invincible_date = (duration == 0) ? 0 : System::now_ms() + duration;
   }
 }
 
@@ -2218,7 +2395,8 @@ void Hero::update_invincibility() {
 
   if (is_invincible() &&
       end_invincible_date != 0 &&
-      System::now() >= end_invincible_date) {
+      System::now_ms() >= end_invincible_date && 
+      !is_suspended()) {
     set_invincible(false, 0);
   }
 }
@@ -2230,7 +2408,9 @@ void Hero::update_invincibility() {
  * \return \c true if the hero can be hurt.
  */
 bool Hero::can_be_hurt(Entity* attacker) const {
-  return !is_invincible() && get_state()->get_can_be_hurt(attacker);
+  return !is_invincible() &&
+      !is_suspended() &&
+      get_state()->get_can_be_hurt(attacker);
 }
 
 /**
@@ -2283,7 +2463,7 @@ void Hero::start_grass() {
   // Display a special sprite below the hero.
   sprites->create_ground(Ground::GRASS);
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   next_ground_date = std::max(next_ground_date, now);
 
   set_walking_speed(normal_walking_speed * 4 / 5);
@@ -2298,7 +2478,7 @@ void Hero::start_shallow_water() {
   // Display a special sprite below the hero.
   sprites->create_ground(Ground::SHALLOW_WATER);
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   next_ground_date = std::max(next_ground_date, now);
 
   set_walking_speed(normal_walking_speed * 4 / 5);
@@ -2360,7 +2540,7 @@ void Hero::start_hole() {
   else {
     // otherwise, push the hero towards the hole
 
-    next_ground_date = System::now();
+    next_ground_date = System::now_ms();
 
     // Don't calculate the attraction direction based on the wanted movement
     // because the wanted movement may be different from the real one.
@@ -2396,8 +2576,8 @@ void Hero::start_hole() {
  */
 void Hero::start_ice() {
 
-  next_ground_date = System::now();
-  next_ice_date = System::now();
+  next_ground_date = System::now_ms();
+  next_ice_date = System::now_ms();
 
   ice_movement_direction8 = get_wanted_movement_direction8();
   if (ice_movement_direction8 == -1) {
@@ -2423,8 +2603,9 @@ void Hero::start_lava() {
  * \param delay delay before returning control to the player
  */
 void Hero::start_prickle(uint32_t delay) {
-
-  Sound::play("hero_hurt");
+  if (!hurt_sound_id.empty()) {
+    Sound::play(hurt_sound_id);
+  }
   get_equipment().remove_life(2);
   start_back_to_solid_ground(true, delay, false);
 }
@@ -2609,13 +2790,13 @@ void Hero::start_running() {
 
   // The running state may be triggered by the action command or an
   // item command.
-  GameCommand command;
+  Command command;
   if (is_free()) {
-    command = GameCommand::ACTION;
+    command = CommandId::ACTION;
   }
   else {
-    command = get_commands().is_command_pressed(GameCommand::ITEM_1) ?
-        GameCommand::ITEM_1 : GameCommand::ITEM_2;
+    command = get_controls()->is_command_pressed(CommandId::ITEM_1) ?
+        CommandId::ITEM_1 : CommandId::ITEM_2;
   }
   set_state(std::make_shared<RunningState>(*this, command));
 }
@@ -2811,7 +2992,7 @@ bool Hero::can_start_item(EquipmentItem& item) {
  * \param item The equipment item to use.
  */
 void Hero::start_item(EquipmentItem& item) {
-  Debug::check_assertion(can_start_item(item),
+  SOLARUS_ASSERT(can_start_item(item),
       std::string("The hero cannot start using item '")
       + item.get_name() + "' now");
   set_state(std::make_shared<UsingItemState>(*this, item));
@@ -2941,13 +3122,292 @@ void Hero::start_state_from_ground() {
 }
 
 /**
- * @brief Starts the given custom Lua state.
- * @param custom_state The Lua state object.
+ * \brief Starts the given custom Lua state.
+ * \param custom_state The Lua state object.
  */
 void Hero::start_custom_state(const std::shared_ptr<CustomState>& custom_state) {
 
   custom_state->set_entity(*this);
   set_state(custom_state);
+}
+
+/**
+ * \brief Returns the sound to play when the hero is falling.
+ * \return The falling sound or an empty string.
+ */
+const std::string& Hero::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is falling.
+ * \param falling_sound_id The falling sound or an empty string.
+ */
+void Hero::set_falling_sound_id(const std::string& falling_sound_id) {
+  this->falling_sound_id = falling_sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero respawns from bad grounds.
+ * \return The respawning sound or an empty string.
+ */
+const std::string& Hero::get_respawn_sound_id() const {
+  return respawn_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero respawns from bad grounds.
+ * \param respawn_sound_id The respawning sound or an empty string.
+ */
+void Hero::set_respawn_sound_id(const std::string& respawn_sound_id) {
+  this->respawn_sound_id = respawn_sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is landing.
+ * \return The landing sound or an empty string.
+ */
+const std::string& Hero::get_landing_sound_id() const {
+  return landing_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is landing.
+ * \param sound_id The landing sound or an empty string.
+ */
+void Hero::set_landing_sound_id(const std::string& sound_id) {
+  landing_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is jumping.
+ * \return The jumping sound or an empty string.
+ */
+const std::string& Hero::get_jumping_sound_id() const {
+  return jumping_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is jumping.
+ * \param sound_id The jumping sound or an empty string.
+ */
+void Hero::set_jumping_sound_id(const std::string& sound_id) {
+  jumping_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is getting damage.
+ * \return The hurting sound or an empty string.
+ */
+const std::string& Hero::get_hurt_sound_id() const {
+  return hurt_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is getting damage.
+ * \param sound_id The hurting sound or an empty string.
+ */
+void Hero::set_hurt_sound_id(const std::string& sound_id) {
+  hurt_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is sinking.
+ * \return The sinking sound or an empty string.
+ */
+const std::string& Hero::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is sinking.
+ * \param sound_id The sinking sound or an empty string.
+ */
+void Hero::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is swimming.
+ * \return The swimming sound or an empty string.
+ */
+const std::string& Hero::get_swimming_sound_id() const {
+  return swimming_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is swimming.
+ * \param sound_id The swimming sound or an empty string.
+ */
+void Hero::set_swimming_sound_id(const std::string& sound_id) {
+  swimming_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is lifting an entity.
+ * \return The lifting sound or an empty string.
+ */
+const std::string& Hero::get_lifting_sound_id() const {
+  return lifting_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is lifting an entity.
+ * \param sound_id The lifting sound or an empty string.
+ */
+void Hero::set_lifting_sound_id(const std::string& sound_id) {
+  lifting_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is running.
+ * \return The running sound or an empty string.
+ */
+const std::string& Hero::get_running_sound_id() const {
+  return running_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is running.
+ * \param sound_id The running sound or an empty string.
+ */
+void Hero::set_running_sound_id(const std::string& sound_id) {
+  running_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is running into an_obstacle.
+ * \return The running_obstacle sound or an empty string.
+ */
+const std::string& Hero::get_running_obstacle_sound_id() const {
+  return running_obstacle_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is running_into an obstacle.
+ * \param sound_id The running_obstacle sound or an empty string.
+ */
+void Hero::set_running_obstacle_sound_id(const std::string& sound_id) {
+  running_obstacle_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is loading the spin attack.
+ * \return The spin_attack_load sound or an empty string.
+ */
+const std::string& Hero::get_spin_attack_load_sound_id() const {
+  return spin_attack_load_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is loading the spin attack.
+ * \param sound_id The spin_attack_load sound or an empty string.
+ */
+void Hero::set_spin_attack_load_sound_id(const std::string& sound_id) {
+  spin_attack_load_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is releasing the spin attack.
+ * \return The spin_attack_release sound or an empty string.
+ */
+const std::string& Hero::get_spin_attack_release_sound_id() const {
+  return spin_attack_release_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is releasing the spin attack.
+ * \param sound_id The spin_attack_release sound or an empty string.
+ */
+void Hero::set_spin_attack_release_sound_id(const std::string& sound_id) {
+  spin_attack_release_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is performing victory animation.
+ * \return The victory sound or an empty string.
+ */
+const std::string& Hero::get_victory_sound_id() const {
+  return victory_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is performing victory animation.
+ * \param sound_id The victory sound or an empty string.
+ */
+void Hero::set_victory_sound_id(const std::string& sound_id) {
+  victory_sound_id = sound_id;
+}
+
+/**
+ * @brief Gets commands controlling this hero
+ * @return
+ */
+const ControlsPtr& Hero::get_controls() const {
+  return controls;
+}
+
+/**
+ * @brief Get effects of the commands linked to this hero
+ * @return
+ */
+const CommandsEffects& Hero::get_commands_effects() const {
+  return controls->get_effects();
+}
+
+/**
+ * @brief Gets effect of the commands linked to this hero, const-version
+ * @return
+ */
+CommandsEffects& Hero::get_commands_effects() {
+  return controls->get_effects();
+}
+
+/**
+ * @brief Hero::set_commands
+ * @param commands
+ */
+void Hero::set_controls(const ControlsPtr& controls) {
+  this->controls = controls;
+}
+
+/**
+ * @brief get_linked_camera
+ * @return
+ */
+const CameraPtr& Hero::get_linked_camera() const {
+  return linked_camera;
+}
+
+/**
+ * @brief Set the camera linked with this hero
+ * @param camera
+ */
+void Hero::set_linked_camera(const CameraPtr& camera) {
+  linked_camera = camera;
+}
+
+/**
+ * @copydoc Entity::notify_being_removed
+ */
+void Hero::notify_being_removed() {
+  Entity::notify_being_removed();
+}
+
+/**
+ * \brief Returns the current equipment.
+ * \return The equipment.
+ */
+Equipment& Hero::get_equipment() {
+  return *equipment;
+}
+
+/**
+ * \brief Returns the current equipment.
+ * \return The equipment.
+ */
+const Equipment& Hero::get_equipment() const {
+  return *equipment;
 }
 
 }

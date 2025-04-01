@@ -44,9 +44,9 @@ AnimatedTilePattern::AnimatedTilePattern(
   mirror_loop(mirror_loop),
   parallax(parallax),
   frame_index(0),
-  next_frame_date(System::now() + frame_delay) {
+  next_frame_date(System::now_ms() + frame_delay) {
 
-  Debug::check_assertion(!this->frames.empty(), "Missing frames for animated pattern");
+  SOLARUS_REQUIRE(!frames.empty(), "Missing frames for animated pattern");
 }
 
 /**
@@ -54,7 +54,7 @@ AnimatedTilePattern::AnimatedTilePattern(
  */
 void AnimatedTilePattern::update() {
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   while (now >= next_frame_date) {
     if (!mirror_loop) {
       frame_index = (frame_index + 1) % frames.size();
@@ -78,11 +78,12 @@ void AnimatedTilePattern::draw(
   const SurfacePtr& tileset_image = tileset.get_tiles_image();
 
   int final_frame_index = frame_index;
-  int num_frames = frames.size();
+  const int num_frames = static_cast<int>(frames.size());
   if (mirror_loop && frame_index >= num_frames) {
-    final_frame_index = (2 * frames.size() - 2) - frame_index;
+    final_frame_index = (2 * num_frames - 2) - frame_index;
   }
-  Debug::check_assertion(final_frame_index >= 0 && final_frame_index < num_frames, "Wrong frame index");
+  SOLARUS_REQUIRE(final_frame_index >= 0 && final_frame_index < num_frames,
+      "Wrong frame index");
   const Rectangle& src = frames[final_frame_index];
   Point dst = dst_position;
 

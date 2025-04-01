@@ -17,12 +17,15 @@
 #include "solarus/audio/Sound.h"
 #include "solarus/core/FontResource.h"
 #include "solarus/core/InputEvent.h"
+#include "solarus/core/Logger.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/core/Random.h"
 #include "solarus/core/System.h"
 #include "solarus/graphics/Color.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/graphics/Video.h"
+#include <chrono>
+#include <filesystem>
 #if _POSIX_C_SOURCE >= 200112L
 #  include <stdlib.h>
 #  include <string.h>
@@ -33,9 +36,8 @@
 #endif
 
 namespace Solarus {
-
-uint32_t System::initial_time = 0;
-uint32_t System::ticks = 0;
+System::Clock::time_point System::initial_time;
+uint64_t System::ticks = 0;
 
 /**
  * \brief Initializes the basic low-level system.
@@ -44,8 +46,9 @@ uint32_t System::ticks = 0;
  * the data file system, etc.
  *
  * \param args Command-line arguments.
+ * \param resource_provider The resource provider.
  */
-void System::initialize(const Arguments& args) {
+void System::initialize(const Arguments& args, ResourceProvider& resource_provider) {
 
 #if _POSIX_C_SOURCE >= 200112L
   // Back up state of environment variables about to be modified.
@@ -59,14 +62,44 @@ void System::initialize(const Arguments& args) {
     sdl_video_wayland_wmclass = strdup(sdl_video_wayland_wmclass);
   }
 
-  // Set AppID that SDL should report on Wayland and X11.
+  // Set AppID that SDL should report on Wayland and X11.
   setenv("SDL_VIDEO_X11_WMCLASS", SOLARUS_APP_ID ".Runner", 1);
   setenv("SDL_VIDEO_WAYLAND_WMCLASS", SOLARUS_APP_ID ".Runner", 1);
 #endif
 
+  // configure a game controller database file if it exists
+  const auto gcdb_filename = "gamecontrollerdb.txt";
+  std::string gcdb_full_path;
+
+  // try the application base path first
+  if (gcdb_full_path.empty()) {
+    const auto base_path = SDL_GetBasePath();
+    if (base_path != nullptr) {
+      const auto full_path = std::string(base_path) + gcdb_filename;
+      if (std::filesystem::exists(full_path)) {
+        gcdb_full_path = full_path;
+      }
+    }
+  }
+
+#ifdef SOLARUS_DATADIR_PATH
+  // if still not found, try the installed data directory path
+  if (gcdb_full_path.empty()) {
+    const auto full_path = std::string(SOLARUS_DATADIR_PATH) + "/" + gcdb_filename;
+    if (std::filesystem::exists(full_path)) {
+      gcdb_full_path = full_path;
+    }
+  }
+#endif
+
+  if (!gcdb_full_path.empty()) {
+    Logger::info("Using game controller database file: " + gcdb_full_path);
+    SDL_SetHint(SDL_HINT_GAMECONTROLLERCONFIG_FILE, gcdb_full_path.c_str());
+  }
+
   // initialize SDL
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
-  initial_time = get_real_time();
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
+  initial_time = Clock::now();
   ticks = 0;
 
 #if _POSIX_C_SOURCE >= 200112L
@@ -89,7 +122,7 @@ void System::initialize(const Arguments& args) {
 #endif
 
   // audio
-  Sound::initialize(args);
+  Sound::initialize(args, &resource_provider);
 
   // input
   InputEvent::initialize(args);
@@ -118,14 +151,20 @@ void System::quit() {
   Video::quit();
 
   SDL_Quit();
+
+  initial_time = Clock::time_point();
+  ticks = 0;
 }
 
 /**
  * \brief This function is called repeatedly by the main loop.
  *
- * It calls the update function of low-level systems that need it.
+ * It makes the clock advance and calls the update function
+ * of low-level systems that need it.
+ *
+ * \param timestep The timestep of this update.
  */
-void System::update() {
+void System::update(uint64_t timestep) {
 
   // Use a constant timestep here to have deterministic updates.
   ticks += timestep;
@@ -147,6 +186,20 @@ std::string System::get_os() {
 }
 
 /**
+ * \brief Returns the number of simulated nanoseconds elapsed since the
+ * main loop started.
+ *
+ * Follows to the real time unless the system is too slow to play at
+ * normal speed.
+ *
+ * \return The number of simulated milliseconds elapsed since the
+ * initialization.
+ */
+uint64_t System::now_ns() {
+  return ticks;
+}
+
+/**
  * \brief Returns the number of simulated milliseconds elapsed since the
  * main loop started.
  *
@@ -156,8 +209,21 @@ std::string System::get_os() {
  * \return The number of simulated milliseconds elapsed since the
  * initialization.
  */
-uint32_t System::now() {
-  return ticks;
+uint32_t System::now_ms() {
+  return static_cast<uint32_t>(ticks / 1000000);
+}
+
+/**
+ * \brief Returns the number of real nanoseconds elapsed since the
+ * initialization of the Solarus library.
+ *
+ * This function is not deterministic, so use it at your own risks.
+ *
+ * \return The number of nanoseconds elapsed since the initialization.
+ */
+uint64_t System::get_real_time_ns() {
+  auto time = Clock::now();
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(time - initial_time).count();
 }
 
 /**
@@ -168,8 +234,8 @@ uint32_t System::now() {
  *
  * \return The number of milliseconds elapsed since the initialization.
  */
-uint32_t System::get_real_time() {
-  return SDL_GetTicks() - initial_time;
+uint32_t System::get_real_time_ms() {
+  return static_cast<uint32_t>(get_real_time_ns() / 1000000);
 }
 
 /**

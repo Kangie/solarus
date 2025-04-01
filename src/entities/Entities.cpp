@@ -35,6 +35,7 @@
 #include "solarus/graphics/Color.h"
 #include "solarus/graphics/Surface.h"
 #include "solarus/lua/LuaContext.h"
+#include "solarus/core/Profiler.h"
 #include <sstream>
 #include <lua.hpp>
 
@@ -103,8 +104,6 @@ Entities::Entities(Game& game, Map& map):
   tiles_ground(),
   non_animated_regions(),
   tiles_in_animated_regions(),
-  hero(game.get_hero()),
-  camera(nullptr),
   named_entities(),
   all_entities(),
   quadtree(new EntityTree()),
@@ -133,13 +132,6 @@ Entities::Entities(Game& game, Map& map):
   const int margin = 64;
   Rectangle quadtree_space(-margin, -margin, map.get_width() + 2 * margin, map.get_height() + 2 * margin);
   quadtree->initialize(quadtree_space);
-
-  // Create the camera.
-  std::shared_ptr<Camera> camera = std::make_shared<Camera>(map);
-  add_entity(camera);
-  const HeroPtr& hero = game.get_hero();
-  Debug::check_assertion(hero != nullptr, "Missing hero when initializing camera");
-  camera->start_tracking(hero);
 }
 
 /**
@@ -162,9 +154,7 @@ void Entities::create_entities(const MapData& data) {
       if (!EntityTypeInfo::can_be_stored_in_map_file(type)) {
         Debug::error("Illegal entity type in map data: " + enum_to_name(type));
       }
-      if (lua_context.create_map_entity_from_data(map, entity_data)) {
-        lua_pop(lua_context.get_internal_state(), 1);  // Discard the created entity on the stack.
-      }
+      lua_context.create_map_entity_from_data(map, entity_data);
     }
   }
 }
@@ -181,11 +171,23 @@ void Entities::notify_entity_removed(Entity& entity) {
 }
 
 /**
- * \brief Returns the hero.
+ * \brief Returns the default hero.
  * \return The hero.
  */
-Hero& Entities::get_hero() {
-  return *hero;
+Hero& Entities::get_default_hero() {
+  if(heroes.size()){
+    return *heroes.front();
+  } else {
+    return *game.get_hero();
+  }
+}
+
+/**
+ * @brief Returns the heroes
+ * @return the heroes
+ */
+const Heroes &Entities::get_heroes() const {
+  return heroes;
 }
 
 /**
@@ -289,7 +291,12 @@ EntityVector Entities::get_entities_with_prefix(const std::string& prefix) {
         entities.push_back(entity);
       }
     }
-    entities.push_back(hero);
+    for(const HeroPtr& hero : heroes) {
+      entities.push_back(hero);
+    }
+    for(const CameraPtr& cam : cameras) {
+      entities.push_back(cam);
+    }
     return entities;
   }
 
@@ -397,14 +404,11 @@ bool Entities::has_entity_with_prefix(const std::string& prefix) const {
 void Entities::get_entities_in_rectangle_z_sorted(
     const Rectangle& rectangle, ConstEntityVector& result
 ) const {
-
-  EntityVector non_const_result = quadtree->get_elements(rectangle);
-
-  result.reserve(non_const_result.size());
-  for (const ConstEntityPtr& entity : non_const_result) {
-      result.push_back(entity);
-  }
+  SOL_PFUN();
+  quadtree->raw_get_elements(rectangle, std::back_inserter(result));
+  std::sort(result.begin(), result.end(), EntityZOrderComparator());
 }
+
 
 /**
  * \overload Non-const version.
@@ -412,8 +416,36 @@ void Entities::get_entities_in_rectangle_z_sorted(
 void Entities::get_entities_in_rectangle_z_sorted(
     const Rectangle& rectangle, EntityVector& result
 ) {
+  SOL_PFUN();
+  quadtree->raw_get_elements(rectangle, std::back_inserter(result));
+  std::sort(result.begin(), result.end(), EntityZOrderComparator());
+}
 
-  result = quadtree->get_elements(rectangle);
+/**
+ * @brief Gets the entities whose bouding box overlap the queried rectangle
+ *
+ * This raw version returns directly the quadtree query result, unsorted
+ *
+ * @param rectangle the area to query
+ * @param result
+ */
+void Entities::get_entities_in_rectangle_raw(const Rectangle& rectangle, ConstEntityVector& result) const {
+  SOL_PFUN();
+  quadtree->raw_get_elements(rectangle, std::back_inserter(result));
+}
+
+
+/**
+ * @brief Gets the entities whose bouding box overlap the queried rectangle
+ *
+ * This raw version returns directly the quadtree query result, unsorted
+ *
+ * @param rectangle the area to query
+ * @param result
+ */
+void Entities::get_entities_in_rectangle_raw(const Rectangle& rectangle, EntityVector& result) {
+  SOL_PFUN();
+  quadtree->raw_get_elements(rectangle, std::back_inserter(result));
 }
 
 /**
@@ -485,9 +517,81 @@ Rectangle Entities::get_region_box(const Point& point) const {
     }
   }
 
-  Debug::check_assertion(top < bottom && left < right, "Invalid region rectangle");
+  SOLARUS_REQUIRE(top < bottom && left < right, "Invalid region rectangle");
 
   return Rectangle(left, top, right - left, bottom - top);
+}
+
+/**
+ * \brief Check to see if two points are in the same region.
+ *
+ * Regions are defined by the position of separators on the map and
+ * are assumed to be rectangular (convex: no "L" shape).
+ *
+ * \param point_a A point.
+ * \param point_b A point.
+ * \return True if the points are in the same region, false otherwise.
+ */
+bool Entities::are_in_same_region(
+    const Point& point_a, const Point& point_b) const {
+
+  /* Here is how the problem is actually solved:
+   *
+   * Two points are in the same region if and only if there does not
+   * exist a seperator that overlaps with the axis-aligned rectangle
+   * defined by the two points. This is because all regions are also
+   * axis-aligned rectangles and may not contain a seperator.
+   *
+   * And remember if a point is on the "far" (away from 0) edge of a
+   * seperator then it is actually on the far side of it. After that
+   * you just have to see if the seperator overlaps on both axis and
+   * that comes down to some range checks. It actually checks if the
+   * separator is not between the two points on either axis.
+   */
+
+  const std::set<ConstSeparatorPtr>& separators =
+      get_entities_by_type<Separator>();
+  for (const ConstSeparatorPtr& separator : separators) {
+
+    if (separator->is_vertical()) {
+      // Wide Axis Near Check:
+      const int top_left_y = separator->get_top_left_y();
+      if (point_a.y < top_left_y && point_b.y < top_left_y) {
+        continue;
+      }
+      // Wide Axis Far Check:
+      const int bottom_right_y = separator->get_bottom_right_y();
+      if (point_a.y >= bottom_right_y && point_b.y >= bottom_right_y) {
+        continue;
+      }
+      // Narrow Axis Check:
+      // Because there is no middle and (m < n) != (m >= n) we can optimize.
+      const int separation_x = separator->get_center_point().x;
+      if ((point_a.x < separation_x) == (point_b.x < separation_x)) {
+        continue;
+      }
+    } else {
+      // Wide Axis Near Check:
+      const int top_left_x = separator->get_top_left_x();
+      if (point_a.x < top_left_x && point_b.x < top_left_x) {
+        continue;
+      }
+      // Wide Axis Far Check:
+      const int bottom_right_x = separator->get_bottom_right_x();
+      if (point_a.x >= bottom_right_x && point_b.x >= bottom_right_x) {
+        continue;
+      }
+      // Narrow Axis Check:
+      const int separation_y = separator->get_center_point().y;
+      if ((point_a.y < separation_y) == (point_b.y < separation_y)) {
+        continue;
+      }
+    }
+
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -548,7 +652,7 @@ EntityVector Entities::get_entities_by_type_z_sorted(EntityType type) {
  */
 EntitySet Entities::get_entities_by_type(EntityType type, int layer) {
 
-  Debug::check_assertion(map.is_valid_layer(layer), "Invalid layer");
+  SOLARUS_REQUIRE(map.is_valid_layer(layer), "Invalid layer");
 
   EntitySet result;
 
@@ -618,8 +722,11 @@ void Entities::notify_map_starting(Map& map, const std::shared_ptr<Destination>&
     entity->notify_map_starting(map, destination);
     entity->notify_tileset_changed();
   }
-  hero->notify_map_starting(map, destination);
-  hero->notify_tileset_changed();
+
+  for(const HeroPtr& hero : heroes) {
+    hero->notify_map_starting(map, destination);
+    hero->notify_tileset_changed();
+  }
 }
 
 /**
@@ -635,7 +742,9 @@ void Entities::notify_map_started(Map& map, const std::shared_ptr<Destination>& 
   for (const EntityPtr& entity: all_entities) {
     entity->notify_map_started(map, destination);
   }
-  hero->notify_map_started(map, destination);
+  for(const HeroPtr& hero : heroes) {
+    hero->notify_map_started(map, destination);
+  }
 }
 
 /**
@@ -647,12 +756,14 @@ void Entities::notify_map_started(Map& map, const std::shared_ptr<Destination>& 
  * \param map The map.
  * \param destination Destination entity where the hero is placed or nullptr.
  */
-void Entities::notify_map_opening_transition_finishing(Map& map, const std::shared_ptr<Destination>& destination) {
+void Entities::notify_map_opening_transition_finishing(Map& map, const std::string& destination_name, const HeroPtr& opt_hero) {
 
   for (const EntityPtr& entity: all_entities) {
-    entity->notify_map_opening_transition_finishing(map, destination);
+    entity->notify_map_opening_transition_finishing(map, destination_name, opt_hero);
   }
-  hero->notify_map_opening_transition_finishing(map, destination);
+  for(const HeroPtr& hero : heroes) {
+    hero->notify_map_opening_transition_finishing(map, destination_name, opt_hero);
+  }
 }
 
 /**
@@ -664,12 +775,14 @@ void Entities::notify_map_opening_transition_finishing(Map& map, const std::shar
  * \param map The map.
  * \param destination Destination entity where the hero is placed or nullptr.
  */
-void Entities::notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination) {
+void Entities::notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination, const HeroPtr& opt_hero) {
 
   for (const EntityPtr& entity: all_entities) {
-    entity->notify_map_opening_transition_finished(map, destination);
+    entity->notify_map_opening_transition_finished(map, destination, opt_hero);
   }
-  hero->notify_map_opening_transition_finished(map, destination);
+  for(const HeroPtr& hero : heroes) {
+    hero->notify_map_opening_transition_finished(map, destination, opt_hero);
+  }
 }
 
 /**
@@ -688,7 +801,10 @@ void Entities::notify_tileset_changed() {
   for (const EntityPtr& entity: all_entities) {
     entity->notify_tileset_changed();
   }
-  hero->notify_tileset_changed();
+
+  for(const HeroPtr& hero : heroes) {
+    hero->notify_tileset_changed();
+  }
 }
 
 /**
@@ -700,7 +816,9 @@ void Entities::notify_map_finished() {
     entity->notify_map_finished();
     notify_entity_removed(*entity);
   }
-  hero->notify_map_finished();
+  for(const HeroPtr& hero : heroes) {
+    hero->notify_map_finished();
+  }
 }
 
 /**
@@ -710,7 +828,7 @@ void Entities::notify_map_finished() {
  */
 void Entities::initialize_layers() {
 
-  Debug::check_assertion(z_orders.empty(), "Layers already initialized");
+  SOLARUS_REQUIRE(z_orders.empty(), "Layers already initialized");
 
   for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {
     tiles_ground[layer] = std::vector<Ground>();
@@ -734,16 +852,14 @@ void Entities::add_tile_info(const TileInfo& tile_info) {
 
   const Rectangle& box = tile_info.box;
   const int layer = tile_info.layer;
-  Debug::check_assertion(map.is_valid_layer(layer),
-                         "Invalid layer");
+  SOLARUS_REQUIRE(map.is_valid_layer(layer), "Invalid layer");
 
-  Debug::check_assertion(tile_info.pattern != nullptr,
-                         "Missing tile pattern");
+  SOLARUS_REQUIRE(tile_info.pattern != nullptr, "Missing tile pattern");
   const TilePattern& pattern = *tile_info.pattern;
 
   // The size of a runtime tile should be the size of its pattern
   // for performance reasons, to optimize away more tiles.
-  Debug::check_assertion(
+  SOLARUS_REQUIRE(
       box.get_width() == pattern.get_width() &&
       box.get_height() == pattern.get_height(),
       "Static tile size must match tile pattern size");
@@ -907,8 +1023,8 @@ void Entities::add_entity(const EntityPtr& entity) {
     return;
   }
 
-  Debug::check_assertion(map.is_valid_layer(entity->get_layer()),
-      "No such layer on this map");
+  SOLARUS_REQUIRE(map.is_valid_layer(entity->get_layer()),
+      "No such layer on this map: " + std::to_string(entity->get_layer()));
 
   const EntityType type = entity->get_type();
   if (type != EntityType::TILE) {  // Tiles are optimized specifically.
@@ -917,14 +1033,22 @@ void Entities::add_entity(const EntityPtr& entity) {
     // Update the quadtree.
     quadtree->add(entity, entity->get_max_bounding_box());
 
+
     // Update the specific entities lists.
-    switch (entity->get_type()) {
+    switch (type) {
 
       case EntityType::CAMERA:
-        Debug::check_assertion(camera == nullptr, "Only one camera is supported");
-        camera = std::static_pointer_cast<Camera>(entity);
+        {
+          CameraPtr new_camera = std::static_pointer_cast<Camera>(entity);
+          cameras.push_back(new_camera);
+        }
         break;
-
+      case EntityType::HERO:
+      {
+        HeroPtr hero = std::static_pointer_cast<Hero>(entity);
+        heroes.push_back(hero);
+        break;
+      }
       case EntityType::DESTINATION:
         {
           std::shared_ptr<Destination> destination =
@@ -945,7 +1069,7 @@ void Entities::add_entity(const EntityPtr& entity) {
     }
 
     // Track the insertion order.
-    z_orders[layer].add(entity);
+    z_orders[layer].bring_to_front(entity);
 
     // Update the list of entities by type.
     auto it = entities_by_type.find(type);
@@ -956,46 +1080,13 @@ void Entities::add_entity(const EntityPtr& entity) {
     sets[layer].insert(entity);
 
     // Update the list of all entities.
-    if (type != EntityType::HERO) {
+    if (type != EntityType::HERO && type != EntityType::CAMERA) {
       all_entities.push_back(entity);
     }
   }
 
   // Rename the entity if there is already an entity with the same name.
-  std::string name = entity->get_name();
-  if (!name.empty()) {
-
-    if (named_entities.find(name) != named_entities.end()) {
-      // This name is already used by another entity. Add a suffix.
-      std::ostringstream oss;
-      std::istringstream iss;
-      int suffix_number = 1;
-      std::string prefix = name;
-      size_t index = name.rfind('_');
-      if (index != std::string::npos) {
-        // If there is already a numbered suffix, we will increment it.
-        const std::string& suffix = name.substr(index + 1);
-        iss.clear();
-        iss.str(suffix);
-        if (iss >> suffix_number) {
-          prefix = name.substr(0, index);
-        }
-      }
-
-      // Now we have the final prefix. Find the first available suffix.
-      do {
-        ++suffix_number;
-        oss.str("");
-        oss.clear();
-        oss << prefix << '_' << suffix_number;
-        name = oss.str();
-      }
-      while (named_entities.find(name) != named_entities.end());
-
-      entity->set_name(name);
-    }
-    named_entities[name] = entity;
-  }
+  set_entity_name(entity, entity->get_name());
 
   // Notify the entity.
   if (type != EntityType::HERO) {
@@ -1016,6 +1107,32 @@ void Entities::remove_entity(Entity& entity) {
 
     // Tell the entity.
     entity.notify_being_removed();
+
+    //Manage removal from the special entities list
+    EntityType type = entity.get_type();
+    switch (type) {
+
+      case EntityType::CAMERA:
+        {
+          CameraPtr camera = entity.shared_from_this_cast<Camera>();
+          cameras.erase(std::remove(cameras.begin(),
+                                    cameras.end(),
+                                    camera),
+                        cameras.end());
+        }
+        break;
+      case EntityType::HERO:
+      {
+        HeroPtr hero = entity.shared_from_this_cast<Hero>();
+        heroes.erase(std::remove(heroes.begin(),
+                                 heroes.end(),
+                                 hero),
+                      heroes.end());
+        break;
+      }
+      default:
+      break;
+    }
 
     // Remove the entity from the by name list
     // to allow users to create a new one with
@@ -1067,23 +1184,29 @@ void Entities::remove_marked_entities() {
     // Remove it from the whole list.
     all_entities.remove(entity);
     const std::string& name = entity->get_name();
-    if (!name.empty()) {
-      named_entities.erase(name);
+    auto nit = named_entities.find(name);
+    if (nit != named_entities.end() && nit->second == entity) {
+      named_entities.erase(nit);
     }
 
     // Update the specific entities lists.
     switch (type) {
 
       case EntityType::CAMERA:
-        camera = nullptr;
+        cameras.erase(std::remove(cameras.begin(),
+                                   cameras.end(),
+                                   std::static_pointer_cast<Camera>(entity)),
+                       cameras.end());
         break;
-
+      case EntityType::HERO:
+        heroes.erase(std::remove(heroes.begin(),
+                                 heroes.end(),
+                                 std::static_pointer_cast<Hero>(entity)),
+                     heroes.end());
+        break;
       default:
-      break;
+        break;
     }
-
-    // Track the insertion order.
-    z_orders.at(layer).remove(entity);
 
     // Update the list of entities by type.
     const auto& it = entities_by_type.find(type);
@@ -1093,7 +1216,8 @@ void Entities::remove_marked_entities() {
     }
 
     // Destroy it.
-    notify_entity_removed(*entity);
+    //notify_entity_removed(*entity); //Already done when pushing in the remove list
+    //TODO this could break things expecting the event being raised two times
   }
   entities_to_remove.clear();
 }
@@ -1110,7 +1234,9 @@ void Entities::remove_marked_entities() {
 void Entities::set_suspended(bool suspended) {
 
   // the hero first
-  hero->set_suspended(suspended);
+  for(const HeroPtr& hero : heroes) {
+    hero->set_suspended(suspended);
+  }
 
   // other entities
   for (const EntityPtr& entity: all_entities) {
@@ -1124,45 +1250,40 @@ void Entities::set_suspended(bool suspended) {
  * \brief Updates the position, movement and animation each entity.
  */
 void Entities::update() {
-
-  Debug::check_assertion(map.is_started(), "The map is not started");
+  SOL_PFUN(profiler::colors::Red);
+  SOLARUS_REQUIRE(map.is_started(), "The map is not started");
 
   // First update the hero.
-  hero->update();
+  for(const HeroPtr& hero : heroes) {
+    hero->update();
+  }
 
   // Update the dynamic entities.
   for (const EntityPtr& entity: all_entities) {
-
-    if (
-        !entity->is_being_removed() &&
-        entity->get_type() != EntityType::CAMERA  // The camera is updated after.
-    ) {
       entity->update();
-    }
   }
 
-  // Update the camera after everyone else.
-  camera->update();
-  entities_to_draw.clear();  // Invalidate entities to draw.
+  // Update the cameras after everyone else.
+  for(const auto& camera : cameras) {
+    camera->update();
+  }
+
+  //entities_to_draw.clear();  // Invalidate entities to draw.
   for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {
     non_animated_regions[layer]->update();
   }
 
   // Remove the entities that have to be removed now.
   remove_marked_entities();
+
+  //Shrink the quadtree
+  quadtree->shrink_to_fit();
 }
 
 /**
  * \brief Draws the entities on the map surface.
  */
-void Entities::draw() {
-
-  const CameraPtr& camera = get_camera();
-  if (camera == nullptr) {
-    return;
-  }
-
-  const SurfacePtr& camera_surface = camera->get_surface();
+void Entities::draw(Camera& camera) {
 
   // Lazily build the list of entities to draw.
   if (entities_to_draw.empty()) {
@@ -1176,34 +1297,50 @@ void Entities::draw() {
     EntityVector entities_in_camera;
     Rectangle around_camera(
         Point(
-            camera->get_x() - camera->get_size().width,
-            camera->get_y() - camera->get_size().height
+            camera.get_x() - camera.get_size().width,
+            camera.get_y() - camera.get_size().height
         ),
-        camera->get_size() * 3
+        camera.get_size() * 3
     );
-    get_entities_in_rectangle_z_sorted(around_camera, entities_in_camera);
+    //get_entities_in_rectangle_z_sorted(around_camera, entities_in_camera);
+    get_entities_in_rectangle_raw(around_camera, entities_in_camera);
 
-    for (const EntityPtr& entity : entities_in_camera) {
-      int layer = entity->get_layer();
-      Debug::check_assertion(map.is_valid_layer(layer), "Invalid layer");
-      entities_to_draw[layer].push_back(entity);
+    {
+      SOL_PBLOCK("Pushing entities.", profiler::colors::Green);
+      for (const EntityPtr& entity : entities_in_camera) {
+        int layer = entity->get_layer();
+        SOLARUS_REQUIRE(map.is_valid_layer(layer), "Invalid layer");
+        entities_to_draw[layer].push_back(entity);
+      }
     }
 
     // Add entities displayed even when out of the camera.
-    for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {
-      for (const EntityPtr& entity : entities_drawn_not_at_their_position[layer]) {
-        entities_to_draw[layer].push_back(entity);
-      }
+    {
+      SOL_PBLOCK("Merging position independent and sorting", profiler::colors::Green);
+      for (int layer = map.get_min_layer(); layer <= map.get_max_layer(); ++layer) {
+        {
+          SOL_PBLOCK("Adding position independent");
+          for (const EntityPtr& entity : entities_drawn_not_at_their_position[layer]) {
+            entities_to_draw[layer].push_back(entity);
+          }
+        }
 
-      // Sort them and remove duplicates.
-      // Duplicate drawings are a problem for entities with semi-transparency.
-      // Using an std::set would be slower because duplicates are rare:
-      // there are not often a lot of dynamic entities displayed out of the camera.
-      std::sort(entities_to_draw[layer].begin(), entities_to_draw[layer].end(), DrawingOrderComparator());
-      entities_to_draw[layer].erase(
-            std::unique(entities_to_draw[layer].begin(), entities_to_draw[layer].end()),
-            entities_to_draw[layer].end()
-      );
+        {
+          SOL_PBLOCK("Sorting");
+          // Sort them and remove duplicates.
+          // Duplicate drawings are a problem for entities with semi-transparency.
+          // Using an std::set would be slower because duplicates are rare:
+          // there are not often a lot of dynamic entities displayed out of the camera.
+          std::sort(entities_to_draw[layer].begin(), entities_to_draw[layer].end(), DrawingOrderComparator());
+        }
+        {
+          SOL_PBLOCK("Dedup");
+          entities_to_draw[layer].erase(
+                std::unique(entities_to_draw[layer].begin(), entities_to_draw[layer].end()),
+                entities_to_draw[layer].end()
+          );
+        }
+      }
     }
 
   }
@@ -1214,31 +1351,45 @@ void Entities::draw() {
     // in other words, draw all regions containing animated tiles
     // (and maybe more, but we don't care because non-animated tiles
     // will be drawn later).
-    for (unsigned int i = 0; i < tiles_in_animated_regions[layer].size(); ++i) {
-      Tile& tile = *tiles_in_animated_regions[layer][i];
-      if (tile.overlaps(*camera) || !tile.is_drawn_at_its_position()) {
-        tile.draw(*camera);
+    {
+      SOL_PBLOCK("Draw dynamic tiles", profiler::colors::Green);
+      for (const TilePtr& ptile : tiles_in_animated_regions[layer]) {
+        Tile& tile = *ptile;
+        if (tile.overlaps(camera) || !tile.is_drawn_at_its_position()) {
+          tile.draw(camera);
+        }
       }
     }
 
     // Draw the non-animated tiles (with transparent rectangles on the regions of animated tiles
     // since they are already drawn).
-    non_animated_regions[layer]->draw_on_map();
+    {
+      SOL_PBLOCK("Draw non animated region", profiler::colors::Green)
+      non_animated_regions[layer]->draw_on_map(camera);
+    }
 
-    // Draw dynamic entities, ordered by their data structure.
-    for (const EntityPtr& entity: entities_to_draw[layer]) {
-      if (!entity->is_being_removed() &&
-          entity->is_enabled() &&
-          entity->is_visible()) {
-        entity->draw(*camera);
+    {
+      SOL_PBLOCK("Draw entitites", profiler::colors::Green);
+      for (const EntityPtr& entity: entities_to_draw[layer]) {
+        if (!entity->is_being_removed() &&
+            entity->is_enabled() &&
+            entity->is_visible()) {
+          entity->draw(camera);
+        }
       }
     }
   }
 
   if (EntityTree::debug_quadtrees) {
+    SOL_PBLOCK("Quadtree debug draw", profiler::colors::DarkGreen);
+
+    const SurfacePtr& camera_surface = camera.get_surface();
+
     // Draw the quadtree structure for debugging.
-    quadtree->draw(camera_surface, -camera->get_top_left_xy());
+    quadtree->draw(camera_surface, -camera.get_top_left_xy());
   }
+
+  entities_to_draw.clear();  // Invalidate entities to draw.
 }
 
 /**
@@ -1266,8 +1417,7 @@ void Entities::set_entity_layer(Entity& entity, int layer) {
     }
 
     // Track the insertion order.
-    z_orders.at(old_layer).remove(shared_entity);
-    z_orders.at(layer).add(shared_entity);
+    z_orders.at(layer).bring_to_front(shared_entity);
 
     // Update the list of entities by type and layer.
     const EntityType type = entity.get_type();
@@ -1289,7 +1439,7 @@ void Entities::set_entity_layer(Entity& entity, int layer) {
  * \param entity The entity modified.
  */
 void Entities::notify_entity_bounding_box_changed(Entity& entity) {
-
+  SOL_PFUN();
   // Update the quadtree.
 
   // Note that if the entity is not in the quadtree
@@ -1328,6 +1478,61 @@ bool Entities::overlaps_raised_blocks(int layer, const Rectangle& rectangle) {
 }
 
 /**
+ * \brief Computes a unique name for an entity on this map.
+ * \param candidate_name Candidate name.
+ * \return The same name, possibly with a numbered suffix.
+ */
+std::string Entities::ensure_unique_name(const std::string &candidate_name) {
+
+  std::string name = candidate_name;
+  if (named_entities.find(name) != named_entities.end()) {
+    // This name is already used by another entity. Add a suffix.
+    std::ostringstream oss;
+    std::istringstream iss;
+    int suffix_number = 1;
+    std::string prefix = name;
+    size_t index = name.rfind('_');
+    if (index != std::string::npos) {
+      // If there is already a numbered suffix, we will increment it.
+      const std::string& suffix = name.substr(index + 1);
+      iss.clear();
+      iss.str(suffix);
+      if (iss >> suffix_number) {
+        prefix = name.substr(0, index);
+      }
+    }
+
+    // Now we have the final prefix. Find the first available suffix.
+    do {
+      ++suffix_number;
+      oss.str("");
+      oss.clear();
+      oss << prefix << '_' << suffix_number;
+      name = oss.str();
+    }
+    while (named_entities.find(name) != named_entities.end());
+  }
+  return name;
+}
+
+/**
+ * \brief Changes the name of an entity on this map.
+ * \param entity The entity.
+ * \param name The new name, or an empty string to set no name.
+ */
+void Entities::set_entity_name(const EntityPtr& entity, const std::string &name) {
+
+  const std::string &old_name = entity->get_name();
+  named_entities.erase(old_name);
+  std::string new_name = name;
+  if (!new_name.empty()) {
+    new_name = ensure_unique_name(new_name);
+    named_entities[new_name] = entity;
+  }
+  entity->set_name(new_name);
+}
+
+/**
  * \brief Creates a Z order tracking data structure.
  */
 Entities::ZOrderInfo::ZOrderInfo() :
@@ -1337,36 +1542,13 @@ Entities::ZOrderInfo::ZOrderInfo() :
 }
 
 /**
- * \brief Inserts an entity at the end of the structure.
- *
- * Nothing happens if the entity was already present.
- */
-void Entities::ZOrderInfo::add(const EntityPtr& entity) {
-
-  ++max;
-  entity->set_z(max);
-}
-
-/**
- * \brief Removes an entity from the structure.
- *
- * Nothing happens if the entity was not present.
- */
-void Entities::ZOrderInfo::remove(const EntityPtr& entity) {
-
-  entity->set_z(0);
-  // Other Z values remain unchanged: removing an entity does not break the order.
-}
-
-/**
  * \brief Puts an entity above all others.
  *
  * It will then have a Z order greater than all other entities in the structure.
  */
 void Entities::ZOrderInfo::bring_to_front(const EntityPtr& entity) {
-
-  remove(entity);
-  add(entity);
+  ++max;
+  entity->set_z(max);
 }
 
 /**
@@ -1375,8 +1557,6 @@ void Entities::ZOrderInfo::bring_to_front(const EntityPtr& entity) {
  * It will then have a Z order lower than all other entities in the structure.
  */
 void Entities::ZOrderInfo::bring_to_back(const EntityPtr& entity) {
-
-  remove(entity);
   --min;
   entity->set_z(min);
 }

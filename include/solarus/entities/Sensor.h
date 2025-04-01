@@ -39,7 +39,6 @@ class Sensor: public Entity {
     Sensor(const std::string& name, int layer, const Point& xy, const Size& size);
 
     virtual EntityType get_type() const override;
-    virtual bool can_be_drawn() const override;
 
     virtual bool is_obstacle_for(Entity& other) override;
     virtual void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
@@ -49,7 +48,7 @@ class Sensor: public Entity {
 
   private:
 
-    bool activated_by_hero;      /**< true if the sensor is activated by the hero */
+    bool activated_by_heroes;      /**< true if the sensor is activated by the hero */
     bool notifying_script;       /**< true if the map script is currently being notified */
 };
 

@@ -76,7 +76,7 @@ class Door: public Entity {
     void update() override;
     void built_in_draw(Camera& camera) override;
     std::string get_sword_tapping_sound() override;
-    bool notify_action_command_pressed() override;
+    bool notify_action_command_pressed(Hero& hero) override;
     void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
     void notify_collision(Entity& entity, Sprite& this_sprite, Sprite& other_sprite) override;
     void notify_collision_with_explosion(Explosion& explosion, Sprite& sprite_overlapping) override;
@@ -93,9 +93,17 @@ class Door: public Entity {
     void set_opening_condition_consumed(bool opening_condition_consumed);
     const std::string& get_cannot_open_dialog_id() const;
     void set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id);
+    const std::string& get_cannot_open_sound_id() const;
+    void set_cannot_open_sound_id(const std::string& sound_id);
+    const std::string& get_opening_sound_id() const;
+    void set_opening_sound_id(const std::string& sound_id);
+    const std::string& get_closing_sound_id() const;
+    void set_closing_sound_id(const std::string& sound_id);
+    const std::string& get_unlocking_sound_id() const;
+    void set_unlocking_sound_id(const std::string& sound_id);
 
     // State.
-    bool can_open() const;
+    bool can_open(Hero &hero) const;
     bool is_open() const;
     bool is_opening() const;
     bool is_closed() const;
@@ -122,7 +130,7 @@ class Door: public Entity {
     void set_opening();
     void set_closing();
     void update_dynamic_tiles();
-    void consume_opening_condition();
+    void consume_opening_condition(Hero &hero);
 
     // Properties.
     const std::string savegame_variable;          /**< Boolean variable that saves the door state. */
@@ -138,6 +146,10 @@ class Door: public Entity {
                                                    * should be consumed when opening the door. */
     std::string cannot_open_dialog_id;            /**< Dialog to show if the door cannot be opened,
                                                    * or an empty string. */
+    std::string cannot_open_sound_id;             /**< Sound ID if cannot open. */
+    std::string opening_sound_id;                 /**< Sound ID for opening phase. */
+    std::string closing_sound_id;                 /**< Sound ID for closing phase. */
+    std::string unlocking_sound_id;               /**< Sound ID for unlocking phase. */
 
     // State.
     State state;                                  /**< State of the door: open, opening, closed or closing. */

@@ -20,7 +20,6 @@
 #include "solarus/core/Common.h"
 #include "solarus/core/Size.h"
 #include "solarus/entities/EntityData.h"
-#include <array>
 #include <deque>
 #include <iosfwd>
 #include <map>
@@ -195,19 +194,19 @@ class SOLARUS_API MapData : public LuaData {
     const std::deque<EntityData>& get_entities(int layer) const;
     std::deque<EntityData>& get_entities(int layer);
 
-    int min_layer;                /**< Lowest layer of the map (0 or less). */
-    int max_layer;                /**< Highest layer of the map (0 or more). */
-    Size size;                    /**< Size of the map in pixels. */
-    std::string world;            /**< World of the map or an empty string. */
-    Point location;               /**< Coordinates of the upper-left corner of the map in its world. */
-    int floor;                    /**< Floor of the map or NO_FLOOR. */
-    std::string tileset_id;       /**< Tileset to use as skin for the map. */
-    std::string music_id;         /**< Background music id or "none" or "same". */
+    int min_layer = 0;              /**< Lowest layer of the map (0 or less). */
+    int max_layer = -1;             /**< Highest layer of the map (0 or more). */
+    Size size;                      /**< Size of the map in pixels. */
+    std::string world;              /**< World of the map or an empty string. */
+    Point location;                 /**< Coordinates of the upper-left corner of the map in its world. */
+    int floor = NO_FLOOR;           /**< Floor of the map or NO_FLOOR. */
+    std::string tileset_id;         /**< Tileset to use as skin for the map. */
+    std::string music_id = "none";  /**< Background music id or "none" or "same". */
 
     std::map<int, EntityDataList>
-        entities;                 /**< The entities on each layer. */
+        entities;                   /**< The entities on each layer. */
     std::map<std::string, EntityIndex>
-        named_entities;           /**< Entities indexed by their name. */
+        named_entities;             /**< Entities indexed by their name. */
 
 };
 

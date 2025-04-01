@@ -1,6 +1,113 @@
 # Changelog
 
-## Solarus 1.6.5 (2010-04-06)
+## Solarus 2.0.0 (2025-04-01)
+
+The multiplayer update!
+Solarus now supports multiple maps, cameras, heroes and game controllers.
+This release comes with a new game controller API and an improved audio API
+with better support and customization features.
+
+### Lua API changes
+
+#### Changes that do not introduce incompatibilities
+
+* Add support for multiple maps, cameras, heroes and game controllers.
+* New game controller API with better support and customization features.
+* Add methods `game:get/set_legacy_controls_storage()` for compatibility.
+* Allow to stop or pause a sound effect (#1289).
+* Allow to change the volume of a sound effect (#1608).
+* Allow to change the pan and pitch of a sound effect.
+* New music API (#1386).
+* Add a method `sol.surface.load()` to safely load from any directory (#1484).
+* Add a method `surface:save()` to save a surface to a PNG file (#1215).
+* Add functions `sol.main.rawget/rawset()` (#1424).
+* Add a method `destination:is_default()`.
+* Add a methode `destination:get_direction()` (#1639).
+* Add a method `entity:set_name()` (#1527).
+* Add overload to `entity:is_in_same_region()`, pass position (#514).
+* Add methods `hero:get/set_push_delay()` (#1524).
+* Add methods `hero:get/set_carry_height()`.
+* Add a method `game:get_values()` (#1552).
+* Add a method `movement:get_type()` (#840).
+* Allow to disable the spin attack (#771).
+* Add methods `timer:get/set_duration()`.
+* Add methods to customize hero falling and respawning sounds (#1645).
+* Add methods to customize all block entities sounds.
+* Add methods to customize all chest entities sounds.
+* Add methods to customize all carried object entities sounds (#1658).
+* Add methods to customize all door entities sounds (#1643).
+* Add methods to customize all hero sounds (#1661, #1666).
+* Add methods to customize all enemy entities sounds (#1659, #1669).
+* Add methods to customize all pickable entities sounds (#1660).
+* Add methods to customize all shop treasure entities sounds (#1665).
+* Add methods to customize all exploding entities sounds (#1662).
+* Add methods `hero:get/set_walking_speed()` and `hero:get/set_can_swim_faster()`.
+* Add events `stairs:on_entered()` and `stairs:on_exited()`.
+* Add game controller rumbling features (#1590).
+* Add methods `npc:get/set_subtype()` (#1398).
+* Add methods `switch:get/set_subtype()` (#1667).
+* Add methods `enemy:get/set_immobilization_duration()` (#463).
+* Add new quest properties: `initial_release_date`, `license`, `languages`,
+`min_players`, `max_players`, `genres`, `age`, `controls`, `dynamic_timestep`, `subpixel_camera`.
+
+#### Changes that introduce incompatibilities
+
+Solarus 2.0 can still run quests in 1.5 and 1.6 format.
+The following list of incompatibilities only affect quests in the 2.0 format.
+See the migration guide for more detailed instructions.
+
+* Joypad input events now provide button names instead of numbers.
+* Controls are no longer saved by default, see `game:set_legacy_controls_storage()`.
+* `hero:teleport()` now also teleports the camera instead of recreating one.
+* `hero:get_sword_sound_id()` now returns `nil` if there is no sword sound.
+
+### Engine bug fixes
+
+* Fix crash when teletransporting to a map without the same layer (#1419).
+* Fix crash when a moving custom entity activates a stream (#1562).
+* Fix crash when a sprite is synchronized to a sprite with more frames (#1117).
+* Fix crash when calling `hero:set_direction()` with an invalid value (#1628).
+* Fix crash when entering a map with tileset-specific sprites nearby.
+* Fix crash when resetting the game from the update step (#1583).
+* Fix crash when loading an invalid savegame file (#1503).
+* Fix crash when assigning a non-assignable item (#1641).
+* Fix return of invalid sprite object with bad sprite id (#1423).
+* Fix separator region detection corner cases (#1425).
+* Fix error reporting when creating entities with a non-existent model (#1494).
+* Fix `entity:overlaps()` returning true even with removed entities (#1611).
+* Fix custom state direction control when the movement is disallowed (#1565).
+* Fix missing equipement for second heroes (#1576).
+* Fix `hero.set_invincible` not suspended with the game (#1554).
+* Fix NPC keeping animation `walking` after movement:stop() (#1652).
+* Fix custom entity still interacting when moved or disabled (#1056, #1407).
+* Fix unhelpful error when a destructible has no sprite.
+* Fix thrown objects destruction animation position (#1508).
+* Fix camera stuck on entities other than separators (#1619).
+* Fix crash when loading a save file with Lua keywords (#1609).
+* Fix crash when a dialog starts during another dialog (#988, #1582).
+* Fix speed of target movement outside a game (#1297).
+* Fix crash when circle movement angular speed is 0 (#1657).
+* Fix `custom_entity:add_collision_test()` not always checking collisions (#1648).
+* Fix collisions when moving a sprite without moving the entity (#1535).
+* Fix abnormal CPU consumption on Windows (#533).
+* Fix master volume being too loud.
+
+### Other engine changes
+
+* The -lua-console parameter is now false by default.
+* Add support for loading SDL Game Controller mapping database files.
+  * Allows the engine to properly support much more current and future controllers.
+  * For a better out of the box experience, the engine now also bundles a popular
+    [community-sourced database](https://github.com/mdqinc/SDL_GameControllerDB).
+  * Users can create and use their own custom controller mappings as well.
+
+### Solarus launcher GUI changes
+
+* Fix Quest Runner not working on Windows when binaries are under Unicode paths.
+* Add error reporting to the Quest Runner process manager.
+* Remove Solarus Launcher from this repository.
+
+## Solarus 1.6.5 (2021-04-06)
 
 ### Engine changes
 
@@ -30,7 +137,8 @@ This release adds new features but does not introduce any incompatibility.
 
 ## Solarus 1.6.4 (2020-04-12)
 
-No change in the engine package.
+This release only contains changes in the Solarus Quest Editor.
+There are no changes in the engine source code.
 
 ## Solarus 1.6.3 (2020-04-11)
 
@@ -295,6 +403,11 @@ but does not introduce any incompatibility.
 * Fix `text_surface:set_horizontal/vertical_alignment()` not working.
 * Fix parallax dynamic tiles still displayed when disabled or invisible.
 * Improve error message of non-square tile patterns with diagonal obstacles.
+
+## Solarus 1.5.2 (2016-12-06)
+
+This release only contains changes in the Solarus Quest Editor.
+There are no changes in the engine source code.
 
 ## Solarus 1.5.1 (2016-11-29)
 

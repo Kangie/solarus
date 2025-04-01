@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/audio/Sound.h"
+#include "solarus/core/AbilityInfo.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/Geometry.h"
@@ -37,6 +38,7 @@
 #include "solarus/entities/EntityTypeInfo.h"
 #include "solarus/entities/GroundInfo.h"
 #include "solarus/entities/Hero.h"
+#include "solarus/entities/Jumper.h"
 #include "solarus/entities/Npc.h"
 #include "solarus/entities/Pickable.h"
 #include "solarus/entities/Sensor.h"
@@ -163,6 +165,11 @@ void LuaContext::register_entity_module() {
         { "set_properties", entity_api_set_properties },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+      common_methods.insert(common_methods.end(), {
+        { "set_name", entity_api_set_name },
+    });
+  }
 
   // Metamethods of all entity types.
   std::vector<luaL_Reg> metamethods = {
@@ -187,8 +194,8 @@ void LuaContext::register_entity_module() {
       { "set_tunic_sprite_id", hero_api_set_tunic_sprite_id },
       { "get_sword_sprite_id", hero_api_get_sword_sprite_id },
       { "set_sword_sprite_id", hero_api_set_sword_sprite_id },
-      { "get_sword_sound_id", hero_api_get_sword_sound_id },
-      { "set_sword_sound_id", hero_api_set_sword_sound_id },
+      { "get_sword_sound_id", hero_api_get_sword_sound_id }, // deprecated
+      { "set_sword_sound_id", hero_api_set_sword_sound_id }, // deprecated
       { "get_shield_sprite_id", hero_api_get_shield_sprite_id },
       { "set_shield_sprite_id", hero_api_set_shield_sprite_id },
       { "is_blinking", hero_api_is_blinking },
@@ -212,11 +219,79 @@ void LuaContext::register_entity_module() {
       { "start_hurt", hero_api_start_hurt },
       { "get_state", entity_api_get_state },
       { "get_state_object", hero_api_get_state_object },
+      { "get_controls", hero_api_get_controls },
+      { "set_controls", hero_api_set_controls }
   };
   if (CurrentQuest::is_format_at_least({ 1, 6 })) {
     hero_methods.insert(hero_methods.end(), {
         { "get_carried_object", hero_api_get_carried_object },
         { "start_state", hero_api_start_state },
+    });
+  }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    hero_methods.insert(hero_methods.end(), {
+      { "get_swimming_speed", hero_api_get_swimming_speed },
+      { "set_swimming_speed", hero_api_set_swimming_speed },
+      { "get_can_swim_faster", hero_api_get_can_swim_faster },
+      { "set_can_swim_faster", hero_api_set_can_swim_faster },
+      { "get_push_delay", hero_api_get_push_delay},
+      { "set_push_delay", hero_api_set_push_delay},
+      { "get_carry_height", hero_api_get_carry_height},
+      { "set_carry_height", hero_api_set_carry_height},
+      { "get_life", hero_get_life },
+      { "set_life", hero_set_life },
+      { "add_life", hero_add_life },
+      { "remove_life", hero_remove_life },
+      { "get_max_life", hero_get_max_life },
+      { "set_max_life", hero_set_max_life },
+      { "add_max_life", hero_add_max_life },
+      { "get_money", hero_get_money },
+      { "set_money", hero_set_money },
+      { "add_money", hero_add_money },
+      { "remove_money", hero_remove_money },
+      { "get_max_money", hero_get_max_money },
+      { "set_max_money", hero_set_max_money },
+      { "get_magic", hero_get_magic },
+      { "set_magic", hero_set_magic },
+      { "add_magic", hero_add_magic },
+      { "remove_magic", hero_remove_magic },
+      { "get_max_magic", hero_get_max_magic },
+      { "set_max_magic", hero_set_max_magic },
+      { "has_ability", hero_has_ability },
+      { "get_abiltiy", hero_get_ability },
+      { "set_ability", hero_set_ability },
+      { "get_item", hero_get_item },
+      { "has_item", hero_has_item },
+      { "get_item_assigned", hero_get_item_assigned },
+      { "set_item_assigned", hero_set_item_assigned },
+      { "get_sword_sound", hero_api_get_sword_sound },
+      { "set_sword_sound", hero_api_set_sword_sound },
+      { "get_falling_sound", hero_api_get_falling_sound },
+      { "set_falling_sound", hero_api_set_falling_sound },
+      { "get_respawn_sound", hero_api_get_respawn_sound },
+      { "set_respawn_sound", hero_api_set_respawn_sound },
+      { "get_landing_sound", hero_api_get_landing_sound },
+      { "set_landing_sound", hero_api_set_landing_sound },
+      { "get_jumping_sound", hero_api_get_jumping_sound },
+      { "set_jumping_sound", hero_api_set_jumping_sound },
+      { "get_hurt_sound", hero_api_get_hurt_sound },
+      { "set_hurt_sound", hero_api_set_hurt_sound },
+      { "get_sinking_sound", hero_api_get_sinking_sound },
+      { "set_sinking_sound", hero_api_set_sinking_sound },
+      { "get_swimming_sound", hero_api_get_swimming_sound },
+      { "set_swimming_sound", hero_api_set_swimming_sound },
+      { "get_lifting_sound", hero_api_get_lifting_sound },
+      { "set_lifting_sound", hero_api_set_lifting_sound },
+      { "get_running_sound", hero_api_get_running_sound },
+      { "set_running_sound", hero_api_set_running_sound },
+      { "get_running_obstacle_sound", hero_api_get_running_obstacle_sound },
+      { "set_running_obstacle_sound", hero_api_set_running_obstacle_sound },
+      { "get_spin_attack_load_sound", hero_api_get_spin_attack_load_sound },
+      { "set_spin_attack_load_sound", hero_api_set_spin_attack_load_sound },
+      { "get_spin_attack_release_sound", hero_api_get_spin_attack_release_sound },
+      { "set_spin_attack_release_sound", hero_api_set_spin_attack_release_sound },
+      { "get_victory_sound", hero_api_get_victory_sound },
+      { "set_victory_sound", hero_api_set_victory_sound },
     });
   }
 
@@ -237,6 +312,13 @@ void LuaContext::register_entity_module() {
       { "start_manual", camera_api_start_manual },
       { "get_position_to_track", camera_api_get_position_to_track },
       { "get_tracked_entity", camera_api_get_tracked_entity },
+      { "set_viewport", camera_api_set_viewport },
+      { "get_viewport", camera_api_get_viewport },
+      { "set_zoom", camera_api_set_zoom},
+      { "get_zoom", camera_api_get_zoom},
+      { "set_rotation", camera_api_set_rotation},
+      { "get_rotation", camera_api_get_rotation},
+      { "teleport", camera_api_teleport }
   };
   if (CurrentQuest::is_format_at_most({ 1, 5 })) {
     camera_methods.insert(camera_methods.end(), {
@@ -244,8 +326,9 @@ void LuaContext::register_entity_module() {
         { "set_size", entity_api_set_size },
     });
   }
+
   if (CurrentQuest::is_format_at_least({ 1, 6 })) {
-    common_methods.insert(common_methods.end(), {
+    camera_methods.insert(camera_methods.end(), {
         { "get_surface", camera_api_get_surface },
     });
   }
@@ -263,6 +346,12 @@ void LuaContext::register_entity_module() {
       { "get_starting_location_mode", destination_api_get_starting_location_mode },
       { "set_starting_location_mode", destination_api_set_starting_location_mode },
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    destination_methods.insert(destination_methods.end(), {
+      { "is_default", destination_api_is_default },
+      { "get_direction", destination_api_get_direction},
+    });
+  }
 
   destination_methods.insert(destination_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -298,6 +387,13 @@ void LuaContext::register_entity_module() {
       { "set_traversable", npc_api_set_traversable },
   };
 
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    npc_methods.insert(npc_methods.end(), {
+      { "get_subtype", npc_api_get_subtype },
+      { "set_subtype", npc_api_set_subtype },
+    });
+  }
+
   npc_methods.insert(npc_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
       get_entity_internal_type_name(EntityType::NPC),
@@ -313,6 +409,20 @@ void LuaContext::register_entity_module() {
       { "get_treasure", chest_api_get_treasure },
       { "set_treasure", chest_api_set_treasure },
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    chest_methods.insert(chest_methods.end(), {
+      { "get_opening_method", chest_api_get_opening_method },
+      { "get_opening_condition", chest_api_get_opening_condition },
+      { "is_opening_condition_consumed", chest_api_is_opening_condition_consumed },
+      { "set_opening_method", chest_api_set_opening_method },
+      { "set_opening_condition", chest_api_set_opening_condition },
+      { "set_opening_condition_consumed", chest_api_set_opening_condition_consumed },
+      { "get_cannot_open_sound", chest_api_get_cannot_open_sound },
+      { "set_cannot_open_sound", chest_api_set_cannot_open_sound },
+      { "get_opening_sound", chest_api_get_opening_sound },
+      { "set_opening_sound", chest_api_set_opening_sound },
+    });
+  }
 
   chest_methods.insert(chest_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -338,6 +448,17 @@ void LuaContext::register_entity_module() {
       { "set_max_moves", block_api_set_max_moves },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    block_methods.insert(block_methods.end(), {
+      { "get_direction", block_api_get_direction},
+      { "get_moving_sound", block_api_get_moving_sound },
+      { "set_moving_sound", block_api_set_moving_sound },
+      { "get_falling_sound", block_api_get_falling_sound },
+      { "set_falling_sound", block_api_set_falling_sound },
+      { "get_sinking_sound", block_api_get_sinking_sound },
+      { "set_sinking_sound", block_api_set_sinking_sound },
+    });
+  }
 
   block_methods.insert(block_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -355,6 +476,15 @@ void LuaContext::register_entity_module() {
       { "set_locked", switch_api_set_locked },
       { "is_walkable", switch_api_is_walkable },
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    switch_methods.insert(switch_methods.end(), {
+        { "get_inactivate_when_leaving", switch_api_get_inactivate_when_leaving},
+        { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
+        { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
+        { "get_subtype", switch_api_get_subtype },
+        { "set_subtype", switch_api_set_subtype },
+    });
+  }
 
   switch_methods.insert(switch_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -400,6 +530,25 @@ void LuaContext::register_entity_module() {
         { "set_open", door_api_set_open },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    door_methods.insert(door_methods.end(), {
+      { "get_opening_method", door_api_get_opening_method },
+      { "get_opening_condition", door_api_get_opening_condition },
+      { "is_opening_condition_consumed", door_api_is_opening_condition_consumed },
+      { "set_opening_method", door_api_set_opening_method },
+      { "set_opening_condition", door_api_set_opening_condition },
+      { "set_opening_condition_consumed", door_api_set_opening_condition_consumed },
+      { "get_savegame_variable", door_api_get_savegame_variable },
+      { "get_cannot_open_sound", door_api_get_cannot_open_sound },
+      { "set_cannot_open_sound", door_api_set_cannot_open_sound },
+      { "get_opening_sound", door_api_get_opening_sound },
+      { "set_opening_sound", door_api_set_opening_sound },
+      { "get_closing_sound", door_api_get_closing_sound },
+      { "set_closing_sound", door_api_set_closing_sound },
+      { "get_unlocking_sound", door_api_get_unlocking_sound },
+      { "set_unlocking_sound", door_api_set_unlocking_sound },
+    });
+  }
 
   door_methods.insert(door_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -436,6 +585,14 @@ void LuaContext::register_entity_module() {
       { "get_falling_height", pickable_api_get_falling_height },
       { "get_treasure", pickable_api_get_treasure },
   };
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    pickable_methods.insert(pickable_methods.end(), {
+      { "get_falling_sound", pickable_api_get_falling_sound },
+      { "set_falling_sound", pickable_api_set_falling_sound },
+      { "get_sinking_sound", pickable_api_get_sinking_sound },
+      { "set_sinking_sound", pickable_api_set_sinking_sound },
+    });
+  }
 
   pickable_methods.insert(pickable_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -470,6 +627,12 @@ void LuaContext::register_entity_module() {
         { "set_weight", entity_api_set_weight },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    destructible_methods.insert(destructible_methods.end(), {
+        { "get_exploding_sound", destructible_api_get_exploding_sound },
+        { "set_exploding_sound", destructible_api_set_exploding_sound },
+    });
+  }
 
   destructible_methods.insert(destructible_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -488,7 +651,21 @@ void LuaContext::register_entity_module() {
         { "get_destruction_sound", carried_object_api_get_destruction_sound },
         { "set_destruction_sound", carried_object_api_set_destruction_sound },
         { "get_damage_on_enemies", carried_object_api_get_damage_on_enemies },
-        { "set_damage_on_enemies", carried_object_api_set_damage_on_enemies },
+        { "set_damage_on_enemies", carried_object_api_set_damage_on_enemies }
+    });
+  }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    carried_object_methods.insert(carried_object_methods.end(), {
+        { "get_object_height", carried_object_api_get_object_height},
+        { "set_object_height", carried_object_api_set_object_height},
+        { "get_throwing_sound", carried_object_api_get_throwing_sound },
+        { "set_throwing_sound", carried_object_api_set_throwing_sound },
+        { "get_falling_sound", carried_object_api_get_falling_sound },
+        { "set_falling_sound", carried_object_api_set_falling_sound },
+        { "get_sinking_sound", carried_object_api_get_sinking_sound },
+        { "set_sinking_sound", carried_object_api_set_sinking_sound },
+        { "get_exploding_sound", carried_object_api_get_exploding_sound },
+        { "set_exploding_sound", carried_object_api_set_exploding_sound },
     });
   }
 
@@ -553,6 +730,8 @@ void LuaContext::register_entity_module() {
       { "set_traversable", enemy_api_set_traversable },
       { "get_obstacle_behavior", enemy_api_get_obstacle_behavior },
       { "set_obstacle_behavior", enemy_api_set_obstacle_behavior },
+      { "get_immobilization_duration", enemy_api_get_immobilization_duration },
+      { "set_immobilization_duration", enemy_api_set_immobilization_duration },
       { "restart", enemy_api_restart },
       { "hurt", enemy_api_hurt },
       { "immobilize", enemy_api_immobilize },
@@ -576,12 +755,65 @@ void LuaContext::register_entity_module() {
         { "set_attacking_collision_mode", enemy_api_set_attacking_collision_mode },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    enemy_methods.insert(enemy_methods.end(), {
+      { "get_savegame_variable", enemy_api_get_savegame_variable },
+      { "get_attack_failure_sound", enemy_api_get_attack_failure_sound },
+      { "set_attack_failure_sound", enemy_api_set_attack_failure_sound },
+      { "get_falling_sound", enemy_api_get_falling_sound },
+      { "set_falling_sound", enemy_api_set_falling_sound },
+      { "get_sinking_sound", enemy_api_get_sinking_sound },
+      { "set_sinking_sound", enemy_api_set_sinking_sound },
+      { "get_dying_sound", enemy_api_get_dying_sound },
+      { "set_dying_sound", enemy_api_set_dying_sound },
+      { "get_exploding_sound", enemy_api_get_exploding_sound },
+      { "set_exploding_sound", enemy_api_set_exploding_sound },
+      { "get_hurt_sound", enemy_api_get_hurt_sound },
+      { "set_hurt_sound", enemy_api_set_hurt_sound },
+    });
+  }
 
   enemy_methods.insert(enemy_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
       get_entity_internal_type_name(EntityType::ENEMY),
       {},
       enemy_methods,
+      metamethods
+  );
+
+  //Jumper.
+  std::vector<luaL_Reg> jumper_methods = {};
+
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    jumper_methods.insert(jumper_methods.end(), {
+      { "get_jump_length", jumper_api_get_jump_length},
+      { "set_jump_length", jumper_api_set_jump_length},
+    });
+  }
+
+  jumper_methods.insert(jumper_methods.end(), common_methods.begin(), common_methods.end());
+  register_type(
+      get_entity_internal_type_name(EntityType::JUMPER),
+      {},
+      jumper_methods,
+      metamethods
+  );
+
+  // Shop treasure.
+  std::vector<luaL_Reg> shop_treasure_methods = {};
+
+  if (CurrentQuest::is_format_at_least({ 2, 0 })) {
+    shop_treasure_methods.insert(shop_treasure_methods.end(), {
+      { "get_cannot_buy_sound", shop_treasure_api_get_cannot_buy_sound },
+      { "set_cannot_buy_sound", shop_treasure_api_set_cannot_buy_sound },
+    });
+  }
+
+  shop_treasure_methods.insert(shop_treasure_methods.end(), common_methods.begin(), common_methods.end());
+  register_type(
+      get_entity_internal_type_name(EntityType::SHOP_TREASURE),
+      {},
+      shop_treasure_methods,
       metamethods
   );
 
@@ -633,13 +865,11 @@ void LuaContext::register_entity_module() {
 
   // Also register all other types of entities that have no specific methods.
   register_type(get_entity_internal_type_name(EntityType::TILE), {}, common_methods, metamethods);
-  register_type(get_entity_internal_type_name(EntityType::JUMPER), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::SENSOR), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::SEPARATOR), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::WALL), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::CRYSTAL), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::CRYSTAL_BLOCK), {}, common_methods, metamethods);
-  register_type(get_entity_internal_type_name(EntityType::SHOP_TREASURE), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::BOMB), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::EXPLOSION), {}, common_methods, metamethods);
   register_type(get_entity_internal_type_name(EntityType::FIRE), {}, common_methods, metamethods);
@@ -720,33 +950,6 @@ void LuaContext::push_entity(lua_State* l, Entity& entity) {
 }
 
 /**
- * \brief Pushes a list of entities as an iterator onto the stack.
- *
- * The iterator is pushed onto the stack as one value of type function.
- *
- * \param l A Lua context.
- * \param entity A list of entities. The iterator preserves their order.
- */
-void LuaContext::push_entity_iterator(lua_State* l, const EntityVector& entities) {
-
-  // Create a Lua table with the list of entities, preserving their order.
-  int i = 0;
-  lua_newtable(l);
-  for (const EntityPtr& entity: entities) {
-    ++i;
-    lua_pushinteger(l, i);
-    push_entity(l, *entity);
-    lua_rawset(l, -3);
-  }
-
-  lua_pushinteger(l, entities.size());
-  lua_pushinteger(l, 1);
-  // 3 upvalues: entities table, size, current index.
-
-  lua_pushcclosure(l, l_entity_iterator_next, 3);
-}
-
-/**
  * \brief Returns the Lua metatable name corresponding to a type of map entity.
  * \param entity_type A type of map entity.
  * \return The corresponding Lua metatable name, e.g. "sol.enemy".
@@ -778,8 +981,8 @@ int LuaContext::l_named_sprite_iterator_next(lua_State* l) {
 
     // Get upvalues.
     const int table_index = lua_upvalueindex(1);
-    const int size = lua_tointeger(l, lua_upvalueindex(2));
-    int index = lua_tointeger(l, lua_upvalueindex(3));
+    const int size = static_cast<int>(lua_tointeger(l, lua_upvalueindex(2)));
+    int index = static_cast<int>(lua_tointeger(l, lua_upvalueindex(3)));
 
     if (index > size) {
       // Finished.
@@ -918,6 +1121,32 @@ int LuaContext::entity_api_get_name(lua_State* l) {
       push_string(l, name);
     }
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of entity:set_name().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::entity_api_set_name(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const EntityPtr& entity = check_entity(l, 1);
+    std::string name;
+    if (lua_gettop(l) == 1) {
+      LuaTools::type_error(l, 2, "string or nil");
+    }
+    name = LuaTools::opt_string(l, 2, "");
+
+    if (!entity->is_on_map()) {
+      entity->set_name(name);
+    } else {
+      // Let the map rename the entity to ensure uniqueness.
+      entity->get_map().get_entities().set_entity_name(entity, name);
+    }
+
+    return 0;
   });
 }
 
@@ -1096,9 +1325,13 @@ int LuaContext::entity_api_set_position(lua_State* l) {
     int y = LuaTools::check_int(l, 3);
     int layer = LuaTools::opt_layer(l, 4, entity.get_map(), entity.get_layer());
 
-    Entities& entities = entity.get_map().get_entities();
     entity.set_xy(x, y);
-    entities.set_entity_layer(entity, layer);
+    if (entity.is_on_map()) {
+      Entities& entities = entity.get_map().get_entities();
+      entities.set_entity_layer(entity, layer);
+    } else {
+      entity.set_layer(layer);
+    }
     entity.notify_position_changed();
 
     return 0;
@@ -1261,8 +1494,12 @@ int LuaContext::entity_api_set_layer(lua_State* l) {
     Entity& entity = *check_entity(l, 1);
     int layer = LuaTools::check_layer(l, 2, entity.get_map());
 
-    Entities& entities = entity.get_map().get_entities();
-    entities.set_entity_layer(entity, layer);
+    if (entity.is_on_map()) {
+      Entities& entities = entity.get_map().get_entities();
+      entities.set_entity_layer(entity, layer);
+    } else {
+      entity.set_layer(layer);
+    }
     entity.notify_position_changed();
 
     return 0;
@@ -1476,7 +1713,9 @@ int LuaContext::entity_api_bring_to_front(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
 
-    entity.get_map().get_entities().bring_to_front(entity);
+    if (entity.is_on_map()) {
+      entity.get_map().get_entities().bring_to_front(entity);
+    }
 
     return 0;
   });
@@ -1492,7 +1731,9 @@ int LuaContext::entity_api_bring_to_back(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
 
-    entity.get_map().get_entities().bring_to_back(entity);
+    if (entity.is_on_map()) {
+      entity.get_map().get_entities().bring_to_back(entity);
+    }
 
     return 0;
   });
@@ -1588,8 +1829,8 @@ int LuaContext::entity_api_create_sprite(lua_State* l) {
     const SpritePtr& sprite = entity.create_sprite(animation_set_id, sprite_name);
     sprite->enable_pixel_collisions();
 
-    //if entity is already on a map, notify the sprite that tileset is there
-    if(entity.is_on_map()){
+    // If the entity is already on a map, notify the sprite that the tileset is there.
+    if (entity.is_on_map()){
       const Map& map = entity.get_map();
       sprite->set_tileset(map.get_tileset());
     }
@@ -1943,10 +2184,23 @@ int LuaContext::entity_api_is_in_same_region(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     const Entity& entity = *check_entity(l, 1);
-    const Entity& other_entity = *check_entity(l, 2);
+    switch (lua_type(l, 2)) {
+    case LUA_TNUMBER: {
+      int x = LuaTools::check_int(l, 2);
+      int y = LuaTools::check_int(l, 3);
 
-    lua_pushboolean(l, entity.is_in_same_region(other_entity));
-    return 1;
+      lua_pushboolean(l, entity.is_in_same_region(Point(x, y)));
+      return 1;
+    }
+    case LUA_TUSERDATA: {
+      const Entity& other_entity = *check_entity(l, 2);
+
+      lua_pushboolean(l, entity.is_in_same_region(other_entity));
+      return 1;
+    }
+    default:
+      LuaTools::type_error(l, 2, "integer or userdata");
+    }
   });
 }
 
@@ -2036,7 +2290,7 @@ int LuaContext::entity_api_get_properties(lua_State* l) {
     const Entity& entity = *check_entity(l, 1);
 
     const std::vector<Entity::UserProperty>& properties = entity.get_user_properties();
-    lua_createtable(l, properties.size(), 0);
+    lua_createtable(l, static_cast<int>(properties.size()), 0);
     int i = 1;
     for (const Entity::UserProperty& property : properties) {
       lua_createtable(l, 0, 2);
@@ -2134,7 +2388,8 @@ int LuaContext::hero_api_teleport(lua_State* l) {
       LuaTools::arg_error(l, 2, std::string("No such map: '") + map_id + "'");
     }
 
-    game.set_current_map(map_id, destination_name, transition_style);
+    HeroPtr hero_ptr = std::static_pointer_cast<Hero>(hero.shared_from_this());
+    hero.get_game().teleport_hero(hero_ptr, map_id, destination_name, transition_style);
 
     return 0;
   });
@@ -2166,6 +2421,12 @@ int LuaContext::hero_api_set_direction(lua_State* l) {
     Hero& hero = *check_hero(l, 1);
     int direction = LuaTools::check_int(l, 2);
 
+    if (direction < 0 || direction >= 4) {
+      std::ostringstream oss;
+      oss << "Invalid hero direction " << direction
+          << ": should be between 0 and 3";
+      LuaTools::arg_error(l, 2, oss.str());
+    }
     hero.set_animation_direction(direction);
 
     return 0;
@@ -2199,6 +2460,133 @@ int LuaContext::hero_api_set_walking_speed(lua_State* l) {
     int normal_walking_speed = LuaTools::check_int(l, 2);
 
     hero.set_normal_walking_speed(normal_walking_speed);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_swimming_speed(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Hero& hero = *check_hero(l, 1);
+
+    lua_pushinteger(l, hero.get_swimming_speed());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_swimming_speed(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    int swimming_speed = LuaTools::check_int(l, 2);
+
+    hero.set_swimming_speed(swimming_speed);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_can_swim_faster(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Hero& hero = *check_hero(l, 1);
+
+    lua_pushboolean(l, hero.get_can_swim_faster());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_swimming_speed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_can_swim_faster(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    int can_swim_faster = LuaTools::check_boolean(l, 2);
+
+    hero.set_can_swim_faster(can_swim_faster);
+
+    return 0;
+  });
+}
+
+
+/**
+ * \brief Implementation of hero:get_push_delay().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::hero_api_get_push_delay(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Hero& hero = *check_hero(l, 1);
+
+    lua_pushinteger(l, hero.get_push_delay());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_push_delay().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_push_delay(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.set_push_delay(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_carry_height()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_carry_height(lua_State* l) {
+
+
+  return state_boundary_handle(l, [&] {
+    const Hero& hero = *check_hero(l, 1);
+
+    lua_pushinteger(l, hero.get_carry_height());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_carry_height().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_carry_height(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.set_carry_height(LuaTools::check_int(l, 2));
 
     return 0;
   });
@@ -2428,32 +2816,64 @@ int LuaContext::hero_api_set_sword_sprite_id(lua_State* l) {
 }
 
 /**
+ * \deprecated Use hero_api_get_sword_sound instead.
  * \brief Implementation of hero:get_sword_sound_id().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
  */
 int LuaContext::hero_api_get_sword_sound_id(lua_State* l) {
+  get().warning_deprecated(
+    { 2, 0 },
+    "hero:get_sword_sound_id()",
+    "Use hero:get_sword_sound() instead.");
+  return hero_api_get_sword_sound(l);
+}
+
+/**
+ * \brief Implementation of hero:get_sword_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_sword_sound(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Hero& hero = *check_hero(l, 1);
 
     const std::string& sound_id = hero.get_hero_sprites().get_sword_sound_id();
 
-    push_string(l, sound_id);
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
     return 1;
   });
 }
 
 /**
- * \brief Implementation of hero:set_sword_sound_id().
+ * \deprecated Use hero_api_set_sword_sound instead.
+ * \brief Implementation of hero:set_sword_sound().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
  */
 int LuaContext::hero_api_set_sword_sound_id(lua_State* l) {
+  get().warning_deprecated(
+    { 2, 0 },
+    "hero:set_sword_sound_id()",
+    "Use hero:set_sword_sound() instead.");
+  return hero_api_set_sword_sound(l);
+}
+
+/**
+ * \brief Implementation of hero:set_sword_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_sword_sound(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Hero& hero = *check_hero(l, 1);
-    const std::string& sound_id = LuaTools::check_string(l, 2);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
 
     hero.get_hero_sprites().set_sword_sound_id(sound_id);
 
@@ -2490,6 +2910,500 @@ int LuaContext::hero_api_set_shield_sprite_id(lua_State* l) {
     const std::string& sprite_id = LuaTools::check_string(l, 2);
 
     hero.get_hero_sprites().set_shield_sprite_id(sprite_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_falling_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_falling_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_falling_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_falling_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_respawn_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_respawn_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_respawn_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_respawn_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_respawn_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_respawn_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_landing_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_landing_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_landing_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_landing_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_landing_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_landing_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_jumping_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_jumping_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_jumping_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_jumping_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_jumping_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_jumping_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_hurt_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_hurt_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_hurt_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_hurt_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_hurt_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_hurt_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_sinking_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_sinking_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_sinking_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_sinking_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_swimming_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_swimming_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_swimming_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_swimming_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_swimming_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_swimming_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_lifting_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_lifting_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_lifting_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_lifting_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_lifting_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_lifting_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_running_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_running_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_running_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_running_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_running_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_running_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_running_obstacle_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_running_obstacle_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_running_obstacle_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_running_obstacle_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_running_obstacle_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_running_obstacle_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_spin_attack_load_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_spin_attack_load_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_spin_attack_load_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_spin_attack_load_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_spin_attack_load_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_spin_attack_load_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_spin_attack_release_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_spin_attack_release_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_spin_attack_release_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_spin_attack_release_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_spin_attack_release_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_spin_attack_release_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_victory_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_victory_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_victory_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_victory_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_victory_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_victory_sound_id(sound_id);
 
     return 0;
   });
@@ -2755,15 +3669,15 @@ int LuaContext::hero_api_start_treasure(lua_State* l) {
           savegame_variable + "'");
     }
 
-    if (!hero.get_game().get_equipment().item_exists(item_name)) {
+    if (!hero.get_equipment().item_exists(item_name)) {
       LuaTools::arg_error(l, 2, std::string("No such item: '") + item_name + "'");
     }
 
-    Treasure treasure(hero.get_game(), item_name, variant, savegame_variable);
-    if (treasure.is_found()) {
+    Treasure treasure(item_name, variant, savegame_variable);
+    if (treasure.is_found(hero.get_equipment())) {
       LuaTools::arg_error(l, 4, "This treasure is already found");
     }
-    if (!treasure.is_obtainable()) {
+    if (!treasure.is_obtainable(hero.get_equipment())) {
       LuaTools::arg_error(l, 4, "This treasure is not obtainable");
     }
 
@@ -2945,6 +3859,521 @@ int LuaContext::hero_api_get_state_object(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of hero:get_commands().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_controls(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Hero& hero = *check_hero(l, 1);
+
+    const ControlsPtr& cmds = hero.get_controls();
+
+    if(cmds) {
+      push_controls(l, *cmds);
+    } else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_commands().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_controls(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    Controls& cmds = *check_controls(l, 2);
+
+    hero.set_controls(cmds.shared_from_this_cast<Controls>());
+
+    return 0;
+  });
+}
+
+
+/**
+ * \brief Implementation of hero:get_life().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_life(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    lua_pushnumber(l, hero.get_equipment().get_life());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_life().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_life(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    hero.get_equipment().set_life(LuaTools::check_int(l, 2));
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:add_life().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_add_life(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    hero.get_equipment().add_life(LuaTools::check_int(l, 2));
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:remove_life().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_remove_life(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    hero.get_equipment().remove_life(LuaTools::check_int(l,2));
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_max_life().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_max_life(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    lua_pushnumber(l, hero.get_equipment().get_max_life());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_max_life().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_max_life(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().set_max_life(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:add_max_life().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_add_max_life(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    Equipment& equipment = hero.get_equipment();
+
+    int max_life = equipment.get_max_life();
+    equipment.set_max_life(max_life + LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_money().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_money(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    lua_pushnumber(l, hero.get_equipment().get_money());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_money().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_money(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().set_money(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:add_money().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_add_money(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().add_money(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:remove_money().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_remove_money(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().remove_money(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_max_money().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_max_money(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    lua_pushnumber(l, hero.get_equipment().get_max_money());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_max_money().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_max_money(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().set_max_money(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_magic().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_magic(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    lua_pushnumber(l, hero.get_equipment().get_magic());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_magic().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_magic(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().set_magic(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:add_magic().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_add_magic(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().add_magic(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:remove_magic().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_remove_magic(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    hero.get_equipment().remove_magic(LuaTools::check_int(l, 2));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_max_magic().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_max_magic(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    lua_pushnumber(l, hero.get_equipment().get_max_magic());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_max_magic().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_max_magic(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    int magic = LuaTools::check_int(l, 2);
+
+    if (magic < 0) {
+      LuaTools::arg_error(l, 2, "Invalid magic points value: must be positive or zero");
+    }
+
+    hero.get_equipment().set_max_magic(magic);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:has_ability().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_has_ability(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    Ability ability = LuaTools::check_enum<Ability>(l, 2);
+
+    bool has_ability = hero.get_equipment().has_ability(ability);
+
+    lua_pushboolean(l, has_ability);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_commands().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_ability(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    Ability ability = LuaTools::check_enum<Ability>(l, 2);
+
+    if (ability == Ability::SWORD_KNOWLEDGE) {
+      LuaTools::arg_error(l, 2, "Invalid ability name 'sword_knowledge': use 'sword_spin_attack' instead");
+    }
+
+    int ability_level = hero.get_equipment().get_ability(ability);
+
+    lua_pushinteger(l, ability_level);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_ability().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_ability(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    Ability ability = LuaTools::check_enum<Ability>(l, 2);
+    int level = LuaTools::check_int(l, 3);
+
+    if (ability == Ability::SWORD_KNOWLEDGE) {
+      LuaTools::arg_error(l, 2, "Invalid ability name 'sword_knowledge': use 'sword_spin_attack' instead");
+    }
+
+    hero.get_equipment().set_ability(ability, level);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_item().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_item(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& item_name = LuaTools::check_string(l, 2);
+
+    if (!hero.get_equipment().item_exists(item_name)) {
+      LuaTools::error(l, std::string("No such item: '") + item_name + "'");
+    }
+
+    push_item(l, hero.get_equipment().get_item(item_name));
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:has_item().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_has_item(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& item_name = LuaTools::check_string(l, 2);
+
+    const Equipment& equipment = hero.get_equipment();
+    if (!equipment.item_exists(item_name)) {
+      LuaTools::error(l, std::string("No such item: '") + item_name + "'");
+    }
+
+    if (!equipment.get_item(item_name).is_saved()) {
+      LuaTools::error(l, std::string("Item '") + item_name + "' is not saved");
+    }
+
+    lua_pushboolean(l, equipment.get_item(item_name).get_variant() > 0);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_item_assigned().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_get_item_assigned(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    int slot = LuaTools::check_int(l, 2);
+
+    if (slot < 1 || slot > 2) {
+      LuaTools::arg_error(l, 2, "The item slot should be 1 or 2");
+    }
+
+    EquipmentItem* item = hero.get_equipment().get_item_assigned(slot);
+
+    if (item == nullptr) {
+      lua_pushnil(l);
+    }
+    else {
+      push_item(l, *item);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_item_assigned().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_set_item_assigned(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    int slot = LuaTools::check_int(l, 2);
+    EquipmentItem* item = nullptr;
+    if (!lua_isnil(l, 3)) {
+      item = check_item(l, 3).get();
+    }
+
+    if (slot < 1 || slot > 2) {
+      LuaTools::arg_error(l, 2, "The item slot should be 1 or 2");
+    }
+
+    if (item != nullptr) {
+      if (!item->is_assignable()) {
+        LuaTools::arg_error(l, 3, "Item '" + item->get_name() + "' is not assignable");
+      }
+      if (!item->is_saved()) {
+        LuaTools::arg_error(l, 3, "Item '" + item->get_name() + "' is not saved");
+      }
+      if (item->get_variant() == 0) {
+        LuaTools::arg_error(l, 3, "The player does not have the item '" + item->get_name() + "'");
+      }
+    }
+
+    hero.get_equipment().set_item_assigned(slot, item);
+
+    return 0;
+  });
+}
+
+
+/**
  * \brief Notifies Lua that the hero is brandishing a treasure.
  *
  * Lua then manages the treasure's dialog if any.
@@ -2954,6 +4383,7 @@ int LuaContext::hero_api_get_state_object(lua_State* l) {
  * treasure's dialog finishes (possibly an empty ref).
  */
 void LuaContext::notify_hero_brandish_treasure(
+    Hero& hero,
     const Treasure& treasure,
     const ScopedLuaRef& callback_ref
 ) {
@@ -2962,25 +4392,26 @@ void LuaContext::notify_hero_brandish_treasure(
   std::ostringstream oss;
   oss << "_treasure." << treasure.get_item_name() << "." << treasure.get_variant();
   const std::string& dialog_id = oss.str();
-  Game& game = treasure.get_game();
+  Game& game = hero.get_game();
 
-  push_item(current_l, treasure.get_item());
+  push_item(current_l, treasure.get_item(hero.get_equipment()));
   lua_pushinteger(current_l, treasure.get_variant());
   push_string(current_l, treasure.get_savegame_variable());
   push_ref(current_l, callback_ref);
-  lua_pushcclosure(current_l, l_treasure_brandish_finished, 4);
+  push_hero(current_l, hero);
+  lua_pushcclosure(current_l, l_treasure_brandish_finished, 5);
   const ScopedLuaRef& treasure_callback_ref = create_ref();
 
-  if (!CurrentQuest::dialog_exists(dialog_id)) {
-    // No treasure dialog: keep brandishing the treasure for some delay
+  if (!CurrentQuest::dialog_exists(dialog_id) || game.is_dialog_enabled()) {
+    // Don't show a treasure dialog. Keep brandishing the treasure for some delay
     // and then execute the callback.
     TimerPtr timer = std::make_shared<Timer>(3000);
-    push_map(current_l, game.get_current_map());
+    push_map(current_l, hero.get_map());
     add_timer(timer, -1, treasure_callback_ref);
     lua_pop(current_l, 1);
   }
   else {
-    // A treasure dialog exists. Show it and then execute the callback.
+    // Show the treasure dialog and then execute the callback.
     game.start_dialog(dialog_id, ScopedLuaRef(), treasure_callback_ref);
   }
 }
@@ -2989,7 +4420,7 @@ void LuaContext::notify_hero_brandish_treasure(
  * \brief Callback function executed after the animation of brandishing
  * a treasure.
  *
- * Upvalues: item, variant, savegame variable, callback/nil.
+ * Upvalues: item, variant, savegame variable, callback/nil, hero
  *
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -3004,19 +4435,18 @@ int LuaContext::l_treasure_brandish_finished(lua_State* l) {
     int treasure_variant = LuaTools::check_int(l, lua_upvalueindex(2));
     const std::string& treasure_savegame_variable =
         LuaTools::check_string(l, lua_upvalueindex(3));
+    Hero& hero = *check_hero(l, lua_upvalueindex(5));
     lua_pushvalue(l, lua_upvalueindex(4));
 
     // Check upvalues. Any error here would be the fault of the C++ side
     // because the user cannot call this function.
-    Debug::check_assertion(item.get_game() != nullptr,
+    SOLARUS_REQUIRE(item.get_game() != nullptr,
         "Equipment item without game");
 
-    Debug::check_assertion(lua_isnil(l, -1) || lua_isfunction(l, -1),
+    SOLARUS_REQUIRE(lua_isnil(l, -1) || lua_isfunction(l, -1),
         "Expected function or nil for treasure callback");
 
-    Game& game = *item.get_game();
-    Hero& hero = *game.get_hero();
-    const Treasure treasure(game, item.get_name(), treasure_variant, treasure_savegame_variable);
+    const Treasure treasure(item.get_name(), treasure_variant, treasure_savegame_variable);
 
     // Notify the Lua item and the Lua map.
     if (!lua_isnil(l, -1)) {
@@ -3024,7 +4454,7 @@ int LuaContext::l_treasure_brandish_finished(lua_State* l) {
       lua_context.call_function(0, 0, "treasure callback");
     }
     lua_context.item_on_obtained(item, treasure);
-    lua_context.map_on_obtained_treasure(game.get_current_map(), treasure);
+    lua_context.map_on_obtained_treasure(hero.get_map(), treasure, hero);
 
     if (hero.is_brandishing_treasure()) {
       // The script may have changed the hero's state.
@@ -3102,6 +4532,110 @@ int LuaContext::camera_api_set_position_on_screen(lua_State* l) {
     camera.set_position_on_screen({ x, y });
 
     return 0;
+  });
+}
+
+/**
+ * \brief Implementation of camera:get_position_on_screen().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::camera_api_get_viewport(lua_State * l) {
+  return state_boundary_handle(l, [&] {
+    const Camera& camera = *check_camera(l, 1);
+
+    const auto& viewport = camera.get_viewport();
+
+    lua_pushnumber(l, viewport.left);
+    lua_pushnumber(l, viewport.top);
+    lua_pushnumber(l, viewport.width);
+    lua_pushnumber(l, viewport.height);
+
+    return 4;
+  });
+}
+
+/**
+ * \brief Implementation of camera:get_position_on_screen().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::camera_api_set_viewport(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Camera& camera = *check_camera(l, 1);
+    double x = LuaTools::check_number(l, 2);
+    double y = LuaTools::check_number(l, 3);
+    double w = LuaTools::check_number(l, 4);
+    double h = LuaTools::check_number(l, 5);
+
+    camera.set_viewport(FRectangle(x, y, w, h));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of camera:set_zoom().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::camera_api_set_zoom(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Camera& camera = *check_camera(l, 1);
+    double zx = LuaTools::check_number(l, 2);
+    double zy = LuaTools::check_number(l, 3);
+
+    camera.set_zoom(Scale(zx, zy));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of camera:get_zoom().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::camera_api_get_zoom(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Camera& camera = *check_camera(l, 1);
+    Scale s = camera.get_zoom();
+
+    lua_pushnumber(l, static_cast<double>(s.x));
+    lua_pushnumber(l, static_cast<double>(s.y));
+
+    return 2;
+  });
+}
+
+/**
+ * \brief Implementation of camera:set_rotation().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::camera_api_set_rotation(lua_State *l) {
+  return state_boundary_handle(l, [&] {
+    Camera& camera = *check_camera(l, 1);
+    double r = LuaTools::check_number(l, 2);
+
+    camera.set_rotation(static_cast<float>(r));
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of camera:get_rotation().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::camera_api_get_rotation(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Camera& camera = *check_camera(l, 1);
+    double rot = static_cast<double>(camera.get_rotation());
+
+    lua_pushnumber(l, rot);
+    return 1;
   });
 }
 
@@ -3212,6 +4746,31 @@ int LuaContext::camera_api_get_surface(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of camera:teleport().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::camera_api_teleport(lua_State *l) {
+  return state_boundary_handle(l, [&] {
+    CameraPtr camera_ptr = check_camera(l, 1);
+    Camera& camera = *camera_ptr;
+    Game& game = camera.get_game();
+
+    std::string map_id = LuaTools::check_string(l, 2);
+    std::string destination_id = LuaTools::check_string(l, 3);
+    Transition::Style transition_style = LuaTools::opt_enum<Transition::Style>(
+        l, 4, game.get_default_transition_style());
+
+
+    game.teleport_camera(camera_ptr, map_id, destination_id, transition_style, nullptr);
+
+    return 0;
+  });
+}
+
+
+
+/**
  * \brief Returns whether a value is a userdata of type destination.
  * \param l A Lua context.
  * \param index An index in the stack.
@@ -3280,6 +4839,41 @@ int LuaContext::destination_api_set_starting_location_mode(lua_State* l) {
 
     destination.set_starting_location_mode(mode);
     return 0;
+  });
+}
+
+/**
+ * \brief Implementation of destination:is_default().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::destination_api_is_default(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Destination& destination = *check_destination(l, 1);
+
+    lua_pushboolean(l, destination.is_default());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of destination:get_direction().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::destination_api_get_direction(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Destination& destination = *check_destination(l, 1);
+
+    const int direction = destination.get_direction();
+    if (direction == -1) {
+      lua_pushnil(l);
+    } else {
+      lua_pushinteger(l, direction);
+    }
+    return 1;
   });
 }
 
@@ -3419,6 +5013,10 @@ int LuaContext::teletransporter_api_set_destination_map(lua_State* l) {
     Teletransporter& teletransporter = *check_teletransporter(l, 1);
     const std::string& map_id = LuaTools::check_string(l, 2);
 
+    if (!CurrentQuest::resource_exists(ResourceType::MAP, map_id)) {
+      LuaTools::arg_error(l, 2, std::string("No such map: '") + map_id + "'");
+    }
+
     teletransporter.set_destination_map_id(map_id);
 
     return 0;
@@ -3519,6 +5117,47 @@ int LuaContext::npc_api_set_traversable(lua_State* l) {
     bool traversable = LuaTools::opt_boolean(l, 2, true);
 
     npc.set_traversable(traversable);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of npc:get_subtype().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::npc_api_get_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Npc& npc = *check_npc(l, 1);
+    
+    lua_pushinteger(l, npc.get_subtype());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of npc:set_traversable().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::npc_api_set_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Npc& npc = *check_npc(l, 1);
+
+    int subtype = LuaTools::opt_int(l, 2, 1);
+    switch (subtype) {
+      case Npc::Subtype::GENERALIZED_NPC:
+        npc.set_subtype(Npc::Subtype::GENERALIZED_NPC);
+        break;
+      case Npc::Subtype::USUAL_NPC:
+      default:
+        npc.set_subtype(Npc::Subtype::USUAL_NPC);
+        break;
+    }
 
     return 0;
   });
@@ -3648,12 +5287,203 @@ int LuaContext::chest_api_set_treasure(lua_State* l) {
       + savegame_variable + "'");
     }
 
-    Treasure treasure(chest.get_game(), item_name, variant, savegame_variable);
+    Treasure treasure(item_name, variant, savegame_variable);
     chest.set_treasure(treasure);
 
     return 0;
   });
 }
+
+/**
+ * \brief Implementation of chest:get_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_get_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    Chest::OpeningMethod method = chest.get_opening_method();
+
+    const auto& it = Chest::opening_method_names.find(method);
+
+    if (it == Chest::opening_method_names.end()){
+      Debug::die("Invalid chest opening method");
+      return 0;
+    }
+
+    push_string(l, it->second);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:get_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_get_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    const std::string& condition = chest.get_opening_condition();
+
+    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION){
+      lua_pushnil(l);
+      return 1;
+    }
+
+    push_string(l, condition);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:is_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_is_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    lua_pushboolean(l, chest.is_opening_condition_consumed());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    const std::map<Chest::OpeningMethod, std::string>& names = Chest::opening_method_names;
+    Chest::OpeningMethod method = LuaTools::check_enum(l, 2, names);
+
+    chest.set_opening_method(method);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    if (chest.get_opening_method() == Chest::OpeningMethod::BY_INTERACTION){
+      return 0;
+    }
+
+    const std::string& condition = LuaTools::check_string(l, 2);
+    chest.set_opening_condition(condition);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::chest_api_set_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+
+    bool consumed = LuaTools::opt_boolean(l, 2, true);
+    chest.set_opening_condition_consumed(consumed);
+    
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:get_cannot_open_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_get_cannot_open_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    
+    const std::string& sound_id = chest.get_cannot_open_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_cannot_open_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_set_cannot_open_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    chest.set_cannot_open_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of chest:get_opening_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_get_opening_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    
+    const std::string& sound_id = chest.get_opening_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of chest:set_opening_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::chest_api_set_opening_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Chest& chest = *check_chest(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    chest.set_opening_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
 
 /**
  * \brief Returns whether a value is a userdata of type block.
@@ -3820,6 +5650,29 @@ int LuaContext::block_api_set_max_moves(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of block:get_direction().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_direction(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const int direction = block.get_direction();
+
+    if (direction == -1) {
+      // -1 means no direction, can be pushed/pulled towards any direction.
+      lua_pushnil(l);
+    }
+    else {
+      lua_pushinteger(l, direction);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of block:get_maximum_moves().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -3845,6 +5698,114 @@ int LuaContext::block_api_set_maximum_moves(lua_State* l) {
       "block:set_maximum_moves()",
       "Use block:set_max_moves() instead.");
   return block_api_set_max_moves(l);
+}
+
+/**
+ * \brief Implementation of block:get_moving_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_moving_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const std::string& sound_id = block.get_moving_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of block:set_moving_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_set_moving_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Block& block = *check_block(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    block.set_moving_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of block:get_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const std::string& sound_id = block.get_falling_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of block:set_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_set_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Block& block = *check_block(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    block.set_falling_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of block:get_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_get_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Block& block = *check_block(l, 1);
+
+    const std::string& sound_id = block.get_sinking_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of block:set_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::block_api_set_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Block& block = *check_block(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    block.set_sinking_sound_id(sound_id);
+
+    return 0;
+  });
 }
 
 /**
@@ -3944,6 +5905,37 @@ int LuaContext::switch_api_set_locked(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of switch:is_inactivate_when_leaving().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::switch_api_get_inactivate_when_leaving(lua_State* l){
+  return state_boundary_handle(l, [&]{
+    const Switch& sw = *check_switch(l, 1);
+    lua_pushboolean(l, sw.is_inactivate_when_leaving());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of switch:set_inactivate_when_leaving().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::switch_api_set_inactivate_when_leaving(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Switch& sw = *check_switch(l, 1);
+    bool iwl = LuaTools::opt_boolean(l, 2, true);
+
+    sw.set_inactivate_when_leaving(iwl);
+
+    return 0;
+  });
+}
+
+/**
  * \brief Implementation of switch:is_walkable().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -3955,6 +5947,50 @@ int LuaContext::switch_api_is_walkable(lua_State* l) {
 
     lua_pushboolean(l, sw.is_walkable());
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of switch:get_subtype().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::switch_api_get_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Switch& sw = *check_switch(l, 1);
+
+    for (const auto& pair: Switch::subtype_names) {
+      if (pair.first == sw.get_subtype()) {
+        push_string(l, pair.second);
+        return 1;
+      }
+    }
+
+    lua_pushnil(l);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of switch:set_subtype().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::switch_api_set_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Switch& sw = *check_switch(l, 1);
+
+    std::string subtype_name = LuaTools::check_string(l, 2);
+    for (const auto& pair: Switch::subtype_names) {
+      if (pair.second == subtype_name) {
+        sw.set_subtype(pair.first);
+        return 0;
+      }
+    }
+
+    return 0;
   });
 }
 
@@ -4187,6 +6223,25 @@ void LuaContext::push_door(lua_State* l, Door& door) {
 }
 
 /**
+ * \brief Impplementation of door:get_savegame_variable()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_savegame_variable(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Door& door = *check_door(l, 1);
+
+    if (door.is_saved()){
+      push_string(l, door.get_savegame_variable());
+    } else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of door:is_open().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -4258,7 +6313,9 @@ int LuaContext::door_api_open(lua_State* l) {
 
     if (!door.is_open() && !door.is_opening()) {
       door.open();
-      Sound::play("door_open");
+      if (!door.get_opening_sound_id().empty()) {
+        Sound::play(door.get_opening_sound_id());
+      }
     }
 
     return 0;
@@ -4277,7 +6334,9 @@ int LuaContext::door_api_close(lua_State* l) {
 
     if (!door.is_closed() && !door.is_closing()) {
       door.close();
-      Sound::play("door_closed");
+      if (!door.get_closing_sound_id().empty()) {
+        Sound::play(door.get_closing_sound_id());
+      }
     }
 
     return 0;
@@ -4296,6 +6355,268 @@ int LuaContext::door_api_set_open(lua_State* l) {
     bool open = LuaTools::opt_boolean(l, 2, true);
 
     door.set_open(open);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    Door::OpeningMethod method = door.get_opening_method();
+
+    const auto& it = Door::opening_method_names.find(method);
+
+    if (it == Door::opening_method_names.end()){
+      Debug::die("Invalid door opening method");
+      return 0;
+    }
+
+    push_string(l, it->second);
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_get_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    const std::string& condition = door.get_opening_condition();
+
+    if (door.get_opening_method() == Door::OpeningMethod::BY_INTERACTION){
+      lua_pushnil(l);
+      return 1;
+    }
+
+    push_string(l, condition);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:is_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_is_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    lua_pushboolean(l, door.is_opening_condition_consumed());
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_method().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_method(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    const std::map<Door::OpeningMethod, std::string>& names = Door::opening_method_names;
+    Door::OpeningMethod method = LuaTools::check_enum(l, 2, names);
+
+    door.set_opening_method(method);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_condition().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::door_api_set_opening_condition(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    Door::OpeningMethod method = door.get_opening_method();
+    if (method == Door::OpeningMethod::BY_INTERACTION || method == Door::OpeningMethod::BY_EXPLOSION || method == Door::OpeningMethod::NONE){
+      return 0;
+    }
+
+    const std::string& condition = LuaTools::check_string(l, 2);
+    door.set_opening_condition(condition);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_method_consumed().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_set_opening_condition_consumed(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    bool consumed = LuaTools::opt_boolean(l, 2, true);
+    door.set_opening_condition_consumed(consumed);
+    
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_cannot_open_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_get_cannot_open_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    const std::string& sound_id = door.get_cannot_open_dialog_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_cannot_open_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_set_cannot_open_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    door.set_cannot_open_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_opening_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_get_opening_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    const std::string& sound_id = door.get_opening_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_opening_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_set_opening_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    door.set_opening_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_closing_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_get_closing_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    const std::string& sound_id = door.get_closing_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_closing_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_set_closing_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    door.set_closing_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of door:get_unlocking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_get_unlocking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+
+    const std::string& sound_id = door.get_unlocking_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of door:set_unlocking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::door_api_set_unlocking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Door& door = *check_door(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    door.set_unlocking_sound_id(sound_id);
 
     return 0;
   });
@@ -4364,6 +6685,44 @@ int LuaContext::stairs_api_is_inner(lua_State* l) {
 }
 
 /**
+ * \brief Calls the on_entered() method of a Lua stairs.
+ *
+ * Does nothing if the method is not defined.
+ *
+ * \param stairs Stairs entity.
+ */
+void LuaContext::stairs_on_entered(Stairs& stairs) {
+
+  if (!userdata_has_field(stairs, "on_entered")) {
+    return;
+  }
+  run_on_main([this, &stairs](lua_State* l){
+    push_stairs(l, stairs);
+    on_entered();
+    lua_pop(l, 1);
+  });
+}
+
+/**
+ * \brief Calls the on_exited() method of a Lua stairs.
+ *
+ * Does nothing if the method is not defined.
+ *
+ * \param stairs Stairs entity.
+ */
+void LuaContext::stairs_on_exited(Stairs& stairs) {
+
+  if (!userdata_has_field(stairs, "on_exited")) {
+    return;
+  }
+  run_on_main([this, &stairs](lua_State* l){
+    push_stairs(l, stairs);
+    on_exited();
+    lua_pop(l, 1);
+  });
+}
+
+/**
  * \brief Returns whether a value is a userdata of type shop treasure.
  * \param l A Lua context.
  * \param index An index in the stack.
@@ -4402,7 +6761,7 @@ void LuaContext::push_shop_treasure(lua_State* l, ShopTreasure& shop_treasure) {
  *
  * \param shop_treasure A shop treasure.
  */
-void LuaContext::notify_shop_treasure_interaction(ShopTreasure& shop_treasure) {
+void LuaContext::notify_shop_treasure_interaction(ShopTreasure& shop_treasure, Hero& /*hero*/) {
 
   push_shop_treasure(current_l, shop_treasure);
   lua_pushcclosure(current_l, l_shop_treasure_description_dialog_finished, 1);
@@ -4477,20 +6836,26 @@ int LuaContext::l_shop_treasure_question_dialog_finished(lua_State* l) {
       // The player wants to buy the item.
       Equipment& equipment = game.get_equipment();
       const Treasure& treasure = shop_treasure.get_treasure();
-      EquipmentItem& item = treasure.get_item();
+      EquipmentItem& item = treasure.get_item(equipment);
 
-      if (!treasure.is_obtainable()) {
+      if (!treasure.is_obtainable(equipment)) {
         // This treasure is not allowed.
-        Sound::play("wrong");
+        if (!shop_treasure.get_cannot_buy_sound_id().empty()) {
+          Sound::play(shop_treasure.get_cannot_buy_sound_id());
+        }
       }
       else if (equipment.get_money() < shop_treasure.get_price()) {
         // Not enough money.
-        Sound::play("wrong");
+        if (!shop_treasure.get_cannot_buy_sound_id().empty()) {
+          Sound::play(shop_treasure.get_cannot_buy_sound_id());
+        }
         game.start_dialog("_shop.not_enough_money", ScopedLuaRef(), ScopedLuaRef());
       }
       else if (item.has_amount() && item.get_amount() >= item.get_max_amount()) {
         // The player already has the maximum amount of this item.
-        Sound::play("wrong");
+        if (!shop_treasure.get_cannot_buy_sound_id().empty()) {
+          Sound::play(shop_treasure.get_cannot_buy_sound_id());
+        }
         game.start_dialog("_shop.amount_full", ScopedLuaRef(), ScopedLuaRef());
       }
       else {
@@ -4510,6 +6875,46 @@ int LuaContext::l_shop_treasure_question_dialog_finished(lua_State* l) {
         }
       }
     }
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:get_cannot_buy_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_get_cannot_buy_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+
+    const std::string& sound_id = shop_treasure.get_cannot_buy_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    }
+    else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:set_cannot_buy_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_set_cannot_buy_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+    shop_treasure.set_cannot_buy_sound_id(sound_id);
+    
     return 0;
   });
 }
@@ -4591,10 +6996,10 @@ int LuaContext::pickable_api_get_falling_height(lua_State* l) {
 int LuaContext::pickable_api_get_treasure(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
-    const Pickable& pickable = *check_pickable(l, 1);
+    Pickable& pickable = *check_pickable(l, 1);
     const Treasure& treasure = pickable.get_treasure();
 
-    push_item(l, treasure.get_item());
+    push_item(l, treasure.get_item(pickable.get_game().get_equipment()));
     lua_pushinteger(l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(l);
@@ -4603,6 +7008,82 @@ int LuaContext::pickable_api_get_treasure(lua_State* l) {
       push_string(l, treasure.get_savegame_variable());
     }
     return 3;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:get_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_get_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Pickable& pickable = *check_pickable(l, 1);
+    const std::string& sound_id = pickable.get_falling_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:set_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_set_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Pickable& pickable = *check_pickable(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    pickable.set_falling_sound_id(sound_id);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:get_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_get_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Pickable& pickable = *check_pickable(l, 1);
+    const std::string& sound_id = pickable.get_sinking_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of pickable:set_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::pickable_api_set_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Pickable& pickable = *check_pickable(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    pickable.set_sinking_sound_id(sound_id);
+    return 0;
   });
 }
 
@@ -4696,7 +7177,7 @@ int LuaContext::destructible_api_set_treasure(lua_State* l) {
       + savegame_variable + "'");
     }
 
-    Treasure treasure(destructible.get_game(), item_name, variant, savegame_variable);
+    Treasure treasure(item_name, variant, savegame_variable);
     destructible.set_treasure(treasure);
 
     return 0;
@@ -4740,6 +7221,43 @@ int LuaContext::destructible_api_set_destruction_sound(lua_State* l) {
     }
 
     destructible.set_destruction_sound(destruction_sound_id);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of destructible:get_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::destructible_api_get_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Destructible& destructible = *check_destructible(l, 1);
+    const std::string& sound_id = destructible.get_exploding_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of destructible:set_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::destructible_api_set_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Destructible& destructible = *check_destructible(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    destructible.set_exploding_sound_id(sound_id);
     return 0;
   });
 }
@@ -5026,6 +7544,154 @@ int LuaContext::carried_object_api_set_destruction_sound(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of carried_object:get_throwing_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_get_throwing_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const CarriedObject& carried_object = *check_carried_object(l, 1);
+    const std::string& sound_id = carried_object.get_throwing_sound();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:set_throwing_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_set_throwing_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    CarriedObject& carried_object = *check_carried_object(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    carried_object.set_throwing_sound(sound_id);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:get_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_get_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const CarriedObject& carried_object = *check_carried_object(l, 1);
+    const std::string& sound_id = carried_object.get_falling_sound();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:set_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_set_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    CarriedObject& carried_object = *check_carried_object(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    carried_object.set_falling_sound(sound_id);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:get_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_get_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const CarriedObject& carried_object = *check_carried_object(l, 1);
+    const std::string& sound_id = carried_object.get_sinking_sound();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:set_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_set_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    CarriedObject& carried_object = *check_carried_object(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    carried_object.set_sinking_sound(sound_id);
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:get_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_get_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const CarriedObject& carried_object = *check_carried_object(l, 1);
+    const std::string& sound_id = carried_object.get_exploding_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:set_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_set_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    CarriedObject& carried_object = *check_carried_object(l, 1);
+    std::string sound_id;
+    if (!lua_isnil(l, 2)) {
+      sound_id = LuaTools::check_string(l, 2);
+    }
+
+    carried_object.set_exploding_sound_id(sound_id);
+    return 0;
+  });
+}
+
+/**
  * \brief Implementation of carried_object:get_damage_on_enemies().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -5054,6 +7720,39 @@ int LuaContext::carried_object_api_set_damage_on_enemies(lua_State* l) {
     int damage_on_enemies = LuaTools::check_int(l, 2);
 
     carried_object.set_damage_on_enemies(damage_on_enemies);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:set_damage_on_enemies().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_get_object_height(lua_State* l){
+  return state_boundary_handle(l, [&] {
+    CarriedObject& carried_object = *check_carried_object(l, 1);
+
+    int height = carried_object.get_object_height();
+
+    lua_pushinteger(l, height);
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of carried_object:set_damage_on_enemies().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::carried_object_api_set_object_height(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    CarriedObject& carried_object = *check_carried_object(l, 1);
+    int height = LuaTools::check_int(l, 2);
+
+    carried_object.set_object_height(height);
 
     return 0;
   });
@@ -5726,6 +8425,25 @@ int LuaContext::enemy_api_set_default_attack_consequences_sprite(lua_State* l) {
 }
 
 /**
+ * \brief Impplementation of enemy:get_savegame_variable()
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+
+int LuaContext::enemy_api_get_savegame_variable(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Enemy& enemy = *check_enemy(l, 1);
+
+    if (enemy.is_saved()){
+      push_string(l, enemy.get_savegame_variable());
+    } else {
+      lua_pushnil(l);
+    }
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of enemy:set_invincible().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -5817,7 +8535,7 @@ int LuaContext::enemy_api_set_treasure(lua_State* l) {
       + savegame_variable + "'");
     }
 
-    Treasure treasure(enemy.get_game(), item_name, variant, savegame_variable);
+    Treasure treasure(item_name, variant, savegame_variable);
     enemy.set_treasure(treasure);
 
     return 0;
@@ -5926,6 +8644,252 @@ int LuaContext::enemy_api_set_obstacle_behavior(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of enemy:get_immobilization_duration().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_immobilization_duration(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Enemy& enemy = *check_enemy(l, 1);
+    lua_pushinteger(l, enemy.get_immobilization_duration());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_immobilization_duration().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_immobilization_duration(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    int duration = LuaTools::check_int(l, 2);
+    enemy.set_immobilization_duration(duration);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_attack_failure_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_attack_failure_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_attack_failure_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_attack_failure_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_attack_failure_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_attack_failure_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_falling_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_falling_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_falling_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_falling_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_sinking_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_sinking_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_sinking_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_sinking_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_dying_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_dying_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_dying_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_dying_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_dying_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_dying_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_exploding_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_exploding_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_exploding_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_exploding_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:get_hurt_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_get_hurt_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    const Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = enemy.get_hurt_sound_id();
+
+    if (!sound_id.empty()) {
+      push_string(l, sound_id);
+    } else {
+      lua_pushnil(l);
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of enemy:set_hurt_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::enemy_api_set_hurt_sound(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Enemy& enemy = *check_enemy(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    enemy.set_hurt_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
  * \brief Implementation of enemy:restart().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -5952,8 +8916,8 @@ int LuaContext::enemy_api_hurt(lua_State* l) {
     Enemy& enemy = *check_enemy(l, 1);
     int life_points = LuaTools::check_int(l, 2);
 
-    if (enemy.is_in_normal_state() && !enemy.is_invulnerable()) {
-      Hero& hero = enemy.get_map().get_entities().get_hero();
+    if (enemy.is_in_normal_state() && !enemy.is_invulnerable()) { //TODO check if default hero is okay...
+      Hero& hero = enemy.get_default_hero();
       enemy.set_attack_consequence(EnemyAttack::SCRIPT, EnemyReaction::ReactionType::HURT, life_points);
       enemy.try_hurt(EnemyAttack::SCRIPT, hero, nullptr);
     }
@@ -5991,8 +8955,8 @@ int LuaContext::enemy_api_immobilize(lua_State* l) {
       return 0;
     }
 
-    if (enemy.is_in_normal_state() || enemy.is_immobilized()) {
-      Hero& hero = enemy.get_map().get_entities().get_hero();
+    if (enemy.is_in_normal_state() || enemy.is_immobilized()) { //TODO check if default hero is okay
+      Hero& hero = enemy.get_default_hero();
       enemy.set_attack_consequence(EnemyAttack::SCRIPT, EnemyReaction::ReactionType::IMMOBILIZED, 0);
       enemy.try_hurt(EnemyAttack::SCRIPT, hero, nullptr);
     }
@@ -6056,7 +9020,7 @@ int LuaContext::enemy_api_create_enemy(lua_State* l) {
         layer,
         { x, y },
         direction,
-        Treasure(game, treasure_name, treasure_variant, treasure_savegame_variable)
+        Treasure(treasure_name, treasure_variant, treasure_savegame_variable)
     );
 
     if (entity == nullptr) {
@@ -6069,6 +9033,58 @@ int LuaContext::enemy_api_create_enemy(lua_State* l) {
 
     push_entity(l, *entity);
     return 1;
+  });
+}
+
+/**
+ * \brief Returns whether a value is a userdata of type jumper.
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \return \c true if the value at this index is an enemy.
+ */
+bool LuaContext::is_jumper(lua_State* l, int index) {
+  return is_userdata(l, index, get_entity_internal_type_name(EntityType::JUMPER));
+}
+
+/**
+ * \brief Checks that the userdata at the specified index of the stack is a
+ * jumper and returns it.
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \return The enemy.
+ */
+std::shared_ptr<Jumper> LuaContext::check_jumper(lua_State* l, int index) {
+  return std::static_pointer_cast<Jumper>(check_userdata(
+      l, index, get_entity_internal_type_name(EntityType::JUMPER)
+  ));
+}
+
+/** 
+ * \brief Implementation of jumper:get_jump_length().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ * */
+
+int LuaContext::jumper_api_get_jump_length(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    const Jumper& jumper = *check_jumper(l, 1);
+    lua_pushinteger(l, jumper.get_jump_length());
+    return 1;
+  });
+}
+
+/** 
+ * \brief Implementation of jumper:set_jump_length().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ * */
+
+int LuaContext::jumper_api_set_jump_length(lua_State* l) {
+  return state_boundary_handle(l, [&]{
+    Jumper& jumper = *check_jumper(l, 1);
+    int length = LuaTools::check_int(l, 2);
+    jumper.set_jump_length(length);
+    return 0;
   });
 }
 
@@ -6117,13 +9133,13 @@ bool LuaContext::do_traversable_test_function(
     ExportableToLua& userdata,
     Entity& other_entity) {
 
-  Debug::check_assertion(!traversable_test_ref.is_empty(),
+  SOLARUS_REQUIRE(!traversable_test_ref.is_empty(),
       "Missing traversable test function ref"
   );
 
   // Call the test function.
   push_ref(current_l, traversable_test_ref);
-  Debug::check_assertion(lua_isfunction(current_l, -1),
+  SOLARUS_REQUIRE(lua_isfunction(current_l, -1),
       "Traversable test is not a function"
   );
   push_userdata(current_l, userdata);
@@ -6152,13 +9168,13 @@ bool LuaContext::do_custom_entity_collision_test_function(
     CustomEntity& custom_entity,
     Entity& other_entity
 ) {
-  Debug::check_assertion(!collision_test_ref.is_empty(),
+  SOLARUS_REQUIRE(!collision_test_ref.is_empty(),
       "Missing collision test function"
   );
 
   // Call the test function.
   push_ref(current_l, collision_test_ref);
-  Debug::check_assertion(lua_isfunction(current_l, -1),
+  SOLARUS_REQUIRE(lua_isfunction(current_l, -1),
       "Collision test is not a function"
   );
   push_custom_entity(current_l, custom_entity);
@@ -6186,11 +9202,11 @@ void LuaContext::do_custom_entity_collision_callback(
     CustomEntity& custom_entity,
     Entity& other_entity
 ) {
-  Debug::check_assertion(!callback_ref.is_empty(),
+  SOLARUS_REQUIRE(!callback_ref.is_empty(),
       "Missing collision callback");
 
   push_ref(current_l, callback_ref);
-  Debug::check_assertion(lua_isfunction(current_l, -1),
+  SOLARUS_REQUIRE(lua_isfunction(current_l, -1),
       "Collision callback is not a function");
   push_custom_entity(current_l, custom_entity);
   push_entity(current_l, other_entity);
@@ -6215,12 +9231,12 @@ void LuaContext::do_custom_entity_collision_callback(
     Sprite& custom_entity_sprite,
     Sprite& other_entity_sprite) {
 
-  Debug::check_assertion(!callback_ref.is_empty(),
+  SOLARUS_REQUIRE(!callback_ref.is_empty(),
       "Missing sprite collision callback"
   );
 
   push_ref(current_l, callback_ref);
-  Debug::check_assertion(lua_isfunction(current_l, -1),
+  SOLARUS_REQUIRE(lua_isfunction(current_l, -1),
       "Sprite collision callback is not a function");
   push_custom_entity(current_l, custom_entity);
   push_entity(current_l, other_entity);
@@ -6254,7 +9270,7 @@ int LuaContext::custom_entity_api_get_direction(lua_State* l) {
   return state_boundary_handle(l, [&] {
     const CustomEntity& entity = *check_custom_entity(l, 1);
 
-    lua_pushinteger(l, entity.get_sprites_direction());
+    lua_pushinteger(l, entity.get_direction());
     return 1;
   });
 }
@@ -6865,7 +9881,7 @@ void LuaContext::entity_on_movement_finished(Entity& entity) {
  * \param entity A map entity.
  * \return \c true if an interaction occurred.
  */
-bool LuaContext::entity_on_interaction(Entity& entity) {
+bool LuaContext::entity_on_interaction(Entity& entity, Hero& hero) {
 
   if (!userdata_has_field(entity, "on_interaction")) {
     return false;
@@ -6875,7 +9891,7 @@ bool LuaContext::entity_on_interaction(Entity& entity) {
   check_callback_thread();
 
   push_entity(current_l, entity);
-  bool exists = on_interaction();
+  bool exists = on_interaction(hero);
   lua_pop(current_l, 1);
 
 
@@ -7006,14 +10022,14 @@ bool LuaContext::hero_on_taking_damage(Hero& hero, int damage) {
  *
  * \param destination A destination.
  */
-void LuaContext::destination_on_activated(Destination& destination) {
+void LuaContext::destination_on_activated(Destination& destination, Hero &hero) {
 
   if (!userdata_has_field(destination, "on_activated")) {
     return;
   }
-  run_on_main([this, &destination](lua_State* l){
+  run_on_main([this, &destination, &hero](lua_State* l){
     push_entity(l, destination);
-    on_activated();
+    on_activated(&hero);
     lua_pop(l, 1);
   });
 }
@@ -7025,14 +10041,14 @@ void LuaContext::destination_on_activated(Destination& destination) {
  *
  * \param teletransporter A teletransporter.
  */
-void LuaContext::teletransporter_on_activated(Teletransporter& teletransporter) {
+void LuaContext::teletransporter_on_activated(Teletransporter& teletransporter, Hero &hero) {
 
   if (!userdata_has_field(teletransporter, "on_activated")) {
     return;
   }
-  run_on_main([this, &teletransporter](lua_State* l){
+  run_on_main([this, &teletransporter, &hero](lua_State* l){
     push_teletransporter(l, teletransporter);
-    on_activated();
+    on_activated(&hero);
     lua_pop(l, 1);
   });
 }
@@ -7162,7 +10178,7 @@ void LuaContext::block_on_moved(Block& block) {
  * \param treasure The treasure obtained.
  * \return \c true if the on_opened() method is defined.
  */
-bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure) {
+bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure, Hero& hero) {
 
   if (!userdata_has_field(chest, "on_opened")) {
     return false;
@@ -7172,7 +10188,7 @@ bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure) {
   check_callback_thread();
 
   push_chest(current_l, chest);
-  bool exists = on_opened(treasure);
+  bool exists = on_opened(treasure, hero);
   lua_pop(current_l, 1);
   return exists;
 }
@@ -7184,15 +10200,15 @@ bool LuaContext::chest_on_opened(Chest& chest, const Treasure& treasure) {
  *
  * \param sw A switch.
  */
-void LuaContext::switch_on_activated(Switch& sw) {
+void LuaContext::switch_on_activated(Switch& sw, Entity* opt_entity) {
 
   if (!userdata_has_field(sw, "on_activated")) {
     return;
   }
 
-  run_on_main([this, &sw](lua_State* l){
+  run_on_main([this, &sw, opt_entity](lua_State* l){
     push_switch(l, sw);
-    on_activated();
+    on_activated(opt_entity);
     lua_pop(l, 1);
   });
 }
@@ -7204,15 +10220,15 @@ void LuaContext::switch_on_activated(Switch& sw) {
  *
  * \param sw A switch.
  */
-void LuaContext::switch_on_inactivated(Switch& sw) {
+void LuaContext::switch_on_inactivated(Switch& sw, Entity* opt_entity) {
 
   if (!userdata_has_field(sw, "on_inactivated")) {
     return;
   }
 
-  run_on_main([this, &sw](lua_State* l){
+  run_on_main([this, &sw, opt_entity](lua_State* l){
     push_switch(l, sw);
-    on_inactivated();
+    on_inactivated(opt_entity);
     lua_pop(l, 1);
   });
 }
@@ -7224,15 +10240,15 @@ void LuaContext::switch_on_inactivated(Switch& sw) {
  *
  * \param sw A switch.
  */
-void LuaContext::switch_on_left(Switch& sw) {
+void LuaContext::switch_on_left(Switch& sw, Entity &entity) {
 
   if (!userdata_has_field(sw, "on_left")) {
     return;
   }
 
-  run_on_main([this, &sw](lua_State* l){
+  run_on_main([this, &sw, &entity](lua_State* l){
     push_switch(l, sw);
-    on_left();
+    on_left(&entity);
     lua_pop(l, 1);
   });
 }
@@ -7244,15 +10260,15 @@ void LuaContext::switch_on_left(Switch& sw) {
  *
  * \param sensor A sensor.
  */
-void LuaContext::sensor_on_activated(Sensor& sensor) {
+void LuaContext::sensor_on_activated(Sensor& sensor, Hero& hero) {
 
   if (!userdata_has_field(sensor, "on_activated")) {
     return;
   }
 
-  run_on_main([this, &sensor](lua_State* l){
+  run_on_main([this, &sensor, &hero](lua_State* l){
     push_entity(l, sensor);
-    on_activated();
+    on_activated(&hero);
     lua_pop(l, 1);
   });
 }
@@ -7264,14 +10280,14 @@ void LuaContext::sensor_on_activated(Sensor& sensor) {
  *
  * \param sensor A sensor.
  */
-void LuaContext::sensor_on_activated_repeat(Sensor& sensor) {
+void LuaContext::sensor_on_activated_repeat(Sensor& sensor, Entity& entity) {
 
   if (!userdata_has_field(sensor, "on_activated_repeat")) {
     return;
   }
-  run_on_main([this, &sensor](lua_State* l){
+  run_on_main([this, &sensor, &entity](lua_State* l){
     push_entity(l, sensor);
-    on_activated_repeat();
+    on_activated_repeat(entity);
     lua_pop(l, 1);
   });
 }
@@ -7287,7 +10303,7 @@ void LuaContext::sensor_on_left(Sensor& sensor) {
   }
   run_on_main([this, &sensor](lua_State* l){
     push_entity(l, sensor);
-    on_left();
+    on_left(nullptr);
     lua_pop(l, 1);
   });
 }
@@ -7680,7 +10696,7 @@ void LuaContext::enemy_on_immobilized(Enemy& enemy) {
  * \param attacker_sprite Enemy's sprite that caused the collision or nullptr.
  * \return \c true if the method is defined.
  */
-bool LuaContext::enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* attacker_sprite) {
+bool LuaContext::entity_on_attacking_hero(Entity& enemy, Hero& hero, Sprite* attacker_sprite) {
 
   if (!userdata_has_field(enemy, "on_attacking_hero")) {
     return false;
@@ -7689,7 +10705,7 @@ bool LuaContext::enemy_on_attacking_hero(Enemy& enemy, Hero& hero, Sprite* attac
   // TODO make this on main
   check_callback_thread();
 
-  push_enemy(current_l, enemy);
+  push_entity(current_l, enemy);
   bool exists = on_attacking_hero(hero, attacker_sprite);
   lua_pop(current_l, 1);
   return exists;

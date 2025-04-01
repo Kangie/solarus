@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/core/ResourceProvider.h"
 #include "solarus/core/Savegame.h"
 #include "solarus/entities/Destination.h"
@@ -32,6 +31,7 @@
 #include "solarus/graphics/Surface.h"
 #include "solarus/graphics/Video.h"
 #include "solarus/lua/LuaContext.h"
+#include "solarus/core/Profiler.h"
 
 namespace Solarus {
 
@@ -49,11 +49,9 @@ Map::Map(const std::string& id):
   max_layer(0),
   tileset(nullptr),
   floor(MapData::NO_FLOOR),
-  background_surface(nullptr),
   foreground_surface(nullptr),
   loaded(false),
   started(false),
-  destination_name(""),
   entities(nullptr),
   suspended(false) {
 
@@ -86,12 +84,13 @@ const std::string& Map::get_tileset_id() const {
  */
 void Map::set_tileset(const std::string& tileset_id) {
 
-  Debug::check_assertion(is_game_running(), "The game of this map does not exist");
+  SOLARUS_REQUIRE(is_game_running(), "The game of this map does not exist");
   ResourceProvider& resource_provider = get_game().get_resource_provider();
   tileset = &resource_provider.get_tileset(tileset_id);
-  get_entities().notify_tileset_changed();
+  if (is_loaded()) {
+    get_entities().notify_tileset_changed();
+  }
   this->tileset_id = tileset_id;
-  build_background_surface();
 }
 
 /**
@@ -246,10 +245,18 @@ bool Map::is_valid_layer(int layer) const {
 
 /**
  * \brief Returns whether the map is loaded.
- * \return true if the map is loaded, false otherwise
+ * \return true if the map is loaded, false otherwise.
  */
 bool Map::is_loaded() const {
   return loaded;
+}
+
+/**
+ * \brief Returns whether the map is loading, that is if its entities are being added.
+ * \return true if the map is loading, false otherwise.
+ */
+bool Map::is_loading() const {
+  return !is_loaded() && entities != nullptr;
 }
 
 /**
@@ -262,11 +269,29 @@ void Map::unload() {
 
   if (is_loaded()) {
     tileset = nullptr;
-    background_surface = nullptr;
     foreground_surface = nullptr;
     entities = nullptr;
-
     loaded = false;
+  }
+}
+
+/**
+ * @brief tells it this map still has cameras
+ * @return
+ */
+bool Map::has_cameras() const {
+  return is_loaded() && get_entities().get_cameras().size() > 0;
+}
+
+/**
+ * @brief Gets the main hero of this map, or the main hero of the game is no hero is there
+ * @return
+ */
+Hero& Map::get_default_hero() {
+  if (not is_loaded()) {
+    return *get_game().get_hero();
+  } else {
+    return get_entities().get_default_hero();
   }
 }
 
@@ -278,11 +303,6 @@ void Map::unload() {
  * \param game the game
  */
 void Map::load(Game& game) {
-
-  background_surface = Surface::create(
-      Video::get_quest_size()
-  );
-
   // Read the map data file.
   MapData data;
   const std::string& file_name = std::string("maps/") + get_id() + ".dat";
@@ -309,10 +329,6 @@ void Map::load(Game& game) {
   tileset = &resource_provider.get_tileset(tileset_id);
   entities = std::unique_ptr<Entities>(new Entities(game, *this));
   entities->create_entities(data);
-
-  build_background_surface();
-  build_foreground_surface();
-
   loaded = true;
 }
 
@@ -324,7 +340,7 @@ void Map::load(Game& game) {
  * \return The Lua context where all scripts are run.
  */
 LuaContext& Map::get_lua_context() {
-  Debug::check_assertion(is_game_running(), "The game of this map does not exist");
+  SOLARUS_REQUIRE(is_game_running(), "The game of this map does not exist");
   return get_savegame()->get_lua_context();
 }
 
@@ -339,7 +355,7 @@ LuaContext& Map::get_lua_context() {
  * \return The game.
  */
 Game& Map::get_game() {
-  Debug::check_assertion(is_game_running(), "The game of this map does not exist");
+  SOLARUS_REQUIRE(is_game_running(), "The game of this map does not exist");
   return *savegame->get_game();
 }
 
@@ -371,10 +387,10 @@ bool Map::is_game_running() const {
  * "_side0", "_side1", "_side2" or "_side3"
  * to place the hero on a side of the map.
  */
-void Map::set_destination(const std::string& destination_name) {
+/*void Map::set_destination(const std::string& destination_name) {
 
   this->destination_name = destination_name;
-}
+}*/
 
 /**
  * \brief Returns the destination point name set by the last call to
@@ -382,9 +398,9 @@ void Map::set_destination(const std::string& destination_name) {
  * \return The name of the destination point previously set,
  * possibly an empty string (meaning the default one).
  */
-const std::string& Map::get_destination_name() const {
+/*const std::string& Map::get_destination_name() const {
   return destination_name;
-}
+}*/
 
 /**
  * \brief Returns the destination point specified by the last call to
@@ -401,14 +417,14 @@ const std::string& Map::get_destination_name() const {
  *
  * \return The destination point previously set, or nullptr.
  */
-std::shared_ptr<Destination> Map::get_destination() {
+std::shared_ptr<Destination> Map::get_destination(const std::string& destination_name) {
 
   if (destination_name == "_same"
       || destination_name.substr(0,5) == "_side") {
     return nullptr;
   }
 
-  Debug::check_assertion(is_loaded(), "This map is not loaded");
+  SOLARUS_REQUIRE(is_loaded(), "This map is not loaded");
 
   std::shared_ptr<Destination> destination;
   if (!destination_name.empty()) {
@@ -444,29 +460,13 @@ std::shared_ptr<Destination> Map::get_destination() {
  * returns this side.
  * \return the destination side (0 to 3), or -1 if the destination point is not a side
  */
-int Map::get_destination_side() const {
+int Map::get_destination_side(const std::string& destination_name) const {
 
   if (destination_name.substr(0,5) == "_side") {
     int destination_side = destination_name[5] - '0';
     return destination_side;
   }
   return -1;
-}
-
-/**
- * \brief Returns the camera surface where the map is displayed.
- * \return The camera surface.
- */
-SurfacePtr Map::get_camera_surface() {
-
-  if (!is_loaded()) {
-    return nullptr;
-  }
-  const CameraPtr& camera = get_camera();
-  if (camera == nullptr) {
-    return nullptr;
-  }
-  return camera->get_surface();
 }
 
 /**
@@ -482,8 +482,10 @@ void Map::set_suspended(bool suspended) {
 
   this->suspended = suspended;
 
-  entities->set_suspended(suspended);
-  get_lua_context().notify_map_suspended(*this, suspended);
+  if (is_loaded()) {
+    get_entities().set_suspended(suspended);
+    get_lua_context().notify_map_suspended(*this, suspended);
+  }
 }
 
 /**
@@ -493,20 +495,57 @@ void Map::set_suspended(bool suspended) {
  */
 bool Map::notify_input(const InputEvent& event) {
 
+  if (!is_loaded()) {
+    return false;
+  }
+  //Check if map could swallow the input
   bool handled = get_lua_context().map_on_input(*this, event);
+
+  // Forward to heroes
+  if (!handled) {
+    for (const HeroPtr& hero : get_entities().get_heroes()) {
+      if (hero->notify_input(event)) {
+        handled = true;
+        break; //Only one hero can handle the input
+      }
+    }
+  }
   return handled;
+}
+
+bool Map::notify_control(const ControlEvent& event) {
+
+  if (!is_game_running() || !is_loaded()) {
+    return false;
+  }
+
+  if (get_lua_context().map_on_control(*this, event)) {
+    return true;
+  }
+
+  if (!is_suspended()) {
+    for (const HeroPtr& hero : get_entities().get_heroes()) { // TODO verify if hero commands must short circuit or not
+      hero->notify_control(event);
+    }
+  }
+  return false;
 }
 
 /**
  * \brief Updates the animation and the position of each map element, including the hero.
  */
 void Map::update() {
+  SOL_PFUN(profiler::colors::Red);
+
+  if (!is_loaded()) {
+    return;
+  }
 
   // Detect whether the game has just been suspended or resumed.
   check_suspended();
 
   // Update the elements.
-  entities->update();
+  get_entities().update();
   get_lua_context().map_on_update(*this);
 }
 
@@ -527,7 +566,7 @@ bool Map::is_suspended() const {
  */
 void Map::check_suspended() {
 
-  Debug::check_assertion(is_game_running(), "The game of this map does not exist");
+  SOLARUS_REQUIRE(is_game_running(), "The game of this map does not exist");
   bool game_suspended = get_game().is_suspended();
   if (suspended != game_suspended) {
     set_suspended(game_suspended);
@@ -538,39 +577,30 @@ void Map::check_suspended() {
  * \brief Draws the map with all its entities on the screen.
  */
 void Map::draw() {
-
-  if (!is_loaded()) {
+  SOL_PFUN(profiler::colors::Green);
+  if (!is_loaded() || !is_started()) {
     return;
   }
 
-  const SurfacePtr& camera_surface = get_camera_surface();
+  for (const CameraPtr& camera : get_entities().get_cameras()) {
+    if (camera->is_being_removed()) {
+        continue;
+    }
+    const SurfacePtr& camera_surface = camera->get_surface();
+    // background
+    camera->reset_view();
+    draw_background(camera_surface);
 
-  if (camera_surface == nullptr) {
-    return;
-  }
+    // draw all entities (including the hero)
+    camera->apply_view();
+    get_entities().draw(*camera);
 
-  // background
-  draw_background(camera_surface);
+    // foreground
+    camera->reset_view();
+    // draw_foreground(camera_surface);
 
-  // draw all entities (including the hero)
-  entities->draw();
-
-  // foreground
-  draw_foreground(camera_surface);
-
-  // Lua
-  get_lua_context().map_on_draw(*this, camera_surface);
-}
-
-/**
- * \brief Builds or rebuilds the surface corresponding to the background of
- * the tileset.
- */
-void Map::build_background_surface() {
-
-  if (tileset != nullptr) {
-    background_surface->clear();
-    background_surface->fill_with_color(tileset->get_background_color());
+    // Lua
+    get_lua_context().map_on_draw(*this, camera_surface); // TODO check for coordinates
   }
 }
 
@@ -579,7 +609,7 @@ void Map::build_background_surface() {
  * \param dst_surface The surface where to draw.
  */
 void Map::draw_background(const SurfacePtr& dst_surface) {
-  background_surface->draw(dst_surface);
+  dst_surface->fill_with_color(tileset->get_background_color());
 }
 
 /**
@@ -591,7 +621,7 @@ void Map::build_foreground_surface() {
   foreground_surface = nullptr;
 
   const CameraPtr& camera = get_camera();
-  if (camera != nullptr) {
+  if (camera == nullptr) {
     return;
   }
 
@@ -644,22 +674,26 @@ void Map::draw_foreground(const SurfacePtr& dst_surface) {
  * \brief Draws a drawable object on the camera surface.
  * \param drawable The drawable object to draw.
  * \param xy Coordinates of the drawable's origin point in the map.
- * \param clipping_area Rectangle of the map where the drawing will be
- * restricted. A flat rectangle means no restriction.
- */
-void Map::draw_visual(Drawable& drawable, const Point &xy, const Rectangle& clipping_area) {
-
-  draw_visual(drawable, xy.x, xy.y, clipping_area);
-}
-
-/**
- * \brief Draws a drawable object on the camera surface.
- * \param drawable The drawable object to draw.
- * \param xy Coordinates of the drawable's origin point in the map.
  */
 void Map::draw_visual(Drawable& drawable, const Point &xy) {
 
-  draw_visual(drawable, xy.x, xy.y);
+  const CameraPtr& camera = get_camera();
+  if (camera == nullptr) {
+    return;
+  }
+
+  Point dst = xy;
+  if (!camera->is_view_applied()) {
+    // When called from map:on_draw(), drawing onto the surface
+    // expects coordinates relative the camera.
+    // When called from entity:on_pre_draw(), it expects
+    // coordinates relative to the map.
+    // See how Map::draw() above calls apply_view()/reset_view().
+    dst -= camera->get_xy();
+  }
+
+  const SurfacePtr& camera_surface = camera->get_surface();
+  drawable.draw(camera_surface, dst);
 }
 
 /**
@@ -669,58 +703,7 @@ void Map::draw_visual(Drawable& drawable, const Point &xy) {
  * \param y Y coordinate of the drawable's origin point in the map.
  */
 void Map::draw_visual(Drawable& drawable, int x, int y) {
-
-  // The position is given in the map coordinate system:
-  // convert it to the visible surface coordinate system.
-  const CameraPtr& camera = get_camera();
-  if (camera == nullptr) {
-    return;
-  }
-  const SurfacePtr& camera_surface = camera->get_surface();
-  drawable.draw(camera_surface,
-      x - camera->get_top_left_x(),
-      y - camera->get_top_left_y()
-  );
-}
-
-/**
- * \brief Draws a drawable object on a restricted area of the camera surface.
- * \param drawable The drawable object to draw.
- * \param x X coordinate of the drawable's origin point in the map.
- * \param y Y coordinate of the drawable's origin point in the map.
- * \param clipping_area Rectangle of the map where the drawing will be
- * restricted. A flat rectangle means no restriction.
- */
-void Map::draw_visual(Drawable& drawable, int x, int y,
-    const Rectangle& clipping_area) {
-
-  if (clipping_area.is_flat()) {
-    // No clipping area.
-    draw_visual(drawable, x, y);
-    return;
-  }
-
-  const CameraPtr& camera = get_camera();
-  if (camera == nullptr) {
-    return;
-  }
-  const SurfacePtr& camera_surface = camera->get_surface();
-
-  const Rectangle region_in_frame(
-      clipping_area.get_x() - x,
-      clipping_area.get_y() - y,
-      clipping_area.get_width(),
-      clipping_area.get_height()
-  );
-  const Point dst_position = {
-      x - camera->get_top_left_x(),
-      y - camera->get_top_left_y()
-  };
-  drawable.draw_region(
-      region_in_frame,
-      camera_surface,
-      dst_position
-  );
+  draw_visual(drawable, {x, y});
 }
 
 /**
@@ -729,15 +712,17 @@ void Map::draw_visual(Drawable& drawable, int x, int y,
  * The map must be loaded.
  * The background music starts and the map script is initialized.
  */
-void Map::start() {
+void Map::start(const std::string& destination_name) {
 
   this->started = true;
 
-  Music::play(music_id, true);
-  std::shared_ptr<Destination> destination = get_destination();
-  this->entities->notify_map_starting(*this, destination);
-  get_lua_context().run_map(*this, destination);
-  this->entities->notify_map_started(*this, destination);
+  if (is_loaded()) {
+    MusicSystem::play(music_id, true);
+    std::shared_ptr<Destination> destination = get_destination(destination_name);
+    get_entities().notify_map_starting(*this, destination);
+    get_lua_context().run_map(*this, destination);
+    get_entities().notify_map_started(*this, destination);
+  }
 }
 
 /**
@@ -747,8 +732,10 @@ void Map::start() {
  */
 void Map::leave() {
   started = false;
-  get_lua_context().map_on_finished(*this);
-  this->entities->notify_map_finished();
+  if (is_loaded()) {
+    get_lua_context().map_on_finished(*this);
+    this->get_entities().notify_map_finished();
+  }
 }
 
 /**
@@ -766,19 +753,23 @@ bool Map::is_started() const {
  * \brief This function is called when the map is started and
  * the opening transition is finished.
  */
-void Map::notify_opening_transition_finished() {
+void Map::notify_opening_transition_finished(const std::string& destination_name, const HeroPtr& opt_hero) {
 
-  const CameraPtr& camera = get_camera();
+  /*const CameraPtr& camera = get_camera();
   if (camera != nullptr) {
     const SurfacePtr& camera_surface = camera->get_surface();
     camera_surface->set_opacity(255); // because the transition effect may have changed the opacity
+  }*/
+
+  if (!is_loaded()) {
+    return;
   }
 
   check_suspended();
-  std::shared_ptr<Destination> destination = get_destination();
-  entities->notify_map_opening_transition_finishing(*this, destination);
+  std::shared_ptr<Destination> destination = get_destination(destination_name);
+  get_entities().notify_map_opening_transition_finishing(*this, destination_name, opt_hero);
   get_lua_context().map_on_opening_transition_finished(*this, destination);
-  entities->notify_map_opening_transition_finished(*this, destination);
+  get_entities().notify_map_opening_transition_finished(*this, destination, opt_hero);
 }
 
 /**
@@ -811,12 +802,12 @@ bool Map::test_collision_with_border(const Rectangle& collision_box) const {
  * Your algorithm may decide to check more points if there is a diagonal wall.
  * \return \c true if this point is on an obstacle.
  */
-bool Map::test_collision_with_ground(
-    int layer,
+bool Map::test_collision_with_ground(int layer,
     int x,
     int y,
     const Entity& entity_to_check,
-    bool& found_diagonal_wall) const {
+    bool& found_diagonal_wall,
+    const ConstEntityVector &entities_nearby) const {
 
   bool on_obstacle = false;
   int x_in_tile, y_in_tile;
@@ -827,7 +818,7 @@ bool Map::test_collision_with_ground(
   }
 
   // Get the ground property under this point.
-  Ground ground = get_ground(layer, x, y, &entity_to_check);
+  Ground ground = get_ground(layer, Point(x, y), &entity_to_check, entities_nearby);
   switch (ground) {
 
   case Ground::EMPTY:
@@ -851,7 +842,7 @@ bool Map::test_collision_with_ground(
     // so we have to test the position of the point in the square.
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile <= x_in_tile;
+    on_obstacle = y_in_tile <= x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 
@@ -860,7 +851,7 @@ bool Map::test_collision_with_ground(
     // Same thing.
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile <= 7 - x_in_tile;
+    on_obstacle = y_in_tile <= 7 - x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 
@@ -868,7 +859,7 @@ bool Map::test_collision_with_ground(
   case Ground::WALL_BOTTOM_LEFT_WATER:
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile >= x_in_tile;
+    on_obstacle = y_in_tile >= x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 
@@ -876,7 +867,7 @@ bool Map::test_collision_with_ground(
   case Ground::WALL_BOTTOM_RIGHT_WATER:
     x_in_tile = x & 7;
     y_in_tile = y & 7;
-    on_obstacle = y_in_tile >= 7 - x_in_tile;
+    on_obstacle = y_in_tile >= 7 - x_in_tile && entity_to_check.is_ground_obstacle(Ground::WALL);
     found_diagonal_wall = true;
     break;
 
@@ -897,15 +888,43 @@ bool Map::test_collision_with_entities(
     int layer,
     const Rectangle& collision_box,
     Entity& entity_to_check) {
-
+  SOL_PFUN();
   if (!is_loaded()) {
     return false;
   }
 
   EntityVector entities_nearby;
   get_entities().get_entities_in_rectangle_z_sorted(collision_box, entities_nearby);
-  for (const EntityPtr& entity_nearby: entities_nearby) {
+  return test_collision_with_entities(layer, collision_box, entity_to_check, entities_nearby);
+}
 
+bool Map::test_collision_with_entities(
+    int layer,
+    const Rectangle& collision_box,
+    Entity& entity_to_check,
+    const ConstEntityVector& entities_nearby
+    ) const {
+  for (const ConstEntityPtr& entity_nearby: entities_nearby) {
+    if (entity_nearby->overlaps(collision_box) &&
+        (entity_nearby->get_layer() == layer || entity_nearby->has_layer_independent_collisions()) &&
+        std::const_pointer_cast<Entity>(entity_nearby)->is_obstacle_for(entity_to_check, collision_box) &&
+        entity_nearby->is_enabled() &&
+        !entity_nearby->is_being_removed() &&
+        entity_nearby.get() != &entity_to_check) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool Map::test_collision_with_entities(
+    int layer,
+    const Rectangle& collision_box,
+    Entity& entity_to_check,
+    const EntityVector& entities_nearby
+    ) const {
+  for (const EntityPtr& entity_nearby: entities_nearby) {
     if (entity_nearby->overlaps(collision_box) &&
         (entity_nearby->get_layer() == layer || entity_nearby->has_layer_independent_collisions()) &&
         entity_nearby->is_obstacle_for(entity_to_check, collision_box) &&
@@ -933,6 +952,12 @@ bool Map::test_collision_with_obstacles(
     const Rectangle& collision_box,
     Entity& entity_to_check) {
 
+  SOL_PFUN();
+
+  if (!is_loaded()) {
+    return false;
+  }
+
   // This function is called very often.
   // For performance reasons, we only check the border of the of the collision box.
 
@@ -943,25 +968,28 @@ bool Map::test_collision_with_obstacles(
   const int y1 = collision_box.get_y();
   const int y2 = y1 + collision_box.get_height() - 1;
 
+  ConstEntityVector entities_nearby;
+  get_entities().get_entities_in_rectangle_z_sorted(collision_box, entities_nearby);
+
   // First, only check the terrain of both extremities of each 8-pixel
   // segment of the border.
   // This is enough for all terrains (except diagonal ones, see below)
   // because the tested collision box makes at least 8x8 pixels.
   bool found_diagonal_wall = false;
   for (int x = x1; x <= x2; x += 8) {
-    if (test_collision_with_ground(layer, x, y1, entity_to_check, found_diagonal_wall)
-        || test_collision_with_ground(layer, x, y2, entity_to_check, found_diagonal_wall)
-        || test_collision_with_ground(layer, x + 7, y1, entity_to_check, found_diagonal_wall)
-        || test_collision_with_ground(layer, x + 7, y2, entity_to_check, found_diagonal_wall)) {
+    if (test_collision_with_ground(layer, x, y1, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x, y2, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x + 7, y1, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x + 7, y2, entity_to_check, found_diagonal_wall, entities_nearby)) {
       return true;
     }
   }
 
   for (int y = y1; y <= y2; y += 8) {
-    if (test_collision_with_ground(layer, x1, y, entity_to_check, found_diagonal_wall)
-        || test_collision_with_ground(layer, x2, y, entity_to_check, found_diagonal_wall)
-        || test_collision_with_ground(layer, x1, y + 7, entity_to_check, found_diagonal_wall)
-        || test_collision_with_ground(layer, x2, y + 7, entity_to_check, found_diagonal_wall)) {
+    if (test_collision_with_ground(layer, x1, y, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x2, y, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x1, y + 7, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x2, y + 7, entity_to_check, found_diagonal_wall, entities_nearby)) {
       return true;
     }
   }
@@ -974,22 +1002,22 @@ bool Map::test_collision_with_obstacles(
     // box. Otherwise, walls with sharp angles like 'V' become
     // partially traversable.
     for (int x = x1; x <= x2; ++x) {
-      if (test_collision_with_ground(layer, x, y1, entity_to_check, found_diagonal_wall)
-          || test_collision_with_ground(layer, x, y2, entity_to_check, found_diagonal_wall)) {
+      if (test_collision_with_ground(layer, x, y1, entity_to_check, found_diagonal_wall, entities_nearby)
+          || test_collision_with_ground(layer, x, y2, entity_to_check, found_diagonal_wall, entities_nearby)) {
         return true;
       }
     }
 
     for (int y = y1; y <= y2; ++y) {
-      if (test_collision_with_ground(layer, x1, y, entity_to_check, found_diagonal_wall)
-          || test_collision_with_ground(layer, x2, y, entity_to_check, found_diagonal_wall)) {
+      if (test_collision_with_ground(layer, x1, y, entity_to_check, found_diagonal_wall, entities_nearby)
+          || test_collision_with_ground(layer, x2, y, entity_to_check, found_diagonal_wall, entities_nearby)) {
         return true;
       }
     }
   }
 
   // No collision with the terrain: check collisions with dynamic entities.
-  return test_collision_with_entities(layer, collision_box, entity_to_check);
+  return test_collision_with_entities(layer, collision_box, entity_to_check, entities_nearby);
 }
 
 /**
@@ -1011,7 +1039,7 @@ bool Map::test_collision_with_obstacles(
   bool is_diagonal_wall = false;
 
   // Test the terrain.
-  bool collision = test_collision_with_ground(layer, x, y, entity_to_check, is_diagonal_wall);
+  bool collision = test_collision_with_ground(layer, x, y, entity_to_check, is_diagonal_wall, {});
 
   // Test dynamic entities.
   if (!collision) {
@@ -1115,7 +1143,7 @@ Ground Map::get_ground(
     const Point& xy,
     const Entity* entity_to_check
 ) const {
-
+  SOL_PFUN();
   if (!is_loaded()) {
     return Ground::EMPTY;
   }
@@ -1129,6 +1157,31 @@ Ground Map::get_ground(
   const Rectangle box(xy, Size(1, 1));
   ConstEntityVector entities_nearby;
   get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  return get_ground(layer, xy, entity_to_check, entities_nearby);
+}
+
+/**
+ * \brief Returns the ground at the specified point.
+ *
+ * Static tiles and dynamic entities are all taken into account here.
+ *
+ * \param layer Layer of the point.
+ * \param xy Coordinates of the point.
+ * \param entity_to_check The entity you want to know the ground of (if any).
+ * Used to make sure that the entity's own modified ground does not count.
+ * \return The ground at this place.
+ */
+Ground Map::get_ground(
+    int layer,
+    const Point& xy,
+    const Entity* entity_to_check,
+    const ConstEntityVector& entities_nearby
+) const {
+  SOL_PFUN();
+
+  if (!is_loaded()) {
+    return Ground::EMPTY;
+  }
 
   const auto& rend = entities_nearby.rend();
   for (auto it = entities_nearby.rbegin(); it != rend; ++it) {
@@ -1157,7 +1210,7 @@ Ground Map::get_ground(
   }
 
   // Otherwise, return the ground defined by static tiles (this is very fast).
-  return entities->get_tile_ground(layer, xy.x, xy.y);
+  return get_entities().get_tile_ground(layer, xy.x, xy.y);
 }
 
 /**
@@ -1311,6 +1364,10 @@ Ground Map::get_ground_from_entity(const Entity& entity, const Point& xy) const 
  */
 void Map::check_collision_with_detectors(Entity& entity) {
 
+  if (!is_loaded()) {
+    return;
+  }
+
   if (suspended) {
     return;
   }
@@ -1325,7 +1382,22 @@ void Map::check_collision_with_detectors(Entity& entity) {
   // Extend the box because some collision tests work without overlapping.
   Rectangle box = entity.get_extended_bounding_box(8);
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  check_collision_with_detectors(entity, entities_nearby);
+}
+
+/**
+ * @brief Checks the collisions between an entity and the detectors of the map. With prior knowledge of nearby entities
+ *
+ * This function is called by an entity sensitive to the entity detectors
+ * when this entity has just moved on the map, or when a detector
+ * wants to check this entity.
+ * We check whether or not the entity overlaps an entity detector.
+ * If the map is suspended, this function does nothing.
+ * @param entity The entity that just moved
+ * @param entities_nearby Entities surrounding the entity that should be checked for collision
+ */
+void Map::check_collision_with_detectors(Entity& entity, EntityVector& entities_nearby) {
   for (const EntityPtr& entity_nearby: entities_nearby) {
 
     if (entity.is_being_removed()) {
@@ -1355,6 +1427,11 @@ void Map::check_collision_with_detectors(Entity& entity) {
  * \param detector A detector.
  */
 void Map::check_collision_from_detector(Entity& detector) {
+  SOL_PFUN();
+
+  if (!is_loaded()) {
+    return;
+  }
 
   if (suspended) {
     return;
@@ -1365,24 +1442,47 @@ void Map::check_collision_from_detector(Entity& detector) {
     return;
   }
 
-  // First check the hero.
-  detector.check_collision(get_entities().get_hero());
-
   // Check each entity with this detector.
   Rectangle box = detector.get_extended_bounding_box(8);
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  check_collision_from_detector(detector, entities_nearby);
+}
+
+/**
+ * \brief Checks the collisions between all entities and a detector.
+ *
+ * This function is called when a detector wants to check entities,
+ * typically when the detector has just moved.
+ * If the map is suspended, this function does nothing.
+ *
+ * \param detector A detector.
+ * \param entities_nearby Entities surrounding this detector
+ */
+void Map::check_collision_from_detector(Entity& detector, EntityVector& entities_nearby) {
+
+  if (!is_loaded()) {
+    return;
+  }
+
   for (const EntityPtr& entity_nearby: entities_nearby) {
 
     if (detector.is_being_removed()) {
       return;
     }
 
+    const Heroes& heroes = get_entities().get_heroes();
+    // First check the heroes.
+    for(const HeroPtr& hero : heroes) {
+      detector.check_collision(*hero);
+    }
+
     if (entity_nearby->is_enabled() &&
         !entity_nearby->is_suspended() &&
         !entity_nearby->is_being_removed() &&
         entity_nearby.get() != &detector &&
-        entity_nearby.get() != &get_entities().get_hero()
+        //entity_nearby.get() != &get_entities().get_hero()
+        std::find(heroes.begin(), heroes.end(), entity_nearby) == heroes.end()
     ) {
       detector.check_collision(*entity_nearby);
     }
@@ -1402,6 +1502,10 @@ void Map::check_collision_from_detector(Entity& detector) {
  */
 void Map::check_collision_from_detector(Entity& detector, Sprite& detector_sprite) {
 
+  if (!is_loaded()) {
+    return;
+  }
+
   if (suspended) {
     return;
   }
@@ -1411,13 +1515,16 @@ void Map::check_collision_from_detector(Entity& detector, Sprite& detector_sprit
     return;
   }
 
-  // First check the hero.
-  detector.check_collision(detector_sprite, get_entities().get_hero());
+  // First check the heroes.
+  const auto& heroes = get_entities().get_heroes();
+  for(const HeroPtr& hero : heroes) {
+    detector.check_collision(detector_sprite, *hero);
+  }
 
   // Check each entity with this detector.
   Rectangle box = detector.get_max_bounding_box();
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
   for (const EntityPtr& entity_nearby: entities_nearby) {
 
     if (detector.is_being_removed()) {
@@ -1428,7 +1535,8 @@ void Map::check_collision_from_detector(Entity& detector, Sprite& detector_sprit
         !entity_nearby->is_suspended() &&
         !entity_nearby->is_being_removed() &&
         entity_nearby.get() != &detector &&
-        entity_nearby.get() != &get_entities().get_hero()
+        //entity_nearby.get() != &get_entities().get_hero()
+        std::find(heroes.begin(), heroes.end(), entity_nearby) == heroes.end()
     ) {
       detector.check_collision(detector_sprite, *entity_nearby);
     }
@@ -1449,6 +1557,10 @@ void Map::check_collision_from_detector(Entity& detector, Sprite& detector_sprit
  */
 void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite) {
 
+  if (!is_loaded()) {
+    return;
+  }
+
   if (suspended) {
     return;
   }
@@ -1460,7 +1572,28 @@ void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite) {
   // Check each detector.
   Rectangle box = entity.get_max_bounding_box();
   std::vector<EntityPtr> entities_nearby;
-  entities->get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
+  check_collision_with_detectors(entity, sprite, entities_nearby);
+}
+
+/**
+ * @brief hecks the pixel-precise collisions between an entity and the
+ * detectors of the map.
+ *
+ * This function is called by an entity
+ * when the frame of one of its sprites has just changed.
+ * We check whether or not the sprite overlaps the detector.
+ * If the map is suspended, this function does nothing.
+ * @param entity A map entity
+ * @param sprite The sprite of this entity to check
+ * @param entities_nearby Entities that surround the checked entity
+ */
+void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite, EntityVector& entities_nearby) {
+
+  if (!is_loaded()) {
+    return;
+  }
+
   for (const EntityPtr& entity_nearby: entities_nearby) {
 
     if (entity.is_being_removed()) {
@@ -1476,6 +1609,24 @@ void Map::check_collision_with_detectors(Entity& entity, Sprite& sprite) {
         && entity_nearby->is_enabled()) {
       entity_nearby->check_collision(entity, sprite);
     }
+  }
+}
+
+/**
+ * @brief notify the map that window size changed
+ *
+ * Updates the cameras if dynamic video mode is enabled
+ *
+ * @param new_size
+ */
+void Map::notify_window_size_changed(const Size& new_size) {
+
+  if (!is_loaded()) {
+    return;
+  }
+
+  for (const CameraPtr& cam : get_entities().get_cameras()) {
+    cam->notify_window_size_changed(new_size);
   }
 }
 

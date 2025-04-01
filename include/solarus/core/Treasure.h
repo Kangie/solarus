@@ -20,6 +20,7 @@
 #include "solarus/core/Common.h"
 #include "solarus/graphics/SurfacePtr.h"
 #include "solarus/graphics/SpritePtr.h"
+#include "solarus/core/Equipment.h"
 #include <string>
 
 namespace Solarus {
@@ -46,28 +47,26 @@ class Treasure {
 
   public:
 
-    Treasure(Game& game, const std::string& item_name, int variant,
+    Treasure(const std::string& item_name, int variant,
         const std::string& savegame_variable);
 
-    Game& get_game() const;
-    EquipmentItem& get_item() const;
+    //Game& get_game() const;
+    EquipmentItem& get_item(Equipment &equipment) const;
     const std::string& get_item_name() const;
     int get_variant() const;
     const std::string& get_savegame_variable() const;
     bool is_saved() const;
     bool is_empty() const;
 
-    bool is_obtainable() const;
-    void ensure_obtainable();
-    void check_obtainable() const;
-    void give_to_player() const;
-    bool is_found() const;
+    bool is_obtainable(Equipment &equipment) const;
+    void ensure_obtainable(Equipment &equipment);
+    void check_obtainable(Equipment &equipment) const;
+    void give_to_player(Hero& hero) const;
+    bool is_found(Equipment& equipment) const;
 
     SpritePtr create_sprite() const;
 
   private:
-
-    Game* game;                        /**< the current game */
     std::string item_name;             /**< content of the treasure (or an empty string) */
     int variant;                       /**< variant of this content */
     std::string savegame_variable;     /**< name of the savegame boolean variable corresponding to this treasure,

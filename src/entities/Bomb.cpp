@@ -16,8 +16,11 @@
  */
 #include "solarus/audio/Sound.h"
 #include "solarus/core/CommandsEffects.h"
+#include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
+#include "solarus/core/Controls.h"
+
 #include "solarus/entities/Bomb.h"
 #include "solarus/entities/CarriedObject.h"
 #include "solarus/entities/Entities.h"
@@ -26,6 +29,7 @@
 #include "solarus/entities/Stream.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/movements/PathMovement.h"
+
 #include <memory>
 
 namespace Solarus {
@@ -41,7 +45,7 @@ namespace Solarus {
  */
 Bomb::Bomb(const std::string& name, int layer, const Point& xy):
   Entity(name, 0, layer, xy, Size(16, 16)),
-  explosion_date(System::now() + 6000) {
+  explosion_date(System::now_ms() + 6000) {
 
   set_collision_modes(CollisionMode::COLLISION_FACING);
   const SpritePtr& sprite = create_sprite("entities/bomb");
@@ -171,27 +175,29 @@ void Bomb::notify_position_changed() {
 
   Entity::notify_position_changed();
 
-  if (get_hero().get_facing_entity() == this
-      && get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_LIFT
-      && !get_hero().is_facing_point_in(get_bounding_box())) {
+  auto res = find_hero([&](const HeroPtr& hero){ //TODO figure out how to revoke ACTION_KEY_LIFT !
+    return hero->get_facing_entity() == this &&
+        hero->get_commands_effects()
+          .get_action_key_effect() == CommandsEffects::ACTION_KEY_LIFT &&
+        hero->is_facing_point_in(get_bounding_box());
+  });
 
-    get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
+  if(res.first) {
+    (*res.second)->get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_NONE);
   }
 }
 
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool Bomb::notify_action_command_pressed() {
+bool Bomb::notify_action_command_pressed(Hero &hero) {
 
-  CommandsEffects::ActionKeyEffect effect = get_commands_effects().get_action_key_effect();
+  if (hero.get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_LIFT &&
+      hero.get_facing_entity() == this &&
+      hero.is_facing_point_in(get_bounding_box())) {
 
-  if (effect == CommandsEffects::ACTION_KEY_LIFT
-      && get_hero().get_facing_entity() == this
-      && get_hero().is_facing_point_in(get_bounding_box())) {
-
-    get_hero().start_lifting(std::make_shared<CarriedObject>(
-        get_hero(),
+    hero.start_lifting(std::make_shared<CarriedObject>(
+        hero,
         *this,
         "entities/bomb",
         "",
@@ -216,7 +222,7 @@ void Bomb::set_suspended(bool suspended) {
 
   if (!suspended && get_when_suspended() != 0) {
     // recalculate the timer
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     explosion_date += diff;
   }
 }
@@ -233,7 +239,7 @@ void Bomb::update() {
   }
 
   // check the explosion date
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   if (now >= explosion_date) {
     explode();
   }

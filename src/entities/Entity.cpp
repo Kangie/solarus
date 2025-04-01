@@ -22,6 +22,7 @@
 #include "solarus/core/MainLoop.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
+#include "solarus/core/Profiler.h"
 #include "solarus/entities/CollisionMode.h"
 #include "solarus/entities/Destructible.h"
 #include "solarus/entities/Door.h"
@@ -31,18 +32,11 @@
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Npc.h"
 #include "solarus/entities/Separator.h"
-#include "solarus/entities/SeparatorPtr.h"
 #include "solarus/entities/StreamAction.h"
 #include "solarus/entities/Switch.h"
-#include "solarus/entities/Tileset.h"
 #include "solarus/graphics/Sprite.h"
-#include "solarus/graphics/SpriteAnimationSet.h"
 #include "solarus/lua/LuaContext.h"
-#include "solarus/lua/LuaTools.h"
 #include "solarus/movements/Movement.h"
-#include <algorithm>
-#include <iterator>
-#include <list>
 #include <utility>
 
 namespace Solarus {
@@ -93,7 +87,7 @@ Entity::Entity(
   optimization_distance(default_optimization_distance),
   optimization_distance2(default_optimization_distance * default_optimization_distance) {
 
-  Debug::check_assertion(size.width >= 0 && size.height >= 0,
+  SOLARUS_REQUIRE(size.width >= 0 && size.height >= 0,
       "Invalid entity size: width and height must be positive");
 }
 
@@ -176,6 +170,11 @@ Ground Entity::get_modified_ground() const {
  * because this is necessary in case it just stopped being one.
  */
 void Entity::update_ground_observers() {
+  SOL_PFUN();
+
+  if (!is_on_map()) {
+    return;
+  }
 
   // Update overlapping entities that are sensible to their ground.
   const Rectangle& box = get_bounding_box();
@@ -220,7 +219,7 @@ Ground Entity::get_ground_below() const {
  * This function does nothing if the entity is not sensible to its ground.
  */
 void Entity::update_ground_below() {
-
+  SOL_PFUN();
   if (!is_ground_observer()) {
     // This entity does not care about the ground below it.
     return;
@@ -249,31 +248,10 @@ void Entity::update_ground_below() {
 }
 
 /**
- * \brief Returns whether entities of this type can be drawn.
- *
- * This function returns \c true by default. Redefine it to return
- * \c false if your type of entity has nothing to display.
- *
- * \return true if this type of entity can be drawn
+ * @brief Notify this entity that a command event happend
  */
-bool Entity::can_be_drawn() const {
-  return true;
-}
-
-/**
- * \brief This function is called when a game command is pressed
- * and the game is not suspended.
- * \param command The command pressed.
- */
-void Entity::notify_command_pressed(GameCommand /* game_command */) {
-}
-
-/**
- * \brief This function is called when a game command is released
- * if the game is not suspended.
- * \param command The command released.
- */
-void Entity::notify_command_released(GameCommand /* game_command */) {
+bool Entity::notify_control(const ControlEvent& /*event*/) {
+  return false;
 }
 
 /**
@@ -298,7 +276,8 @@ void Entity::set_map(Map& map) {
   this->main_loop = &map.get_game().get_main_loop();
   this->map = &map;
   set_lua_context(&main_loop->get_lua_context());
-  if (get_game().has_current_map() && &get_game().get_current_map() == &map) {
+
+  if (get_game().is_current_map(map)) {
     notify_tileset_changed();
   }
 
@@ -309,6 +288,41 @@ void Entity::set_map(Map& map) {
     // In this case, we are ready to finish the initialization right now.
     finish_initialization();
   }
+
+  being_removed = false; //Ensure this entity restarts after being removed from another map
+}
+
+/**
+ * \brief Puts the entity on a map.
+ *
+ * This function is called when the current map is changed.
+ * Does nothing if the hero is already on this map.
+ *
+ * \param map The map.
+ */
+void Entity::place_on_map(Map& map) {
+
+  if (!map.is_loaded()) {
+    return;
+  }
+
+  if (is_on_map() &&
+      &get_map() == &map
+  ) {
+    // No change.
+    return;
+  }
+
+  // Add the entity to the map.
+  const EntityPtr& shared_entity = std::static_pointer_cast<Entity>(shared_from_this());
+  map.get_entities().add_entity(shared_entity);
+
+  if(get_state())
+    get_state()->set_map(map);
+
+  Entity::set_map(map);
+
+  being_removed = false;
 }
 
 /**
@@ -331,9 +345,9 @@ bool Entity::is_initialized() const {
  */
 void Entity::finish_initialization() {
 
-  Debug::check_assertion(!initialized, "Entity is already initialized");
-  Debug::check_assertion(is_on_map(), "Missing map");
-  Debug::check_assertion(get_map().is_loaded(), "Map is not ready");
+  SOLARUS_REQUIRE(!initialized, "Entity is already initialized");
+  SOLARUS_REQUIRE(is_on_map(), "Missing map");
+  SOLARUS_REQUIRE(get_map().is_loaded(), "Map is not ready");
 
   notify_creating();
   get_lua_context()->entity_on_created(*this);
@@ -411,7 +425,7 @@ void Entity::notify_map_started(
  * \param destination Destination entity where the hero is placed or nullptr.
  */
 void Entity::notify_map_opening_transition_finishing(
-    Map& /* map */, const std::shared_ptr<Destination>& /* destination */) {
+    Map& /* map */, const std::string& /* destination_name */, const HeroPtr& /*hero*/) {
 
   if (is_ground_observer()) {
     update_ground_below();
@@ -428,7 +442,7 @@ void Entity::notify_map_opening_transition_finishing(
  * \param destination Destination entity where the hero is placed or nullptr.
  */
 void Entity::notify_map_opening_transition_finished(
-    Map& /* map */, const std::shared_ptr<Destination>& /* destination */) {
+    Map& /* map */, const std::shared_ptr<Destination>& /* destination */, const HeroPtr& /*hero*/) {
 }
 
 /**
@@ -493,38 +507,6 @@ Entities& Entity::get_entities() {
 }
 
 /**
- * \brief Returns the current equipment.
- * \return The equipment.
- */
-Equipment& Entity::get_equipment() {
-  return get_game().get_equipment();
-}
-
-/**
- * \brief Returns the current equipment.
- * \return The equipment.
- */
-const Equipment& Entity::get_equipment() const {
-  return get_game().get_equipment();
-}
-
-/**
- * \brief Returns the keys effect manager.
- * \return the keys effect
- */
-CommandsEffects& Entity::get_commands_effects() {
-  return get_game().get_commands_effects();
-}
-
-/**
- * \brief Returns the game commands.
- * \return The commands.
- */
-GameCommands& Entity::get_commands() {
-  return get_game().get_commands();
-}
-
-/**
  * \brief Returns the savegame.
  * \return The savegame.
  */
@@ -544,8 +526,16 @@ const Savegame& Entity::get_savegame() const {
  * \brief Returns the hero
  * \return The hero.
  */
-Hero& Entity::get_hero() {
-  return get_entities().get_hero();
+Hero& Entity::get_default_hero() {
+  return get_entities().get_default_hero();
+}
+
+/**
+ * @brief Returns the list of heroes on the map of this entity
+ * @return The heroes.
+ */
+const Heroes& Entity::get_heroes() const {
+  return get_entities().get_heroes();
 }
 
 /**
@@ -556,6 +546,9 @@ Hero& Entity::get_hero() {
  */
 void Entity::remove_from_map() {
 
+  if (!is_on_map()) {
+    return;
+  }
   get_entities().remove_entity(*this);
 }
 
@@ -579,8 +572,10 @@ void Entity::notify_being_removed() {
     update_ground_observers();
   }
 
-  if (get_hero().get_facing_entity() == this) {
-    get_hero().set_facing_entity(nullptr);
+  for(const HeroPtr& hero : get_heroes()) {
+    if (hero->get_facing_entity() == this) {
+      hero->set_facing_entity(nullptr);
+    }
   }
 }
 
@@ -806,6 +801,30 @@ void Entity::set_top_left_xy(const Point& xy) {
 }
 
 /**
+ * \brief Returns the position of the entity's bottom-right corner.
+ * \return The position of the entity's right side.
+ */
+int Entity::get_bottom_right_x() const {
+  return bounding_box.get_right();
+}
+
+/**
+ * \brief Returns the y position of the entity's bottom-right corner.
+ * \return The position of the entity's bottom side.
+ */
+int Entity::get_bottom_right_y() const {
+  return bounding_box.get_bottom();
+}
+
+/**
+ * \brief Returns the position of the entity's bottom-right corner.
+ * \return The position of the entity's bottom-right corner.
+ */
+Point Entity::get_bottom_right_xy() const {
+  return bounding_box.get_bottom_right();
+}
+
+/**
  * \brief Returns the coordinates where this entity should be drawn.
  *
  * Most of the time, this function just returns get_xy().
@@ -854,7 +873,7 @@ Size Entity::get_size() const {
  */
 void Entity::set_size(int width, int height) {
 
-  Debug::check_assertion(width >= 0 && height >= 0,
+  SOLARUS_REQUIRE(width >= 0 && height >= 0,
       "Invalid entity size: width and height must be positive");
   bounding_box.set_size(width, height);
 
@@ -934,10 +953,8 @@ Rectangle Entity::get_max_bounding_box() const {
   Rectangle result = get_bounding_box();
   for (const SpritePtr& sprite: get_sprites()) {
     Rectangle box = sprite->get_max_bounding_box();
-    box.add_xy(sprite->get_xy());  // Take into account the sprite's own offset.
     box.add_xy(get_xy());  // Take into account the coordinates of the entity.
     result |= box;
-    // TODO when the sprite's offset changes, update the bounding box
   }
   return result;
 }
@@ -1087,16 +1104,18 @@ Point Entity::get_touching_point(int direction) const {
 }
 
 /**
- * \brief Returns the detector in front of this entity.
- * \return The detector this entity is facing, or nullptr if there is no detector in front of him.
+ * \brief Returns the entity in front of this entity.
+ * \return The entity this entity is facing, or nullptr if there is no entity
+ * in front of this one.
  */
 Entity* Entity::get_facing_entity() {
   return facing_entity;
 }
 
 /**
- * \brief Returns the detector in front of this entity.
- * \return The detector this entity is facing, or nullptr if there is no detector in front of him.
+ * \brief Returns the entity in front of this entity.
+ * \return The entity this entity is facing, or nullptr if there is no entity
+ * in front of this one.
  */
 const Entity* Entity::get_facing_entity() const {
   return facing_entity;
@@ -1113,6 +1132,22 @@ void Entity::set_facing_entity(Entity* facing_entity) {
 
   this->facing_entity = facing_entity;
   notify_facing_entity_changed(facing_entity);
+}
+
+/**
+ * \brief Check if the facing entity is still facing this entity.
+ */
+void Entity::update_facing_entity() {
+
+  if (facing_entity != nullptr) {
+    // Check if the facing entity is still there.
+    if (facing_entity->is_being_removed() ||
+        !facing_entity->is_enabled() ||
+        !facing_entity->test_collision_facing_point(*this)
+    ) {
+      set_facing_entity(nullptr);
+    }
+  }
 }
 
 /**
@@ -1421,9 +1456,10 @@ SpritePtr Entity::create_sprite(
     int order
 ) {
   if (order == -1) {
-    order = sprites.size();
+    order = static_cast<int>(sprites.size());
   }
-  SpritePtr sprite = std::make_shared<Sprite>(animation_set_id);
+  SpritePtr sprite = Sprite::create(animation_set_id);
+  SOLARUS_REQUIRE(sprite, "Entity::create_sprite failed.");
 
   NamedSprite named_sprite;
   named_sprite.name = sprite_name;
@@ -1708,6 +1744,8 @@ void Entity::clear_movement() {
     movement->set_lua_notifications_enabled(false);  // Stop future Lua callbacks.
     old_movements.push_back(movement);               // Destroy it later.
     movement = nullptr;
+    // Don't call notify_movement_finished() from here or any virtual function
+    // as we can be in the destructor at this point.
   }
 }
 
@@ -1792,7 +1830,6 @@ void Entity::stop_stream_action() {
 
   old_stream_actions.emplace_back(std::move(stream_action));
   stream_action = nullptr;
-  check_collision_with_detectors();
 }
 
 /**
@@ -1812,6 +1849,7 @@ void Entity::update_stream_action() {
     get_stream_action()->update();
     if (get_stream_action() != nullptr && !get_stream_action()->is_active()) {
       stop_stream_action();
+      check_collision_with_detectors();
     }
   }
   clear_old_stream_actions();
@@ -1840,18 +1878,28 @@ void Entity::notify_obstacle_reached() {
  * TODO only keep notify_bounding_box_changed()
  */
 void Entity::notify_position_changed() {
+  SOL_PFUN();
+
+  if (!is_on_map()) {
+    return;
+  }
 
   // Notify the quadtree.
   notify_bounding_box_changed();
 
+  // Query the quadtree
+  Rectangle box = get_max_bounding_box().get_union(get_extended_bounding_box(8));
+  EntityVector entities_nearby;
+  get_map().get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
+
   if (is_detector()) {
     // Since this entity is a detector, all entities need to check
     // their collisions with it.
-    get_map().check_collision_from_detector(*this);
+    get_map().check_collision_from_detector(*this, entities_nearby);
   }
 
   // Check collisions between this entity and other detectors.
-  check_collision_with_detectors();
+  check_collision_with_detectors(entities_nearby);
 
   // Update the ground.
   if (is_ground_modifier()) {
@@ -1941,10 +1989,10 @@ void Entity::set_layer_independent_collisions(bool independent) {
 /**
  * \brief Returns whether the hero can lift this entity.
  */
-bool Entity::can_be_lifted() const {
+bool Entity::can_be_lifted(Hero& hero) const {
 
   return get_weight() >= 0 &&
-      get_equipment().has_ability(Ability::LIFT, get_weight());
+      hero.get_equipment().has_ability(Ability::LIFT, get_weight());
 }
 
 /**
@@ -2167,6 +2215,14 @@ bool Entity::test_collision(
     CollisionMode collision_mode,
     const SpritePtr& this_sprite,
     const SpritePtr& other_sprite) {
+
+  if (!is_on_map() || !is_enabled() || is_being_removed()) {
+    return false;
+  }
+
+  if (!entity.is_on_map() || !entity.is_enabled() || entity.is_being_removed()) {
+    return false;
+  }
 
   if (get_layer() != entity.get_layer() && !has_layer_independent_collisions()) {
     // Not the same layer: no collision.
@@ -2401,7 +2457,7 @@ void Entity::notify_collision(
  * enabled for some sprites of this entity.
  */
 void Entity::check_collision_with_detectors() {
-
+  SOL_PFUN();
   if (!is_on_map()) {
     // The entity is still being initialized.
     return;
@@ -2416,8 +2472,26 @@ void Entity::check_collision_with_detectors() {
     return;
   }
 
+  EntityVector entities_nearby;
+  Rectangle box = get_max_bounding_box().get_union(get_extended_bounding_box(8));
+  get_map().get_entities().get_entities_in_rectangle_z_sorted(box, entities_nearby);
+
+  check_collision_with_detectors(entities_nearby);
+}
+
+/**
+ * \brief Checks collisions between this entity and the detectors of the map.
+ *
+ * Simple collisions are checked, and then pixel-precise collisions if they are
+ * enabled for some sprites of this entity.
+ *
+ * \param entities_nearby entities_surrounding this entity
+ */
+void Entity::check_collision_with_detectors(EntityVector& entities_nearby) {
+  SOL_PFUN();
+
   // Detect simple collisions.
-  get_map().check_collision_with_detectors(*this);
+  get_map().check_collision_with_detectors(*this, entities_nearby);
 
   // Detect pixel-precise collisions.
   std::vector<NamedSprite> sprites = this->sprites;
@@ -2427,7 +2501,7 @@ void Entity::check_collision_with_detectors() {
     }
     Sprite& sprite = *named_sprite.sprite;
     if (sprite.are_pixel_collisions_enabled()) {
-      get_map().check_collision_with_detectors(*this, sprite);
+      get_map().check_collision_with_detectors(*this, sprite, entities_nearby);
     }
   }
 }
@@ -3002,10 +3076,21 @@ bool Entity::is_jumper_obstacle(Jumper& /* jumper */, const Rectangle& /* candid
  * By default, this function returns true.
  *
  * \param destructible a destructible item
- * \return true if the destructible item is currently an obstacle for this entity
+ * \return true if the destructible object is currently an obstacle for this entity
  */
 bool Entity::is_destructible_obstacle(Destructible& /* destructible */) {
+  return true;
+}
 
+/**
+ * \brief Returns whether a chet is currently considered as an obstacle by this entity.
+ *
+ * By default, this function returns \c true.
+ *
+ * \param chest A chest.
+ * \return \c true if the chest is currently an obstacle for this entity.
+ */
+bool Entity::is_chest_obstacle(Chest& /* chest */) {
   return true;
 }
 
@@ -3230,77 +3315,11 @@ bool Entity::is_in_same_region(const Entity& other) const {
  */
 bool Entity::is_in_same_region(const Point& xy) const {
 
-  const Point& this_xy = get_center_point();
-  const Point& other_xy = xy;
-
-  const std::set<ConstSeparatorPtr>& separators =
-      get_entities().get_entities_by_type<Separator>();
-  for (const ConstSeparatorPtr& separator: separators) {
-
-    if (separator->is_vertical()) {
-      // Vertical separation.
-      if (this_xy.y < separator->get_top_left_y() ||
-          this_xy.y >= separator->get_top_left_y() + separator->get_height()) {
-        // This separator is irrelevant: the entity is not in either side,
-        // it is too much to the north or to the south.
-        //
-        //     |
-        //     |
-        //     |
-        //
-        //  x
-        //
-        continue;
-      }
-
-      if (other_xy.y < separator->get_top_left_y() ||
-          other_xy.y >= separator->get_top_left_y() + separator->get_height()) {
-        // This separator is irrelevant: the other entity is not in either side.
-        // it is too much to the north or to the south.
-        continue;
-      }
-
-      // Both entities are in the zone of influence of this separator.
-      // See if they are in the same side.
-      const int separation_x = separator->get_center_point().x;
-      if (this_xy.x < separation_x &&
-          separation_x <= other_xy.x) {
-        // Different side.
-        return false;
-      }
-
-      if (other_xy.x < separation_x &&
-          separation_x <= this_xy.x) {
-        // Different side.
-        return false;
-      }
-    }
-    else {
-      // Horizontal separation.
-      if (this_xy.x < separator->get_top_left_x() ||
-          this_xy.x >= separator->get_top_left_x() + separator->get_width()) {
-        continue;
-      }
-
-      if (other_xy.x < separator->get_top_left_x() ||
-          other_xy.x >= separator->get_top_left_x() + separator->get_width()) {
-        continue;
-      }
-
-      const int separation_y = separator->get_center_point().y;
-      if (this_xy.y < separation_y &&
-          separation_y <= other_xy.y) {
-        return false;
-      }
-
-      if (other_xy.y < separation_y &&
-          separation_y <= this_xy.y) {
-        return false;
-      }
-    }
+  if (!is_on_map()) {
+    return false;
   }
 
-  return true;
+  return get_entities().are_in_same_region(get_center_point(), xy);
 }
 
 /**
@@ -3476,6 +3495,15 @@ void Entity::notify_collision_with_enemy(Enemy& /* enemy */, Sprite& /* this_spr
 }
 
 /**
+ * @brief This function is called when a hero's sprite collides with a sprite of this entity.
+ * @param hero the hero
+ * @param this_sprite this entity's sprite that overlaps the hero sprite
+ * @param hero_sprite the hero's sprite that overlaps a sprite of this entity
+ */
+void Entity::notify_collision_with_hero(Hero& /*hero*/, Sprite& /*this_sprite*/, Sprite& /*hero_sprite*/) {
+}
+
+/**
  * \brief Notifies this entity that it has just attacked an enemy.
  *
  * This function is called even if this attack was not successful.
@@ -3513,34 +3541,34 @@ void Entity::notify_attacked_enemy(
  *
  * \return \c true if an interaction happened.
  */
-bool Entity::notify_action_command_pressed() {
+bool Entity::notify_action_command_pressed(Hero& hero) {
 
-  if (!can_be_lifted()) {
+  if (!can_be_lifted(hero)) {
     return false;
   }
 
-  CommandsEffects::ActionKeyEffect effect = get_commands_effects().get_action_key_effect();
-  if (effect == CommandsEffects::ACTION_KEY_LIFT &&
-      get_hero().get_facing_entity() == this &&
-      get_hero().is_facing_point_in(get_bounding_box())) {
-
+  if(hero.get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_LIFT &&
+     hero.get_facing_entity() == this &&
+     hero.is_facing_point_in(get_bounding_box())) {
     std::string sprite_id;
     if (has_sprite()) {
       sprite_id = get_sprite()->get_animation_set_id();
     }
     std::shared_ptr<CarriedObject> carried_object = std::make_shared<CarriedObject>(
-        get_hero(),
+        hero,
         *this,
         sprite_id,
         "stone",
         1,  // damage_on_enemies
         0   // explosion_date
     );
-    get_hero().start_lifting(carried_object);
+    hero.start_lifting(carried_object);
 
-    Sound::play("lift");
+    if (!hero.get_lifting_sound_id().empty()) {
+      Sound::play(hero.get_lifting_sound_id());
+    }
     remove_from_map();
-    get_lua_context()->entity_on_lifting(*this, get_hero(), *carried_object);
+    get_lua_context()->entity_on_lifting(*this, hero, *carried_object);
     return true;
   }
 
@@ -3577,7 +3605,7 @@ bool Entity::notify_interaction_with_item(EquipmentItem& /* item */) {
  *
  * \return \c true if this entity was pushed or pulled successfully.
  */
-bool Entity::start_movement_by_hero() {
+bool Entity::start_movement_by_hero(Hero& /*hero*/) {
   return false;
 }
 
@@ -3617,7 +3645,7 @@ void Entity::set_suspended(bool suspended) {
 
   // Remember the date if the entity is being suspended.
   if (suspended) {
-    when_suspended = System::now();
+    when_suspended = System::now_ms();
   }
 
   // Suspend/unsuspend sprite animations.
@@ -3706,11 +3734,6 @@ void Entity::update() {
     return;
   }
 
-  // Check the facing entity.
-  if (facing_entity != nullptr && facing_entity->is_being_removed()) {
-    set_facing_entity(nullptr);
-  }
-
   update_sprites();
 
   // Update the movement.
@@ -3718,6 +3741,7 @@ void Entity::update() {
     movement->update();
   }
   clear_old_movements();
+  update_facing_entity();
   update_stream_action();
 
   // Update the state if any.
@@ -3753,9 +3777,10 @@ void Entity::update_sprites() {
  */
 void Entity::update_sprite(Sprite& sprite) {
 
-  sprite.update();
-  if (sprite.has_frame_changed()) {
-    // The frame has just changed.
+  bool changed = false;
+  sprite.update(changed);
+  if (changed) {
+    // The frame or offset has just changed.
     // Pixel-precise collisions need to be rechecked.
     if (sprite.are_pixel_collisions_enabled()) {
 
@@ -3835,10 +3860,12 @@ void Entity::built_in_draw(Camera& camera) {
  * \param clipping_area Rectangle of the map where the drawing will be
  * restricted. A flat rectangle means no restriction.
  */
-void Entity::draw_sprites(Camera& /* camera */, const Rectangle& clipping_area) {
 
+void Entity::draw_sprites(Camera& camera , const Rectangle& clipping_area) {
   const Point& xy = get_displayed_xy();
   const Size& size = get_size();
+
+  const auto& surface = camera.get_surface();
 
   // Draw the sprites.
   for (const NamedSprite& named_sprite: sprites) {
@@ -3848,7 +3875,20 @@ void Entity::draw_sprites(Camera& /* camera */, const Rectangle& clipping_area) 
     Sprite& sprite = *named_sprite.sprite;
 
     if (!is_tiled()) {
-      get_map().draw_visual(sprite, xy, clipping_area);
+      //get_map().draw_visual(sprite, xy);
+      if(!clipping_area.is_flat()) {
+        const Rectangle region_in_frame(
+            clipping_area.get_xy() - xy,
+            clipping_area.get_size()
+        );
+        sprite.draw_region(
+            region_in_frame,
+            surface,
+            xy
+        );
+      } else {
+        sprite.draw(surface, xy);
+      }
     }
     else {
       // Repeat the sprite with tiling.
@@ -3860,7 +3900,7 @@ void Entity::draw_sprites(Camera& /* camera */, const Rectangle& clipping_area) 
 
       for (int y = y1; y < y2; y += sprite_size.height) {
         for (int x = x1; x < x2; x += sprite_size.width) {
-          get_map().draw_visual(sprite, x, y, clipping_area);
+          sprite.draw(surface, {x,y}); //TODO check if clipping can be ignored for repeated sprites
         }
       }
     }

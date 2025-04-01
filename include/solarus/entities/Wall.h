@@ -50,7 +50,6 @@ class Wall: public Entity {
     );
 
     virtual EntityType get_type() const override;
-    virtual bool can_be_drawn() const override;
     virtual bool is_obstacle_for(Entity& other) override;
 
   private:

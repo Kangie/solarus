@@ -20,15 +20,27 @@
 #include "solarus/core/Common.h"
 #include <string>
 
+/**
+ * \brief Stops Solarus if the condition is \c false.
+ * \param condition The condition to check.
+ * \param message Error message to show in case of failure.
+ */
+#define SOLARUS_REQUIRE(condition, message) \
+    ((condition) ? (void)0 : Debug::die(message))
+
+/**
+ * \def SOLARUS_ASSERT(condition, message)
+ * \brief Stops Solarus in debug mode if the condition is \c false.
+ * \param condition The condition to check.
+ * \param message Error message to show in case of failure.
+ */
 #ifndef NDEBUG
-#define SOLARUS_ASSERT(condition, message) Debug::check_assertion(condition, message)
+#define SOLARUS_ASSERT(condition, message) SOLARUS_REQUIRE(condition, message)
 #else
-#define SOLARUS_ASSERT(condition, message)
+#define SOLARUS_ASSERT(condition, message) ((void)0)
 #endif
 
 namespace Solarus {
-
-class CommandLine;
 
 /**
  * \brief Provides features for handling errors.
@@ -41,8 +53,6 @@ SOLARUS_API void set_abort_on_die(bool abort);
 
 SOLARUS_API void warning(const std::string& message);
 SOLARUS_API void error(const std::string& message);
-SOLARUS_API void check_assertion(bool assertion, const char* error_message);
-SOLARUS_API void check_assertion(bool assertion, const std::string& error_message);
 [[noreturn]] SOLARUS_API void die(const std::string& error_message);
 
 /**

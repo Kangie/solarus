@@ -38,7 +38,7 @@ Sensor::Sensor(
     const Point& xy,
     const Size& size):
   Entity(name, 0, layer, xy, size),
-  activated_by_hero(false),
+  activated_by_heroes(false),
   notifying_script(false) {
 
   set_collision_modes(CollisionMode::COLLISION_CONTAINING | CollisionMode::COLLISION_OVERLAPPING);
@@ -51,14 +51,6 @@ Sensor::Sensor(
  */
 EntityType Sensor::get_type() const {
   return ThisType;
-}
-
-/**
- * \brief Returns whether entities of this type can be drawn.
- * \return true if this type of entity can be drawn
- */
-bool Sensor::can_be_drawn() const {
-  return false;
 }
 
 /**
@@ -100,21 +92,20 @@ void Sensor::notify_collision_with_explosion(Explosion& /* explosion */, Collisi
  *
  * \param hero the hero
  */
-void Sensor::activate(Hero& /* hero */) {
+void Sensor::activate(Hero& hero) {
 
-  if (!activated_by_hero) {
-
-    activated_by_hero = true;
-
+  if (!activated_by_heroes) {
+    activated_by_heroes = true;
     // Notify Lua.
     notifying_script = true;
-    get_lua_context()->sensor_on_activated(*this);
+
+    get_lua_context()->sensor_on_activated(*this, hero);
     notifying_script = false;
   }
   else {
     if (!notifying_script && !get_game().is_suspended()) {
       notifying_script = true;
-      get_lua_context()->sensor_on_activated_repeat(*this);
+      get_lua_context()->sensor_on_activated_repeat(*this, hero);
       notifying_script = false;
     }
   }
@@ -127,10 +118,10 @@ void Sensor::update() {
 
   Entity::update();
 
-  if (activated_by_hero) {
+  if (activated_by_heroes) {
     // check whether the hero is still present
-    if (!test_collision_inside(get_hero())) {
-      activated_by_hero = false;
+    if (!any_hero([&](const HeroPtr& hero){return test_collision_inside(*hero);})) {
+      activated_by_heroes = false;
 
       // Notify Lua.
       notifying_script = true;

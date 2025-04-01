@@ -1,0 +1,193 @@
+# Project information.
+site_name: Solarus Documentation
+site_author: Solarus Labs
+site_description: "Official documentation for the Solarus game engine: Lua API, tutorials and more."
+copyright: Copyright &copy; 2006 - 2025 Solarus Labs
+
+# Repository.
+repo_url: https://gitlab.com/solarus-games/solarus
+repo_name: solarus
+edit_uri: edit/dev/doc/docs/
+
+# Theme.
+theme:
+  name: material
+  font:
+    text: Inter
+    code: Fira Code
+  favicon: assets/images/favicon.png
+  logo: assets/images/logo.svg
+  features:
+    - navigation.tabs
+    - search.suggest
+extra_css:
+  - stylesheets/extra.css
+extra:
+  social:
+    - icon: fontawesome/solid/globe
+      link: https://www.solarus-games.org
+      name: Solarus website
+    - icon: fontawesome/brands/gitlab
+      link: https://gitlab.com/solarus-games
+      name: Source code on GitLab
+    - icon: fontawesome/brands/mastodon
+      link: https://mastodon.gamedev.place/@solarus
+      name: Mastodon
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/solarusgames
+      name: Twitter
+    - icon: fontawesome/brands/facebook-f
+      link: https://www.facebook.com/solarusgames
+      name: Facebook
+    - icon: fontawesome/brands/reddit
+      link: https://www.reddit.com/r/solarus
+      name: Reddit
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/yYHjJHt
+      name: Discord
+
+# Plugins
+plugins:
+  - git-revision-date-localized:
+      enable_creation_date: false
+      type: date
+  - search
+  - offline:
+      enabled: !ENV [OFFLINE, false]
+
+# Page tree
+nav:
+  - Home: index.md
+  - Tutorials:
+      - Introduction: tutorials/introduction.md
+      - Basics:
+          - Introduction: tutorials/basics/introduction.md
+          - Installation: tutorials/basics/installation.md
+          - Creating a Quest: tutorials/basics/creating-a-quest.md
+          - Building a Quest Package: tutorials/basics/building-quest-package.md
+          - Choosing a License: tutorials/basics/choosing-a-license.md
+      - Quest Creation:
+          - Introduction: tutorials/quest-creation/introduction.md
+          - Map Editor: tutorials/quest-creation/map-editor.md
+          - Translate a Quest: tutorials/quest-creation/translate-a-quest.md
+      - Distribution:
+          - Introduction: tutorials/distribution/introduction.md
+          - Android: tutorials/distribution/android.md
+          - Nintendo Switch: tutorials/distribution/nintendo-switch.md
+      - Migration:
+          - Introduction: tutorials/migration/introduction.md
+          - From v1.6 to v2.0: tutorials/migration/from-v1-6-to-v2-0.md
+          - From v1.5 to v1.6: tutorials/migration/from-v1-5-to-v1-6.md
+          - From v1.4 to v1.5: tutorials/migration/from-v1-4-to-v1-5.md
+          - From v1.3 to v1.4: tutorials/migration/from-v1-3-to-v1-4.md
+          - From v1.2 to v1.3: tutorials/migration/from-v1-2-to-v1-3.md
+          - From v1.1 to v1.2: tutorials/migration/from-v1-1-to-v1-2.md
+          - From v1.0 to v1.1: tutorials/migration/from-v1-0-to-v1-1.md
+  - Lua API:
+      - Introduction: lua-api/introduction.md
+      - General Features: lua-api/general-features.md
+      - Audio:
+          - Overview: lua-api/audio/overview.md
+          - Music: lua-api/audio/music.md
+          - Sound: lua-api/audio/sound.md
+      - Video: lua-api/video.md
+      - Shaders: lua-api/shaders.md
+      - Controls:
+          - Overview: lua-api/controls/overview.md
+          - Inputs: lua-api/controls/inputs.md
+          - Joypad: lua-api/controls/joypad.md
+      - Files: lua-api/files.md
+      - Menus: lua-api/menus.md
+      - Language Functions: lua-api/language-functions.md
+      - Timers: lua-api/timers.md
+      - Drawable Objects:
+          - Overview: lua-api/drawable-objects/overview.md
+          - Surfaces: lua-api/drawable-objects/surface.md
+          - Text Surfaces: lua-api/drawable-objects/text-surface.md
+          - Sprites: lua-api/drawable-objects/sprite.md
+      - Movements:
+          - Overview: lua-api/movements/overview.md
+          - Straight Movement: lua-api/movements/straight-movement.md
+          - Random Movement: lua-api/movements/random-movement.md
+          - Target Movement: lua-api/movements/target-movement.md
+          - Path Movement: lua-api/movements/path-movement.md
+          - Random Path Movement: lua-api/movements/random-path-movement.md
+          - Path Finding Movement: lua-api/movements/path-finding-movement.md
+          - Circle Movement: lua-api/movements/circle-movement.md
+          - Jump Movement: lua-api/movements/jump-movement.md
+          - Pixel Movement: lua-api/movements/pixel-movement.md
+      - Game: lua-api/game.md
+      - Equipment Items: lua-api/equipment-items.md
+      - Map: lua-api/map.md
+      - Map Entities:
+          - Overview: lua-api/map-entities/overview.md
+          - Hero: lua-api/map-entities/hero.md
+          - Tile: lua-api/map-entities/tile.md
+          - Dynamic Tile: lua-api/map-entities/dynamic-tile.md
+          - Teletransporter: lua-api/map-entities/teletransporter.md
+          - Destination: lua-api/map-entities/destination.md
+          - Pickable Treasure: lua-api/map-entities/pickable.md
+          - Destructible Object: lua-api/map-entities/destructible.md
+          - Carried Object: lua-api/map-entities/carried-object.md
+          - Chest: lua-api/map-entities/chest.md
+          - Shop Treasure: lua-api/map-entities/shop-treasure.md
+          - Enemy: lua-api/map-entities/enemy.md
+          - Non-Playing Character: lua-api/map-entities/npc.md
+          - Block: lua-api/map-entities/block.md
+          - Jumper: lua-api/map-entities/jumper.md
+          - Switch: lua-api/map-entities/switch.md
+          - Sensor: lua-api/map-entities/sensor.md
+          - Separator: lua-api/map-entities/separator.md
+          - Wall: lua-api/map-entities/wall.md
+          - Crystal: lua-api/map-entities/crystal.md
+          - Crystal Block: lua-api/map-entities/crystal-block.md
+          - Stream: lua-api/map-entities/stream.md
+          - Door: lua-api/map-entities/door.md
+          - Stairs: lua-api/map-entities/stairs.md
+          - Bomb: lua-api/map-entities/bomb.md
+          - Explosion: lua-api/map-entities/explosion.md
+          - Fire: lua-api/map-entities/fire.md
+          - Arrow: lua-api/map-entities/arrow.md
+          - Hookshot: lua-api/map-entities/hookshot.md
+          - Boomerang: lua-api/map-entities/boomerang.md
+          - Camera: lua-api/map-entities/camera.md
+          - Custom Entity: lua-api/map-entities/custom-entity.md
+      - Custom States: lua-api/custom-states.md
+  - Files Specs:
+      - Introduction: files-specs/introduction.md
+      - Quest Properties File: files-specs/properties-file.md
+      - Quest Database File: files-specs/database-file.md
+      - Main Lua Script: files-specs/main-script.md
+      - Logos and Icons: files-specs/logos.md
+      - Audio:
+          - Sounds: files-specs/audio/sounds.md
+          - Musics: files-specs/audio/musics.md
+      - Fonts: files-specs/fonts.md
+      - Languages:
+          - Overview: files-specs/languages/overview.md
+          - Translated Strings: files-specs/languages/strings.md
+          - Translated Dialogs: files-specs/languages/dialogs.md
+      - Sprite Data File: files-specs/sprite-data-file.md
+      - Map Definition File: files-specs/map-data-file.md
+      - Tileset Definition File: files-specs/tileset-data-file.md
+      - Shader Description File: files-specs/shader-data-file.md
+  - Resources:
+      - Introduction: resources/introduction.md
+      - Scripts: resources/scripts.md
+      - Resource Packs: resources/resource-packs.md
+      - Tools:
+          - Zeal: resources/tools/zeal.md
+          - ZeroBrane: resources/tools/zerobrane.md
+
+# Extensions.
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.smartsymbols
+  - admonition
+  - pymdownx.details
+  - def_list

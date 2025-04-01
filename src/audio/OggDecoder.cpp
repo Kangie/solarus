@@ -17,7 +17,7 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/audio/OggDecoder.h"
-#include <al.h>
+#include <AL/al.h>
 #include <sstream>
 #include <vector>
 
@@ -50,7 +50,7 @@ bool OggDecoder::load(std::string&& ogg_data, bool loop) {
   ogg_mem.data = ogg_data;
   // Now, ogg_mem contains the encoded data.
 
-  int error = ov_open_callbacks(&ogg_mem, ogg_file.get(), nullptr, 0, Sound::ogg_callbacks);
+  int error = ov_open_callbacks(&ogg_mem, ogg_file.get(), nullptr, 0, SoundBuffer::ogg_callbacks);
 
   if (error != 0) {
     return false;
@@ -155,7 +155,8 @@ void OggDecoder::decode(ALuint destination_buffer, ALsizei nb_samples) {
     bytes_read = ov_read(
         ogg_file.get(),
         ((char*) raw_data.data()) + total_bytes_read,
-        max_bytes_to_read,
+        // Lossy conversion long -> int.
+        static_cast<int>(max_bytes_to_read),
         0,
         2,
         1,
@@ -194,10 +195,10 @@ void OggDecoder::decode(ALuint destination_buffer, ALsizei nb_samples) {
   // Put this decoded data into the buffer.
   alBufferData(destination_buffer, al_format, raw_data.data(), ALsizei(total_bytes_read), sample_rate);
 
-  int error = alGetError();
+  ALenum error = alGetError();
   if (error != AL_NO_ERROR) {
     std::ostringstream oss;
-    oss << "Failed to fill the audio buffer with decoded OGG data: error " << error;
+    oss << "Failed to fill the audio buffer with decoded OGG data: error " << std::hex << error;
     Debug::error(oss.str());
   }
 }

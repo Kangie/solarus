@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/InputEvent.h"
 #include "solarus/core/MainLoop.h"
@@ -48,9 +49,9 @@ const std::string Savegame::KEY_JOYPAD_ITEM_1 = "_joypad_item_1";      /**< Joyp
 const std::string Savegame::KEY_JOYPAD_ITEM_2 = "_joypad_item_2";      /**< Joypad string mapped to the item 2 command. */
 const std::string Savegame::KEY_JOYPAD_PAUSE = "_joypad_pause";        /**< Joypad string mapped to the pause command. */
 const std::string Savegame::KEY_JOYPAD_RIGHT = "_joypad_right";        /**< Joypad string mapped to the right command. */
-const std::string Savegame::KEY_JOYPAD_UP = "_joypad_up_key";          /**< Joypad string mapped to the up command. */
-const std::string Savegame::KEY_JOYPAD_LEFT = "_joypad_left_key";      /**< Joypad string mapped to the left command. */
-const std::string Savegame::KEY_JOYPAD_DOWN = "_joypad_down_key";      /**< Joypad string mapped to the down command. */
+const std::string Savegame::KEY_JOYPAD_UP = "_joypad_up";              /**< Joypad string mapped to the up command. */
+const std::string Savegame::KEY_JOYPAD_LEFT = "_joypad_left";          /**< Joypad string mapped to the left command. */
+const std::string Savegame::KEY_JOYPAD_DOWN = "_joypad_down";          /**< Joypad string mapped to the down command. */
 const std::string Savegame::KEY_CURRENT_LIFE = "_current_life";        /**< Number of life points. */
 const std::string Savegame::KEY_CURRENT_MONEY = "_current_money";      /**< Amount of money. */
 const std::string Savegame::KEY_CURRENT_MAGIC = "_current_magic";      /**< Number of magic points. */
@@ -61,8 +62,10 @@ const std::string Savegame::KEY_ITEM_SLOT_1 = "_item_slot_1";          /**< Name
 const std::string Savegame::KEY_ITEM_SLOT_2 = "_item_slot_2";          /**< Name of the equipment item in slot 2. */
 const std::string Savegame::KEY_ABILITY_TUNIC = "_ability_tunic";      /**< Resistance level. */
 const std::string Savegame::KEY_ABILITY_SWORD = "_ability_sword";      /**< Attack level. */
+const std::string Savegame::KEY_ABILITY_SWORD_SPIN_ATTACK =
+    "_ability_sword_spin_attack";                                      /**< Spin attack level. */
 const std::string Savegame::KEY_ABILITY_SWORD_KNOWLEDGE =
-    "_ability_sword_knowledge";                                        /**< Super spin attack ability level. */
+    "_ability_sword_knowledge";                                        /**< Super spin attack ability level (deprecated). */
 const std::string Savegame::KEY_ABILITY_SHIELD = "_ability_shield";    /**< Protection level. */
 const std::string Savegame::KEY_ABILITY_LIFT = "_ability_lift";        /**< Lift level. */
 const std::string Savegame::KEY_ABILITY_SWIM = "_ability_swim";        /**< Swim level. */
@@ -88,9 +91,9 @@ Savegame::Savegame(MainLoop& main_loop, const std::string& file_name):
   empty(true),
   file_name(file_name),
   main_loop(main_loop),
-  equipment(*this),
   game(nullptr),
-  default_transition_style(Transition::Style::FADE) {
+  default_transition_style(Transition::Style::FADE),
+  legacy_controls_storage(CurrentQuest::is_format_at_most({ 1, 6 })) {
 
   // Don't call initialize() manually because the shared_ptr does not exist
   // at this point, but is needed by initialize() when calling item scripts.
@@ -103,25 +106,35 @@ Savegame::Savegame(MainLoop& main_loop, const std::string& file_name):
  * This function should be called before using the object.
  * The constructor does not call it because it involves Lua calls to initialize
  * the equipment.
+ * \return \c true in case of success.
  */
-void Savegame::initialize() {
-
+bool Savegame::initialize() {
   const std::string& quest_write_dir = QuestFiles::get_quest_write_dir();
-  Debug::check_assertion(!quest_write_dir.empty(),
+  SOLARUS_REQUIRE(!quest_write_dir.empty(),
       "The quest write directory for savegames was not set in quest.dat");
 
-  if (!QuestFiles::data_file_exists(file_name)) {
-    // This save does not exist yet.
+  if (file_name.empty() || !QuestFiles::data_file_exists(file_name)) {
+    // // File-less save (for multi), or savegame does not exist
     empty = true;
     set_initial_values();
   }
-  else {
+  else
+  {
     // A save already exists, let's load it.
     empty = false;
-    import_from_file();
+    if (!import_from_file()) {
+      return false;
+    }
   }
 
-  get_equipment().load_items();
+  // This is a main savegame ! Lets inflate an equipement
+  equipment = std::make_shared<Equipment>(shared_from_this_cast<Savegame>(), "");
+  equipment->load_items();
+  if (empty) {
+    equipment->set_initial_values();
+  }
+  //get_equipment().load_items(); //TODO load equipement elsewhere
+  return true;
 }
 
 /**
@@ -143,14 +156,6 @@ void Savegame::set_initial_values() {
   // Set the initial controls.
   set_default_keyboard_controls();
   set_default_joypad_controls();
-
-  // Set the initial equipment.
-  equipment.set_max_life(1);
-  equipment.set_life(1);
-  equipment.set_ability(Ability::TUNIC, 1);  // Mandatory to have a valid hero sprite.
-  equipment.set_ability(Ability::PUSH, 1);
-  equipment.set_ability(Ability::GRAB, 1);
-  equipment.set_ability(Ability::PULL, 1);
 }
 
 /**
@@ -188,15 +193,41 @@ void Savegame::set_default_keyboard_controls() {
  */
 void Savegame::set_default_joypad_controls() {
 
-  set_string(KEY_JOYPAD_ACTION, "button 0");
-  set_string(KEY_JOYPAD_ATTACK, "button 1");
-  set_string(KEY_JOYPAD_ITEM_1, "button 2");
-  set_string(KEY_JOYPAD_ITEM_2, "button 3");
-  set_string(KEY_JOYPAD_PAUSE, "button 4");
-  set_string(KEY_JOYPAD_RIGHT, "axis 0 +");
-  set_string(KEY_JOYPAD_UP, "axis 1 -");
-  set_string(KEY_JOYPAD_LEFT, "axis 0 -");
-  set_string(KEY_JOYPAD_DOWN, "axis 1 +");
+  set_string(KEY_JOYPAD_ACTION, "b");
+  set_string(KEY_JOYPAD_ATTACK, "a");
+  set_string(KEY_JOYPAD_ITEM_1, "x");
+  set_string(KEY_JOYPAD_ITEM_2, "y");
+  set_string(KEY_JOYPAD_PAUSE, "start");
+  set_string(KEY_JOYPAD_RIGHT,  "left_x +");
+  set_string(KEY_JOYPAD_UP, "left_y -");
+  set_string(KEY_JOYPAD_LEFT, "left_x -");
+  set_string(KEY_JOYPAD_DOWN, "left_y +");
+}
+
+/**
+ * \brief Returns whether main controls should be stored the < 2.0 way.
+ * \return \c true if legacty controls storage is enabled.
+ */
+bool Savegame::get_legacy_controls_storage() const {
+  return legacy_controls_storage;
+}
+
+/**
+ * \brief Sets whether main controls should be stored the < 2.0 way.
+ *
+ * If enabled, controls are loaded and saved automtically with this savegame,
+ * but with the following limitations.
+ *   - Does not support multiple heroes: only saves the main hero controls.
+ *   - Limited support of multiple inputs bound to the same command:
+ *     at most only one from the keyboard and one from the joypad.
+ *   - Does not support custom commands: scripts have to load and save them on their own.
+ *   - Does not apply to menus outside a game (like a title screen) because this stores
+ *     to a savegame.
+ *
+ * \return \c true if legacy controls storage is enabled.
+ */
+void Savegame::set_legacy_controls_storage(bool legacy_controls_storage) {
+  this->legacy_controls_storage = legacy_controls_storage;
 }
 
 /**
@@ -218,17 +249,26 @@ void Savegame::post_process_existing_savegame() {
   if (!is_set(Savegame::KEY_ABILITY_PULL)) {
     set_integer(Savegame::KEY_ABILITY_PULL, 1);
   }
+
+  // Sword knowledge is replaced by the more general spin attack starting with Solarus 2.0.
+  if (!is_set(Savegame::KEY_ABILITY_SWORD_SPIN_ATTACK)) {
+    const int super_spin_attack_ability = get_integer(Savegame::KEY_ABILITY_SWORD_KNOWLEDGE);
+    set_integer(Savegame::KEY_ABILITY_SWORD_SPIN_ATTACK, super_spin_attack_ability == 1 ? 2 : 1);
+    unset(Savegame::KEY_ABILITY_SWORD_KNOWLEDGE);
+  }
 }
 
 /**
  * \brief Import the savegame data from the file.
+ * \return \c true in case of success.
  */
-void Savegame::import_from_file() {
+bool Savegame::import_from_file() {
 
   // Try to parse as Lua first.
   lua_State* l = luaL_newstate();
   const std::string& buffer = QuestFiles::data_file_read(file_name);
   const int load_result = luaL_loadbuffer(l, buffer.data(), buffer.size(), file_name.c_str());
+  bool success = true;
 
   // Call the Lua savegame file.
   if (load_result == 0) {
@@ -252,21 +292,19 @@ void Savegame::import_from_file() {
     lua_setfenv(l, -2);
                                     // fun
 
-    if (lua_pcall(l, 0, 0, 0) != 0) {
-      Debug::die(std::string("Failed to load savegame file '")
-          + file_name + "': " + lua_tostring(l, -1));
-    }
+    success = (lua_pcall(l, 0, 0, 0) == 0);
   }
   else if (load_result == LUA_ERRSYNTAX) {
     // Apparently it was not a Lua file.
     // Let's try the obsolete format of Solarus 0.9.
     SavegameConverterV1 converter(file_name);
-    converter.convert_to_v2(*this);
+    success = converter.convert_to_v2(*this);
   }
 
   lua_close(l);
 
   post_process_existing_savegame();
+  return success;
 }
 
 /**
@@ -294,7 +332,7 @@ int Savegame::l_newindex(lua_State* l) {
       break;
 
     case LUA_TNUMBER:
-      savegame->set_integer(key, (int) lua_tointeger(l, 3));
+      savegame->set_integer(key, static_cast<int>(lua_tointeger(l, 3)));
       break;
 
     case LUA_TSTRING:
@@ -361,21 +399,6 @@ LuaContext& Savegame::get_lua_context() {
 }
 
 /**
- * \brief Returns the player's equipment corresponding to this savegame.
- * \return The equipment.
- */
-const Equipment& Savegame::get_equipment() const {
-  return equipment;
-}
-
-/**
- * \overload Non-const version.
- */
-Equipment& Savegame::get_equipment() {
-  return equipment;
-}
-
-/**
  * \brief If this savegame is currently running in a game, return that game.
  * \return A game or nullptr.
  */
@@ -396,22 +419,6 @@ Game* Savegame::get_game() {
  */
 void Savegame::set_game(Game* game) {
   this->game = game;
-}
-
-/**
- * \brief Notifies this savegame that its game starts.
- */
-void Savegame::notify_game_started() {
-
-  equipment.notify_game_started();
-}
-
-/**
- * \brief Notifies this savegame that its game is finished.
- */
-void Savegame::notify_game_finished() {
-
-  equipment.notify_game_finished();
 }
 
 /**
@@ -479,8 +486,8 @@ std::string Savegame::get_string(const std::string& key) const {
  * \param value The string value to associate with this key.
  */
 void Savegame::set_string(const std::string& key, const std::string& value) {
-
-  Debug::check_assertion(LuaTools::is_valid_lua_identifier(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_STRING;
@@ -535,8 +542,8 @@ int Savegame::get_integer(const std::string& key) const {
  * \param value The integer value to associate with this key.
  */
 void Savegame::set_integer(const std::string& key, int value) {
-
-  Debug::check_assertion(LuaTools::is_valid_lua_identifier(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_INTEGER;
@@ -591,8 +598,8 @@ bool Savegame::get_boolean(const std::string& key) const {
  * \param value The boolean value to associate with this key.
  */
 void Savegame::set_boolean(const std::string& key, bool value) {
-
-  Debug::check_assertion(LuaTools::is_valid_lua_identifier(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values[key].type = SavedValue::VALUE_BOOLEAN;
@@ -614,11 +621,15 @@ bool Savegame::is_set(const std::string& key) const {
  * \param key Name of the value to unset.
  */
 void Savegame::unset(const std::string& key) {
-
-  Debug::check_assertion(LuaTools::is_valid_lua_identifier(key),
+  
+  SOLARUS_REQUIRE(LuaTools::is_valid_lua_identifier(key),
       std::string("Savegame variable '") + key + "' is not a valid key");
 
   saved_values.erase(key);
+}
+
+const EquipmentPtr& Savegame::get_equipment() const {
+  return equipment;
 }
 
 /**
@@ -629,5 +640,13 @@ const std::string& Savegame::get_lua_type_name() const {
   return LuaContext::game_module_name;
 }
 
+/**
+ * \brief Get a read-only view of the saved values.
+ * \return A constant reference to the interal store.
+ */
+const std::map<std::string, Savegame::SavedValue>&
+    Savegame::get_saved_values() const {
+  return saved_values;
 }
 
+}

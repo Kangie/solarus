@@ -82,7 +82,8 @@ void Hero::PlayerMovementState::start(const State* previous_state) {
   Hero& hero = get_entity();
 
   player_movement = std::make_shared<PlayerMovement>(
-      hero.get_walking_speed()
+      hero.get_walking_speed(),
+      hero.get_controls()
   );
   hero.set_movement(player_movement);
 
@@ -157,7 +158,7 @@ void Hero::PlayerMovementState::update() {
         current_jumper = nullptr;
         jumper_start_date = 0;
       }
-      else if (System::now() >= jumper_start_date) {
+      else if (System::now_ms() >= jumper_start_date) {
         // Time to make the jump and everything is okay.
         hero.start_jumping(
             jump_direction8, current_jumper->get_jump_length(), true, true);
@@ -176,7 +177,7 @@ void Hero::PlayerMovementState::set_suspended(bool suspended) {
 
   if (!suspended) {
     if (jumper_start_date != 0) {
-      jumper_start_date += System::now() - get_when_suspended();
+      jumper_start_date += System::now_ms() - get_when_suspended();
     }
   }
 }
@@ -312,7 +313,7 @@ void Hero::PlayerMovementState::notify_jumper_activated(Jumper& jumper) {
 
   // Add a small delay before jumping.
   current_jumper = std::static_pointer_cast<Jumper>(jumper.shared_from_this());
-  jumper_start_date = System::now() + get_jumper_delay();
+  jumper_start_date = System::now_ms() + get_jumper_delay();
 }
 
 /**

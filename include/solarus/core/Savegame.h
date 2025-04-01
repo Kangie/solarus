@@ -37,7 +37,6 @@ class MainLoop;
  * This class provides read and write access to the saved data.
  */
 class SOLARUS_API Savegame: public ExportableToLua {
-
   public:
 
     static const int SAVEGAME_VERSION;  /**< Version number of the savegame file format. */
@@ -74,6 +73,7 @@ class SOLARUS_API Savegame: public ExportableToLua {
     static const std::string KEY_ITEM_SLOT_2;
     static const std::string KEY_ABILITY_TUNIC;
     static const std::string KEY_ABILITY_SWORD;
+    static const std::string KEY_ABILITY_SWORD_SPIN_ATTACK;
     static const std::string KEY_ABILITY_SWORD_KNOWLEDGE;
     static const std::string KEY_ABILITY_SHIELD;
     static const std::string KEY_ABILITY_LIFT;
@@ -91,11 +91,24 @@ class SOLARUS_API Savegame: public ExportableToLua {
 
     // file state
     bool is_empty() const;
-    void initialize();
+    bool initialize();
     void save();
     const std::string& get_file_name() const;
 
-    // data
+    // unsaved data
+    MainLoop& get_main_loop();
+    LuaContext& get_lua_context();
+    const Game* get_game() const;
+    Game* get_game();
+    void set_game(Game* game);
+    const EquipmentPtr& get_equipment() const;
+
+    Transition::Style get_default_transition_style() const;
+    void set_default_transition_style(Transition::Style default_transition_style);
+
+    virtual const std::string& get_lua_type_name() const override;
+
+    // data, private to allow only access via the player view
     bool is_string(const std::string& key) const;
     std::string get_string(const std::string& key) const;
     void set_string(const std::string& key, const std::string& value);
@@ -111,24 +124,9 @@ class SOLARUS_API Savegame: public ExportableToLua {
     void set_initial_values();
     void set_default_keyboard_controls();
     void set_default_joypad_controls();
+    bool get_legacy_controls_storage() const;
+    void set_legacy_controls_storage(bool legacy_controls_storage);
     void post_process_existing_savegame();
-
-    // unsaved data
-    MainLoop& get_main_loop();
-    LuaContext& get_lua_context();
-    const Equipment& get_equipment() const;
-    Equipment& get_equipment();
-    const Game* get_game() const;
-    Game* get_game();
-    void set_game(Game* game);
-    void notify_game_started();
-    void notify_game_finished();
-    Transition::Style get_default_transition_style() const;
-    void set_default_transition_style(Transition::Style default_transition_style);
-
-    virtual const std::string& get_lua_type_name() const override;
-
-  private:
 
     struct SavedValue {
 
@@ -142,19 +140,22 @@ class SOLARUS_API Savegame: public ExportableToLua {
       int int_data;  // Also used for boolean
     };
 
-    std::map<std::string, SavedValue> saved_values;
+    const std::map<std::string, SavedValue>& get_saved_values() const;
 
-    bool empty;
-    std::string file_name;         /**< Savegame file name relative to the quest write directory. */
+  private:
+    std::map<std::string, SavedValue>
+        saved_values;                   /**< The saved data. */
+    EquipmentPtr equipment;             /**< Equipment of this savegame */
+    bool empty = false;
+    std::string file_name;              /**< Savegame file name relative to the quest write directory. */
     MainLoop& main_loop;
-    Equipment equipment;
-    Game* game;                    /**< nullptr if this savegame is not currently running */
+    Game* game = nullptr;               /**< nullptr if this savegame is not currently running */
     Transition::Style
-        default_transition_style;  /**< Transition style to use by default. */
-
-    void import_from_file();
+        default_transition_style;       /**< Transition style to use by default. */
+    bool legacy_controls_storage =
+        false;                          /**< Whether to load and save controls automatically for this game. */
+    bool import_from_file();
     static int l_newindex(lua_State* l);
-
 };
 
 }

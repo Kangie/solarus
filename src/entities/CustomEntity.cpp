@@ -37,6 +37,7 @@
 #include "solarus/entities/Teletransporter.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/lua/LuaContext.h"
+#include "solarus/core/Map.h"
 #include <lua.hpp>
 
 namespace Solarus {
@@ -99,19 +100,6 @@ EntityType CustomEntity::get_type() const {
  */
 const std::string& CustomEntity::get_model() const {
   return model;
-}
-
-/**
- * \brief Returns the direction of this custom entity.
- *
- * This is the direction applied to the sprites unless it is overridden
- * for particular sprites.
- *
- * \return The direction.
- */
-int CustomEntity::get_sprites_direction() const {
-
-  return get_direction();
 }
 
 /**
@@ -595,6 +583,18 @@ bool CustomEntity::is_destructible_obstacle(Destructible& destructible) {
 }
 
 /**
+ * \copydoc Entity::is_chest_obstacle
+ */
+bool CustomEntity::is_chest_obstacle(Chest& chest) {
+
+  const TraversableInfo& info = get_can_traverse_entity_info(chest.get_type());
+  if (!info.is_empty()) {
+    return !info.is_traversable(*this, chest);
+  }
+  return Entity::is_chest_obstacle(chest);
+}
+
+/**
  * \copydoc Entity::is_separator_obstacle
  */
 bool CustomEntity::is_separator_obstacle(Separator& separator, const Rectangle& candidate_position) {
@@ -774,15 +774,17 @@ void CustomEntity::add_collision_test(
     CollisionMode collision_test,
     const ScopedLuaRef& callback_ref
 ) {
-  Debug::check_assertion(collision_test != COLLISION_NONE, "Invalid collision mode");
-  Debug::check_assertion(!callback_ref.is_empty(), "Missing collision callback");
+  SOLARUS_REQUIRE(collision_test != COLLISION_NONE, "Invalid collision mode");
+  SOLARUS_REQUIRE(!callback_ref.is_empty(), "Missing collision callback");
 
   collision_tests.emplace_back(
       collision_test,
       callback_ref
   );
 
-  check_collision_with_detectors();
+  if (is_on_map()) {
+    get_map().check_collision_from_detector(*this);
+  }
 }
 
 /**
@@ -796,7 +798,7 @@ void CustomEntity::add_collision_test(
     const ScopedLuaRef& collision_test_ref,
     const ScopedLuaRef& callback_ref
 ) {
-  Debug::check_assertion(!callback_ref.is_empty(), "Missing collision callback");
+  SOLARUS_REQUIRE(!callback_ref.is_empty(), "Missing collision callback");
 
   add_collision_mode(COLLISION_CUSTOM);
 
@@ -805,7 +807,9 @@ void CustomEntity::add_collision_test(
       callback_ref
   );
 
-  check_collision_with_detectors();
+  if (is_on_map()) {
+    get_map().check_collision_from_detector(*this);
+  }
 }
 
 /**
@@ -915,7 +919,7 @@ void CustomEntity::notify_collision(Entity& entity_overlapping, CollisionMode co
   // (even a custom Lua collision test function),
   // except COLLISION_SPRITE that is handled separately.
 
-  Debug::check_assertion(collision_mode == COLLISION_CUSTOM,
+  SOLARUS_REQUIRE(collision_mode == COLLISION_CUSTOM,
       "Unexpected collision mode");
 
   // There is a collision: execute the callbacks.
@@ -1158,12 +1162,12 @@ void CustomEntity::notify_collision_with_enemy(
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool CustomEntity::notify_action_command_pressed() {
+bool CustomEntity::notify_action_command_pressed(Hero &hero) {
 
-  if (get_lua_context()->entity_on_interaction(*this)) {
+  if (get_lua_context()->entity_on_interaction(*this, hero)) {
     return true;
   }
-  return Entity::notify_action_command_pressed();
+  return Entity::notify_action_command_pressed(hero);
 }
 
 /**
@@ -1267,6 +1271,7 @@ bool CustomEntity::get_follow_streams() const {
  */
 void CustomEntity::set_follow_streams(bool follow_streams) {
   this->follow_streams = follow_streams;
+  check_collision_with_detectors();
 }
 
 /**
@@ -1293,7 +1298,7 @@ CustomEntity::CollisionInfo::CollisionInfo(
     custom_test_ref(),
     callback_ref(callback_ref) {
 
-  Debug::check_assertion(!callback_ref.is_empty(), "Missing callback ref");
+  SOLARUS_REQUIRE(!callback_ref.is_empty(), "Missing callback ref");
 }
 
 /**
@@ -1310,7 +1315,7 @@ CustomEntity::CollisionInfo::CollisionInfo(
     custom_test_ref(custom_test_ref),
     callback_ref(callback_ref) {
 
-  Debug::check_assertion(!callback_ref.is_empty(), "Missing callback ref");
+  SOLARUS_REQUIRE(!callback_ref.is_empty(), "Missing callback ref");
 }
 
 /**

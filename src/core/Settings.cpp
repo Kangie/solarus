@@ -17,11 +17,11 @@
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/InputEvent.h"
-#include "solarus/core/Logger.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/core/Settings.h"
 #include "solarus/core/String.h"
 #include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/audio/Sound.h"
 #include "solarus/graphics/SoftwareVideoMode.h"
 #include "solarus/graphics/Video.h"
@@ -293,11 +293,11 @@ void Settings::set_from_quest() {
     set_boolean(key_fullscreen, Video::is_fullscreen());
   }
   if (Sound::is_initialized()) {
-    set_integer(key_sound_volume, Sound::get_volume());
-    set_integer(key_music_volume, Music::get_volume());
+    set_integer(key_sound_volume, Sound::get_global_volume());
+    set_integer(key_music_volume, MusicSystem::get_global_volume());
   }
   if (InputEvent::is_initialized()) {
-    set_boolean(key_joypad_enabled, InputEvent::is_joypad_enabled());
+    set_boolean(key_joypad_enabled, InputEvent::is_legacy_joypad_enabled());
   }
   if (CurrentQuest::is_initialized()) {
     if (!CurrentQuest::get_language().empty()) {
@@ -332,13 +332,13 @@ void Settings::apply_to_quest() {
     // Sound volume.
     auto sound_volume = get_integer(key_sound_volume);
     if (sound_volume.second) {
-      Sound::set_volume(sound_volume.first);
+      Sound::set_global_volume(sound_volume.first);
     }
 
     // Music volume.
     auto music_volume = get_integer(key_music_volume);
     if (music_volume.second) {
-      Music::set_volume(music_volume.first);
+      MusicSystem::set_global_volume(music_volume.first);
     }
 }
 
@@ -356,7 +356,7 @@ void Settings::apply_to_quest() {
     // Joystick.
     auto joypad_enabled = get_boolean(key_joypad_enabled);
     if (joypad_enabled.second) {
-      InputEvent::set_joypad_enabled(joypad_enabled.first);
+      InputEvent::set_legacy_joypad_enabled(joypad_enabled.first);
     }
   }
 }

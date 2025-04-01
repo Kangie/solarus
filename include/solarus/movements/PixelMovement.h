@@ -36,6 +36,9 @@ class SOLARUS_API PixelMovement: public Movement {
     // creation and destruction
     PixelMovement(const std::string& trajectory_string, uint32_t delay, bool loop, bool ignore_obstacles);
 
+    // static information
+    static constexpr const char module_name[] = "sol.pixel_movement";
+
     // properties
     const std::list<Point>& get_trajectory() const;
     void set_trajectory(const std::list<Point>& trajectory);
@@ -69,8 +72,8 @@ class SOLARUS_API PixelMovement: public Movement {
     std::list<Point> trajectory;       /**< The trajectory. Each element of the
                                         * represents a move in pixels. */
     std::string trajectory_string;     /**< String representation of the trajectory, like "dx1 dy1  dx2 dy2  dx3 dy3 ..." */
-    uint32_t next_move_date;           /**< Date of the next move */
-    uint32_t delay;                    /**< Delay in milliseconds between two translations. */
+    uint64_t next_move_date;           /**< Date of the next move */
+    uint64_t delay;                    /**< Delay in milliseconds between two translations. */
     bool loop;                         /**< Should the trajectory return to the beginning once finished? */
 
     // current state

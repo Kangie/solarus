@@ -40,7 +40,7 @@ namespace Solarus {
  */
 Hero::StairsState::StairsState(
     Hero& hero,
-    const std::shared_ptr<const Stairs>& stairs,
+    const std::shared_ptr<Stairs>& stairs,
     Stairs::Way way
 ):
   HeroState(hero, "stairs"),
@@ -102,7 +102,7 @@ void Hero::StairsState::start(const State* previous_state) {
     if (way == Stairs::NORMAL_WAY) {
       // Toward a higher layer: change the layer now.
       int layer = stairs->get_layer();
-      Debug::check_assertion(get_map().is_valid_layer(layer), "Invalid stairs layer");
+      SOLARUS_REQUIRE(get_map().is_valid_layer(layer), "Invalid stairs layer");
       get_entities().set_entity_layer(hero, layer + 1);
     }
   }
@@ -118,6 +118,8 @@ void Hero::StairsState::start(const State* previous_state) {
     }
   }
   hero.set_movement(movement);
+
+  stairs->notify_entered();
 }
 
 /**
@@ -127,6 +129,8 @@ void Hero::StairsState::start(const State* previous_state) {
 void Hero::StairsState::stop(const State* next_state) {
 
   HeroState::stop(next_state);
+
+  stairs->notify_exited();
 
   if (carried_object != nullptr) {
 
@@ -163,7 +167,7 @@ void Hero::StairsState::update() {
   // first time: we play the sound and initialize
   if (phase == 0) {
     stairs->play_sound(way);
-    next_phase_date = System::now() + 450;
+    next_phase_date = System::now_ms() + 450;
     phase++;
   }
 
@@ -206,6 +210,7 @@ void Hero::StairsState::update() {
             !teletransporter->is_enabled() ||
             teletransporter->is_being_removed()) {
           Logger::error("Teletransporter expected with the stairs");
+          sprites.set_clipping_rectangle();
         }
         else {
           teletransporter->transport_hero(hero);
@@ -216,16 +221,18 @@ void Hero::StairsState::update() {
         sprites.set_clipping_rectangle();
       }
 
-      if (carried_object == nullptr) {
-        hero.set_state(std::make_shared<FreeState>(hero));
-      }
-      else {
-        hero.set_state(std::make_shared<CarryingState>(hero, carried_object));
+      if (is_current_state()) {  // Support the edge case of changing state in teletransporter:on_activated().
+        if (carried_object == nullptr) {
+          hero.set_state(std::make_shared<FreeState>(hero));
+        }
+        else {
+          hero.set_state(std::make_shared<CarryingState>(hero, carried_object));
+        }
       }
     }
     else { // movement not finished yet
 
-      uint32_t now = System::now();
+      uint32_t now = System::now_ms();
       if (now >= next_phase_date) {
         phase++;
         next_phase_date += 350;
@@ -275,7 +282,7 @@ void Hero::StairsState::set_suspended(bool suspended) {
   }
 
   if (!suspended) {
-    next_phase_date += System::now() - get_when_suspended();
+    next_phase_date += System::now_ms() - get_when_suspended();
   }
 }
 
@@ -306,6 +313,13 @@ bool Hero::StairsState::get_can_come_from_bad_ground() const {
  */
 bool Hero::StairsState::is_teletransporter_delayed() const {
   return true;
+}
+
+/**
+ * \copydoc Entity::State::get_can_be_hurt
+ */
+bool Hero::StairsState::get_can_be_hurt(Entity* /* attacker */) {
+  return false;
 }
 
 /**
@@ -351,4 +365,3 @@ void Hero::StairsState::notify_layer_changed() {
 }
 
 }
-

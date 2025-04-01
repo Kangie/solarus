@@ -75,23 +75,12 @@ class EntityZOrderComparator {
      * \param second Another entity.
      * \return \c true if the first entity's Z index is lower than the second one's.
      */
-    bool operator()(const ConstEntityPtr& first, const ConstEntityPtr& second) const {
-
-      if (first->get_layer() < second->get_layer()) {
-        return true;
-      }
-
-      if (first->get_layer() > second->get_layer()) {
-        return false;
-      }
-
-      // Same layer.
-      return first->get_z() < second->get_z();
+    inline bool operator()(const ConstEntityPtr& first, const ConstEntityPtr& second) const {
+      return std::tuple(first->get_layer(), first->get_z()) < std::tuple(second->get_layer(), second->get_z());
     }
 };
 
 using EntityTree = Quadtree<EntityPtr, EntityZOrderComparator>;
-
 /**
  * \brief Manages the whole content of a map.
  *
@@ -109,8 +98,10 @@ class SOLARUS_API Entities {
     ~Entities();
 
     // Get entities.
-    Hero& get_hero();
-    const CameraPtr& get_camera() const;
+    Hero& get_default_hero();
+    const Heroes& get_heroes() const;
+    const CameraPtr get_camera() const;
+    const Cameras& get_cameras() const;
     Ground get_tile_ground(int layer, int x, int y) const;
     EntityVector get_entities();
     const std::shared_ptr<Destination>& get_default_destination();
@@ -143,10 +134,14 @@ class SOLARUS_API Entities {
     // By coordinates.
     void get_entities_in_rectangle_z_sorted(const Rectangle& rectangle, ConstEntityVector& result) const;
     void get_entities_in_rectangle_z_sorted(const Rectangle& rectangle, EntityVector& result);
+    void get_entities_in_rectangle_raw(const Rectangle& rectangle, ConstEntityVector& result) const;
+    void get_entities_in_rectangle_raw(const Rectangle& rectangle, EntityVector& result);
+
 
     // By separator region.
     void get_entities_in_region_z_sorted(const Point& xy, EntityVector& result);
     Rectangle get_region_box(const Point& point) const;
+    bool are_in_same_region(const Point& point_a, const Point& point_b) const;
 
     // Handle entities.
     void create_entities(const MapData& data);
@@ -160,6 +155,8 @@ class SOLARUS_API Entities {
     void bring_to_back(Entity& entity);
     void set_entity_layer(Entity& entity, int layer);
     void notify_entity_bounding_box_changed(Entity& entity);
+    std::string ensure_unique_name(const std::string& candidate_name);
+    void set_entity_name(const EntityPtr& entity, const std::string& name);
 
     // Specific to some entity types.
     bool overlaps_raised_blocks(int layer, const Rectangle& rectangle) ;
@@ -167,15 +164,15 @@ class SOLARUS_API Entities {
     // Map events.
     void notify_map_starting(Map& map, const std::shared_ptr<Destination>& destination);
     void notify_map_started(Map& map, const std::shared_ptr<Destination>& destination);
-    void notify_map_opening_transition_finishing(Map& map, const std::shared_ptr<Destination>& destination);
-    void notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination);
+    void notify_map_opening_transition_finishing(Map& map, const std::string &destination_name, const HeroPtr &opt_hero);
+    void notify_map_opening_transition_finished(Map& map, const std::shared_ptr<Destination>& destination, const HeroPtr &opt_hero);
     void notify_tileset_changed();
     void notify_map_finished();
 
     // Game loop.
     void set_suspended(bool suspended);
     void update();
-    void draw();
+    void draw(Camera &camera);
 
   private:
 
@@ -199,8 +196,6 @@ class SOLARUS_API Entities {
 
         ZOrderInfo();
 
-        void add(const EntityPtr& entity);
-        void remove(const EntityPtr& entity);
         void bring_to_front(const EntityPtr& entity);
         void bring_to_back(const EntityPtr& entity);
 
@@ -235,9 +230,9 @@ class SOLARUS_API Entities {
         tiles_in_animated_regions;                  /**< For each layer, animated tiles and tiles overlapping them. */
 
     // dynamic entities
-    HeroPtr hero;                                   /**< The hero, also stored in Game because
-                                                     * it is kept when changing maps. */
-    CameraPtr camera;                               /**< The visible area of the map. */
+    std::vector<HeroPtr> heroes;
+
+    Cameras cameras;                                /**< The visibles area of the map. */
 
     std::map<std::string, EntityPtr>
         named_entities;                             /**< Entities identified by a name. */
@@ -284,9 +279,20 @@ inline Ground Entities::get_tile_ground(int layer, int x, int y) const {
  * \brief Returns the camera of the map.
  * \return The camera, or nullptr if there is no camera.
  */
-inline const CameraPtr& Entities::get_camera() const {
+inline const CameraPtr Entities::get_camera() const {
+  if (!cameras.empty()) {
+    return cameras.front();
+  } else {
+    return nullptr;
+  }
+}
 
-  return camera;
+/**
+ * \brief Returns the cameras of the map.
+ * \return The cameras
+ */
+inline const Cameras& Entities::get_cameras() const {
+  return cameras;
 }
 
 /**
@@ -305,7 +311,7 @@ std::set<std::shared_ptr<const T>> Entities::get_entities_by_type() const {
   }
 
   for (const auto& kvp : it->second) {
-    for (const ConstEntityPtr& entity : kvp.second) {
+    for (const ConstEntityPtr entity : kvp.second) {
       result.insert(std::static_pointer_cast<const T>(entity));
     }
   }

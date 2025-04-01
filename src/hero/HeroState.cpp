@@ -81,9 +81,9 @@ HeroSprites& HeroState::get_sprites() {
 /**
  * \brief Draws this state.
  */
-void HeroState::draw_on_map() {
+void HeroState::draw_on_map(Camera &camera) {
 
-  get_sprites().draw_on_map();
+  get_sprites().draw_on_map(camera);
 }
 
 /**
@@ -204,6 +204,40 @@ bool HeroState::is_jumper_obstacle(
   }
 
   return true;
+}
+
+/**
+ * @brief Get the commands linked with the hero
+ * @return the commands
+ */
+const Controls& HeroState::get_commands() const {
+  return *get_entity().get_controls();
+}
+
+/**
+ * @brief Gets the commands effects linked with the hero
+ * @return the command effects
+ */
+CommandsEffects& HeroState::get_commands_effects() {
+  return get_entity().get_commands_effects();
+}
+
+/**
+ * @brief Const version
+ * @return the commands effects
+ */
+const CommandsEffects& HeroState::get_commands_effects() const {
+  return get_entity().get_commands_effects();
+}
+
+/**
+ * \brief Returns the name identifying this type in Lua.
+ * \return The name identifying this type in Lua.
+ * An empty string means that this type is not exported to Lua.
+ */
+const std::string& HeroState::get_lua_type_name() const {
+  static std::string empty;
+  return empty;
 }
 
 }

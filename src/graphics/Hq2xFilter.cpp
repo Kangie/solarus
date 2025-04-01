@@ -16,7 +16,7 @@
  */
 #include "solarus/graphics/Hq2xFilter.h"
 #include "solarus/graphics/Hq4xFilter.h"
-#include "solarus/third_party/hqx/hqx.h"
+#include <hqx.h>
 
 namespace Solarus {
 

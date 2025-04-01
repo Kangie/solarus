@@ -78,6 +78,10 @@ Door::Door(Game& game,
   opening_condition(),
   opening_condition_consumed(false),
   cannot_open_dialog_id(),
+  cannot_open_sound_id("wrong"),
+  opening_sound_id("door_open"),
+  closing_sound_id("door_closed"),
+  unlocking_sound_id("door_unlocked"),
   state(OPEN),
   initialized(false),
   next_hint_sound_date(0) {
@@ -178,8 +182,12 @@ void Door::set_open(bool door_open) {
     set_collision_modes(COLLISION_FACING | COLLISION_SPRITE);
 
     // ensure that we are not closing the door on the hero
-    if (is_on_map() && overlaps(get_hero())) {
-      get_hero().avoid_collision(*this, (get_direction() + 2) % 4);
+    if(is_on_map()) {
+      for(const HeroPtr& hero : get_heroes()) {
+        if (overlaps(*hero)) {
+          hero->avoid_collision(*this, (get_direction() + 2) % 4);
+        }
+      }
     }
   }
 
@@ -233,16 +241,16 @@ void Door::notify_collision(Entity& entity_overlapping, CollisionMode /* collisi
 
     Hero& hero = static_cast<Hero&>(entity_overlapping);
 
-    if (get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_NONE
+    if (hero.get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_NONE
         && hero.is_free()) {
 
-      if (can_open()) {
+      if (can_open(hero)) {
         // The action command opens the door.
-        get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_OPEN);
+        hero.get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_OPEN);
       }
       else if (!get_cannot_open_dialog_id().empty()) {
         // The action command shows a dialog.
-        get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_LOOK);
+        hero.get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_LOOK);
       }
     }
   }
@@ -415,7 +423,7 @@ void Door::set_opening_condition_consumed(bool opening_condition_consumed) {
  * \return \c true if the hero can currently open the door by pressing the
  * action command.
  */
-bool Door::can_open() const {
+bool Door::can_open(Hero& hero) const {
 
   switch (get_opening_method()) {
 
@@ -454,7 +462,7 @@ bool Door::can_open() const {
       if (required_item_name.empty()) {
         return false;
       }
-      const EquipmentItem& item = get_equipment().get_item(required_item_name);
+      const EquipmentItem& item = hero.get_equipment().get_item(required_item_name);
       return item.is_saved()
         && item.get_variant() > 0
         && (!item.has_amount() || item.get_amount() > 0);
@@ -487,6 +495,82 @@ void Door::set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id) {
 }
 
 /**
+ * \brief Returns the id of the sound to play when the hero cannot unlock a door.
+ *
+ * \return The id of the "cannot open" sound for this door
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_cannot_open_sound_id() const {
+  return cannot_open_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the hero cannot unlock a door.
+ * \param sound_id The id of the "cannot open" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_cannot_open_sound_id(const std::string& sound_id) {
+  cannot_open_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the door is opening.
+ *
+ * \return The id of the "opening" sound for this door.
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_opening_sound_id() const {
+  return opening_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the door is opening.
+ * \param sound_id The id of the "opening" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_opening_sound_id(const std::string& sound_id) {
+  opening_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the door is closing.
+ *
+ * \return The id of the "closing" sound for this door.
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_closing_sound_id() const {
+  return closing_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the door is closing.
+ * \param sound_id The id of the "closing" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_closing_sound_id(const std::string& sound_id) {
+  closing_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the hero unlocks the door (usually with a key).
+ *
+ * \return The id of the "unlocking" sound for this door.
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_unlocking_sound_id() const {
+  return unlocking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the hero unlocks the door (usually with a key).
+ * \param sound_id The id of the "unlocking" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_unlocking_sound_id(const std::string& sound_id) {
+  unlocking_sound_id = sound_id;
+}
+
+/**
  * \brief Suspends or resumes the entity.
  * \param suspended true to suspend the entity
  */
@@ -495,7 +579,7 @@ void Door::set_suspended(bool suspended) {
   Entity::set_suspended(suspended);
 
   if (!suspended && next_hint_sound_date > 0) {
-    next_hint_sound_date += System::now() - get_when_suspended();
+    next_hint_sound_date += System::now_ms() - get_when_suspended();
   }
 }
 
@@ -513,12 +597,13 @@ void Door::update() {
 
   if (is_closed()
       && get_opening_method() == OpeningMethod::BY_EXPLOSION
-      && get_equipment().has_ability(Ability::DETECT_WEAK_WALLS)
-      && Geometry::get_distance(get_center_point(), get_hero().get_center_point()) < 40
+      && any_hero([&](const HeroPtr& hero){
+        return Geometry::get_distance(get_center_point(), hero->get_center_point()) < 40  && hero->get_equipment().has_ability(Ability::DETECT_WEAK_WALLS);
+      })
       && !is_suspended()
-      && System::now() >= next_hint_sound_date) {
+      && System::now_ms() >= next_hint_sound_date) {
     Sound::play("cane");
-    next_hint_sound_date = System::now() + 500;
+    next_hint_sound_date = System::now_ms() + 500;
   }
 
   const SpritePtr& sprite = get_sprite();
@@ -553,45 +638,51 @@ void Door::built_in_draw(Camera& camera) {
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool Door::notify_action_command_pressed() {
+bool Door::notify_action_command_pressed(Hero &hero) {
 
-  if (get_hero().is_free() &&
+  if (hero.is_free() &&
       is_closed() &&
-      get_commands_effects().get_action_key_effect() != CommandsEffects::ACTION_KEY_NONE
+      hero.get_commands_effects().get_action_key_effect() != CommandsEffects::ACTION_KEY_NONE
   ) {
 
-    if (can_open()) {
-      Sound::play("door_unlocked");
-      Sound::play("door_open");
+    if (can_open(hero)) {
+      if (!unlocking_sound_id.empty()) {
+        Sound::play(unlocking_sound_id);
+      }
+      if (!opening_sound_id.empty()) {
+        Sound::play(opening_sound_id);
+      }
 
       if (is_saved()) {
         get_savegame().set_boolean(savegame_variable, true);
       }
 
       if (is_opening_condition_consumed()) {
-        consume_opening_condition();
+        consume_opening_condition(hero);
       }
 
       set_opening();
 
-      get_hero().check_position();
+      hero.check_position();
     }
     else if (!cannot_open_dialog_id.empty()) {
-      Sound::play("wrong");
+      if (!cannot_open_sound_id.empty()) {
+        Sound::play(cannot_open_sound_id);
+      }
       get_game().start_dialog(cannot_open_dialog_id, ScopedLuaRef(), ScopedLuaRef());
     }
 
     return true;
   }
 
-  return Entity::notify_action_command_pressed();
+  return Entity::notify_action_command_pressed(hero);
 }
 
 /**
  * \brief Consumes the savegame variable or the equipment item that was required
  * to open the door.
  */
-void Door::consume_opening_condition() {
+void Door::consume_opening_condition(Hero& hero) {
 
   switch (get_opening_method()) {
 
@@ -619,7 +710,7 @@ void Door::consume_opening_condition() {
     {
       // Remove the equipment item that was required.
       if (!opening_condition.empty()) {
-        EquipmentItem& item = get_equipment().get_item(opening_condition);
+        EquipmentItem& item = hero.get_equipment().get_item(opening_condition);
         if (item.is_saved() && item.get_variant() > 0) {
           if (item.has_amount()) {
             item.set_amount(item.get_amount() - 1);

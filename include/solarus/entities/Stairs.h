@@ -81,7 +81,6 @@ class Stairs: public Entity {
     );
 
     virtual EntityType get_type() const override;
-    virtual bool can_be_drawn() const override;
     bool can_change_ground() const;
     Ground get_ground() const;
 
@@ -91,10 +90,12 @@ class Stairs: public Entity {
     virtual bool is_obstacle_for(Entity& other) override;
     virtual void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
     virtual void notify_enabled(bool enabled) override;
+    void notify_entered();
+    void notify_exited();
 
     int get_movement_direction(Way way) const;
     int get_animation_direction(Way way) const;
-    void play_sound(Way way) const;
+    void play_sound(Way way);
     std::string get_path(Way way) const;
     Rectangle get_clipping_rectangle(Way way) const;
 

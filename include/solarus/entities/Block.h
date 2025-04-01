@@ -59,8 +59,8 @@ class Block: public Entity {
     void notify_created() override;
     void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
     void notify_collision_with_switch(Switch& sw, CollisionMode collision_mode) override;
-    bool notify_action_command_pressed() override;
-    bool start_movement_by_hero() override;
+    bool notify_action_command_pressed(Hero& hero) override;
+    bool start_movement_by_hero(Hero &hero) override;
     void stop_movement_by_hero() override;
     void notify_moving_by(Entity& entity) override;
     void notify_moved_by(Entity& entity) override;
@@ -76,20 +76,31 @@ class Block: public Entity {
     int get_max_moves() const;
     void set_max_moves(int max_moves);
 
+    const std::string& get_moving_sound_id() const;
+    void set_moving_sound_id(const std::string& sound_id);
+    const std::string& get_falling_sound_id() const;
+    void set_falling_sound_id(const std::string& sound_id);
+    const std::string& get_sinking_sound_id() const;
+    void set_sinking_sound_id(const std::string& sound_id);
+
   private:
 
     void movement_by_hero_finished();
 
-    int max_moves;              /**< indicates whether the block can be pushed
-                                 * (-1 means infinite) */
-    bool sound_played;          /**< true if the block sound was played while pulling it */
-    uint32_t when_can_move;     /**< date when the hero can move the block again */
+    int max_moves;                /**< indicates whether the block can be pushed
+                                   * (-1 means infinite) */
+    bool sound_played;            /**< true if the block sound was played while pulling it */
+    uint32_t when_can_move;       /**< date when the hero can move the block again */
 
-    Point last_position;        /**< last position of the block before moving */
-    Point initial_position;     /**< position of the block when created */
-    int initial_max_moves;      /**< value of maximum_moves when the block was created */
-    bool can_be_pushed;         /**< indicates that the hero can push this block */
-    bool can_be_pulled;         /**< indicates that the hero can pull this block */
+    Point last_position;          /**< last position of the block before moving */
+    Point initial_position;       /**< position of the block when created */
+    int initial_max_moves;        /**< value of maximum_moves when the block was created */
+    bool can_be_pushed;           /**< indicates that the hero can push this block */
+    bool can_be_pulled;           /**< indicates that the hero can pull this block */
+    HeroPtr moving_hero;          /**< Moving hero */
+    std::string moving_sound_id;  /**< Sound played when the hero is moving (push or pull) the block. */
+    std::string falling_sound_id; /**< Sound played when the block is falling into a hole. */
+    std::string sinking_sound_id; /**< Sound played when the block is sinking into water or lava. */
 
     static constexpr uint32_t moving_delay = 500; /**< delay between two successive moves of a block */
 

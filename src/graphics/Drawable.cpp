@@ -106,7 +106,11 @@ const Point& Drawable::get_xy() const {
  * \param xy The new coordinates of this drawable object.
  */
 void Drawable::set_xy(const Point& xy) {
-  this->xy = xy;
+
+  if (xy != this->xy) {
+    this->xy = xy;
+    notify_position_changed();
+  }
 }
 
 /**
@@ -206,6 +210,13 @@ void Drawable::set_suspended(bool suspended) {
   if (movement != nullptr) {
     movement->set_suspended(suspended);
   }
+}
+
+/**
+ * \brief Notifies this object that its position has changed.
+ */
+void Drawable::notify_position_changed() {
+  // Do nothing by default.
 }
 
 /**
@@ -322,7 +333,7 @@ void Drawable::draw_region(const Rectangle& region,
  * @param trans the Transition to use
  */
 void Drawable::draw_with_transition(const Rectangle& region, const SurfacePtr& dst_surface, const Point& dst_position, const Transition& trans) const {
-  draw_region(region,dst_surface,dst_position,DrawProxyChain<2>(DrawProxyChain<2>::Proxies{{trans,terminal()}}));
+  draw_region(region,dst_surface,dst_position, DrawProxyChain<2>(DrawProxyChain<2>::Proxies{{trans,terminal()}}));
 }
 
 /**

@@ -186,9 +186,9 @@ void PathMovement::set_suspended(bool suspended) {
   PixelMovement::set_suspended(suspended);
 
   if (!suspended
-      && get_when_suspended() != 0
+      && get_when_suspended_ns() != 0
       && stop_snapping_date != 0) {
-    stop_snapping_date += System::now() - get_when_suspended();
+    stop_snapping_date += System::now_ns() - get_when_suspended_ns();
   }
 }
 
@@ -217,7 +217,7 @@ void PathMovement::restart() {
 }
 
 /**
- * \brief This function is called when a one-pixel step of the current elementary move just occured.
+ * \brief This function is called when a one-pixel step of the current elementary move just occurred.
  * \param step_index index of the one-pixel step in the elementary move (the first one is 0)
  * \param success true if the one-pixel move was made, false if the movement was stopped by an obstacle
  */
@@ -287,7 +287,7 @@ void PathMovement::start_next_elementary_move() {
       // normal case: there is a next trajectory to do
 
       current_direction = remaining_path[0] - '0';
-      Debug::check_assertion(current_direction >= 0 && current_direction < 8,
+      SOLARUS_REQUIRE(current_direction >= 0 && current_direction < 8,
           std::string("Invalid path '") + initial_path + "' (bad direction '"
           + remaining_path[0] + "')"
       );
@@ -375,7 +375,7 @@ void PathMovement::snap() {
   snapped_x -= snapped_x % 8;
   snapped_y -= snapped_y % 8;
 
-  uint32_t now = System::now();
+  const uint32_t now = static_cast<uint32_t>(System::now_ns());
 
   if (!snapping) {
     // if we haven't started to move the entity towards an intersection of the grid, do it now
@@ -385,8 +385,6 @@ void PathMovement::snap() {
   }
   else {
     // the entity is currently trying to move towards the closest grid intersection
-
-    uint32_t now = System::now();
     if (now >= stop_snapping_date) {
       // we could not snap the entity after the timeout:
       // this is possible when there is an (unlikely) collision with an obstacle that is not aligned to the grid
@@ -395,7 +393,7 @@ void PathMovement::snap() {
       snapped_x += (snapped_x < x) ? 8 : -8;
       snapped_y += (snapped_y < y) ? 8 : -8;
       set_snapping_trajectory(Point(x, y), Point(snapped_x, snapped_y));
-      stop_snapping_date = now + 500;
+      stop_snapping_date = now + 500000000;
     }
   }
 }

@@ -45,6 +45,9 @@ class SOLARUS_API Movement: public ExportableToLua {
 
     virtual ~Movement();
 
+    // static information
+    static constexpr const char module_name[] = "sol.movement";
+
     // object controlled
     Entity* get_entity() const;
     void set_entity(Entity* entity);
@@ -77,6 +80,8 @@ class SOLARUS_API Movement: public ExportableToLua {
     virtual void notify_movement_changed();
     virtual void notify_movement_finished();
 
+    virtual glm::vec2 get_subpixel_offset() const;
+
     // movement
     bool is_stopped() const;
     virtual bool is_started() const;
@@ -100,7 +105,6 @@ class SOLARUS_API Movement: public ExportableToLua {
     void set_finished_callback(const ScopedLuaRef& finished_callback_ref);
     bool are_lua_notifications_enabled() const;
     void set_lua_notifications_enabled(bool lua_notifications_enabled);
-    virtual const std::string& get_lua_type_name() const override;
 
   protected:
 
@@ -108,7 +112,7 @@ class SOLARUS_API Movement: public ExportableToLua {
     explicit Movement(bool ignore_obstacles);
 
     // suspended
-    uint32_t get_when_suspended() const;
+    uint64_t get_when_suspended_ns() const;
 
     // obstacles (only when the movement is applied to an entity)
     void set_default_ignore_obstacles(bool ignore_obstacles);
@@ -120,13 +124,13 @@ class SOLARUS_API Movement: public ExportableToLua {
     Drawable* drawable;                          /**< The drawable controlled by this movement. */
     Point xy;                                    /**< Coordinates of the point controlled by this movement. */
 
-    uint32_t last_move_date;                     /**< Date of the last x or y move. */
+    uint64_t last_move_date;                     /**< Date of the last x or y move. */
     bool finished;                               /**< true if is_finished() returns true. */
     bool lua_notifications_enabled;              /**< Whether Lua events and callbacks should be called for this movement. */
 
     // suspended
     bool suspended;                              /**< Indicates whether the movement is suspended. */
-    uint32_t when_suspended;                     /**< Indicates when the movement was suspended. */
+    uint64_t when_suspended;                     /**< Indicates when the movement was suspended. */
     bool ignore_suspend;                         /**< Whether the movement continues when the game is suspended
                                                   * (for entity movements only). */
 

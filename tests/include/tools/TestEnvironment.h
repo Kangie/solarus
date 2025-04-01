@@ -17,7 +17,6 @@
 #ifndef SOLARUS_TEST_ENVIRONMENT_H
 #define SOLARUS_TEST_ENVIRONMENT_H
 
-#include "solarus/core/Common.h"
 #include "solarus/core/Arguments.h"
 #include "solarus/core/MainLoop.h"
 #include "solarus/core/Point.h"
@@ -71,6 +70,9 @@ class TestEnvironment {
     // Simulation.
     uint32_t now();
     void step();
+
+    // Additional Checks.
+    static void verify(bool condition, const std::string& message);
 
   private:
 

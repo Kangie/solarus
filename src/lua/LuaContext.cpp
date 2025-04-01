@@ -40,6 +40,7 @@
 #include "solarus/entities/ShopTreasure.h"
 #include "solarus/entities/Switch.h"
 #include "solarus/entities/Tileset.h"
+#include "solarus/entities/Hero.h"
 #include "solarus/lua/ExportableToLuaPtr.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
@@ -74,7 +75,7 @@ LuaContext::~LuaContext() {
  * \return The LuaContext object encapsulating this Lua state.
  */
 LuaContext& LuaContext::get() {
-  Debug::check_assertion(lua_context, "No lua context available");
+  SOLARUS_REQUIRE(lua_context, "No lua context available");
   return *lua_context;
 }
 
@@ -105,7 +106,7 @@ MainLoop& LuaContext::get_main_loop() {
 /**
  * \brief Initializes Lua.
  */
-void LuaContext::initialize(const Arguments& args) {
+void LuaContext::initialize(const std::string& arg_script) {
 
   // Create an execution context.
   main_l = current_l = luaL_newstate();
@@ -175,11 +176,10 @@ void LuaContext::initialize(const Arguments& args) {
     CurrentQuest::set_language(languages.begin()->first);
   }
 
-  Debug::check_assertion(lua_gettop(current_l) == 0, "Non-empty Lua stack after initialization");
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0, "Non-empty Lua stack after initialization");
 
 
   //Do the script passed as arg
-  std::string arg_script = args.get_argument_value("-s");
   if(!arg_script.empty()) {
     Debug::warning("Running script arg \"" + arg_script + "\"");
     do_string(arg_script,"script argument (-s)");
@@ -188,7 +188,7 @@ void LuaContext::initialize(const Arguments& args) {
   // Execute the main file.
   do_file_if_exists("main");
 
-  Debug::check_assertion(lua_gettop(current_l) == 0, "Non-empty Lua stack after running main.lua");
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0, "Non-empty Lua stack after running main.lua");
 
   main_on_started();
 }
@@ -226,31 +226,31 @@ void LuaContext::exit() {
 void LuaContext::update() {
 
   // Make sure the stack does not leak.
-  Debug::check_assertion(lua_gettop(main_l) == 0,
+  SOLARUS_REQUIRE(lua_gettop(main_l) == 0,
       "Non-empty stack before LuaContext::update()"
   );
 
-  Debug::check_assertion(current_l == main_l,
-                         "Not on the main lua thread to execute lua update");
+  SOLARUS_REQUIRE(current_l == main_l,
+      "Not on the main lua thread to execute lua update");
 
   update_drawables();
 
-  Debug::check_assertion(current_l == main_l,
-                         "Not on the main lua thread after updating drawable");
+  SOLARUS_REQUIRE(current_l == main_l,
+      "Not on the main lua thread after updating drawable");
   update_movements();
 
-  Debug::check_assertion(current_l == main_l,
-                         "Not on the main lua thread after updating movements");
+  SOLARUS_REQUIRE(current_l == main_l,
+      "Not on the main lua thread after updating movements");
 
   update_menus();
 
-  Debug::check_assertion(current_l == main_l,
-                         "Not on the main lua thread after updating menus");
+  SOLARUS_REQUIRE(current_l == main_l,
+      "Not on the main lua thread after updating menus");
 
   update_timers();
 
-  Debug::check_assertion(current_l == main_l,
-                         "Not on the main lua thread after updating timers");
+  SOLARUS_REQUIRE(current_l == main_l,
+      "Not on the main lua thread after updating timers");
 
   // Call sol.main.on_update().
   main_on_update();
@@ -264,9 +264,8 @@ void LuaContext::update() {
 
   current_l = main_l; //Ensure we run again on the main thread
 
-  Debug::check_assertion(lua_gettop(main_l) == 0,
-      "Non-empty stack after LuaContext::update()"
-  );
+  SOLARUS_REQUIRE(lua_gettop(main_l) == 0,
+      "Non-empty stack after LuaContext::update()");
 }
 
 /**
@@ -279,17 +278,30 @@ void LuaContext::update() {
  */
 bool LuaContext::notify_input(const InputEvent& event) {
 
-  Debug::check_assertion(lua_gettop(current_l) == 0,
-      "Non-empty stack before LuaContext::notify_input()"
-  );
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0,
+      "Non-empty stack before LuaContext::notify_input()");
 
   // Call the appropriate callback in sol.main (if it exists).
   const bool handled = main_on_input(event);
 
-  Debug::check_assertion(lua_gettop(current_l) == 0,
-      "Non-empty stack after LuaContext::notify_input()"
-  );
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0,
+      "Non-empty stack after LuaContext::notify_input()");
 
+  return handled;
+}
+
+/**
+ * \brief Notifies Lua that a control event has just occurred.
+ *
+ * The appropriate callback in sol.main is notified.
+ *
+ * \param event The control event to handle.
+ * \return \c true if the event was handled and should stop being propagated.
+ */
+bool LuaContext::notify_control(const ControlEvent& event) {
+
+  // Call the appropriate callback in sol.main (if it exists).
+  const bool handled = main_on_control(event);
   return handled;
 }
 
@@ -396,8 +408,6 @@ void LuaContext::run_enemy(Enemy& enemy) {
     push_enemy(current_l, enemy);
     call_function(1, 0, file_name.c_str());
   }
-
-  // TODO parse Lua only once for each breed.
 }
 
 /**
@@ -427,8 +437,6 @@ void LuaContext::run_custom_entity(CustomEntity& custom_entity) {
     push_custom_entity(current_l, custom_entity);
     call_function(1, 0, file_name.c_str());
   }
-
-  // TODO parse Lua only once for each model.
 }
 
 /**
@@ -539,7 +547,7 @@ void LuaContext::push_ref(lua_State* l, const ScopedLuaRef& ref) {
   }
 
   //This is not needed anymore since several state (threads) can be active
-  //Debug::check_assertion(ref.get_lua_state() == l, "Wrong Lua state");
+  //SOLARUS_REQUIRE(ref.get_lua_state() == l, "Wrong Lua state");
   ref.push(l);
 }
 
@@ -963,7 +971,7 @@ std::string LuaContext::get_lua_version() const {
  */
 void LuaContext::find_lua_version() {
 
-  Debug::check_assertion(lua_gettop(current_l) == 0, "Non-empty Lua stack before find_lua_version()");
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0, "Non-empty Lua stack before find_lua_version()");
 
   // _VERSION is the Lua language version, giving the same
   // result for vanilla Lua and LuaJIT.
@@ -991,7 +999,7 @@ void LuaContext::find_lua_version() {
     luajit = true;
   }
 
-  Debug::check_assertion(lua_gettop(current_l) == 0, "Non-empty Lua stack after find_lua_version()");
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0, "Non-empty Lua stack after find_lua_version()");
 }
 
 /**
@@ -1030,7 +1038,7 @@ void LuaContext::register_type(
 
   // Check that this type does not already exist.
   luaL_getmetatable(current_l, module_name.c_str());
-  Debug::check_assertion(lua_isnil(current_l, -1),
+  SOLARUS_REQUIRE(lua_isnil(current_l, -1),
       std::string("Type ") + module_name + " already exists");
   lua_pop(current_l, 1);
 
@@ -1094,7 +1102,7 @@ void LuaContext::register_type(
  */
 void LuaContext::register_modules() {
 
-  Debug::check_assertion(lua_gettop(current_l) == 0,
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0,
       "Lua stack is not empty before modules initialization");
 
   register_main_module();
@@ -1102,6 +1110,8 @@ void LuaContext::register_modules() {
   register_map_module();
   register_entity_module();
   register_audio_module();
+  register_sound_module();
+  register_music_module();
   register_timer_module();
   register_surface_module();
   register_text_surface_module();
@@ -1115,8 +1125,10 @@ void LuaContext::register_modules() {
   register_menu_module();
   register_language_module();
   register_state_module();
+  register_joypad_module();
+  register_controls_module();
 
-  Debug::check_assertion(lua_gettop(current_l) == 0,
+  SOLARUS_REQUIRE(lua_gettop(current_l) == 0,
       "Lua stack is not empty after modules initialization");
 }
 
@@ -1210,13 +1222,13 @@ void LuaContext::push_userdata(lua_State* l, ExportableToLua& userdata) {
                                   // ... all_udata lightudata udata mt
 
     Debug::execute_if_debug([&] {
-      Debug::check_assertion(!lua_isnil(main, -1),
+      SOLARUS_REQUIRE(!lua_isnil(main, -1),
           std::string("Userdata of type '" + userdata.get_lua_type_name()
           + "' has no metatable, this is a memory leak"));
 
       lua_getfield(main, -1, "__gc");
                                     // ... all_udata lightudata udata mt gc
-      Debug::check_assertion(lua_isfunction(main, -1),
+      SOLARUS_REQUIRE(lua_isfunction(main, -1),
           std::string("Userdata of type '") + userdata.get_lua_type_name()
           + "' must have the __gc function LuaContext::userdata_meta_gc");
                                     // ... all_udata lightudata udata mt gc
@@ -1245,38 +1257,6 @@ void LuaContext::push_userdata(lua_State* l, ExportableToLua& userdata) {
 }
 
 /**
- * \brief Get pointer to userdata if it is of the given type.
- *
- * This is luaL_testudata from the Lua auxiliary library.
- * It should be replaced when Lua 5.3/LuaJIT 2.1 or higher is required.
- *
- * \param l A Lua context.
- * \param index An index in the stack.
- * \param module_name Name of a userdata metatable in the registry.
- * \return Pointer to userdata if it is a userdata of the given type,
- *   nullptr otherwise.
- */
-void* LuaContext::test_userdata(
-    lua_State* l, int index, const char* module_name) {
-
-  index = LuaTools::get_positive_index(l, index);
-
-  void* udata = lua_touserdata(l, index);
-  if (udata == nullptr || !lua_getmetatable(l, index)) {
-    return nullptr;
-  }
-  // ... udata ... meta(found)
-  lua_getfield(l, LUA_REGISTRYINDEX, module_name);
-  // ... udata ... meta(found) meta(expected)
-  if (lua_rawequal(l, -1, -2) == 0) {
-    udata = nullptr;
-  }
-  lua_pop(l, 2);
-  // ... udata ...
-  return udata;
-}
-
-/**
  * \brief Returns whether a value is a userdata of a given type.
  * \param l a Lua context
  * \param index an index in the stack
@@ -1286,7 +1266,7 @@ void* LuaContext::test_userdata(
 bool LuaContext::is_userdata(lua_State* l, int index,
     const std::string& module_name) {
 
-  void* udata = test_userdata(l, index, module_name.c_str());
+  void* udata = LuaTools::test_userdata(l, index, module_name.c_str());
   return (udata != nullptr);
 }
 
@@ -1304,7 +1284,7 @@ const ExportableToLuaPtr& LuaContext::check_userdata(
     const std::string& module_name
 ) {
 
-  void* udata = test_userdata(l, index, module_name.c_str());
+  void* udata = LuaTools::test_userdata(l, index, module_name.c_str());
   if (udata == nullptr) {
     LuaTools::type_error(l, index, LuaTools::get_type_name(module_name));
   }
@@ -1324,33 +1304,40 @@ bool LuaContext::is_solarus_userdata(
     int index,
     std::string& module_name
 ) {
-  void* udata = lua_touserdata(l, index);
-  if (udata == nullptr) {
-    // This is not a userdata.
-    return false;
-  }
+  const int initial_stack_size = lua_gettop(l);
 
-  if (!lua_getmetatable(l, index)) {
-    // The userdata has no metatable.
-    return false;
-  }
+  const bool result = [l, index, &module_name]() {
+    void* udata = lua_touserdata(l, index);
+    if (udata == nullptr) {
+      // This is not a userdata.
+      return false;
+    }
 
-  // Get the name of the Solarus type from this userdata.
-  lua_pushstring(l, "__solarus_type");
-  lua_rawget(l, -2);
-  if (!lua_isstring(l, -1)) {
-    // This is probably a userdata from some library other than Solarus.
+    if (!lua_getmetatable(l, index)) {
+      // The userdata has no metatable.
+      return false;
+    }
+
+    // Get the name of the Solarus type from this userdata.
+    lua_pushstring(l, "__solarus_type");
+    lua_rawget(l, -2);
+    if (!lua_isstring(l, -1)) {
+      // This is probably a userdata from some library other than Solarus.
+      lua_pop(l, 2);
+      return false;
+    }
+
+    // Check if the type name is one of the entity type names.
+    module_name = lua_tostring(l, -1);
     lua_pop(l, 2);
-    return false;
-  }
+    if (module_name.substr(0, 4) != "sol.") {
+      return false;
+    }
+    return true;
+  }();
 
-  // Check if the type name is one of the entity type names.
-  module_name = lua_tostring(l, -1);
-  if (module_name.substr(0, 4) != "sol.") {
-    return false;
-  }
-
-  return true;
+  SOLARUS_REQUIRE(lua_gettop(l) == initial_stack_size, "Unbalanced Lua stack after LuaContext::is_solarus_userdata()");
+  return result;
 }
 
 /**
@@ -1437,6 +1424,50 @@ void LuaContext::userdata_close_lua() {
 }
 
 /**
+ * \brief Preform a rawget on a userdata as if it were a table.
+ *
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::userdata_rawget_as_table(lua_State* l) {
+
+  LuaTools::check_type(l, 1, LUA_TUSERDATA);
+  LuaTools::check_mintop(l, 2);
+
+  const ExportableToLuaPtr& userdata =
+    *(static_cast<ExportableToLuaPtr*>(lua_touserdata(l, 1)));
+  LuaContext& lua_context = get();
+
+  // If there is a possibility it will have a key, try and find it.
+  if (userdata->is_with_lua_table() &&
+      (!lua_isstring(l, 2) ||
+       lua_context.userdata_has_field(*userdata, lua_tostring(l, 2)))) {
+    // udata key ...
+    lua_getfield(l, LUA_REGISTRYINDEX, "sol.userdata_tables");
+    // udata key ... udata_tables
+    lua_pushlightuserdata(l, userdata.get());
+    // udata key ... udata_tables lightudata
+    lua_rawget(l, -2);
+    // udata key ... udata_tables udata_table|nil
+    if (lua_istable(l, -1)) {
+      // udata key ... udata_tables udata_table
+      lua_pushvalue(l, 2);
+      // udata key ... udata_tables udata_table key
+      lua_gettable(l, -2);
+      // udata key ... udata_tables udata_table value|nil
+    }
+  }
+  // Otherwise just push nil and finish.
+  else {
+    // udata key ...
+    lua_pushnil(l);
+    // udata key ... nil
+  }
+  // udata key ... value|nil
+  return 1;
+}
+
+/**
  * \brief Implementation of __newindex that allows userdata to be like tables.
  *
  * Lua code can make "object[key] = value" if object is a userdata with this
@@ -1451,8 +1482,7 @@ void LuaContext::userdata_close_lua() {
 int LuaContext::userdata_meta_newindex_as_table(lua_State* l) {
 
   LuaTools::check_type(l, 1, LUA_TUSERDATA);
-  LuaTools::check_any(l, 2);
-  LuaTools::check_any(l, 3);
+  LuaTools::check_mintop(l, 3);
 
   const ExportableToLuaPtr& userdata =
       *(static_cast<ExportableToLuaPtr*>(lua_touserdata(l, 1)));
@@ -1485,7 +1515,7 @@ int LuaContext::userdata_meta_newindex_as_table(lua_State* l) {
     lua_gettable(l, -2);
                                   // ... udata_tables udata_table
   }
-  Debug::check_assertion(!lua_isnil(l, -1), "Missing userdata table");
+  SOLARUS_REQUIRE(!lua_isnil(l, -1), "Missing userdata table");
   lua_pushvalue(l, 2);
                                   // ... udata_tables udata_table key
   lua_pushvalue(l, 3);
@@ -1528,49 +1558,25 @@ int LuaContext::userdata_meta_index_as_table(lua_State* l) {
    * to the userdata __index metamethod.
    */
 
-  LuaTools::check_type(l, 1, LUA_TUSERDATA);
-  LuaTools::check_any(l, 2);
-
-  const ExportableToLuaPtr& userdata =
-      *(static_cast<ExportableToLuaPtr*>(lua_touserdata(l, 1)));
-  LuaContext& lua_context = get();
-
-  // If the userdata actually has a table, lookup this table, unless we already
-  // know that we won't find it (because we know all the existing string keys).
-  if (userdata->is_with_lua_table() &&
-      (!lua_isstring(l, 2) || lua_context.userdata_has_field(*userdata, lua_tostring(l, 2)))) {
-
-    lua_getfield(l, LUA_REGISTRYINDEX, "sol.userdata_tables");
-                                  // ... udata_tables
-    lua_pushlightuserdata(l, userdata.get());
-                                  // ... udata_tables lightudata
-    // Lookup the key in the table, without metamethods.
-    lua_rawget(l, -2);
-                                  // ... udata_tables udata_table/nil
-    if (!lua_isnil(l, -1)) {
-      lua_pushvalue(l, 2);
-                                  // ... udata_tables udata_table key
-      lua_gettable(l, -2);
-                                  // ... udata_tables udata_table value/nil
-      if (!lua_isnil(l, -1)) {
-        // Found it!
-        return 1;
-      }
-    }
+  // Try a rawget. (returns 1)
+  userdata_rawget_as_table(l);
+                                  // udata key ... value|nil
+  if (!lua_isnil(l, -1)) {
+    return 1;
   }
+                                  // udata key ... nil
 
-  // Not in the table. See in the metatable
+  // Not in the table. Check the metatable.
   // (just like when metatable.__index = metatable).
-
-  lua_pushvalue(l, 1);
-                                  // ... udata
-  lua_getmetatable(l, -1);
-                                  // ... udata meta
-  Debug::check_assertion(!lua_isnil(l, -1), "Missing userdata metatable");
+  // (Argument checking is already complete.)
+                                  // udata key ... nil
+  lua_getmetatable(l, 1);
+                                  // udata key ... meta
+  SOLARUS_REQUIRE(!lua_isnil(l, -1), "Missing userdata metatable");
   lua_pushvalue(l, 2);
-                                  // ... udata meta key
+                                  // udata key ... meta key
   lua_gettable(l, -2);
-                                  // ... udata meta key value/nil
+                                  // udata key ... meta value|nil
   return 1;
 }
 
@@ -1578,8 +1584,9 @@ int LuaContext::userdata_meta_index_as_table(lua_State* l) {
  * @brief checks if the LuaContext is in a event-friendly context
  */
 void LuaContext::check_callback_thread() const {
-  Debug::check_assertion(current_l == main_l, "Events should be called in the main Lua thread");
+  SOLARUS_REQUIRE(current_l == main_l, "Events should be called in the main Lua thread");
 }
+
 
 /**
  * \brief Calls the on_started() method of the object on top of the stack.
@@ -1734,10 +1741,15 @@ void LuaContext::on_dialog_finished(const Dialog& dialog) {
 /**
  * \brief Calls the on_game_over_started() method of the object on top of the stack.
  */
-bool LuaContext::on_game_over_started() {
+bool LuaContext::on_game_over_started(const HeroPtr& hero) {
   check_callback_thread();
   if (find_method("on_game_over_started")) {
-    call_function(1, 0, "on_game_over_started");
+    if(hero) {
+      push_hero(current_l, *hero);
+    } else {
+      lua_pushnil(current_l);
+    }
+    call_function(2, 0, "on_game_over_started");
     return true;
   }
   return false;
@@ -1746,10 +1758,15 @@ bool LuaContext::on_game_over_started() {
 /**
  * \brief Calls the on_game_over_finished() method of the object on top of the stack.
  */
-void LuaContext::on_game_over_finished() {
+void LuaContext::on_game_over_finished(const HeroPtr& hero) {
   check_callback_thread();
   if (find_method("on_game_over_finished")) {
-    call_function(1, 0, "on_game_over_finished");
+    if(hero) {
+      push_hero(current_l, *hero);
+    } else {
+      lua_pushnil(current_l);
+    }
+    call_function(2, 0, "on_game_over_finished");
   }
 }
 
@@ -1808,7 +1825,7 @@ bool LuaContext::on_input(const InputEvent& event) {
       handled = on_finger_released(event) || handled;
     }
     else if (event.is_finger_moved()) {
-        handled = on_finger_moved(event) || handled;
+      handled = on_finger_moved(event) || handled;
     }
   }
 
@@ -1934,10 +1951,15 @@ bool LuaContext::on_joypad_button_pressed(const InputEvent& event) {
   check_callback_thread();
   bool handled = false;
   if (find_method("on_joypad_button_pressed")) {
-    int button = event.get_joypad_button();
+    JoyPadButton button = event.get_joypad_button();
 
-    lua_pushinteger(current_l, button);
-    bool success = call_function(2, 1, "on_joypad_button_pressed");
+    if (CurrentQuest::is_format_at_least({2, 0})) {
+      push_string(current_l, enum_to_name(button));
+    } else { // Emulate old behaviour if quest is < 2.0
+      lua_pushinteger(current_l, static_cast<int>(button));
+    }
+    push_joypad(current_l, *event.get_joypad());
+    bool success = call_function(3, 1, "on_joypad_button_pressed");
     if (!success) {
       // Something was wrong in the script: don't propagate the input to other objects.
       handled = true;
@@ -1960,10 +1982,15 @@ bool LuaContext::on_joypad_button_released(const InputEvent& event) {
   check_callback_thread();
   bool handled = false;
   if (find_method("on_joypad_button_released")) {
-    int button = event.get_joypad_button();
+    JoyPadButton button = event.get_joypad_button();
 
-    lua_pushinteger(current_l, button);
-    bool success = call_function(2, 1, "on_joypad_button_released");
+    if (CurrentQuest::is_format_at_least({2, 0})) {
+      push_string(current_l, enum_to_name(button));
+    } else { // Emulate old behaviour if quest is < 2.0
+      lua_pushinteger(current_l, static_cast<int>(button));
+    }
+    push_joypad(current_l, *event.get_joypad());
+    bool success = call_function(3, 1, "on_joypad_button_released");
     if (!success) {
       // Something was wrong in the script: don't propagate the input to other objects.
       handled = true;
@@ -1986,12 +2013,17 @@ bool LuaContext::on_joypad_axis_moved(const InputEvent& event) {
   check_callback_thread();
   bool handled = false;
   if (find_method("on_joypad_axis_moved")) {
-    int axis = event.get_joypad_axis();
-    int state = event.get_joypad_axis_state();
+    JoyPadAxis axis = event.get_joypad_axis();
+    double state = event.get_joypad_axis_state();
 
-    lua_pushinteger(current_l, axis);
-    lua_pushinteger(current_l, state);
-    bool success = call_function(3, 1, "on_joypad_axis_moved");
+    if (CurrentQuest::is_format_at_least({2, 0})) {
+      push_string(current_l, enum_to_name(axis));
+    } else { // Emulate old behaviour if the quest is < 2.0
+      lua_pushinteger(current_l, static_cast<int>(axis));
+    }
+    lua_pushnumber(current_l, state);
+    push_joypad(current_l, *event.get_joypad());
+    bool success = call_function(4, 1, "on_joypad_axis_moved");
     if (!success) {
       // Something was wrong in the script: don't propagate the input to other objects.
       handled = true;
@@ -2009,6 +2041,8 @@ bool LuaContext::on_joypad_axis_moved(const InputEvent& event) {
  * that a joypad hat was just moved.
  * \param event The corresponding input event.
  * \return \c true if the event was handled and should stop being propagated.
+ *
+ * \deprecated THIS SHOULD NOT BE CALLED ANYMORE IN 2.0
  */
 bool LuaContext::on_joypad_hat_moved(const InputEvent& event) {
   check_callback_thread();
@@ -2019,7 +2053,8 @@ bool LuaContext::on_joypad_hat_moved(const InputEvent& event) {
 
     lua_pushinteger(current_l, hat);
     lua_pushinteger(current_l, direction8);
-    bool success = call_function(3, 1, "on_joypad_hat_moved");
+    push_joypad(current_l, *event.get_joypad());
+    bool success = call_function(4, 1, "on_joypad_hat_moved");
     if (!success) {
       // Something was wrong in the script: don't propagate the input to other objects.
       handled = true;
@@ -2209,37 +2244,22 @@ bool LuaContext::on_finger_moved(const InputEvent& event) {
 }
 
 /**
- * \brief Calls the on_command_pressed() method of the object on top of the stack.
- * \param command The game command just pressed.
+ * @brief Notify the object on top of the stack that a command event happended
+ * @param event the command event
+ * @return
  */
-bool LuaContext::on_command_pressed(GameCommand command) {
+bool LuaContext::on_command(const ControlEvent& event) {
   check_callback_thread();
   bool handled = false;
-  if (find_method("on_command_pressed")) {
-    push_string(current_l, GameCommands::get_command_name(command));
-    bool success = call_function(2, 1, "on_command_pressed");
-    if (!success) {
-      // Something was wrong in the script: don't propagate the command to other objects.
-      handled = true;
-    }
-    else {
-      handled = lua_toboolean(current_l, -1);
-      lua_pop(current_l, 1);
-    }
-  }
-  return handled;
-}
+  if (find_method(event.event_name())) {
+    push_string(current_l, event.get_command_or_axis_name());
 
-/**
- * \brief Calls the on_command_released() method of the object on top of the stack.
- * \param command The game command just pressed.
- */
-bool LuaContext::on_command_released(GameCommand command) {
-  check_callback_thread();
-  bool handled = false;
-  if (find_method("on_command_released")) {
-    push_string(current_l, GameCommands::get_command_name(command));
-    bool success = call_function(2, 1, "on_command_released");
+    if(event.is_moved()) {
+        lua_pushnumber(current_l, event.get_axis_state());
+    }
+
+    push_controls(current_l, *event.emitter); //Push emmiting commands as well
+    bool success = call_function(event.is_moved() ? 4 : 3, 1, event.event_name());
     if (!success) {
       // Something was wrong in the script: don't propagate the command to other objects.
       handled = true;
@@ -2376,10 +2396,10 @@ void LuaContext::on_opening_transition_finished(const std::shared_ptr<Destinatio
  * \brief Calls the on_obtaining_treasure() method of the object on top of the stack.
  * \param treasure The treasure being obtained.
  */
-void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
+void LuaContext::on_obtaining_treasure(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_obtaining_treasure")) {
-    push_item(current_l, treasure.get_item());
+    push_item(current_l, treasure.get_item(hero.get_equipment()));
     lua_pushinteger(current_l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(current_l);
@@ -2387,7 +2407,8 @@ void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
     else {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
-    call_function(4, 0, "on_obtaining_treasure");
+    push_hero(current_l, hero);
+    call_function(5, 0, "on_obtaining_treasure");
   }
 }
 
@@ -2395,10 +2416,10 @@ void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
  * \brief Calls the on_obtained_treasure() method of the object on top of the stack.
  * \param treasure The treasure just obtained.
  */
-void LuaContext::on_obtained_treasure(const Treasure& treasure) {
+void LuaContext::on_obtained_treasure(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_obtained_treasure")) {
-    push_item(current_l, treasure.get_item());
+    push_item(current_l, treasure.get_item(hero.get_equipment()));
     lua_pushinteger(current_l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(current_l);
@@ -2406,7 +2427,8 @@ void LuaContext::on_obtained_treasure(const Treasure& treasure) {
     else {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
-    call_function(4, 0, "on_obtained_treasure");
+    push_hero(current_l, hero);
+    call_function(5, 0, "on_obtained_treasure");
   }
 }
 
@@ -2475,10 +2497,15 @@ void LuaContext::on_activating(int direction) {
 /**
  * \brief Calls the on_activated() method of the object on top of the stack.
  */
-void LuaContext::on_activated() {
+void LuaContext::on_activated(Entity *opt_entity) {
   check_callback_thread();
   if (find_method("on_activated")) {
-    call_function(1, 0, "on_activated");
+      if(opt_entity) {
+          push_entity(current_l, *opt_entity);
+      } else {
+          lua_pushnil(current_l);
+      }
+      call_function(2, 0, "on_activated");
   }
 }
 
@@ -2497,30 +2524,41 @@ void LuaContext::on_activated(int direction) {
 /**
  * \brief Calls the on_inactivated_repeat() method of the object on top of the stack.
  */
-void LuaContext::on_activated_repeat() {
+void LuaContext::on_activated_repeat(Entity& entity) {
   check_callback_thread();
   if (find_method("on_activated_repeat")) {
-    call_function(1, 0, "on_activated_repeat");
+    push_entity(current_l, entity);
+    call_function(2, 0, "on_activated_repeat");
   }
 }
 
 /**
  * \brief Calls the on_inactivated() method of the object on top of the stack.
  */
-void LuaContext::on_inactivated() {
+void LuaContext::on_inactivated(Entity* opt_entity) {
   check_callback_thread();
   if (find_method("on_inactivated")) {
-    call_function(1, 0, "on_inactivated");
+    if(opt_entity) {
+        push_entity(current_l, *opt_entity);
+    } else {
+        lua_pushnil(current_l);
+    }
+    call_function(2, 0, "on_inactivated");
   }
 }
 
 /**
  * \brief Calls the on_left() method of the object on top of the stack.
  */
-void LuaContext::on_left() {
+void LuaContext::on_left(Entity* opt_entity) {
   check_callback_thread();
   if (find_method("on_left")) {
-    call_function(1, 0, "on_left");
+      if(opt_entity) {
+          push_entity(current_l, *opt_entity);
+      } else {
+          lua_pushnil(current_l);
+      }
+    call_function(2, 0, "on_left");
   }
 }
 
@@ -2563,22 +2601,23 @@ bool LuaContext::on_npc_interaction_item(Npc& npc, EquipmentItem& item_used) {
 
 /**
  * \brief Calls the on_interaction() method of the object on top of the stack.
- * \return true if an interaction occurred.
+ * \param hero The hero who triggers the interaction.
+ * \return \c true if an interaction occurred.
  */
-bool LuaContext::on_interaction() {
+bool LuaContext::on_interaction(Hero& hero) {
   check_callback_thread();
   if (find_method("on_interaction")) {
-    call_function(1, 0, "on_interaction");
+    push_hero(current_l, hero);
+    call_function(2, 0, "on_interaction");
     return true;
   }
-
   return false;
 }
 
 /**
  * \brief Calls the on_interaction_item() method of the object on top of the stack.
  * \param item_used The equipment item used.
- * \return true if an interaction occurred.
+ * \return \c true if an interaction occurred.
  */
 bool LuaContext::on_interaction_item(EquipmentItem& item) {
   check_callback_thread();
@@ -2676,7 +2715,7 @@ void LuaContext::on_opened() {
  * \param treasure A treasure being obtained when opening.
  * \return \c true if the method is defined.
  */
-bool LuaContext::on_opened(const Treasure& treasure) {
+bool LuaContext::on_opened(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_opened")) {
 
@@ -2685,7 +2724,7 @@ bool LuaContext::on_opened(const Treasure& treasure) {
       lua_pushnil(current_l);
     }
     else {
-      push_item(current_l, treasure.get_item());
+      push_item(current_l, treasure.get_item(hero.get_equipment()));
       lua_pushinteger(current_l, treasure.get_variant());
     }
 
@@ -2696,7 +2735,8 @@ bool LuaContext::on_opened(const Treasure& treasure) {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
 
-    call_function(4, 0, "on_opened");
+    push_hero(current_l, hero);
+    call_function(5, 0, "on_opened");
     return true;
   }
 
@@ -2710,6 +2750,26 @@ void LuaContext::on_closed() {
   check_callback_thread();
   if (find_method("on_closed")) {
     call_function(1, 0, "on_closed");
+  }
+}
+
+/**
+ * \brief Calls the on_entered() method of the object on top of the stack.
+ */
+void LuaContext::on_entered() {
+  check_callback_thread();
+  if (find_method("on_entered")) {
+    call_function(1, 0, "on_entered");
+  }
+}
+
+/**
+ * \brief Calls the on_exited() method of the object on top of the stack.
+ */
+void LuaContext::on_exited() {
+  check_callback_thread();
+  if (find_method("on_exited")) {
+    call_function(1, 0, "on_exited");
   }
 }
 
@@ -2737,11 +2797,13 @@ void LuaContext::on_moved() {
  * \brief Calls the on_map_changed() method of the object on top of the stack.
  * \param map The new active map.
  */
-void LuaContext::on_map_changed(Map& map) {
+void LuaContext::on_map_changed(Map& map, Camera& camera) {
   check_callback_thread();
+
   if (find_method("on_map_changed")) {
     push_map(current_l, map);
-    call_function(2, 0, "on_map_changed");
+    push_camera(current_l, camera);
+    call_function(3, 0, "on_map_changed");
   }
 }
 
@@ -3370,4 +3432,3 @@ int LuaContext::l_backtrace(lua_State* l) {
 }
 
 }
-

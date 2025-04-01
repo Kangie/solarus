@@ -17,7 +17,7 @@
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Equipment.h"
 #include "solarus/core/Game.h"
-#include "solarus/core/GameCommands.h"
+#include "solarus/core/Controls.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
@@ -39,7 +39,7 @@ namespace Solarus {
  * \param hero The hero controlled by this state.
  * \param command The game command that triggers running.
  */
-Hero::RunningState::RunningState(Hero& hero, GameCommand command):
+Hero::RunningState::RunningState(Hero& hero, Command command):
   HeroState(hero, "running"),
   phase(0),
   next_phase_date(0),
@@ -60,7 +60,7 @@ void Hero::RunningState::start(const State* previous_state) {
 
   phase = 0;
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
   next_phase_date = now + 500;
   next_sound_date = now + 300;
 }
@@ -88,10 +88,13 @@ void Hero::RunningState::update() {
     return;
   }
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   if (!is_bouncing() && now >= next_sound_date) {
-    Sound::play("running");
+    const std::string& running_sound_id = get_entity().get_running_sound_id();
+    if (!running_sound_id.empty()) {
+      Sound::play(running_sound_id);
+    }
     next_sound_date = now + 170;
   }
 
@@ -130,7 +133,7 @@ void Hero::RunningState::set_suspended(bool suspended) {
   HeroState::set_suspended(suspended);
 
   if (!suspended) {
-    uint32_t diff = System::now() - get_when_suspended();
+    uint32_t diff = System::now_ms() - get_when_suspended();
     next_phase_date += diff;
     next_sound_date += diff;
   }
@@ -181,7 +184,10 @@ void Hero::RunningState::notify_obstacle_reached() {
         opposite_direction, 32, 64, false
     ));
     get_sprites().set_animation_hurt();
-    Sound::play("running_obstacle");
+    const std::string& running_obstacle_sound_id = get_entity().get_running_obstacle_sound_id();
+    if (!running_obstacle_sound_id.empty()) {
+      Sound::play(running_obstacle_sound_id);
+    }
     phase++;
   }
 }

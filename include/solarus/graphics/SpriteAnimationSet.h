@@ -45,6 +45,9 @@ class SpriteAnimationSet {
 
     explicit SpriteAnimationSet(const std::string& id);
 
+    bool is_valid() const;
+    const std::string& get_id() const;
+
     void set_tileset(const Tileset& tileset);
 
     bool has_animation(const std::string& animation_name) const;
@@ -60,7 +63,6 @@ class SpriteAnimationSet {
   private:
 
     void load();
-
     void add_animation(const std::string& animation_name,
         const SpriteAnimationData& animation_data);
 

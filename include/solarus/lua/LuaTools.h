@@ -24,6 +24,7 @@
 #include "solarus/lua/LuaException.h"
 #include <map>
 #include <string>
+#include <vector>
 #include <lua.hpp>
 
 namespace Solarus {
@@ -44,6 +45,8 @@ namespace LuaTools {
 
 // Helpers.
 int get_positive_index(lua_State* l, int index);
+void* test_userdata(lua_State* l, int index, const char* metatable_name);
+bool is_valid_identifier(const std::string& name);
 bool is_valid_lua_identifier(const std::string& name);
 std::string get_type_name(lua_State*l, int index);
 std::string get_type_name(const std::string& module_name);
@@ -78,14 +81,26 @@ int exception_boundary_handle(
     int arg_index,
     const std::string& expected_type_name
 );
+[[noreturn]] void field_error(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::string& message
+);
+[[noreturn]] void field_type_error(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::string& expected_type_name
+);
 void check_type(
     lua_State* l,
     int arg_index,
     int expected_type
 );
-void check_any(
+int check_mintop(
     lua_State* l,
-    int arg_index
+    int minimum
 );
 
 // int
@@ -133,6 +148,8 @@ double opt_number_field(
 );
 
 // std::string
+const char * islstring(lua_State * L, int index, size_t * len);
+
 std::string check_string(
     lua_State* l,
     int index
@@ -152,6 +169,28 @@ std::string opt_string_field(
     int table_index,
     const std::string& key,
     const std::string& default_value
+);
+
+// std::vector<std::string>
+std::vector<std::string> check_string_list(
+    lua_State* l,
+    int index
+);
+std::vector<std::string> check_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key
+);
+std::vector<std::string> opt_string_list(
+    lua_State* l,
+    int index,
+    const std::vector<std::string>& default_value
+);
+std::vector<std::string> opt_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::vector<std::string>& default_value
 );
 
 // bool

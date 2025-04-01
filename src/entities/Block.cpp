@@ -58,14 +58,17 @@ Block::Block(
   Entity(name, direction, layer, xy, Size(16, 16)),
   max_moves(max_moves),
   sound_played(false),
-  when_can_move(System::now()),
+  when_can_move(System::now_ms()),
   last_position(xy),
   initial_position(xy),
   initial_max_moves(max_moves),
   can_be_pushed(can_be_pushed),
-  can_be_pulled(can_be_pulled) {
+  can_be_pulled(can_be_pulled),
+  moving_sound_id("hero_pushes"),
+  falling_sound_id("jump"),
+  sinking_sound_id("splash") {
 
-  Debug::check_assertion(max_moves >= -1,
+  SOLARUS_REQUIRE(max_moves >= -1,
       "maxm_moves must be between postive, 0 or -1");
 
   set_collision_modes(CollisionMode::COLLISION_FACING);
@@ -208,25 +211,23 @@ void Block::notify_collision_with_switch(Switch& sw, CollisionMode /* collision_
 /**
  * \copydoc Entity::notify_action_command_pressed
  */
-bool Block::notify_action_command_pressed() {
-
-  if (get_commands_effects().get_action_key_effect() == CommandsEffects::ACTION_KEY_GRAB &&
-      get_hero().can_grab()
-  ) {
-    get_hero().start_grabbing();
-    return true;
+bool Block::notify_action_command_pressed(Hero &hero) {
+  bool handled = false;
+  if(hero.get_commands_effects().get_action_key_effect()
+     == CommandsEffects::ACTION_KEY_GRAB &&
+     hero.can_grab()) {
+    hero.start_grabbing();
+    handled = true;
   }
 
-  return Entity::notify_action_command_pressed();
+  return handled or Entity::notify_action_command_pressed(hero);
 }
 
 /**
  * \brief This function is called when the player tries to push or pull this block.
  * \return true if the player is allowed to move this block
  */
-bool Block::start_movement_by_hero() {
-
-  Hero& hero = get_hero();
+bool Block::start_movement_by_hero(Hero& hero) {
   bool pulling = hero.is_grabbing_or_pulling();
   int allowed_direction = get_direction();
   int hero_direction = hero.get_animation_direction();
@@ -237,7 +238,7 @@ bool Block::start_movement_by_hero() {
 
   if (get_movement() != nullptr             // the block is already moving
       || max_moves == 0                     // the block cannot move anymore
-      || System::now() < when_can_move      // the block cannot move for a while
+      || System::now_ms() < when_can_move      // the block cannot move for a while
       || (pulling && !can_be_pulled)        // the hero tries to pull a block that cannot be pulled
       || (!pulling && !can_be_pushed)       // the hero tries to push a block that cannot be pushed
       || (allowed_direction != -1 && hero_direction != allowed_direction)) { // incorrect direction
@@ -248,13 +249,13 @@ bool Block::start_movement_by_hero() {
   int dy = get_y() - hero.get_y();
 
   set_movement(std::make_shared<RelativeMovement>(
-      std::static_pointer_cast<Hero>(hero.shared_from_this()),
+      hero.shared_from_this_cast<Entity>(),
       dx,
       dy,
       false
   ));
   sound_played = false;
-
+  moving_hero = hero.shared_from_this_cast<Hero>();
   return true;
 }
 
@@ -268,7 +269,9 @@ void Block::notify_position_changed() {
   // Now we know that the block moves at least of 1 pixel:
   // we can play the sound.
   if (get_movement() != nullptr && !sound_played) {
-    Sound::play("hero_pushes");
+    if (!moving_sound_id.empty()) {
+      Sound::play(moving_sound_id);
+    }
     sound_played = true;
   }
 }
@@ -280,7 +283,9 @@ void Block::notify_position_changed() {
 void Block::notify_obstacle_reached() {
 
   // The block is stopped by an obstacle while being pushed or pulled.
-  get_hero().notify_grabbed_entity_collision();
+  if(moving_hero) {
+    moving_hero->notify_grabbed_entity_collision();
+  }
 
   Entity::notify_obstacle_reached();
 }
@@ -292,15 +297,18 @@ void Block::notify_ground_below_changed() {
 
   Ground ground = get_ground_below();
   switch (ground) {
-
     case Ground::HOLE:
-      Sound::play("jump");
+      if (!falling_sound_id.empty()) {
+        Sound::play(falling_sound_id);
+      }
       remove_from_map();
       break;
 
     case Ground::LAVA:
     case Ground::DEEP_WATER:
-      Sound::play("splash");
+      if (!sinking_sound_id.empty()) {
+        Sound::play(sinking_sound_id);
+      }
       remove_from_map();
       break;
 
@@ -316,7 +324,7 @@ void Block::notify_ground_below_changed() {
 void Block::stop_movement_by_hero() {
 
   clear_movement();
-  when_can_move = System::now() + moving_delay;
+  when_can_move = System::now_ms() + moving_delay;
 
   // see if the block has moved
   if (get_xy() != last_position) {
@@ -354,7 +362,7 @@ void Block::reset() {
   if (get_movement() != nullptr) {
     // the block was being pushed or pulled by the hero
     clear_movement();
-    when_can_move = System::now() + moving_delay;
+    when_can_move = System::now_ms() + moving_delay;
   }
 
   last_position = initial_position;
@@ -420,11 +428,74 @@ int Block::get_max_moves() const {
  */
 void Block::set_max_moves(int max_moves) {
 
-  Debug::check_assertion(max_moves >= -1,
+  SOLARUS_REQUIRE(max_moves >= -1,
         "max_moves must be positive, 0 or -1");
 
   this->initial_max_moves = max_moves;
   this->max_moves = max_moves;
+}
+
+/**
+ * \brief Returns the id of the sound played when the hero is moving the block.
+ * 
+ * \return The id of the "moving" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+const std::string& Block::get_moving_sound_id() const {
+  return moving_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the hero is moving the block.
+ * \param sound_id The if of the "moving" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+void Block::set_moving_sound_id(const std::string& sound_id) {
+  moving_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound played when the block is falling into a hole.
+ * 
+ * \return The id of the "falling" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+const std::string& Block::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the block is falling into a hole.
+ * \param sound_id The if of the "falling" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+void Block::set_falling_sound_id(const std::string& sound_id) {
+  falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound played when the block is sinking into deep water or lava.
+ * 
+ * \return The id of the "sinking" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+const std::string& Block::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the block is sinking into deep water or lava.
+ * \param sound_id The if of the "sinking" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+void Block::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
 }
 
 }

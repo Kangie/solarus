@@ -31,7 +31,7 @@ namespace Solarus {
  *
  * The target point may be a fixed point or a moving entity.
  */
-class TargetMovement: public StraightMovement {
+class TargetMovement final: public StraightMovement {
 
   public:
 
@@ -49,6 +49,9 @@ class TargetMovement: public StraightMovement {
         int moving_speed,
         bool ignore_obstacles
     );
+
+    // static information
+    static constexpr const char module_name[] = "sol.target_movement";
 
     void set_target(
         const EntityPtr& target_entity,

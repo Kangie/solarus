@@ -1,17 +1,35 @@
+/*
+ * Copyright (C) 2018-2020 std::gregwar, Solarus - http://www.solarus-games.org
+ *
+ * Solarus is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Solarus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 #pragma once
 
-#ifdef ANDROID
+#ifdef __ANDROID__
 #include <SDL_opengles2.h>
 #include <stdio.h>
+#ifndef SOLARUS_GL_ES
 #define SOLARUS_GL_ES
+#endif
 #else
-#include "solarus/third_party/glad/glad.h" // Only include glad to have GL work
+#include <glad/glad.h> // Only include glad to have GL work
 #include <SDL_video.h>
 #endif
 
 namespace Solarus { namespace Gl {
     inline std::pair<GLint, GLint> getVersion() {
-#ifdef ANDROID
+#ifdef __ANDROID__
       GLint major, minor;
       const char* version = (const char*)glGetString(GL_VERSION);
       sscanf(version,"OpenGL ES %d.%d", &major, &minor);
@@ -24,7 +42,7 @@ namespace Solarus { namespace Gl {
     }
 
     inline bool load() {
-#ifdef ANDROID
+#ifdef __ANDROID__
         return true;
 #elif SOLARUS_GL_ES
         return gladLoadGLES2Loader(SDL_GL_GetProcAddress);

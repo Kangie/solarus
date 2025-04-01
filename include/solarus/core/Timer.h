@@ -28,11 +28,14 @@ namespace Solarus {
  *
  * Timers are mostly used by the scripts.
  */
-class Timer: public ExportableToLua {
+class Timer final: public ExportableToLua {
 
   public:
 
     explicit Timer(uint32_t duration);
+
+    // static information
+    static constexpr const char module_name[] = "sol.timer";
 
     bool is_with_sound() const;
     void set_with_sound(bool with_sound);

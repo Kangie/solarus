@@ -57,8 +57,10 @@ Pickable::Pickable(
   shadow_sprite(),
   falling_height(FALLING_NONE),
   will_disappear(false),
+  falling_sound_id("jump"),
+  sinking_sound_id("splash"),
   shadow_xy(xy),
-  appear_date(System::now()),
+  appear_date(System::now_ms()),
   allow_pick_date(0),
   can_be_picked(true),
   blink_date(0),
@@ -100,7 +102,7 @@ EntityType Pickable::get_type() const {
  * \return the pickable item created, or nullptr
  */
 std::shared_ptr<Pickable> Pickable::create(
-    Game& /* game */,
+    Game& game,
     const std::string& name,
     int layer,
     const Point& xy,
@@ -108,10 +110,10 @@ std::shared_ptr<Pickable> Pickable::create(
     FallingHeight falling_height,
     bool force_persistent
 ) {
-  treasure.ensure_obtainable();
+  treasure.ensure_obtainable(game.get_equipment()); // Should be okay to test in main equipment
 
   // Don't create anything if there is no treasure to give.
-  if (treasure.is_found() || treasure.is_empty()) {
+  if (treasure.is_found(game.get_equipment()) || treasure.is_empty()) {
     return nullptr;
   }
 
@@ -121,10 +123,10 @@ std::shared_ptr<Pickable> Pickable::create(
 
   // Set the item properties.
   pickable->falling_height = falling_height;
-  pickable->will_disappear = !force_persistent && treasure.get_item().get_can_disappear();
+  pickable->will_disappear = !force_persistent && treasure.get_item(game.get_equipment()).get_can_disappear();
 
   // Initialize the pickable item.
-  if (!pickable->initialize_sprites()) {
+  if (!pickable->initialize_sprites(game.get_equipment())) {
     return nullptr;  // No valid sprite: don't create the pickable.
   }
   pickable->initialize_movement();
@@ -144,13 +146,13 @@ bool Pickable::is_ground_observer() const {
  *
  * Pickable treasures are represented with two sprites:
  * the treasure itself and, for some items, a shadow.
- *
+ * \param equipment Reference equipment for the sprites
  * \return \c true in case of success, \c false if the animation corresponding
  * to the treasure is missing.
  */
-bool Pickable::initialize_sprites() {
+bool Pickable::initialize_sprites(Equipment& equipment) {
 
-  EquipmentItem& item = treasure.get_item();
+  EquipmentItem& item = treasure.get_item(equipment);
 
   // Shadow sprite first, because below the treasure sprite.
   shadow_sprite = nullptr;
@@ -204,7 +206,7 @@ bool Pickable::initialize_sprites() {
   set_size(16, 16);
   set_origin(8, 13);
 
-  uint32_t now = System::now();
+  uint32_t now = System::now_ms();
 
   if (falling_height != FALLING_NONE) {
     allow_pick_date = now + 700;  // The player will be allowed to take the item after 0.7 seconds.
@@ -234,8 +236,10 @@ void Pickable::notify_created() {
   notify_ground_below_changed();  // Necessary if on empty ground.
 
   // This entity and the map are now both ready. Notify the Lua item.
-  EquipmentItem& item = get_equipment().get_item(treasure.get_item_name());
-  item.notify_pickable_appeared(*this);
+  for_each_hero([&](const HeroPtr& hero) {
+    EquipmentItem& item = hero->get_equipment().get_item(treasure.get_item_name());
+    item.notify_pickable_appeared(*this);
+  });
 }
 
 /**
@@ -300,7 +304,7 @@ bool Pickable::is_stream_obstacle(Stream& /* stream */) {
 void Pickable::notify_collision(Entity& entity_overlapping, CollisionMode /* collision_mode */) {
 
   if (entity_overlapping.is_hero()) {
-    try_give_item_to_player();
+    try_give_item_to_player(entity_overlapping.as<Hero>());
   }
   else if (entity_followed == nullptr) {
 
@@ -347,9 +351,9 @@ void Pickable::notify_collision(
 
   // Taking the item with the sword.
   if (other_entity.is_hero()) {
-    Hero& hero = static_cast<Hero&>(other_entity);
+    Hero& hero = other_entity.as<Hero>();
     if (other_sprite.get_animation_set_id() == hero.get_hero_sprites().get_sword_sprite_id()) {
-      try_give_item_to_player();
+      try_give_item_to_player(hero);
     }
   }
 }
@@ -399,7 +403,7 @@ void Pickable::check_bad_ground() {
     return;
   }
 
-  if (System::now() <= appear_date + 200) {
+  if (System::now_ms() <= appear_date + 200) {
     // The pickable appeared very recently, let the user see it for
     // a short time at least.
     return;
@@ -421,7 +425,9 @@ void Pickable::check_bad_ground() {
 
     case Ground::HOLE:
     {
-      Sound::play("jump");
+      if (!falling_sound_id.empty()) {
+        Sound::play(falling_sound_id);
+      }
       remove_from_map();
     }
     break;
@@ -429,7 +435,9 @@ void Pickable::check_bad_ground() {
     case Ground::DEEP_WATER:
     case Ground::LAVA:
     {
-      Sound::play("splash");
+      if (!sinking_sound_id.empty()) {
+        Sound::play(sinking_sound_id);
+      }
       remove_from_map();
     }
     break;
@@ -442,14 +450,14 @@ void Pickable::check_bad_ground() {
 /**
  * \brief Gives the item to the player.
  */
-void Pickable::try_give_item_to_player() {
+void Pickable::try_give_item_to_player(Hero& hero) {
 
-  EquipmentItem& item = treasure.get_item();
+  EquipmentItem& item = treasure.get_item(hero.get_equipment());
 
   if (!can_be_picked
       || given_to_player
       || get_game().is_dialog_enabled()
-      || !get_hero().can_pick_treasure(item)) {
+      || !hero.can_pick_treasure(item)) {
     return;
   }
 
@@ -467,14 +475,14 @@ void Pickable::try_give_item_to_player() {
   if (item.get_brandish_when_picked()) {
     // The treasure is brandished.
     // on_obtained() will be called after the dialog.
-    get_hero().start_treasure(treasure, ScopedLuaRef());
+    hero.start_treasure(treasure, ScopedLuaRef());
   }
   else {
-    treasure.give_to_player();
+    treasure.give_to_player(hero);
 
     // Call on_obtained() immediately since the treasure is not brandished.
     get_lua_context()->item_on_obtained(item, treasure);
-    get_lua_context()->map_on_obtained_treasure(get_map(), treasure);
+    get_lua_context()->map_on_obtained_treasure(get_map(), treasure, hero);
   }
 }
 
@@ -514,7 +522,7 @@ void Pickable::set_suspended(bool suspended) {
   if (!suspended) {
     // suspend the timers
 
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
 
     if (!can_be_picked && get_when_suspended() != 0) {
       allow_pick_date = now + (allow_pick_date - get_when_suspended());
@@ -530,6 +538,38 @@ void Pickable::set_suspended(bool suspended) {
       }
     }
   }
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is falling into a hole.
+ * \return The falling sound id or an empty string.
+ */
+const std::string& Pickable::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is falling into a hole.
+ * \param sound_id The falling sound id or an empty string.
+ */
+void Pickable::set_falling_sound_id(const std::string& sound_id) {
+  falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is sinking into deep water or lava.
+ * \return The sinking sound id or an empty string.
+ */
+const std::string& Pickable::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is sinking into deep water or lava.
+ * \param sound_id The sinking sound id or an empty string.
+ */
+void Pickable::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
 }
 
 /**
@@ -560,8 +600,11 @@ void Pickable::update() {
         entity_followed->get_type() == EntityType::HOOKSHOT) {
       // The pickable may have been dropped by the boomerang/hookshot
       // not exactly on the hero so let's fix this.
-      if (get_distance(get_hero()) < 16) {
-        try_give_item_to_player();
+      auto res = find_hero([&](const HeroPtr& hero){
+        return get_distance(*hero) < 16;
+      });
+      if (res.first) {
+        try_give_item_to_player(**res.second);
       }
     }
     entity_followed = nullptr;
@@ -572,13 +615,15 @@ void Pickable::update() {
   if (!is_suspended()) {
 
     // check the timer
-    uint32_t now = System::now();
+    uint32_t now = System::now_ms();
 
     // wait 0.7 second before allowing the hero to take the item
     if (!can_be_picked && now >= allow_pick_date) {
       can_be_picked = true;
       falling_height = FALLING_NONE;
-      get_hero().check_collision_with_detectors();
+      for(const HeroPtr& hero: get_heroes()) {
+        hero->check_collision_with_detectors();
+      }
     }
     else {
       // make the item blink and then disappear

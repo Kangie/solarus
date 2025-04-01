@@ -45,12 +45,12 @@ class Chest: public Entity {
       BY_INTERACTION_IF_ITEM,               /**< Can be opened by pressing the action command, provided that the player has a specific equipment item. */
     };
 
-    Chest(
-        const std::string& name,
-        int layer,
-        const Point& xy,
-        const std::string& sprite_name,
-        const Treasure& treasure);
+    Chest(Game &game,
+          const std::string& name,
+          int layer,
+          const Point& xy,
+          const std::string& sprite_name,
+          const Treasure& treasure);
 
     virtual EntityType get_type() const override;
 
@@ -59,7 +59,7 @@ class Chest: public Entity {
 
     bool is_open() const;
     void set_open(bool open);
-    bool can_open();
+    bool can_open(Hero &hero);
 
     OpeningMethod get_opening_method() const;
     void set_opening_method(OpeningMethod opening_method);
@@ -69,12 +69,16 @@ class Chest: public Entity {
     void set_opening_condition_consumed(bool opening_condition_consumed);
     const std::string& get_cannot_open_dialog_id() const;
     void set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id);
+    const std::string& get_cannot_open_sound_id() const;
+    void set_cannot_open_sound_id(const std::string& sound_id);
+    const std::string& get_opening_sound_id() const;
+    void set_opening_sound_id(const std::string& sound_id);
 
     virtual bool is_obstacle_for(Entity& other) override;
     virtual void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
     virtual void notify_enabled(bool enabled) override;
     virtual void update() override;
-    virtual bool notify_action_command_pressed() override;
+    virtual bool notify_action_command_pressed(Hero& hero) override;
     virtual void set_suspended(bool suspended) override;
 
     static const std::map<OpeningMethod, std::string> opening_method_names;
@@ -100,7 +104,10 @@ class Chest: public Entity {
                                         * should be consumed when opening the chesty. */
     std::string cannot_open_dialog_id; /**< Dialog to show if the chesty cannot be opened,
                                         * or an empty string. */
+    std::string cannot_open_sound_id;   /**< Sound to play when the hero cannot open the chest. */
+    std::string opening_sound_id;       /**< Sound to play when the chest is opening. */
 
+    HeroPtr opening_hero;               /**< Hero opening the chest*/
 };
 
 }

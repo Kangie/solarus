@@ -80,6 +80,8 @@ class SOLARUS_API Npc: public Entity {
     );
 
     EntityType get_type() const override;
+    Subtype get_subtype() const;
+    void set_subtype(Subtype subtype);
 
     bool is_solid() const;
     bool is_traversable() const;
@@ -92,7 +94,7 @@ class SOLARUS_API Npc: public Entity {
     virtual bool is_sword_ignored() const override;
 
     virtual void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
-    virtual bool notify_action_command_pressed() override;
+    virtual bool notify_action_command_pressed(Hero& hero) override;
     virtual bool notify_interaction_with_item(EquipmentItem& item) override;
     virtual void notify_position_changed() override;
     virtual void notify_movement_finished() override;
@@ -100,7 +102,7 @@ class SOLARUS_API Npc: public Entity {
   private:
 
     void initialize_sprite(const std::string& sprite_name, int initial_direction);
-    void call_script_hero_interaction();
+    void call_script_hero_interaction(Hero &hero);
 
     Subtype subtype;                    /**< subtpype of NPC */
     Behavior behavior;                  /**< type of action done when the player interacts with this entity */

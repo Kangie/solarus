@@ -16,7 +16,7 @@
  */
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Game.h"
-#include "solarus/core/GameCommands.h"
+#include "solarus/core/Controls.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
@@ -51,7 +51,7 @@ void Hero::SwordTappingState::start(const State* previous_state) {
   HeroState::start(previous_state);
 
   get_sprites().set_animation_sword_tapping();
-  next_sound_date = System::now() + 100;
+  next_sound_date = System::now_ms() + 100;
 }
 
 /**
@@ -86,7 +86,7 @@ void Hero::SwordTappingState::update() {
 
     const Point& facing_point = hero.get_facing_point();
 
-    if (!get_commands().is_command_pressed(GameCommand::ATTACK)
+    if (!get_commands().is_command_pressed(CommandId::ATTACK)
         || get_commands().get_wanted_direction8() != get_sprites().get_animation_direction8()
         || !get_map().test_collision_with_obstacles(hero.get_layer(), facing_point, hero)) {
       // the sword key has been released, the player has moved or the obstacle is gone
@@ -99,7 +99,7 @@ void Hero::SwordTappingState::update() {
     else {
 
       // play the sound every 100 ms
-      uint32_t now = System::now();
+      uint32_t now = System::now_ms();
       if (get_sprites().get_current_frame() == 3 && now >= next_sound_date) {
 
         Entity* facing_entity = hero.get_facing_entity();
@@ -130,7 +130,7 @@ void Hero::SwordTappingState::set_suspended(bool suspended) {
   HeroState::set_suspended(suspended);
 
   if (!suspended) {
-    next_sound_date += System::now() - get_when_suspended();
+    next_sound_date += System::now_ms() - get_when_suspended();
   }
 }
 

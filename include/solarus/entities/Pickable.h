@@ -65,6 +65,10 @@ class Pickable: public Entity {
     bool is_falling() const;
     FallingHeight get_falling_height() const;
     const Treasure& get_treasure() const;
+    const std::string& get_falling_sound_id() const;
+    void set_falling_sound_id(const std::string& sound_id);
+    const std::string& get_sinking_sound_id() const;
+    void set_sinking_sound_id(const std::string& sound_id);
 
     // item state
     void set_suspended(bool suspended) override;
@@ -88,11 +92,11 @@ class Pickable: public Entity {
   private:
 
     // initialization
-    bool initialize_sprites();
+    bool initialize_sprites(Equipment &equipment);
     void initialize_movement();
 
     // item
-    void try_give_item_to_player();
+    void try_give_item_to_player(Hero &hero);
     void set_blinking(bool blinking);
 
     void check_bad_ground();
@@ -105,6 +109,8 @@ class Pickable: public Entity {
     FallingHeight falling_height;               /**< indicates whether the item is falling when it appears */
     bool will_disappear;                        /**< indicates that the item will disappear after an amount of time
                                                  * (only possible for items not saved) */
+    std::string falling_sound_id;               /**< Sound played when the item is falling into a hole */
+    std::string sinking_sound_id;               /**< Sound played when the item is sinking into deep water or lava */
 
     // current state
     Point shadow_xy;                            /**< coordinates of the shadow (which does not move while the item does) */

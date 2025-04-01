@@ -45,7 +45,7 @@ class SavegameConverterV1 {
     bool get_boolean(int index);
 
     // conversion to a savegame version 2
-    void convert_to_v2(Savegame& savegame_v2);
+    bool convert_to_v2(Savegame& savegame_v2);
 
     /**
      * \brief Index of each string saved in the file by the engine.
@@ -217,6 +217,7 @@ class SavegameConverterV1 {
     };
 
     SavedData saved_data;
+    std::string file_name;
 
 };
 

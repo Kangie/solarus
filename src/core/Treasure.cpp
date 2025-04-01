@@ -19,6 +19,7 @@
 #include "solarus/core/EquipmentItem.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
+#include "solarus/entities/Hero.h"
 #include "solarus/core/Savegame.h"
 #include "solarus/core/Treasure.h"
 #include "solarus/graphics/Sprite.h"
@@ -34,7 +35,6 @@ namespace Solarus {
  * You must call ensure_obtainable() before giving it to the player, because
  * of unauthorized treasures.
  *
- * \param game The current game.
  * \param item_name Name of the item to give, or an empty string to mean no
  * treasure.
  * \param variant Variant of this item.
@@ -42,9 +42,8 @@ namespace Solarus {
  * player has found this treasure, or an empty string if this treasure is not
  * saved.
  */
-Treasure::Treasure(Game& game, const std::string& item_name, int variant,
+Treasure::Treasure(const std::string& item_name, int variant,
     const std::string& savegame_variable):
-  game(&game),
   item_name(item_name),
   variant(variant),
   savegame_variable(savegame_variable) {
@@ -54,18 +53,18 @@ Treasure::Treasure(Game& game, const std::string& item_name, int variant,
 /**
  * \brief Returns whether the player can obtain this treasure.
  */
-bool Treasure::is_obtainable() const {
+bool Treasure::is_obtainable(Equipment& equipment) const {
 
   return item_name.empty()
-      || game->get_equipment().get_item(item_name).is_obtainable();
+      || equipment.get_item(item_name).is_obtainable();
 }
 
 /**
  * \brief Raises an assertion error if the player cannot obtain this treasure.
  */
-void Treasure::check_obtainable() const {
+void Treasure::check_obtainable(Equipment& equipment) const {
 
-  if (!is_obtainable()) {
+  if (!is_obtainable(equipment)) {
     Debug::die(std::string("Treasure '") + item_name
       + "' is not allowed, did you call ensure_obtainable()?");
   }
@@ -82,28 +81,20 @@ void Treasure::check_obtainable() const {
  * may indeed change after the creation of the treasure, for example if the
  * player finds a new equipment item in the meantime.
  */
-void Treasure::ensure_obtainable() {
+void Treasure::ensure_obtainable(Equipment &equipment) {
 
-  if (!is_obtainable()) {
+  if (!is_obtainable(equipment)) {
     item_name = "";
     variant = 1;
   }
 }
 
 /**
- * \brief Returns the game where this treasure was created.
- * \return The game.
- */
-Game& Treasure::get_game() const {
-  return *game;
-}
-
-/**
  * \brief Returns the equipment item corresponding to this treasure's content.
  * \return The equipment item.
  */
-EquipmentItem& Treasure::get_item() const {
-  return game->get_equipment().get_item(get_item_name());
+EquipmentItem& Treasure::get_item(Equipment& equipment) const {
+  return equipment.get_item(get_item_name());
 }
 
 /**
@@ -138,8 +129,8 @@ bool Treasure::is_saved() const {
  *
  * \return \c true if the player has found this treasure.
  */
-bool Treasure::is_found() const {
-  return is_saved() && game->get_savegame().get_boolean(savegame_variable);
+bool Treasure::is_found(Equipment& equipment) const {
+  return is_saved() && equipment.get_savegame().get_boolean(savegame_variable);
 }
 
 /**
@@ -165,25 +156,25 @@ const std::string& Treasure::get_savegame_variable() const {
  * Adds the item to the hero's equipment.
  * The item should not be empty and must be obtainable.
  */
-void Treasure::give_to_player() const {
+void Treasure::give_to_player(Hero &hero) const {
 
-  check_obtainable();
+  check_obtainable(hero.get_equipment());
 
   // Mark the treasure as found in the savegame.
   if (is_saved()) {
-    game->get_savegame().set_boolean(savegame_variable, true);
+    hero.get_equipment().get_savegame().set_boolean(savegame_variable, true);
   }
 
   // Give the item to the player.
-  EquipmentItem& item = get_item();
+  EquipmentItem& item = get_item(hero.get_equipment());
   if (item.is_saved()) {
     item.set_variant(get_variant());
   }
 
   // Notify the Lua item and the Lua map.
-  LuaContext& lua_context = game->get_lua_context();
+  LuaContext& lua_context = LuaContext::get();
   lua_context.item_on_obtaining(item, *this);
-  lua_context.map_on_obtaining_treasure(game->get_current_map(), *this);
+  lua_context.map_on_obtaining_treasure(hero.get_map(), *this, hero);
 }
 
 /**
@@ -191,7 +182,9 @@ void Treasure::give_to_player() const {
  */
 SpritePtr Treasure::create_sprite() const {
 
-  SpritePtr sprite = std::make_shared<Sprite>("entities/items");
+  SpritePtr sprite = Sprite::create("entities/items");
+  SOLARUS_REQUIRE(sprite,
+    "Treasure::create_sprite(): cannot load 'entities/items'");
   sprite->set_current_animation(get_item_name());
   sprite->set_current_direction(get_variant() - 1);
   return sprite;

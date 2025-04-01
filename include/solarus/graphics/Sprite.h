@@ -17,7 +17,6 @@
 #ifndef SOLARUS_SPRITE_H
 #define SOLARUS_SPRITE_H
 
-#include "solarus/core/Common.h"
 #include "solarus/graphics/Drawable.h"
 #include "solarus/graphics/SpritePtr.h"
 #include "solarus/lua/ScopedLuaRef.h"
@@ -44,7 +43,7 @@ class Tileset;
  * A sprite can be drawn directly on a surface, or it can
  * be attached to a map entity.
  */
-class Sprite: public Drawable {
+class Sprite final: public Drawable {
 
   public:
 
@@ -53,9 +52,14 @@ class Sprite: public Drawable {
     static void quit();
 
     // creation and destruction
-    explicit Sprite(const std::string& id);
+    explicit Sprite(SpriteAnimationSet& animation_set);
+    static SpritePtr create(const std::string& id);
+    bool is_valid() const;
 
     void set_tileset(const Tileset& tileset);
+
+    // static information
+    static constexpr const char module_name[] = "sol.sprite";
 
     // animation set
     const std::string& get_animation_set_id() const;
@@ -67,7 +71,7 @@ class Sprite: public Drawable {
     virtual Size get_size() const override;
     const Size& get_max_size() const;
     virtual Point get_origin() const override;
-    const Rectangle& get_max_bounding_box() const;
+    Rectangle get_max_bounding_box() const;
 
     // animation state
     const std::string& get_current_animation() const;
@@ -98,7 +102,7 @@ class Sprite: public Drawable {
     bool is_animation_looping() const;
     bool is_animation_finished() const;
     bool is_last_frame_reached() const;
-    bool has_frame_changed() const;
+    void notify_position_changed() override;
 
     // effects
     bool is_blinking() const;
@@ -109,6 +113,7 @@ class Sprite: public Drawable {
 
     // update and draw
     virtual void update() override;
+    void update(bool &changed);
     void draw_intermediate() const;
 
     Rectangle clamp_region(const Rectangle& region) const;
@@ -128,24 +133,24 @@ class Sprite: public Drawable {
     static SpriteAnimationSet& get_animation_set(const std::string& id);
     int get_next_frame() const;
     Surface& get_intermediate_surface() const ;
-    void set_frame_changed(bool frame_changed);
+    void set_changed(bool changed);
     void notify_finished();
 
     // animation set
     static std::map<std::string, SpriteAnimationSet*> all_animation_sets;
-    const std::string animation_set_id;  /**< id of this sprite's animation set */
     SpriteAnimationSet& animation_set;   /**< animation set of this sprite */
 
     // current state of the sprite
 
     std::string current_animation_name;  /**< name of the current animation */
-    SpriteAnimation* current_animation;  /**< the current animation or nullptr if the sprite sheet has no animation */
+    const SpriteAnimation*
+        current_animation;             /**< the current animation or nullptr if the sprite sheet has no animation */
     int current_direction;             /**< current direction of the animation (the first one is number 0);
                                         * it can be different from the movement direction
                                         * of the entity, because sometimes a sprite can
                                         * go backwards. */
     int current_frame;                 /**< current frame of the animation (the first one is number 0) */
-    bool frame_changed;                /**< indicates that the frame has just changed */
+    bool changed;                      /**< indicates that collisions should be recomputed */
 
     uint32_t frame_delay;              /**< delay between two frames in milliseconds */
     uint32_t next_frame_date;          /**< date of the next frame */

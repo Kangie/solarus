@@ -34,7 +34,7 @@ class HeroState: public Entity::State {
     const HeroSprites& get_sprites() const;
     HeroSprites& get_sprites();
 
-    void draw_on_map() override;
+    void draw_on_map(Camera& camera) override;
 
     void notify_attack_command_pressed() override;
     void notify_item_command_pressed(int slot) override;
@@ -42,6 +42,12 @@ class HeroState: public Entity::State {
     bool is_block_obstacle(Block& block) override;
     bool is_raised_block_obstacle(CrystalBlock& raised_block) override;
     bool is_jumper_obstacle(Jumper& jumper, const Rectangle& candidate_position) override;
+
+    const Controls& get_commands() const;
+    CommandsEffects& get_commands_effects();
+    const CommandsEffects& get_commands_effects() const;
+
+    const std::string& get_lua_type_name() const override;
 
   protected:
 

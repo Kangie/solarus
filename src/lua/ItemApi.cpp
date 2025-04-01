@@ -160,7 +160,7 @@ int LuaContext::item_api_get_map(lua_State* l) {
 
     Game* game = item.get_game();
     if (game != nullptr) {
-      push_map(l, game->get_current_map());
+      push_map(l, game->get_default_map());
     }
     else {
       lua_pushnil(l);
@@ -759,7 +759,7 @@ int LuaContext::item_api_set_finished(lua_State* l) {
     EquipmentItem& item = *check_item(l, 1);
 
     // Retrieve the equipment item from the hero.
-    Hero& hero = *item.get_game()->get_hero();
+    Hero& hero = *item.get_equipment().get_hero();
     if (hero.is_using_item()) {  // Do nothing if the script has already changed the hero's state.
 
       EquipmentItemUsage& item_usage = hero.get_item_being_used();
@@ -877,14 +877,14 @@ void LuaContext::item_on_created(EquipmentItem& item) {
  * \param item An equipment item.
  * \param map A map.
  */
-void LuaContext::item_on_map_changed(EquipmentItem& item, Map& map) {
+void LuaContext::item_on_map_changed(EquipmentItem& item, Map& map, Camera& camera) {
 
   if (!userdata_has_field(item, "on_map_changed")) {
     return;
   }
-  run_on_main([this,&item,&map](lua_State* l){
+  run_on_main([this,&item,&map,&camera](lua_State* l){
     push_item(l, item);
-    on_map_changed(map);
+    on_map_changed(map, camera);
     lua_pop(l, 1);
   });
 }

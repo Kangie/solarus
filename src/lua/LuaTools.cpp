@@ -20,8 +20,11 @@
 #include "solarus/lua/LuaTools.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/ScopedLuaRef.h"
+#include "solarus/core/Profiler.h"
+#include "solarus/core/CurrentQuest.h"
 #include <cctype>
 #include <sstream>
+#include <unordered_set>
 
 namespace Solarus {
 namespace LuaTools {
@@ -46,12 +49,82 @@ int get_positive_index(lua_State* l, int index) {
 }
 
 /**
- * \brief Returns whether the specified name is a valid Lua identifier.
+ * \brief Get pointer to userdata if it is of the given type.
+ *
+ * This is luaL_testudata from the Lua auxiliary library.
+ * It should be replaced when Lua 5.3/LuaJIT 2.1 or higher is required.
+ *
+ * \param l A Lua context.
+ * \param index An index in the stack.
+ * \param metatable_name Name of a userdata metatable in the registry.
+ * \return Pointer to userdata if it is a userdata of the given type,
+ *   nullptr otherwise.
+ */
+void* test_userdata(lua_State* l, int index, const char* metatable_name) {
+
+  index = get_positive_index(l, index);
+
+  void* udata = lua_touserdata(l, index);
+  // ... value ...
+  if (udata == nullptr || !lua_getmetatable(l, index)) {
+    return nullptr;
+  }
+  // ... udata ... meta(found)
+  lua_getfield(l, LUA_REGISTRYINDEX, metatable_name);
+  // ... udata ... meta(found) meta(expected)
+  if (lua_rawequal(l, -1, -2) == 0) {
+    udata = nullptr;
+  }
+  lua_pop(l, 2);
+  // ... udata ...
+  return udata;
+}
+
+/* \brief Check to see if a name is a Lua keyword.
+ *
+ * This is update to date with Lua 5.4.
+ * \param name Any valid string.
+ * \return True if the name is a keyword, otherwise false.
+ */
+static bool is_lua_keyword(const std::string& name) {
+
+  static const std::unordered_set<std::string> keywords = {
+    "and",
+    "break",
+    "do",
+    "else",
+    "elseif",
+    "end",
+    "false",
+    "for",
+    "function",
+    "goto",
+    "if",
+    "in",
+    "local",
+    "nil",
+    "not",
+    "or",
+    "repeat",
+    "return",
+    "then",
+    "true",
+    "until",
+    "while",
+  };
+  return keywords.count(name);
+}
+
+/**
+ * \brief Returns whether the specified name is a valid identifier.
+ *
+ * Lua keywords are considered valid identifiers by this function.
+ *
  * \param name The name to check.
  * \return \c true if the name only contains alphanumeric characters or '_' and
  * does not start with a digit.
  */
-bool is_valid_lua_identifier(const std::string& name) {
+bool is_valid_identifier(const std::string& name) {
 
   if (name.empty() || std::isdigit(name[0])) {
     return false;
@@ -66,6 +139,20 @@ bool is_valid_lua_identifier(const std::string& name) {
 }
 
 /**
+ * \brief Returns whether the specified name is a legal savegame variable name.
+ *
+ * Same as is_valid_identifier(), except that Lua keywords are considered invalid.
+ *
+ * \param name The name to check.
+ * \return \c true if the name only contains alphanumeric characters or '_',
+ * does not start with a digit and is not a Lua keyword.
+ */
+bool is_valid_lua_identifier(const std::string& name) {
+
+  return is_valid_identifier(name) && !is_lua_keyword(name);
+}
+
+/**
  * \brief Returns the type name of a value.
  * Similar to the standard Lua function type(), except that for userdata
  * known by Solarus, it returns the exact Solarus type name.
@@ -73,7 +160,7 @@ bool is_valid_lua_identifier(const std::string& name) {
  * \param index An index in the stack.
  * \return The type name.
  */
-std::string get_type_name(lua_State*l, int index) {
+std::string get_type_name(lua_State* l, int index) {
 
   std::string module_name;
   if (!LuaContext::is_solarus_userdata(l, index, module_name)) {
@@ -152,14 +239,15 @@ bool call_function(
     int nb_results,
     const char* function_name
 ) {
-  Debug::check_assertion(lua_gettop(l) > nb_arguments, "Missing arguments");
+  SOL_PBLOCK(function_name, profiler::colors::Blue);
+  SOLARUS_ASSERT(lua_gettop(l) > nb_arguments, "Missing arguments");
   int base = lua_gettop(l) - nb_arguments;
   lua_pushcfunction(l, &LuaContext::l_backtrace);
   lua_insert(l, base);
   int status = lua_pcall(l, nb_arguments, nb_results, base);
   lua_remove(l, base);
   if (status != 0) {
-    Debug::check_assertion(lua_isstring(l, -1), "Missing error message");
+    SOLARUS_ASSERT(lua_isstring(l, -1), "Missing error message");
     Debug::error(std::string("In ") + function_name + ": "
         + lua_tostring(l, -1)
     );
@@ -234,8 +322,49 @@ void type_error(
     int arg_index,
     const std::string& expected_type_name
 ) {
-  arg_error(l, arg_index, std::string(expected_type_name) +
-      " expected, got " + get_type_name(l, arg_index));
+  arg_error(l, arg_index,
+      expected_type_name + " expected, got " + get_type_name(l, arg_index));
+}
+
+/**
+ * \brief Similar to arg_error but adds field information to the message.
+ *
+ * This function never returns.
+ *
+ * \param l A Lua state.
+ * \param table_index Index of an argument (usually a table) on the stack.
+ * \param key Key of the field in the table.
+ * \param message Error message.
+ */
+void field_error(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::string& message
+) {
+  arg_error(l, table_index,
+      std::string("Bad field '") + key + "': " + message);
+}
+
+/**
+ * \brief Similar to type_error but adds field information to the message.
+ *
+ * This function never returns. The field's value (of the incorrect type)
+ * should be at the top of the stack, as if it had just been pushed.
+ *
+ * \param l A Lua state.
+ * \param table_index Index of an argument (usually a table) on the stack.
+ * \param key Key of the field in the table.
+ * \param expected_type_name A name describing the type that was expected.
+ */
+void field_type_error(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::string& expected_type_name
+) {
+  field_error(l, table_index, key,
+      expected_type_name + " expected, got " + get_type_name(l, -1));
 }
 
 /**
@@ -250,23 +379,25 @@ void check_type(
     int expected_type
 ) {
   if (lua_type(l, arg_index) != expected_type) {
-    arg_error(l, arg_index, std::string(lua_typename(l, expected_type)) +
-        " expected, got " + get_type_name(l, arg_index));
+    type_error(l, arg_index, std::string(lua_typename(l, expected_type)));
   }
 }
 
 /**
- * \brief Like luaL_checkany() but throws a LuaException in case of error.
+ * \brief Throws a LuaException if not enough arguments have been provided.
  * \param l A Lua state.
- * \param arg_index Index of an argument in the stack.
+ * \param minimum The minimum number of values on the Lua stack.
+ * \return The current value of Lua top.
  */
-void check_any(
+int check_mintop(
     lua_State* l,
-    int arg_index
+    int minimum
 ) {
-  if (lua_type(l, arg_index) == LUA_TNONE) {
-    arg_error(l, arg_index, "value expected");
+  int top = lua_gettop(l);
+  if (top < minimum) {
+    arg_error(l, top + 1, "value expected");
   }
+  return top;
 }
 
 /**
@@ -284,13 +415,10 @@ int check_int(
     int index
 ) {
   if (!lua_isnumber(l, index)) {
-    arg_error(l, index,
-        std::string("integer expected, got ")
-            + get_type_name(l, index) + ")"
-    );
+    type_error(l, index, "integer");
   }
 
-  return (int) lua_tointeger(l, index);
+  return static_cast<int>(lua_tointeger(l, index));
 }
 
 /**
@@ -310,13 +438,10 @@ int check_int_field(
 ) {
   lua_getfield(l, table_index, key.c_str());
   if (!lua_isnumber(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (integer expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "integer");
   }
 
-  int value = (int) lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -367,12 +492,9 @@ int opt_int_field(
   }
 
   if (!lua_isnumber(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (integer expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "integer");
   }
-  int value = (int) lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -392,10 +514,7 @@ double check_number(
     int index
 ) {
   if (!lua_isnumber(l, index)) {
-    arg_error(l, index,
-        std::string("number expected, got ")
-            + get_type_name(l, index) + ")"
-    );
+    type_error(l, index, "number");
   }
 
   return lua_tonumber(l, index);
@@ -418,10 +537,7 @@ double check_number_field(
 ) {
   lua_getfield(l, table_index, key.c_str());
   if (!lua_isnumber(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (number expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "number");
   }
 
   double value = lua_tonumber(l, -1);
@@ -475,14 +591,26 @@ double opt_number_field(
   }
 
   if (!lua_isnumber(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (number expected, got "
-        + luaL_typename(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "number");
   }
   double value = lua_tonumber(l, -1);
   lua_pop(l, 1);
   return value;
+}
+
+/**
+ * @brief LuaTools::islstring
+ * @param L A lua state.
+ * @param index INdex of a value in the stack
+ * @param len lenght output parameter
+ * @return The C-string value or nullptr if value is not a string
+ */
+const char * islstring(
+    lua_State * L,
+    int index,
+    size_t * len
+) {
+  return (lua_isstring(L, index)) ? lua_tolstring(L, index, len) : nullptr;
 }
 
 /**
@@ -500,10 +628,7 @@ std::string check_string(
     int index
 ) {
   if (!lua_isstring(l, index)) {
-    arg_error(l, index,
-        std::string("string expected, got ")
-            + get_type_name(l, index) + ")"
-    );
+    type_error(l, index, "string");
   }
   size_t size = 0;
   const char* data = lua_tolstring(l, index, &size);
@@ -527,10 +652,7 @@ std::string check_string_field(
 ) {
   lua_getfield(l, table_index, key.c_str());
   if (!lua_isstring(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (string expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "string");
   }
 
   size_t size = 0;
@@ -586,16 +708,111 @@ std::string opt_string_field(
   }
 
   if (!lua_isstring(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (string expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "string");
   }
   size_t size = 0;
   const char* data = lua_tolstring(l, -1, &size);
   const std::string value = {data, size};
   lua_pop(l, 1);
   return value;
+}
+
+/**
+ * \brief Checks that a value is a string list and returns it.
+ *
+ * Throws a LuaException in case of error.
+ *
+ * \param l A Lua state.
+ * \param index Index of a value in the stack.
+ * \return The string list value.
+ */
+std::vector<std::string> check_string_list(
+    lua_State* l,
+    int index
+) {
+  std::vector<std::string> value;
+    index = get_positive_index(l, index);
+
+  if (lua_istable(l, index)) {
+    lua_pushnil(l);
+    while (lua_next(l, index) != 0) {
+      value.push_back(check_string(l, -1));
+      lua_pop(l, 1);
+    }
+  } else if (!lua_isnil(l, index)) {
+    type_error(l, index, "table");
+  }
+
+  return value;
+}
+
+/**
+ * \brief Checks that a table field is a string list and returns it.
+ *
+ * \param l A Lua state.
+ * \param table_index Index of a table in the stack.
+ * \param key Key of the field to get in that table.
+ * \return The wanted field as a string list.
+ */
+std::vector<std::string> check_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key
+) {
+  lua_getfield(l, table_index, key.c_str());
+  std::vector<std::string> result = check_string_list(l, -1);
+  lua_pop(l, 1);
+  return result;
+}
+
+/**
+ * \brief Like LuaTools::check_string_list() but with a default value.
+ *
+ * Throws a LuaException in case of error.
+ *
+ * \param l A Lua state.
+ * \param index Index of a value in the stack.
+ * \param default_value The default value to return if the value is \c nil.
+ * \return The wanted value as a string list.
+ */
+std::vector<std::string> opt_string_list(
+    lua_State* l,
+    int index,
+    const std::vector<std::string>& default_value
+) {
+  if (lua_isnoneornil(l, index)) {
+    return default_value;
+  }
+  return check_string_list(l, index);
+}
+
+/**
+ * \brief Like LuaTools::check_string_list_field() but with a default value.
+ *
+ * This function acts like lua_getfield() followed by LuaTools::opt_string_list().
+ *
+ * \param l A Lua state.
+ * \param table_index Index of a table in the stack.
+ * \param key Key of the field to get in that table.
+ * \param default_value The default value to return if the field is \c nil.
+ * \return The wanted field as a string list.
+ */
+std::vector<std::string> opt_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::vector<std::string>& default_value
+) {
+  lua_getfield(l, table_index, key.c_str());
+
+  if (lua_isnil(l, -1)) {
+    lua_pop(l, 1);
+    return default_value;
+  }
+
+  std::vector<std::string> result = check_string_list(l, -1);
+  lua_pop(l, 1);
+  return result;
 }
 
 /**
@@ -612,10 +829,7 @@ bool check_boolean(
     int index
 ) {
   if (!lua_isboolean(l, index)) {
-    arg_error(l, index,
-        std::string("boolean expected, got ")
-            + get_type_name(l, index) + ")"
-    );
+    type_error(l, index, "boolean");
   }
   return lua_toboolean(l, index);
 }
@@ -634,10 +848,7 @@ bool check_boolean_field(
 ) {
   lua_getfield(l, table_index, key.c_str());
   if (lua_type(l, -1) != LUA_TBOOLEAN) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (boolean expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "boolean");
   }
 
   bool value = lua_toboolean(l, -1);
@@ -657,7 +868,9 @@ bool opt_boolean(
     int index,
     bool default_value
 ) {
-  if (lua_isnoneornil(l, index)) {
+  if (lua_isnone(l, index)
+    || (CurrentQuest::is_format_at_most({1, 7}) && lua_isnoneornil(l, index))
+  ) {
     return default_value;
   }
   return check_boolean(l, index);
@@ -687,10 +900,7 @@ bool opt_boolean_field(
   }
 
   if (lua_type(l, -1) != LUA_TBOOLEAN) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (boolean expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "boolean");
   }
   bool value = lua_toboolean(l, -1);
   lua_pop(l, 1);
@@ -728,10 +938,7 @@ ScopedLuaRef check_function_field(
 ) {
   lua_getfield(l, table_index, key.c_str());
   if (!lua_isfunction(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (function expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "function");
   }
 
   return create_ref(l);  // This also pops the function from the stack.
@@ -772,10 +979,7 @@ ScopedLuaRef opt_function_field(
   }
 
   if (!lua_isfunction(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (function expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "function");
   }
   return create_ref(l);  // This also pops the function from the stack.
 }
@@ -820,7 +1024,7 @@ int check_layer(
     arg_error(l, index, oss.str());
   }
 
-  return lua_tointeger(l, index);
+  return static_cast<int>(lua_tointeger(l, index));
 }
 
 /**
@@ -842,13 +1046,10 @@ int check_layer_field(
 ) {
   lua_getfield(l, table_index, key.c_str());
   if (!is_layer(l, -1, map)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (layer expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "layer");
   }
 
-  int value = lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -896,12 +1097,9 @@ int opt_layer_field(
   }
 
   if (!is_layer(l, -1, map)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (layer expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "layer");
   }
-  int value = lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -978,10 +1176,7 @@ Color check_color_field(
 ) {
   lua_getfield(l, table_index, key.c_str());
   if (!is_color(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (color table expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "color");
   }
 
   const Color& value = check_color(l, -1);
@@ -1028,10 +1223,7 @@ Color opt_color_field(
   }
 
   if (!is_color(l, -1)) {
-    arg_error(l, table_index,
-        std::string("Bad field '") + key + "' (color expected, got "
-        + get_type_name(l, -1) + ")"
-    );
+    field_type_error(l, table_index, key, "color");
   }
   const Color& color = check_color(l, -1);
   lua_pop(l, 1);

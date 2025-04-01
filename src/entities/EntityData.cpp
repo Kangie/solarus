@@ -265,10 +265,15 @@ const std::map<EntityType, const EntityTypeDescription> entity_type_descriptions
             // No additional fields.
         }
     },
-
     {
         EntityType::FIRE, {
             // No additional fields.
+        }
+    },
+    {
+        EntityType::HERO, {
+            { "direction", OptionalFlag::OPTIONAL, FieldValue(-1)}
+            // TODO add more usefull fields
         }
     }
 };
@@ -388,13 +393,7 @@ EntityData::EntityData() :
  * \param type A type of entity.
  */
 EntityData::EntityData(EntityType type) :
-    type(type),
-    name(),
-    layer(0),
-    xy(),
-    enabled_at_start(true),
-    user_properties(),
-    specific_properties() {
+    type(type) {
 
   initialize_specific_properties();
 }
@@ -480,6 +479,38 @@ void EntityData::set_layer(int layer) {
 }
 
 /**
+ * \brief Returns whether this entity is locked.
+ * \return \c true if the entity is locked.
+ */
+bool EntityData::is_locked() const {
+  return locked;
+}
+
+/**
+ * \brief Sets whether this entity is locked.
+ * \param locked \c true to lock the entity.
+ */
+void EntityData::set_locked(bool locked) {
+  this->locked = locked;
+}
+
+/**
+ * \brief Returns the group of this entity on the map.
+ * \return The group or 0.
+ */
+int EntityData::get_group() const {
+  return group;
+}
+
+/**
+ * \brief Sets the group of this entity.
+ * \param group The group.
+ */
+void EntityData::set_group(int group) {
+  this->group = group;
+}
+
+/**
  * \brief Returns the coordinates of this entity on the map.
  * \return The coordinates of the entity.
  */
@@ -521,9 +552,7 @@ void EntityData::set_enabled_at_start(bool enabled_at_start) {
  * \return \c true if this is a valid user property key.
  */
 bool EntityData::is_user_property_key_valid(const std::string& key) {
-
-  // Same rules as Lua identifiers.
-  return LuaTools::is_valid_lua_identifier(key);
+  return LuaTools::is_valid_identifier(key);
 }
 
 /**
@@ -549,7 +578,7 @@ int EntityData::get_user_property_count() const {
  */
 const EntityData::UserProperty& EntityData::get_user_property(int index) const {
 
-  Debug::check_assertion(index >= 0 && index < get_user_property_count(),
+  SOLARUS_REQUIRE(index >= 0 && index < get_user_property_count(),
       "Invalid user property index");
   return user_properties.at(index);
 }
@@ -561,14 +590,14 @@ const EntityData::UserProperty& EntityData::get_user_property(int index) const {
  */
 void EntityData::set_user_property(int index, const UserProperty& user_property) {
 
-  Debug::check_assertion(index >= 0 && index < get_user_property_count(),
+  SOLARUS_REQUIRE(index >= 0 && index < get_user_property_count(),
       "Invalid user property index");
 
-  Debug::check_assertion(is_user_property_key_valid(user_property.first),
+  SOLARUS_REQUIRE(is_user_property_key_valid(user_property.first),
       "Invalid user property key");
 
   int existing_index = get_user_property_index(user_property.first);
-  Debug::check_assertion(existing_index == -1 || existing_index == index,
+  SOLARUS_REQUIRE(existing_index == -1 || existing_index == index,
       "This user property already exists");
 
   user_properties[index] = user_property;
@@ -581,7 +610,7 @@ void EntityData::set_user_property(int index, const UserProperty& user_property)
 void EntityData::set_user_properties(const std::vector<UserProperty>& user_properties) {
 
   for (const UserProperty& user_property : user_properties) {
-    Debug::check_assertion(is_user_property_key_valid(user_property.first),
+    SOLARUS_REQUIRE(is_user_property_key_valid(user_property.first),
         "Invalid user property key");
   }
 
@@ -597,10 +626,10 @@ void EntityData::set_user_properties(const std::vector<UserProperty>& user_prope
  */
 void EntityData::add_user_property(const UserProperty& user_property) {
 
-  Debug::check_assertion(is_user_property_key_valid(user_property.first),
+  SOLARUS_REQUIRE(is_user_property_key_valid(user_property.first),
       "Invalid user property key");
 
-  Debug::check_assertion(!has_user_property(user_property.first),
+  SOLARUS_REQUIRE(!has_user_property(user_property.first),
       "This user property already exists");
 
   user_properties.emplace_back(user_property);
@@ -612,7 +641,7 @@ void EntityData::add_user_property(const UserProperty& user_property) {
  */
 void EntityData::remove_user_property(int index) {
 
-  Debug::check_assertion(index >= 0 && index < get_user_property_count(),
+  SOLARUS_REQUIRE(index >= 0 && index < get_user_property_count(),
       "Invalid user property index");
 
   user_properties.erase(user_properties.begin() + index);
@@ -702,10 +731,10 @@ bool EntityData::is_string(const std::string& key) const {
 const std::string& EntityData::get_string(const std::string& key) const {
 
   const auto& it = specific_properties.find(key);
-  Debug::check_assertion(it != specific_properties.end(),
+  SOLARUS_REQUIRE(it != specific_properties.end(),
       "No such entity field in " + get_type_name() + ": '" + key + "'");
 
-  Debug::check_assertion(it->second.value_type == EntityFieldType::STRING,
+  SOLARUS_REQUIRE(it->second.value_type == EntityFieldType::STRING,
       "Field '" + key + "' is not a string");
 
   return it->second.string_value;
@@ -720,10 +749,10 @@ const std::string& EntityData::get_string(const std::string& key) const {
 void EntityData::set_string(const std::string& key, const std::string& value) {
 
   const auto& it = specific_properties.find(key);
-  Debug::check_assertion(it != specific_properties.end(),
+  SOLARUS_REQUIRE(it != specific_properties.end(),
       "No such entity field in " + get_type_name() + ": '" + key + "'");
 
-  Debug::check_assertion(it->second.value_type == EntityFieldType::STRING,
+  SOLARUS_REQUIRE(it->second.value_type == EntityFieldType::STRING,
       "Field '" + key + "' is not a string");
 
   it->second.string_value = value;
@@ -752,10 +781,10 @@ bool EntityData::is_integer(const std::string& key) const {
 int EntityData::get_integer(const std::string& key) const {
 
   const auto& it = specific_properties.find(key);
-  Debug::check_assertion(it != specific_properties.end(),
+  SOLARUS_REQUIRE(it != specific_properties.end(),
       "No such entity field in " + get_type_name() + ": '" + key + "'");
 
-  Debug::check_assertion(it->second.value_type == EntityFieldType::INTEGER,
+  SOLARUS_REQUIRE(it->second.value_type == EntityFieldType::INTEGER,
       "Field '" + key + "' is not a string");
 
   return it->second.int_value;
@@ -770,10 +799,10 @@ int EntityData::get_integer(const std::string& key) const {
 void EntityData::set_integer(const std::string& key, int value) {
 
   const auto& it = specific_properties.find(key);
-  Debug::check_assertion(it != specific_properties.end(),
+  SOLARUS_REQUIRE(it != specific_properties.end(),
       "No such entity field in " + get_type_name() + ": '" + key + "'");
 
-  Debug::check_assertion(it->second.value_type == EntityFieldType::INTEGER,
+  SOLARUS_REQUIRE(it->second.value_type == EntityFieldType::INTEGER,
       "Field '" + key + "' is not an integer");
 
   it->second.int_value = value;
@@ -802,10 +831,10 @@ bool EntityData::is_boolean(const std::string& key) const {
 bool EntityData::get_boolean(const std::string& key) const {
 
   const auto& it = specific_properties.find(key);
-  Debug::check_assertion(it != specific_properties.end(),
+  SOLARUS_REQUIRE(it != specific_properties.end(),
       "No such entity field in " + get_type_name() + ": '" + key + "'");
 
-  Debug::check_assertion(it->second.value_type == EntityFieldType::BOOLEAN,
+  SOLARUS_REQUIRE(it->second.value_type == EntityFieldType::BOOLEAN,
       "Field '" + key + "' is not a boolean");
 
   return it->second.int_value != 0;
@@ -820,10 +849,10 @@ bool EntityData::get_boolean(const std::string& key) const {
 void EntityData::set_boolean(const std::string& key, bool value) {
 
   const auto& it = specific_properties.find(key);
-  Debug::check_assertion(it != specific_properties.end(),
+  SOLARUS_REQUIRE(it != specific_properties.end(),
       "No such entity field in " + get_type_name() + ": '" + key + "'");
 
-  Debug::check_assertion(it->second.value_type == EntityFieldType::BOOLEAN,
+  SOLARUS_REQUIRE(it->second.value_type == EntityFieldType::BOOLEAN,
       "Field '" + key + "' is not an boolean");
 
   it->second.int_value = value ? 1 : 0;
@@ -915,10 +944,14 @@ EntityData EntityData::check_entity_data(lua_State* l, int index, EntityType typ
   int x = LuaTools::check_int_field(l, index, "x");
   int y = LuaTools::check_int_field(l, index, "y");
   bool enabled_at_start = LuaTools::opt_boolean_field(l, index, "enabled_at_start", true);
+  bool locked = LuaTools::opt_boolean_field(l, index, "locked", false);
+  int group = LuaTools::opt_int_field(l, index, "group", 0);
 
   EntityData entity(type);
   entity.set_layer(layer);
   entity.set_xy({ x, y });
+  entity.set_locked(locked);
+  entity.set_group(group);
 
   if (entity.is_dynamic()) {
     entity.set_name(name);
@@ -1064,6 +1097,12 @@ bool EntityData::export_to_lua(std::ostream& out) const {
 
   if (!is_enabled_at_start()) {
     out << "  enabled_at_start = false,\n";
+  }
+  if (is_locked()) {
+    out << "  locked = true,\n";
+  }
+  if (get_group() != 0) {
+    out << "  group = " << get_group() << ",\n";
   }
 
   // User-defined properties.

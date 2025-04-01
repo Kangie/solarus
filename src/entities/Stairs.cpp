@@ -22,6 +22,7 @@
 #include "solarus/entities/DynamicTile.h"
 #include "solarus/entities/Entities.h"
 #include "solarus/entities/Stairs.h"
+#include "solarus/lua/LuaContext.h"
 #include <list>
 
 namespace Solarus {
@@ -62,14 +63,6 @@ Stairs::Stairs(
  */
 EntityType Stairs::get_type() const {
   return ThisType;
-}
-
-/**
- * \brief Returns whether entities of this type can be drawn.
- * \return \c true if this type of entity can be drawn.
- */
-bool Stairs::can_be_drawn() const {
-  return false;
 }
 
 /**
@@ -149,6 +142,24 @@ void Stairs::notify_collision(
 }
 
 /**
+ * \brief this function is called when another entity has entered this entity.
+ */
+void Stairs::notify_entered() {
+  if (get_lua_context() != nullptr) {
+    get_lua_context()->stairs_on_entered(*this);
+  }
+}
+
+/**
+ * \brief this function is called when another entity has exited this entity.
+ */
+void Stairs::notify_exited() {
+  if (get_lua_context() != nullptr) {
+    get_lua_context()->stairs_on_exited(*this);
+  }
+}
+
+/**
  * \brief Returns the direction of the movement an entity would take when
  * activating these stairs.
  * \param way The way you intend to take these stairs.
@@ -201,7 +212,7 @@ int Stairs::get_animation_direction(Way way) const {
  *
  * \param way The way you are taking these stairs.
  */
-void Stairs::play_sound(Way way) const {
+void Stairs::play_sound(Way way) {
 
   std::string sound_id;
   if (is_inside_floor()) {

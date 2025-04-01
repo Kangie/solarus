@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/Arguments.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
@@ -35,6 +35,7 @@
 
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
+#include "solarus/core/Profiler.h"
 
 #include <lua.hpp>
 #include <clocale>
@@ -57,26 +58,27 @@ void check_version_compatibility(const std::pair<int, int>& quest_version) {
   const int quest_minor_version = quest_version.second;
 
   if (quest_version.first == 0) {
-    Debug::die("No Solarus version is specified in your quest.dat file!");
+    Debug::die("No Solarus version is specified in your quest.dat file");
   }
 
   // The third digit of the version (patch) is ignored because compatibility
   // is not broken by patches.
 
   bool compatible = true;
-  if (quest_major_version != SOLARUS_MAJOR_VERSION) {
-    // Assume that changes of major versions break compatibility.
+  if (quest_major_version > SOLARUS_MAJOR_VERSION) {
+    // The quest is too recent for this engine.
     compatible = false;
   }
   else {
-    if (quest_minor_version > SOLARUS_MINOR_VERSION) {
+    if (quest_major_version == SOLARUS_MAJOR_VERSION &&
+        quest_minor_version > SOLARUS_MINOR_VERSION) {
       // The quest is too recent for this engine.
       compatible = false;
     }
     else {
-      // 1.5 quests can be run by Solarus 1.6.
-      if (quest_minor_version < SOLARUS_MINOR_VERSION &&
-          quest_major_version == 1 &&
+      // 1.5 quests can be run by Solarus 1.5, 1.6 and 2.0.
+      // 1.6 quests can be run by Solarus 1.6 and 2.0.
+      if (quest_major_version == 1 &&
           quest_minor_version < 5
       ) {
         compatible = false;
@@ -130,15 +132,19 @@ MainLoop::MainLoop(const Arguments& args):
   root_surface(nullptr),
   game(nullptr),
   next_game(nullptr),
+  resetting(false),
   exiting(false),
   debug_lag(0),
+  lua_console_enabled(false),
   suspend_unfocused(true),
   suspended(false),
   turbo(false),
   lua_commands(),
   lua_commands_mutex(),
   num_lua_commands_pushed(0),
-  num_lua_commands_done(0) {
+  num_lua_commands_done(0),
+  commands_dispatcher(*this)
+{
 
 #ifdef SOLARUS_GIT_REVISION
   Logger::info("Solarus " SOLARUS_VERSION " (" SOLARUS_GIT_REVISION ")");
@@ -156,6 +162,9 @@ MainLoop::MainLoop(const Arguments& args):
   turbo = (turbo_arg == "yes");
   const std::string& suspend_unfocused_arg = args.get_argument_value("-suspend-unfocused");
   suspend_unfocused = suspend_unfocused_arg.empty() || suspend_unfocused_arg == "yes";
+  const std::string& lua_console_arg = args.get_argument_value("-lua-console");
+  lua_console_enabled = lua_console_arg == "yes";
+  lua_script_arg = args.get_argument_value("-s");
 
   // Try to open the quest.
   const std::string& quest_path = get_quest_path(args);
@@ -166,7 +175,7 @@ MainLoop::MainLoop(const Arguments& args):
   }
 
   // Initialize engine features (audio, video...).
-  System::initialize(args);
+  System::initialize(args, resource_provider);
 
   // Read the quest resource list from data.
   CurrentQuest::initialize();
@@ -174,10 +183,7 @@ MainLoop::MainLoop(const Arguments& args):
   // Read the quest general properties.
   load_quest_properties();
 
-  // Create the quest surface.
-  root_surface = Surface::create(
-      Video::get_quest_size()
-  );
+  make_root_surface();
 
   // Run the Lua world.
   // Do this after the creation of the window, but before showing the window,
@@ -186,16 +192,13 @@ MainLoop::MainLoop(const Arguments& args):
 
   if(Video::get_renderer().needs_window_workaround()) {
     Video::show_window();
-    lua_context->initialize(args);
+    lua_context->initialize(lua_script_arg);
     Video::hide_window();
   } else {
-    lua_context->initialize(args);
+    lua_context->initialize(lua_script_arg);
   }
 
-  // Set up the Lua console.
-  const std::string& lua_console_arg = args.get_argument_value("-lua-console");
-  const bool enable_lua_console = lua_console_arg.empty() || lua_console_arg == "yes";
-  if (enable_lua_console) {
+  if (lua_console_enabled) {
     Logger::info("Lua console: yes");
     initialize_lua_console();
   }
@@ -241,6 +244,10 @@ MainLoop::~MainLoop() {
     game->stop();
     game.reset();  // While deleting the game, the Lua world must still exist.
   }
+
+  // The resource provider holds sound buffers that may be still in-use.
+  // Therefore, all sounds need to be stopped before clearing the resource provider.
+  Sound::stop_all();
 
   resource_provider.clear();
 
@@ -320,7 +327,7 @@ void MainLoop::set_exiting() {
  */
 bool MainLoop::is_resetting() {
 
-  return game != nullptr && next_game == nullptr;
+  return resetting;
 }
 
 /**
@@ -329,11 +336,7 @@ bool MainLoop::is_resetting() {
  */
 void MainLoop::set_resetting() {
 
-  // Reset the program.
-  if (game != nullptr) {
-    game->stop();
-  }
-  set_game(nullptr);
+  resetting = true;
 }
 
 /**
@@ -377,6 +380,10 @@ int MainLoop::push_lua_command(const std::string& command) {
  * Does nothing if the quest is missing.
  */
 void MainLoop::run() {
+  SOL_MAIN_THREAD;
+#ifdef SOLARUS_PROFILING
+  profiler::startListen();
+#endif
 
   if (!QuestFiles::quest_exists()) {
     return;
@@ -385,32 +392,95 @@ void MainLoop::run() {
   // Main loop.
   Logger::info("Simulation started");
 
-  uint32_t last_frame_date = System::get_real_time();
-  uint32_t lag = 0;  // Lose time of the simulation to catch up.
-  uint32_t time_dropped = 0;  // Time that won't be caught up.
+  if(CurrentQuest::get_properties().is_dynamic_timestep()) {
+    dynamic_run();
+  } else {
+    fixed_run();
+  }
+
+  Logger::info("Simulation finished");
+}
+
+void MainLoop::dynamic_run() {
+  uint64_t last_frame_date = System::get_real_time_ns();
+  int64_t delta_buffer = 0; //Delta buffer is used to store difference between perfect timing and realtime
+
+  auto delta_buffer_spill = 0.01f; //The lower it is the smoother we are but the less efficiently we catch up time
+  // The main loop basically repeats
+  // check_input(), update(), draw() and sleep().
+  // Each call to update() makes the simulated time advance until next frame.
+
+  while (!is_exiting()) {
+    SOL_PBLOCK("Solarus::MainLoop::Frame");
+    // 1. Detect and handle input events.
+    check_input();
+
+    if (!is_exiting() && !is_suspended()) {
+      // Measure the time of the last iteration.
+      uint64_t now = System::get_real_time_ns();
+      int64_t last_frame_duration = now - last_frame_date;
+      int64_t used_last_frame_duration = last_frame_duration;
+      last_frame_date = now;
+
+      int64_t perfect_frame_duration = Video::get_display_period_ns();
+
+      if (last_frame_duration > perfect_frame_duration * 5) {
+        //Do not try to catch up more than 10 frames, pretend everything is fine
+        used_last_frame_duration = perfect_frame_duration;
+      }
+
+      //Compute how much we spill from delta_buffer
+      int64_t spill = delta_buffer * delta_buffer_spill;
+
+      //Transfer time to smoothed duration
+      int64_t smoothed_duration = perfect_frame_duration + spill;
+
+      //Put current frame error in buffer
+      delta_buffer += used_last_frame_duration - smoothed_duration;
+
+      // 2. Update the world once
+      step(smoothed_duration);
+
+      // 3. Draw
+      draw();
+
+      //Debug
+      //std::cout << perfect_frame_duration << " " << last_frame_duration << " " << smoothed_duration << " " << delta_buffer << " " << spill << std::endl;
+    }
+    else
+    {
+      System::sleep(System::fixed_timestep_ns / 1000000);
+    }
+  }
+}
+
+void MainLoop::fixed_run() {
+  uint64_t last_frame_date = System::get_real_time_ns();
+  int64_t lag = 0;  // Lose time of the simulation to catch up.
+  int64_t time_dropped = 0;  // Time that won't be caught up.
 
   // The main loop basically repeats
   // check_input(), update(), draw() and sleep().
   // Each call to update() makes the simulated time advance one fixed step.
 
   while (!is_exiting()) {
-
+    SOL_PBLOCK("Solarus::MainLoop::Frame");
     // Measure the time of the last iteration.
-    uint32_t now = System::get_real_time() - time_dropped;
-    uint32_t last_frame_duration = now - last_frame_date;
+    uint64_t now = System::get_real_time_ns() - time_dropped;
+    uint64_t last_frame_duration = now - last_frame_date;
     last_frame_date = now;
     lag += last_frame_duration;
     // At this point, lag represents how much late the simulated time with
     // compared to the real time.
 
-    if (lag >= 200) {
+    if (lag >= 200000000) {
       // Huge lag: don't try to catch up.
       // Maybe we have just made a one-time heavy operation like loading a
       // big file, or the process was just unsuspended.
       // Let's fake the real time instead.
-      time_dropped += lag - System::timestep;
-      lag = System::timestep;
-      last_frame_date = System::get_real_time() - time_dropped;
+      time_dropped += lag - System::fixed_timestep_ns;
+      lag = System::fixed_timestep_ns;
+      last_frame_date = System::get_real_time_ns() - time_dropped;
     }
 
     // 1. Detect and handle input events.
@@ -421,17 +491,17 @@ void MainLoop::run() {
     int num_updates = 0;
     if (turbo && !is_suspended()) {
       // Turbo mode: always update at least once.
-      step();
-      lag -= System::timestep;
+      step(System::fixed_timestep_ns);
+      lag -= System::fixed_timestep_ns;
       ++num_updates;
     }
 
-    while (lag >= System::timestep &&
+    while (lag >= static_cast<int64_t>(System::fixed_timestep_ns) &&
            num_updates < 10 && // To draw sometimes anyway on very slow systems.
            !is_exiting() && !is_suspended()
     ) {
-      step();
-      lag -= System::timestep;
+      step(System::fixed_timestep_ns);
+      lag -= System::fixed_timestep_ns;
       ++num_updates;
     }
 
@@ -442,17 +512,17 @@ void MainLoop::run() {
 
     // 4. Sleep if we have time, to save CPU and GPU cycles.
     if (debug_lag > 0 && !turbo && !is_suspended()) {
+      SOL_PBLOCK("Debug lag")
       // Extra sleep time for debugging, useful to simulate slower systems.
-      System::sleep(debug_lag);
+      System::sleep(debug_lag / 1000000);
     }
 
-    last_frame_duration = (System::get_real_time() - time_dropped) - last_frame_date;
-    if (last_frame_duration < System::timestep && !turbo) {
-      System::sleep(System::timestep - last_frame_duration);
+    last_frame_duration = (System::get_real_time_ms() - time_dropped) - last_frame_date;
+    if (last_frame_duration < System::fixed_timestep_ns && !turbo) {
+      SOL_PBLOCK("Timestep sleep");
+      System::sleep(static_cast<uint32_t>((System::fixed_timestep_ns - last_frame_duration) / 1000000));
     }
   }
-
-  Logger::info("Simulation finished");
 }
 
 /**
@@ -461,12 +531,22 @@ void MainLoop::run() {
  * You can use this function if you want to simulate step by step.
  * Otherwise, use run() to execute the standard main loop.
  */
-void MainLoop::step() {
+void MainLoop::step(uint64_t timestep_ns) {
+  SOL_PFUN();
   if (game != nullptr) {
     game->update();
   }
   lua_context->update();
-  System::update();
+  System::update(timestep_ns);
+
+  // Cleanup the game if we are resetting.
+  if (resetting) {
+    if (game != nullptr) {
+      game->stop();
+    }
+    set_game(nullptr);
+    resetting = false;
+  }
 
   // Go to another game?
   if (next_game != game.get()) {
@@ -477,9 +557,10 @@ void MainLoop::step() {
       game->start();
     }
     else {
+      // Reset
       lua_context->exit();
-      lua_context->initialize(Arguments());
-      Music::stop_playing();
+      lua_context->initialize(lua_script_arg);
+      MusicSystem::stop_playing();
     }
   }
 }
@@ -488,16 +569,16 @@ void MainLoop::step() {
  * \brief Detects whether there were input events and if yes, handles them.
  */
 void MainLoop::check_input() {
-
+  SOL_PFUN();
   // Check SDL events.
-  std::unique_ptr<InputEvent> event = InputEvent::get_event();
-  while (event != nullptr) {
-    notify_input(*event);
-    event = InputEvent::get_event();
+  for(std::unique_ptr<InputEvent> event =  InputEvent::get_event();
+      event != nullptr;
+      event = InputEvent::get_event()) {
+     notify_input(*event);
   }
 
   // Check Lua requests.
-  if (!lua_commands.empty()) {
+  if (lua_console_enabled && !lua_commands.empty()) {
     std::lock_guard<std::mutex> lock(lua_commands_mutex);
     for (const std::string& command : lua_commands) {
       std::cout << "\n";  // To make sure that the command delimiter starts on a new line.
@@ -540,7 +621,7 @@ void MainLoop::setup_game_icon() {
 
   //else try to use default icon
   SDL_Surface_UniquePtr surface = Surface::create_sdl_surface_from_memory(quest_icon_data, quest_icon_data_len);
-  Debug::check_assertion(bool(surface), "Could not load built-in icon");
+  SOLARUS_REQUIRE(bool(surface), "Could not load built-in icon");
 
   Video::set_window_icon(surface.get());
 }
@@ -553,25 +634,32 @@ void MainLoop::setup_game_icon() {
  */
 void MainLoop::notify_input(const InputEvent& event) {
 
+  bool handled = false;
   if (event.is_window_closing()) {
     set_exiting();
   }
   else if (event.is_window_resizing()) {
+    // Let video module resize it's geometry
     Video::on_window_resized(event.get_window_size());
+    //Notify game if any
+    make_root_surface();
+    if(game) {
+      game->notify_window_size_changed(event.get_window_size());
+    }
   }
   else if (suspend_unfocused && event.is_window_focus_lost()) {
     if (!is_suspended()) {
       Logger::info("Simulation suspended");
       set_suspended(true);
       Sound::pause_all();
-      Music::pause_playing();
+      MusicSystem::pause_playing();
     }
   }
   else if (suspend_unfocused && event.is_window_focus_gained()) {
     if (is_suspended()) {
       Logger::info("Simulation resumed");
       set_suspended(false);
-      Music::resume_playing();
+      MusicSystem::resume_playing();
       Sound::resume_all();
     }
   }
@@ -583,12 +671,54 @@ void MainLoop::notify_input(const InputEvent& event) {
       exiting = true;
     }
 #endif
+  } else if (event.is_controller_event()) {
+    // First check if main joypad disconnected
+    if(InputEvent::is_legacy_joypad_enabled() &&
+       event.is_joypad_removed() &&
+       game &&
+       (game->get_controls().get_joypad() == event.get_joypad())) {
+      // Main controls joypad is removed, try to fallback on another joypad
+      auto new_joy = InputEvent::other_joypad(event.get_joypad());
+      if(new_joy) {
+        Logger::info("Using joystick: \"" + new_joy->get_name() + "\"");
+      }
+      game->get_controls().set_joypad(new_joy); //Could set joypad to nullptr, leaving it without joy
+    }
+
+    handled = event.notify_joypad(*lua_context);
+
+    if(InputEvent::is_legacy_joypad_enabled() && event.is_joypad_added() && game && !game->get_controls().get_joypad()) {
+      // A joypad was connected and main commands did not had a joypad
+      auto new_joy = event.get_joypad();
+      if(new_joy) {
+        Logger::info("Using joystick: \"" + new_joy->get_name() + "\"");
+      }
+      game->get_controls().set_joypad(new_joy);
+    }
   }
 
   // Send the event to Lua and to the current screen.
-  bool handled = lua_context->notify_input(event);
+  if(!handled) {
+    handled = lua_context->notify_input(event);
+  }
+
   if (!handled && game != nullptr) {
-    game->notify_input(event);
+    handled = game->notify_input(event);
+  }
+
+  if(!handled) {
+    commands_dispatcher.notify_input(event);
+  }
+}
+
+void MainLoop::notify_control(const ControlEvent& event) {
+
+  if (lua_context->notify_control(event)) {
+    return;
+  }
+
+  if (game != nullptr) {
+    game->notify_control(event);
   }
 }
 
@@ -598,11 +728,12 @@ void MainLoop::notify_input(const InputEvent& event) {
  * This function is called repeatedly by the main loop.
  */
 void MainLoop::draw() {
-
+  SOL_PFUN();
   root_surface->clear();
+  Video::clear_screen_surface();
 
   if (game != nullptr) {
-    game->draw(root_surface);
+    game->draw(root_surface, Video::get_screen_surface());
   }
   lua_context->main_on_draw(root_surface);
   Video::render(root_surface);
@@ -655,6 +786,9 @@ void MainLoop::initialize_lua_console() {
     std::string line;
     while (!is_exiting()) {
 
+      // Note: don't enable the console on Windows when stdin is the default,
+      // it continuously receives false positives and eats tons of CPU.
+      // This should rather be used with a pipe typically from the editor.
       if (std::getline(std::cin, line)) {
 
         while (!line.empty() && std::isspace(line.at(line.size() - 1))) {
@@ -681,6 +815,24 @@ void MainLoop::quit_lua_console() {
   }
 
   stdin_thread.join();
+}
+
+/**
+ * @brief create the root surface
+ */
+void MainLoop::make_root_surface() {
+  Size s = Video::get_quest_size();
+  switch (Video::get_geometry_mode()) {
+  case Video::GeometryMode::DYNAMIC_ABSOLUTE:
+  case Video::GeometryMode::DYNAMIC_QUEST_SIZE:
+    s = Video::get_window_size();
+    break;
+  default:
+    break;
+  }
+  if(!root_surface or root_surface->get_size() != s) {
+    root_surface = Surface::create(s);
+  }
 }
 
 }

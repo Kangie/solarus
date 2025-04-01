@@ -4,11 +4,11 @@ local super_spin_attack_ability_used = false
 local sword = game:get_item("sword")
 
 game:set_ability("sword", 1)
-game:set_ability("sword_knowledge", 1)
+game:set_ability("sword_spin_attack", 2)
 
 function sword:on_ability_used(ability)
 
-  if ability == "sword_knowledge" then
+  if ability == "sword_spin_attack" then
     super_spin_attack_ability_used = true
   end
 end

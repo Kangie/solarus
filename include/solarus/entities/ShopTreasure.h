@@ -69,11 +69,13 @@ class ShopTreasure: public Entity {
     const Treasure& get_treasure() const;
     int get_price() const;
     const std::string& get_dialog_id() const;
+    const std::string& get_cannot_buy_sound_id() const;
+    void set_cannot_buy_sound_id(const std::string& sound_id);
 
     bool is_sword_ignored() const override;
     bool is_obstacle_for(Entity& other) override;
     void notify_collision(Entity& entity_overlapping, CollisionMode collision_mode) override;
-    bool notify_action_command_pressed() override;
+    bool notify_action_command_pressed(Hero& hero) override;
 
     void update() override;
     void built_in_draw(Camera& camera) override;
@@ -84,6 +86,7 @@ class ShopTreasure: public Entity {
     Treasure treasure;                /**< The treasure the player can buy. */
     int price;                        /**< The treasure's price. */
     std::string dialog_id;            /**< Id of the dialog describing the treasure. */
+    std::string cannot_buy_sound_id;  /**< Id of the sound played when the played cannot buy the item. */
 
     // Displaying.
     SpritePtr treasure_sprite;        /**< Sprite of the treasure. */

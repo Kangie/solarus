@@ -60,14 +60,7 @@ void initialize() {
     const std::string error_message = lua_tostring(l, -1);
     lua_close(l);
 
-    if (std::string(buffer).find("[info]")) {
-      // Quest format of Solarus 0.9.
-      Debug::die(std::string("This quest is made for Solarus 0.9 but you are running Solarus ")
-          + SOLARUS_VERSION);
-    }
-    else {
-      Debug::die(std::string("Failed to load quest.dat: ") + error_message);
-    }
+    Debug::die(std::string("Failed to load quest.dat: ") + error_message);
   }
 
   // Normal case.
@@ -166,7 +159,7 @@ bool has_language(const std::string& language_code) {
  */
 void set_language(const std::string& language_code) {
 
-  Debug::check_assertion(has_language(language_code),
+  SOLARUS_REQUIRE(has_language(language_code),
       std::string("No such language: '") + language_code + "'");
 
   get_language() = language_code;
@@ -302,7 +295,7 @@ bool dialog_exists(const std::string& dialog_id) {
  */
 const Dialog& get_dialog(const std::string& dialog_id) {
 
-  Debug::check_assertion(dialog_exists(dialog_id), std::string(
+  SOLARUS_REQUIRE(dialog_exists(dialog_id), std::string(
     "No such dialog: '") + dialog_id + "'");
   return get_dialogs()[dialog_id];
 }

@@ -17,7 +17,7 @@
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Equipment.h"
 #include "solarus/core/Game.h"
-#include "solarus/core/GameCommands.h"
+#include "solarus/core/Controls.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/core/System.h"
@@ -64,7 +64,7 @@ void Hero::SwordLoadingState::start(const State* previous_state) {
   }
   else {
     // Allowed after a delay.
-    sword_loaded_date = System::now() + spin_attack_delay;
+    sword_loaded_date = System::now_ms() + spin_attack_delay;
   }
 }
 
@@ -79,8 +79,10 @@ void Hero::SwordLoadingState::update() {
     return;
   }
 
-  bool attack_pressed = get_commands().is_command_pressed(GameCommand::ATTACK);
-  uint32_t now = System::now();
+
+  bool attack_pressed = get_commands().is_command_pressed(CommandId::ATTACK);
+  uint32_t now = System::now_ms();
+
 
   // detect when the sword is loaded (i.e. ready for a spin attack)
   if (attack_pressed &&
@@ -94,15 +96,17 @@ void Hero::SwordLoadingState::update() {
   if (!attack_pressed) {
     // the player has just released the sword key
 
-    // stop loading the sword, go to the normal state or make a spin attack
+    // stop charging the sword, go to the normal state or make a spin attack
     Hero& hero = get_entity();
     if (!sword_loaded) {
-      // the sword was not loaded yet: go to the normal state
-      hero.set_state(std::make_shared<FreeState>(hero));
+      // the sword was not charged yet: go to the normal state
+      hero.start_free();
     }
-    else {
-      // the sword is loaded: release a spin attack
+    else if (get_equipment().has_ability(Ability::SWORD_SPIN_ATTACK)) {
+      // the sword is charged: release a spin attack
       hero.set_state(std::make_shared<SpinAttackState>(hero));
+    } else {
+      hero.start_free();
     }
   }
 }
@@ -116,7 +120,7 @@ void Hero::SwordLoadingState::set_suspended(bool suspended) {
   PlayerMovementState::set_suspended(suspended);
 
   if (!suspended) {
-    sword_loaded_date += System::now() - get_when_suspended();
+    sword_loaded_date += System::now_ms() - get_when_suspended();
   }
 }
 
@@ -226,7 +230,10 @@ void Hero::SwordLoadingState::play_load_sound() {
     Sound::play(custom_sound_name); // this particular sword has a custom loading sound effect
   }
   else {
-    Sound::play("sword_spin_attack_load");
+    const std::string& sword_spin_attack_load_sound_id = get_entity().get_spin_attack_load_sound_id();
+    if (!sword_spin_attack_load_sound_id.empty()) {
+      Sound::play(sword_spin_attack_load_sound_id);
+    }
   }
 }
 

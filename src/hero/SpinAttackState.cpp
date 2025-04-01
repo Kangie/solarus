@@ -16,11 +16,8 @@
  */
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Equipment.h"
-#include "solarus/core/Game.h"
 #include "solarus/core/Geometry.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/entities/Enemy.h"
-#include "solarus/hero/FreeState.h"
 #include "solarus/hero/HeroSprites.h"
 #include "solarus/hero/SpinAttackState.h"
 #include "solarus/movements/CircleMovement.h"
@@ -54,7 +51,9 @@ void Hero::SpinAttackState::start(const State* previous_state) {
 
   // start the animation
   Hero& hero = get_entity();
-  if (get_equipment().has_ability(Ability::SWORD_KNOWLEDGE)) {
+  const int spin_ability = get_equipment().get_ability(Ability::SWORD_SPIN_ATTACK);
+  if (spin_ability >= 2) {
+    // Super spin attack.
     get_sprites().set_animation_super_spin_attack();
     std::shared_ptr<CircleMovement> movement =
         std::make_shared<CircleMovement>();
@@ -65,9 +64,10 @@ void Hero::SpinAttackState::start(const State* previous_state) {
     movement->set_max_rotations(3);
     movement->set_clockwise(true);
     hero.set_movement(movement);
-    get_equipment().notify_ability_used(Ability::SWORD_KNOWLEDGE);
+    get_equipment().notify_ability_used(Ability::SWORD_SPIN_ATTACK);
   }
   else {
+    // Normal spin attack.
     get_sprites().set_animation_spin_attack();
   }
 }
@@ -95,7 +95,7 @@ void Hero::SpinAttackState::update() {
   // check the animation
   Hero& hero = get_entity();
   if (get_sprites().is_animation_finished()) {
-    hero.set_state(std::make_shared<FreeState>(hero));
+    hero.start_free();
   }
 
   // check the movement if any
@@ -104,7 +104,7 @@ void Hero::SpinAttackState::update() {
 
     if (!being_pushed) {
       // end of a super spin attack
-      hero.set_state(std::make_shared<FreeState>(hero));
+      hero.start_free();
     }
   }
 }
@@ -167,7 +167,10 @@ void Hero::SpinAttackState::play_spin_attack_sound() {
     Sound::play(custom_sound_name); // this particular sword has a spin attack sound effect
   }
   else {
-    Sound::play("sword_spin_attack_release");
+    const std::string& sword_spin_attack_release_sound_id = get_entity().get_spin_attack_release_sound_id();
+    if (!sword_spin_attack_release_sound_id.empty())  {
+      Sound::play(sword_spin_attack_release_sound_id);
+    }
   }
 }
 
