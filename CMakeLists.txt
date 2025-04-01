@@ -100,7 +100,7 @@ set_target_properties(qlementine-icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG af82123cbafec0762721bd595ab38c49b4b9cb9b #dev
+  GIT_TAG v1.2.0
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -239,7 +239,7 @@ endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
   # ${BUNDLE_ID_OPTION}
-  OUTPUT_NAME ${EXECUTABLE_NAME} 
+  OUTPUT_NAME ${EXECUTABLE_NAME}
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
   MACOSX_BUNDLE_BUNDLE_NAME ${DISPLAY_NAME}
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -457,7 +457,7 @@ if(UNIX AND NOT APPLE)
   install(CODE "execute_process(COMMAND touch /root/.config/mimeapps.list)") # Ensure the mimeapps.list file exists.
   install(CODE "execute_process(COMMAND xdg-mime default ${APP_IDENTIFIER}.desktop application/x-solarus)")
 
-endif() 
+endif()
 
 qt_finalize_executable(${PROJECT_NAME})
 
