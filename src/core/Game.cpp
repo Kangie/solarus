@@ -933,10 +933,10 @@ const MapPtr& Game::prepare_map(const std::string& map_id) {
   map->load(*this);
   map->check_suspended();
 
-  auto emp_it = current_maps.emplace(current_maps.begin(), map); //Emplace front to have default map being the new one
+  // Emplace back to have default map being the old one, as the hero is still on the old one.
+  auto emp_it = current_maps.emplace(current_maps.end(), map);
   return *emp_it;
 }
-
 
 /**
  * @brief Remove an entity from a map and ensure the map is unloaded if necessary
