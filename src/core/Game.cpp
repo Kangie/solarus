@@ -108,7 +108,6 @@ Game::Game(MainLoop& main_loop, const SavegamePtr& savegame):
     starting_destination_name = "";  // Default destination.
   }
 
-
   teleport_hero(get_hero(), starting_map_id, starting_destination_name, Transition::Style::FADE);
 }
 
@@ -760,7 +759,7 @@ void Game::teleport_hero(
       Debug::error("Teleporting a hero without camera from no map to \"" + map_id + "\"");
     }
 
-    auto& map = hero->get_map();
+    Map& map = hero->get_map();
 
     if (map.get_entities().get_cameras().size() != 1){
        Debug::error("Ambiguous teleportation of a hero without camera from a map with "
@@ -772,8 +771,10 @@ void Game::teleport_hero(
     set_suspended_by_script(false);  // Keep the pre 2.0 behavior
 
     // Relink unique camera to hero before teleportation
-    auto cam = map.get_camera();
+    CameraPtr cam = map.get_camera();
     hero->set_linked_camera(cam);
+    cam->set_position_on_screen({0, 0});
+    cam->set_size(Video::get_quest_size());
     teleport_camera(cam,
                     map_id,
                     a_destination_name,
@@ -853,21 +854,23 @@ void Game::teleport_camera(const CameraPtr& camera,
 
   //Camera teleported without hero, stop tracking
   if(!opt_hero) {
-      camera->start_manual();
+    camera->start_manual();
   }
 
   // Add the teleportation details to the list of current teleportations
   cameras_teleportations.emplace_back(std::move(ct));
 
-  if(!camera->is_on_map()) {
-    //Fast forward to opening transition
+  if (!camera->is_on_map()) {
+    // Fast forward to opening transition
     auto& ct = cameras_teleportations.back();
-    if(started) {
+    if (started) {
       teleportation_change_map(ct);
     } else {
       // Place the hero on the very first map before game starts
       ct.camera->place_on_map(*ct.next_map);
-      if(opt_hero) opt_hero->place_on_map(*ct.next_map);
+      if (opt_hero) {
+        opt_hero->place_on_map(*ct.next_map);
+      }
     }
   }
 }
