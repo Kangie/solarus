@@ -345,6 +345,6 @@ launcher-trigger:
   stage: trigger
   trigger:
     project: solarus-games/solarus-launcher
-    branch: master  # TODO: use $CI_COMMIT_BRANCH when 'dev' is available in launcher
+    branch: $CI_COMMIT_BRANCH
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
