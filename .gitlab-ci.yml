@@ -5,7 +5,7 @@
 # An initial prepare stage is used to download build and package
 # dependencies. Packaging uses two jobs: staging-install and package.
 #
-# There are four build targets currently supported:
+# There are three build targets currently supported:
 #
 # - Linux 64-bit (using gcc)
 # - macOS (using Xcode)
