@@ -46,3 +46,6 @@ set(SOLARUS_OPENAL_EXTENSIONS_RECONNECT ${SOLARUS_INITIAL_OPENAL_EXTENSIONS_RECO
 
 # Profiling instrumentation
 set(SOLARUS_PROFILING "OFF" CACHE BOOL "Enable compiling with easy_profiler embedded")
+
+# Enable installing community-sourced SDL Game Controller Database file.
+set(SOLARUS_GAMECONTROLLERDB_INSTALL "ON" CACHE BOOL "Enable installing community-sourced SDL Game Controller database file")

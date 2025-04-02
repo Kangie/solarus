@@ -20,7 +20,9 @@ install(DIRECTORY
 )
 
 # Install the SDL game controller database into the data directory.
-install(FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt"
-  DESTINATION ${SOLARUS_INSTALL_DATADIR}
-)
+if(SOLARUS_GAMECONTROLLERDB_INSTALL)
+  install(FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/gamecontrollerdb.txt"
+    DESTINATION ${SOLARUS_INSTALL_DATADIR}
+  )
+endif()
