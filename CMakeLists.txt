@@ -129,7 +129,7 @@ if(SOLARUS_FETCHCONTENT)
   set(SOLARUS_DEPLOYMENT ${CMAKE_OSX_DEPLOYMENT_TARGET})
   FetchContent_Declare(solarus
     GIT_REPOSITORY "https://gitlab.com/solarus-games/solarus.git"
-    GIT_TAG 7cd7d55137f41566c78fa59c081cf7ad8d962b25 # dev
+    GIT_TAG v2.0.0
   )
   FetchContent_MakeAvailable(solarus)
   set_target_properties(solarus
