@@ -9,7 +9,7 @@
 
 **Solarus** is a free and open-source 2D game engine written in C++, that can run games scripted in Lua. It has been designed with 16-bit classic Action-RPGs in mind, and is available on a wide range of platforms.
 
-You'll find more information about Solarus on <https://www.solarus-games.org>, such as downloads, games, news, tutorials and more.
+More information can be found in the [official website](https://www.solarus-games.org), including downloads, games, news, tutorials and more.
 
 ![Sample quest screenshot](images/solarus_screenshot.png)
 
@@ -30,6 +30,10 @@ To compile Solarus, instructions can be found in the [compilation.md](compilatio
 ## Create your own game
 
 See [tutorials](https://docs.solarus-games.org/) (video and text), and [documentation](https://doxygen.solarus-games.org/latest) on Solarus website.
+
+## Repository Management
+
+The repository management policy can be found in the [repository.md](repository.md) file.
 
 ## License
 
