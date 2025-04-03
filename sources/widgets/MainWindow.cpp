@@ -74,7 +74,7 @@ void MainWindow::setAppIcon() {
     QIcon::Mode::Selected,
   };
   static constexpr std::array<int, 12> dimensions{ 16, 20, 24, 32, 40, 48, 64, 96, 128, 256, 512, 1024 };
-  static constexpr const char* path_base(":/solarus/launcher/resources/icon/solarus_launcher_icon_");
+  static constexpr const char* path_base(":/solarus/launcher/resources/app_icon/solarus_launcher_icon_");
   static constexpr const char* path_ext(".png");
 
   QIcon app_icon;
