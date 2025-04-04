@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/main_window.h"
+#include "config.h"
 #include "editor_settings.h"
 #include "editor_style.h"
 #include "version.h"

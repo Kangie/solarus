@@ -27,6 +27,7 @@
 #include "widgets/package_dialog.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
+#include "config.h"
 #include "editor_style.h"
 #include "file_tools.h"
 #include "map_model.h"
