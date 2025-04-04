@@ -28,6 +28,7 @@
 #include <QMimeData>
 #include <QDropEvent>
 #include <QFileInfo>
+#include <QSysInfo>
 
 #include <oclero/qlementine/utils/WidgetUtils.hpp>
 #include <oclero/qlementine/widgets/Expander.hpp>
@@ -67,6 +68,15 @@ MainWindow::MainWindow(Controller* controller, QWidget* parent)
 }
 
 void MainWindow::setAppIcon() {
+  // On macOS, the window icon doesn't need to be changed.
+  // The application will use the bundle icon, which is at the correct size,
+  // and displays a specific padding to follow Apple's guidelines.
+  const auto platform = QSysInfo::productType();
+  if (platform == QStringLiteral("osx") || platform == QStringLiteral("macos"))
+    return;
+
+  // On the other platforms, the icon can be changed, and it doesn't need any padding.
+  // (i.e. the image should take all the available space).
   static constexpr std::array<QIcon::Mode, 4> modes{
     QIcon::Mode::Normal,
     QIcon::Mode::Disabled,
