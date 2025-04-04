@@ -354,6 +354,7 @@ void Controller::openPreferencesDialog() {
 
 void Controller::openAboutDialog() {
   auto* dialog = new oclero::qlementine::AboutDialog(qApp->activeWindow());
+  dialog->setIcon(QIcon(":/solarus/launcher/resources/app_icon/solarus_launcher_icon.ico"));
   dialog->setWindowTitle(i18n::aboutWindowTitle(QApplication::applicationDisplayName()));
   dialog->setWebsiteUrl(PROJECT_HOMEPAGE_URL);
   dialog->setDescription(i18n::appDescription());
