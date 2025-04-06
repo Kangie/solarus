@@ -199,7 +199,7 @@ void Controller::setupRunner() {
 
 void Controller::loadLanguages() {
   constexpr auto sourceDirPath = ":/i18n/";
-  constexpr auto fileName = PROJECT_APP_EXECUTABLE_NAME;
+  constexpr auto fileName = PROJECT_QM_PREFIX;
   constexpr auto separator = "_";
 
   constexpr auto filterFlags = QDir::Filter::NoDotAndDotDot | QDir::Filter::Files | QDir::Filter::Readable;
@@ -211,8 +211,10 @@ void Controller::loadLanguages() {
     if (!entry.baseName().startsWith(QStringLiteral("qt"))) {
       const auto baseName = entry.baseName();
       const auto hasPrefix = !filePrefix.isEmpty() && baseName.startsWith(filePrefix);
-      const auto& languageName = hasPrefix ? baseName.mid(filePrefix.length()) : baseName;
-      _languages.append(languageName);
+      if (hasPrefix) {
+        const auto& languageName = baseName.mid(filePrefix.length());
+        _languages.append(languageName);
+      }
     }
   }
 

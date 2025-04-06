@@ -205,11 +205,15 @@ qt_add_resources(${PROJECT_NAME} "resources"
     resources/age_ratings/warning.svg
 )
 
+# Qt6 automatically uses the project name as the prefix for the translation files.
+# It is possibble to use a custom prefix, but to keep things simple,
+# we will use the built-in Qt6 translation system.
+set(QM_PREFIX "${PROJECT_NAME}")
 if (Qt6_VERSION VERSION_LESS 6.7)
   qt_add_translations(${PROJECT_NAME}
     TS_FILES
-      ${CMAKE_CURRENT_SOURCE_DIR}/i18n/${PROJECT_NAME}_en_US.ts
-      ${CMAKE_CURRENT_SOURCE_DIR}/i18n/${PROJECT_NAME}_fr_FR.ts
+      ${CMAKE_CURRENT_SOURCE_DIR}/i18n/${QM_PREFIX}_en_US.ts
+      ${CMAKE_CURRENT_SOURCE_DIR}/i18n/${QM_PREFIX}_fr_FR.ts
   )
 else()
   qt_add_translations(${PROJECT_NAME}
@@ -261,6 +265,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
   PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
   PROJECT_APP_EXECUTABLE_NAME="${EXECUTABLE_NAME}"
+  PROJECT_QM_PREFIX="${QM_PREFIX}"
   PROJECT_DISPLAY_NAME="${DISPLAY_NAME}"
   PROJECT_APP_COPYRIGHT="${APP_COPYRIGHT}"
   PROJECT_APP_ORGANISATION="${APP_ORGANISATION}"
@@ -358,7 +363,6 @@ if(DEPLOY_SCRIPT)
 endif()
 
 # Add Info.plist to the macOS bundle only on macOS.
-set(EXECUTABLE_NAME ${EXECUTABLE_NAME})
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist")
   configure_file(
