@@ -100,7 +100,7 @@ set_target_properties(qlementine-icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG v1.2.0
+  GIT_TAG v1.2.1
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -151,7 +151,7 @@ endif()
 # Icon.
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(MACOSX_BUNDLE_ICON_FILE "solarus_launcher_icon.icns")
-  set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/${MACOSX_BUNDLE_ICON_FILE}")
+  set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/${MACOSX_BUNDLE_ICON_FILE}")
   set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
   set(MACOSX_DOCUMENT_ICON_FILE "macos_doc_icon.icns")
@@ -184,20 +184,20 @@ qt_add_resources(${PROJECT_NAME} "resources"
     # resources/flags/pt.svg
     # resources/flags/ru.svg
     # resources/flags/zh.svg
-    resources/icon/solarus_launcher_icon_16.png
-    resources/icon/solarus_launcher_icon_20.png
-    resources/icon/solarus_launcher_icon_32.png
-    resources/icon/solarus_launcher_icon_40.png
-    resources/icon/solarus_launcher_icon_48.png
-    resources/icon/solarus_launcher_icon_64.png
-    resources/icon/solarus_launcher_icon_96.png
-    resources/icon/solarus_launcher_icon_128.png
-    resources/icon/solarus_launcher_icon_256.png
-    resources/icon/solarus_launcher_icon_512.png
-    resources/icon/solarus_launcher_icon_1024.png
-    resources/icon/solarus_launcher_icon.icns
-    resources/icon/solarus_launcher_icon.ico
-    resources/icon/solarus_launcher_icon.svg
+    resources/app_icon/solarus_launcher_icon_16.png
+    resources/app_icon/solarus_launcher_icon_20.png
+    resources/app_icon/solarus_launcher_icon_32.png
+    resources/app_icon/solarus_launcher_icon_40.png
+    resources/app_icon/solarus_launcher_icon_48.png
+    resources/app_icon/solarus_launcher_icon_64.png
+    resources/app_icon/solarus_launcher_icon_96.png
+    resources/app_icon/solarus_launcher_icon_128.png
+    resources/app_icon/solarus_launcher_icon_256.png
+    resources/app_icon/solarus_launcher_icon_512.png
+    resources/app_icon/solarus_launcher_icon_1024.png
+    resources/app_icon/solarus_launcher_icon.icns
+    resources/app_icon/solarus_launcher_icon.ico
+    resources/app_icon/solarus_launcher_icon.svg
     resources/themes/dark.json
     resources/themes/light.json
     resources/age_ratings/all.svg
@@ -385,7 +385,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
   # We embed both the app icon and its document icon in the exe.
   file(TO_NATIVE_PATH
-    "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.ico"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus_launcher_icon.ico"
     WINDOWS_APPLICATION_ICON_ABSOLUTE_PATH
   )
   file(TO_NATIVE_PATH
@@ -428,23 +428,23 @@ if(UNIX AND NOT APPLE OR MINGW)
 
   # Raster images for icon sizes under 48x48 pixels.
   foreach(SIZE IN ITEMS 16 20 24 32 40 48)
-    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon_${SIZE}.png
+    install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus_launcher_icon_${SIZE}.png
       DESTINATION share/icons/hicolor/${SIZE}x${SIZE}/apps RENAME ${APP_IDENTIFIER}.png
     )
   endforeach(SIZE)
 
   # Raster image for desktops that don't support multiple sizes.
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon_512.png
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus_launcher_icon_512.png
     DESTINATION share/pixmaps RENAME ${APP_IDENTIFIER}.png
   )
 
   # Vector images, automatically chosen for icon sizes above 48x48 pixels
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon.svg
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus_launcher_icon.svg
     DESTINATION share/icons/hicolor/scalable/apps RENAME ${APP_IDENTIFIER}.svg
   )
 
   # Monochromatic vector image for some desktop environments that need it.
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icon/solarus_launcher_icon_symbolic.svg
+  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus_launcher_icon_symbolic.svg
     DESTINATION share/icons/hicolor/symbolic/apps RENAME ${APP_IDENTIFIER}.svg
   )
 
