@@ -19,7 +19,7 @@ void configureQApplication() {
   QGuiApplication::setOrganizationName(PROJECT_APP_ORGANISATION);
   QGuiApplication::setOrganizationDomain(PROJECT_APP_ORGANISATION_DOMAIN);
   QGuiApplication::setApplicationVersion(PROJECT_VERSION);
-  QGuiApplication::setDesktopFileName(PROJECT_APP_IDENTIFIER ".desktop");
+  QGuiApplication::setDesktopFileName(PROJECT_APP_IDENTIFIER);
 }
 
 Application::Application(int& argc, char** argv)
