@@ -90,6 +90,7 @@ include(FetchContent)
 FetchContent_Declare(qlementine-icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
   GIT_TAG v1.8.0
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(qlementine-icons)
 set_target_properties(qlementine-icons
@@ -101,6 +102,7 @@ set_target_properties(qlementine-icons
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
   GIT_TAG v1.2.1
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(qlementine)
 set_target_properties(qlementine
@@ -111,6 +113,7 @@ set_target_properties(qlementine
 FetchContent_Declare(QtAppInstanceManager
  GIT_REPOSITORY "https://github.com/oclero/qtappinstancemanager.git"
  GIT_TAG v1.3.0
+ EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(QtAppInstanceManager)
 set_target_properties(QtAppInstanceManager
