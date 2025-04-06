@@ -100,6 +100,7 @@ set(solarus_quest_editor_SOURCES
   include/border_kind_traits.h
   include/border_set_model.h
   include/color.h
+  include/config.h.in
   include/dialogs_model.h
   include/editor_exception.h
   include/editor_settings.h

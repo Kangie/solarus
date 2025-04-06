@@ -52,7 +52,7 @@ include(FetchContent)
 FetchContent_Declare(
   qlementine
   GIT_REPOSITORY https://github.com/oclero/qlementine.git
-  GIT_TAG        v1.2.0
+  GIT_TAG        v1.2.1
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(qlementine)

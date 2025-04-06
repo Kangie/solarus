@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/main_window.h"
+#include "config.h"
 #include "editor_settings.h"
 #include "editor_style.h"
 #include "version.h"
@@ -31,6 +32,7 @@
 #include <QTranslator>
 #include <QIcon>
 #include <QPixmap>
+#include <QSysInfo>
 #include <array>
 
 // SDLmain is required in some platforms, i.e. Windows, for proper initialization.
@@ -61,6 +63,12 @@ void setup_application_information() {
  * @brief Sets the QGuiApplication icon. Must done after creating a QApplication.
  */
 void set_application_icon() {
+
+  // The bundle icon is used on macOS/OS X. No need to change it.
+  const QString platform = QSysInfo::productType();
+  if (platform == QStringLiteral("osx") || platform == QStringLiteral("macos"))
+    return;
+
   static constexpr std::array<QIcon::Mode, 4> modes{
       QIcon::Mode::Normal,
       QIcon::Mode::Disabled,
@@ -68,13 +76,13 @@ void set_application_icon() {
       QIcon::Mode::Selected,
   };
   static constexpr std::array<int, 12> dimensions{ 16, 20, 24, 32, 40, 48, 64, 96, 128, 256, 512, 1024 };
-  static constexpr const char* path_base(":/app_icon/solarus-quest-editor");
+  static constexpr const char* path_base(":/app_icon/solarus-editor");
   static constexpr const char* path_ext("png");
 
   QIcon app_icon;
   for (const int dimension : dimensions) {
-    const QString path = QString("%1-%2x%2.%3").arg(path_base, QString::number(dimension), path_ext);
-    QPixmap pixmap(path);
+    const QString path = QString("%1-%2.%3").arg(path_base, QString::number(dimension), path_ext);
+    const QPixmap pixmap(path);
     if (pixmap.isNull())
       continue;
     for (const QIcon::Mode mode : modes) {

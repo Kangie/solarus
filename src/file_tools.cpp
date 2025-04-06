@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "config.h"
 #include "editor_exception.h"
 #include "file_tools.h"
 #include <solarus/core/Common.h>
@@ -59,6 +60,7 @@ void initialize_assets() {
   // Try the current directory first.
   potential_paths << executable_path + "/assets";
 
+#ifdef SOLARUSEDITOR_BINDIR_PATH
   // Try the source path if we are not running the installed executable.
   bool running_installed_executable = (executable_path == SOLARUSEDITOR_BINDIR_PATH);
 #ifdef SOLARUSEDITOR_SOURCE_PATH
@@ -72,6 +74,7 @@ void initialize_assets() {
   if (running_installed_executable) {
     potential_paths << SOLARUSEDITOR_DATADIR_PATH "/assets";
   }
+#endif
 #endif
 #endif
 

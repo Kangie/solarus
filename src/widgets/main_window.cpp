@@ -27,6 +27,7 @@
 #include "widgets/package_dialog.h"
 #include "widgets/pair_spin_box.h"
 #include "audio.h"
+#include "config.h"
 #include "editor_style.h"
 #include "file_tools.h"
 #include "map_model.h"
@@ -1359,6 +1360,7 @@ void MainWindow::on_action_website_triggered() {
 void MainWindow::on_action_about_triggered() {
 
   auto* dialog = new oclero::qlementine::AboutDialog(qApp->activeWindow());
+  dialog->setIcon(QIcon(":/app_icon/solarus-editor-1024.png"));
   dialog->setWindowTitle(QApplication::translate("SolarusEditor::AboutDialog",
      "About %0").arg(QApplication::applicationDisplayName()));
   dialog->setWebsiteUrl(SOLARUSEDITOR_WEBSITE);
