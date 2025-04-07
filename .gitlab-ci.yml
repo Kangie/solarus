@@ -15,10 +15,6 @@
 #
 # At the moment, only Linux-based testing is available. However, Windows
 # staging-install and package jobs will not run if Linux testing fails.
-#
-# If a pipeline is started for the 'dev' or 'master' branches, a pipeline
-# for the Solarus Launcher and Editor repositories on the same branch will
-# be triggered after the packaging jobs are completed.
 
 variables:
   IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
@@ -31,7 +27,6 @@ stages:
   - install
   - package
   - deploy
-  - trigger
 
 #------------------------------------------------------------------------------------
 # Template for Generic Build Jobs
@@ -258,29 +253,3 @@ docs-deploy:
     GIT_STRATEGY: none  # no repository content is needed
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-
-#------------------------------------------------------------------------------------
-# Trigger CI/CD pipeline for the Solarus Quest Editor
-#
-# Only the 'dev' or 'master' branches are used for this trigger.
-
-quest-editor-trigger:
-  stage: trigger
-  trigger:
-    project: solarus-games/solarus-quest-editor
-    branch: $CI_COMMIT_BRANCH
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
-
-#------------------------------------------------------------------------------------
-# Trigger CI/CD pipeline for the Solarus Launcher
-#
-# Only the 'dev' or 'master' branches are used for this trigger.
-
-launcher-trigger:
-  stage: trigger
-  trigger:
-    project: solarus-games/solarus-launcher
-    branch: $CI_COMMIT_BRANCH
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
