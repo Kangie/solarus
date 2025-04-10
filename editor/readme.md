@@ -106,7 +106,7 @@ make
 #### Run
 
 ```bash
-./solarus-quest-editor
+./solarus-editor
 ```
 
 ### Adding Documentation
