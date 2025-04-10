@@ -3,13 +3,13 @@
 <plist version="1.0">
   <dict>
     <key>CFBundleIdentifier</key>
-    <string>@APP_IDENTIFIER@</string>
+    <string>@SOLARUSLAUNCHER_APP_IDENTIFIER@</string>
     <key>CFBundleName</key>
-    <string>@DISPLAY_NAME@</string>
+    <string>@SOLARUSLAUNCHER_DISPLAY_NAME@</string>
     <key>CFBundleExecutable</key>
-    <string>@EXECUTABLE_NAME@</string>
+    <string>@SOLARUSLAUNCHER_EXECUTABLE_NAME@</string>
     <key>CFBundleIconFile</key>
-    <string>@MACOSX_BUNDLE_ICON_FILE@</string>
+    <string>@SOLARUSLAUNCHER_MACOS_BUNDLE_ICON_FILE@</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -26,20 +26,20 @@
     <array>
       <dict>
         <key>CFBundleTypeName</key>
-        <string>@DOCUMENT_NAME@</string>
+        <string>@SOLARUSLAUNCHER_DOCUMENT_NAME@</string>
         <key>CFBundleTypeRole</key>
         <string>Viewer</string>
         <key>LSHandlerRank</key>
         <string>Owner</string>
         <key>LSItemContentTypes</key>
         <array>
-          <string>@DOCUMENT_TYPE_IDENTIFIER@</string>
+          <string>@SOLARUSLAUNCHER_TYPE_IDENTIFIER@</string>
         </array>
         <key>CFBundleTypeIconFile</key>
-        <string>@MACOSX_DOCUMENT_ICON_FILE@</string>
+        <string>@SOLARUSLAUNCHER_MACOS_DOCUMENT_ICON_FILE@</string>
         <key>CFBundleTypeExtensions</key>
         <array>
-          <string>@DOCUMENT_EXTENSION@</string>
+          <string>@SOLARUSLAUNCHER_DOCUMENT_EXTENSION@</string>
         </array>
         <key>CFBundleTypeMIMETypes</key>
         <string>application/octet-stream</string>
@@ -49,9 +49,9 @@
     <array>
       <dict>
         <key>UTTypeIdentifier</key>
-        <string>@DOCUMENT_TYPE_IDENTIFIER@</string>
+        <string>@SOLARUSLAUNCHER_TYPE_IDENTIFIER@</string>
         <key>UTTypeDescription</key>
-        <string>@DOCUMENT_NAME@</string>
+        <string>@SOLARUSLAUNCHER_DOCUMENT_NAME@</string>
         <key>UTTypeConformsTo</key>
         <array>
           <string>public.data</string>
@@ -61,7 +61,7 @@
         <dict>
           <key>public.filename-extension</key>
           <array>
-            <string>@DOCUMENT_EXTENSION@</string>
+            <string>@SOLARUSLAUNCHER_DOCUMENT_EXTENSION@</string>
           </array>
           <key>public.mime-type</key>
           <array>

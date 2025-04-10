@@ -10,9 +10,8 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "Qt6_DIR": "/opt/homebrew/opt/qt/lib/cmake/Qt6",
-        "SOLARUS_FETCHCONTENT": true,
-        "ENABLE_QTDEPLOY": true,
-        "ENABLE_CPACK": true
+        "CMAKE_PREFIX_PATH": "/opt/homebrew/opt/qt",
+        "SOLARUS_FETCHCONTENT": true
       },
       "condition": {
         "type": "equals",
@@ -27,7 +26,7 @@
       "displayName": "macOS",
       "configurePreset": "macos",
       "description": "Release build with Ninja for macOS",
-      "targets": ["solaruslauncher"],
+      "targets": ["solarus-launcher"],
       "configuration": "Release",
       "condition": {
         "type": "equals",

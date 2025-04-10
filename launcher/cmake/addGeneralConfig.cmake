@@ -19,3 +19,10 @@ message(STATUS "Available cores: ${NUM_CORES}")
 message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/")
+
+# Set the deployment target for macOS.
+if(APPLE)
+  if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.6")
+  endif()
+endif()

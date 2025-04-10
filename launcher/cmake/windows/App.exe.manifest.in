@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity type="win32" name="${APP_IDENTIFIER}" version="${PROJECT_VERSION}" processorArchitecture="${CMAKE_HOST_SYSTEM_PROCESSOR}"/>
+  <assemblyIdentity type="win32" name="${SOLARUSLAUNCHER_APP_IDENTIFIER}" version="${PROJECT_VERSION}" processorArchitecture="${CMAKE_HOST_SYSTEM_PROCESSOR}"/>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>
