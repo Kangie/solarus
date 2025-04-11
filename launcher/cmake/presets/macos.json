@@ -18,6 +18,18 @@
         "lhs": "${hostSystemName}",
         "rhs": "Darwin"
       }
+    },
+    {
+      "name": "macos-signed",
+      "inherits": "macos",
+      "displayName": "Signed macOS",
+      "description": "Ninja project for a signed+notarized macOS bundle",
+      "cacheVariables": {
+        "SOLARUSLAUNCHER_DEPLOY_ENABLED": true,
+        "SOLARUSLAUNCHER_CODESIGN_ENABLED": true,
+        "SOLARUSLAUNCHER_NOTARIZE_ENABLED": true,
+        "SOLARUSLAUNCHER_CPACK_PRETTY_DMG_ENABLED": true
+      }
     }
   ],
   "buildPresets": [
@@ -33,6 +45,13 @@
         "lhs": "${hostSystemName}",
         "rhs": "Darwin"
       }
+    },
+    {
+      "name": "macos-signed",
+      "inherits": "macos",
+      "displayName": "Signed macOS",
+      "description": "Release build with Ninja for signed+notarized macOS",
+      "configurePreset": "macos-signed"
     },
     {
       "name": "macos-i18n",
@@ -53,13 +72,20 @@
       "name": "macos",
       "displayName": "macOS",
       "configurePreset": "macos",
-      "description": "DMG packaging for macOS",
+      "description": "DMG packaging for macOS bundle",
       "generators": ["DragNDrop"],
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Darwin"
       }
+    },
+    {
+      "name": "macos-signed",
+      "inherits": "macos",
+      "displayName": "Signed macOS",
+      "configurePreset": "macos-signed",
+      "description": "DMG packaging for signed+notarized macOS bundle"
     }
   ],
   "workflowPresets": [
@@ -78,6 +104,25 @@
         {
           "type": "package",
           "name": "macos"
+        }
+      ]
+    },
+    {
+      "name": "macos-signed",
+      "displayName": "Signed macOS",
+      "description": "Bundling+signing+notarizing+packaging for macOS",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "macos-signed"
+        },
+        {
+          "type": "build",
+          "name": "macos-signed"
+        },
+        {
+          "type": "package",
+          "name": "macos-signed"
         }
       ]
     }
