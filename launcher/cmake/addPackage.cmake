@@ -26,7 +26,7 @@ endfunction()
 # Function to get a user-friendly architecture name.
 function(get_pretty_arch_name OUTPUT_VAR)
   if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-    set(ARCH_NAME "x86_64")
+    set(ARCH_NAME "x64")
   elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
     set(ARCH_NAME "arm64")
   else()
