@@ -5,6 +5,8 @@
 #include <solarus/core/Debug.h>
 #include <solarus/core/MainLoop.h>
 
+#include <SolarusLauncherConfig.h>
+
 #include <string>
 #include <iostream>
 
@@ -46,7 +48,7 @@ int runCLI(int argc, char* argv[]) {
  * @return int The exit status.
  */
 int printHelp(int argc, char* argv[]) {
-  const auto binary_name = std::string{ (argc > 0) ? argv[0] : PROJECT_APP_EXECUTABLE_NAME };
+  const auto binary_name = std::string{ (argc > 0) ? argv[0] : solarus::launcher::SOLARUSLAUNCHER_EXECUTABLE_NAME };
   std::cout << "Usage:\n" << binary_name << " [--version] [--help] [<path/to/quest.solarus>]" << std::endl;
   return EXIT_SUCCESS;
 }
@@ -56,7 +58,7 @@ int printHelp(int argc, char* argv[]) {
  * @return int The exit status.
  */
 int printVersion() {
-  std::cout << PROJECT_VERSION << std::endl;
+  std::cout << solarus::launcher::SOLARUSLAUNCHER_VERSION << std::endl;
   return EXIT_SUCCESS;
 }
 

@@ -33,7 +33,7 @@
         <string>Owner</string>
         <key>LSItemContentTypes</key>
         <array>
-          <string>@SOLARUSLAUNCHER_TYPE_IDENTIFIER@</string>
+          <string>@SOLARUSLAUNCHER_DOCUMENT_IDENTIFIER@</string>
         </array>
         <key>CFBundleTypeIconFile</key>
         <string>@SOLARUSLAUNCHER_MACOS_DOCUMENT_ICON_FILE@</string>
@@ -49,7 +49,7 @@
     <array>
       <dict>
         <key>UTTypeIdentifier</key>
-        <string>@SOLARUSLAUNCHER_TYPE_IDENTIFIER@</string>
+        <string>@SOLARUSLAUNCHER_DOCUMENT_IDENTIFIER@</string>
         <key>UTTypeDescription</key>
         <string>@SOLARUSLAUNCHER_DOCUMENT_NAME@</string>
         <key>UTTypeConformsTo</key>
