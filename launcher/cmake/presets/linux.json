@@ -24,7 +24,7 @@
       "displayName": "Linux",
       "configurePreset": "linux",
       "description": "Release build for Linux",
-      "targets": ["solaruslauncher"],
+      "targets": ["solarus-launcher"],
       "configuration": "Release",
       "condition": {
         "type": "equals",

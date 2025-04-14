@@ -39,9 +39,29 @@
 
    Available options when configuring with cmake:
 
-   - `-DSOLARUS_FETCHCONTENT=ON`: Will clone Solarus' repo instead of trying to finding it in the system's installed libraries.
-   - `-DCODE_SIGN_IDENTITY=<YOUR_ID>`: Organization's id to use with macOS's `codesign`.
-   - `-DDMG_SCRIPT=OFF`: Skip the long AppleScript call when building the `.dmg`. Useful when debugging. Default is `ON`.
+   - `-DSOLARUS_FETCHCONTENT=<ON|OFF>`: Will clone Solarus' repo instead of trying to finding it in the system's installed libraries. Default is `ON`.
+   - `-DSOLARUSLAUNCHER_DEPLOY_ENABLED=<ON|OFF>`: Enables deploying all the dependencies to the macOS bundle with `macdeployqt`. Default is `ON`.
+   - `-DSOLARUSLAUNCHER_CODESIGN_ENABLED=<ON|OFF>`: Enables codesigning the macOS bundle with `codesign`. Default is `OFF`.
+   - `-DSOLARUSLAUNCHER_CODESIGN_IDENTITY=<YOUR_ID>`: Organization's identifier to use with macOS's `codesign`. Default is Solarus Lab's id.
+   - `-DSOLARUSLAUNCHER_NOTARIZE_ENABLED=<ON|OFF>`: Enables notarizing after codesigning the macOS bundle. Must be done on an approved machine by Solarus Labs and Apple. Default is `ON`.
+   - `-DSOLARUSLAUNCHER_CPACK_PRETTY_DMG_ENABLED=<ON|OFF>`: Activates or skips the long AppleScript call when building the `.dmg`. Useful when debugging. Default is `ON`.
+
+   Typically, to build a signed and notarized package for a release, these variables should be enabled. This is handlded by CMake presets:
+
+   ```sh
+   rm -rf build
+   cmake --preset macos-signed \
+   cmake --build --preset macos-signed \
+   cpack --preset macos-signed
+   ```
+
+   Alternatively, you may use this equivalent one-liner:
+
+   ```sh
+   cmake --workflow macos-signed
+   ```
+
+   Note that notarizing may take some time (from 5 minutes to a few hours) as it sends the package to Apple for validation.
 
 ### Windows (MSYS2)
 

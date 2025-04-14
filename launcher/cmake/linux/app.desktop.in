@@ -1,13 +1,13 @@
 [Desktop Entry]
-Name=@DISPLAY_NAME@
+Name=@SOLARUSLAUNCHER_DISPLAY_NAME@
 GenericName=Launcher for Solarus video games
 GenericName[es]=Lanzador de videojuegos Solarus
 GenericName[fr]=Lecteur de jeux vidéos Solarus
 Comment=Browse and play your Solarus quest collection.
 Comment[es]=Explora y juega tu colección de videojuegos Solarus.
 Comment[fr]=Parcourez et jouez à votre collection de quêtes Solarus.
-Exec=@EXECUTABLE_NAME@ %F
-Icon=@APP_IDENTIFIER@
+Exec=@SOLARUSLAUNCHER_EXECUTABLE_NAME@ %F
+Icon=@SOLARUSLAUNCHER_APP_IDENTIFIER@
 Type=Application
 Terminal=false
 StartupNotify=true

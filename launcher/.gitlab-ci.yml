@@ -175,7 +175,8 @@ macos-build:
         openal-soft
         qt@6
   script:
-    - cmake --workflow --preset macos
+    - cmake --preset macos
+    - cmake --build --preset macos
   artifacts:
     name: $CI_JOB_NAME
     paths:
