@@ -87,5 +87,6 @@ if(SOLARUS_FETCHCONTENT)
 else()
   # Ensure that Solarus is found, one way or another.
   message(STATUS "Solarus: Using from system")
+  find_package(OpenAL REQUIRED)
   find_package(Solarus REQUIRED)
 endif()

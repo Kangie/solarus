@@ -18,7 +18,10 @@ file(GLOB_RECURSE SOURCES
 qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${SOURCES}
 )
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sources)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/sources"
+    "${OPENAL_INCLUDE_DIR}"
+)
 
 qt_add_resources(${PROJECT_NAME} "resources"
   PREFIX "/solarus/launcher/"

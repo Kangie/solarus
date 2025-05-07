@@ -48,11 +48,29 @@ if("${DL_LIBRARY}" MATCHES DL_LIBRARY-NOTFOUND)
   set(DL_LIBRARY "")
 endif()
 
+# Control whether to use a local Qlementine build.
 include(FetchContent)
-FetchContent_Declare(
-  qlementine
-  GIT_REPOSITORY https://github.com/oclero/qlementine.git
-  GIT_TAG        v1.2.1
-  EXCLUDE_FROM_ALL
-)
+option(SOLARUS_USE_LOCAL_QLEMENTINE "Use a local build of Qlementine instead of FetchContent download" OFF)
+if(SOLARUS_USE_LOCAL_QLEMENTINE)
+  set(SOLARUS_QLEMENTINE_LOCAL_PATH "" CACHE PATH "Path to the local Qlementine source directory")
+  # Check if the provided path is valid.
+  if(NOT IS_DIRECTORY "${SOLARUS_QLEMENTINE_LOCAL_PATH}")
+    message(FATAL_ERROR "SOLARUS_QLEMENTINE_LOCAL_PATH is set to '${SOLARUS_QLEMENTINE_LOCAL_PATH}' but it's not a valid directory. Please provide the correct path to your local qlementine clone.")
+  else()
+    set(Qlementine_SOURCE_DIR ${QSOLARUS_LEMENTINE_LOCAL_PATH})
+    message(STATUS "Using local Qlementine source from: ${SOLARUS_QLEMENTINE_LOCAL_PATH}")
+  endif()
+  FetchContent_Declare(
+    qlementine
+    SOURCE_DIR "${SOLARUS_QLEMENTINE_LOCAL_PATH}"
+    EXCLUDE_FROM_ALL
+  )
+else()
+  FetchContent_Declare(
+    qlementine
+    GIT_REPOSITORY https://github.com/oclero/qlementine.git
+    GIT_TAG        v1.2.2
+    EXCLUDE_FROM_ALL
+  )
+endif()
 FetchContent_MakeAvailable(qlementine)
