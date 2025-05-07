@@ -20,6 +20,7 @@
 #include "solarus/core/Transform.h"
 #include "solarus/graphics/Shader.h"
 #include "solarus/graphics/Video.h"
+#include "solarus/graphics/SolarusGl.h"
 #include "solarus/graphics/Surface.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <glad/glad.h>
 #include <solarus/graphics/VertexArray.h>
 
 // Workaround for conflicting declaration of GLsizeiptrARB on Windows.
@@ -36,7 +37,6 @@
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 #include <QWheelEvent>
-
 
 namespace SolarusEditor {
 
