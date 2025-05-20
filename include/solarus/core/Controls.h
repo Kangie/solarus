@@ -134,6 +134,7 @@ class Controls final: public ExportableToLua {
 
     explicit Controls(MainLoop& main_loop);
     explicit Controls(MainLoop& main_loop, Game& game);
+    ~Controls();
 
     InputEvent::KeyboardKey get_keyboard_binding(const Command& command) const;
     void set_keyboard_binding(const Command& command, InputEvent::KeyboardKey keyboard_key);
@@ -160,6 +161,7 @@ class Controls final: public ExportableToLua {
 
     void load_default_joypad_bindings();
     void load_default_keyboard_bindings();
+    void save(Savegame& savegame) const;
 
     void notify_input(const InputEvent& event);
     bool is_command_pressed(const Command& command) const;
@@ -194,8 +196,7 @@ class Controls final: public ExportableToLua {
 
     const std::string& get_lua_type_name() const override;
 
-    ~Controls();
-  private:
+private:
     static bool analog_commands_enabled;
 
     // Keyboard mapping.
@@ -217,8 +218,6 @@ class Controls final: public ExportableToLua {
     void set_saved_joypad_binding(Command command, const JoypadBinding &joypad_binding, Savegame& save);
     Command get_command_from_joypad(const JoypadBinding &joypad_binding) const;
     ControlAxisBinding get_axis_from_joypad(JoyPadAxis joypad_axis) const;
-
-    void save(Savegame& savegame) const;
 
     void do_customization_callback();
 

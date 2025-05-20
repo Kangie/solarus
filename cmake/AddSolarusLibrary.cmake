@@ -16,6 +16,11 @@ endif()
 # Declare the public/private libraries that "solarus" depends on
 target_link_libraries(solarus
   PUBLIC
+    # Third-party libs managed within the project.
+    Glad::Glad
+    SNES_SPC::SNES_SPC
+    HQX::HQX
+    # External dependencies.
     SDL2::Core
     SDL2::Image
     SDL2::TTF
@@ -44,6 +49,11 @@ if(OPENGL_FOUND)
   target_link_libraries(solarus PUBLIC OpenGL::GL)
 endif()
 
+# Add Android-specific libraries
+if(ANDROID)
+  target_link_libraries(solarus PUBLIC android log EGL GLESv1_CM GLESv2)
+endif()
+
 # Add Lua or LuaJIT imported target to "solarus" declared dependencies
 if(LUA_FOUND)
   target_link_libraries(solarus PUBLIC Lua::Lua)
@@ -61,3 +71,11 @@ set_target_properties(solarus PROPERTIES
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   include(cmake/macOS/macOSBuild.cmake)
 endif()
+
+# Include directories acessible for "solarus".
+target_include_directories(solarus
+  PUBLIC
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+)

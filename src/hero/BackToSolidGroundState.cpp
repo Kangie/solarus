@@ -22,7 +22,6 @@
 #include "solarus/entities/Boomerang.h"
 #include "solarus/entities/Entities.h"
 #include "solarus/hero/BackToSolidGroundState.h"
-#include "solarus/hero/FreeState.h"
 #include "solarus/hero/HeroSprites.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
@@ -145,7 +144,7 @@ void Hero::BackToSolidGroundState::update() {
       get_sprites().blink(2000);
 
       if (with_sound) {
-        Sound::play("message_end");  // TODO rename this sound.
+        Sound::play(get_entity().get_respawn_sound_id());
       }
     }
 

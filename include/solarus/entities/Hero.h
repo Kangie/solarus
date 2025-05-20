@@ -20,12 +20,10 @@
 #include "solarus/core/Point.h"
 #include "solarus/entities/EnemyAttack.h"
 #include "solarus/entities/Entity.h"
-#include "solarus/entities/Ground.h"
 #include "solarus/hero/HeroSprites.h"
 #include "solarus/core/ControlsPtr.h"
 #include "solarus/entities/CameraPtr.h"
 #include "solarus/core/Equipment.h"
-#include "solarus/core/SavegamePtr.h"
 
 #include <memory>
 #include <string>
@@ -138,6 +136,8 @@ class Hero: public Entity {
     void set_normal_walking_speed(int normal_walking_speed);
     int get_walking_speed() const;
     void set_walking_speed(int walking_speed);
+    int get_swimming_speed() const;
+    void set_swimming_speed(int swimming_speed);
     int get_push_delay() const;
     void set_push_delay(int delay);
     int get_carry_height() const;
@@ -321,12 +321,40 @@ class Hero: public Entity {
     void start_state_from_ground();
     void start_custom_state(const std::shared_ptr<CustomState>& custom_state);
 
-    const ControlsPtr &get_controls() const;
+    const std::string& get_falling_sound_id() const;
+    void set_falling_sound_id(const std::string& falling_sound_id);
+    const std::string& get_respawn_sound_id() const;
+    void set_respawn_sound_id(const std::string& respawn_sound_id);
+    const std::string& get_landing_sound_id() const;
+    void set_landing_sound_id(const std::string& sound_id);
+    const std::string& get_jumping_sound_id() const;
+    void set_jumping_sound_id(const std::string& sound_id);
+    const std::string& get_hurt_sound_id() const;
+    void set_hurt_sound_id(const std::string& sound_id);
+    const std::string& get_sinking_sound_id() const;
+    void set_sinking_sound_id(const std::string& sound_id);
+    const std::string& get_lifting_sound_id() const;
+    void set_lifting_sound_id(const std::string& sound_id);
+    const std::string& get_swimming_sound_id() const;
+    void set_swimming_sound_id(const std::string& sound_id);
+    const std::string& get_running_sound_id() const;
+    void set_running_sound_id(const std::string& sound_id);
+    const std::string& get_running_obstacle_sound_id() const;
+    void set_running_obstacle_sound_id(const std::string& sound_id);
+    const std::string& get_spin_attack_load_sound_id() const;
+    void set_spin_attack_load_sound_id(const std::string& sound_id);
+    const std::string& get_spin_attack_release_sound_id() const;
+    void set_spin_attack_release_sound_id(const std::string& sound_id);
+    const std::string& get_victory_sound_id() const;
+    void set_victory_sound_id(const std::string& sound_id);
+
+    bool get_can_swim_faster() const;
+    void set_can_swim_faster(bool can_swim_faster);
+
+    const ControlsPtr& get_controls() const;
+    void set_controls(const ControlsPtr& controls);
     const CommandsEffects& get_commands_effects() const;
     CommandsEffects& get_commands_effects();
-
-    void set_controls(const ControlsPtr& controls);
-
 
     Equipment& get_equipment();
     const Equipment& get_equipment() const;
@@ -334,6 +362,7 @@ class Hero: public Entity {
     void place_on_map(Map& map);
     const CameraPtr& get_linked_camera() const;
     void set_linked_camera(const CameraPtr& camera);
+
   private:
 
     // state
@@ -410,6 +439,22 @@ class Hero: public Entity {
                                             * a special behavior, such as falling into a hole or walking on stairs */
     bool on_raised_blocks;                 /**< indicates that the hero is currently on
                                             * raised crystal blocks */
+    std::string falling_sound_id;          /**< Sound to play when the hero is falling in bad ground. */
+    std::string respawn_sound_id;          /**< Sound to play when the hero gets back from bad ground. */
+    std::string landing_sound_id;          /**< Sound to play when the hero is landing on a walkable ground (from upper layer for example). */
+    std::string jumping_sound_id;          /**< Sound to play when the hero is jumping from a jumper or with built-in feather. */
+    std::string hurt_sound_id;             /**< Sound to play when the hero is getting damage from enemy or bad ground like prickles. */ 
+    std::string sinking_sound_id;          /**< Sound to play when the hero is sinking in deep water or lava. */
+    std::string swimming_sound_id;         /**< Sound to play when the hero is swimming in deep water. */
+    std::string lifting_sound_id;          /**< Sound to play when the hero is lifting an entity. */
+    std::string running_sound_id;          /**< Sound to play when the hero is running. */
+    std::string running_obstacle_sound_id; /**< Sound to play when the hero is colliding with an obstacle while running. */
+    std::string spin_attack_load_sound_id; /**< Sound to play when the hero has just loaded the spin attack */
+    std::string
+        spin_attack_release_sound_id;      /**< Sound to play when the hero is releasing the spin attack */
+    std::string victory_sound_id;          /**< Sound to play on hero victory animation. */
+    int swimming_speed;                    /**< current wimming speed */
+    bool can_swim_faster;                  /**< if the hero has the ability to swim faster (swim boost) */
 
     // ground
     Point last_solid_ground_coords;        /**< coordinates of the last hero position on a ground

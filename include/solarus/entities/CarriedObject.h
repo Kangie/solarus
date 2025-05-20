@@ -68,6 +68,14 @@ class CarriedObject: public Entity {
     void set_object_height(int height);
     const std::string& get_destruction_sound() const;
     void set_destruction_sound(const std::string& destruction_sound);
+    const std::string& get_throwing_sound() const;
+    void set_throwing_sound(const std::string& sound_id);
+    const std::string& get_falling_sound() const;
+    void set_falling_sound(const std::string& sound_id);
+    const std::string& get_sinking_sound() const;
+    void set_sinking_sound(const std::string& sound_id);
+    const std::string& get_exploding_sound_id() const;
+    void set_exploding_sound_id(const std::string& sound_id);
 
     void set_animation_stopped();
     void set_animation_walking();
@@ -121,30 +129,34 @@ class CarriedObject: public Entity {
     bool will_explode_soon() const;
 
     // game data
-    HeroPtr hero;               /**< the hero, who is carrying or throwing this item */
+    HeroPtr hero;                       /**< the hero, who is carrying or throwing this item */
 
     // state
-    bool is_lifting;            /**< indicates that the hero is lifting this item */
-    bool is_throwing;           /**< indicates that the item is being thrown */
-    bool is_breaking;           /**< indicates that the item is breaking */
-    bool break_one_layer_above; /**< indicates that the item has to get broken
-                                 * now one layer above its current position */
-    std::string
-        destruction_sound_id;   /**< the sound played when the item breaks */
-    int damage_on_enemies;      /**< damage for an enemy that receives the item */
+    bool is_lifting;                    /**< indicates that the hero is lifting this item */
+    bool is_throwing;                   /**< indicates that the item is being thrown */
+    bool is_breaking;                   /**< indicates that the item is breaking */
+    bool break_one_layer_above;         /**< indicates that the item has to get broken
+                                         * now one layer above its current position */
+    std::string destruction_sound_id;   /**< the sound played when the item breaks */
+    std::string throwing_sound_id;      /**< the sound played when the item is thrown by the hero */
+    std::string falling_sound_id;       /**< the sound played when the item is falling into a hole */
+    std::string sinking_sound_id;       /**< the sound played when the item is sinking into deep water or lava */
+    std::string exploding_sound_id;     /**< the sound played when the item is exploding */
+    int damage_on_enemies;              /**< damage for an enemy that receives the item */
 
     // throwing the item
-    SpritePtr main_sprite;      /**< main sprite of the destructible object */
-    SpritePtr shadow_sprite;    /**< sprite of the shadow when the item is being thrown */
-    int throwing_direction;     /**< direction where the item is thrown (0 to 3) */
-    uint32_t next_down_date;    /**< when the item is thrown, date when it move one pixel downwards next time */
-    int item_height;            /**< current height where the item is drawn above its shadow */
-    int y_increment;            /**< next y change for item_height */
+    SpritePtr main_sprite;              /**< main sprite of the destructible object */
+    SpritePtr shadow_sprite;            /**< sprite of the shadow when the item is being thrown */
+    int throwing_direction;             /**< direction where the item is thrown (0 to 3) */
+    uint32_t next_down_date;            /**< when the item is thrown, date when it move one pixel downwards next time */
+    int item_height;                    /**< current height where the item is drawn above its shadow */
+    int y_increment;                    /**< next y change for item_height */
 
     // explosion of the item
-    uint32_t explosion_date;    /**< date when the item explodes (0 if there is no explosion) */
+    uint32_t explosion_date;            /**< date when the item explodes (0 if there is no explosion) */
 
-    static const std::string lifting_trajectories[4];   /**< trajectory of the lifting movement for each direction */
+    static const std::string
+      lifting_trajectories[4];          /**< trajectory of the lifting movement for each direction */
 
 };
 

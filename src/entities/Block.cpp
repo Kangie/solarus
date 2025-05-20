@@ -63,7 +63,10 @@ Block::Block(
   initial_position(xy),
   initial_max_moves(max_moves),
   can_be_pushed(can_be_pushed),
-  can_be_pulled(can_be_pulled) {
+  can_be_pulled(can_be_pulled),
+  moving_sound_id("hero_pushes"),
+  falling_sound_id("jump"),
+  sinking_sound_id("splash") {
 
   SOLARUS_REQUIRE(max_moves >= -1,
       "maxm_moves must be between postive, 0 or -1");
@@ -266,7 +269,9 @@ void Block::notify_position_changed() {
   // Now we know that the block moves at least of 1 pixel:
   // we can play the sound.
   if (get_movement() != nullptr && !sound_played) {
-    Sound::play("hero_pushes");
+    if (!moving_sound_id.empty()) {
+      Sound::play(moving_sound_id);
+    }
     sound_played = true;
   }
 }
@@ -292,15 +297,18 @@ void Block::notify_ground_below_changed() {
 
   Ground ground = get_ground_below();
   switch (ground) {
-
     case Ground::HOLE:
-      Sound::play("jump");
+      if (!falling_sound_id.empty()) {
+        Sound::play(falling_sound_id);
+      }
       remove_from_map();
       break;
 
     case Ground::LAVA:
     case Ground::DEEP_WATER:
-      Sound::play("splash");
+      if (!sinking_sound_id.empty()) {
+        Sound::play(sinking_sound_id);
+      }
       remove_from_map();
       break;
 
@@ -425,6 +433,69 @@ void Block::set_max_moves(int max_moves) {
 
   this->initial_max_moves = max_moves;
   this->max_moves = max_moves;
+}
+
+/**
+ * \brief Returns the id of the sound played when the hero is moving the block.
+ * 
+ * \return The id of the "moving" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+const std::string& Block::get_moving_sound_id() const {
+  return moving_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the hero is moving the block.
+ * \param sound_id The if of the "moving" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+void Block::set_moving_sound_id(const std::string& sound_id) {
+  moving_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound played when the block is falling into a hole.
+ * 
+ * \return The id of the "falling" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+const std::string& Block::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the block is falling into a hole.
+ * \param sound_id The if of the "falling" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+void Block::set_falling_sound_id(const std::string& sound_id) {
+  falling_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound played when the block is sinking into deep water or lava.
+ * 
+ * \return The id of the "sinking" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+const std::string& Block::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the block is sinking into deep water or lava.
+ * \param sound_id The if of the "sinking" sound for this block
+ * (an empty string or nil means no sound).
+ */
+
+void Block::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
 }
 
 }

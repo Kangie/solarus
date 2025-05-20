@@ -46,7 +46,7 @@ enum class CommandId {
 /**
  * @brief Struct holding custom command name
  */
-struct CustomId{
+struct CustomId {
     std::string id;
 
     inline bool operator!=(const CustomId& other) const {

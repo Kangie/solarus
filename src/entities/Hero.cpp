@@ -24,7 +24,6 @@
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
 #include "solarus/entities/Block.h"
-#include "solarus/entities/Bomb.h"
 #include "solarus/entities/Boomerang.h"
 #include "solarus/entities/Chest.h"
 #include "solarus/entities/Crystal.h"
@@ -32,7 +31,6 @@
 #include "solarus/entities/Destructible.h"
 #include "solarus/entities/Enemy.h"
 #include "solarus/entities/Entities.h"
-#include "solarus/entities/GroundInfo.h"
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Jumper.h"
 #include "solarus/entities/Sensor.h"
@@ -75,7 +73,6 @@
 #include <lua.hpp>
 #include <algorithm>
 #include <sstream>
-#include <utility>
 
 namespace Solarus {
 
@@ -115,6 +112,20 @@ Hero::Hero(const EquipmentPtr &equipment, const std::string& name):
   carry_height(18),
   delayed_teletransporter(nullptr),
   on_raised_blocks(false),
+  falling_sound_id("hero_falls"),
+  respawn_sound_id("message_end"),
+  landing_sound_id("hero_lands"),
+  jumping_sound_id("jump"),
+  hurt_sound_id("hero_hurt"),
+  sinking_sound_id("splash"),
+  swimming_sound_id("swim"),
+  lifting_sound_id("lift"),
+  running_sound_id("running"),
+  running_obstacle_sound_id("running_obstacle"),
+  spin_attack_load_sound_id("sword_spin_attack_load"),
+  spin_attack_release_sound_id("sword_spin_attack_release"),
+  victory_sound_id("victory"),
+  swimming_speed(44),
   last_solid_ground_coords(0, 0),
   last_solid_ground_layer(0),
   target_solid_ground_callback(),
@@ -484,7 +495,7 @@ bool Hero::notify_input(const InputEvent& event) {
 bool Hero::notify_control(const ControlEvent& event) {
 
   //TODO filter events that aren't for this hero
-  if(!event.is_from(controls)) {
+  if (!event.is_from(controls)) {
     return false; //Don't handle events not destined to this hero
   }
 
@@ -1011,6 +1022,41 @@ void Hero::set_walking_speed(int walking_speed) {
     get_state()->notify_walking_speed_changed();
   }
 }
+
+/**
+ * \brief Returns the current speed applied to the hero's movements when he is swimming.
+ * \return The current swimming speed.
+ */
+int Hero::get_swimming_speed() const {
+  return swimming_speed;
+}
+
+/**
+ * \brief Sets the speed to apply to the hero's movements when he is walking.
+ * \param swimming_speed the new swimming speed
+ */
+void Hero::set_swimming_speed(int swimming_speed) {
+  if (swimming_speed != this->swimming_speed) {
+    this->swimming_speed = swimming_speed;
+    get_state()->notify_swimming_speed_changed();
+  }
+}
+
+/**
+ * \brief Returns true if the hero can swim faster in deep water by pressing action command.
+ * \return The ability to swim faster.
+ */
+bool Hero::get_can_swim_faster() const {
+  return can_swim_faster;
+}
+
+/**
+ * \brief Sets the ability to swim faster in deep water by pressing action command.
+ * \param can_swim_faster sets the ability to swim faster.
+ */
+void Hero::set_can_swim_faster(bool can_swim_faster) {
+  this->can_swim_faster = can_swim_faster;
+}
  	
 /**
 * \brief Returns the default height carried objects will be displayed at.
@@ -1309,7 +1355,9 @@ void Hero::check_position() {
           (new_ground == Ground::TRAVERSABLE
            || new_ground == Ground::GRASS
            || new_ground == Ground::LADDER)) {
-        Sound::play("hero_lands");
+        if (!landing_sound_id.empty()) {
+          Sound::play(landing_sound_id);
+        }
       }
     }
   }
@@ -2555,8 +2603,9 @@ void Hero::start_lava() {
  * \param delay delay before returning control to the player
  */
 void Hero::start_prickle(uint32_t delay) {
-
-  Sound::play("hero_hurt");
+  if (!hurt_sound_id.empty()) {
+    Sound::play(hurt_sound_id);
+  }
   get_equipment().remove_life(2);
   start_back_to_solid_ground(true, delay, false);
 }
@@ -3073,13 +3122,221 @@ void Hero::start_state_from_ground() {
 }
 
 /**
- * @brief Starts the given custom Lua state.
- * @param custom_state The Lua state object.
+ * \brief Starts the given custom Lua state.
+ * \param custom_state The Lua state object.
  */
 void Hero::start_custom_state(const std::shared_ptr<CustomState>& custom_state) {
 
   custom_state->set_entity(*this);
   set_state(custom_state);
+}
+
+/**
+ * \brief Returns the sound to play when the hero is falling.
+ * \return The falling sound or an empty string.
+ */
+const std::string& Hero::get_falling_sound_id() const {
+  return falling_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is falling.
+ * \param falling_sound_id The falling sound or an empty string.
+ */
+void Hero::set_falling_sound_id(const std::string& falling_sound_id) {
+  this->falling_sound_id = falling_sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero respawns from bad grounds.
+ * \return The respawning sound or an empty string.
+ */
+const std::string& Hero::get_respawn_sound_id() const {
+  return respawn_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero respawns from bad grounds.
+ * \param respawn_sound_id The respawning sound or an empty string.
+ */
+void Hero::set_respawn_sound_id(const std::string& respawn_sound_id) {
+  this->respawn_sound_id = respawn_sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is landing.
+ * \return The landing sound or an empty string.
+ */
+const std::string& Hero::get_landing_sound_id() const {
+  return landing_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is landing.
+ * \param sound_id The landing sound or an empty string.
+ */
+void Hero::set_landing_sound_id(const std::string& sound_id) {
+  landing_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is jumping.
+ * \return The jumping sound or an empty string.
+ */
+const std::string& Hero::get_jumping_sound_id() const {
+  return jumping_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is jumping.
+ * \param sound_id The jumping sound or an empty string.
+ */
+void Hero::set_jumping_sound_id(const std::string& sound_id) {
+  jumping_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is getting damage.
+ * \return The hurting sound or an empty string.
+ */
+const std::string& Hero::get_hurt_sound_id() const {
+  return hurt_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is getting damage.
+ * \param sound_id The hurting sound or an empty string.
+ */
+void Hero::set_hurt_sound_id(const std::string& sound_id) {
+  hurt_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is sinking.
+ * \return The sinking sound or an empty string.
+ */
+const std::string& Hero::get_sinking_sound_id() const {
+  return sinking_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is sinking.
+ * \param sound_id The sinking sound or an empty string.
+ */
+void Hero::set_sinking_sound_id(const std::string& sound_id) {
+  sinking_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is swimming.
+ * \return The swimming sound or an empty string.
+ */
+const std::string& Hero::get_swimming_sound_id() const {
+  return swimming_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is swimming.
+ * \param sound_id The swimming sound or an empty string.
+ */
+void Hero::set_swimming_sound_id(const std::string& sound_id) {
+  swimming_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is lifting an entity.
+ * \return The lifting sound or an empty string.
+ */
+const std::string& Hero::get_lifting_sound_id() const {
+  return lifting_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is lifting an entity.
+ * \param sound_id The lifting sound or an empty string.
+ */
+void Hero::set_lifting_sound_id(const std::string& sound_id) {
+  lifting_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is running.
+ * \return The running sound or an empty string.
+ */
+const std::string& Hero::get_running_sound_id() const {
+  return running_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is running.
+ * \param sound_id The running sound or an empty string.
+ */
+void Hero::set_running_sound_id(const std::string& sound_id) {
+  running_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is running into an_obstacle.
+ * \return The running_obstacle sound or an empty string.
+ */
+const std::string& Hero::get_running_obstacle_sound_id() const {
+  return running_obstacle_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is running_into an obstacle.
+ * \param sound_id The running_obstacle sound or an empty string.
+ */
+void Hero::set_running_obstacle_sound_id(const std::string& sound_id) {
+  running_obstacle_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is loading the spin attack.
+ * \return The spin_attack_load sound or an empty string.
+ */
+const std::string& Hero::get_spin_attack_load_sound_id() const {
+  return spin_attack_load_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is loading the spin attack.
+ * \param sound_id The spin_attack_load sound or an empty string.
+ */
+void Hero::set_spin_attack_load_sound_id(const std::string& sound_id) {
+  spin_attack_load_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is releasing the spin attack.
+ * \return The spin_attack_release sound or an empty string.
+ */
+const std::string& Hero::get_spin_attack_release_sound_id() const {
+  return spin_attack_release_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is releasing the spin attack.
+ * \param sound_id The spin_attack_release sound or an empty string.
+ */
+void Hero::set_spin_attack_release_sound_id(const std::string& sound_id) {
+  spin_attack_release_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is performing victory animation.
+ * \return The victory sound or an empty string.
+ */
+const std::string& Hero::get_victory_sound_id() const {
+  return victory_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is performing victory animation.
+ * \param sound_id The victory sound or an empty string.
+ */
+void Hero::set_victory_sound_id(const std::string& sound_id) {
+  victory_sound_id = sound_id;
 }
 
 /**

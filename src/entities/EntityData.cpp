@@ -393,13 +393,7 @@ EntityData::EntityData() :
  * \param type A type of entity.
  */
 EntityData::EntityData(EntityType type) :
-    type(type),
-    name(),
-    layer(0),
-    xy(),
-    enabled_at_start(true),
-    user_properties(),
-    specific_properties() {
+    type(type) {
 
   initialize_specific_properties();
 }
@@ -482,6 +476,38 @@ int EntityData::get_layer() const {
  */
 void EntityData::set_layer(int layer) {
   this->layer = layer;
+}
+
+/**
+ * \brief Returns whether this entity is locked.
+ * \return \c true if the entity is locked.
+ */
+bool EntityData::is_locked() const {
+  return locked;
+}
+
+/**
+ * \brief Sets whether this entity is locked.
+ * \param locked \c true to lock the entity.
+ */
+void EntityData::set_locked(bool locked) {
+  this->locked = locked;
+}
+
+/**
+ * \brief Returns the group of this entity on the map.
+ * \return The group or 0.
+ */
+int EntityData::get_group() const {
+  return group;
+}
+
+/**
+ * \brief Sets the group of this entity.
+ * \param group The group.
+ */
+void EntityData::set_group(int group) {
+  this->group = group;
 }
 
 /**
@@ -918,10 +944,14 @@ EntityData EntityData::check_entity_data(lua_State* l, int index, EntityType typ
   int x = LuaTools::check_int_field(l, index, "x");
   int y = LuaTools::check_int_field(l, index, "y");
   bool enabled_at_start = LuaTools::opt_boolean_field(l, index, "enabled_at_start", true);
+  bool locked = LuaTools::opt_boolean_field(l, index, "locked", false);
+  int group = LuaTools::opt_int_field(l, index, "group", 0);
 
   EntityData entity(type);
   entity.set_layer(layer);
   entity.set_xy({ x, y });
+  entity.set_locked(locked);
+  entity.set_group(group);
 
   if (entity.is_dynamic()) {
     entity.set_name(name);
@@ -1067,6 +1097,12 @@ bool EntityData::export_to_lua(std::ostream& out) const {
 
   if (!is_enabled_at_start()) {
     out << "  enabled_at_start = false,\n";
+  }
+  if (is_locked()) {
+    out << "  locked = true,\n";
+  }
+  if (get_group() != 0) {
+    out << "  group = " << get_group() << ",\n";
   }
 
   // User-defined properties.

@@ -70,6 +70,8 @@ class Destructible: public Entity {
     const std::string& get_animation_set_id() const;
     const std::string& get_destruction_sound() const;
     void set_destruction_sound(const std::string& destruction_sound);
+    const std::string& get_exploding_sound_id() const;
+    void set_exploding_sound_id(const std::string& sound_id);
     bool get_can_be_cut() const;
     void set_can_be_cut(bool can_be_cut);
     CutMethod get_cut_method() const;
@@ -118,6 +120,7 @@ class Destructible: public Entity {
         animation_set_id;              /**< Animation set of the sprite of this object. */
     std::string destruction_sound_id;  /**< Sound played when this object is cut or broken
                                         * or an empty string. */
+    std::string exploding_sound_id;    /**< The sound played when the item is exploding */
     bool can_be_cut;                   /**< Whether this object can be cut with the sword. */
     CutMethod cut_method;              /**< How the hero can cut the destructible with the sword. */
     bool can_explode;                  /**< Whether this object explodes after a delay when lifted. */

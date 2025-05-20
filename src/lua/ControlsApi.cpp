@@ -43,9 +43,9 @@ struct Marshalling<Command> {
 };
 
 template<>
-struct Marshalling<Axis>{
+struct Marshalling<Axis> {
     static inline Axis check_arg(lua_State * L, int index, const CheckContext& context) {
-      if(lua_isnil(L, index)){
+      if (lua_isnil(L, index)){
         return Axis(AxisId::NONE);
       }
       size_t length;
@@ -65,15 +65,15 @@ struct Marshalling<Axis>{
 };
 
 template<>
-struct Marshalling<Solarus::Controls::JoypadBinding>{
+struct Marshalling<Solarus::Controls::JoypadBinding> {
     static inline Controls::JoypadBinding check_arg(lua_State * L, int index, const CheckContext& context) {
-      if(lua_isnoneornil(L, index)){
+      if (lua_isnoneornil(L, index)){
         return Controls::JoypadBinding(JoyPadButton::INVALID);
       }
       size_t length;
       if (const char * data = LuaTools::islstring(L, index, &length)) {
         auto binding = Controls::JoypadBinding(data);
-        if(!binding.is_invalid()){
+        if (!binding.is_invalid()){
           return binding;
         }
       }
@@ -81,7 +81,7 @@ struct Marshalling<Solarus::Controls::JoypadBinding>{
     }
 
     static inline void push(lua_State* L, const Controls::JoypadBinding& binding) {
-      if(binding.is_invalid())
+      if (binding.is_invalid())
         lua_pushnil(L);
       else
         lua_pushstring(L, binding.to_string().c_str());
@@ -89,12 +89,12 @@ struct Marshalling<Solarus::Controls::JoypadBinding>{
 };
 
 template<>
-struct Marshalling<Controls::ControlAxisBinding>{
+struct Marshalling<Controls::ControlAxisBinding> {
     static inline Controls::ControlAxisBinding check_arg(lua_State * L, int index, const CheckContext& context) {
       size_t length;
       if (const char * data = LuaTools::islstring(L, index, &length)) {
         auto cab = Controls::ControlAxisBinding::from_string(std::string(data, length));
-        if(cab) {
+        if (cab) {
           return cab.value();
         }
         error(context, L, index, std::string("invalid controlaxis binding : '") + data + "'");
@@ -114,7 +114,7 @@ struct Marshalling<Controls::JoypadAxisBinding>{
       size_t length;
       if (const char * data = LuaTools::islstring(L, index, &length)) {
         auto cab = Controls::JoypadAxisBinding::from_string(std::string(data, length));
-        if(cab) {
+        if (cab) {
           return cab.value();
         }
         error(context, L, index, std::string("invalid joypadaxisbinding : '") + data + "'");
@@ -123,7 +123,7 @@ struct Marshalling<Controls::JoypadAxisBinding>{
     }
 
     static inline void push(lua_State* L, const Controls::JoypadAxisBinding& binding) {
-      if(binding.invalid()) {
+      if (binding.invalid()) {
         lua_pushnil(L);
       }
 

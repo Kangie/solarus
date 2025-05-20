@@ -65,9 +65,9 @@ static inline T to_type(lua_State * L, int index) {
   } else if constexpr (std::is_same_v<double, T>) {
     return lua_tonumber(L, index);
   } else if constexpr (std::is_same_v<int, T>) {
-    return lua_tointeger(L, index);
+    return static_cast<int>(lua_tointeger(L, index));
   } else if constexpr (std::is_same_v<unsigned int, T>) {
-    return lua_tointeger(L, index);
+    return static_cast<unsigned int>(lua_tointeger(L, index));
   } else if constexpr (std::is_same_v<const char *, T>) {
     return lua_tostring(L, index);
   } else if constexpr (std::is_same_v<std::string, T>) {
@@ -97,22 +97,27 @@ static inline T to_type(lua_State * L, int index) {
  */
 template<typename T>
 std::shared_ptr<T> test_shared_exportable(lua_State * L, int index) {
-  // Abstract types can be any of their child types that are exported to Lua.
-  if constexpr (std::is_abstract_v<T>) {
-    std::string module_name;
-    void * data = lua_touserdata(L, index);
-    // Check for a Solarus userdata (which are shared_ptrs).
-    if (data && LuaContext::is_solarus_userdata(L, index, module_name)) {
-      auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
-      // Now we can rely on C++'s type information for the check.
-      return std::dynamic_pointer_cast<T>(*ptr);
+
+  void* data = nullptr;
+
+  if constexpr(!std::is_abstract_v<T>) {
+    // See if the metatable is exactly the expected type.
+    LuaTools::test_userdata(L, index, T::module_name);
+    if (data != nullptr) {
+      return *static_cast<std::shared_ptr<T> *>(data);
     }
-    return nullptr;
-  // Concrete types can be handled with a standard metatable test.
-  } else {
-    void * data = LuaTools::test_userdata(L, index, T::module_name);
-    return (data) ? *static_cast<std::shared_ptr<T> *>(data) : nullptr;
   }
+
+  // Maybe it is a child type.
+  std::string module_name;
+  data = lua_touserdata(L, index);
+  // Check for a Solarus userdata (which are shared_ptrs).
+  if (data != nullptr && LuaContext::is_solarus_userdata(L, index, module_name)) {
+    auto ptr = static_cast<std::shared_ptr<ExportableToLua> *>(data);
+    // Now we can rely on C++'s type information for the check.
+    return std::dynamic_pointer_cast<T>(*ptr);
+  }
+  return nullptr;
 }
 
 /**
@@ -219,7 +224,7 @@ static inline void push_any(lua_State * L, T * ptr) {
 template<typename T>
 static inline void push_any(lua_State * L, const std::vector<T>& vec) {
   // Build a Lua table containing the vector content.
-  lua_createtable(L, vec.size(), 0);
+  lua_createtable(L, static_cast<int>(vec.size()), 0);
   int i = 1;
   for (const auto& v : vec) {
     push_any(L, v);
@@ -232,7 +237,7 @@ static inline void push_any(lua_State * L, const std::vector<T>& vec) {
 template<typename K, typename V>
 static inline void push_any(lua_State * L, const std::map<K, V>& map) {
   // Build a Lua table containing the map content.
-  lua_createtable(L, 0, map.size());
+  lua_createtable(L, 0, static_cast<int>(map.size()));
   for (const auto& [k, v] : map) {
     push_any(L, k);
     push_any(L, v);
@@ -569,9 +574,9 @@ struct CheckStack<std::vector<T>> {
     auto len = lua_objlen(L, index);
     std::vector<T> vec; vec.reserve(len);
 
-    for(size_t i = 1; i < len+1; i++) {
-      lua_rawgeti(L, index, i);
-      vec.push_back(CheckStack<T>::call(L, -1, IndexContext(i, context)));
+    for(size_t i = 1; i < len + 1; i++) {
+      lua_rawgeti(L, index, static_cast<int>(i));
+      vec.push_back(CheckStack<T>::call(L, -1, IndexContext(static_cast<int>(i), context)));
       lua_pop(L, 1);
     }
 

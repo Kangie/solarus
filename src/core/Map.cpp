@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
@@ -582,8 +582,8 @@ void Map::draw() {
     return;
   }
 
-  for(const CameraPtr& camera : get_entities().get_cameras()) {
-    if(camera->is_being_removed()){
+  for (const CameraPtr& camera : get_entities().get_cameras()) {
+    if (camera->is_being_removed()) {
         continue;
     }
     const SurfacePtr& camera_surface = camera->get_surface();
@@ -597,10 +597,10 @@ void Map::draw() {
 
     // foreground
     camera->reset_view();
-    //draw_foreground(camera_surface);
+    // draw_foreground(camera_surface);
 
     // Lua
-    get_lua_context().map_on_draw(*this, camera_surface); //TODO check for coordinates problem
+    get_lua_context().map_on_draw(*this, camera_surface); // TODO check for coordinates
   }
 }
 
@@ -677,7 +677,23 @@ void Map::draw_foreground(const SurfacePtr& dst_surface) {
  */
 void Map::draw_visual(Drawable& drawable, const Point &xy) {
 
-  draw_visual(drawable, xy.x, xy.y);
+  const CameraPtr& camera = get_camera();
+  if (camera == nullptr) {
+    return;
+  }
+
+  Point dst = xy;
+  if (!camera->is_view_applied()) {
+    // When called from map:on_draw(), drawing onto the surface
+    // expects coordinates relative the camera.
+    // When called from entity:on_pre_draw(), it expects
+    // coordinates relative to the map.
+    // See how Map::draw() above calls apply_view()/reset_view().
+    dst -= camera->get_xy();
+  }
+
+  const SurfacePtr& camera_surface = camera->get_surface();
+  drawable.draw(camera_surface, dst);
 }
 
 /**
@@ -687,18 +703,7 @@ void Map::draw_visual(Drawable& drawable, const Point &xy) {
  * \param y Y coordinate of the drawable's origin point in the map.
  */
 void Map::draw_visual(Drawable& drawable, int x, int y) {
-
-  // The position is given in the map coordinate system:
-  // convert it to the visible surface coordinate system.
-  const CameraPtr& camera = get_camera();
-  if (camera == nullptr) {
-    return;
-  }
-  const SurfacePtr& camera_surface = camera->get_surface();
-  drawable.draw(camera_surface,
-      x,
-      y
-  );
+  draw_visual(drawable, {x, y});
 }
 
 /**
@@ -712,7 +717,7 @@ void Map::start(const std::string& destination_name) {
   this->started = true;
 
   if (is_loaded()) {
-    Music::play(music_id, true);
+    MusicSystem::play(music_id, true);
     std::shared_ptr<Destination> destination = get_destination(destination_name);
     get_entities().notify_map_starting(*this, destination);
     get_lua_context().run_map(*this, destination);

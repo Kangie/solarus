@@ -171,7 +171,10 @@ bool CrystalBlock::try_jump(Hero& hero, const Rectangle& collision_box,
       && !get_entities().overlaps_raised_blocks(get_layer(), collision_box)) {
 
     hero.start_jumping(jump_direction, jump_length, true, false);
-    Sound::play("hero_lands");
+    const std::string& landing_sound_id = hero.get_landing_sound_id();
+    if (!landing_sound_id.empty()) {
+      Sound::play(landing_sound_id);
+    }
     return true;
   }
 

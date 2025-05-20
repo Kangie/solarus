@@ -418,7 +418,7 @@ int check_int(
     type_error(l, index, "integer");
   }
 
-  return (int) lua_tointeger(l, index);
+  return static_cast<int>(lua_tointeger(l, index));
 }
 
 /**
@@ -441,7 +441,7 @@ int check_int_field(
     field_type_error(l, table_index, key, "integer");
   }
 
-  int value = (int) lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -494,7 +494,7 @@ int opt_int_field(
   if (!lua_isnumber(l, -1)) {
     field_type_error(l, table_index, key, "integer");
   }
-  int value = (int) lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -718,6 +718,104 @@ std::string opt_string_field(
 }
 
 /**
+ * \brief Checks that a value is a string list and returns it.
+ *
+ * Throws a LuaException in case of error.
+ *
+ * \param l A Lua state.
+ * \param index Index of a value in the stack.
+ * \return The string list value.
+ */
+std::vector<std::string> check_string_list(
+    lua_State* l,
+    int index
+) {
+  std::vector<std::string> value;
+    index = get_positive_index(l, index);
+
+  if (lua_istable(l, index)) {
+    lua_pushnil(l);
+    while (lua_next(l, index) != 0) {
+      value.push_back(check_string(l, -1));
+      lua_pop(l, 1);
+    }
+  } else if (!lua_isnil(l, index)) {
+    type_error(l, index, "table");
+  }
+
+  return value;
+}
+
+/**
+ * \brief Checks that a table field is a string list and returns it.
+ *
+ * \param l A Lua state.
+ * \param table_index Index of a table in the stack.
+ * \param key Key of the field to get in that table.
+ * \return The wanted field as a string list.
+ */
+std::vector<std::string> check_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key
+) {
+  lua_getfield(l, table_index, key.c_str());
+  std::vector<std::string> result = check_string_list(l, -1);
+  lua_pop(l, 1);
+  return result;
+}
+
+/**
+ * \brief Like LuaTools::check_string_list() but with a default value.
+ *
+ * Throws a LuaException in case of error.
+ *
+ * \param l A Lua state.
+ * \param index Index of a value in the stack.
+ * \param default_value The default value to return if the value is \c nil.
+ * \return The wanted value as a string list.
+ */
+std::vector<std::string> opt_string_list(
+    lua_State* l,
+    int index,
+    const std::vector<std::string>& default_value
+) {
+  if (lua_isnoneornil(l, index)) {
+    return default_value;
+  }
+  return check_string_list(l, index);
+}
+
+/**
+ * \brief Like LuaTools::check_string_list_field() but with a default value.
+ *
+ * This function acts like lua_getfield() followed by LuaTools::opt_string_list().
+ *
+ * \param l A Lua state.
+ * \param table_index Index of a table in the stack.
+ * \param key Key of the field to get in that table.
+ * \param default_value The default value to return if the field is \c nil.
+ * \return The wanted field as a string list.
+ */
+std::vector<std::string> opt_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::vector<std::string>& default_value
+) {
+  lua_getfield(l, table_index, key.c_str());
+
+  if (lua_isnil(l, -1)) {
+    lua_pop(l, 1);
+    return default_value;
+  }
+
+  std::vector<std::string> result = check_string_list(l, -1);
+  lua_pop(l, 1);
+  return result;
+}
+
+/**
  * \brief Checks that a value is a boolean and returns it.
  *
  * This function throws a LuaException in case of error.
@@ -926,7 +1024,7 @@ int check_layer(
     arg_error(l, index, oss.str());
   }
 
-  return lua_tointeger(l, index);
+  return static_cast<int>(lua_tointeger(l, index));
 }
 
 /**
@@ -951,7 +1049,7 @@ int check_layer_field(
     field_type_error(l, table_index, key, "layer");
   }
 
-  int value = lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }
@@ -1001,7 +1099,7 @@ int opt_layer_field(
   if (!is_layer(l, -1, map)) {
     field_type_error(l, table_index, key, "layer");
   }
-  int value = lua_tointeger(l, -1);
+  int value = static_cast<int>(lua_tointeger(l, -1));
   lua_pop(l, 1);
   return value;
 }

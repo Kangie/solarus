@@ -252,7 +252,7 @@ bool Quadtree<T, Comparator>::move(const T& element, const Rectangle& bounding_b
  */
 template<typename T, typename Comparator>
 int Quadtree<T, Comparator>::get_num_elements() const {
-  return elements_infos.size();
+  return static_cast<int>(elements_infos.size());
 }
 
 /**

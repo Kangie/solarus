@@ -78,6 +78,10 @@ Door::Door(Game& game,
   opening_condition(),
   opening_condition_consumed(false),
   cannot_open_dialog_id(),
+  cannot_open_sound_id("wrong"),
+  opening_sound_id("door_open"),
+  closing_sound_id("door_closed"),
+  unlocking_sound_id("door_unlocked"),
   state(OPEN),
   initialized(false),
   next_hint_sound_date(0) {
@@ -491,6 +495,82 @@ void Door::set_cannot_open_dialog_id(const std::string& cannot_open_dialog_id) {
 }
 
 /**
+ * \brief Returns the id of the sound to play when the hero cannot unlock a door.
+ *
+ * \return The id of the "cannot open" sound for this door
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_cannot_open_sound_id() const {
+  return cannot_open_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the hero cannot unlock a door.
+ * \param sound_id The id of the "cannot open" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_cannot_open_sound_id(const std::string& sound_id) {
+  cannot_open_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the door is opening.
+ *
+ * \return The id of the "opening" sound for this door.
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_opening_sound_id() const {
+  return opening_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the door is opening.
+ * \param sound_id The id of the "opening" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_opening_sound_id(const std::string& sound_id) {
+  opening_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the door is closing.
+ *
+ * \return The id of the "closing" sound for this door.
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_closing_sound_id() const {
+  return closing_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the door is closing.
+ * \param sound_id The id of the "closing" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_closing_sound_id(const std::string& sound_id) {
+  closing_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when the hero unlocks the door (usually with a key).
+ *
+ * \return The id of the "unlocking" sound for this door.
+ * (an empty string or nil means no sound).
+ */
+const std::string& Door::get_unlocking_sound_id() const {
+  return unlocking_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when the hero unlocks the door (usually with a key).
+ * \param sound_id The id of the "unlocking" sound for this door
+ * (an empty string or nil means no sound).
+ */
+void Door::set_unlocking_sound_id(const std::string& sound_id) {
+  unlocking_sound_id = sound_id;
+}
+
+/**
  * \brief Suspends or resumes the entity.
  * \param suspended true to suspend the entity
  */
@@ -566,8 +646,12 @@ bool Door::notify_action_command_pressed(Hero &hero) {
   ) {
 
     if (can_open(hero)) {
-      Sound::play("door_unlocked");
-      Sound::play("door_open");
+      if (!unlocking_sound_id.empty()) {
+        Sound::play(unlocking_sound_id);
+      }
+      if (!opening_sound_id.empty()) {
+        Sound::play(opening_sound_id);
+      }
 
       if (is_saved()) {
         get_savegame().set_boolean(savegame_variable, true);
@@ -582,7 +666,9 @@ bool Door::notify_action_command_pressed(Hero &hero) {
       hero.check_position();
     }
     else if (!cannot_open_dialog_id.empty()) {
-      Sound::play("wrong");
+      if (!cannot_open_sound_id.empty()) {
+        Sound::play(cannot_open_sound_id);
+      }
       get_game().start_dialog(cannot_open_dialog_id, ScopedLuaRef(), ScopedLuaRef());
     }
 

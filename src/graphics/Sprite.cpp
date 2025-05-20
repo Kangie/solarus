@@ -83,7 +83,7 @@ Sprite::Sprite(SpriteAnimationSet& animation_set):
   current_animation(nullptr),
   current_direction(0),
   current_frame(-1),
-  frame_changed(false),
+  changed(false),
   frame_delay(0),
   next_frame_date(0),
   ignore_suspend(false),
@@ -208,13 +208,17 @@ Point Sprite::get_origin() const {
  * and direction.
  *
  * The rectangle is anchored to the origin point of the sprite,
- * so it has has negative top and left coordinates.
+ * so it has negative top and left coordinates.
  *
  * \return The maximum frame size.
  */
-const Rectangle& Sprite::get_max_bounding_box() const {
+Rectangle Sprite::get_max_bounding_box() const {
 
-  return animation_set.get_max_bounding_box();
+  Rectangle box = animation_set.get_max_bounding_box();
+  box.add_xy(get_xy());
+  // TODO Take into account scaling and rotation
+  // (can DrawInfos::dst_rectangle() help?)
+  return box;
 }
 
 /**
@@ -419,7 +423,7 @@ void Sprite::set_current_frame(int current_frame, bool notify_script) {
 
   if (current_frame != this->current_frame) {
     this->current_frame = current_frame;
-    set_frame_changed(true);
+    set_changed(true);
 
     if (notify_script) {
       LuaContext* lua_context = get_lua_context();
@@ -445,20 +449,19 @@ Rectangle Sprite::get_current_frame_rectangle() const {
 }
 
 /**
- * \brief Returns whether the frame of this sprite has just changed.
- * \return true if the frame of this sprite has just changed.
+ * \brief Notifies this object that its position has changed.
  */
-bool Sprite::has_frame_changed() const {
-  return frame_changed;
+void Sprite::notify_position_changed() {
+  Drawable::notify_position_changed();
+  set_changed(true);  // Make sure collisions will be recomputed.
 }
 
 /**
- * \brief Sets whether the frame has just changed.
- * \param frame_changed true if the frame has just changed.
+ * \brief Sets whether the sprite has just changed.
+ * \param changed \c true if the frame or position have just changed.
  */
-void Sprite::set_frame_changed(bool frame_changed) {
-
-  this->frame_changed = frame_changed;
+void Sprite::set_changed(bool changed) {
+  this->changed = changed;
 }
 
 /**
@@ -700,21 +703,29 @@ bool Sprite::test_collision(const Sprite& other, int x1, int y1, int x2, int y2)
 }
 
 /**
- * \brief Checks whether the frame has to be changed.
- *
- * If the frame changes, next_frame_date is updated.
+ * \brief Updates the sprite.
  */
 void Sprite::update() {
+  bool changed = false;
+  update(changed);
+}
 
-  Drawable::update();
+/**
+ * \brief Same as Sprite::update, but tells whether there was a change.
+ * \param changed \c true if the position or frame have changed.
+ */
+void Sprite::update(bool &changed) {
+
+  changed = this->changed;  // Maybe the position was changed even before.
+  Drawable::update();  // This updates the transition and movement.
 
   if (is_suspended() || paused) {
+    set_changed(false);
     return;
   }
 
   LuaContext* lua_context = get_lua_context();
 
-  frame_changed = false;
   uint32_t now = System::now_ms();
 
   // Update the current frame.
@@ -747,7 +758,7 @@ void Sprite::update() {
           next_frame_date = std::numeric_limits<uint32_t>::max();
         }
       }
-      set_frame_changed(true);
+      changed = true;
 
       if (lua_context != nullptr) {
         lua_context->sprite_on_frame_changed(*this, current_animation_name, current_frame);
@@ -765,7 +776,7 @@ void Sprite::update() {
       if (other_frame != current_frame) {
         current_frame = other_frame;
         next_frame_date = now + get_frame_delay();
-        set_frame_changed(true);
+        changed = true;
 
         if (lua_context != nullptr) {
           lua_context->sprite_on_frame_changed(*this, current_animation_name, current_frame);
@@ -783,22 +794,10 @@ void Sprite::update() {
       blink_next_change_date += blink_delay;
     }
   }
-}
 
-/**
- * @brief Sprite::draw_intermediate
- * @param region
- * @param dst_surface
- * @param dst_position
- */
-/*void Sprite::draw_intermediate() const {
-    get_intermediate_surface().clear();
-    current_animation->draw(
-        get_intermediate_surface(),
-        get_origin(),
-        current_direction,
-        current_frame);
-}*/
+  set_changed(false);
+  return;
+}
 
 /**
  * \brief Draws the sprite on a surface, with its current animation,

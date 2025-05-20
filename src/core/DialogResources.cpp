@@ -310,8 +310,8 @@ bool DialogResources::export_to_lua(std::ostream& out) const {
     const DialogData& dialog = kvp.second;
 
     out << "dialog{\n  id = \"" << escape_string(id) << "\",\n";
-    for (const auto& pkvp : dialog.get_properties()) {
-      out << "  " << pkvp.first << " = \"" << pkvp.second << "\",\n";
+    for (const auto& [key, value] : dialog.get_properties()) {
+      out << "  " << escape_string(key) << " = \"" << escape_string(value) << "\",\n";
     }
     const std::string& text = dialog.get_text();
     export_multiline_string("text", text, out);

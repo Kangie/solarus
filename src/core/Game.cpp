@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/CommandsEffects.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
@@ -108,7 +108,6 @@ Game::Game(MainLoop& main_loop, const SavegamePtr& savegame):
     starting_destination_name = "";  // Default destination.
   }
 
-
   teleport_hero(get_hero(), starting_map_id, starting_destination_name, Transition::Style::FADE);
 }
 
@@ -163,7 +162,7 @@ void Game::stop() {
   get_savegame().set_game(nullptr);
 
   controls->remove(); // Stop our controls
-  Music::stop_playing();
+  MusicSystem::stop_playing();
 
   started = false;
 }
@@ -300,7 +299,7 @@ bool Game::notify_input(const InputEvent& event) {
 }
 
 /**
- * \brief This function is called when a game commend event is raised.
+ * \brief This function is called when a game command event is raised.
  * \param command A game command.
  */
 void Game::notify_control(const ControlEvent& event) {
@@ -319,8 +318,8 @@ void Game::notify_control(const ControlEvent& event) {
   }
 
   // See if the map scripts handled the command.
-  for(const MapPtr& map : current_maps) {
-    if(map->notify_control(event)) {
+  for (const MapPtr& map : current_maps) {
+    if (map->notify_control(event)) {
       return;
     }
   }
@@ -543,7 +542,6 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
       }
   }
 
-
   //All entities should be there, start the map if necessary
   if(!next_map->is_started()) {
     SOLARUS_REQUIRE(next_map->is_loaded(), "This map is not loaded");
@@ -597,7 +595,7 @@ void Game::draw(const SurfacePtr& dst_surface, const SurfacePtr& screen_surface)
  */
 void Game::notify_window_size_changed(const Size& size) {
   for(const MapPtr& current_map : current_maps) {
-     current_map->notify_window_size_changed(size);
+    current_map->notify_window_size_changed(size);
   }
 }
 
@@ -609,6 +607,12 @@ void Game::notify_window_size_changed(const Size& size) {
  * @return
  */
 Map& Game::get_default_map() {
+  // If multiple maps are loaded, return the one where the default is.
+  // This best mimics the pre-Solarus 2.0 behavior.
+  const HeroPtr& default_hero = get_hero();
+  if (default_hero != nullptr && default_hero->is_on_map()) {
+    return default_hero->get_map();
+  }
   return *current_maps.front();
 }
 
@@ -755,7 +759,7 @@ void Game::teleport_hero(
       Debug::error("Teleporting a hero without camera from no map to \"" + map_id + "\"");
     }
 
-    auto& map = hero->get_map();
+    Map& map = hero->get_map();
 
     if (map.get_entities().get_cameras().size() != 1){
        Debug::error("Ambiguous teleportation of a hero without camera from a map with "
@@ -763,11 +767,14 @@ void Game::teleport_hero(
                     + " cameras.");
     }
 
-    Debug::warning("Deprecated : Teleporting not tracked hero to unloaded map. Consider using camera:teleport or track hero.");
+    Debug::warning("Deprecated: Teleporting untracked hero to an unloaded map. Consider using camera:teleport() or track hero.");
+    set_suspended_by_script(false);  // Keep the pre 2.0 behavior
 
     // Relink unique camera to hero before teleportation
-    auto cam = map.get_camera();
+    CameraPtr cam = map.get_camera();
     hero->set_linked_camera(cam);
+    cam->set_position_on_screen({0, 0});
+    cam->set_size(Video::get_quest_size());
     teleport_camera(cam,
                     map_id,
                     a_destination_name,
@@ -836,32 +843,34 @@ void Game::teleport_camera(const CameraPtr& camera,
   ct.destination_name = destination_name;
   ct.transition_style = transition_style;
 
-  //Setup the transition
+  // Setup the transition.
   auto transition = std::unique_ptr<Transition>(Transition::create(
-                                                  transition_style,
-                                                  Transition::Direction::CLOSING
-                                              ));
+      started ? transition_style : Transition::Style::IMMEDIATE,
+      Transition::Direction::CLOSING
+  ));
 
   transition->start();
   ct.camera->set_transition(std::move(transition));
 
   //Camera teleported without hero, stop tracking
   if(!opt_hero) {
-      camera->start_manual();
+    camera->start_manual();
   }
 
   // Add the teleportation details to the list of current teleportations
   cameras_teleportations.emplace_back(std::move(ct));
 
-  if(!camera->is_on_map()) {
-    //Fast forward to opening transition
+  if (!camera->is_on_map()) {
+    // Fast forward to opening transition
     auto& ct = cameras_teleportations.back();
-    if(started) {
+    if (started) {
       teleportation_change_map(ct);
     } else {
       // Place the hero on the very first map before game starts
       ct.camera->place_on_map(*ct.next_map);
-      if(opt_hero) opt_hero->place_on_map(*ct.next_map);
+      if (opt_hero) {
+        opt_hero->place_on_map(*ct.next_map);
+      }
     }
   }
 }
@@ -933,10 +942,10 @@ const MapPtr& Game::prepare_map(const std::string& map_id) {
   map->load(*this);
   map->check_suspended();
 
-  auto emp_it = current_maps.emplace(current_maps.begin(), map); //Emplace front to have default map being the new one
+  // Emplace back to have default map being the old one, as the hero is still on the old one.
+  auto emp_it = current_maps.emplace(current_maps.end(), map);
   return *emp_it;
 }
-
 
 /**
  * @brief Remove an entity from a map and ensure the map is unloaded if necessary
@@ -1230,9 +1239,9 @@ void Game::set_suspended_by_script(bool suspended) {
  * \brief Restarts the game with the current savegame state.
  */
 void Game::restart() {
-  //Transition each hero out of their map
-  for(const CameraPtr& camera : cameras) {
-    if(camera->is_on_map()) {
+  // Transition each hero out of their map
+  for (const CameraPtr& camera : cameras) {
+    if (camera->is_on_map()) {
       CameraTeleportation ht;
       ht.camera = camera;
       ht.current_map = camera->get_map().shared_from_this_cast<Map>();

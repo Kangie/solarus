@@ -61,7 +61,6 @@ class SOLARUS_API CustomEntity: public Entity {
     void update() override;
 
     // Direction.
-    int get_sprites_direction() const;
     void set_sprites_direction(int direction);
 
     // What can traverse this custom entity.

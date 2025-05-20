@@ -49,11 +49,12 @@ pacman --noconfirm --needed -S \
     mingw-w64-ucrt-x86_64-SDL2_ttf
 ```
 
-The following additional dependency packages are required to be installed if building the GUI:
+The following additional dependency packages are required for building GUI components:
 ```
 pacman --noconfirm --needed -S \
-    mingw-w64-ucrt-x86_64-qt5-base
-    mingw-w64-ucrt-x86_64-qt5-tools
+    mingw-w64-ucrt-x86_64-qt6-base \
+    mingw-w64-ucrt-x86_64-qt6-svg \
+    mingw-w64-ucrt-x86_64-qt6-tools
 ```
 > **Note:** The GUI components include the Solarus Launcher and the Solarus Quest Editor.
 
@@ -81,7 +82,6 @@ cmake -B build -G "Ninja"
 
 The following common configuration options can be added to the CMake command above:
 
-* `-DSOLARUS_GUI=OFF`: Disable building the GUI.
 * `-DCMAKE_BUILD_TYPE=Debug`: Configure the build for debugging.
 
 Start the configured build using CMake:
@@ -99,12 +99,10 @@ ctest --test-dir build
 
 After [building Solarus](#building-solarus), working binaries should be in the `build` directory.
 
-You can invoke these binaries directly from the **UCRT64** shell to start a quest or
-use the GUI launcher:
+You can invoke the CLI binary directly from the **UCRT64** shell to start a quest:
 ```
 cd build
-solarus-run.exe /path/to/quest
-gui/solarus-launcher.exe
+cli/solarus-run.exe /path/to/quest
 ```
 
 If you configured the build for debugging, you can use the standard
@@ -112,5 +110,11 @@ If you configured the build for debugging, you can use the standard
 ```
 cd build
 gdb --args solarus-run.exe /path/to/quest
+(gdb) run
 ```
-> **Tip:** To obtain a complete stack trace after a crash, type `bt full` in `gdb`.
+
+> **Tips:** To stop the program execution at any time, use <kbd>CTRL-c</kbd> in the `gdb` console.
+> To resume execution after a stop, type `continue` or `c`. To get a stack trace for the currently
+> running thread, type `bt`, or for all running threads, `thread apply all bt` (long output!).
+> To exit `gdb` and stop the program, type `quit` or `q`.
+> A cheat sheet for `gdb` can be found [here](https://github.com/nicolasventer/GDB-cheat-sheet).

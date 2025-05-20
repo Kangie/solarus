@@ -57,6 +57,7 @@ ShopTreasure::ShopTreasure(
   treasure(treasure),
   price(price),
   dialog_id(dialog_id),
+  cannot_buy_sound_id("wrong"),
   treasure_sprite(treasure.create_sprite()),
   rupee_icon_sprite(Sprite::create("entities/rupee_icon")),
   price_digits(0, 0, TextSurface::HorizontalAlignment::LEFT, TextSurface::VerticalAlignment::TOP) {
@@ -85,7 +86,7 @@ ShopTreasure::ShopTreasure(
  * is not obtainable.
  */
 std::shared_ptr<ShopTreasure> ShopTreasure::create(
-    Game& /* game */,
+    Game& game,
     const std::string& name,
     int layer,
     const Point& xy,
@@ -95,7 +96,7 @@ std::shared_ptr<ShopTreasure> ShopTreasure::create(
     const std::string& dialog_id
 ) {
   // See if the item is not already bought and is obtainable.
-  if (treasure.is_found() || !treasure.is_obtainable()) {
+  if (treasure.is_found(game.get_equipment()) || !treasure.is_obtainable(game.get_equipment())) {
     return nullptr;
   }
 
@@ -135,6 +136,22 @@ int ShopTreasure::get_price() const {
  */
 const std::string& ShopTreasure::get_dialog_id() const {
   return dialog_id;
+}
+
+/**
+ * \brief Returns the id of the sound played when the played cannot buy the item.
+ * \return The sound id.
+ */
+const std::string& ShopTreasure::get_cannot_buy_sound_id() const {
+  return cannot_buy_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound played when the player cannot buy this item.
+ * \param sound_id The sound id.
+ */
+void ShopTreasure::set_cannot_buy_sound_id(const std::string& sound_id) {
+  cannot_buy_sound_id = sound_id;
 }
 
 /**

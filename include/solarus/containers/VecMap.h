@@ -20,7 +20,6 @@
 #include <optional>
 #include <memory>
 #include <vector>
-#include <iterator>
 
 namespace Solarus {
 
@@ -37,7 +36,6 @@ class VecMap {
     using Wrapped = std::map<Key, Vec, Compare, Allocator>;
     using Map = Wrapped;
 
-
     VecMap() = default;
     VecMap(std::initializer_list<typename Wrapped::value_type> list) : map(std::forward(list)) {}
 
@@ -45,8 +43,8 @@ class VecMap {
     const T& operator[](const Key& k) const {
       auto& vec = map[k];
 
-      if(vec.size() == 0) {
-        vec.push_back({}); //Default construct the T
+      if (vec.size() == 0) {
+        vec.push_back({}); // Default construct the T
       }
 
       return vec.front();
@@ -56,8 +54,8 @@ class VecMap {
     T& operator[](const Key& k) {
       auto& vec = map[k];
 
-      if(vec.size() == 0) {
-        vec.push_back({}); //Default construct the T
+      if (vec.size() == 0) {
+        vec.push_back({}); // Default construct the T
       }
 
       return vec.front();
@@ -84,7 +82,7 @@ class VecMap {
     const auto& vec_for(const Key& k) const {
       static Vec empty;
       auto it = map.find(k);
-      if(it == map.end()){
+      if (it == map.end()){
         return empty;
       }
       return it->second;
@@ -95,8 +93,8 @@ class VecMap {
     }
 
     std::optional<Key> search_fronts_for(const T& v) const {
-      for(const auto& kvp : map) {
-        if(kvp.second.size() && kvp.second.front() == v) {
+      for (const auto& kvp : map) {
+        if (kvp.second.size() && kvp.second.front() == v) {
           return kvp.first;
         }
       }
@@ -104,9 +102,9 @@ class VecMap {
     }
 
     std::optional<Key> search_all_for(const T& v) const {
-      for(const auto& kvp : map) {
-        for(const auto& av : kvp.second) {
-          if(av == v) {
+      for (const auto& kvp : map) {
+        for (const auto& av : kvp.second) {
+          if (av == v) {
             return kvp.first;
           }
         }
@@ -124,8 +122,8 @@ class VecMap {
 
     template<class F>
     void for_each_front(F&& f) const {
-      for(const auto& kvp : map) {
-        if(kvp.second.size()) {
+      for (const auto& kvp : map) {
+        if (kvp.second.size()) {
           f(kvp.first, kvp.second.front());
         }
       }
@@ -133,8 +131,8 @@ class VecMap {
 
     template<class F>
     void for_each(F&& f) const {
-      for(const auto& [k, vec] : map) {
-        for(const auto& v : vec) {
+      for (const auto& [k, vec] : map) {
+        for (const auto& v : vec) {
           f(k, v);
         }
       }

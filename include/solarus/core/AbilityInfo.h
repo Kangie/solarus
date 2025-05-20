@@ -20,7 +20,6 @@
 #include "solarus/core/Common.h"
 #include "solarus/core/Ability.h"
 #include "solarus/core/EnumInfo.h"
-#include <map>
 #include <string>
 
 namespace Solarus {

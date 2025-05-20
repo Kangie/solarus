@@ -67,6 +67,7 @@ Destructible::Destructible(
   treasure(treasure),
   animation_set_id(animation_set_id),
   destruction_sound_id(),
+  exploding_sound_id("explosion"),
   can_be_cut(false),
   cut_method(CutMethod::ALIGNED),
   can_explode(false),
@@ -145,6 +146,22 @@ const std::string& Destructible::get_destruction_sound() const {
  */
 void Destructible::set_destruction_sound(const std::string& destruction_sound_id) {
   this->destruction_sound_id = destruction_sound_id;
+}
+
+/**
+ * \brief Returns the id of the sound to play when this object is exploding.
+ * \return The exploding sound id or an empty string.
+ */
+const std::string& Destructible::get_exploding_sound_id() const {
+  return exploding_sound_id;
+}
+
+/**
+ * \brief Sets the id of the sound to play when this object is exploding.
+ * \param sound_id The exploding sound id or an empty string.
+ */
+void Destructible::set_exploding_sound_id(const std::string& sound_id) {
+  this->exploding_sound_id = sound_id;
 }
 
 /**
@@ -404,7 +421,9 @@ bool Destructible::notify_action_command_pressed(Hero &hero) {
       hero.start_lifting(carried_object);
 
       // Play the sound.
-      Sound::play("lift");
+      if (!hero.get_lifting_sound_id().empty()) {
+        Sound::play(hero.get_lifting_sound_id());
+      }
 
       // Create the pickable treasure.
       create_treasure();
@@ -472,7 +491,9 @@ void Destructible::explode() {
   get_entities().add_entity(std::make_shared<Explosion>(
       "", get_layer(), get_xy(), true
   ));
-  Sound::play("explosion");
+  if (!exploding_sound_id.empty()) {
+    Sound::play(exploding_sound_id);
+  }
   get_lua_context()->destructible_on_exploded(*this);
 }
 

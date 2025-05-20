@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
 #include "solarus/core/System.h"
 #include "solarus/entities/Camera.h"
@@ -25,12 +24,12 @@
 #include "solarus/graphics/Surface.h"
 #include "solarus/graphics/Video.h"
 #include "solarus/lua/LuaContext.h"
-#include "solarus/movements/TargetMovement.h"
+#include "solarus/movements/Movement.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/QuestProperties.h"
+#include <iostream>
 
 #include <algorithm>
-#include <list>
 
 namespace Solarus {
 
@@ -940,6 +939,7 @@ Point Camera::get_position_on_screen(Scale px_scale) const {
  */
 void Camera::reset_view() {
   surface->get_view().reset(Rectangle(surface->get_size()));
+  view_applied = false;
 }
 
 /**
@@ -949,11 +949,19 @@ void Camera::apply_view() {
   //TODO add rotation and zoom
   surface->get_view().reset(get_bounding_box());
 
-
   surface->get_view().move(position_offset);
   surface->get_view().zoom(zoom_corr);
   //Just move the view enough to compensate for the rounding
   surface->get_view().rotate(rotation);
+  view_applied = true;
+}
+
+/**
+ * @brief Returns whether the view is set.
+ * @return @c true if the view is applied to the camera surface.
+ */
+bool Camera::is_view_applied() const {
+  return view_applied;
 }
 
 /**

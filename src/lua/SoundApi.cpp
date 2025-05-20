@@ -39,14 +39,18 @@ void LuaContext::register_sound_module() {
   // Functions of sol.sound.
   const std::vector<luaL_Reg> functions = {
       { "create", sound_api_create },
+      { "stop_all", sound_api_stop_all },
   };
 
   // Methods of the sound type.
   const std::vector<luaL_Reg> methods = {
       { "play", sound_api_play },
       { "stop", sound_api_stop },
+      { "is_playing", sound_api_is_playing },
       { "is_paused", sound_api_is_paused },
       { "set_paused", sound_api_set_paused },
+      { "is_looped", sound_api_is_looped },
+      { "set_looped", sound_api_set_looped },
       { "get_volume", sound_api_get_volume },
       { "set_volume", sound_api_set_volume },
       { "get_pan", sound_api_get_pan },
@@ -114,6 +118,19 @@ int LuaContext::sound_api_create(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of sol.sound.stop_all().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_stop_all(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Sound::stop_all();
+    return 0;
+  });
+}
+
+/**
  * \brief Implementation of sound:play().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -144,6 +161,21 @@ int LuaContext::sound_api_stop(lua_State* l) {
 }
 
 /**
+ * \brief Implementation of sound:is_playing().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_is_playing(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Sound& sound = *check_sound(l, 1);
+
+    lua_pushboolean(l, sound.is_playing());
+    return 1;
+  });
+}
+
+/**
  * \brief Implementation of sound:is_paused().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
@@ -159,7 +191,7 @@ int LuaContext::sound_api_is_paused(lua_State* l) {
 }
 
 /**
- * \brief Implementation of :set_paused().
+ * \brief Implementation of sound:set_paused().
  * \param l The Lua context that is calling this function.
  * \return Number of values to return to Lua.
  */
@@ -170,6 +202,38 @@ int LuaContext::sound_api_set_paused(lua_State* l) {
     bool paused = LuaTools::opt_boolean(l, 2, true);
 
     sound.set_paused_by_script(paused);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of sound:is_looped().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_is_looped(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Sound& sound = *check_sound(l, 1);
+
+    lua_pushboolean(l, sound.is_looped());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of sound:set_looped().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::sound_api_set_looped(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Sound& sound = *check_sound(l, 1);
+    bool looped = LuaTools::opt_boolean(l, 2, true);
+
+    sound.set_looped(looped);
 
     return 0;
   });

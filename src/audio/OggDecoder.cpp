@@ -17,7 +17,7 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/QuestFiles.h"
 #include "solarus/audio/OggDecoder.h"
-#include <al.h>
+#include <AL/al.h>
 #include <sstream>
 #include <vector>
 
@@ -155,7 +155,8 @@ void OggDecoder::decode(ALuint destination_buffer, ALsizei nb_samples) {
     bytes_read = ov_read(
         ogg_file.get(),
         ((char*) raw_data.data()) + total_bytes_read,
-        max_bytes_to_read,
+        // Lossy conversion long -> int.
+        static_cast<int>(max_bytes_to_read),
         0,
         2,
         1,

@@ -116,6 +116,10 @@ class SOLARUS_API EntityData : public LuaData {
     void set_xy(const Point& xy);
     bool is_enabled_at_start() const;
     void set_enabled_at_start(bool enabled_at_start);
+    bool is_locked() const;
+    void set_locked(bool locked);
+    int get_group() const;
+    void set_group(int group);
 
     static bool is_user_property_key_valid(const std::string& key);
     const std::vector<UserProperty>& get_user_properties() const;
@@ -160,9 +164,11 @@ class SOLARUS_API EntityData : public LuaData {
 
     // Common properties.
     std::string name;             /**< Unique name of the entity on the map. */
-    int layer;                    /**< Layer of the entity on the map. */
+    int layer = 0;                /**< Layer of the entity on the map. */
     Point xy;                     /**< Entity position on the map. */
-    bool enabled_at_start;        /**< Whether the entity is initially enabled. */
+    bool enabled_at_start = true; /**< Whether the entity is initially enabled. */
+    bool locked = false;          /**< Whether the entity is locked, only used by the editor. */
+    int group = 0;                /**< Id of an entity group, only used by the editor. */
     std::vector<UserProperty>
         user_properties;          /**< User-defined properties. */
 

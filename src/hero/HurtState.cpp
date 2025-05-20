@@ -60,13 +60,16 @@ void Hero::HurtState::start(const State* previous_state) {
 
   Equipment& equipment = get_equipment();
 
-  Sound::play("hero_hurt");
-
   Hero& hero = get_entity();
   const uint32_t invincibility_duration = 2000;
   hero.set_invincible(true, invincibility_duration);
   get_sprites().set_animation_hurt();
   get_sprites().blink(invincibility_duration);
+
+  const std::string& hurt_sound_id = hero.get_hurt_sound_id();
+  if (!hurt_sound_id.empty()) {
+    Sound::play(hurt_sound_id);
+  }  
 
   if (has_source) {
     double angle = Geometry::get_angle(source_xy, hero.get_xy());

@@ -40,6 +40,7 @@
 #include "solarus/entities/ShopTreasure.h"
 #include "solarus/entities/Switch.h"
 #include "solarus/entities/Tileset.h"
+#include "solarus/entities/Hero.h"
 #include "solarus/lua/ExportableToLuaPtr.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
@@ -1110,6 +1111,7 @@ void LuaContext::register_modules() {
   register_entity_module();
   register_audio_module();
   register_sound_module();
+  register_music_module();
   register_timer_module();
   register_surface_module();
   register_text_surface_module();
@@ -1951,10 +1953,11 @@ bool LuaContext::on_joypad_button_pressed(const InputEvent& event) {
   if (find_method("on_joypad_button_pressed")) {
     JoyPadButton button = event.get_joypad_button();
 
-    if(CurrentQuest::is_format_at_least({2, 0}))
+    if (CurrentQuest::is_format_at_least({2, 0})) {
       push_string(current_l, enum_to_name(button));
-    else // Emulate old behaviour if quest is < 2.0
+    } else { // Emulate old behaviour if quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(button));
+    }
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(3, 1, "on_joypad_button_pressed");
     if (!success) {
@@ -1981,10 +1984,11 @@ bool LuaContext::on_joypad_button_released(const InputEvent& event) {
   if (find_method("on_joypad_button_released")) {
     JoyPadButton button = event.get_joypad_button();
 
-    if(CurrentQuest::is_format_at_least({2, 0}))
+    if (CurrentQuest::is_format_at_least({2, 0})) {
       push_string(current_l, enum_to_name(button));
-    else // Emulate old behaviour if quest is < 2.0
+    } else { // Emulate old behaviour if quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(button));
+    }
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(3, 1, "on_joypad_button_released");
     if (!success) {
@@ -2012,10 +2016,11 @@ bool LuaContext::on_joypad_axis_moved(const InputEvent& event) {
     JoyPadAxis axis = event.get_joypad_axis();
     double state = event.get_joypad_axis_state();
 
-    if(CurrentQuest::is_format_at_least({2, 0}))
+    if (CurrentQuest::is_format_at_least({2, 0})) {
       push_string(current_l, enum_to_name(axis));
-    else // Emulate old behaviour if quest is not 2.0
+    } else { // Emulate old behaviour if the quest is < 2.0
       lua_pushinteger(current_l, static_cast<int>(axis));
+    }
     lua_pushnumber(current_l, state);
     push_joypad(current_l, *event.get_joypad());
     bool success = call_function(4, 1, "on_joypad_axis_moved");
@@ -2391,10 +2396,10 @@ void LuaContext::on_opening_transition_finished(const std::shared_ptr<Destinatio
  * \brief Calls the on_obtaining_treasure() method of the object on top of the stack.
  * \param treasure The treasure being obtained.
  */
-void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
+void LuaContext::on_obtaining_treasure(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_obtaining_treasure")) {
-    push_item(current_l, treasure.get_item());
+    push_item(current_l, treasure.get_item(hero.get_equipment()));
     lua_pushinteger(current_l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(current_l);
@@ -2402,7 +2407,8 @@ void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
     else {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
-    call_function(4, 0, "on_obtaining_treasure");
+    push_hero(current_l, hero);
+    call_function(5, 0, "on_obtaining_treasure");
   }
 }
 
@@ -2410,10 +2416,10 @@ void LuaContext::on_obtaining_treasure(const Treasure& treasure) {
  * \brief Calls the on_obtained_treasure() method of the object on top of the stack.
  * \param treasure The treasure just obtained.
  */
-void LuaContext::on_obtained_treasure(const Treasure& treasure) {
+void LuaContext::on_obtained_treasure(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_obtained_treasure")) {
-    push_item(current_l, treasure.get_item());
+    push_item(current_l, treasure.get_item(hero.get_equipment()));
     lua_pushinteger(current_l, treasure.get_variant());
     if (!treasure.is_saved()) {
       lua_pushnil(current_l);
@@ -2421,7 +2427,8 @@ void LuaContext::on_obtained_treasure(const Treasure& treasure) {
     else {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
-    call_function(4, 0, "on_obtained_treasure");
+    push_hero(current_l, hero);
+    call_function(5, 0, "on_obtained_treasure");
   }
 }
 
@@ -2594,22 +2601,23 @@ bool LuaContext::on_npc_interaction_item(Npc& npc, EquipmentItem& item_used) {
 
 /**
  * \brief Calls the on_interaction() method of the object on top of the stack.
- * \return true if an interaction occurred.
+ * \param hero The hero who triggers the interaction.
+ * \return \c true if an interaction occurred.
  */
-bool LuaContext::on_interaction() {
+bool LuaContext::on_interaction(Hero& hero) {
   check_callback_thread();
   if (find_method("on_interaction")) {
-    call_function(1, 0, "on_interaction");
+    push_hero(current_l, hero);
+    call_function(2, 0, "on_interaction");
     return true;
   }
-
   return false;
 }
 
 /**
  * \brief Calls the on_interaction_item() method of the object on top of the stack.
  * \param item_used The equipment item used.
- * \return true if an interaction occurred.
+ * \return \c true if an interaction occurred.
  */
 bool LuaContext::on_interaction_item(EquipmentItem& item) {
   check_callback_thread();
@@ -2707,7 +2715,7 @@ void LuaContext::on_opened() {
  * \param treasure A treasure being obtained when opening.
  * \return \c true if the method is defined.
  */
-bool LuaContext::on_opened(const Treasure& treasure) {
+bool LuaContext::on_opened(const Treasure& treasure, Hero& hero) {
   check_callback_thread();
   if (find_method("on_opened")) {
 
@@ -2716,7 +2724,7 @@ bool LuaContext::on_opened(const Treasure& treasure) {
       lua_pushnil(current_l);
     }
     else {
-      push_item(current_l, treasure.get_item());
+      push_item(current_l, treasure.get_item(hero.get_equipment()));
       lua_pushinteger(current_l, treasure.get_variant());
     }
 
@@ -2727,7 +2735,8 @@ bool LuaContext::on_opened(const Treasure& treasure) {
       lua_pushstring(current_l, treasure.get_savegame_variable().c_str());
     }
 
-    call_function(4, 0, "on_opened");
+    push_hero(current_l, hero);
+    call_function(5, 0, "on_opened");
     return true;
   }
 
@@ -2741,6 +2750,26 @@ void LuaContext::on_closed() {
   check_callback_thread();
   if (find_method("on_closed")) {
     call_function(1, 0, "on_closed");
+  }
+}
+
+/**
+ * \brief Calls the on_entered() method of the object on top of the stack.
+ */
+void LuaContext::on_entered() {
+  check_callback_thread();
+  if (find_method("on_entered")) {
+    call_function(1, 0, "on_entered");
+  }
+}
+
+/**
+ * \brief Calls the on_exited() method of the object on top of the stack.
+ */
+void LuaContext::on_exited() {
+  check_callback_thread();
+  if (find_method("on_exited")) {
+    call_function(1, 0, "on_exited");
   }
 }
 

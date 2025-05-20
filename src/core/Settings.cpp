@@ -21,6 +21,7 @@
 #include "solarus/core/Settings.h"
 #include "solarus/core/String.h"
 #include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/audio/Sound.h"
 #include "solarus/graphics/SoftwareVideoMode.h"
 #include "solarus/graphics/Video.h"
@@ -293,7 +294,7 @@ void Settings::set_from_quest() {
   }
   if (Sound::is_initialized()) {
     set_integer(key_sound_volume, Sound::get_global_volume());
-    set_integer(key_music_volume, Music::get_volume());
+    set_integer(key_music_volume, MusicSystem::get_global_volume());
   }
   if (InputEvent::is_initialized()) {
     set_boolean(key_joypad_enabled, InputEvent::is_legacy_joypad_enabled());
@@ -337,7 +338,7 @@ void Settings::apply_to_quest() {
     // Music volume.
     auto music_volume = get_integer(key_music_volume);
     if (music_volume.second) {
-      Music::set_volume(music_volume.first);
+      MusicSystem::set_global_volume(music_volume.first);
     }
 }
 

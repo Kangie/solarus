@@ -117,6 +117,8 @@ class Enemy: public Entity {
     void set_attacking_collision_mode(CollisionMode attacking_collision_mode);
     ObstacleBehavior get_obstacle_behavior() const;
     void set_obstacle_behavior(ObstacleBehavior obstacle_behavior);
+    int get_immobilization_duration() const;
+    void set_immobilization_duration(int duration);
     bool get_pushed_back_when_hurt() const;
     void set_pushed_back_when_hurt(bool pushed_back_when_hurt);
     bool get_push_hero_on_sword() const;
@@ -145,6 +147,18 @@ class Enemy: public Entity {
     void set_default_attack_consequences_sprite(const Sprite& sprite);
     const std::string& get_savegame_variable() const;
     bool is_saved() const;
+    const std::string& get_attack_failure_sound_id() const;
+    void set_attack_failure_sound_id(const std::string& sound_id);
+    const std::string& get_falling_sound_id() const;
+    void set_falling_sound_id(const std::string& sound_id);
+    const std::string& get_sinking_sound_id() const;
+    void set_sinking_sound_id(const std::string& sound_id);
+    const std::string& get_dying_sound_id() const;
+    void set_dying_sound_id(const std::string& sound_id);
+    const std::string& get_exploding_sound_id() const;
+    void set_exploding_sound_id(const std::string& sound_id);
+    const std::string& get_hurt_sound_id() const;
+    void set_hurt_sound_id(const std::string& sound_id);
     
     // sprites
     std::string get_animation() const;
@@ -219,6 +233,7 @@ class Enemy: public Entity {
     int damage_on_hero;                /**< number of heart quarters the player loses when he gets hurt by this enemy;
                                         * this number is divided depending on the hero's tunic number (default: 1) */
     int life;                          /**< number of health points of the enemy (default: 1) */
+    bool has_set_hurt_sound;           /**< indicates whether set_hurt_sound has been called or not. */
     HurtStyle hurt_style;              /**< style of sounds and animations when this enemy gets hurt
                                         * (default: HURT_NORMAL) */
     std::string dying_sprite_id;       /**< Sprite to show during the dying animation if any. */
@@ -239,6 +254,7 @@ class Enemy: public Entity {
         attacking_collision_mode;      /**< How the enemy tries to attack the hero. */
     ObstacleBehavior
         obstacle_behavior;             /**< Whether this enemy can fly or swim. */
+    int immobilization_duration;       /**< Duration in milliseconds during which the enemy is immobilized. */
 
     // enemy state
     bool being_hurt;                   /**< indicates that the enemy is being hurt */
@@ -251,6 +267,13 @@ class Enemy: public Entity {
     uint32_t start_shaking_date;       /**< date when the enemy shakes */
     uint32_t end_shaking_date;         /**< date when the enemy stops shaking and walks again */
     bool dying_animation_started;      /**< whether the dying animation was started */
+    std::string
+      attack_failure_sound_id;         /**< sound played when an attack failed on this enemy. */
+    std::string falling_sound_id;      /**< sound played when the enemy is falling into a hole. */
+    std::string sinking_sound_id;      /**< sound played when the enemy is sinking into deep water or lava. */
+    std::string dying_sound_id;        /**< sound played when the enemy is defeated. */
+    std::string exploding_sound_id;    /**< sound played when the enemy is exploding. */
+    std::string hurt_sound_id;         /**< sound played when the enemy is hurt. */
 
     Treasure treasure;                 /**< pickable item that appears when this enemy gets killed */
 

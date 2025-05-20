@@ -24,8 +24,8 @@
 #include <list>
 #include <map>
 #include <optional>
-#include <al.h>
-#include <alc.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 #include <vorbis/vorbisfile.h>
 
 namespace Solarus {
@@ -50,11 +50,14 @@ class SOLARUS_API Sound: public ExportableToLua {
     const std::string& get_id() const;
     bool start();
     void stop();
+    bool is_playing() const;
     bool is_paused() const;
     void set_paused(bool paused);
     bool is_paused_by_script() const;
     void set_paused_by_script(bool paused_by_script);
     void update_paused();
+    bool is_looped() const;
+    void set_looped(bool looped);
     int get_volume() const;
     void set_volume(int volume);
     float get_pan() const;
@@ -90,6 +93,7 @@ class SOLARUS_API Sound: public ExportableToLua {
 
     const SoundBuffer& data;                     /**< The loaded sound data. */
     ALuint source = 0;                           /**< The source currently playing this sound. */
+    bool looped = false;                         /**< If the sound should be played in a loop. */
     bool paused_by_script = false;               /**< Whether the sound is paused by a Lua script. */
     float volume = 1.0;                          /**< Volume of this sound effect
                                                   * (0.0 to 1.0, relative to the global volume). */

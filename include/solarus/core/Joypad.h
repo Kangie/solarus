@@ -23,7 +23,6 @@
 #include <memory>
 #include <SDL_events.h>
 #include <SDL_joystick.h>
-#include <SDL_haptic.h>
 
 namespace Solarus {
 struct SDL_Controller_Deleter {
@@ -33,14 +32,6 @@ struct SDL_Controller_Deleter {
 };
 
 using SDL_GameControllerUniquePtr = std::unique_ptr<SDL_GameController,SDL_Controller_Deleter>;
-
-struct SDL_Haptic_Deleter {
-    void operator()(SDL_Haptic* haptic) {
-        SDL_HapticClose(haptic);
-    }
-};
-
-using SDL_HapticUniquePtr = std::unique_ptr<SDL_Haptic,SDL_Haptic_Deleter>;
 
 struct SDL_Joystick_Deleter {
     void operator()(SDL_Joystick* joystick) {
@@ -98,7 +89,7 @@ public:
   double get_axis(JoyPadAxis axis) const;
   bool is_button_pressed(JoyPadButton button) const;
   std::string get_name() const;
-  void rumble(float intensity, uint32_t time);
+  void rumble(float low_frequency_intensity, float high_frequency_intensity, uint32_t duration);
   bool has_rumble();
   bool is_attached();
   void reset();
@@ -107,7 +98,6 @@ public:
 private:
   SDL_GameControllerUniquePtr controller;
   SDL_JoystickUniquePtr joystick;
-  SDL_HapticUniquePtr haptic;
 };
 
 template <>

@@ -59,6 +59,7 @@ public:
 
   void set_viewport(const FRectangle& viewport);
   const FRectangle& get_viewport() const;
+
 private:
   inline void invalidate() {
     transform_dirty = true;
@@ -66,7 +67,7 @@ private:
   }
   glm::vec2 center = glm::vec2(0.f);        /**< Center at which the view looks */
   //glm::vec2 size;                         /**< Size the view covers */
-  glm::vec2 scale = glm::vec2(1.f);          /**< Scaling of the view */
+  glm::vec2 scale = glm::vec2(1.f);         /**< Scaling of the view */
   float rotation = 0;                       /**< Rotation of the view around the center */
   FRectangle viewport;                      /**< Viewport of this view, in fraction of the */
   mutable glm::mat4 transform;              /**< Cached transform from the viewed space to target space */

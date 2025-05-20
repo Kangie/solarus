@@ -186,6 +186,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1527_entity_set_name"
   "bugs/1533_savegame_write_escape"
   "bugs/1534_unicode_filenames"
+  "bugs/1535_collision_moving_sprite"
   "bugs/1547_teletransporter_on_activated_twice/map_1"
   "bugs/1550_use_bow"
   "bugs/1551_error_teletransporter_set_destination_map"
@@ -202,7 +203,12 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1619_camera_obstacles"
   "bugs/1628_hero_set_direction_crash"
   "bugs/1635_timer_set_remaining_time"
+  "bugs/1637_multi_items"
+  "bugs/1639_destination_get_direction"
   "bugs/1641_crash_assign_item"
+  "bugs/1644_random_movement_get_angle"
+  "bugs/1648_custom_entities_collision_not_happening"
+  "bugs/1652_npc_movement_stop_animation"
 )
 
 # Test that should succeed when there are non-fatal errors

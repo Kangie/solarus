@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/CurrentQuest.h"
-#include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/MainLoop.h"
@@ -174,6 +173,7 @@ static void stop(LuaContext& context, Movement& movement) {
   if (Entity* entity = movement.get_entity()) {
     // The object controlled is a map entity.
     entity->clear_movement();
+    entity->notify_movement_finished();
   } else if (Drawable* drawable = movement.get_drawable()) {
     // The object controlled is a drawable.
     drawable->stop_movement();
@@ -374,7 +374,7 @@ static LuaBind::OnStack path_get_path(lua_State* l, PathMovement& movement) {
   const std::string& path = movement.get_path();
 
   // Build a Lua array containing the path.
-  lua_createtable(l, path.size(), 0);
+  lua_createtable(l, static_cast<int>(path.size()), 0);
   for (size_t i = 0 ; i < path.size() ; ++i) {
     int direction8 = (path[i] - '0');
     lua_pushinteger(l, direction8);

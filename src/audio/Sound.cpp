@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/audio/Sound.h"
 #include "solarus/core/Arguments.h"
 #include "solarus/core/Debug.h"
@@ -24,7 +24,7 @@
 #include "solarus/lua/LuaContext.h"
 #include <algorithm>
 #ifdef SOLARUS_OPENAL_EXTENSIONS_RECONNECT
-#  include <alext.h>
+#  include <AL/alext.h>
 #endif
 #include <cstdlib>
 #include <cstring>
@@ -102,9 +102,10 @@ void Sound::initialize(const Arguments& args, ResourceProvider* resource_provide
   }
 
   alGenBuffers(0, nullptr);  // Necessary on some systems to avoid errors with the first sound loaded.
+  alListenerf(AL_GAIN, 0.7);  // Reduce master volume, too loud by default.
 
   // initialize the music system
-  Music::initialize();
+  MusicSystem::initialize();
 }
 
 /**
@@ -124,7 +125,7 @@ void Sound::quit() {
   stop_all();
 
   // uninitialize the music subsystem
-  Music::quit();
+  MusicSystem::quit();
 
   // uninitialize OpenAL
   alcMakeContextCurrent(nullptr);
@@ -194,7 +195,7 @@ void Sound::update_device_connection() {
         }
         resource_provider->notify_audio_device_disconnected();
       }
-      Music::notify_device_disconnected_all();
+      MusicSystem::notify_device_disconnected_all();
     }
   }
 
@@ -219,7 +220,7 @@ void Sound::update_device_connection() {
         } else {
           const ALchar* current_device_name = alcGetString(device, SOLARUS_OPENAL_DEVICE_SPECIFIER);
           Logger::info(std::string("Connected to audio device '") + (current_device_name ? current_device_name : "") + "'");
-          Music::notify_device_reconnected_all();
+          MusicSystem::notify_device_reconnected_all();
         }
       }
       if (device == nullptr) {
@@ -269,12 +270,16 @@ bool Sound::exists(const std::string& sound_id) {
 
 /**
  * \brief Starts playing the specified sound.
- * \param sound_id Id of the sound to play.
+ * \param sound_id Id of the sound to play. An empty string does nothing.
  */
 void Sound::play(const std::string& sound_id) {
 
   if (device == nullptr) {
     // Sound might be disabled.
+    return;
+  }
+
+  if (sound_id.empty()) {
     return;
   }
 
@@ -460,7 +465,7 @@ void Sound::update() {
   }
 
   // also update the music
-  Music::update();
+  MusicSystem::update();
 }
 
 /**
@@ -511,6 +516,7 @@ bool Sound::start() {
     alGenSources(1, &source);
     alSourcei(source, AL_BUFFER, buffer);
     alSourcef(source, AL_GAIN, get_actual_volume());
+    alSourcei(source, AL_LOOPING, looped ? AL_TRUE : AL_FALSE);
 
     // update initial parameters
     set_pan(pan);
@@ -589,6 +595,20 @@ void Sound::stop_source() {
   }
 
   source = AL_NONE;
+}
+
+/**
+ * \brief Returns whether the sound is currently playing.
+ * \return \c true if the sound is playing.
+ */
+bool Sound::is_playing() const {
+  if (device == nullptr || source == AL_NONE) {
+    return false;
+  }
+
+  ALint status;
+  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  return status == AL_PLAYING;
 }
 
 /**
@@ -683,6 +703,22 @@ void Sound::stop_all() {
   for (const SoundPtr& sound: current_sounds) {
     sound->stop();
   }
+}
+
+/**
+ * \brief Returns whether the sound is looped.
+ * \return true if the sound is looped.
+ */
+bool Sound::is_looped() const {
+  return looped;
+}
+
+/**
+ * \brief Sets if the sound should be played in a loop.
+ * \param looped true if the sound is looped.
+ */
+void Sound::set_looped(bool looped) {
+  this->looped = looped;
 }
 
 /**

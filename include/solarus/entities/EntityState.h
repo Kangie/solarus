@@ -91,6 +91,7 @@ class Entity::State : public ExportableToLua {
     virtual bool get_can_control_movement() const;
     virtual int get_wanted_movement_direction8() const;
     virtual void notify_walking_speed_changed();
+    virtual void notify_swimming_speed_changed();
     virtual void notify_position_changed();
     virtual void notify_layer_changed();
     virtual void notify_obstacle_reached();

@@ -93,6 +93,22 @@ EntityType Switch::get_type() const {
 }
 
 /**
+ * \brief Returns the subtype of this switch.
+ * \return the subtype of switch entity.
+ */
+Switch::Subtype Switch::get_subtype() const {
+  return subtype;
+}
+
+/**
+ * \brief Sets the subtype of this switch.
+ * \param subtype the subtype of switch entity.
+ */
+void Switch::set_subtype(Switch::Subtype subtype) {
+  this->subtype = subtype;
+}
+
+/**
  * \brief Returns whether this entity is an obstacle for another one when
  * it is enabled.
  * \param other another entity

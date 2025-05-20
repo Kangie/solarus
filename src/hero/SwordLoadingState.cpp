@@ -230,7 +230,10 @@ void Hero::SwordLoadingState::play_load_sound() {
     Sound::play(custom_sound_name); // this particular sword has a custom loading sound effect
   }
   else {
-    Sound::play("sword_spin_attack_load");
+    const std::string& sword_spin_attack_load_sound_id = get_entity().get_spin_attack_load_sound_id();
+    if (!sword_spin_attack_load_sound_id.empty()) {
+      Sound::play(sword_spin_attack_load_sound_id);
+    }
   }
 }
 

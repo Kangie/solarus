@@ -22,7 +22,6 @@
 #include "solarus/graphics/Transition.h"
 #include "solarus/lua/ExportableToLua.h"
 #include <map>
-#include <vector>
 #include <string>
 
 struct lua_State;
@@ -125,6 +124,8 @@ class SOLARUS_API Savegame: public ExportableToLua {
     void set_initial_values();
     void set_default_keyboard_controls();
     void set_default_joypad_controls();
+    bool get_legacy_controls_storage() const;
+    void set_legacy_controls_storage(bool legacy_controls_storage);
     void post_process_existing_savegame();
 
     struct SavedValue {
@@ -142,17 +143,17 @@ class SOLARUS_API Savegame: public ExportableToLua {
     const std::map<std::string, SavedValue>& get_saved_values() const;
 
   private:
-    std::map<std::string, SavedValue> saved_values;
-
-    EquipmentPtr equipment;    /**< Equipement of this savegame */
-
-    bool empty;
-    std::string file_name;         /**< Savegame file name relative to the quest write directory. */
+    std::map<std::string, SavedValue>
+        saved_values;                   /**< The saved data. */
+    EquipmentPtr equipment;             /**< Equipment of this savegame */
+    bool empty = false;
+    std::string file_name;              /**< Savegame file name relative to the quest write directory. */
     MainLoop& main_loop;
-    Game* game;                    /**< nullptr if this savegame is not currently running */
+    Game* game = nullptr;               /**< nullptr if this savegame is not currently running */
     Transition::Style
-        default_transition_style;  /**< Transition style to use by default. */
-
+        default_transition_style;       /**< Transition style to use by default. */
+    bool legacy_controls_storage =
+        false;                          /**< Whether to load and save controls automatically for this game. */
     bool import_from_file();
     static int l_newindex(lua_State* l);
 };

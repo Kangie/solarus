@@ -37,6 +37,7 @@
 #include "solarus/entities/Teletransporter.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/lua/LuaContext.h"
+#include "solarus/core/Map.h"
 #include <lua.hpp>
 
 namespace Solarus {
@@ -99,19 +100,6 @@ EntityType CustomEntity::get_type() const {
  */
 const std::string& CustomEntity::get_model() const {
   return model;
-}
-
-/**
- * \brief Returns the direction of this custom entity.
- *
- * This is the direction applied to the sprites unless it is overridden
- * for particular sprites.
- *
- * \return The direction.
- */
-int CustomEntity::get_sprites_direction() const {
-
-  return get_direction();
 }
 
 /**
@@ -794,7 +782,9 @@ void CustomEntity::add_collision_test(
       callback_ref
   );
 
-  check_collision_with_detectors();
+  if (is_on_map()) {
+    get_map().check_collision_from_detector(*this);
+  }
 }
 
 /**
@@ -817,7 +807,9 @@ void CustomEntity::add_collision_test(
       callback_ref
   );
 
-  check_collision_with_detectors();
+  if (is_on_map()) {
+    get_map().check_collision_from_detector(*this);
+  }
 }
 
 /**
@@ -1279,6 +1271,7 @@ bool CustomEntity::get_follow_streams() const {
  */
 void CustomEntity::set_follow_streams(bool follow_streams) {
   this->follow_streams = follow_streams;
+  check_collision_with_detectors();
 }
 
 /**

@@ -1,5 +1,5 @@
 <div align="center">
-<img alt="Solarus logo" src="images/solarus_logo.svg" width="300"/>
+<img alt="Solarus logo" src="images/solarus_logo.svg" width="400" style="margin-bottom: 2em;"/>
 </div>
 
 # Solarus
@@ -9,13 +9,19 @@
 
 **Solarus** is a free and open-source 2D game engine written in C++, that can run games scripted in Lua. It has been designed with 16-bit classic Action-RPGs in mind, and is available on a wide range of platforms.
 
-You'll find more information about Solarus on <https://www.solarus-games.org>, such as downloads, games, news, tutorials and more.
+More information can be found in the [official website](https://www.solarus-games.org), including downloads, games, news, tutorials and more.
 
 ![Sample quest screenshot](images/solarus_screenshot.png)
 
-Solarus has a CLI, `solarus-run` and a GUI launcher, [Solarus Launcher](gui/).
+| Application                  | Description                  |
+| ---------------------------- | ---------------------------- |
+| `solarus`                    | The C++ library.             |
+| `solarus-run`                | CLI to play Solarus games.   |
+| [Solarus Launcher](launcher) | GUI to play Solarus games.   |
+| [Solarus Editor](editor)     | GUI to create Solarus games. |
 
-Solarus also features a graphical game creation editor called [Solarus Quest Editor](https://gitlab.com/solarus-games/solarus-quest-editor), that allows you to create maps, sprites and scripts with ease.
+[launcher]: https://gitlab.com/solarus-games/solarus-launcher-legacy
+[editor]: https://gitlab.com/solarus-games/solarus-quest-editor
 
 ## Compilation
 
@@ -24,6 +30,10 @@ To compile Solarus, instructions can be found in the [compilation.md](compilatio
 ## Create your own game
 
 See [tutorials](https://docs.solarus-games.org/) (video and text), and [documentation](https://doxygen.solarus-games.org/latest) on Solarus website.
+
+## Repository Management
+
+The repository management policy can be found in the [repository.md](repository.md) file.
 
 ## License
 
@@ -35,5 +45,4 @@ Resources made for Solarus are licensed under the terms of the [CC BY-SA 3.0](ht
 
 Solarus is backed by [Solarus Labs](https://www.solarus-games.org/about/legal-terms/), a nonprofit organization under French law. All your donations will be totally reinvested into the project.
 
-[![](https://img.shields.io/liberapay/receives/solarus-labs.svg?logo=liberapay)](https://liberapay.com/solarus-labs/donate
-)
+[![](https://img.shields.io/liberapay/receives/solarus-labs.svg?logo=liberapay)](https://liberapay.com/solarus-labs/donate)

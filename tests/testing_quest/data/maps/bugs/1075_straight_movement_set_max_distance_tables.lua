@@ -1,10 +1,11 @@
 local map = ...
 local game = map:get_game()
 
+local xy = { x = 0, y = 0 }
+
 function map:on_opening_transition_finished()
 
-  local hero_x, hero_y = hero:get_position()
-  local xy = { x = hero_x, y = hero_y }
+  xy.x, xy.y = hero:get_position()
 
   local movement = sol.movement.create("straight")
   movement:set_angle(math.pi)

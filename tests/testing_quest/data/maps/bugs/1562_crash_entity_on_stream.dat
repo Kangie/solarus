@@ -42,6 +42,7 @@ stream{
 }
 
 stream{
+  name = "stream_1",
   layer = 0,
   x = 48,
   y = 93,

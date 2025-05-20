@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/core/Debug.h"
 #include "solarus/core/Geometry.h"
 #include "solarus/core/System.h"
 #include "solarus/core/Profiler.h"
@@ -451,12 +450,10 @@ void StraightMovement::update_smooth_x() {
           translate_xy(x_move, -1);
         }
         else {
-
           // The diagonal moves didn't work either.
           // So we look for a place (up to 8 pixels up and down)
           // where the required move would be allowed.
           // If we find a such place, then we move towards this place.
-
 
           bool moved = false;
           for (int i = 1; i <= 8 && !moved; i++) {
@@ -492,8 +489,8 @@ void StraightMovement::update_smooth_x() {
         }
       }
     }
-    //Increment anyway if it wasn't done (in case the move was impossible
-    if(not did_increment) {
+    // Increment anyway if it wasn't done (in case the move was impossible.
+    if (not did_increment) {
       increment_next_move_date(x_delay);
     }
   }
@@ -592,8 +589,8 @@ void StraightMovement::update_smooth_y() {
         }
       }
     }
-    //Increment anyway if it wasn't done (in case the move was impossible
-    if(not did_increment) {
+    // Increment anyway if it wasn't done (in case the move was impossible).
+    if (not did_increment) {
       increment_next_move_date(y_delay);
     }
   }

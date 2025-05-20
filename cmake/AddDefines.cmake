@@ -41,5 +41,4 @@ if(SOLARUS_PROFILING)
   add_definitions(-DSOLARUS_PROFILING)
 endif()
 
-# Enable experimental GLM to gain access to GLM_GTX_matrix_transform_2d
-add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
+add_definitions(-DSOLARUS_DATADIR_PATH="${CMAKE_INSTALL_PREFIX}/${SOLARUS_INSTALL_DATADIR}")

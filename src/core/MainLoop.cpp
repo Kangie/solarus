@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
+#include "solarus/audio/MusicSystem.h"
 #include "solarus/core/Arguments.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
@@ -135,7 +135,7 @@ MainLoop::MainLoop(const Arguments& args):
   resetting(false),
   exiting(false),
   debug_lag(0),
-  lua_console_enabled(true),
+  lua_console_enabled(false),
   suspend_unfocused(true),
   suspended(false),
   turbo(false),
@@ -163,7 +163,7 @@ MainLoop::MainLoop(const Arguments& args):
   const std::string& suspend_unfocused_arg = args.get_argument_value("-suspend-unfocused");
   suspend_unfocused = suspend_unfocused_arg.empty() || suspend_unfocused_arg == "yes";
   const std::string& lua_console_arg = args.get_argument_value("-lua-console");
-  lua_console_enabled = lua_console_arg.empty() || lua_console_arg == "yes";
+  lua_console_enabled = lua_console_arg == "yes";
   lua_script_arg = args.get_argument_value("-s");
 
   // Try to open the quest.
@@ -520,7 +520,7 @@ void MainLoop::fixed_run() {
     last_frame_duration = (System::get_real_time_ms() - time_dropped) - last_frame_date;
     if (last_frame_duration < System::fixed_timestep_ns && !turbo) {
       SOL_PBLOCK("Timestep sleep");
-      System::sleep((System::fixed_timestep_ns - last_frame_duration) / 1000000);
+      System::sleep(static_cast<uint32_t>((System::fixed_timestep_ns - last_frame_duration) / 1000000));
     }
   }
 }
@@ -560,7 +560,7 @@ void MainLoop::step(uint64_t timestep_ns) {
       // Reset
       lua_context->exit();
       lua_context->initialize(lua_script_arg);
-      Music::stop_playing();
+      MusicSystem::stop_playing();
     }
   }
 }
@@ -652,14 +652,14 @@ void MainLoop::notify_input(const InputEvent& event) {
       Logger::info("Simulation suspended");
       set_suspended(true);
       Sound::pause_all();
-      Music::pause_playing();
+      MusicSystem::pause_playing();
     }
   }
   else if (suspend_unfocused && event.is_window_focus_gained()) {
     if (is_suspended()) {
       Logger::info("Simulation resumed");
       set_suspended(false);
-      Music::resume_playing();
+      MusicSystem::resume_playing();
       Sound::resume_all();
     }
   }
@@ -713,11 +713,11 @@ void MainLoop::notify_input(const InputEvent& event) {
 
 void MainLoop::notify_control(const ControlEvent& event) {
 
-  if(lua_context->notify_control(event)) {
+  if (lua_context->notify_control(event)) {
     return;
   }
 
-  if(game != nullptr) {
+  if (game != nullptr) {
     game->notify_control(event);
   }
 }
@@ -786,6 +786,9 @@ void MainLoop::initialize_lua_console() {
     std::string line;
     while (!is_exiting()) {
 
+      // Note: don't enable the console on Windows when stdin is the default,
+      // it continuously receives false positives and eats tons of CPU.
+      // This should rather be used with a pipe typically from the editor.
       if (std::getline(std::cin, line)) {
 
         while (!line.empty() && std::isspace(line.at(line.size() - 1))) {

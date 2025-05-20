@@ -273,6 +273,10 @@ void Movement::notify_position_changed() {
       entity->notify_position_changed();
     }
   }
+
+  if (drawable != nullptr) {
+    drawable->notify_position_changed();
+  }
 }
 
 /**

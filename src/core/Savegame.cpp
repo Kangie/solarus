@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "solarus/core/CurrentQuest.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/InputEvent.h"
 #include "solarus/core/MainLoop.h"
@@ -48,9 +49,9 @@ const std::string Savegame::KEY_JOYPAD_ITEM_1 = "_joypad_item_1";      /**< Joyp
 const std::string Savegame::KEY_JOYPAD_ITEM_2 = "_joypad_item_2";      /**< Joypad string mapped to the item 2 command. */
 const std::string Savegame::KEY_JOYPAD_PAUSE = "_joypad_pause";        /**< Joypad string mapped to the pause command. */
 const std::string Savegame::KEY_JOYPAD_RIGHT = "_joypad_right";        /**< Joypad string mapped to the right command. */
-const std::string Savegame::KEY_JOYPAD_UP = "_joypad_up_key";          /**< Joypad string mapped to the up command. */
-const std::string Savegame::KEY_JOYPAD_LEFT = "_joypad_left_key";      /**< Joypad string mapped to the left command. */
-const std::string Savegame::KEY_JOYPAD_DOWN = "_joypad_down_key";      /**< Joypad string mapped to the down command. */
+const std::string Savegame::KEY_JOYPAD_UP = "_joypad_up";              /**< Joypad string mapped to the up command. */
+const std::string Savegame::KEY_JOYPAD_LEFT = "_joypad_left";          /**< Joypad string mapped to the left command. */
+const std::string Savegame::KEY_JOYPAD_DOWN = "_joypad_down";          /**< Joypad string mapped to the down command. */
 const std::string Savegame::KEY_CURRENT_LIFE = "_current_life";        /**< Number of life points. */
 const std::string Savegame::KEY_CURRENT_MONEY = "_current_money";      /**< Amount of money. */
 const std::string Savegame::KEY_CURRENT_MAGIC = "_current_magic";      /**< Number of magic points. */
@@ -91,7 +92,8 @@ Savegame::Savegame(MainLoop& main_loop, const std::string& file_name):
   file_name(file_name),
   main_loop(main_loop),
   game(nullptr),
-  default_transition_style(Transition::Style::FADE) {
+  default_transition_style(Transition::Style::FADE),
+  legacy_controls_storage(CurrentQuest::is_format_at_most({ 1, 6 })) {
 
   // Don't call initialize() manually because the shared_ptr does not exist
   // at this point, but is needed by initialize() when calling item scripts.
@@ -203,6 +205,32 @@ void Savegame::set_default_joypad_controls() {
 }
 
 /**
+ * \brief Returns whether main controls should be stored the < 2.0 way.
+ * \return \c true if legacty controls storage is enabled.
+ */
+bool Savegame::get_legacy_controls_storage() const {
+  return legacy_controls_storage;
+}
+
+/**
+ * \brief Sets whether main controls should be stored the < 2.0 way.
+ *
+ * If enabled, controls are loaded and saved automtically with this savegame,
+ * but with the following limitations.
+ *   - Does not support multiple heroes: only saves the main hero controls.
+ *   - Limited support of multiple inputs bound to the same command:
+ *     at most only one from the keyboard and one from the joypad.
+ *   - Does not support custom commands: scripts have to load and save them on their own.
+ *   - Does not apply to menus outside a game (like a title screen) because this stores
+ *     to a savegame.
+ *
+ * \return \c true if legacy controls storage is enabled.
+ */
+void Savegame::set_legacy_controls_storage(bool legacy_controls_storage) {
+  this->legacy_controls_storage = legacy_controls_storage;
+}
+
+/**
  * \brief Updates a savegame if necessary from any Solarus version to the newest one.
  */
 void Savegame::post_process_existing_savegame() {
@@ -304,7 +332,7 @@ int Savegame::l_newindex(lua_State* l) {
       break;
 
     case LUA_TNUMBER:
-      savegame->set_integer(key, (int) lua_tointeger(l, 3));
+      savegame->set_integer(key, static_cast<int>(lua_tointeger(l, 3)));
       break;
 
     case LUA_TSTRING:

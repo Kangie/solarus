@@ -299,9 +299,9 @@ bool Entity::State::notify_input(const InputEvent& /* event */) {
 }
 
 void Entity::State::notify_control(const ControlEvent& event) {
-  if(event.is_pressed()) {
+  if (event.is_pressed()) {
     notify_command_pressed(event.get_command());
-  } else if(event.is_released()){
+  } else if (event.is_released()){
     notify_command_released(event.get_command());
   }
 }
@@ -558,6 +558,15 @@ int Entity::State::get_wanted_movement_direction8() const {
  * to set the new speed.
  */
 void Entity::State::notify_walking_speed_changed() {
+}
+
+/**
+ * \brief Notifies this state that the swimming speed has changed.
+ *
+ * If the entity can swim in this state, the state should modify its movement
+ * to set the new speed.
+ */
+void Entity::State::notify_swimming_speed_changed() {
 }
 
 /**

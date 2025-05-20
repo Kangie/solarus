@@ -221,10 +221,10 @@ static LuaBind::OnStack list_dir(lua_State* L, const std::string& dir_name) {
   // work and even if it did, it would probably result in extra copies.
   if (QuestFiles::data_file_is_dir(dir_name)) {
     const std::vector<std::string>& files = QuestFiles::data_file_list_dir(dir_name);
-    lua_createtable(L, files.size(), 0);
+    lua_createtable(L, static_cast<int>(files.size()), 0);
     int i = 1;
     for (const std::string& file : files) {
-      lua_pushlstring(L, file.c_str(), file.size());
+      LuaContext::push_string(L, file);
       lua_rawseti(L, -2, i);
       ++i;
     }

@@ -119,6 +119,7 @@ class Drawable: public ExportableToLua {
     virtual void update();
     bool is_suspended() const;
     virtual void set_suspended(bool suspended);
+    virtual void notify_position_changed();
 
     BlendMode get_blend_mode() const;
     void set_blend_mode(BlendMode blend_mode);
@@ -141,8 +142,10 @@ class Drawable: public ExportableToLua {
     Point get_full_origin() const;
 
     virtual Rectangle get_region() const = 0;
+
   protected:
     Drawable();
+
   private:
     const DrawProxy& terminal() const;
 
@@ -161,7 +164,7 @@ class Drawable: public ExportableToLua {
     uint8_t opacity = 255;        /**< Opacity of this drawable object */
     double rotation = 0;          /**< Rotation of the object around transform_origin*/
     Scale scale;                  /**< Scale of the object around transform_origin*/
-    Point transformation_origin;       /**< pivot for the transformations (rot,scale) of the object*/
+    Point transformation_origin;  /**< Pivot for the transformations (rot,scale) of the object */
     Color color_mod = Color::white;
 };
 

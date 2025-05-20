@@ -230,11 +230,8 @@ class SOLARUS_API Entities {
         tiles_in_animated_regions;                  /**< For each layer, animated tiles and tiles overlapping them. */
 
     // dynamic entities
-    /*HeroPtr hero;  */                                   /**< The hero, also stored in Game because
-                                                     * it is kept when changing maps. */
     std::vector<HeroPtr> heroes;
 
-    //CameraPtr camera;                               /**< The visible area of the map. */
     Cameras cameras;                                /**< The visibles area of the map. */
 
     std::map<std::string, EntityPtr>
@@ -283,7 +280,7 @@ inline Ground Entities::get_tile_ground(int layer, int x, int y) const {
  * \return The camera, or nullptr if there is no camera.
  */
 inline const CameraPtr Entities::get_camera() const {
-  if(cameras.size()) {
+  if (!cameras.empty()) {
     return cameras.front();
   } else {
     return nullptr;

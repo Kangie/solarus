@@ -184,15 +184,10 @@ double CircleMovement::get_angular_speed() const {
  * \param angle_speed Number of radians to make per second.
  */
 void CircleMovement::set_angular_speed(double angular_speed) {
-
-  if (angular_speed <= 0.0) {
-    std::ostringstream oss;
-    oss << "Invalid angle speed: " << angular_speed;
-    Debug::die(oss.str());
-  }
-
   this->angular_speed = angular_speed;
-  this->angle_change_delay = 1000000000.0 / Geometry::radians_to_degrees(angular_speed);
+  this->angle_change_delay = angular_speed > 0.0
+    ? 1000000000.0 / Geometry::radians_to_degrees(angular_speed)
+    : 0.0;
   this->next_angle_change_date = static_cast<double>(System::now_ns());
   recompute_position();
 }
@@ -258,7 +253,7 @@ void CircleMovement::set_clockwise(bool clockwise) {
  */
 uint32_t CircleMovement::get_duration() const {
 
-  return duration/1000000;
+  return static_cast<uint32_t>(duration / 1000000);
 }
 
 /**
@@ -272,7 +267,7 @@ uint32_t CircleMovement::get_duration() const {
  */
 void CircleMovement::set_duration(uint32_t duration) {
 
-  this->duration = duration*1000000;
+  this->duration = duration * 1000000;
   if (duration != 0 && is_started()) {
     this->end_movement_date = System::now_ns() + duration;
   }
@@ -320,7 +315,7 @@ void CircleMovement::set_max_rotations(int max_rotations) {
  */
 uint32_t CircleMovement::get_loop() const {
 
-  return loop_delay / 1000000;
+  return static_cast<uint32_t>(loop_delay / 1000000);
 }
 
 /**
@@ -329,7 +324,7 @@ uint32_t CircleMovement::get_loop() const {
  */
 void CircleMovement::set_loop(uint32_t delay) {
 
-  this->loop_delay = delay*10000000;
+  this->loop_delay = delay * 10000000;
   if (delay != 0 && is_stopped()) {
     this->restart_date = System::now_ns() + delay;
   }
@@ -385,8 +380,8 @@ void CircleMovement::update() {
         }
       }
 
-      next_angle_change_date += angle_change_delay;
-      update_needed = true;
+      next_angle_change_date += angle_change_delay > 0.0 ? angle_change_delay : 10.0;
+      update_needed = angle_change_delay > 0.0;
     }
   }
 

@@ -24,6 +24,7 @@
 #include "solarus/lua/LuaException.h"
 #include <map>
 #include <string>
+#include <vector>
 #include <lua.hpp>
 
 namespace Solarus {
@@ -168,6 +169,28 @@ std::string opt_string_field(
     int table_index,
     const std::string& key,
     const std::string& default_value
+);
+
+// std::vector<std::string>
+std::vector<std::string> check_string_list(
+    lua_State* l,
+    int index
+);
+std::vector<std::string> check_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key
+);
+std::vector<std::string> opt_string_list(
+    lua_State* l,
+    int index,
+    const std::vector<std::string>& default_value
+);
+std::vector<std::string> opt_string_list_field(
+    lua_State* l,
+    int table_index,
+    const std::string& key,
+    const std::vector<std::string>& default_value
 );
 
 // bool

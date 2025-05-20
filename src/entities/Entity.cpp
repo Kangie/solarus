@@ -34,13 +34,9 @@
 #include "solarus/entities/Separator.h"
 #include "solarus/entities/StreamAction.h"
 #include "solarus/entities/Switch.h"
-#include "solarus/entities/Tileset.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/movements/Movement.h"
-#include <algorithm>
-#include <iterator>
-#include <list>
 #include <utility>
 
 namespace Solarus {
@@ -175,6 +171,11 @@ Ground Entity::get_modified_ground() const {
  */
 void Entity::update_ground_observers() {
   SOL_PFUN();
+
+  if (!is_on_map()) {
+    return;
+  }
+
   // Update overlapping entities that are sensible to their ground.
   const Rectangle& box = get_bounding_box();
   std::vector<EntityPtr> entities_nearby;
@@ -545,6 +546,9 @@ const Heroes& Entity::get_heroes() const {
  */
 void Entity::remove_from_map() {
 
+  if (!is_on_map()) {
+    return;
+  }
   get_entities().remove_entity(*this);
 }
 
@@ -949,10 +953,8 @@ Rectangle Entity::get_max_bounding_box() const {
   Rectangle result = get_bounding_box();
   for (const SpritePtr& sprite: get_sprites()) {
     Rectangle box = sprite->get_max_bounding_box();
-    box.add_xy(sprite->get_xy());  // Take into account the sprite's own offset.
     box.add_xy(get_xy());  // Take into account the coordinates of the entity.
     result |= box;
-    // TODO when the sprite's offset changes, update the bounding box
   }
   return result;
 }
@@ -1454,7 +1456,7 @@ SpritePtr Entity::create_sprite(
     int order
 ) {
   if (order == -1) {
-    order = sprites.size();
+    order = static_cast<int>(sprites.size());
   }
   SpritePtr sprite = Sprite::create(animation_set_id);
   SOLARUS_REQUIRE(sprite, "Entity::create_sprite failed.");
@@ -1742,6 +1744,8 @@ void Entity::clear_movement() {
     movement->set_lua_notifications_enabled(false);  // Stop future Lua callbacks.
     old_movements.push_back(movement);               // Destroy it later.
     movement = nullptr;
+    // Don't call notify_movement_finished() from here or any virtual function
+    // as we can be in the destructor at this point.
   }
 }
 
@@ -3311,6 +3315,10 @@ bool Entity::is_in_same_region(const Entity& other) const {
  */
 bool Entity::is_in_same_region(const Point& xy) const {
 
+  if (!is_on_map()) {
+    return false;
+  }
+
   return get_entities().are_in_same_region(get_center_point(), xy);
 }
 
@@ -3556,7 +3564,9 @@ bool Entity::notify_action_command_pressed(Hero& hero) {
     );
     hero.start_lifting(carried_object);
 
-    Sound::play("lift");
+    if (!hero.get_lifting_sound_id().empty()) {
+      Sound::play(hero.get_lifting_sound_id());
+    }
     remove_from_map();
     get_lua_context()->entity_on_lifting(*this, hero, *carried_object);
     return true;
@@ -3767,9 +3777,10 @@ void Entity::update_sprites() {
  */
 void Entity::update_sprite(Sprite& sprite) {
 
-  sprite.update();
-  if (sprite.has_frame_changed()) {
-    // The frame has just changed.
+  bool changed = false;
+  sprite.update(changed);
+  if (changed) {
+    // The frame or offset has just changed.
     // Pixel-precise collisions need to be rechecked.
     if (sprite.are_pixel_collisions_enabled()) {
 

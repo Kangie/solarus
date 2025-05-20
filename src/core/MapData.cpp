@@ -26,17 +26,7 @@ namespace Solarus {
 /**
  * \brief Creates an empty map data object.
  */
-MapData::MapData():
-    min_layer(0),
-    max_layer(-1),
-    size(0, 0),
-    world(),
-    location(0, 0),
-    floor(NO_FLOOR),
-    tileset_id(),
-    music_id("none"),
-    entities(),
-    named_entities() {
+MapData::MapData() {
 
   set_min_layer(0);
   set_max_layer(0);
@@ -288,7 +278,7 @@ int MapData::get_num_entities() const {
  * \return The number of entities on that layer.
  */
 int MapData::get_num_entities(int layer) const {
-  return get_entities(layer).size();
+  return static_cast<int>(get_entities(layer).size());
 }
 
 /**

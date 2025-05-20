@@ -18,8 +18,8 @@ function map:on_started()
   -- Double checking type checks on some related types.
   local straight = sol.movement.create'straight'
   local random = sol.movement.create'random'
-  assert_error{straight.get_speed, random}
-  assert_error{random.get_speed, straight}
+  straight:get_speed()
+  random:get_speed()
 
   sol.main.exit()
 end

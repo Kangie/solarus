@@ -23,16 +23,17 @@ namespace Solarus {
 const std::string LuaContext::joypad_module_name = "sol.joypad";
 
 /**
- * \brief Implementation of joypad:rumble(intensity,duration).
+ * \brief Implementation of joypad:rumble(low_frequency_intensity, high_frequency_intensity, duration).
  * \param joypad The joypad to rumble.
- * \param intensity Strength of rumble, in range 0-1.
+ * \param low_frequency_intensity Strength of low frequency (left) rumble, in range 0-1.
+ * \param high_frequency_intensity Strength of high frequency (right) rumble, in range 0-1.
  * \param duration Length of rumble in milliseconds.
  */
-static void rumble(Joypad& joypad, double intensity, int duration) {
+static void rumble(Joypad& joypad, double low_frequency_intensity, double high_frequency_intensity, int duration) {
   if (duration < 0) {
     Debug::error("negative rumble duration");
   }
-  joypad.rumble(intensity, duration);
+  joypad.rumble(low_frequency_intensity, high_frequency_intensity, duration);
 }
 
 void LuaContext::register_joypad_module() {
