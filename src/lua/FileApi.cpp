@@ -75,7 +75,7 @@ static LuaBind::OnStack open(lua_State* l,
       lua_pushnil(l);
       const std::string& message = "Cannot find file '" + file_name
           + "' in the quest write directory, in data/, data.solarus or in data.solarus.zip";
-      lua_pushlstring(l, message.c_str(), message.size());
+      LuaContext::push_string(l, message);
       return {2};
     }
     case QuestFiles::DataFileLocation::LOCATION_WRITE_DIRECTORY:
@@ -129,7 +129,7 @@ static LuaBind::OnStack open(lua_State* l,
   if (file_handle == nullptr) {
     lua_pushnil(l);
     const std::string& message = file_name + ": " + strerror(errno);
-    lua_pushlstring(l, message.c_str(), message.size());
+    LuaContext::push_string(l, message);
     lua_pushinteger(l, errno);
     return {3};
   }
@@ -138,8 +138,8 @@ static LuaBind::OnStack open(lua_State* l,
 
   // In other than Windows, just call io.open() in Lua.
   lua_getfield(l, LUA_REGISTRYINDEX, "io.open");
-  lua_pushstring(l, file_path.c_str());
-  lua_pushstring(l, mode.c_str());
+  LuaContext::push_string(l, file_path);
+  LuaContext::push_string(l, mode);
 
   bool called = LuaTools::call_function(l, 2, 2, "io.open");
   if (!called) {
@@ -175,7 +175,7 @@ static LuaBind::OnStack remove(lua_State* l, const std::string& file_name) {
 
   lua_pushnil(l);
   const std::string& message = "Failed to delete file '" + file_name + "'";
-  lua_pushlstring(l, message.c_str(), message.size());
+  LuaContext::push_string(l, message);
   return {2};
 }
 
@@ -195,7 +195,7 @@ static LuaBind::OnStack mkdir(lua_State* l, const std::string& dir_name) {
 
   lua_pushnil(l);
   const std::string& message = "Failed to create directory '" + dir_name + "'";
-  lua_pushlstring(l, message.c_str(), message.size());
+  LuaContext::push_string(l, message);
   return {2};
 }
 
