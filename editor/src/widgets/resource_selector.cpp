@@ -59,6 +59,7 @@ void ResourceSelector::set_resource_type(ResourceType resource_type) {
     const QString& tileset_id = get_tileset_id();
     model = new ResourceModel(model->get_quest(), resource_type);
     setModel(model);
+    model->populate();
     model->set_tileset_id(tileset_id);
   }
 }
@@ -81,6 +82,8 @@ void ResourceSelector::set_quest(const Quest& quest) {
   view->setUniformRowHeights(true);
 
   setView(view);
+
+  model->populate();
 }
 
 /**

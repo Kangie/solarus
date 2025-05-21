@@ -1,5 +1,9 @@
 # Changelog
 
+## Solarus Quest Editor 2.0.1 (in progress)
+
+* Fix empty tileset selector (#1724).
+
 ## Solarus Quest Editor 2.0.0 (2025-04-01)
 
 ### New features
