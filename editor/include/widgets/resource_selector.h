@@ -60,7 +60,7 @@ private:
   void rebuild();
 
   ResourceType resource_type;     /**< The type of resource to choose. */
-  QTreeView* view;                /**< The tree view shown in the combobox. */
+  QTreeView* tree_view;           /**< The tree view shown in the combobox. */
   ResourceModel* model;           /**< The underlying model. */
 
 };
