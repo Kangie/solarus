@@ -32,17 +32,14 @@ Solarus::Point to_solarus_point(const QPoint& qt_point);
 QPoint round_8(const QPoint& point);
 QPoint round_8(const QPointF& point);
 
-QPoint floor_8(const QPoint& point);
-QPoint floor_8(const QPointF& point);
+QPoint ceil(const QPoint& point, const QSize& size);
+QPoint ceil(const QPointF& point, const QSize& size);
 
 QPoint floor(const QPoint& point, const QSize& size);
 QPoint floor(const QPointF& point, const QSize& size);
 
-QPoint ceil(const QPoint& point, const QSize& size);
-QPoint ceil(const QPointF& point, const QSize& size);
-
-QPoint round_down(const QPoint& point, const QSize& size);
-QPoint round_down(const QPointF& point, const QSize& size);
+QPoint floor_8(const QPoint& point);
+QPoint floor_8(const QPointF& point);
 
 }
 

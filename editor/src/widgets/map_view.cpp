@@ -2440,7 +2440,7 @@ void ResizingEntitiesState::mouse_moved(const QMouseEvent& event) {
     reference_base_size.setHeight(leader_base_size.height());
   }
 
-  QPoint leader_expansion = Point::round_down(leader_distance_to_mouse, reference_base_size);
+  QPoint leader_expansion = Point::floor(leader_distance_to_mouse, reference_base_size);
 
   // Determine if at least one entity is resizable horizontally and
   // if at least one entity is resizable vertically.
@@ -2872,7 +2872,7 @@ void AddingEntitiesState::start() {
 
   MapView& view = get_view();
   QPoint mouse_position = view.mapFromGlobal(QCursor::pos());
-  last_point = Point::floor_8(view.mapToScene(mouse_position));
+  last_point = Point::ceil(view.mapToScene(mouse_position), QSize(8, 8));
 
   // Determine the center of all entities in their current position.
   QPoint center = get_entities_center();
@@ -2883,8 +2883,7 @@ void AddingEntitiesState::start() {
     EntityModel& entity = item->get_entity();
     QPoint top_left_in_group = center - entity.get_top_left();
     QPoint top_left = last_point - top_left_in_group - MapScene::get_margin_top_left();
-    top_left = Point::round_8(top_left);
-    entity.set_top_left(top_left);
+    entity.set_top_left(Point::floor_8(top_left));
     item->update_xy();
   }
 }
@@ -3065,7 +3064,7 @@ void AddingEntitiesState::mouse_moved(const QMouseEvent& event) {
 
   MapView& view = get_view();
 
-  QPoint current_point = Point::floor_8(view.mapToScene(event.pos()));
+  QPoint current_point = Point::ceil(view.mapToScene(event.pos()), QSize(8, 8));
   if (current_point == last_point) {
     // No change after rounding.
     return;
