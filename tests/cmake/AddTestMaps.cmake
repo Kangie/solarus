@@ -209,6 +209,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1644_random_movement_get_angle"
   "bugs/1648_custom_entities_collision_not_happening"
   "bugs/1652_npc_movement_stop_animation"
+  "bugs/1900_game_over_hero_argument"
 )
 
 # Test that should succeed when there are non-fatal errors

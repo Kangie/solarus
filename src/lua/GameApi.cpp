@@ -559,13 +559,16 @@ int LuaContext::game_api_start_game_over(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
 
     HeroPtr hero;
-    if(!lua_isnil(l, 2)){
+    if (lua_gettop(l) >= 2) {
       hero = check_hero(l, 2);
     }
 
     Game* game = savegame.get_game();
     if (game == nullptr) {
       LuaTools::error(l, "Cannot start game-over: this game is not running");
+    }
+    if (game->is_showing_game_over()) {
+      LuaTools::error(l, "The game-over sequence is already active");
     }
 
     game->start_game_over(hero);
@@ -585,13 +588,16 @@ int LuaContext::game_api_stop_game_over(lua_State* l) {
     Savegame& savegame = *check_game(l, 1);
 
     HeroPtr hero;
-    if(!lua_isnil(l, 2)){
+    if (lua_gettop(l) >= 2) {
       hero = check_hero(l, 2);
     }
 
     Game* game = savegame.get_game();
     if (game == nullptr) {
       LuaTools::error(l, "Cannot stop game-over: this game is not running");
+    }
+    if (!game->is_showing_game_over()) {
+      LuaTools::error(l, "The game-over sequence is not active");
     }
 
     game->stop_game_over(hero);
