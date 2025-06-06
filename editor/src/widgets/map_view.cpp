@@ -2027,21 +2027,20 @@ void IdleState::mouse_released(const QMouseEvent& event) {
   );
   QGraphicsItem* item = items_under_mouse.isEmpty() ? nullptr : items_under_mouse.first();
   const EntityItem* entity_item = qgraphicsitem_cast<const EntityItem*>(item);
-  if (entity_item != nullptr) {
+  if (entity_item != nullptr && selection_delayed) {
     const bool was_selected = item->isSelected();
     if (was_selected) {
-      if (selection_delayed) {
-        const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
-        if (control_or_shift) {
-          // Releasing the mouse while control or shift is pressed: unselect the clicked entity.
-          view.set_entity_and_group_selected(entity_item->get_index(), false);
-          selection_delayed = false;
-        }
+      const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
+      if (control_or_shift) {
+        // Releasing the mouse while control or shift is pressed: unselect the clicked entity.
+        view.set_entity_and_group_selected(entity_item->get_index(), false);
+        selection_delayed = false;
       }
     } else {
       const bool layer_locked = view.get_view_settings()->is_layer_locked(entity_item->get_index().layer);
       if (!layer_locked) {
         view.set_entity_and_group_selected(entity_item->get_index(), true);
+          selection_delayed = false;
       }
     }
   }

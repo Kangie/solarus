@@ -4,6 +4,7 @@
 
 * Fix empty tileset selector (#1724).
 * Fix tiles position following the mouse when picked from the tileset view.
+* Fix wrong entity selection below entities just added (#1905).
 * Adjust combobox dropdown size when expanding folders.
 
 ## Solarus Quest Editor 2.0.0 (2025-04-01)
