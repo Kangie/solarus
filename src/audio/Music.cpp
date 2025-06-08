@@ -49,6 +49,7 @@ const std::vector<std::string> Music::format_names = {
  * \brief Creates an empty music.
  */
 Music::Music():
+  playing(false),
   id(none),
   format(FORMAT_NONE),
   loop(false),
@@ -76,6 +77,7 @@ Music::Music(
     const std::string& music_id,
     bool loop,
     const ScopedLuaRef& callback_ref):
+  playing(false),
   id(music_id),
   format(FORMAT_OGG),
   loop(loop),
@@ -85,8 +87,6 @@ Music::Music(
   it_decoder(std::unique_ptr<ItDecoder>(new ItDecoder())),
   ogg_decoder(std::unique_ptr<OggDecoder>(new OggDecoder())),
   volume(1.0) {
-
-  load(music_id);
 
   SOLARUS_REQUIRE(!loop || callback_ref.is_empty(),
       "Attempt to set both a loop and a callback to music");
@@ -329,8 +329,6 @@ bool Music::update_playing() {
   return status == AL_PLAYING;
 }
 
-
-
 /**
  * \brief Notifies this music that the audio device was disconnected.
  */
@@ -471,6 +469,9 @@ bool Music::start() {
     }
   }
 
+  // loading the music file
+  load(id);
+
   // create the buffers and the source
   alGenBuffers(nb_buffers, buffers);
   alGenSources(1, &source);
@@ -518,6 +519,8 @@ bool Music::start() {
 
   // The update() function will then take care of filling the buffers
 
+  playing = true;
+
   return start_successful;
 }
 
@@ -564,6 +567,17 @@ void Music::stop() {
       Debug::die("stop: Invalid music format");
       break;
   }
+
+  playing = false;
+}
+
+/**
+ * \brief Returns the playing status of this music
+ * 
+ * \return \c true if the music is currently playing
+ */
+bool Music::is_playing() const {
+  return playing;
 }
 
 /**
