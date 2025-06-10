@@ -275,12 +275,15 @@ void quit() {
     SDL_FreeFormat(context.rgba_format);
     context.rgba_format = nullptr;
   }
+
+  Surface::empty_cache();
+
+  context.renderer = nullptr;
+
   if (context.main_window != nullptr) {
     SDL_DestroyWindow(context.main_window);
     context.main_window = nullptr;
   }
-
-  Surface::empty_cache();
 
   context = VideoContext();
 }
