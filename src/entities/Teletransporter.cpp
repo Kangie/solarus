@@ -343,8 +343,8 @@ void Teletransporter::transport_hero(Hero& hero) {
 
   HeroPtr hero_ptr = std::static_pointer_cast<Hero>(hero.shared_from_this());
 
-  if(hero.get_linked_camera()) {
-    hero.set_suspended(true); //Suspend the traveling hero so that it does not trigger more tp
+  if (hero.get_linked_camera()) {
+    hero.set_suspended(true);  // Suspend the travelling hero so that it does not trigger more tp.
     get_game().teleport_hero(hero_ptr, destination_map_id, name, transition_style);
   } else {
     // Handle edge case of StairsState Stairs::NORMAL_WAY

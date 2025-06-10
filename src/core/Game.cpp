@@ -442,8 +442,8 @@ void Game::update_tilesets() {
  * \returns true if the transition has succeeded and needs to be removed
  */
 bool Game::update_teleportation(CameraTeleportation& tp) {
-  if(tp.removed) {
-    return true; //Set this tp to be really removed
+  if (tp.removed) {
+    return true; // Set this tp to be really removed
   }
 
   MapPtr& next_map = tp.next_map;
@@ -453,7 +453,7 @@ bool Game::update_teleportation(CameraTeleportation& tp) {
   if (transition != nullptr) {
     transition->update();
   } else {
-    return true; //Transition has died
+    return true; // Transition has died
   }
 
   // if a transition was playing and has just been finished
@@ -463,13 +463,13 @@ bool Game::update_teleportation(CameraTeleportation& tp) {
     transition = nullptr;
 
     if (restarting) {
-      return true; //We are done closing let's restart or kill the camera!
+      return true; // We are done closing let's restart or kill the camera!
     }
-    else if(next_map == nullptr) {
-        //Camera leave the map before dying...
+    else if (next_map == nullptr) {
+        // Camera leave the map before dying...
         leave_map(camera, tp.current_map);
 
-        //Transition to nowhere, camera is to be removed
+        // Transition to nowhere, camera is to be removed
         cameras.erase(std::remove(
                           cameras.begin(),
                           cameras.end(),
@@ -480,13 +480,13 @@ bool Game::update_teleportation(CameraTeleportation& tp) {
       // The closing transition has just finished.
       teleportation_change_map(tp);
     }
-    else { //The opening transition has finished
+    else { // The opening transition has finished
       next_map->notify_opening_transition_finished(tp.destination_name, tp.opt_hero);
       return true; // This teleportation has come to an end
     }
   }
 
-  return false; //This transition is not yet finished
+  return false; // This transition is not yet finished
 }
 
 /**

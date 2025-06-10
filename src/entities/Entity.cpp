@@ -3928,7 +3928,7 @@ void Entity::set_draw_override(const ScopedLuaRef& draw_override) {
  * \return The state.
  */
 std::shared_ptr<Entity::State> Entity::get_state() const {
-    return state;
+  return state;
 }
 
 /**
