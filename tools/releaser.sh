@@ -105,16 +105,6 @@ api::releases::create() {
     "$(urlfmt "$GITLAB_API_RELEASES" "$_pid")"
 }
 
-# https://docs.gitlab.com/api/releases/#update-a-release
-api::releases::update() {
-  local -r _pid=$1
-  local -r _tag_name=$2
-  curl_gitlab --request PUT \
-    --header "Content-Type: application/json" \
-    --data-binary @- \
-    "$(urlfmt "$GITLAB_API_RELEASES/%s" "$_pid" "$_tag_name")"
-}
-
 # https://docs.gitlab.com/api/tags/#get-a-single-repository-tag
 api::tags::get() {
   local -r _pid=$1
@@ -299,13 +289,11 @@ release() {
 Usage: $0 release [ARGUMENT]...
 
     create    create a new release in GitLab
-    update    update an existing release in GitLab
 
 __EOF__
 
   case "$1" in
     create) release::create "${@:2}" ;;
-    update) release::update "${@:2}" ;;
     *) die "error: unknown release command: $1" ;;
   esac
 }
@@ -345,40 +333,6 @@ __EOF__
     jq -c <<< "$_response" && return 1
   fi
   jq -r '"release created: \(.name) (\(.commit.id))"' <<< "$_response"
-}
-
-release::update() {
-  [[ $# -lt 2 ]] && show_usage << __EOF__
-Usage: $0 release update VERSION NOTES_FILE
-
-Environment variables:
-
-    PROJECT_ID      the project ID or project path to manage (default: $PROJECT_ID)
-    PACKAGE_NAME    the generic package name to manage (default: $PACKAGE_NAME)
-
-Important: VERSION must be in the form MAJOR.MINOR.PATCH (without any "v" prefix).
-__EOF__
-
-  local -r _version=$1
-  local -r _notes_file=$2
-  local -r _tag_name=v$_version
-  if ! is_semver "$_version"; then
-    die "error: version argument is not in valid semver format: $_version"
-  fi
-  if ! api::tags::get "$PROJECT_ID" "$_tag_name" >/dev/null; then
-    die "error: tag not found in repository: $_tag_name"
-  fi
-
-  local _notes _links _body _response
-  _notes=$(<"$_notes_file")$'\n' || return
-  _links=$(package::gen_links "$_version") || return
-  _body=$(jq -cn \
-    --arg tag_name "$_tag_name" --arg description "$_notes" --argjson links "$_links" \
-    '{tag_name:$tag_name,description:$description,assets:{links:$links}}')
-  if ! _response=$(api::releases::update "$PROJECT_ID" "$_tag_name" <<< "$_body"); then
-    jq -c <<< "$_response" && return 1
-  fi
-  jq -r '"release updated: \(.name) (\(.commit.id))"' <<< "$_response"
 }
 
 check_req_tools
