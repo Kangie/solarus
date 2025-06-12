@@ -83,6 +83,8 @@ class Stairs: public Entity {
     virtual EntityType get_type() const override;
     bool can_change_ground() const;
     Ground get_ground() const;
+    const Subtype& get_subtype() const;
+    void set_subtype(const Subtype& subtype);
 
     virtual void notify_creating() override;
     bool is_inside_floor() const;
@@ -98,6 +100,8 @@ class Stairs: public Entity {
     void play_sound(Way way);
     std::string get_path(Way way) const;
     Rectangle get_clipping_rectangle(Way way) const;
+
+    static const std::map<Subtype, std::string> subtype_names;
 
   private:
 
