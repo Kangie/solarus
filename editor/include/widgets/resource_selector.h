@@ -39,7 +39,7 @@ class ResourceSelector : public QComboBox {
 
 public:
 
-  ResourceSelector(QWidget* parent = nullptr);
+  explicit ResourceSelector(QWidget* parent = nullptr);
 
   void set_quest(const Quest& quest);
 
@@ -60,7 +60,7 @@ private:
   void rebuild();
 
   ResourceType resource_type;     /**< The type of resource to choose. */
-  QTreeView* view;                /**< The tree view shown in the combobox. */
+  QTreeView* tree_view;           /**< The tree view shown in the combobox. */
   ResourceModel* model;           /**< The underlying model. */
 
 };

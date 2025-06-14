@@ -1,11 +1,14 @@
 #include "editor_settings.h"
 #include "editor_style.h"
+#include "widgets/resource_selector.h"
 #include <map>
 #include <QApplication>
 #include <QStyleHints>
 #include <QStyleOptionComboBox>
 #include <QWidget>
+#include <QLayout>
 #include <QLineEdit>
+#include <QListView>
 #include <QPlainTextEdit>
 
 namespace SolarusEditor {
@@ -148,14 +151,15 @@ void EditorStyle::osThemeChanged() {
   set_mode(mode);
 }
 
-void EditorStyle::polish(QWidget* w) {
-  QlementineStyle::polish(w);
+void EditorStyle::polish(QWidget* widget) {
+
+  QlementineStyle::polish(widget);
 
   // Tweak the icon colors in the text widget's menus.
-  if (auto* line_edit = qobject_cast<QLineEdit*>(w)) {
+  if (QLineEdit* line_edit = qobject_cast<QLineEdit*>(widget)) {
     QlementineStyle::setAutoIconColor(line_edit, AutoIconColor::TextColor);
   }
-  if (auto* plain_text_edit = qobject_cast<QPlainTextEdit*>(w)) {
+  if (QPlainTextEdit* plain_text_edit = qobject_cast<QPlainTextEdit*>(widget)) {
     QlementineStyle::setAutoIconColor(plain_text_edit, AutoIconColor::TextColor);
   }
 }

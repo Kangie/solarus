@@ -36,9 +36,11 @@ ResourceModel::ResourceModel(const Quest& quest, ResourceType resource_type, QOb
   icons(),
   directory_icon(":/images/icon_folder_open.svg"),
   tileset_id() {
+}
+
+void ResourceModel::populate() {
 
   const QuestDatabase& database = get_database();
-
   const QStringList& ids = database.get_elements(this->resource_type);
   for (const QString& id : ids) {
     add_element(id);
@@ -158,6 +160,8 @@ void ResourceModel::add_element(const QString& element_id) {
 
   QStringList files = element_id.split('/', Qt::SkipEmptyParts);
   QStandardItem* parent = invisibleRootItem();
+  Q_ASSERT(parent != nullptr && parent->model() == this);
+
   while (files.size() > 1) {
     parent = find_or_create_dir_item(*parent, files.first());
     files.removeFirst();
@@ -245,6 +249,7 @@ QStandardItem* ResourceModel::get_element_item(const QString& element_id) {
 QStandardItem* ResourceModel::find_or_create_dir_item(
     QStandardItem& parent, const QString& dir_name) {
 
+  Q_ASSERT(parent.model() == this);
   for (int i = 0; i < parent.rowCount(); ++i) {
     QStandardItem* child = parent.child(i, 0);
     QString name = child->data(Qt::DisplayRole).toString();

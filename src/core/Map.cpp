@@ -766,6 +766,12 @@ void Map::notify_opening_transition_finished(const std::string& destination_name
   }
 
   check_suspended();
+
+  // Immediate transitions may have suspended the hero without suspending the map.
+  if (opt_hero != nullptr && opt_hero->is_suspended() != suspended) {
+    opt_hero->set_suspended(suspended);
+  }
+
   std::shared_ptr<Destination> destination = get_destination(destination_name);
   get_entities().notify_map_opening_transition_finishing(*this, destination_name, opt_hero);
   get_lua_context().map_on_opening_transition_finished(*this, destination);

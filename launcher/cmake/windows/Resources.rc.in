@@ -22,14 +22,14 @@ BEGIN
     BEGIN
         BLOCK "040904E4"
         BEGIN
-            VALUE "CompanyName", "${APP_ORGANISATION}\0"
+            VALUE "CompanyName", "${SOLARUSLAUNCHER_ORGANISATION}\0"
             VALUE "FileDescription", "${PROJECT_DESCRIPTION}\0"
             VALUE "FileVersion", "${PROJECT_VERSION}\0"
-            VALUE "InternalName", "${DISPLAY_NAME}\0"
-            VALUE "LegalCopyright", "${APP_COPYRIGHT}\0"
-            VALUE "LegalTrademarks", "${APP_TRADEMARKS}\0"
-            VALUE "OriginalFilename", "${DISPLAY_NAME}.exe\0"
-            VALUE "ProductName", "${DISPLAY_NAME}\0"
+            VALUE "InternalName", "${SOLARUSLAUNCHER_DISPLAY_NAME}\0"
+            VALUE "LegalCopyright", "${SOLARUSLAUNCHER_COPYRIGHT}\0"
+            VALUE "LegalTrademarks", "${SOLARUSLAUNCHER_TRADEMARKS}\0"
+            VALUE "OriginalFilename", "${SOLARUSLAUNCHER_DISPLAY_NAME}.exe\0"
+            VALUE "ProductName", "${SOLARUSLAUNCHER_DISPLAY_NAME}\0"
             VALUE "ProductVersion", "${PROJECT_VERSION}\0"
         END
     END

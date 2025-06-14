@@ -2027,21 +2027,20 @@ void IdleState::mouse_released(const QMouseEvent& event) {
   );
   QGraphicsItem* item = items_under_mouse.isEmpty() ? nullptr : items_under_mouse.first();
   const EntityItem* entity_item = qgraphicsitem_cast<const EntityItem*>(item);
-  if (entity_item != nullptr) {
+  if (entity_item != nullptr && selection_delayed) {
     const bool was_selected = item->isSelected();
     if (was_selected) {
-      if (selection_delayed) {
-        const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
-        if (control_or_shift) {
-          // Releasing the mouse while control or shift is pressed: unselect the clicked entity.
-          view.set_entity_and_group_selected(entity_item->get_index(), false);
-          selection_delayed = false;
-        }
+      const bool control_or_shift = (event.modifiers() & (Qt::ControlModifier | Qt::ShiftModifier));
+      if (control_or_shift) {
+        // Releasing the mouse while control or shift is pressed: unselect the clicked entity.
+        view.set_entity_and_group_selected(entity_item->get_index(), false);
+        selection_delayed = false;
       }
     } else {
       const bool layer_locked = view.get_view_settings()->is_layer_locked(entity_item->get_index().layer);
       if (!layer_locked) {
         view.set_entity_and_group_selected(entity_item->get_index(), true);
+          selection_delayed = false;
       }
     }
   }
@@ -2440,7 +2439,7 @@ void ResizingEntitiesState::mouse_moved(const QMouseEvent& event) {
     reference_base_size.setHeight(leader_base_size.height());
   }
 
-  QPoint leader_expansion = Point::round_down(leader_distance_to_mouse, reference_base_size);
+  QPoint leader_expansion = Point::floor(leader_distance_to_mouse, reference_base_size);
 
   // Determine if at least one entity is resizable horizontally and
   // if at least one entity is resizable vertically.
@@ -2872,7 +2871,7 @@ void AddingEntitiesState::start() {
 
   MapView& view = get_view();
   QPoint mouse_position = view.mapFromGlobal(QCursor::pos());
-  last_point = Point::floor_8(view.mapToScene(mouse_position));
+  last_point = Point::ceil(view.mapToScene(mouse_position), QSize(8, 8));
 
   // Determine the center of all entities in their current position.
   QPoint center = get_entities_center();
@@ -2883,8 +2882,7 @@ void AddingEntitiesState::start() {
     EntityModel& entity = item->get_entity();
     QPoint top_left_in_group = center - entity.get_top_left();
     QPoint top_left = last_point - top_left_in_group - MapScene::get_margin_top_left();
-    top_left = Point::round_8(top_left);
-    entity.set_top_left(top_left);
+    entity.set_top_left(Point::floor_8(top_left));
     item->update_xy();
   }
 }
@@ -3065,7 +3063,7 @@ void AddingEntitiesState::mouse_moved(const QMouseEvent& event) {
 
   MapView& view = get_view();
 
-  QPoint current_point = Point::floor_8(view.mapToScene(event.pos()));
+  QPoint current_point = Point::ceil(view.mapToScene(event.pos()), QSize(8, 8));
   if (current_point == last_point) {
     // No change after rounding.
     return;

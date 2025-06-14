@@ -38,6 +38,7 @@ public:
 
   ResourceModel(const Quest& quest, ResourceType resource_type, QObject* parent = nullptr);
 
+  void populate();
   const Quest& get_quest() const;
   const QuestDatabase& get_database() const;
   QString get_tileset_id() const;

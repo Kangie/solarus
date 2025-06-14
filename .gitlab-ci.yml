@@ -15,10 +15,6 @@
 #
 # At the moment, only Linux-based testing is available. However, Windows
 # staging-install and package jobs will not run if Linux testing fails.
-#
-# If a pipeline is started for the 'dev' or 'master' branches, a pipeline
-# for the Solarus Launcher and Editor repositories on the same branch will
-# be triggered after the packaging jobs are completed.
 
 variables:
   IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
@@ -31,7 +27,6 @@ stages:
   - install
   - package
   - deploy
-  - trigger
 
 #------------------------------------------------------------------------------------
 # Template for Generic Build Jobs
@@ -201,7 +196,7 @@ mingw-x64-package:
     - mingw-x64-install
   before_script:
     - PACKAGE_REF=${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-    - PACKAGE=$PACKAGE_PREFIX-$PACKAGE_REF.zip
+    - PACKAGE=$PACKAGE_NAME-$PACKAGE_REF-$PACKAGE_PLATFORM-$PACKAGE_ARCH.zip
     - 'echo "Package: $PACKAGE"'
   script:
     - mingw_make_pkg.sh $ARCH $PACKAGE $BASE_DIR $BINARIES
@@ -217,12 +212,14 @@ mingw-x64-package:
   artifacts:
     name: $CI_JOB_NAME
     paths:
-      - $PACKAGE_PREFIX-*.zip
+      - $PACKAGE_NAME-*-$PACKAGE_PLATFORM-$PACKAGE_ARCH.zip
     expire_in: 1 month
   variables:
     ARCH: x86_64
     BASE_DIR: solarus
-    PACKAGE_PREFIX: solarus-cli-x64
+    PACKAGE_NAME: solarus-cli
+    PACKAGE_PLATFORM: windows
+    PACKAGE_ARCH: x64
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
@@ -258,29 +255,3 @@ docs-deploy:
     GIT_STRATEGY: none  # no repository content is needed
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-
-#------------------------------------------------------------------------------------
-# Trigger CI/CD pipeline for the Solarus Quest Editor
-#
-# Only the 'dev' or 'master' branches are used for this trigger.
-
-quest-editor-trigger:
-  stage: trigger
-  trigger:
-    project: solarus-games/solarus-quest-editor
-    branch: $CI_COMMIT_BRANCH
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
-
-#------------------------------------------------------------------------------------
-# Trigger CI/CD pipeline for the Solarus Launcher
-#
-# Only the 'dev' or 'master' branches are used for this trigger.
-
-launcher-trigger:
-  stage: trigger
-  trigger:
-    project: solarus-games/solarus-launcher
-    branch: $CI_COMMIT_BRANCH
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/

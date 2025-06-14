@@ -26,8 +26,6 @@
 #include <vector>
 #include <glm/vec2.hpp>
 
-#include "SolarusGl.h"
-
 namespace Solarus {
 
 /**

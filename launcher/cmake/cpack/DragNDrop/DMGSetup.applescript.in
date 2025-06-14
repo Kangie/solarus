@@ -43,7 +43,7 @@ on run argv
           -- The height is the whole window height, including system title bar and
           -- the status bar (potentially visible, if the user enabled it).
           set the bounds to { 400, 100, 900, 490 }
-          set position of item "@BUNDLE_NAME@" to { 122, 174 }
+          set position of item "@SOLARUSLAUNCHER_BUNDLE_NAME@" to { 122, 174 }
           delay 5
           set position of item "Applications" to { 384, 174 }
           delay 5

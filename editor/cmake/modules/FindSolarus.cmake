@@ -73,5 +73,28 @@ find_package_handle_standard_args(Solarus
   VERSION_VAR
     SOLARUS_VERSION_STRING
 )
-set(SOLARUS_INCLUDE_DIRS ${SOLARUS_INCLUDE_DIR})
+set(SOLARUS_INCLUDE_DIRS
+    "${SOLARUS_INCLUDE_DIR}"
+)
 set(SOLARUS_LIBRARIES ${SOLARUS_LIBRARY})
+
+# Create an imported target for Solarus, including required dependencies.
+if(SOLARUS_FOUND AND NOT TARGET solarus)
+  find_package(SDL2 REQUIRED CONFIG)
+  list(APPEND SOLARUS_INCLUDE_DIRS
+      "${SDL2_INCLUDE_DIR}"
+      "${SOLARUS_INCLUDE_DIR}/solarus/third_party"
+  )
+
+  add_library(solarus UNKNOWN IMPORTED)
+  set_target_properties(solarus PROPERTIES
+    IMPORTED_LOCATION "${SOLARUS_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SOLARUS_INCLUDE_DIRS}"
+  )
+endif()
+
+# Mark cache variables as advanced.
+mark_as_advanced(
+  SOLARUS_LIBRARY
+  SOLARUS_INCLUDE_DIR
+)

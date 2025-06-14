@@ -1665,7 +1665,7 @@ void ResizingPatternState::mouse_moved(const QMouseEvent& event) {
     free_corner.ry() += old_box.height() - 8;
   }
   const QSize base_size(8, 8);
-  const QPoint expansion = Point::round_down(current_point - free_corner, base_size);
+  const QPoint expansion = Point::floor(current_point - free_corner, base_size);
   current_box = Rectangle::expand_rect(old_box, fixed_corner, expansion, base_size);
 
   current_area_item->setRect(current_box);

@@ -54,7 +54,9 @@ void MusicSystem::quit() {
     current_music = nullptr;
 
     for (const MusicPtr& music: current_musics) {
-      music->stop();
+      if (music->is_playing()) {
+        music->stop();
+      }
     }
     current_musics.clear();
 
@@ -314,8 +316,10 @@ void MusicSystem::update() {
   // Update current musics from sol.music API
   std::list<MusicPtr> musics_to_remove;
   for (const MusicPtr& music: current_musics) {
-    if (!music->update_playing()) {
-      musics_to_remove.push_back(music);
+    if (music->is_playing()) {
+      if (!music->update_playing()) {
+        musics_to_remove.push_back(music);
+      }
     }
   }
 

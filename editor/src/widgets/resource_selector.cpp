@@ -17,6 +17,8 @@
 #include "widgets/resource_selector.h"
 #include "widgets/resource_model.h"
 #include <QHeaderView>
+#include <QLayout>
+#include <QPointer>
 #include <QStandardItemModel>
 #include <QTreeView>
 
@@ -29,7 +31,7 @@ namespace SolarusEditor {
 ResourceSelector::ResourceSelector(QWidget* parent) :
   QComboBox(parent),
   resource_type(),
-  view(nullptr),
+  tree_view(nullptr),
   model(nullptr) {
 
   setMaxVisibleItems(100);
@@ -59,6 +61,7 @@ void ResourceSelector::set_resource_type(ResourceType resource_type) {
     const QString& tileset_id = get_tileset_id();
     model = new ResourceModel(model->get_quest(), resource_type);
     setModel(model);
+    model->populate();
     model->set_tileset_id(tileset_id);
   }
 }
@@ -72,15 +75,21 @@ void ResourceSelector::set_quest(const Quest& quest) {
   model = new ResourceModel(quest, resource_type);
   setModel(model);
 
-  view = new QTreeView(this);
-  view->setModel(model);
-  view->setEditTriggers(QTreeView::NoEditTriggers);
-  view->setAlternatingRowColors(true);
-  view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-  view->setHeaderHidden(true);
-  view->setUniformRowHeights(true);
+  tree_view = new QTreeView(this);
+  tree_view->setModel(model);
+  tree_view->setEditTriggers(QTreeView::NoEditTriggers);
+  tree_view->setAlternatingRowColors(true);
+  tree_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  tree_view->setHeaderHidden(true);
+  tree_view->setUniformRowHeights(true);
 
-  setView(view);
+  QPointer<QAbstractItemDelegate> delegate = this->itemDelegate();
+  setView(tree_view);
+  if (delegate != nullptr) {
+    setItemDelegate(delegate);  // Keep any delegate created by Qlementine.
+  }
+
+  model->populate();
 }
 
 /**
@@ -147,7 +156,7 @@ void ResourceSelector::set_selected_id(const QString& element_id) {
   setCurrentIndex(index.row());  // Relative to the new root.
   setRootModelIndex(model->invisibleRootItem()->index());
 
-  view->expand(index.parent());
+  tree_view->expand(index.parent());
 }
 
 /**

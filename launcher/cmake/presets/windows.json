@@ -25,7 +25,7 @@
       "displayName": "MSYS2 (Windows)",
       "configurePreset": "msys2",
       "description": "Release build for Windows with MSYS2 and Ninja",
-      "targets": ["solaruslauncher"],
+      "targets": ["solarus-launcher"],
       "configuration": "Release",
       "condition": {
         "type": "equals",
