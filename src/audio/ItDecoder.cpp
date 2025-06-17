@@ -85,10 +85,10 @@ int ItDecoder::get_num_channels() const {
  * \return The volume of this channel.
  */
 int ItDecoder::get_channel_volume(int channel) const {
-  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
-      "Invalid channel number");
+  SOLARUS_REQUIRE(channel >= 1 && channel <= get_num_channels(),
+      "Invalid channel number, must be between 1 and the total number of channels.");
 
-  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nGlobalVol;
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel - 1].nGlobalVol;
 }
 
 /**
@@ -97,10 +97,10 @@ int ItDecoder::get_channel_volume(int channel) const {
  * \param volume The volume to set.
  */
 void ItDecoder::set_channel_volume(int channel, int volume) {
-  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
-      "Invalid channel number");
+  SOLARUS_REQUIRE(channel >= 1 && channel <= get_num_channels(),
+      "Invalid channel number, must be between 1 and the total number of channels.");
 
-  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nGlobalVol = volume;
+  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel - 1].nGlobalVol = volume;
 }
 
 /**
@@ -109,10 +109,10 @@ void ItDecoder::set_channel_volume(int channel, int volume) {
  * \return The pan of this channel.
  */
 int ItDecoder::get_channel_pan(int channel) const {
-  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
-      "Invalid channel number");
+  SOLARUS_REQUIRE(channel >= 1 && channel <= get_num_channels(),
+      "Invalid channel number, must be between 1 and the total number of channels.");
 
-  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nPan;
+  return reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel - 1].nPan;
 }
 
 /**
@@ -121,10 +121,10 @@ int ItDecoder::get_channel_pan(int channel) const {
  * \param pan The pan to set.
  */
 void ItDecoder::set_channel_pan(int channel, int pan) {
-  SOLARUS_REQUIRE(channel >= 0 && channel < get_num_channels(),
-      "Invalid channel number");
+  SOLARUS_REQUIRE(channel >= 1 && channel <= get_num_channels(),
+      "Invalid channel number, must be between 1 and the total number of channels.");
 
-  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel].nPan = pan;
+  reinterpret_cast<CSoundFile*>(modplug_file.get())->Chn[channel - 1].nPan = pan;
 }
 
 /**

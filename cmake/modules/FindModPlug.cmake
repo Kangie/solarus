@@ -94,6 +94,13 @@ if(MODPLUG_FOUND)
   set(MODPLUG_DEFINITIONS ${PC_MODPLUG_CFLAGS_OTHER})
 endif()
 
+# check for uint8_t type size to detect stdint.h and add compiler definition
+include(CheckTypeSize)
+check_type_size(uint8_t SIZEOF_UINT8_T)
+if(HAVE_STDINT_H)
+  list(APPEND MODPLUG_DEFINITIONS "-DHAVE_STDINT_H")
+endif()
+
 # create an imported target for ModPlug
 if(MODPLUG_FOUND AND NOT TARGET ModPlug::ModPlug)
   add_library(ModPlug::ModPlug UNKNOWN IMPORTED)
