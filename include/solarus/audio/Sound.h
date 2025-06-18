@@ -20,6 +20,7 @@
 #include "solarus/audio/SoundPtr.h"
 #include "solarus/core/Common.h"
 #include "solarus/lua/ExportableToLua.h"
+#include <cstdint>
 #include <string>
 #include <list>
 #include <map>
