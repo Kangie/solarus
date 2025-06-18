@@ -130,6 +130,7 @@ map{ id = "bugs/1657_crash_circle_movement", description = "#1657 circle_movemen
 map{ id = "bugs/1680_music_volume", description = "#1680: Music volume" }
 map{ id = "bugs/1691_immediate_transition_freeze", description = "#1691: Freeze after immediate transition" }
 map{ id = "bugs/1900_game_over_hero_argument", description = "#1900: game:start/stop_game_over() hero should be optional" }
+map{ id = "bugs/1908_map_create_enemy_suffix", description = "#1908: map:create_enemy() gives dupicate name" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
@@ -301,7 +302,7 @@ sprite{ id = "shatter", description = "Shatter" }
 sprite{ id = "things/platform", description = "32x32 platform" }
 sprite{ id = "todo", description = "TODO image" }
 
-music{ id = "great_fairy", description = "great_fairy" }
+music{ id = "missing_music", description = "Missing music" }
 
 sound{ id = "arrow_hit", description = "arrow_hit" }
 sound{ id = "bird_chirp", description = "bird_chirp" }
@@ -731,6 +732,8 @@ file{ path = "maps/bugs/1691_immediate_transition_freeze.dat", author = "Christo
 file{ path = "maps/bugs/1691_immediate_transition_freeze.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1900_game_over_hero_argument.dat", author = "Christopho", license = "CC-BY SA 4.0" }
 file{ path = "maps/bugs/1900_game_over_hero_argument.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1908_map_create_enemy_suffix.dat", author = "Christopho", license = "CC-BY SA 4.0" }
+file{ path = "maps/bugs/1908_map_create_enemy_suffix.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -964,7 +967,6 @@ file{ path = "maps/text_predict.dat", author = "std::gregwar", license = "CC BY-
 file{ path = "maps/text_predict.lua", author = "std::gregwar", license = "GPL v3" }
 file{ path = "maps/traversable.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/traversable.lua", author = "Christopho", license = "GPL v3" }
-file{ path = "musics/great_fairy.it", author = "Metallizer", }
 file{ path = "shaders/scale2x.dat", author = "Christopho", license = "GPL v3" }
 file{ path = "shaders/scale2x.frag.glsl", author = "Vlag", license = "GPL v3" }
 file{ path = "shaders/scale2x.vert.glsl", author = "Vlag", license = "GPL v3" }
