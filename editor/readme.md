@@ -80,14 +80,14 @@ command line using CMake.
 #### Configure
 
 ```bash
-cd solarus-quest-editor
+cd solarus/editor
 mkdir build
 cd build
 cmake ..
 ```
 
-If CMake fails to find Solarus include directories or libraries,
-for example because they are not properly installed in standard paths,
+If CMake fails to find Solarus included directories or libraries,
+for example because they are not properly installed in the standard paths,
 you can explictly indicate their location instead:
 
 ```bash
@@ -106,7 +106,7 @@ make
 #### Run
 
 ```bash
-./solarus-quest-editor
+./solarus-editor
 ```
 
 ### Adding Documentation
