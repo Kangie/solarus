@@ -369,11 +369,11 @@ void EquipmentItem::notify_amount_changed(int amount) {
 }
 
 /**
- * \brief Notifies the script that the hero is using this equipment item.
+ * \brief Notifies the script that a hero is using this equipment item.
  */
-void EquipmentItem::notify_using() {
+void EquipmentItem::notify_using(Hero& hero) {
 
-  get_lua_context().item_on_using(*this);
+  get_lua_context().item_on_using(*this, hero);
 }
 
 /**
