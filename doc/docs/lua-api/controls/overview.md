@@ -80,21 +80,21 @@ Default mappings are:
 | Left Stick X | X          |
 | Left Stick Y | Y          |
 
-## Methods of the type `controls`
-
-### `controls:set_analog(analog)`
+### `sol.controls.set_analog_commands_enabled(enabled)`
 
 Enable the use of axes for built-in movements of the hero when controlled by those controls.
 
-`analog` (boolean)
+`enabled` (boolean)
 : enable the analog behavior of those controls.
 
-### `controls:are_analog(analog)`
+### `sol.controls.are_analog_commands_enabled()`
 
 Tells whether those controls are analog.
 
 Return value (boolean)
 : `true` if those controls are analog.
+
+## Methods of the type `controls`
 
 ### `controls:is_pressed(command)`
 
