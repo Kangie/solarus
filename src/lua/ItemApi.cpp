@@ -997,6 +997,7 @@ void LuaContext::item_on_amount_changed(EquipmentItem& item, int amount) {
  * Does nothing if the method is not defined.
  *
  * \param item An equipment item.
+ * \param hero The hero that uses this item.
  */
 void LuaContext::item_on_using(EquipmentItem& item, Hero& hero) {
 
@@ -1017,15 +1018,16 @@ void LuaContext::item_on_using(EquipmentItem& item, Hero& hero) {
  *
  * \param item An equipment item.
  * \param ability The ability just used.
+ * \param hero The hero that uses the ability.
  */
-void LuaContext::item_on_ability_used(EquipmentItem& item, Ability ability) {
+void LuaContext::item_on_ability_used(EquipmentItem& item, Ability ability, Hero& hero) {
 
   if (!userdata_has_field(item, "on_ability_used")) {
     return;
   }
-  run_on_main([this,&item,ability](lua_State* l){
+  run_on_main([this, &item, ability, &hero](lua_State* l){
     push_item(l, item);
-    on_ability_used(ability);
+    on_ability_used(ability, hero);
     lua_pop(l, 1);
   });
 }

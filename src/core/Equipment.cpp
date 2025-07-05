@@ -652,11 +652,11 @@ void Equipment::set_ability(Ability ability, int level) {
  *
  * \param ability The ability used.
  */
-void Equipment::notify_ability_used(Ability ability) {
+void Equipment::notify_ability_used(Ability ability, Hero& hero) {
 
   for (const auto& kvp: items) {
     EquipmentItem& item = *kvp.second;
-    item.notify_ability_used(ability);
+    item.notify_ability_used(ability, hero);
   }
 }
 

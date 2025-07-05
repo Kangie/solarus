@@ -459,7 +459,7 @@ This event is triggered when you call [`item:set_amount()`](#itemset_amountamoun
 
 Called when a player is using this item. Only possible when the [game](./game.md) is running, and only for [assignable items](#itemset_assignableassignable).
 
-The player is using your item (by pressing an item [game command](./game.md#game-commands)). You now have full control of the [hero](./map-entities/hero.md). From this event, you have to program the item's behavior. For example, your item can remove some magic points and perform an special attack that kills all enemies nearby. When you have finished, call [`item:set_finished()`](#itemset_finished) to restore normal control to the player.
+The player is using your item (by pressing an item [game command](./game.md#game-commands)). You now have full control of the [hero](./map-entities/hero.md). From this event, you have to program the item's behavior. For example, your item can remove some magic points and perform a special attack that kills all enemies nearby. When you have finished, call [`item:set_finished()`](#itemset_finished) to restore normal control to the player.
 
 !!! note "Note"
 
@@ -468,14 +468,16 @@ The player is using your item (by pressing an item [game command](./game.md#game
 `hero` ([Hero](./map-entities/hero.md))
 : The hero entity that uses the item.
 
-### `item:on_ability_used(ability_name)`
+### `item:on_ability_used(ability_name, hero)`
 
-Called when the player has just performed a built-in ability. Only possible when the [game](./game.md) is running.
+Called when a hero has just performed a built-in ability. Only possible when the [game](./game.md) is running.
 
 Built-in abilities indicate whether the hero can perform some built-in actions like attacking, swimming or running. See [`game:get_ability()`](./game.md#gameget_abilityability_name) for more details.
 
 `ability_name` (string)
 : Name of the ability that was used.
+`hero` ([Hero](./map-entities/hero.md))
+: The hero entity that just used the ability.
 
 ### `item:on_npc_interaction(npc)`
 

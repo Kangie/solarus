@@ -370,6 +370,7 @@ void EquipmentItem::notify_amount_changed(int amount) {
 
 /**
  * \brief Notifies the script that a hero is using this equipment item.
+ * \param hero The hero that uses this item.
  */
 void EquipmentItem::notify_using(Hero& hero) {
 
@@ -379,10 +380,11 @@ void EquipmentItem::notify_using(Hero& hero) {
 /**
  * \brief Notifies this item that a built-in ability was used.
  * \param ability An ability.
+ * \param hero The hero that uses this ability.
  */
-void EquipmentItem::notify_ability_used(Ability ability) {
+void EquipmentItem::notify_ability_used(Ability ability, Hero& hero) {
 
-  get_lua_context().item_on_ability_used(*this, ability);
+  get_lua_context().item_on_ability_used(*this, ability, hero);
 }
 
 /**

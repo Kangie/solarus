@@ -2918,12 +2918,14 @@ void LuaContext::on_using(Hero& hero) {
 /**
  * \brief Calls the on_ability_used() method of the object on top of the stack.
  * \param ability A built-in ability.
+ * \param hero The hero that uses this ability.
  */
-void LuaContext::on_ability_used(Ability ability) {
+void LuaContext::on_ability_used(Ability ability, Hero& hero) {
   check_callback_thread();
   if (find_method("on_ability_used")) {
     push_string(current_l, enum_to_name(ability));
-    call_function(2, 0, "on_ability_used");
+    push_hero(current_l, hero);
+    call_function(3, 0, "on_ability_used");
   }
 }
 
