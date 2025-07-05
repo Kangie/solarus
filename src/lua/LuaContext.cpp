@@ -2907,10 +2907,11 @@ void LuaContext::on_obtained(const Treasure& treasure) {
 /**
  * \brief Calls the on_using() method of the object on top of the stack.
  */
-void LuaContext::on_using() {
+void LuaContext::on_using(Hero& hero) {
   check_callback_thread();
   if (find_method("on_using")) {
-    call_function(1, 0, "on_using");
+    push_hero(current_l, hero);
+    call_function(2, 0, "on_using");
   }
 }
 

@@ -8,6 +8,7 @@
 * Fix possible duplicate name when creating an entity dynamically (#1908).
 * Fix index offsets for channels of IT music files.
 * Fix possible error when retrieving joypad name (#1895).
+* Add hero argument to `item:on_using()` event (#1899).
 
 ## Solarus 2.0.0 (2025-04-01)
 

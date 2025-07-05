@@ -455,15 +455,18 @@ This event is triggered when you call [`item:set_amount()`](#itemset_amountamoun
 `amount` (number)
 : The new amount possessed (possibly `0`)
 
-### `item:on_using()`
+### `item:on_using(hero)`
 
-Called when the player is using this item. Only possible when the [game](./game.md) is running, and only for [assignable items](#itemset_assignableassignable).
+Called when a player is using this item. Only possible when the [game](./game.md) is running, and only for [assignable items](#itemset_assignableassignable).
 
 The player is using your item (by pressing an item [game command](./game.md#game-commands)). You now have full control of the [hero](./map-entities/hero.md). From this event, you have to program the item's behavior. For example, your item can remove some magic points and perform an special attack that kills all enemies nearby. When you have finished, call [`item:set_finished()`](#itemset_finished) to restore normal control to the player.
 
 !!! note "Note"
 
     There is another event for the special case of giving an item to an [non-playing character](./map-entities/npc.md). If the [hero](./map-entities/hero.md) uses an item in front of an [NPC](./map-entities/npc.md) whose property is to notify your item, then event [`item:on_npc_interaction_item()`](#itemon_npc_interaction_itemnpc-item_used) is triggered first. If that event is defined and returns `true`, then [`item:on_using()`](#itemon_using) is not called (the interaction is considered done).
+
+`hero` ([Hero](./map-entities/hero.md))
+: The hero entity that uses the item.
 
 ### `item:on_ability_used(ability_name)`
 

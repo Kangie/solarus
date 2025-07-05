@@ -998,14 +998,14 @@ void LuaContext::item_on_amount_changed(EquipmentItem& item, int amount) {
  *
  * \param item An equipment item.
  */
-void LuaContext::item_on_using(EquipmentItem& item) {
+void LuaContext::item_on_using(EquipmentItem& item, Hero& hero) {
 
   if (!userdata_has_field(item, "on_using")) {
     return;
   }
-  run_on_main([this,&item](lua_State* l){
+  run_on_main([this, &item, &hero](lua_State* l) {
     push_item(l, item);
-    on_using();
+    on_using(hero);
     lua_pop(l, 1);
   });
 }
