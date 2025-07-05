@@ -160,6 +160,7 @@
      <bool>true</bool>
     </property>
     <addaction name="action_show_grid"/>
+    <addaction name="action_show_quest_files"/>
     <addaction name="action_show_console"/>
     <addaction name="separator"/>
     <addaction name="action_show_layer_0"/>
@@ -446,6 +447,20 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+W</string>
+   </property>
+  </action>
+  <action name="action_show_quest_files">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show quest files</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ShortcutContext::WindowShortcut</enum>
    </property>
   </action>
   <action name="action_show_console">

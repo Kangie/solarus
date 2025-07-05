@@ -2616,6 +2616,11 @@ Voulez-vous l&apos;écraser ?</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="456"/>
+        <source>Show quest files</source>
+        <translation>Afficher les fichiers de quête</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="456"/>
         <source>Show console</source>
         <translation>Afficher la console</translation>
     </message>
