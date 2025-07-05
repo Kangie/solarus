@@ -87,6 +87,8 @@ MainWindow::MainWindow(QWidget* parent) :
   // Quest tree splitter.
   const int tree_width = 300;
   ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
+  ui.quest_tree_splitter->setStretchFactor(0, 0);  // Don't expand the left panel
+  ui.quest_tree_splitter->setStretchFactor(1, 1);  // but only the map view.
 
   // Console splitter.
   const int console_height = 100;

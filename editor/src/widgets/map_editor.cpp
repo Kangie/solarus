@@ -1232,8 +1232,10 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   get_undo_stack().setClean();
 
   // Prepare the gui.
-  const int side_width = 300;
+  const int side_width = 400;
   ui.splitter->setSizes({ side_width, width() - side_width });
+  ui.splitter->setStretchFactor(0, 0);  // Don't expand the left panel
+  ui.splitter->setStretchFactor(1, 1);  // but only the map view.
   ui.map_side_splitter->setStretchFactor(0, 0);  // Don't expand the map properties view
   ui.map_side_splitter->setStretchFactor(1, 1);  // but only the tileset view.
   ui.music_field->set_quest(quest);
@@ -1477,7 +1479,8 @@ void MapEditor::build_entity_creation_toolbar() {
       entity_creation_button_triggered(type, checked);
     });
   }
-  entity_creation_toolbar->setIconSize(QSize(32, 32));
+  entity_creation_toolbar->setIconSize(QSize(28, 28));
+  entity_creation_toolbar->layout()->setSpacing(0);
 
   ui.entity_creation_layout->insertWidget(0, entity_creation_toolbar);
 }
