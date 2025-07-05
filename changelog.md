@@ -7,6 +7,7 @@
 * Fix crash when creating a music without playing it immediately (#1896).
 * Fix possible duplicate name when creating an entity dynamically (#1908).
 * Fix index offsets for channels of IT music files.
+* Fix possible error when retrieving joypad name (#1895).
 
 ## Solarus 2.0.0 (2025-04-01)
 
