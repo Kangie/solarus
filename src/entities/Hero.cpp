@@ -1887,7 +1887,7 @@ void Hero::attack_hero(Hero& hero, Sprite* this_sprite) {
     }
 
     if (hero_protected) {
-      hero.get_equipment().notify_ability_used(Ability::SHIELD);
+      hero.get_equipment().notify_ability_used(Ability::SHIELD, hero);
     }
     else {
       // Let the enemy script handle this if it wants.
@@ -2806,7 +2806,7 @@ void Hero::start_running() {
  */
 void Hero::start_pushing() {
 
-  get_equipment().notify_ability_used(Ability::PUSH);
+  get_equipment().notify_ability_used(Ability::PUSH, *this);
   set_state(std::make_shared<PushingState>(*this));
 }
 
@@ -2815,7 +2815,7 @@ void Hero::start_pushing() {
  */
 void Hero::start_grabbing() {
 
-  get_equipment().notify_ability_used(Ability::GRAB);
+  get_equipment().notify_ability_used(Ability::GRAB, *this);
   set_state(std::make_shared<GrabbingState>(*this));
 }
 
@@ -2824,7 +2824,7 @@ void Hero::start_grabbing() {
  */
 void Hero::start_pulling() {
 
-  get_equipment().notify_ability_used(Ability::PULL);
+  get_equipment().notify_ability_used(Ability::PULL, *this);
   set_state(std::make_shared<PullingState>(*this));
 }
 

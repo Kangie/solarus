@@ -93,7 +93,7 @@ void Hero::HurtState::start(const State* previous_state) {
 
     equipment.remove_life(life_points);
     if (equipment.has_ability(Ability::TUNIC)) {
-      equipment.notify_ability_used(Ability::TUNIC);
+      equipment.notify_ability_used(Ability::TUNIC, get_entity());
     }
   }
 }

@@ -1121,7 +1121,7 @@ void Enemy::attack_stopped_by_hero_shield(Hero& hero) {
   can_attack = false;
   can_attack_again_date = now + 1000;
 
-  hero.get_equipment().notify_ability_used(Ability::SHIELD);
+  hero.get_equipment().notify_ability_used(Ability::SHIELD, hero);
 }
 
 /**

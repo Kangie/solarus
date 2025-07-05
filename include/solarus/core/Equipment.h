@@ -108,7 +108,7 @@ class SOLARUS_API Equipment {
     bool has_ability(Ability ability, int level = 1) const;
     int get_ability(Ability ability) const;
     void set_ability(Ability ability, int level);
-    void notify_ability_used(Ability ability);
+    void notify_ability_used(Ability ability, Hero& hero);
     Hero* get_hero();
   private:
 

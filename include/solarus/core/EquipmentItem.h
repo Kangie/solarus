@@ -86,7 +86,7 @@ class EquipmentItem: public ExportableToLua {
     void notify_amount_changed(int amount);
     void notify_variant_changed(int variant);
     void notify_using(Hero& hero);
-    void notify_ability_used(Ability ability);
+    void notify_ability_used(Ability ability, Hero& hero);
     void notify_pickable_appeared(Pickable& pickable);
 
     int get_variant() const;
