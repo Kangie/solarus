@@ -2,11 +2,11 @@
 <img alt="Solarus  Quest Editor logo" src="logo.svg" width="500px"/>
 </div>
 
-# Solarus Quest Editor
+# Solarus Editor
 
-[![Build Status](https://travis-ci.org/solarus-games/solarus-quest-editor.svg?branch=dev)](https://travis-ci.org/solarus-games/solarus-quest-editor) [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/copyleft/gpl.html)
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/copyleft/gpl.html)
 
-**Solarus Quest Editor** is a graphical user interface to create, modify and run
+**Solarus Editor** is a graphical user interface to create, modify and run
 quests for the [Solarus engine](https://gitlab.com/solarus-games/solarus).
 
 This software is written in C++ with Qt.
@@ -21,22 +21,10 @@ This software is written in C++ with Qt.
 
 ### Dependencies
 
-To build Solarus Quest Editor, you need:
+To build Solarus Editor, you need:
 
 - A C++ compiler with support of C++11 (gcc 4.8 and clang 3.4 are okay).
 - CMake 3.10 or greater.
-- Qt version 6 (see note below).
-  - Solarus recommends using Qt version 6.8 or newer.
-    Graphical issues or memory leaks might be encountered with older Qt versions.
-    If you build with a prior version it is at your own risk.
-  - Required Qt6 packages for building in Debian or derivatives:
-    - qt6-base-dev
-    - qt6-base-dev-tools
-    - qt6-tools-dev
-    - qt6-tools-dev-tools
-    - qt6-l10n-tools
-    - libqt6opengl6-dev
-    - libqt6svg6-dev
 - Solarus and its dependencies:
   - SDL2 (2.0.18 or greater)
   - SDL2_image
@@ -48,11 +36,9 @@ To build Solarus Quest Editor, you need:
   - modplug (0.8.8.4 or greater)
   - lua5.1 or luajit (LuaJIT is recommended)
   - physfs
+- Qt version 6.8 or higher.
 
-We always keep branch `dev` of `solarus-quest-editor` compatible with branch
-`dev` of `solarus`.
-
-Be sure to build and install `solarus` before building `solarus-quest-editor`. You may need to clone `solarus` repository before.
+Be sure to build and install `solarus` before building `solarus-editor`:
 
 ```bash
 cd solarus
@@ -62,9 +48,46 @@ cmake ..
 sudo make install
 ```
 
+[Read the detailed instructions](../compilation.md) to build `solarus`
+
+#### macOS
+
+Installing Qt6 on macOS is easy by using [Homebrew](https://brew.sh/) with the following package:
+
+```bash
+brew install qt@6
+```
+
+#### Linux
+
+On Debian or derivatives, we strongly recommend to use [online installer from Qt](https://www.qt.io/download-qt-installer-oss) to get the latest version. Following debian packages are not supported on Debian LTS distributions. You can still install them if your Linux distribution provides them in version 6.8 or higher:
+
+```bash
+sudo apt update
+sudo apt install --no-install-recommends \
+  qt6-base-dev \
+  qt6-base-dev-tools \
+  qt6-tools-dev \
+  qt6-tools-dev-tools \
+  qt6-l10n-tools \
+  libqt6opengl6-dev \
+  libqt6svg6-dev
+```
+
+#### Windows (MSYS2)
+
+On Windows, using UCTR64 environment, you can install the Qt6 framework with this command:
+
+```bash
+pacman --noconfirm --needed -S \
+  mingw-w64-ucrt-x86_64-qt6-base \
+  mingw-w64-ucrt-x86_64-qt6-svg \
+  mingw-w64-ucrt-x86_64-qt6-tools
+```
+
 ### With Qt Creator
 
-In Qt Creator, you can load the `solarus-quest-editor` project by opening the
+In Qt Creator, you can load the `solarus-editor` project by opening the
 `CMakeLists.txt` file.
 
 If Solarus is installed in a standard paths known by CMake, it should directly
@@ -80,7 +103,7 @@ command line using CMake.
 #### Configure
 
 ```bash
-cd solarus-quest-editor
+cd editor
 mkdir build
 cd build
 cmake ..
@@ -106,16 +129,8 @@ make
 #### Run
 
 ```bash
-./solarus-quest-editor
+./solarus-editor
 ```
-
-### Adding Documentation
-
-The Solarus Quest Editor supports offline documentation,
-but does not currently build or install it itself. Use `doxygen` with the
-[solarus-doc](https://gitlab.com/solarus-games/solarus-doc) repository to
-create the documentation. Everything in the `<version>/html/` directory should
-be copied to `assets/doc/`.
 
 ## License
 
