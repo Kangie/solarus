@@ -4,11 +4,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake/modules/
 # Wheither LuaJIT should be used instead of vanilla Lua.
 option(SOLARUS_USE_LUAJIT "Use LuaJIT instead of default Lua (recommended)" ON)
 
-find_package(Qt6Core REQUIRED)
-if(Qt6Core_VERSION VERSION_LESS "6.8")
-  message(WARNING "Solarus recommends using Qt version 6.8 or newer. Graphical issues or "
-                  "memory leaks might be encountered with older Qt versions.")
-endif()
+find_package(Qt6Core "6.8" REQUIRED)
 find_package(Qt6Widgets REQUIRED)
 find_package(Qt6OpenGL REQUIRED)
 find_package(Qt6OpenGLWidgets REQUIRED)
@@ -69,7 +65,7 @@ else()
   FetchContent_Declare(
     qlementine
     GIT_REPOSITORY https://github.com/oclero/qlementine.git
-    GIT_TAG        8f90b45bde64c319a0f1a94cead5b6caa2b81693
+    GIT_TAG        73d1f490e1942c8c140d764844c9d31a1ef0206c
     EXCLUDE_FROM_ALL
   )
 endif()
