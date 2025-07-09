@@ -80,6 +80,7 @@ private slots:
   void on_action_run_map_triggered();
   void on_action_stop_music_triggered();
   void on_action_show_grid_triggered();
+  void on_action_show_quest_files_triggered();
   void on_action_show_console_triggered();
   void change_grid_size();
   void on_action_show_layer_0_triggered();
@@ -139,6 +140,10 @@ private:
   void update_show_layers_menu();
   void update_lock_layers_menu();
   QMenu* create_show_entities_menu();
+
+  bool is_quest_files_visible() const;
+  void set_quest_files_visible(bool quest_files_visible);
+
   bool is_console_visible() const;
   void set_console_visible(bool console_visible);
   void log_message_to_console(const QString& log_level, const QString& message);
@@ -221,7 +226,6 @@ private:
       common_actions;             /**< Actions available to all editors. */
 
   SettingsDialog settings_dialog; /**< The settings dialog. */
-
 };
 
 }

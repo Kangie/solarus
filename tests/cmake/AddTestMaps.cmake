@@ -211,6 +211,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1652_npc_movement_stop_animation"
   "bugs/1691_immediate_transition_freeze"
   "bugs/1900_game_over_hero_argument"
+  "bugs/1908_map_create_enemy_suffix"
 )
 
 # Test that should succeed when there are non-fatal errors

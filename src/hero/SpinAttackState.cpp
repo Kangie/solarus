@@ -64,7 +64,7 @@ void Hero::SpinAttackState::start(const State* previous_state) {
     movement->set_max_rotations(3);
     movement->set_clockwise(true);
     hero.set_movement(movement);
-    get_equipment().notify_ability_used(Ability::SWORD_SPIN_ATTACK);
+    get_equipment().notify_ability_used(Ability::SWORD_SPIN_ATTACK, get_entity());
   }
   else {
     // Normal spin attack.

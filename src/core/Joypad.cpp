@@ -69,7 +69,11 @@ double Joypad::get_axis(JoyPadAxis axis) const {
 }
 
 std::string Joypad::get_name() const {
-  return std::string(SDL_GameControllerName(controller.get()));
+  const char* name = SDL_GameControllerName(controller.get());
+  if (name == NULL) {
+    return "";
+  }
+  return std::string(name);
 }
 
 void Joypad::rumble(float low_frequency_intensity, float high_frequency_intensity, uint32_t duration) {

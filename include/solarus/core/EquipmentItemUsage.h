@@ -38,7 +38,7 @@ class EquipmentItemUsage {
     EquipmentItem& get_item();
 
     // state
-    void start();
+    void start(Hero& hero);
     void update();
     bool is_finished();
     void set_finished();

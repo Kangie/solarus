@@ -8,18 +8,19 @@
 
 #include <widgets/MainWindow.h>
 #include <Controller.h>
+#include <SolarusLauncherConfig.h>
 
 #include <QFileOpenEvent>
 #include <QFileInfo>
 
 namespace solarus::launcher {
 void configureQApplication() {
-  QGuiApplication::setApplicationName(PROJECT_DISPLAY_NAME);
-  QGuiApplication::setApplicationDisplayName(PROJECT_DISPLAY_NAME);
-  QGuiApplication::setOrganizationName(PROJECT_APP_ORGANISATION);
-  QGuiApplication::setOrganizationDomain(PROJECT_APP_ORGANISATION_DOMAIN);
-  QGuiApplication::setApplicationVersion(PROJECT_VERSION);
-  QGuiApplication::setDesktopFileName(PROJECT_APP_IDENTIFIER);
+  QGuiApplication::setApplicationName(SOLARUSLAUNCHER_DISPLAY_NAME);
+  QGuiApplication::setApplicationDisplayName(SOLARUSLAUNCHER_DISPLAY_NAME);
+  QGuiApplication::setOrganizationName(SOLARUSLAUNCHER_ORGANISATION);
+  QGuiApplication::setOrganizationDomain(SOLARUSLAUNCHER_ORGANISATION_DOMAIN);
+  QGuiApplication::setApplicationVersion(SOLARUSLAUNCHER_VERSION);
+  QGuiApplication::setDesktopFileName(SOLARUSLAUNCHER_APP_IDENTIFIER);
 }
 
 Application::Application(int& argc, char** argv)

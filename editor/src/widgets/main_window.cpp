@@ -87,6 +87,8 @@ MainWindow::MainWindow(QWidget* parent) :
   // Quest tree splitter.
   const int tree_width = 300;
   ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
+  ui.quest_tree_splitter->setStretchFactor(0, 0);  // Don't expand the left panel
+  ui.quest_tree_splitter->setStretchFactor(1, 1);  // but only the map view.
 
   // Console splitter.
   const int console_height = 100;
@@ -136,6 +138,7 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.tool_bar->insertWidget(ui.action_show_layer_0, grid_size);
   ui.tool_bar->insertSeparator(ui.action_show_layer_0);
 
+  ui.action_show_quest_files->setChecked(true);
   ui.action_show_layer_0->setShortcutContext(Qt::WidgetShortcut);
   ui.action_show_layer_1->setShortcutContext(Qt::WidgetShortcut);
   ui.action_show_layer_2->setShortcutContext(Qt::WidgetShortcut);
@@ -203,6 +206,7 @@ MainWindow::MainWindow(QWidget* parent) :
   addAction(ui.action_package_quest);
   addAction(ui.action_stop_music);
   addAction(ui.action_pause_music);
+  addAction(ui.action_show_quest_files);
   addAction(ui.action_show_console);
   addAction(ui.action_show_grid);
   addAction(ui.action_show_layer_0);
@@ -1158,6 +1162,7 @@ void MainWindow::run_quest(const QString& map_id) {
 
     // Automatically show the console when the quest starts.
     set_console_visible(true);
+    ui.action_show_console->setChecked(true);
   }
   else {
     quest_runner.stop();
@@ -1204,6 +1209,16 @@ void MainWindow::on_action_show_grid_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Show quest files" action.
+ */
+void MainWindow::on_action_show_quest_files_triggered() {
+
+  // Show or hide the quest file tree
+  const bool show_quest_files = ui.action_show_quest_files->isChecked();
+  set_quest_files_visible(show_quest_files);
+}
+
+/**
  * @brief Slot called when the user triggers the "Show console" action.
  */
 void MainWindow::on_action_show_console_triggered() {
@@ -1211,6 +1226,32 @@ void MainWindow::on_action_show_console_triggered() {
   // Show or hide the console.
   const bool show_console = ui.action_show_console->isChecked();
   set_console_visible(show_console);
+}
+
+/**
+ * @brief Returns whether the quest file tree is shown.
+ * @return @c true if the quest file tree is visible.
+ */
+bool MainWindow::is_quest_files_visible() const {
+
+  return ui.quest_tree_view->isVisible();
+}
+
+/**
+ * @brief Shows or hide the quest file tree.
+ * @param quest_files_visible @c true to show the file tree.
+ */
+void MainWindow::set_quest_files_visible(bool quest_files_visible) {
+
+  const int tree_width = 300;
+
+  if (!quest_files_visible) {
+    ui.quest_tree_splitter->setSizes({ 0, width() });
+  } else {
+    ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
+  }
+
+  ui.quest_tree_view->setVisible(quest_files_visible);
 }
 
 /**
@@ -1223,7 +1264,7 @@ bool MainWindow::is_console_visible() const {
 }
 
 /**
- * @brief Shows or hide the execution visible.
+ * @brief Shows or hide the execution console.
  * @param console_visible @c true to show the console.
  */
 void MainWindow::set_console_visible(bool console_visible) {

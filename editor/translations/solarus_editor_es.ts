@@ -2613,6 +2613,11 @@ Do you want to overwrite its content?</source>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="456"/>
+        <source>Show quest files</source>
+        <translation>Mostrar archivos del proyecto</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="456"/>
         <source>Show console</source>
         <translation>Mostrar consola</translation>
     </message>

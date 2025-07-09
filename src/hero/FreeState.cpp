@@ -141,7 +141,7 @@ void Hero::FreeState::notify_obstacle_reached() {
       pushing_direction4 = hero.get_animation_direction();
     }
     else if (now >= start_pushing_date) {
-      equipment.notify_ability_used(Ability::PUSH);
+      equipment.notify_ability_used(Ability::PUSH, get_entity());
       hero.start_pushing();
     }
   }

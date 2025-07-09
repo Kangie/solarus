@@ -2400,6 +2400,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="456"/>
+        <source>Show quest files</source>
+        <translation>显示项目文件</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/main_window.ui" line="456"/>
         <source>Show console</source>
         <translation>显示控制台</translation>
     </message>

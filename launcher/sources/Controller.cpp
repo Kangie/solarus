@@ -8,6 +8,7 @@
 #include <widgets/PreferencesWindow.h>
 #include <Utils.h>
 #include <BasicUpdater.h>
+#include <SolarusLauncherConfig.h>
 
 #include <oclero/qlementine/style/QlementineStyle.hpp>
 #include <oclero/qlementine/style/ThemeManager.hpp>
@@ -199,7 +200,7 @@ void Controller::setupRunner() {
 
 void Controller::loadLanguages() {
   constexpr auto sourceDirPath = ":/i18n/";
-  constexpr auto fileName = PROJECT_QM_PREFIX;
+  constexpr auto fileName = SOLARUSLAUNCHER_QM_PREFIX;
   constexpr auto separator = "_";
 
   constexpr auto filterFlags = QDir::Filter::NoDotAndDotDot | QDir::Filter::Files | QDir::Filter::Readable;
@@ -331,7 +332,8 @@ void Controller::startRunner(const QString& questFilePath) {
   }
 
   // Check if the file exists and is a quest file.
-  if (QFile::exists(questFilePath) && questFilePath.endsWith("." PROJECT_DOCUMENT_EXTENSION)) {
+  const auto extension = QString(".%1").arg(SOLARUSLAUNCHER_DOCUMENT_EXTENSION);
+  if (QFile::exists(questFilePath) && questFilePath.endsWith(extension)) {
     _runner->start(questFilePath);
   }
 }
@@ -358,15 +360,15 @@ void Controller::openAboutDialog() {
   auto* dialog = new oclero::qlementine::AboutDialog(qApp->activeWindow());
   dialog->setIcon(QIcon(":/solarus/launcher/resources/app_icon/solarus_launcher_icon.ico"));
   dialog->setWindowTitle(i18n::aboutWindowTitle(QApplication::applicationDisplayName()));
-  dialog->setWebsiteUrl(PROJECT_HOMEPAGE_URL);
+  dialog->setWebsiteUrl(SOLARUSLAUNCHER_HOMEPAGE_URL);
   dialog->setDescription(i18n::appDescription());
   dialog->setLicense(i18n::license());
-  dialog->setCopyright(QString("%1 %2").arg(PROJECT_APP_COPYRIGHT, i18n::allRightsReserved()));
+  dialog->setCopyright(QString("%1 %2").arg(SOLARUSLAUNCHER_COPYRIGHT, i18n::allRightsReserved()));
   for (const auto [tooltip, url, icon] : {
-         std::make_tuple("X", PROJECT_LINKS_X, Icons16::Brand_X),
-         std::make_tuple("Mastodon", PROJECT_LINKS_MASTODON, Icons16::Brand_MastodonFill),
-         std::make_tuple("YouTube", PROJECT_LINKS_YOUTUBE, Icons16::Brand_YoutubeFill),
-         std::make_tuple("GitLab", PROJECT_LINKS_SOURCE_CODE, Icons16::Brand_GitlabFill),
+         std::make_tuple("X", SOLARUSLAUNCHER_LINKS_X, Icons16::Brand_X),
+         std::make_tuple("Mastodon", SOLARUSLAUNCHER_LINKS_MASTODON, Icons16::Brand_MastodonFill),
+         std::make_tuple("YouTube", SOLARUSLAUNCHER_LINKS_YOUTUBE, Icons16::Brand_YoutubeFill),
+         std::make_tuple("GitLab", SOLARUSLAUNCHER_LINKS_SOURCE_CODE, Icons16::Brand_GitlabFill),
        }) {
     dialog->addSocialMediaLink(tooltip, url, makeIcon(icon));
   }
@@ -383,15 +385,15 @@ void Controller::playStopQuest() {
 }
 
 void Controller::openContactPage() {
-  QDesktopServices::openUrl(QUrl(PROJECT_LINKS_CONTACT));
+  QDesktopServices::openUrl(QUrl(SOLARUSLAUNCHER_LINKS_CONTACT));
 }
 
 void Controller::openSourceCodePage() {
-  QDesktopServices::openUrl(QUrl(PROJECT_LINKS_SOURCE_CODE));
+  QDesktopServices::openUrl(QUrl(SOLARUSLAUNCHER_LINKS_SOURCE_CODE));
 }
 
 void Controller::checkForUpdates() {
-  _updater->checkForUpdates(PROJECT_LINKS_UPDATE_ENDPOINT);
+  _updater->checkForUpdates(SOLARUSLAUNCHER_UPDATE_ENDPOINT);
 }
 
 const QStringList& Controller::languages() const {
@@ -412,7 +414,8 @@ bool Controller::isMimeDataValid(const QMimeData* mimeData) const {
         if (url.isLocalFile()) {
           const auto path = url.toLocalFile();
           const auto fileInfo = QFileInfo(path);
-          return fileInfo.isDir() || (fileInfo.isFile() && path.endsWith("." PROJECT_DOCUMENT_EXTENSION));
+          const auto extension = QString(".%1").arg(SOLARUSLAUNCHER_DOCUMENT_EXTENSION);
+          return fileInfo.isDir() || (fileInfo.isFile() && path.endsWith(extension));
         }
         return false;
       });
