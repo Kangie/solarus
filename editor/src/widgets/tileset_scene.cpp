@@ -174,7 +174,8 @@ void TilesetScene::build() {
     // Maybe this is a recently created tileset.
     QString path = get_quest().get_tileset_tiles_image_path(model.get_tileset_id());
     path = path.right(path.length() - get_quest().get_data_path().length() - 1);
-    addText(tr("Missing tileset image '%1'").arg(path));
+    QGraphicsTextItem *text = addText(tr("Missing tileset image '%1'").arg(path));
+    text->setDefaultTextColor(QColor(Qt::black));
     return;
   }
 
