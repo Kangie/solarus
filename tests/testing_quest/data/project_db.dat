@@ -131,6 +131,7 @@ map{ id = "bugs/1680_music_volume", description = "#1680: Music volume" }
 map{ id = "bugs/1691_immediate_transition_freeze", description = "#1691: Freeze after immediate transition" }
 map{ id = "bugs/1900_game_over_hero_argument", description = "#1900: game:start/stop_game_over() hero should be optional" }
 map{ id = "bugs/1908_map_create_enemy_suffix", description = "#1908: map:create_enemy() gives dupicate name" }
+map{ id = "bugs/1917_set_tileset_int", description = "#1917: map:set_tileset() fails with an integer" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
@@ -248,6 +249,7 @@ map{ id = "teletransportation_tests/start_scrolling_sword_charged", description 
 map{ id = "text_predict", description = "Text size prediction" }
 map{ id = "traversable", description = "Traversable test area" }
 
+tileset{ id = "13", description = "A tileset with an integer id" }
 tileset{ id = "castle", description = "Castle" }
 tileset{ id = "castle_grayscale", description = "Castle (grayscale)" }
 tileset{ id = "castle_no_sprites_file", description = "Castle (no sprites file)" }
@@ -734,6 +736,8 @@ file{ path = "maps/bugs/1900_game_over_hero_argument.dat", author = "Christopho"
 file{ path = "maps/bugs/1900_game_over_hero_argument.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1908_map_create_enemy_suffix.dat", author = "Christopho", license = "CC-BY SA 4.0" }
 file{ path = "maps/bugs/1908_map_create_enemy_suffix.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1917_set_tileset_int.dat", author = "Christopho", license = "CC-BY SA 4.0" }
+file{ path = "maps/bugs/1917_set_tileset_int.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -1283,6 +1287,7 @@ file{ path = "sprites/things/platform.dat", author = "Christopho", license = "CC
 file{ path = "sprites/things/platform.png", author = "Stephen Challener", license = "CC BY 4.0" }
 file{ path = "sprites/todo.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "sprites/todo.png", author = "Christopho", license = "CC BY-SA 4.0" }
+file{ path = "tilesets/13.dat", author = "Christopho", license = "CC-BY SA 4.0" }
 file{ path = "tilesets/castle.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "tilesets/castle.entities.png", author = "Bertram", license = "CC BY-SA 4.0" }
 file{ path = "tilesets/castle.tiles.png", author = "Stephen Challener, Jetrel", license = "CC BY 4.0" }

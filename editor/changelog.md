@@ -3,6 +3,7 @@
 ## Solarus Quest Editor 2.0.1 (in progress)
 
 * Fix empty tileset selector (#1724).
+* Fix crash when opening a tileset without PNG file.
 * Fix tiles position following the mouse when picked from the tileset view.
 * Fix wrong entity selection below entities just added (#1905).
 * Adjust combobox dropdown size when expanding folders.
