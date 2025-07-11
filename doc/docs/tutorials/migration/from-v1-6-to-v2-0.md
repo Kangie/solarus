@@ -53,8 +53,18 @@ Teleportation is now driven by cameras, as there might be multiple heroes and mu
   - If the destination map is already loaded (meaning you are using the new 2.0 multiplayer features), the camera stays on the previous map.
   - If the destination map is not loaded yet, you will get a warning but the camera will automatically be re-linked to the hero for compatibility.
 
-### Minor Incompatibilities
+### Loading a surface from a file
 
-The remaining incompatibilities in the Solarus API are less disruptive. They should not have any consequence in most games, and if they do, they should be easy to address. Yet, we provide them here for completeness.
+`sol.surface.create(file_name, [language_specific])` is now deprecated. It was meant to load an image file from either the `sprites` directory or from the `images` directory of the current language.
+It it now recommended to use the new function [`sol.surface.load(file_name)`](../../lua-api/drawable-objects/surface.md#solsurfaceloadfile_name), that simply loads a file name relative to the quest data directory.
 
-- `hero:get_sword_sound_id()` now returns `nil` if there is no sword sound.
+### Spin attack ability
+
+The `sword_knowledge` [ability](../../lua-api/game.md#gameget_abilityability_name), that allowed to enable or disable the super spin attack, is now deprecated. There is now a new ability `spin_attack`, that controls the level of spin attack, allowing to disable the spin attack completely (0), to enable the normal spin attack (1) or the super spin attack (2).
+The now deprecated `sword_knowledge` ability is equivalant to a `spin_attack` ability of lvel 1.
+
+### Audio API changes
+
+There is a whole new audio API with proper types for [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md). The only slightly breaking change is detailed below.
+
+- `hero:get_sword_sound_id()` is now deprecated, please use `hero:get_sword_sound()` instead. This function was renamed for consistency with the rest of the API. Additionally, it now returns `nil` rather than an empty string if there is no sword sound.
