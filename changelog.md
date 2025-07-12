@@ -5,6 +5,7 @@
 * Fix `game:start/stop_game_over()` hero optional parameter (#1900).
 * Fix immediate transitions suspending the hero (#1691).
 * Fix crash when creating a music without playing it immediately (#1896).
+* Fix crash when calling `sol.main.get_game()` while restarting (#1904).
 * Fix possible duplicate name when creating an entity dynamically (#1908).
 * Fix index offsets for channels of IT music files.
 * Fix possible error when retrieving joypad name (#1895).

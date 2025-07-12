@@ -283,8 +283,8 @@ static void remove_resource(LuaContext& ctx, ResourceType type, const std::strin
  * @return [game] : the current game if any
  */
 static Savegame* get_game(LuaContext& ctx) {
-  auto game = ctx.get_main_loop().get_game();
-  if(game) {
+  Game* game = ctx.get_main_loop().get_game();
+  if (game != nullptr && game->has_savegame()) {
     return &game->get_savegame();
   }
   return nullptr;

@@ -248,6 +248,18 @@ const Savegame& Game::get_savegame() const {
 }
 
 /**
+ * \brief Returns whether some save data is associated to this game.
+ *
+ * This is \c true unless the save data was moved to another running game,
+ * typically after restarting a game.
+ *
+ * \return \c true if there is a savegame.
+ */
+bool Game::has_savegame() const {
+  return savegame != nullptr;
+}
+
+/**
  * \brief Returns the equipment of the player.
  *
  * It is equivalent to get_savegame().get_equipment().
