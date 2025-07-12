@@ -150,6 +150,7 @@ MainWindow::MainWindow(QWidget* parent) :
   show_layers_button->setPopupMode(QToolButton::InstantPopup);
   show_layers_action = ui.tool_bar->insertWidget(ui.action_show_traversables, show_layers_button);
   lock_layers_menu = new QMenu(tr("Lock/unlock layers"));
+  update_grouping_actions();
   ui.tool_bar->insertSeparator(ui.action_show_traversables);
   ui.menu_view->insertMenu(ui.action_show_traversables, show_layers_menu);
   ui.menu_view->insertMenu(ui.action_show_traversables, lock_layers_menu);
@@ -288,7 +289,6 @@ MainWindow::MainWindow(QWidget* parent) :
   // Prevent Qt's default toolbar context menu that allows to hide the QToolBar.
   // It should NOT be able to hide.
   ui.tool_bar->installEventFilter(this);
-
 }
 
 /**
