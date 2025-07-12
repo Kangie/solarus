@@ -9,6 +9,7 @@
 * Fix crash when calling `sol.main.get_game()` while restarting (#1904).
 * Fix possible duplicate name when creating an entity dynamically (#1908).
 * Fix OpenAL error A003 when stopping a music that was just started.
+* Fix OpenAL error A004 when stopping a sound.
 * Fix index offsets for channels of IT music files.
 * Fix possible error when retrieving joypad name (#1895).
 * Add hero argument to `item:on_using()` event (#1899).
