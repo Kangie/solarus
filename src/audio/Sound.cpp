@@ -566,11 +566,7 @@ void Sound::stop() {
     return;
   }
 
-  ALint status;
-  alGetSourcei(source, AL_SOURCE_STATE, &status);
-  if (status == AL_PLAYING || status == AL_PAUSED) {
-    stop_source();
-  }
+  stop_source();
 }
 
 /**
@@ -582,7 +578,11 @@ void Sound::stop_source() {
     return;
   }
 
-  alSourceStop(source);
+  ALint status = 0;
+  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  if (status == AL_PLAYING || status == AL_PAUSED) {
+    alSourceStop(source);
+  }
   alSourcei(source, AL_BUFFER, 0);
   alDeleteSources(1, &source);
 
