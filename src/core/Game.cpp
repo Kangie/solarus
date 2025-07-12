@@ -356,7 +356,7 @@ void Game::notify_control(const ControlEvent& event) {
  */
 void Game::update_teleportations() {
   // Update the transitions between maps.
-  for(auto& ct : cameras_teleportations) {
+  for (auto& ct : cameras_teleportations) {
     ct.removed = update_teleportation(ct);
   }
 
@@ -377,7 +377,7 @@ void Game::update_teleportations() {
 void Game::update() {
   SOL_PFUN(profiler::colors::Red);
 
-  //Update teleportations and transitions
+  // Update teleportations and transitions
   update_teleportations();
 
   if (restarting && cameras_teleportations.empty()) { //All transitions finished ! Restart !
@@ -512,7 +512,7 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
   auto& transition_style = tp.transition_style;
   const auto& camera = tp.camera;
   auto& transition = camera->get_transition();
-  //Create opening transition
+  // Create opening transition
   transition = std::unique_ptr<Transition>(Transition::create(
       transition_style,
       Transition::Direction::OPENING
@@ -531,42 +531,42 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
   }
 
   transition->set_destination_side(next_map->get_destination_side(tp.destination_name));
-  transition->start(); //Start opening transition
+  transition->start(); // Start opening transition
 
   if (next_map != current_map) {
-    if(current_map) {
+    if (current_map) {
       leave_map(camera, current_map);
     }
 
-    //Go to the new map
+    // Go to the new map
     camera->set_layer(next_map->get_max_layer());
     camera->place_on_map(*next_map);
     camera->set_layer(next_map->get_max_layer());
   }
 
-  if(tp.opt_hero) {
+  if (tp.opt_hero) {
       on_hero_map_prepare(tp.opt_hero, tp);
   } else {
-      EntityPtr destination = next_map->get_entities().find_entity(tp.destination_name);
+    EntityPtr destination = next_map->get_entities().find_entity(tp.destination_name);
 
-      if(destination) {
-        camera->track_position(destination->get_center_point());
-      }
+    if (destination) {
+      camera->track_position(destination->get_center_point());
+    }
   }
 
-  //All entities should be there, start the map if necessary
-  if(!next_map->is_started()) {
+  // All entities should be there, start the map if necessary
+  if (!next_map->is_started()) {
     SOLARUS_REQUIRE(next_map->is_loaded(), "This map is not loaded");
     next_map->start(tp.destination_name);
   }
 
-  //Only notify map change if maps are different
-  if(next_map != current_map) {
-     notify_map_changed(*next_map, *camera);
+  // Only notify map change if maps are different
+  if (next_map != current_map) {
+    notify_map_changed(*next_map, *camera);
   }
 
-  if(tp.opt_hero) {
-      on_hero_map_change(tp.opt_hero, tp);
+  if (tp.opt_hero) {
+    on_hero_map_change(tp.opt_hero, tp);
   }
 }
 
@@ -863,8 +863,8 @@ void Game::teleport_camera(const CameraPtr& camera,
   transition->start();
   ct.camera->set_transition(std::move(transition));
 
-  //Camera teleported without hero, stop tracking
-  if(!opt_hero) {
+  // Camera teleported without hero, stop tracking
+  if (!opt_hero) {
     camera->start_manual();
   }
 
@@ -943,8 +943,8 @@ const MapPtr& Game::prepare_map(const std::string& map_id) {
     return map->get_id() == map_id;
   });
 
-  //If map is already loaded, return it immediatly
-  if(it != current_maps.end()) {
+  // If map is already loaded, return it immediatly
+  if (it != current_maps.end()) {
     return *it;
   }
 
