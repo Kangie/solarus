@@ -7,6 +7,7 @@
 * Fix teletransporters to unloaded map without camera (#1907).
 * Fix crash when creating a music without playing it immediately (#1896).
 * Fix crash when calling `sol.main.get_game()` while restarting (#1904).
+* Fix crash if hero sprites have more than 4 directions (#1493).
 * Fix possible duplicate name when creating an entity dynamically (#1908).
 * Fix OpenAL error A003 when stopping a music that was just started.
 * Fix OpenAL error A004 when stopping a sound.
