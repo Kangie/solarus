@@ -199,7 +199,11 @@ Teleports the camera to another map and destination.
 : Id of the map to teleport the camera into.
 
 `destination_id` (string)
-: Id of the destination to place the camera on on arrival.
+: Name of the destination to place the camera on on arrival.
+
+`transition_style` (string)
+: `"immediate"` (no transition effect), `"fade"` (fade-out and fade-in effect) or `"scrolling"`. No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default.
+
 
 ## Events inherited from map entity
 

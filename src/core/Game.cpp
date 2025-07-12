@@ -755,13 +755,13 @@ void Game::teleport_hero(
     const std::string& a_destination_name,
     Transition::Style transition_style) {
 
-  if(hero->get_linked_camera()) {
+  if (hero->get_linked_camera()) {
     teleport_camera(hero->get_linked_camera(),
                     map_id,
                     a_destination_name,
                     transition_style,
                     hero);
-  } else if(is_map_loaded(map_id)) {
+  } else if (is_map_loaded(map_id)) {
     MapPtr current_map = hero->get_map().shared_from_this_cast<Map>();
     MapPtr next_map = prepare_map(map_id);
     hero->place_on_destination(*next_map, current_map->get_location(), a_destination_name);
@@ -773,16 +773,15 @@ void Game::teleport_hero(
 
     Map& map = hero->get_map();
 
-    if (map.get_entities().get_cameras().size() != 1){
+    if (map.get_entities().get_cameras().size() != 1) {
        Debug::error("Ambiguous teleportation of a hero without camera from a map with "
                     + std::to_string(map.get_entities().get_cameras().size())
                     + " cameras.");
     }
 
-    Debug::warning("Deprecated: Teleporting untracked hero to an unloaded map. Consider using camera:teleport() or track hero.");
     set_suspended_by_script(false);  // Keep the pre 2.0 behavior
 
-    // Relink unique camera to hero before teleportation
+    // Relink unique camera to hero before teleportation.
     CameraPtr cam = map.get_camera();
     hero->set_linked_camera(cam);
     cam->set_position_on_screen({0, 0});

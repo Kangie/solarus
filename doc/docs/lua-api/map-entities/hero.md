@@ -51,7 +51,7 @@ Teletransports the hero to a different place.
 : Name of the [destination entity](./destination.md) where to go on that map, or the special keyword `"_same"` to keep the same coordinates. Can also be the special keyword `"_side0"`, `"_side1"`, `"_side2"` or `"_side3"` to arrive near the East, North, West or South frontier of the map respectively. But the hero should be near the corresponding side of the original map for this to look okay. This is usually used in combination with scrolling transitions. No value means the default destination entity of the map. If the destination does not exist, a debugging message is logged and the default destination is used as a fallback. Finally, if there is no destination at all, then no default destination can be used. In this case, another debugging message is logged and the hero is placed at coordinates `(0,0)`
 
 `transition_style` (string, optional)
-: `"immediate"` (no transition effect) `"fade"` (fade-out and fade-in effect) or `"scrolling"` No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default.
+: `"immediate"` (no transition effect), `"fade"` (fade-out and fade-in effect) or `"scrolling"`. No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default.
 
 !!! note "Note"
 
