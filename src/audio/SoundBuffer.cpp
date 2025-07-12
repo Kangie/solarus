@@ -132,6 +132,11 @@ SoundBuffer::SoundBuffer(const std::string& sound_id):
  */
 SoundBuffer::~SoundBuffer() {
 
+  if (!Sound::is_initialized()) {
+    // Sound might be disabled or already terminated.
+    return;
+  }
+
   if (buffer != AL_NONE) {
     alDeleteBuffers(1, &buffer);
     ALenum error = alGetError();
@@ -165,7 +170,7 @@ bool SoundBuffer::is_loaded() const {
 void SoundBuffer::load() {
 
   if (!Sound::is_initialized()) {
-    // Sound might be disabled.
+    // Sound might be disabled or already terminated.
     return;
   }
 
