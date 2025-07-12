@@ -107,6 +107,7 @@ MusicPtr Music::create(const std::string& music_id) {
  * \brief Performs the loading of music into memory
  */
 void Music::load(const std::string& music_id) {
+  Sound::check_openal_clean_state("Music::load");
   // Detect format from file_name
   std::string file_name;
   MusicSystem::find_music_file(music_id, file_name, format);
@@ -151,7 +152,7 @@ Music::Format Music::get_format() {
  * \return the volume (0 to 100)
  */
 int Music::get_volume() const {
-  return (int) (volume * 100.0 + 0.5);
+  return static_cast<int>(volume * 100.0 + 0.5);
 }
 
 /**
@@ -333,17 +334,22 @@ bool Music::update_playing() {
  */
 void Music::notify_device_disconnected() {
 
+  Sound::check_openal_clean_state("Music::notify_device_disconnected beginning");
+
   // All sources and buffers are already destroyed by OpenAL at this point.
   source = AL_NONE;
   for (int i = 0; i < nb_buffers; ++i) {
     buffers[i] = AL_NONE;
   }
+  Sound::check_openal_clean_state("Music::notify_device_disconnected end");
 }
 
 /**
  * \brief Notifies this music that the audio device was reconnected.
  */
 void Music::notify_device_reconnected() {
+
+  Sound::check_openal_clean_state("Music::notify_device_reconnected beginning");
 
   if (buffers[0] == AL_NONE) {
     // Recreate a source and buffers.
@@ -374,6 +380,7 @@ void Music::notify_device_reconnected() {
     }
     alSourcePlay(source);
   }
+  Sound::check_openal_clean_state("Music::notify_device_reconnected end");
 }
 
 /**
@@ -389,6 +396,8 @@ void Music::notify_global_volume_changed() {
  * \param nb_samples number of samples to write
  */
 void Music::decode_spc(ALuint destination_buffer, ALsizei nb_samples) {
+
+  Sound::check_openal_clean_state("Music::decode_spc");
 
   // decode the SPC data
   std::vector<ALushort> raw_data(nb_samples);
@@ -412,6 +421,8 @@ void Music::decode_spc(ALuint destination_buffer, ALsizei nb_samples) {
  * \param nb_samples number of samples to write
  */
 void Music::decode_it(ALuint destination_buffer, ALsizei nb_samples) {
+
+  Sound::check_openal_clean_state("Music::decode_it");
 
   // Decode the IT data.
   std::vector<ALushort> raw_data(nb_samples);
@@ -456,6 +467,8 @@ bool Music::start() {
     return false;
   }
 
+  Sound::check_openal_clean_state("Music::start");
+
   // First time: find the file.
   if (file_name.empty()) {
     MusicSystem::find_music_file(id, file_name, format);
@@ -496,7 +509,7 @@ bool Music::start() {
       }
       break;
     case FORMAT_NONE:
-      Debug::die("start: Invalid music format");
+      Debug::die("Music::start: Invalid music format");
       break;
   }
 
@@ -534,24 +547,61 @@ void Music::stop() {
     return;
   }
 
+  Sound::check_openal_clean_state("Music::stop beginning");
+
   // Release the callback if any.
   callback_ref.clear();
 
-  // empty the source
+  // Empty the source.
   alSourceStop(source);
-
-  ALint nb_queued;
-  ALuint buffer;
-  alGetSourcei(source, AL_BUFFERS_QUEUED, &nb_queued);
-  for (int i = 0; i < nb_queued; i++) {
-    alSourceUnqueueBuffers(source, 1, &buffer);
+  ALenum error = alGetError();
+  if (error != AL_NO_ERROR) {
+    std::ostringstream oss;
+    oss << "Failed to stop music source" << source << ": " << std::hex << error;
+    Debug::error(oss.str());
   }
 
-  // delete the source
-  alDeleteSources(1, &source);
+  // Unqueue buffers.
+  ALint nb_processed = 0;
+  ALuint processed_buffers[nb_buffers];
+  alGetSourcei(source, AL_BUFFERS_PROCESSED, &nb_processed);
+  if (nb_processed > 0) {
+    alSourceUnqueueBuffers(source, 1, processed_buffers);
+    error = alGetError();
+    if (error != AL_NO_ERROR) {
+      std::ostringstream oss;
+      oss << "Failed to unqueue " << nb_processed << " processed buffers: " << std::hex << error;
+      Debug::error(oss.str());
+    }
+  }
 
-  // delete the buffers
+  ALint nb_queued = 0;
+  ALuint queued_buffers[nb_buffers];
+  alGetSourcei(source, AL_BUFFERS_QUEUED, &nb_queued);
+  if (nb_queued > 0) {
+    alSourceUnqueueBuffers(source, 1, queued_buffers);
+    alGetError();
+    // OpenAL Soft refuses to unqueue buffers that were just queued but this is fine,
+    // they will still deleted properly in alDeleteBuffers().
+  }
+
+  // Delete the source.
+  alDeleteSources(1, &source);
+  error = alGetError();
+  if (error != AL_NO_ERROR) {
+    std::ostringstream oss;
+    oss << "Failed to delete source " << source << ": " << std::hex << error;
+    Debug::error(oss.str());
+  }
+
+  // Delete the buffers.
   alDeleteBuffers(nb_buffers, buffers);
+  error = alGetError();
+  if (error != AL_NO_ERROR) {
+    std::ostringstream oss;
+    oss << "Failed to delete " << nb_buffers << " buffers: " << std::hex << error;
+    Debug::error(oss.str());
+  }
 
   switch (format) {
     case FORMAT_SPC:

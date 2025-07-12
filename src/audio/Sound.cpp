@@ -464,6 +464,8 @@ void Sound::update() {
     }
   }
 
+  check_openal_clean_state("Sound::update");
+
   // also update the music
   MusicSystem::update();
 }
@@ -558,8 +560,6 @@ void Sound::stop() {
   if (device == nullptr) {
     return;
   }
-
-  check_openal_clean_state("Sound::stop");
 
   if (source == AL_NONE) {
     // Nothing to do.

@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/Debug.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/audio/OggDecoder.h"
+#include "solarus/audio/Sound.h"
 #include <AL/al.h>
 #include <sstream>
 #include <vector>
@@ -117,13 +117,15 @@ void OggDecoder::unload() {
  */
 void OggDecoder::decode(ALuint destination_buffer, ALsizei nb_samples) {
 
+  Sound::check_openal_clean_state("OggDecoder::decode");
+
   if (ogg_info == nullptr) {
     return;
   }
 
   // Read the encoded music properties.
   const int num_channels = ogg_info->channels;
-  ALsizei sample_rate = ALsizei(ogg_info->rate);
+  ALsizei sample_rate = static_cast<ALsizei>(ogg_info->rate);
   ALenum al_format = AL_NONE;
   if (num_channels == 1) {
     al_format = AL_FORMAT_MONO16;
@@ -154,7 +156,7 @@ void OggDecoder::decode(ALuint destination_buffer, ALsizei nb_samples) {
 
     bytes_read = ov_read(
         ogg_file.get(),
-        ((char*) raw_data.data()) + total_bytes_read,
+        (reinterpret_cast<char*>(raw_data.data())) + total_bytes_read,
         // Lossy conversion long -> int.
         static_cast<int>(max_bytes_to_read),
         0,
