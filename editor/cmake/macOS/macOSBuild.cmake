@@ -30,7 +30,7 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "${SOLARUS_DEPLOYMENT}" CACHE STRING "Oldest OS 
 # According to LuaJIT doc, OSX needs to link with additional flags if 64bit build is requested
 if(SOLARUS_USE_LUAJIT AND SOLARUS_ARCH MATCHES "x86_64")
   if(XCODE)
-    set_property(TARGET solarus-quest-editor PROPERTY
+    set_property(TARGET solarus-editor PROPERTY
       "XCODE_ATTRIBUTE_LINKER_FLAGS[arch=x86_64]" "-pagezero_size 10000 -image_base 100000000"
     )
   elseif(NOT CMAKE_EXE_LINKER_FLAGS MATCHES "-pagezero_size 10000 -image_base 100000000")
@@ -42,7 +42,7 @@ endif()
 set(SOLARUSEDITOR_ICON_FILENAME "solarus-editor.icns")
 set(SOLARUSEDITOR_ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/${SOLARUSEDITOR_ICON_FILENAME}")
 set_source_files_properties(${SOLARUSEDITOR_ICON_PATH} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-target_sources(solarus-quest-editor PRIVATE
+target_sources(solarus-editor PRIVATE
   ${SOLARUSEDITOR_ICON_PATH}
 )
 
@@ -53,10 +53,10 @@ configure_file(
   "${SOLARUSEDITOR_PLIST_PATH}"
   @ONLY
 )
-target_sources(solarus-quest-editor PRIVATE
+target_sources(solarus-editor PRIVATE
   ${SOLARUSEDITOR_PLIST_PATH}
 )
-set_target_properties(solarus-quest-editor PROPERTIES
+set_target_properties(solarus-editor PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST "${SOLARUSEDITOR_PLIST_PATH}"
   MACOSX_BUNDLE_BUNDLE_NAME "${SOLARUSEDITOR_APP_DISPLAY_NAME}"
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

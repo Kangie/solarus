@@ -1,12 +1,12 @@
 # Main executable.
-add_executable(solarus-quest-editor
+add_executable(solarus-editor
   ${solarus_quest_editor_SOURCES}
   ${solarus_quest_editor_FORMS_HEADERS}
   ${solarus_quest_editor_RESOURCES_RCC}
   ${solarus_quest_editor_TRANSLATIONS_QM}
 )
 
-target_link_libraries(solarus-quest-editor
+target_link_libraries(solarus-editor
   Qt6::Widgets
   Qt6::OpenGL
   Qt6::OpenGLWidgets

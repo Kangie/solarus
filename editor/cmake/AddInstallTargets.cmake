@@ -1,5 +1,5 @@
 # Set files to install
-install(TARGETS solarus-quest-editor
+install(TARGETS solarus-editor
   RUNTIME DESTINATION ${SOLARUS_INSTALL_BINDIR}
 )
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/assets/"

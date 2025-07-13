@@ -10,19 +10,19 @@ elseif(WIN32)
     cmake/win32/resources.rc
   )
 endif()
-target_sources(solarus-quest-editor PRIVATE
+target_sources(solarus-editor PRIVATE
   ${solarus_quest_editor_SOURCES}
 )
 
 # Windows: disable the console.
 if(WIN32)
   if(MSVC)
-    set_target_properties(solarus-quest-editor PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+    set_target_properties(solarus-editor PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
   elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-mwindows ${CMAKE_CXX_FLAGS}")
   endif()
 
-  set_target_properties(solarus-quest-editor PROPERTIES
+  set_target_properties(solarus-editor PROPERTIES
     OUTPUT_NAME ${SOLARUSEDITOR_EXECUTABLE_NAME}
   )
 endif()

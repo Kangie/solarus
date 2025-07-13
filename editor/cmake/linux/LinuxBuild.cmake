@@ -15,11 +15,11 @@ install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus-editor.svg
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus-editor-symbolic.svg
   DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/icons/hicolor/symbolic/apps RENAME ${SOLARUSEDITOR_APP_ID}-symbolic.svg)
 
-# FreeDesktop compatible start menu launcher
+# FreeDesktop compatible start menu editor
 configure_file (resources/app.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/resources/${SOLARUSEDITOR_APP_ID}.desktop @ONLY)
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/resources/${SOLARUSEDITOR_APP_ID}.desktop
   DESTINATION ${SOLARUS_INSTALL_DATAROOTDIR}/applications)
 
-set_target_properties(solarus-quest-editor PROPERTIES
+set_target_properties(solarus-editor PROPERTIES
   OUTPUT_NAME ${SOLARUSEDITOR_EXECUTABLE_NAME}
 )
