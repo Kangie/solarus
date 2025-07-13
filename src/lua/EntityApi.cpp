@@ -9959,7 +9959,7 @@ void LuaContext::entity_on_state_changed(
   if (!userdata_has_field(entity, "on_state_changed")) {
     return;
   }
- run_on_main([this, &entity, new_state_name](lua_State* l){
+  run_on_main([this, &entity, new_state_name](lua_State* l){
     push_entity(l, entity);
     on_state_changed(new_state_name);
     lua_pop(l, 1);

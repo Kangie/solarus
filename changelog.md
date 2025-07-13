@@ -5,7 +5,7 @@
 * Fix `game:start/stop_game_over()` hero optional parameter (#1900).
 * Fix immediate transitions suspending the hero (#1691).
 * Fix teletransporters to unloaded map without camera (#1907).
-* Fix `game:get_map()` returning an unstarted map instead of nil (#1689).
+* Fix map and hero initialized before `game:on_started()` (#1689).
 * Fix crash when creating a music without playing it immediately (#1896).
 * Fix crash when calling `sol.main.get_game()` while restarting (#1904).
 * Fix crash if hero sprites have more than 4 directions (#1493).

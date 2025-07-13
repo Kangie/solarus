@@ -295,10 +295,15 @@ The game is suspended during the whole game-over sequence. Call this function to
 
 ### `game:get_map()`
 
-Returns one of the current maps.
+Returns the current map.
+
+If more than one maps are loaded, returns the one that has the default hero if any.
+Otherwise, returns the first map of the current maps.
+
+Returns `nil` if the game is not running, or if the game has no map initialized yet, typically from `game:on_started()`.
 
 Return value ([map](./map.md))
-: The current map of this game (`nil` if this game is not running).
+: The current map of this game, or `nil` if no map is currently running.
 
 ### `game:get_hero()`
 
