@@ -869,8 +869,11 @@ bool opt_boolean(
     bool default_value
 ) {
   if (lua_isnone(l, index)
-    || (CurrentQuest::is_format_at_most({1, 7}) && lua_isnoneornil(l, index))
+    || (CurrentQuest::is_format_at_most({1, 6}) && lua_isnoneornil(l, index))
   ) {
+    // entity:set_visible() is allowed and equivalent to entity:set_visible(true).
+    // entity:set_visible(nil) is tolerated for quests < 2.0
+    // but raises an error for quests >= 2.0.
     return default_value;
   }
   return check_boolean(l, index);

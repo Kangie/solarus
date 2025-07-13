@@ -68,3 +68,10 @@ The now deprecated `sword_knowledge` ability is equivalant to a `spin_attack` ab
 There is a whole new audio API with proper types for [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md). The only slightly breaking change is detailed below.
 
 - `hero:get_sword_sound_id()` is now deprecated, please use `hero:get_sword_sound()` instead. This function was renamed for consistency with the rest of the API. Additionally, it now returns `nil` rather than an empty string if there is no sword sound.
+
+### Optional booleans
+
+Most functions that take a boolean parameter with a default value were wrongly allowing `nil` instead of a boolean value or no value.
+As an example, `entity:set_visible()` (no value) is allowed, is correct, and is equivalent to `entity:set_visible(true)`.
+However, `entity:set_visible(nil)` was very confusing and will now generate an error for quests with format 2.0.
+The engine still allows `entity:set_visible(nil)` for quests with format < 2.0 for compatibility, with `nil` confusingly meaning "default value" and not `false`.

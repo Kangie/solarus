@@ -1935,7 +1935,7 @@ int LuaContext::entity_api_set_visible(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
-    bool visible = LuaTools::opt_boolean(l, 2, true);
+    const bool visible = LuaTools::opt_boolean(l, 2, true);
 
     entity.set_visible(visible);
 
