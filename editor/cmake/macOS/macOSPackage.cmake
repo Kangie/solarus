@@ -1,5 +1,3 @@
-message("allo")
-
 set(SOLARUSEDITOR_CPACK_PRETTY_DMG_ENABLED ON CACHE BOOL "Enable DMG customization with AppleScript")
 
 get_target_property(SOLARUSEDITOR_BUNDLE_BASENAME ${PROJECT_NAME} OUTPUT_NAME)
@@ -14,7 +12,6 @@ if(SOLARUSEDITOR_CPACK_PRETTY_DMG_ENABLED)
     @ONLY
   )
 endif()
-
 
 set(CPACK_PACKAGE_NAME "${SOLARUSEDITOR_BUNDLE_BASENAME}")
 set(CPACK_PACKAGE_FILE_NAME "${SOLARUSEDITOR_BUNDLE_BASENAME}") # CPack can't find if not named like this.

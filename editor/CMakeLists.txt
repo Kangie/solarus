@@ -22,7 +22,17 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   include(cmake/win32/Win32Build.cmake)
 elseif(UNIX AND NOT APPLE)
   include(cmake/linux/LinuxBuild.cmake)
-endif() 
+endif()
+
+# Configure deployement for each platform.
+set(SOLARUSEDITOR_DEPLOY_ENABLED ON CACHE BOOL "Enable deployment using Qt deploy tool")
+if(SOLARUSEDITOR_DEPLOY_ENABLED)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macOS/macOSDeploy.cmake)
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT MINGW)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/windowsDeploy.cmake)
+  endif()
+endif()
 
 # Configure packaging for each platform.
 set(SOLARUSEDITOR_CPACK_ENABLED ON CACHE BOOL "Enable packaging with CPack")
