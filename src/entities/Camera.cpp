@@ -27,7 +27,6 @@
 #include "solarus/movements/Movement.h"
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/QuestProperties.h"
-#include <iostream>
 
 #include <algorithm>
 
@@ -341,7 +340,7 @@ const SurfacePtr& Camera::get_surface() const {
 void Camera::notify_size_changed() {
 
   // The size thas changed: rebuild the surface.
-  if(Video::get_geometry_mode() == Video::GeometryMode::LETTER_BOXING &&
+  if (Video::get_geometry_mode() == Video::GeometryMode::LETTER_BOXING &&
      (surface == nullptr || get_size() != surface->get_size())) {
     create_surface(get_size());
   }
@@ -924,7 +923,6 @@ Rectangle Camera::apply_separators_and_map_bounds(const Rectangle& area) const {
   return apply_map_bounds(apply_separators(area));
 }
 
-
 void Camera::set_subpixel_offset(const glm::vec2 &offset) {
   subpixel_offset = offset;
 }
@@ -1004,13 +1002,13 @@ void Camera::track_position(const Point& center, const EntityPtr& tracked_entity
     // Then apply constraints of both separators and map limits.
     set_bounding_box(apply_separators_and_map_bounds(next));
 
-    if(tracked_entity) {
+    if (tracked_entity) {
       glm::vec2 offset = tracked_entity->get_movement() ? tracked_entity->get_movement()->get_subpixel_offset() : glm::vec2{0,0};
 
-      if(get_bounding_box().get_left() != next.get_left()) {
+      if (get_bounding_box().get_left() != next.get_left()) {
         offset.x = 0.f;
       }
-      if(get_bounding_box().get_top() != next.get_top()){
+      if (get_bounding_box().get_top() != next.get_top()){
         offset.y = 0.f;
       }
       set_subpixel_offset(offset);
@@ -1025,14 +1023,14 @@ void Camera::track_position(const Point& center, const EntityPtr& tracked_entity
  */
 void Camera::draw(const SurfacePtr& dst_surface, const SurfacePtr &screen_surface) const {
   const auto& surf = get_surface();
-  if(transition){
+  if (transition) {
     surf->draw_with_transition(
           Rectangle(surf->get_size()),
           dst_surface,
           get_position_on_screen(),
           *transition);
   } else {
-    if(CurrentQuest::get_properties().is_subpixel_camera()) {
+    if (CurrentQuest::get_properties().is_subpixel_camera()) {
       const ShaderPtr shader = surf->get_shader();
       const DrawProxy& proxy = shader ?
             reinterpret_cast<const DrawProxy&>(*shader) :

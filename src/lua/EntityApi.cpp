@@ -1054,7 +1054,17 @@ void LuaContext::do_entity_draw_override_function(
   push_ref(current_l, draw_override);
   push_entity(current_l, entity);
   push_camera(current_l, camera);
+
+  if (CurrentQuest::is_format_at_most({1, 6})) {
+    // Pre Solarus 2.0 behavior: screen coordinates are expected.
+    // In 2.0 we should draw on the camera surface in map coordinates.
+    camera.reset_view();
+  }
   call_function(2, 0, "entity draw override");
+
+  if (CurrentQuest::is_format_at_most({1, 6})) {
+    camera.apply_view();
+  }
 }
 
 /**
