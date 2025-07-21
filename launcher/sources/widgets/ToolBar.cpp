@@ -29,9 +29,11 @@ static QString addQuest() {
 static QString addQuestAction() {
   return QApplication::translate("SolarusLauncher", "Add Quest…");
 }
+/*
 static QString addQuestFolderAction() {
   return QApplication::translate("SolarusLauncher", "Add Folder…");
 }
+*/
 static QString removeQuest() {
   return QApplication::translate("SolarusLauncher", "Remove Quest");
 }
@@ -96,6 +98,8 @@ void ToolBar::setupUi() {
       _controller->openAddQuestDialog();
     });
 
+    /* Disable submenu for now, waiting for the "add folder" action to work
+
     {
       auto* subMenu = new QMenu(i18n::addQuest(), addQuestButton);
       addQuestButton->setMenu(subMenu);
@@ -115,6 +119,7 @@ void ToolBar::setupUi() {
         _controller->openAddFolderDialog();
       });
     }
+    */
   }
 
   auto* removeQuestButton = new QToolButton(this);
