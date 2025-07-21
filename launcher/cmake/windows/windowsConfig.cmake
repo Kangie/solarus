@@ -8,17 +8,17 @@ configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/App.exe.manifest.in"
   "${APPLICATION_MANIFEST_ABSOLUTE_PATH}"
 )
-file(TO_NATIVE_PATH
+file(TO_CMAKE_PATH
   "${APPLICATION_MANIFEST_ABSOLUTE_PATH}"
   WINDOWS_APPLICATION_MANIFEST_ABSOLUTE_PATH
 )
 
 # We embed both the app icon and its document icon in the exe.
-file(TO_NATIVE_PATH
+file(TO_CMAKE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/resources/app_icon/solarus_launcher_icon.ico"
   WINDOWS_APPLICATION_ICON_ABSOLUTE_PATH
 )
-file(TO_NATIVE_PATH
+file(TO_CMAKE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/resources/doc_icon/windows/win_doc_icon.ico"
   WINDOWS_FILE_ICON_ABSOLUTE_PATH
 )
