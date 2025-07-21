@@ -17,9 +17,11 @@ namespace i18n {
 static QString addQuestAction() {
   return QApplication::translate("SolarusLauncher", "Add Quest…");
 }
+/*
 static QString addQuestFolderAction() {
   return QApplication::translate("SolarusLauncher", "Add Folder…");
 }
+*/
 static QString preferences() {
   return QApplication::translate("SolarusLauncher", "Preferences…");
 }
@@ -103,11 +105,13 @@ void MenuBar::setupUi() {
       });
     addQuestAction->setAutoRepeat(false);
 
+    /*
     auto* addFolderAction = fileMenu->addAction(makeIcon(Icons16::Action_AddFolder, macOS),
       i18n::addQuestFolderAction(), QKeySequence::StandardKey::Open, [this]() {
         _controller->openAddFolderDialog();
       });
     addFolderAction->setAutoRepeat(false);
+    */
 
 #ifdef __APPLE__
     const auto removeQuestShortcut = QKeySequence(Qt::Key_Backspace);
