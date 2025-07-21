@@ -17,11 +17,12 @@ file(GLOB_RECURSE SOURCES
 # Target.
 qt_add_executable(${PROJECT_NAME} MANUAL_FINALIZATION
   ${SOURCES}
-  ${CMAKE_CURRENT_BINARY_DIR}/SolarusLauncherConfig.h
+  ${CMAKE_CURRENT_BINARY_DIR}/sources/SolarusLauncherConfig.h
 )
 target_include_directories(${PROJECT_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/sources
+    ${CMAKE_CURRENT_SOURCE_DIR}/../build/include
     ${CMAKE_CURRENT_BINARY_DIR}/sources
     "${OPENAL_INCLUDE_DIR}"
 )
