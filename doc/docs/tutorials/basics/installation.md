@@ -6,9 +6,11 @@ You need first to install Solarus on your computer to be able to develop a game 
 
 ![Download page of Solarus](images/installation/download-page.png)
 
-On the left side is the installation package for the players. They will need it to be able to play your game. As a quest developer, you don't need it because it is already included in the developer package.
+The first section shows the **developer installation packages**. This is what you need. Select your OS and click on the download button.
 
-On the **right side**, you'll find the **developer installation package**. This is what you need. Select your OS and follow the instructions in the popup that will show up.
+The second section is for players who just want to play games made with Solarus.
+
+## Content of packages
 
 | Component                         | Description                                                                                                   |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -32,32 +34,29 @@ What you need to launch to start developing your Solarus quest is `solarus-edito
 
 ### Linux
 
-Solarus is available in the Snap Store. Look for `"solarus"` and you will get the Solarus developer package (Solarus Editor, Solarus Launcher, solarus-run).
+You can get Solarus as an **AppImage**. After downloading it, you need to make it executable.
 
-![Solarus in Ubuntu Software Center](images/installation/ubuntu-software-center.png)
+On most Linux system, perform a right-click and go to _Properties_. You will be able to check an option called "Executable as Program" or something equivalent.
 
-You can also install it with a terminal. First, ensure you have **snapd** installed. If not, [install it with your package manager](https://docs.snapcraft.io/installing-snapd/6735) It should be something like (for Ubuntu, as instance):
+Otherwise, you can also execute the command:
 
-```bash
-sudo apt install snapd
-```
-
-Then, install **Solarus**.
+For the editor:
 
 ```bash
-sudo snap install solarus
+chmod +x solarus-editor-v2.0.1-linux-x64.AppImage
 ```
+
+For the launcher:
+
+```bash
+chmod +x solarus-launcher-v2.0.1-linux-x64.AppImage
+```
+
+Then double-click on the AppImage to launch the application.
 
 ### macOS
 
-There is **no installer** on macOS. The `.zip` package contains two `.app` bundles: Solarus Editor and Solarus Launcher, along with the Sample Quest. You need to drag and drop these `.app` bundles to the **Applications** folder.
+Open the DMG image you just downloaded to mount it. Drag and drop the Solarus Editor or Solarus Launcher icon to the Application folder to install it.
+Now you are able to open Solarus apps by pressing <kbd>Cmd</kbd>+<kbd>Space</kbd> and type solarus in the Spotlight.
 
-![Mac OS Solarus apps](images/installation/macos-apps.png)
-
-!!! note
-
-    Currently, the macOS package does not contains a `.app` for **solarus-run** because this is a command-line program, that does not have a GUI. To be able to execute it in the terminal, you need to type:
-
-    ```bash
-    /Applications/Solarus Launcher.app/Content/Resources/solarus-run path/to/your/quest
-    ```
+![Mac OS Solarus apps](images/installation/macos-install.png)

@@ -43,9 +43,9 @@ The Solarus Editor window is divided in 4 main parts. Here is a quick overview.
 ![Solarus Editor UI](images/creating-a-quest/solarus-editor.png)
 
 1. **Toolbar:** Main functions of the app.
-2. **Quest tree:** Displays the quest files. It's not exactly the filesystem tree, but close to it.
+2. **Quest tree:** Displays the quest files. It's not exactly the filesystem tree, but close to it. Press F6 to toggle it.
 3. **Tabs and workspace:** This is where the different tabs open, and where you are able to edit your files with the multiple editors included in Solarus (map editor, sprite editor, script editor, etc.).
-4. **Console:** Displays the game's output.
+4. **Console:** Displays the game's output. Press F12 to toggle it.
 
 ## Running a Quest
 
