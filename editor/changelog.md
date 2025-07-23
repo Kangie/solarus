@@ -1,6 +1,8 @@
 # Changelog
 
-## Solarus Quest Editor 2.0.1 (in progress)
+## Solarus Quest Editor 2.0.2 (In progress)
+
+## Solarus Quest Editor 2.0.1 (2025-07-23)
 
 * Fix empty tileset selector (#1724).
 * Fix crash when opening a tileset without PNG file.

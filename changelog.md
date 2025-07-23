@@ -1,6 +1,8 @@
 # Changelog
 
-## Solarus 2.0.1 (in progress)
+## Solarus 2.0.2 (In progress)
+
+## Solarus 2.0.1 (2025-07-23)
 
 * Fix `game:start/stop_game_over()` hero optional parameter (#1900).
 * Fix immediate transitions suspending the hero (#1691).
