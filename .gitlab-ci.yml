@@ -255,3 +255,7 @@ docs-deploy:
     GIT_STRATEGY: none  # no repository content is needed
   rules:
     - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG == null
+      when: manual
+      allow_failure: true
+  manual_confirmation: "Are you sure you want to deploy the docs from this pipeline?"
