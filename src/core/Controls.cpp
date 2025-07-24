@@ -1165,17 +1165,23 @@ std::string Controls::JoypadAxisBinding::to_string() const {
 * @param str a binding string
 */
 Controls::JoypadBinding::JoypadBinding(const std::string& str) {
-  //Unserialize the binding
-  size_t spos = str.find(' ');
+  // Convert old binding to new ones to prevent invalid values
+  std::string new_str = Joypad::legacy_bindings_mapping[str];
+  if (new_str == "") {
+    new_str = str;
+  }
+
+  // Unserialize the binding
+  size_t spos = new_str.find(' ');
   if (spos != std::string::npos) {
-    //There is a space ! Its an axis binding
-    auto axis = name_to_enum<JoyPadAxis>(str.substr(0, spos), JoyPadAxis::INVALID);
-    auto sdir = str[spos+1];
+    // There is a space ! Its an axis binding
+    auto axis = name_to_enum<JoyPadAxis>(new_str.substr(0, spos), JoyPadAxis::INVALID);
+    auto sdir = new_str[spos+1];
     auto dir = sdir == '+' ? AxisDirection::PLUS : AxisDirection::MINUS;
     *this = JoypadAxisBinding{axis, dir};
   } else {
-    //Probably a button
-    *this = name_to_enum<JoyPadButton>(str, JoyPadButton::INVALID);
+    // Probably a button
+    *this = name_to_enum<JoyPadButton>(new_str, JoyPadButton::INVALID);
   }
 }
 
