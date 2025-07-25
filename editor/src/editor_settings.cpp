@@ -22,6 +22,18 @@
 
 namespace SolarusEditor {
 
+// Layout keys.
+const QString EditorSettings::quest_tree_visible = "quest_tree_visible";
+const QString EditorSettings::quest_tree_width = "quest_tree_width";
+const QString EditorSettings::console_height = "console_height";
+const QString EditorSettings::map_side_width = "map_side_width";
+const QString EditorSettings::map_props_height = "map_props_height";
+const QString EditorSettings::tileset_side_width = "tileset_side_width";
+const QString EditorSettings::sprite_side_width = "sprite_side_width";
+const QString EditorSettings::sprite_preview_height = "sprite_preview_height";
+const QString EditorSettings::shader_side_width = "shader_side_width";
+const QString EditorSettings::shader_files_height = "shader_files_height";
+
 // General keys.
 const QString EditorSettings::theme = "theme";
 const QString EditorSettings::working_directory = "working_directory";
@@ -104,6 +116,18 @@ const QString EditorSettings::shader_preview_sprite_animation = "shader_editor/p
 const QString EditorSettings::shader_preview_sprite_direction = "shader_editor/preview_sprite_direction";
 
 QMap<QString, QVariant> EditorSettings::default_values = {
+
+  // Layout.
+  { EditorSettings::quest_tree_visible, true },
+  { EditorSettings::quest_tree_width, 300 },
+  { EditorSettings::console_height, 100 },
+  { EditorSettings::map_side_width, 400 },
+  { EditorSettings::map_props_height, 340 },
+  { EditorSettings::tileset_side_width, 400 },
+  { EditorSettings::sprite_side_width, 400 },
+  { EditorSettings::sprite_preview_height, 550 },
+  { EditorSettings::shader_side_width, 300 },
+  { EditorSettings::shader_files_height, 400 },
 
   // General.
   { EditorSettings::theme, "automatic" },

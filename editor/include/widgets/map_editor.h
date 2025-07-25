@@ -117,6 +117,8 @@ private slots:
   void add_entities_requested(AddableEntities& entities, bool replace_selection);
   void remove_entities_requested(const EntityIndexes& indexes);
   void generate_borders_requested(const EntityIndexes& indexes);
+  void map_side_resized(int pos, int index);
+  void map_props_resized(int pos, int index);
 
 private:
 

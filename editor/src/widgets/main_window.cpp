@@ -46,6 +46,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QSplitter>
 #include <QToolButton>
 #include <QUndoGroup>
 
@@ -84,15 +85,24 @@ MainWindow::MainWindow(QWidget* parent) :
   // Title.
   update_title();
 
+  // Get layout settings
+  EditorSettings settings;
+
   // Quest tree splitter.
-  const int tree_width = 300;
-  ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
+  const bool quest_tree_visible = settings.get_value_bool(EditorSettings::quest_tree_visible);
+  const int quest_tree_width = quest_tree_visible
+    ? settings.get_value_int(EditorSettings::quest_tree_width)
+    : 0;
+  ui.quest_tree_splitter->setSizes({ quest_tree_width, width() - quest_tree_width });
   ui.quest_tree_splitter->setStretchFactor(0, 0);  // Don't expand the left panel
   ui.quest_tree_splitter->setStretchFactor(1, 1);  // but only the map view.
+  ui.quest_tree_view->setVisible(quest_tree_visible);
 
   // Console splitter.
-  const int console_height = 100;
+  const int console_height = settings.get_value_int(EditorSettings::console_height);
   ui.console_splitter->setSizes({ height() - console_height, console_height });
+  ui.console_splitter->setStretchFactor(0, 0);  // Don't expand the left panel
+  ui.console_splitter->setStretchFactor(1, 1);  // but only the map view.
   ui.console_widget->setVisible(false);
   ui.console_widget->set_quest_runner(quest_runner);
 
@@ -138,7 +148,7 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.tool_bar->insertWidget(ui.action_show_layer_0, grid_size);
   ui.tool_bar->insertSeparator(ui.action_show_layer_0);
 
-  ui.action_show_quest_files->setChecked(true);
+  ui.action_show_quest_files->setChecked(quest_tree_visible);
   ui.action_show_layer_0->setShortcutContext(Qt::WidgetShortcut);
   ui.action_show_layer_1->setShortcutContext(Qt::WidgetShortcut);
   ui.action_show_layer_2->setShortcutContext(Qt::WidgetShortcut);
@@ -259,6 +269,11 @@ MainWindow::MainWindow(QWidget* parent) :
 
   connect(&settings_dialog, &SettingsDialog::settings_changed,
           this, &MainWindow::reload_settings);
+
+  connect(ui.quest_tree_splitter, &QSplitter::splitterMoved,
+          this, &MainWindow::quest_tree_resized);
+  connect(ui.console_splitter, &QSplitter::splitterMoved,
+          this, &MainWindow::console_resized);
 
   // No editor initially.
   current_editor_changed(-1);
@@ -1241,17 +1256,19 @@ bool MainWindow::is_quest_files_visible() const {
  * @brief Shows or hide the quest file tree.
  * @param quest_files_visible @c true to show the file tree.
  */
-void MainWindow::set_quest_files_visible(bool quest_files_visible) {
+void MainWindow::set_quest_files_visible(bool visible) {
 
-  const int tree_width = 300;
+  EditorSettings settings;
+  const int tree_width = settings.get_value_int(EditorSettings::quest_tree_width);
 
-  if (!quest_files_visible) {
+  if (!visible) {
     ui.quest_tree_splitter->setSizes({ 0, width() });
   } else {
     ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
   }
 
-  ui.quest_tree_view->setVisible(quest_files_visible);
+  ui.quest_tree_view->setVisible(visible);
+  settings.set_value(EditorSettings::quest_tree_visible, visible);
 }
 
 /**
@@ -2575,6 +2592,30 @@ bool MainWindow::update_image_in_sprite(
   QString replacement = QString("\n  src_image = \"%1\",\n").arg(image_after);
 
   return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
+}
+
+/**
+ * @brief Saves the quest tree width in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void MainWindow::quest_tree_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::quest_tree_width, pos);
+  }
+}
+
+/**
+ * @brief Saves the console height in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void MainWindow::console_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::console_height, pos);
+  }
 }
 
 }

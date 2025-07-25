@@ -764,10 +764,17 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   get_undo_stack().setClean();
 
   // Prepare the gui.
-  const int side_width = 400;
-  const int side_height = 550;
+  EditorSettings settings;
+  const int side_width = settings.get_value_int(EditorSettings::sprite_side_width);
   ui.horizontal_splitter->setSizes({ side_width, width() - side_width });
+  ui.horizontal_splitter->setStretchFactor(0, 0);  // Don't expand the left panel
+  ui.horizontal_splitter->setStretchFactor(1, 1);  // but only the sprite view.
+
+  const int side_height = settings.get_value_int(EditorSettings::sprite_preview_height);
   ui.vertical_splitter->setSizes({ side_height, height() - side_height });
+  ui.vertical_splitter->setStretchFactor(0, 1);  // Expand the top panel,
+  ui.vertical_splitter->setStretchFactor(1, 0);  // not the bottom one.
+
   ui.sprite_tree_view->set_model(model.get());
   ui.sprite_view->set_model(model.get());
   ui.sprite_view->set_view_settings(get_view_settings());
@@ -909,6 +916,11 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
 
   connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
           this, &SpriteEditor::update_selection);
+
+  connect(ui.horizontal_splitter, QSplitter::splitterMoved,
+          this, &SpriteEditor::side_panel_resized);
+  connect(ui.vertical_splitter, QSplitter::splitterMoved,
+          this, &SpriteEditor::preview_panel_resized);
 
   // Qlementine-related stuff.
   for (auto* widget : std::vector<QWidget*>{
@@ -1702,6 +1714,30 @@ void SpriteEditor::auto_detect_grid_size() {
 
     get_view_settings().set_grid_size(
       model->get_direction_first_frame_rect(index).size());
+  }
+}
+
+/**
+ * @brief Saves the side panel width in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void SpriteEditor::side_panel_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::sprite_side_width, pos);
+  }
+}
+
+/**
+ * @brief Saves the preview panel height in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void SpriteEditor::preview_panel_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::sprite_preview_height, pos);
   }
 }
 

@@ -982,8 +982,12 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
   get_undo_stack().setClean();
 
   // Prepare the gui.
-  const int side_width = 400;
+  EditorSettings settings;
+  const int side_width = settings.get_value_int(EditorSettings::tileset_side_width);
   ui.splitter->setSizes({ side_width, width() - side_width });
+  ui.splitter->setStretchFactor(0, 0);  // Don't expand the left panel
+  ui.splitter->setStretchFactor(1, 1);  // but only the tileset view.
+
   ui.patterns_list_view->set_model(*model);
   ui.border_sets_tree_view->set_tileset(*model);
   ui.tileset_view->set_tileset(model);
@@ -1107,6 +1111,9 @@ TilesetEditor::TilesetEditor(Quest& quest, const QString& path, QWidget* parent)
 
   connect(model, &TilesetModel::tileset_data_file_changed,
           this, &TilesetEditor::tileset_data_file_changed);
+
+  connect(ui.splitter, &QSplitter::splitterMoved,
+          this, &TilesetEditor::side_panel_resized);
 
   // Qlementine-related stuff.
   for (auto* widget : std::vector<QWidget*>{
@@ -2092,6 +2099,18 @@ void TilesetEditor::load_settings() {
     settings.get_value_size(EditorSettings::tileset_grid_size));
 
   reload_settings();
+}
+
+/**
+ * @brief Saves the tileset side panel splitter into settings.
+ * @param pos the new splitter position
+ * @param index the index of splitter that just moved
+ */
+void TilesetEditor::side_panel_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::tileset_side_width, pos);
+  }
 }
 
 }

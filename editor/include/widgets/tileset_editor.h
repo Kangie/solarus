@@ -97,6 +97,10 @@ public slots:
       const QStringList& pattern_ids
   );
 
+private slots:
+
+  void side_panel_resized(int pos, int index);
+
 private:
 
   void tileset_data_file_changed();
@@ -108,8 +112,6 @@ private:
       const QString& old_pattern_id,
       const QString& new_pattern_id);
   void load_settings();
-
-private:
 
   Ui::TilesetEditor ui;         /**< The tileset editor widgets. */
   QString tileset_id;           /**< Id of the tileset being edited. */
