@@ -178,7 +178,7 @@ Starts a fade-in effect on this object.
 
 You can specify a callback function to be executed when the fade-in effect finishes.
 
-If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../map-entities/overview.md) during a game, the fade-in effect gets the lifetime of that entity. The behavior is probably what you expect: the fade-in effect gets suspended when the entity gets suspended, and it gets canceled (that is, the callback is never executed) when the map entity is destroyed.
+If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../map-entities/index.md) during a game, the fade-in effect gets the lifetime of that entity. The behavior is probably what you expect: the fade-in effect gets suspended when the entity gets suspended, and it gets canceled (that is, the callback is never executed) when the map entity is destroyed.
 
 `delay` (number, optional)
 : Delay in milliseconds between two frames of the fade-in animation (default `20`) The total number of frames of the animation is 32.
@@ -188,7 +188,7 @@ If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../
 
 !!! note "Note"
 
-    When your drawable object does not belong to a [map entity](../map-entities/overview.md) (typically in a title screen before a game is started, or in your pause menu), the fade-in effect continues until the drawable object is garbage-collected. In other words, the callback can be executed even if you have stopped using the drawable object in the meantime.
+    When your drawable object does not belong to a [map entity](../map-entities/index.md) (typically in a title screen before a game is started, or in your pause menu), the fade-in effect continues until the drawable object is garbage-collected. In other words, the callback can be executed even if you have stopped using the drawable object in the meantime.
 
     Therefore, you should use the `callback` parameter with care. In these situations, using a [timer](../timers.md) for your callback is easier because timers have an explicit lifetime.
 
@@ -198,7 +198,7 @@ Starts a fade-out effect on this object.
 
 You can specify a callback function to be executed when the fade-out effect finishes.
 
-If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../map-entities/overview.md) during a game, the fade-out effect gets the lifetime of that entity. The behavior is probably what you expect: the fade-out effect gets suspended when the entity gets suspended, and it gets canceled (that is, the callback is never executed) when the map entity is destroyed.
+If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../map-entities/index.md) during a game, the fade-out effect gets the lifetime of that entity. The behavior is probably what you expect: the fade-out effect gets suspended when the entity gets suspended, and it gets canceled (that is, the callback is never executed) when the map entity is destroyed.
 
 `delay` (number, optional)
 : Delay in milliseconds between two frames of the fade-out animation (default `20`) The total number of frames of the animation is 32.
@@ -208,7 +208,7 @@ If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../
 
 !!! note "Note"
 
-    When your drawable object does not belong to a [map entity](../map-entities/overview.md) (typically in a title screen before a game is started, or in your pause menu), the fade-out effect continues until the drawable object is garbage-collected. In other words, the callback can be executed even if you have stopped using the drawable object in the meantime.
+    When your drawable object does not belong to a [map entity](../map-entities/index.md) (typically in a title screen before a game is started, or in your pause menu), the fade-out effect continues until the drawable object is garbage-collected. In other words, the callback can be executed even if you have stopped using the drawable object in the meantime.
 
     Therefore, you should use the `callback` parameter with care. In these situations, using a [timer](../timers.md) for your callback is easier because timers have an explicit lifetime.
 
@@ -218,7 +218,7 @@ Returns the offset added where this drawable object is drawn.
 
 This value is initially `0,0`. It is added to whatever coordinates the object is drawn at.
 
-They can be modified by a [movement](../movements/overview.md) or by [`drawable:set_xy()`](#drawableset_xyx-y).
+They can be modified by a [movement](../movements/index.md) or by [`drawable:set_xy()`](#drawableset_xyx-y).
 
 Return value 1 (number)
 : X offset of the drawable object.
@@ -242,7 +242,7 @@ This value is initially `0,0`. It is added to whatever coordinates the object is
 
 Returns the current movement of this drawable object.
 
-Return value ([movement](../movements/overview.md))
+Return value ([movement](../movements/index.md))
 : The current movement, or `nil` if the drawable object is not moving.
 
 ### `drawable:stop_movement()`

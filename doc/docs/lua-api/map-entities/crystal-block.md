@@ -4,7 +4,7 @@
 
 A crystal block is a colored low wall that may be raised or lowered in the ground.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_crystal_block()`](../map.md#mapcreate_crystal_blockproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_crystal_block()`](../map.md#mapcreate_crystal_blockproperties).
 
 !!! note "Note"
 
@@ -20,9 +20,9 @@ This state persists accross maps of the same [world](../map.md#mapget_world). It
 
 ## Methods Inherited from map entity
 
-Crystals are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Crystals are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `crystal`
 
@@ -32,9 +32,9 @@ None.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Crystals are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Crystals are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type crystal
 

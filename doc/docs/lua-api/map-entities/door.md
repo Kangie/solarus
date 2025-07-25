@@ -4,7 +4,7 @@
 
 A door is an obstacle that can be opened by Lua, and optionally by the [hero](./hero.md) under some conditions.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_door()`](../map.md#mapcreate_doorproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_door()`](../map.md#mapcreate_doorproperties).
 
 A door may have four states: open, closed, opening or closing. States opening and closing are transitional states used to play a door opening or closing animation on the door's sprite. The sprite of a door must define at least an animation `"closed"` When the door is open, nothing is displayed. Animations `"opening"` and `"closing"` are optional: if they don't exist, the door won't use states opening and closing. If they exist, be aware that after you call a function like [`map:open_doors()`](../map.md#mapopen_doorsprefix), your door will first be in state opening (for the duration of its sprite `"opening"` animation), and only after that, will get in state open. In other words, [`door:is_open()`](#dooris_open) does not return true as soon as you open the door, unless the sprite has no animation `"opening"`
 
@@ -22,9 +22,9 @@ For doors whose opening method is `"interaction_if_savegame_variable"` or `"inte
 
 ## Methods Inherited from map entity
 
-Doors are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Doors are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type door
 
@@ -60,7 +60,7 @@ Return value (boolean)
 
 ### `door:open()`
 
-Opens this door, enables [dynamic tiles](./dynamic-tile.md) whose name starts with the door's name followed by `_open` and plays the `"door_open"` [sound](../audio/overview.md#solaudioplay_soundsound_id).
+Opens this door, enables [dynamic tiles](./dynamic-tile.md) whose name starts with the door's name followed by `_open` and plays the `"door_open"` [sound](../audio/index.md#solaudioplay_soundsound_id).
 
 !!! note "Note"
 
@@ -68,7 +68,7 @@ Opens this door, enables [dynamic tiles](./dynamic-tile.md) whose name starts wi
 
 ### `door:close()`
 
-Closes this door, disables [dynamic tiles](./dynamic-tile.md) whose name starts with the door's name followed by `_closed` and plays the `"door_closed"` [sound](../audio/overview.md#solaudioplay_soundsound_id).
+Closes this door, disables [dynamic tiles](./dynamic-tile.md) whose name starts with the door's name followed by `_closed` and plays the `"door_closed"` [sound](../audio/index.md#solaudioplay_soundsound_id).
 
 ### `door:set_open([open])`
 
@@ -206,9 +206,9 @@ You can use this function if you want another sound to be played.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Doors are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Doors are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type door
 

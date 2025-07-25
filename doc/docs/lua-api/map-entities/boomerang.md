@@ -2,7 +2,7 @@
 
 ## Overview
 
-A boomerang [map entity](./overview.md) is used to implement the [hero](./hero.md)'s boomerang state.
+A boomerang [map entity](./index.md) is used to implement the [hero](./hero.md)'s boomerang state.
 
 !!! note "Historical Feature"
 
@@ -16,9 +16,9 @@ Note that there is no predefined boomerang [equipment item](../equipment-items.m
 
 ## Methods Inherited from map entity
 
-A boomerang is a particular [map entity](./overview.md). Therefore, it inherits all methods from the type map entity.
+A boomerang is a particular [map entity](./index.md). Therefore, it inherits all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `boomerang`
 
@@ -28,9 +28,9 @@ None.
 
 Events are callback methods automatically called by the engine if you define them.
 
-A boomerang is a particular [map entity](./overview.md). Therefore, it inherits all events from the type map entity.
+A boomerang is a particular [map entity](./index.md). Therefore, it inherits all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type `boomerang`
 

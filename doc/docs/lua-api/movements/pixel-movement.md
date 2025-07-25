@@ -10,9 +10,9 @@ Unlike most other types of movements, there is no notion of speed in pixels per 
 
 ## Methods Inherited from `movement`
 
-Pixel movements are particular [movement](./overview.md) objects. Therefore, they inherit all methods from the type movement.
+Pixel movements are particular [movement](./index.md) objects. Therefore, they inherit all methods from the type movement.
 
-See [movement](./overview.md#methods-of-all-movement-types) to know these methods.
+See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 ## Methods of the type `pixel_movement`
 
@@ -64,6 +64,6 @@ Sets the delay between two steps of the trajectory.
 
 ## Events Inherited from `movement`
 
-Pixel movements are particular [movement](./overview.md) objects. Therefore, they inherit all events from the type movement.
+Pixel movements are particular [movement](./index.md) objects. Therefore, they inherit all events from the type movement.
 
-See [movement](./overview.md#events-of-all-movement-types) to know these events.
+See [movement](./index.md#events-of-all-movement-types) to know these events.

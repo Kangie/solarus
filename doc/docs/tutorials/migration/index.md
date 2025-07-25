@@ -19,4 +19,4 @@ For example, if `solarus_version` is `2.0`, your quest can run with Solarus `2.0
 To make your quest compatible with the latest version of Solarus, there are two steps:
 
 1. **Upgrading Data Files**: when your quest is obsolete, the editor shows a dialog that lets you automatically convert it to the latest version. You have nothing to do, the editor converts data files for you.
-2. **Upgrading scripts**: Lua scripts are programs, so the editor does not convert them automatically when something changes in the [Solarus Lua API](../../lua-api/introduction.md). Our goal with this migration guide is to help you doing the upgrade.
+2. **Upgrading scripts**: Lua scripts are programs, so the editor does not convert them automatically when something changes in the [Solarus Lua API](../../lua-api/index.md). Our goal with this migration guide is to help you doing the upgrade.

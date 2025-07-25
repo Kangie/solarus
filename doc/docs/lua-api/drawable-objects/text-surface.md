@@ -67,9 +67,9 @@ Return value 2 (number)
 
 ## Methods Inherited from `drawable`
 
-Text surfaces are particular [drawable](./overview.md) objects. Therefore, they inherit all methods from the type drawable.
+Text surfaces are particular [drawable](./index.md) objects. Therefore, they inherit all methods from the type drawable.
 
-See [drawable](./overview.md) to know these methods.
+See [drawable](./index.md) to know these methods.
 
 ## Methods of the type `text_surface`
 

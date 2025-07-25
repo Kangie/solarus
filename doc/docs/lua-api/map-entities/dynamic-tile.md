@@ -4,11 +4,11 @@
 
 Dynamic tiles are [tiles](./tile.md) that can be hidden, shown, created and deleted at runtime.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_dynamic_tile()`](../map.md#mapcreate_dynamic_tileproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_dynamic_tile()`](../map.md#mapcreate_dynamic_tileproperties).
 
 Dynamic tiles exist because normal [tiles](./tile.md) are optimized away at runtime. See [tile performances](./tile.md#tiles-are-designed-for-performance) for more details.
 
-A typical usage of dynamic tiles is to make appear of disappear parts of the map because something happens: a puzzle is solved, an [non-playing characters](./npc.md) opens a path for you, water disappears, etc. Use [`dynamic_tile:set_enabled()`](./overview.md#entityset_enabledenabled) to this end.
+A typical usage of dynamic tiles is to make appear of disappear parts of the map because something happens: a puzzle is solved, an [non-playing characters](./npc.md) opens a path for you, water disappears, etc. Use [`dynamic_tile:set_enabled()`](./index.md#entityset_enabledenabled) to this end.
 
 !!! note "Note"
 
@@ -16,9 +16,9 @@ A typical usage of dynamic tiles is to make appear of disappear parts of the map
 
 ## Methods Inherited from map entity
 
-Dynamic tiles are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Dynamic tiles are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type dynamic tile
 
@@ -58,9 +58,9 @@ Return value (string)
 
 Events are callback methods automatically called by the engine if you define them.
 
-Dynamic tiles are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Dynamic tiles are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type dynamic tile
 

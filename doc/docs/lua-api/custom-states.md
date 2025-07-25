@@ -20,7 +20,7 @@ To make a custom state, first create a custom state object with [`sol.state.crea
 
 After this operation, the current state string of the hero (as returned by [`hero:get_state()`](./map-entities/hero.md#heroget_state)) is `"custom"`, and no longer a usual built-in state like `"free"`, `"frozen"`, `"swimming"`, etc. You can then use [`hero:get_state_object()`](./map-entities/hero.md#heroget_state_object) to retrieve the actual custom state object that you created.
 
-When your state finishes, because you or the engine started another state (built-in or custom), it is your responsibility to clean things that you may have done on objects other than the state. For instance, if you [added a sprite](./map-entities/overview.md#entitycreate_spriteanimation_set_id-sprite_name) to the hero for your custom state, maybe you want to remove it when the state finishes. The event [`state:on_finished()`](#stateon_finishednext_state_name-next_state) is the appropriate place to do so, because it is called no matter who is changing the state.
+When your state finishes, because you or the engine started another state (built-in or custom), it is your responsibility to clean things that you may have done on objects other than the state. For instance, if you [added a sprite](./map-entities/index.md#entitycreate_spriteanimation_set_id-sprite_name) to the hero for your custom state, maybe you want to remove it when the state finishes. The event [`state:on_finished()`](#stateon_finishednext_state_name-next_state) is the appropriate place to do so, because it is called no matter who is changing the state.
 
 ### Example
 
@@ -72,9 +72,9 @@ The engine does nothing special with this description, but it may help you disti
 
 ### `state:get_entity()`
 
-Returns the [entity](./map-entities/overview.md) controlled by this state.
+Returns the [entity](./map-entities/index.md) controlled by this state.
 
-Return value ([entity](./map-entities/overview.md))
+Return value ([entity](./map-entities/index.md))
 : The entity controlled by this state (which can only by the [hero](./map-entities/hero.md)), or `nil` if the state is not associated to an entity yet.
 
 !!! note "Note"
@@ -183,13 +183,13 @@ Sets whether the entity can traverse other entities in this state.
 By default, this depends on the other entities: for example, [sensors](./map-entities/sensor.md) can be traversed by default while [doors](./map-entities/door.md) cannot unless they are open.
 
 `entity_type` (string, optional)
-: A type of entity. See [`entity:get_type()`](./map-entities/overview.md#entityget_type) for the possible values. If not specified, the setting will be applied to all entity types for which you don't override this setting.
+: A type of entity. See [`entity:get_type()`](./map-entities/index.md#entityget_type) for the possible values. If not specified, the setting will be applied to all entity types for which you don't override this setting.
 
 `traversable` (boolean, function or `nil`)
 : Whether the entity controlled by this state can traverse the other entity type. This can be:
 
     - A boolean: `true` to allow your entity to traverse entities of the specified type, `false` otherwise.
-    - A function: Custom test. This allows you to decide dynamically. The function takes your entity (the one controlled by this state) and then the other entity as parameters, and should return `true` if you allow your entity to traverse the other entity. When your entity has a [movement](./movements/overview.md), this function will be called every time it is about to overlap an entity of the specified type.
+    - A function: Custom test. This allows you to decide dynamically. The function takes your entity (the one controlled by this state) and then the other entity as parameters, and should return `true` if you allow your entity to traverse the other entity. When your entity has a [movement](./movements/index.md), this function will be called every time it is about to overlap an entity of the specified type.
     - `nil`: Clears any previous setting for this entity type and therefore restores the default value.
 
 ### `state:get_can_traverse_ground(ground)`
@@ -293,7 +293,7 @@ The default value is `true`.
 `state` (state)
 : The current state itself.
 
-`attacker` ([entity](./map-entities/overview.md) or nil)
+`attacker` ([entity](./map-entities/index.md) or nil)
 : The attacker entity, or `nil` if the attack does not come from an entity.
 
 Return value (boolean)
@@ -317,7 +317,7 @@ The default value is `true`.
 
 ### `state:get_can_cut()`
 
-Returns whether the entity can cut another [entity](./map-entities/overview.md) with the sword during this state.
+Returns whether the entity can cut another [entity](./map-entities/index.md) with the sword during this state.
 
 Return value (boolean)
 : `true` if the entity can cut a destructible entity during this state.
@@ -328,7 +328,7 @@ Return value (boolean)
 
 ### `state:set_can_cut(can_cut)`
 
-Sets whether the entity can cut another [entity](./map-entities/overview.md) with the sword during this state.
+Sets whether the entity can cut another [entity](./map-entities/index.md) with the sword during this state.
 
 When the sword sprite overlaps a destructible object that [`destructible:get_can_be_cut()`](./map-entities/destructible.md#destructibleget_can_be_cut) can be cut, this setting decides if the destructible will actually be cut.
 
@@ -340,7 +340,7 @@ The default value is `true`.
 `state` (state)
 : The current state itself.
 
-`entity` ([entity](./map-entities/overview.md) or nil)
+`entity` ([entity](./map-entities/index.md) or nil)
 : The entity that would be cut, or `nil` if there is no entity about to be cut.
 
 Return value (boolean)
@@ -652,9 +652,9 @@ You may display additional things above the entity. To do so, you can either cal
 
 ### `state:on_suspended(suspended)`
 
-Called when the [entity](./map-entities/overview.md) has just been suspended or resumed.
+Called when the [entity](./map-entities/index.md) has just been suspended or resumed.
 
-The entity is suspended by the engine in a few cases, like when the [game](./game.md) is paused or when a dialog is active. When this happens, all [map entities](./map-entities/overview.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation.
+The entity is suspended by the engine in a few cases, like when the [game](./game.md) is paused or when a dialog is active. When this happens, all [map entities](./map-entities/index.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation.
 
 `suspended` (boolean)
 : `true` if the entity was just suspended, `false` if it was resumed.
@@ -701,34 +701,34 @@ Called when the coordinates of the entity controlled by this state have just cha
 Called when the kind of [ground](./map.md#mapget_groundx-y-layer) on the map below the entity controlled by this state has changed. It may change because the entity is moving, or when because another entity changes it.
 
 `ground_below` (string)
-: The kind of ground at the [ground point](./map-entities/overview.md#entityget_ground_position) of the entity controlled by this state. `nil` means empty, that is, there is no ground at this point on the current layer.
+: The kind of ground at the [ground point](./map-entities/index.md#entityget_ground_position) of the entity controlled by this state. `nil` means empty, that is, there is no ground at this point on the current layer.
 
 ### `state:on_obstacle_reached()`
 
-Called when the [movement](./movements/overview.md) of the entity was stopped because of an obstacle during this state.
+Called when the [movement](./movements/index.md) of the entity was stopped because of an obstacle during this state.
 
 When an obstacle is reached, this event is called instead of [`state:on_position_changed()`](#stateon_position_changedx-y-layer).
 
-`movement` ([movement](./movements/overview.md))
+`movement` ([movement](./movements/index.md))
 : The movement of the entity.
 
 ### `state:on_movement_started(movement)`
 
-Called when a [movement](./movements/overview.md) is started on the entity controlled by this state.
+Called when a [movement](./movements/index.md) is started on the entity controlled by this state.
 
-`movement` ([movement](./movements/overview.md))
+`movement` ([movement](./movements/index.md))
 : The movement that was just started on the entity.
 
 ### `state:on_movement_changed(movement)`
 
-Called when some characteristics of the entity's [movement](./movements/overview.md) (like the speed or the angle) have just changed during this state.
+Called when some characteristics of the entity's [movement](./movements/index.md) (like the speed or the angle) have just changed during this state.
 
-`movement` ([movement](./movements/overview.md))
+`movement` ([movement](./movements/index.md))
 : The movement of the entity.
 
 ### `state:on_movement_finished()`
 
-Called when the [movement](./movements/overview.md) of the entity controlled by this state is finished (if there is an end).
+Called when the [movement](./movements/index.md) of the entity controlled by this state is finished (if there is an end).
 
 ### `state:on_attacked_enemy(enemy, enemy_sprite, attack, consequence)`
 

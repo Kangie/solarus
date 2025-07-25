@@ -4,14 +4,14 @@
 
 A chest is a box that contains a treasure.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_chest()`](../map.md#mapcreate_chestproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_chest()`](../map.md#mapcreate_chestproperties).
 
 A chest may contain a treasure or be empty. When opening the chest, the following happens by default:
 
 - If the chest contains a treasure, the engine automatically gives it to the player, unless the treasure is not [obtainable](../equipment-items.md#itemis_obtainable).
 - If the chest is empty or contains a non-obtainable treasure, then nothing happens.
 
-This is the default behavior of opening a chest, and it can be redefined by your script in the [`chest:on_opened()`](#cheston_openedtreasure_item-treasure_variant-treasure_savegame_variable) event.
+This is the default behavior of opening a chest, and it can be redefined by your script in the [`chest:on_opened()`](#cheston_openedtreasure_item-treasure_variant-treasure_savegame_variable-hero) event.
 
 The state of a chest is either open or closed. When a chest is closed, its treasure (if any) is still inside and the [hero](./hero.md) can get it.
 
@@ -19,9 +19,9 @@ A chest appears initially open on the [map](../map.md) if its state is saved and
 
 ## Methods Inherited from map entity
 
-Chests are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Chests are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type chest
 
@@ -163,9 +163,9 @@ You can use this function if you want another sound to be played.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Chests are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Chests are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type chest
 

@@ -4,9 +4,9 @@ This type of movement is a rectilinear movement whose trajectory changes randoml
 
 ## Methods Inherited from `movement`
 
-Random movements are particular [movement](./overview.md) objects. Therefore, they inherit all methods from the type movement.
+Random movements are particular [movement](./index.md) objects. Therefore, they inherit all methods from the type movement.
 
-See [movement](./overview.md#methods-of-all-movement-types) to know these methods.
+See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 ## Methods of the type `random_movement`
 
@@ -37,7 +37,7 @@ Return value (number)
 
 !!! note "Note"
 
-    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./overview.md#movementget_direction4).
+    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./index.md#movementget_direction4).
 
 ### `random_movement:get_max_distance()`
 
@@ -59,20 +59,20 @@ If the movement goes further than this distance, it automatically comes back tow
 
 ### `random_movement:is_smooth()`
 
-Returns whether this movement adjusts its trajectory when an obstacle of the [map](../map.md) is reached. This property has no effect if the movement is not attached to a [map entity](../map-entities/overview.md) or if the movement ignores obstacles.
+Returns whether this movement adjusts its trajectory when an obstacle of the [map](../map.md) is reached. This property has no effect if the movement is not attached to a [map entity](../map-entities/index.md) or if the movement ignores obstacles.
 
 Return value (boolean)
 : `true` if this movement is smooth.
 
 ### `random_movement:set_smooth([smooth])`
 
-Sets whether this movement should adjust its trajectory when an obstacle of the [map](../map.md) is reached. This property has no effect if the movement is not attached to a [map entity](../map-entities/overview.md) or if the movement ignores obstacles.
+Sets whether this movement should adjust its trajectory when an obstacle of the [map](../map.md) is reached. This property has no effect if the movement is not attached to a [map entity](../map-entities/index.md) or if the movement ignores obstacles.
 
 `smooth` (boolean, optional)
 : `true` to make this movement smooth. No value means `true`.
 
 ## Events Inherited from `movement`
 
-Random movements are particular [movement](./overview.md) objects. Therefore, they inherit all events from the type movement.
+Random movements are particular [movement](./index.md) objects. Therefore, they inherit all events from the type movement.
 
-See [movement](./overview.md#events-of-all-movement-types) to know these events.
+See [movement](./index.md#events-of-all-movement-types) to know these events.

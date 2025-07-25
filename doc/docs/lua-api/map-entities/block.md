@@ -2,9 +2,9 @@
 
 ## Overview
 
-Blocks are solid [map entities](./overview.md) that may be pushed or pulled by the [hero](./hero.md).
+Blocks are solid [map entities](./index.md) that may be pushed or pulled by the [hero](./hero.md).
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_block()`](../map.md#mapcreate_blockproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_block()`](../map.md#mapcreate_blockproperties).
 
 Blocks that can move may be pushable, pullable or both pushable and pullable. A block can optionally be moved a limited number of times. It can be moved either to any direction (the four main directions) or to a specific direction only.
 
@@ -14,9 +14,9 @@ Blocks are normally always moved by steps of 16 pixels. Thus, they can stay alig
 
 ## Methods Inherited from map entity
 
-Blocks are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Blocks are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type block
 
@@ -147,9 +147,9 @@ You can use this function if you want another sound to be played.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Blocks are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Blocks are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type block
 

@@ -2,17 +2,17 @@
 
 ## Overview
 
-A destructible object is an entity that can be cut or [lifted](./overview.md#entityget_weight) by the [hero](./hero.md) and that may hide a [pickable treasure](./pickable.md).
+A destructible object is an entity that can be cut or [lifted](./index.md#entityget_weight) by the [hero](./hero.md) and that may hide a [pickable treasure](./pickable.md).
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_destructible()`](../map.md#mapcreate_destructibleproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_destructible()`](../map.md#mapcreate_destructibleproperties).
 
 Destructible objects can be customized in various ways. You can allow the hero to lift them or to cut them. The ones that can be lifted may require a minimum level of the `"lift"` [ability](../game.md#gameget_abilityability_name). Their size is always 16×16 pixels (like the [hero](./hero.md)).
 
 ## Methods Inherited from map entity
 
-Destructible objects are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Destructible objects are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type destructible
 
@@ -162,9 +162,9 @@ Return value (string)
 
 Events are callback methods automatically called by the engine if you define them.
 
-Destructible objects are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Destructible objects are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type destructible
 
