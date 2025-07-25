@@ -4,7 +4,7 @@
 
 Stairs make fancy animations, movements and sounds when the [hero](./hero.md) takes them.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_stairs()`](../map.md#mapcreate_stairsproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_stairs()`](../map.md#mapcreate_stairsproperties).
 
 !!! note "Note"
 
@@ -22,9 +22,9 @@ Stairs are invisible: it is up to you to place appropriate tiles where you make 
 
 ## Methods Inherited from map entity
 
-Stairs are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Stairs are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type stairs
 
@@ -64,9 +64,9 @@ Changes the subtype for this stairs entity.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Stairs are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Stairs are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type stairs
 

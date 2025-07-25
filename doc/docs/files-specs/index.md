@@ -49,12 +49,12 @@ Here is the full structure of the `data` directory / `zip` archive of a quest an
 - [`project_db.dat`](./database-file.md): list of all resources (maps, sprites, enemies…) and additional information about quest files.
 
 - [`main.lua`](./main-script.md): main Lua script of your quest.
-- [`**/*.lua:`](../lua-api/introduction.md) other Lua scripts, possibly organized in subdirectories.
+- [`**/*.lua:`](../lua-api/index.md) other Lua scripts, possibly organized in subdirectories.
 - [`logos/`](./logos.md): images used by Solarus Launcher to represent your game.
 - [`sounds/`](./audio/sounds.md): contains all sound effects.
 - [`musics/`](./audio/musics.md): contains all musics.
 - [`fonts/`](./fonts.md): contains the fonts used to draw text in your quest.
-- [`languages/`](./languages/overview.md): contains the language-specific files.
+- [`languages/`](./languages/index.md): contains the language-specific files.
 - [`sprites/`](./sprite-data-file.md): contains all animated sprites (`xx.dat` and `*.png`), possibly organized in subdirectories.
 - [`maps/`](./map-data-file.md): contains all the maps of your quest (map definitions and their [scripts](../lua-api/map.md)).
 - [`tilesets/`](./tileset-data-file.md): contains all tilesets available to maps (`xx.dat`, `xx.tiles.png` and `xx.entities.png`).

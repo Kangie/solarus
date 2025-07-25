@@ -4,7 +4,7 @@
 
 A shop treasure is a treasure that can be purchased by the [hero](./hero.md) for money.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_shop_treasure()`](../map.md#mapcreate_shop_treasureproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_shop_treasure()`](../map.md#mapcreate_shop_treasureproperties).
 
 A shop treasure entity shows the [sprite](../drawable-objects/sprite.md) of the treasure and its price. Its size is always 32×32 pixels and other entities cannot traverse it.
 
@@ -32,9 +32,9 @@ Furthermore, when the dialog finishes, you have to tell the engine the decision 
 
 ## Methods Inherited from map entity
 
-Shop treasures are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Shop treasures are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type shop treasure
 
@@ -56,9 +56,9 @@ Changes the sound to play when the player is unable to buy the shop treasure. By
 
 Events are callback methods automatically called by the engine if you define them.
 
-Shop treasures are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Shop treasures are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type shop treasure
 

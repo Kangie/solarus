@@ -4,7 +4,7 @@
 
 A destination is a possible arrival place for [teletransporters](./teletransporter.md).
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_destination()`](../map.md#mapcreate_destinationproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_destination()`](../map.md#mapcreate_destinationproperties).
 
 Destinations may either have a sprite or be invisible. They may also have a direction: in this case, the [hero](./hero.md) takes that direction when arriving on the destination. Otherwise, the hero keeps his current direction.
 
@@ -12,9 +12,9 @@ The size of a destination is the one of the [hero](./hero.md) (16×16 pixels).
 
 ## Methods Inherited from map entity
 
-Destinations are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Destinations are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `destination`
 
@@ -58,9 +58,9 @@ Return value (number or nil)
 
 Events are callback methods automatically called by the engine if you define them.
 
-Destinations are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Destinations are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type `destination`
 

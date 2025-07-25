@@ -20,7 +20,7 @@ The following movement types are available.
 
 This page desribes the methods and callbacks common to all movement types.
 
-Movements can be applied in-game to [map entities](../map-entities/overview.md), but also outside a game, typically in a [menu](../menus.md) to move a [sprite](../drawable-objects/sprite.md), an [image](../drawable-objects/surface.md) or just an `(x,y)` value. However, some properties of movements (like [`movement:set_ignore_obstacles()`](#movementset_ignore_obstaclesignore_obstacles)) only take effect in the case of a [map entity](../map-entities/overview.md) because they refer to [map-specific](../map.md) notions like obstacles.
+Movements can be applied in-game to [map entities](../map-entities/index.md), but also outside a game, typically in a [menu](../menus.md) to move a [sprite](../drawable-objects/sprite.md), an [image](../drawable-objects/surface.md) or just an `(x,y)` value. However, some properties of movements (like [`movement:set_ignore_obstacles()`](#movementset_ignore_obstaclesignore_obstacles)) only take effect in the case of a [map entity](../map-entities/index.md) because they refer to [map-specific](../map.md) notions like obstacles.
 
 ## Functions of `sol.movement`
 
@@ -75,7 +75,7 @@ Starts this movement on an object.
 
 The movement will be applied until it finishes (if it has an end) or until it is replaced by another one. It does not matter if the movement gets out of scope in your Lua script.
 
-`object_to_move` ([map entity](../map-entities/overview.md), [drawable object](../drawable-objects/overview.md) or table)
+`object_to_move` ([map entity](../map-entities/index.md), [drawable object](../drawable-objects/index.md) or table)
 : The object to move. It may be a map entity, a drawable object or a table with two fields `x` and `y` In the case of the table, if the fields `x` and `y` don't exist, they are created and initialized to `0`.
 
     An empty table will be initialized with `{x = 0, y = 0}`.
@@ -85,7 +85,7 @@ The movement will be applied until it finishes (if it has an end) or until it is
 
 !!! note "Note"
 
-    The [hero](../map-entities/hero.md) is a [map entity](../map-entities/overview.md) just like any other. So you can apply a custom movement to him using this function. The usual way to do this is to call [`hero:freeze()`](../map-entities/hero.md#herofreeze) first to properly remove control from the player, and then to start the movement. When you have finished, you can restore the control with [`hero:unfreeze()`](../map-entities/hero.md#herounfreeze).
+    The [hero](../map-entities/hero.md) is a [map entity](../map-entities/index.md) just like any other. So you can apply a custom movement to him using this function. The usual way to do this is to call [`hero:freeze()`](../map-entities/hero.md#herofreeze) first to properly remove control from the player, and then to start the movement. When you have finished, you can restore the control with [`hero:unfreeze()`](../map-entities/hero.md#herounfreeze).
 
     Indeed, changing the movement while the hero is in a state other than `"frozen"` might give surprising results. Your movement will be applied, replacing any built-in movement of the state, but whatever was happening in the state will still continue. Furthermore, your movement will disappear as soon as the state changes. So don't start a movement on the hero during an arbitrary state unless you know what you are doing.
 
@@ -97,7 +97,7 @@ Stops this movement and detaches it from the object that was moved.
 
 Returns the coordinates of the object controlled by this movement.
 
-The object controlled by this movement may be a [map entity](../map-entities/overview.md), a [drawable object](../drawable-objects/overview.md) or a point.
+The object controlled by this movement may be a [map entity](../map-entities/index.md), a [drawable object](../drawable-objects/index.md) or a point.
 
 Return value 1 (number)
 : X coordinate.
@@ -109,7 +109,7 @@ Return value 2 (number)
 
 Sets the coordinates of the object controlled by this movement.
 
-The object controlled by this movement may be a [map entity](../map-entities/overview.md), a [drawable object](../drawable-objects/overview.md) or a point.
+The object controlled by this movement may be a [map entity](../map-entities/index.md), a [drawable object](../drawable-objects/index.md) or a point.
 
 `x` (number)
 : X coordinate to set.
@@ -128,7 +128,7 @@ Return value (boolean)
 
 Returns whether the movement should continue even when the [game](../game.md) is suspended.
 
-This setting only has an effect for movements attached to a [map entity](../map-entities/overview.md) during a game. The default value is `false`
+This setting only has an effect for movements attached to a [map entity](../map-entities/index.md) during a game. The default value is `false`
 
 Return value (boolean)
 : `true` to continue the movement even when the game is suspended.
@@ -144,7 +144,7 @@ Sets whether the movement should continue even when the [game](../game.md) is su
 
 Returns whether this movement ignores obstacles of the map.
 
-If the movement is not attached to a [map entity](../map-entities/overview.md) yet, it is not an error to call this function: the result will have an effect when the movement gets attached to a map entity.
+If the movement is not attached to a [map entity](../map-entities/index.md) yet, it is not an error to call this function: the result will have an effect when the movement gets attached to a map entity.
 
 Return value (boolean)
 : `true` if this movement ignores obstacles.
@@ -153,7 +153,7 @@ Return value (boolean)
 
 Sets whether a map entity controlled by this movement should ignore obstacles of the map.
 
-If the movement is not attached to a [map entity](../map-entities/overview.md) yet, it is not an error to call this function: your choice will have an effect when the movement gets attached to a map entity.
+If the movement is not attached to a [map entity](../map-entities/index.md) yet, it is not an error to call this function: your choice will have an effect when the movement gets attached to a map entity.
 
 `ignore_obstacles` (boolean, optional)
 : `true` to make this movement ignore obstacles of the map (no value means `true`)
@@ -164,7 +164,7 @@ From the four main directions, returns the closest one to the current trajectory
 
 East is `0`, North is `1`, West is `2`, South is `3`. As the real trajectory does not necessarily follows one of the four main directions, it will be converted to the closest one.
 
-If you use this movement to control a [sprite](../drawable-objects/sprite.md) (or a [map entity](../map-entities/overview.md) that has a sprite), you can use this function to make the sprite face the direction of the movement.
+If you use this movement to control a [sprite](../drawable-objects/sprite.md) (or a [map entity](../map-entities/index.md) that has a sprite), you can use this function to make the sprite face the direction of the movement.
 
 Return value (number)
 : The closest direction corresponding to the angle of this movement.
@@ -207,14 +207,14 @@ Called when the coordinates controlled by this movement have just changed.
 
 ### `movement:on_obstacle_reached()`
 
-During a [game](../game.md), called when the coordinates controlled by this movement have just failed to change because they would lead the [map entity](../map-entities/overview.md) controlled into an obstacle of the [map](../map.md).
+During a [game](../game.md), called when the coordinates controlled by this movement have just failed to change because they would lead the [map entity](../map-entities/index.md) controlled into an obstacle of the [map](../map.md).
 
 When an obstacle is reached, this event is called instead of [`movement:on_position_changed()`](#movementon_position_changed).
 
 This event can only be called when all of these conditions are met:
 
 - A [game](../game.md) is currently running.
-- The movement is attached to a [map entity](../map-entities/overview.md) (like an [enemy](../map-entities/enemy.md), an [NPC](../map-entities/npc.md), etc.).
+- The movement is attached to a [map entity](../map-entities/index.md) (like an [enemy](../map-entities/enemy.md), an [NPC](../map-entities/npc.md), etc.).
 - The movement does not ignore obstacles (i.e. [`movement:get_ignore_obstacles()`](#movementget_ignore_obstacles) returns `false`).
 
 !!! note "Note"

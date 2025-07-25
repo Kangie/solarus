@@ -4,7 +4,7 @@
 
 A jumper is an invisible detector that makes the [hero](./hero.md) jump into one of the 8 main directions when touching it.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_jumper()`](../map.md#mapcreate_jumperproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_jumper()`](../map.md#mapcreate_jumperproperties).
 
 The [hero](./hero.md) makes a jump when touching the jumper. Properties of the jumper include the distance and the direction of the jump.
 
@@ -14,9 +14,9 @@ Think of a jumper like an horizontal, vertical or diagonal line (depending on th
 
 ## Methods Inherited from map entity
 
-Jumpers are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Jumpers are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `jumper`
 
@@ -38,9 +38,9 @@ Sets the length of the jump.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Jumpers are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Jumpers are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type `jumper`
 

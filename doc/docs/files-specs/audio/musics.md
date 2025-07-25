@@ -18,7 +18,7 @@ Future releases may support more music formats.
 
 ## Loop Settings
 
-When starting a map, its music is automatically played and will loop to the beginning if it finishes. When you play a music from a script (using [`sol.audio.play_music()`](../../lua-api/audio/overview.md#solaudioplay_musicmusic_id-action)), you can specify the action to do when the music finishes. By default, this action is also to loop the music to the beginning.
+When starting a map, its music is automatically played and will loop to the beginning if it finishes. When you play a music from a script (using [`sol.audio.play_music()`](../../lua-api/audio/index.md#solaudioplay_musicmusic_id-action)), you can specify the action to do when the music finishes. By default, this action is also to loop the music to the beginning.
 
 However, some musics already have their own loop internal loop. It means that they don't finish (they loop by themselves) so the rules above have no effect on them. Instead, such musics are able to loop to a specific point rather than to the beginning.
 

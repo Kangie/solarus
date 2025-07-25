@@ -70,14 +70,14 @@ Sets that the sound effect should be played in a loop.
 
 ### `sound:get_volume()`
 
-Returns the volume of this sound effect. This is relative to the global [sound volume](./overview.md#solaudioget_sound_volume).
+Returns the volume of this sound effect. This is relative to the global [sound volume](./index.md#solaudioget_sound_volume).
 
 Return value (number)
 : The current volume of this sound effect, as an integer between `0` (mute) and `100` (full volume).
 
 ### `sound:set_volume(volume)`
 
-Sets the volume of this sound effect. This is relative to the global [sound volume](./overview.md#solaudioset_sound_volumevolume).
+Sets the volume of this sound effect. This is relative to the global [sound volume](./index.md#solaudioset_sound_volumevolume).
 
 `volume` (number)
 : The new volume of this sound effect, as an integer between `0` (mute) and `100` (full volume).

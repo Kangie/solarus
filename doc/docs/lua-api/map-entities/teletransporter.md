@@ -4,7 +4,7 @@
 
 A teletransporter is a detector that sends the [hero](./hero.md) to another place when he walks on it.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_teletransporter()`](../map.md#mapcreate_teletransporterproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_teletransporter()`](../map.md#mapcreate_teletransporterproperties).
 
 A teletransporter can send the [hero](./hero.md) to one of the following kind of places:
 
@@ -20,9 +20,9 @@ Teletransporters can have any size, but like all entities, their width and heigh
 
 ## Methods Inherited from map entity
 
-Teletransporters are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Teletransporters are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `teletransporter`
 
@@ -104,9 +104,9 @@ Sets the destination place on the destination map.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Teletransporters are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Teletransporters are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type `teletransporter`
 
@@ -121,4 +121,4 @@ Called when the user takes this teletransporter, just before the map closing tra
 
 !!! note "Note"
 
-    If you [disable](./overview.md#entityset_enabledenabled) or [remove](./overview.md#entityremove) the teletransporter during this event, then the teletransportation does not occur.
+    If you [disable](./index.md#entityset_enabledenabled) or [remove](./index.md#entityremove) the teletransporter during this event, then the teletransportation does not occur.

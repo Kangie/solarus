@@ -18,8 +18,14 @@ theme:
   favicon: assets/images/favicon.png
   logo: assets/images/logo.svg
   features:
-    - navigation.tabs
     - search.suggest
+    - search.highlight
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs.sticky
+    - navigation.instant.progress
 extra_css:
   - stylesheets/extra.css
 extra:
@@ -59,9 +65,9 @@ plugins:
 nav:
   - Home: index.md
   - Tutorials:
-      - Introduction: tutorials/introduction.md
+      - tutorials/index.md
       - Getting started:
-          - Introduction: tutorials/getting-started/introduction.md
+          - tutorials/getting-started/index.md
           - Installation: tutorials/getting-started/installation.md
           - Creating a Quest: tutorials/getting-started/creating-a-quest.md
           - Map editor: tutorials/getting-started/map-editor.md
@@ -107,11 +113,11 @@ nav:
           #- Post-process effects: tutorials/advanced/post-process-effects.md
           #- Debug HUD: tutorials/advanced/debug-hud.md
       - Distribution:
-          - Introduction: tutorials/distribution/introduction.md
+          - tutorials/distribution/index.md
           - Android: tutorials/distribution/android.md
           - Nintendo Switch: tutorials/distribution/nintendo-switch.md
       - Migration:
-          - Introduction: tutorials/migration/introduction.md
+          - tutorials/migration/index.md
           - From v1.6 to v2.0: tutorials/migration/from-v1-6-to-v2-0.md
           - From v1.5 to v1.6: tutorials/migration/from-v1-5-to-v1-6.md
           - From v1.4 to v1.5: tutorials/migration/from-v1-4-to-v1-5.md
@@ -120,16 +126,16 @@ nav:
           - From v1.1 to v1.2: tutorials/migration/from-v1-1-to-v1-2.md
           - From v1.0 to v1.1: tutorials/migration/from-v1-0-to-v1-1.md
   - Lua API:
-      - Introduction: lua-api/introduction.md
+      - lua-api/index.md
       - General Features: lua-api/general-features.md
       - Audio:
-          - Overview: lua-api/audio/overview.md
+          - lua-api/audio/index.md
           - Music: lua-api/audio/music.md
           - Sound: lua-api/audio/sound.md
       - Video: lua-api/video.md
       - Shaders: lua-api/shaders.md
       - Controls:
-          - Overview: lua-api/controls/overview.md
+          - lua-api/controls/index.md
           - Inputs: lua-api/controls/inputs.md
           - Joypad: lua-api/controls/joypad.md
       - Files: lua-api/files.md
@@ -137,12 +143,12 @@ nav:
       - Language Functions: lua-api/language-functions.md
       - Timers: lua-api/timers.md
       - Drawable Objects:
-          - Overview: lua-api/drawable-objects/overview.md
+          - lua-api/drawable-objects/index.md
           - Surfaces: lua-api/drawable-objects/surface.md
           - Text Surfaces: lua-api/drawable-objects/text-surface.md
           - Sprites: lua-api/drawable-objects/sprite.md
       - Movements:
-          - Overview: lua-api/movements/overview.md
+          - lua-api/movements/index.md
           - Straight Movement: lua-api/movements/straight-movement.md
           - Random Movement: lua-api/movements/random-movement.md
           - Target Movement: lua-api/movements/target-movement.md
@@ -156,7 +162,7 @@ nav:
       - Equipment Items: lua-api/equipment-items.md
       - Map: lua-api/map.md
       - Map Entities:
-          - Overview: lua-api/map-entities/overview.md
+          - lua-api/map-entities/index.md
           - Hero: lua-api/map-entities/hero.md
           - Tile: lua-api/map-entities/tile.md
           - Dynamic Tile: lua-api/map-entities/dynamic-tile.md
@@ -190,7 +196,7 @@ nav:
           - Custom Entity: lua-api/map-entities/custom-entity.md
       - Custom States: lua-api/custom-states.md
   - Files Specs:
-      - Introduction: files-specs/introduction.md
+      - files-specs/index.md
       - Quest Properties File: files-specs/properties-file.md
       - Quest Database File: files-specs/database-file.md
       - Main Lua Script: files-specs/main-script.md
@@ -200,7 +206,7 @@ nav:
           - Musics: files-specs/audio/musics.md
       - Fonts: files-specs/fonts.md
       - Languages:
-          - Overview: files-specs/languages/overview.md
+          - files-specs/languages/index.md
           - Translated Strings: files-specs/languages/strings.md
           - Translated Dialogs: files-specs/languages/dialogs.md
       - Sprite Data File: files-specs/sprite-data-file.md
@@ -208,7 +214,7 @@ nav:
       - Tileset Definition File: files-specs/tileset-data-file.md
       - Shader Description File: files-specs/shader-data-file.md
   - Resources:
-      - Introduction: resources/introduction.md
+      - resources/index.md
       - Scripts: resources/scripts.md
       - Resource Packs: resources/resource-packs.md
       - Tools:

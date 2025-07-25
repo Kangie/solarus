@@ -1,30 +1,30 @@
 # Map
 
-Maps are areas where the [game](./game.md) takes place. They may be rooms, houses, entire dungeon floors, parts of the outside world or any place. The active map contains many objects called [map entities](./map-entities/overview.md) (or just "entities" to be short). Map entities are everything that has a position on the map, including the [hero](./map-entities/hero.md), the [tiles](./map-entities/tile.md), the [enemies](./map-entities/enemy.md), the [pickable treasures](./map-entities/pickable.md) and even the [camera](./map-entities/camera.md). See the [entity API](./map-entities/overview.md) for more details.
+Maps are areas where the [game](./game.md) takes place. They may be rooms, houses, entire dungeon floors, parts of the outside world or any place. The active map contains many objects called [map entities](./map-entities/index.md) (or just "entities" to be short). Map entities are everything that has a position on the map, including the [hero](./map-entities/hero.md), the [tiles](./map-entities/tile.md), the [enemies](./map-entities/enemy.md), the [pickable treasures](./map-entities/pickable.md) and even the [camera](./map-entities/camera.md). See the [entity API](./map-entities/index.md) for more details.
 
 ## Overview
 
 ### Coordinates and layer
 
-A map has a rectangular size in pixels. The width and the height are always multiples of 8 pixels, and most [map entities](./map-entities/overview.md) usually stay aligned on a grid of squares of 8x8 pixels (except when they are moving).
+A map has a rectangular size in pixels. The width and the height are always multiples of 8 pixels, and most [map entities](./map-entities/index.md) usually stay aligned on a grid of squares of 8x8 pixels (except when they are moving).
 
-Thus, each [entity](./map-entities/overview.md) has some coordinates `X,Y` on the map. But its position is also defined by a third value: its layer. The map has a number of distinct layers that are stacked. Each layer has its own list of entities. Layers are identified by a number. There is always a layer `0`, and maps can add additional layers above or below `0`
+Thus, each [entity](./map-entities/index.md) has some coordinates `X,Y` on the map. But its position is also defined by a third value: its layer. The map has a number of distinct layers that are stacked. Each layer has its own list of entities. Layers are identified by a number. There is always a layer `0`, and maps can add additional layers above or below `0`
 
-Layers allow to implement maps with multi-level content, like a bridge between two higher platforms. The [hero](./map-entities/hero.md) (as well as [enemies](./map-entities/enemy.md) and any other [map entity](./map-entities/overview.md)) is then able to walk either above or under the bridge, depending on his layer. Entities like [stairs](./map-entities/stairs.md) and [jumpers](./map-entities/jumper.md) can change the layer of the hero automatically, but you can also do that from your Lua scripts.
+Layers allow to implement maps with multi-level content, like a bridge between two higher platforms. The [hero](./map-entities/hero.md) (as well as [enemies](./map-entities/enemy.md) and any other [map entity](./map-entities/index.md)) is then able to walk either above or under the bridge, depending on his layer. Entities like [stairs](./map-entities/stairs.md) and [jumpers](./map-entities/jumper.md) can change the layer of the hero automatically, but you can also do that from your Lua scripts.
 
 ### Tileset
 
-The graphic skin of a map is called a [tileset](../files-specs/tileset-data-file.md). The tileset defines the small patterns used to draw [tiles](./map-entities/tile.md) and also some other [entities](./map-entities/overview.md) that may depend on the skin. For example, you can have a forest tileset, a castle tileset, etc. Tilesets have no special size limitation. It is possible to use multiple tilesets in the same map.
+The graphic skin of a map is called a [tileset](../files-specs/tileset-data-file.md). The tileset defines the small patterns used to draw [tiles](./map-entities/tile.md) and also some other [entities](./map-entities/index.md) that may depend on the skin. For example, you can have a forest tileset, a castle tileset, etc. Tilesets have no special size limitation. It is possible to use multiple tilesets in the same map.
 
 ### Map files
 
-A map can contain many types of [entities](./map-entities/overview.md). Map entities can be either declared in the map data file or created dynamically. Thus, a map with id `XXXX` is managed by two distinct files:
+A map can contain many types of [entities](./map-entities/index.md). Map entities can be either declared in the map data file or created dynamically. Thus, a map with id `XXXX` is managed by two distinct files:
 
 - In the data file `maps/XXXX.dat` are declared all entities that initially compose your map (most importantly: the [tiles](./map-entities/tile.md)). You normally don't need to edit this file by hand: you can use Solarus Editor (but if you want to, [here is the syntax](../files-specs/map-data-file.md)).
 
 - In the script file `"maps/XXXX.lua"` (which is optional), you define the dynamic behavior of your map, using the features of the `map` Lua type described on this page (and the rest of the Solarus API will also be very useful).
 
-When the player enters a map, the engine first creates the [entities](./map-entities/overview.md) declared in the map data file [maps/XXXX.dat](../files-specs/map-data-file.md), and then it runs your script `"maps/XXXX.lua"` The Lua map object is passed as parameter of your script (remember that any Lua script is implicitly a function and can have parameters). Use the Lua notation `...` to get this parameter and store it into a regular variable.
+When the player enters a map, the engine first creates the [entities](./map-entities/index.md) declared in the map data file [maps/XXXX.dat](../files-specs/map-data-file.md), and then it runs your script `"maps/XXXX.lua"` The Lua map object is passed as parameter of your script (remember that any Lua script is implicitly a function and can have parameters). Use the Lua notation `...` to get this parameter and store it into a regular variable.
 
 Here is a basic example of script for a map that does nothing special except playing a special music and showing an evil welcome dialog when the hero enters it.
 
@@ -63,7 +63,7 @@ If you want some data or behavior to persist when the player comes back, like th
 
 ### Accessing maps like tables
 
-Like other essential Solarus types (including [game](./game.md), [items](./equipment-items.md) and [map entities](./map-entities/overview.md)), a fundamental property of maps is that even if they are userdata, they can also be used like Lua tables.
+Like other essential Solarus types (including [game](./game.md), [items](./equipment-items.md) and [map entities](./map-entities/index.md)), a fundamental property of maps is that even if they are userdata, they can also be used like Lua tables.
 
 This property is actually what allows you to define events on your map. But you can store any data in your map object, including new functions specific to your particular map. Here is an example that uses this feature:
 
@@ -116,7 +116,7 @@ In this example, you see that we add three values to the map object, like if it 
 
 !!! note "Note"
 
-    You may wonder how we can access `puzzle_switch_1`,`puzzle_switch_2`and `puzzle_switch_3` without declaring them. There is a mechanism that makes all named [map entities](./map-entities/overview.md) directly accessible in the environment of the map script. See [`map:get_entity()`](#mapget_entityname) for more details. But this example has some issues. The three [switches](./map-entities/switch.md) are managed by duplicated code. This is error-prone because one day, we will probably want to make a similar puzzle with 50 entities instead of just 3. To make your map easier to maintain, the following and equivalent version is much more preferred:
+    You may wonder how we can access `puzzle_switch_1`,`puzzle_switch_2`and `puzzle_switch_3` without declaring them. There is a mechanism that makes all named [map entities](./map-entities/index.md) directly accessible in the environment of the map script. See [`map:get_entity()`](#mapget_entityname) for more details. But this example has some issues. The three [switches](./map-entities/switch.md) are managed by duplicated code. This is error-prone because one day, we will probably want to make a similar puzzle with 50 entities instead of just 3. To make your map easier to maintain, the following and equivalent version is much more preferred:
 
     ```lua
     local map = ...
@@ -283,7 +283,7 @@ It is your responsability to make sure that the new tileset is be compatible wit
 
 Returns the name of the music associated to this map.
 
-This is the music to play when the map starts, as specified in the map file. It may be different from the music currently being played. To get the music currently being played, see [`sol.audio.get_music()`](./audio/overview.md#solaudioplay_musicmusic_id-action).
+This is the music to play when the map starts, as specified in the map file. It may be different from the music currently being played. To get the music currently being played, see [`sol.audio.get_music()`](./audio/index.md#solaudioplay_musicmusic_id-action).
 
 Return value (string)
 : Name of the music of this map, relative to the `musics` directory and without extension. It can also be the special value `"same"` if the map specifies to keep the music unchanged, or `nil` if the map specifies to play no music.
@@ -315,15 +315,15 @@ Return value (string)
 
 ### `map:draw_visual(drawable, x, y)`
 
-Draws a [drawable object](./drawable-objects/overview.md) ([surface](./drawable-objects/surface.md), [text surface](./drawable-objects/text-surface.md) or [sprite](./drawable-objects/sprite.md)) on the [camera](#mapget_camera) at the given map coordinates.
+Draws a [drawable object](./drawable-objects/index.md) ([surface](./drawable-objects/surface.md), [text surface](./drawable-objects/text-surface.md) or [sprite](./drawable-objects/sprite.md)) on the [camera](#mapget_camera) at the given map coordinates.
 
-This function can be used as an alternative to [`drawable:draw()`](./drawable-objects/overview.md#drawabledrawdst_surface-x-y) in order to draw the object relative to the map (instead of relative to the screen).
+This function can be used as an alternative to [`drawable:draw()`](./drawable-objects/index.md#drawabledrawdst_surface-x-y) in order to draw the object relative to the map (instead of relative to the screen).
 
 If the object to draw is a [sprite](./drawable-objects/sprite.md), its origin point will be displayed at the given location, relative to the the upper left corner of the map.
 
-This function should only be called during the drawing phase of the map, for example from [`map:on_draw()`](#mapon_drawcamera_surface) or from [`custom_entity:on_post_draw()`](./map-entities/overview.md#entityon_post_drawcamera).
+This function should only be called during the drawing phase of the map, for example from [`map:on_draw()`](#mapon_drawcamera_surface) or from [`custom_entity:on_post_draw()`](./map-entities/index.md#entityon_post_drawcamera).
 
-`drawable` ([drawable](./drawable-objects/overview.md))
+`drawable` ([drawable](./drawable-objects/index.md))
 : The visual object to draw on the map.
 
 `x` (number)
@@ -366,9 +366,9 @@ Inverts the configuration of [crystal blocks](./map-entities/crystal-block.md).
 
 ### `map:open_doors(prefix)`
 
-Opens the [doors](./map-entities/door.md) whose name starts with the specified prefix, enables or disables relative [dynamic tiles](./map-entities/dynamic-tile.md) accordingly and plays the `"door_open"` [sound](./audio/overview.md#solaudioplay_soundsound_id).
+Opens the [doors](./map-entities/door.md) whose name starts with the specified prefix, enables or disables relative [dynamic tiles](./map-entities/dynamic-tile.md) accordingly and plays the `"door_open"` [sound](./audio/index.md#solaudioplay_soundsound_id).
 
-Opening a door may be more complex than just modifying a single [door entity](./map-entities/door.md). Indeed, there is often a corresponding door is the adjacent room that you also want to open (that corresponding door is another [entity](./map-entities/overview.md)). Name both doors with the same prefix, and you can use this function to open both of them.
+Opening a door may be more complex than just modifying a single [door entity](./map-entities/door.md). Indeed, there is often a corresponding door is the adjacent room that you also want to open (that corresponding door is another [entity](./map-entities/index.md)). Name both doors with the same prefix, and you can use this function to open both of them.
 
 Furthermore, you sometimes want [dynamic tiles](./map-entities/dynamic-tile.md) to be shown or hidden depending on the state of a door. When a door is open, all dynamic tiles whose prefix is the door's name followed by `_open` or `_closed` are automatically enabled or disabled, respectively.
 
@@ -381,9 +381,9 @@ Furthermore, you sometimes want [dynamic tiles](./map-entities/dynamic-tile.md) 
 
 ### `map:close_doors(prefix)`
 
-Closes the [doors](./map-entities/door.md) whose name starts with the specified prefix, enables or disables relative [dynamic tiles](./map-entities/dynamic-tile.md) accordingly and plays the `"door_closed"` [sound](./audio/overview.md#solaudioplay_soundsound_id).
+Closes the [doors](./map-entities/door.md) whose name starts with the specified prefix, enables or disables relative [dynamic tiles](./map-entities/dynamic-tile.md) accordingly and plays the `"door_closed"` [sound](./audio/index.md#solaudioplay_soundsound_id).
 
-Closing a door may be more complex than just modifying a single [door entity](./map-entities/door.md). Indeed, there is often a corresponding door is the adjacent room that you also want to open (that corresponding door is another [entity](./map-entities/overview.md)). Name both doors with the same prefix, and you can use this function to close both of them.
+Closing a door may be more complex than just modifying a single [door entity](./map-entities/door.md). Indeed, there is often a corresponding door is the adjacent room that you also want to open (that corresponding door is another [entity](./map-entities/index.md)). Name both doors with the same prefix, and you can use this function to close both of them.
 
 Furthermore, you sometimes want [dynamic tiles](./map-entities/dynamic-tile.md) to be shown or hidden depending on the state of a door. When a door is closed, all dynamic tiles whose prefix is the door's name followed by `_open` or `_closed` are automatically disabled or enabled, respectively.
 
@@ -404,14 +404,14 @@ This function is intended to be called when you don't want the player to notice 
 
 ### `map:get_entity(name)`
 
-Returns the [map entity](./map-entities/overview.md) with the specified name if it exists on this map. Entity names are unique (two entities cannot exist on the map with the same name at the same time). The name is optional: some entities may have no name. In this case, you cannot access them from this function.
+Returns the [map entity](./map-entities/index.md) with the specified name if it exists on this map. Entity names are unique (two entities cannot exist on the map with the same name at the same time). The name is optional: some entities may have no name. In this case, you cannot access them from this function.
 
 As a convenient feature, map entities can also be accessed directly through the environment of the [map script](#map-files). In other words, you can just write `bob:get_position()` as an equivalent to `map:get_entity("bob"):get_position()`.
 
 `name` (string)
 : Name of the map entity to get.
 
-Return value ([entity](./map-entities/overview.md))
+Return value ([entity](./map-entities/index.md))
 : The corresponding entity, or `nil` if there exists no entity with this name on the map.
 
 !!! note "Note"
@@ -422,10 +422,10 @@ Return value ([entity](./map-entities/overview.md))
 
 ### `map:has_entity(name)`
 
-Returns whether there currently exists a [map entity](./map-entities/overview.md) with the specified name on the map.
+Returns whether there currently exists a [map entity](./map-entities/index.md) with the specified name on the map.
 
 `name` (string)
-: Name of the [map entity](./map-entities/overview.md) to check.
+: Name of the [map entity](./map-entities/index.md) to check.
 
 Return value (boolean)
 : `true` if such an entity exists.
@@ -436,7 +436,7 @@ Return value (boolean)
 
 ### `map:get_entities([prefix])`
 
-Returns an iterator to all [map entities](./map-entities/overview.md) whose name has the specified prefix.
+Returns an iterator to all [map entities](./map-entities/index.md) whose name has the specified prefix.
 
 The typical usage of this function is:
 
@@ -454,7 +454,7 @@ Return value (function)
 
 ### `map:get_entities_count(prefix)`
 
-Returns the number of [map entities](./map-entities/overview.md) having the specified prefix.
+Returns the number of [map entities](./map-entities/index.md) having the specified prefix.
 
 `prefix` (string)
 : Prefix of the entities to count.
@@ -464,7 +464,7 @@ Return value (number)
 
 ### `map:has_entities(prefix)`
 
-Returns whether there exists at least one [map entity](./map-entities/overview.md) having the specified prefix.
+Returns whether there exists at least one [map entity](./map-entities/index.md) having the specified prefix.
 
 This function can be used for example to checker whether a group of [enemies](./map-entities/enemy.md) is dead.
 
@@ -480,7 +480,7 @@ Return value (boolean)
 
 ### `map:get_entities_by_type(type)`
 
-Returns an iterator to all [map entities](./map-entities/overview.md) of the given type on the map.
+Returns an iterator to all [map entities](./map-entities/index.md) of the given type on the map.
 
 The typical usage of this function is:
 
@@ -491,11 +491,11 @@ end
 ```
 
 `type` (string)
-: Name of an entity type. See [`entity:get_type()`](./map-entities/overview.md#entityget_type) for the possible values.
+: Name of an entity type. See [`entity:get_type()`](./map-entities/index.md#entityget_type) for the possible values.
 
 ### `map:get_entities_in_rectangle(x, y, width, height)`
 
-Returns an iterator to all [map entities](./map-entities/overview.md) whose maximum bounding box intersects the given rectangle. The maximum bounding box is the union of the entity's own [bounding box](./map-entities/overview.md#entityget_bounding_box) and of the bounding boxes from its sprites.
+Returns an iterator to all [map entities](./map-entities/index.md) whose maximum bounding box intersects the given rectangle. The maximum bounding box is the union of the entity's own [bounding box](./map-entities/index.md#entityget_bounding_box) and of the bounding boxes from its sprites.
 
 The typical usage of this function is:
 
@@ -522,7 +522,7 @@ Return value (function)
 
 ### `map:get_entities_in_region(x, y), map:get_entities_in_region(entity)`
 
-Returns an iterator to all [map entities](./map-entities/overview.md) that are in a region. Regions of the map are defined by the position of [separators](./map-entities/separator.md) and map limits. The region of an entity is the one of its center point.
+Returns an iterator to all [map entities](./map-entities/index.md) that are in a region. Regions of the map are defined by the position of [separators](./map-entities/separator.md) and map limits. The region of an entity is the one of its center point.
 
 Regions should be rectangular. Non-convex regions, for example with an "L" shape, are not supported by this function.
 
@@ -566,7 +566,7 @@ Return value ([hero](./map-entities/hero.md))
 
 ### `map:set_entities_enabled(prefix, [enabled])`
 
-Enables or disables all [map entities](./map-entities/overview.md) having the specified prefix.
+Enables or disables all [map entities](./map-entities/index.md) having the specified prefix.
 
 Disabled entities are not displayed and are not updated. Therefore, they don't move and their collisions are no longer detected. But they still exist and can be enabled back later.
 
@@ -578,11 +578,11 @@ Disabled entities are not displayed and are not updated. Therefore, they don't m
 
 !!! note "Note"
 
-    Equivalent to calling [`entity:set_enabled()`](./map-entities/overview.md#entityset_enabledenabled) on a group of entities.
+    Equivalent to calling [`entity:set_enabled()`](./map-entities/index.md#entityset_enabledenabled) on a group of entities.
 
 ### `map:remove_entities(prefix)`
 
-Removes and destroys all [map entities](./map-entities/overview.md) having the specified prefix.
+Removes and destroys all [map entities](./map-entities/index.md) having the specified prefix.
 
 Once an entity is removed, it is destroyed and it no longer exists on the map. A good practice is to avoid keeping references to destroyed entities in your scripts so that they can be garbage-collected by Lua.
 
@@ -591,7 +591,7 @@ Once an entity is removed, it is destroyed and it no longer exists on the map. A
 
 !!! note "Note"
 
-    Equivalent to calling [`entity:remove()`](./map-entities/overview.md#entityremove) on a group of entities.
+    Equivalent to calling [`entity:remove()`](./map-entities/index.md#entityremove) on a group of entities.
 
 ### `map:create_destination(properties)`
 
@@ -632,7 +632,7 @@ Creates an entity of type [destination](./map-entities/destination.md) on the ma
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([destination](./map-entities/destination.md))
 : The destination created.
@@ -666,7 +666,7 @@ Creates an entity of type [teletransporter](./map-entities/teletransporter.md) o
 : Id of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the teletransporter. No value means no sprite (the teletransporter will then be invisible).
 
 `sound` (string, optional)
-: Sound to [play](./audio/overview.md#solaudioplay_soundsound_id) when the [hero](./map-entities/hero.md) uses the teletransporter. No value means no sound.
+: Sound to [play](./audio/index.md#solaudioplay_soundsound_id) when the [hero](./map-entities/hero.md) uses the teletransporter. No value means no sound.
 
 `transition` (string, optional)
 : Style of transition to play when the hero uses the teletransporter. Must be one of:
@@ -685,7 +685,7 @@ Creates an entity of type [teletransporter](./map-entities/teletransporter.md) o
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([teletransporter](./map-entities/teletransporter.md))
 : The teletransporter created.
@@ -722,7 +722,7 @@ Creates an entity of type [pickable treasure](./map-entities/pickable.md) on the
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([pickable treasure](./map-entities/pickable.md))
 : The pickable treasure created, or `nil` if the item is not set, not [obtainable](./equipment-items.md#itemis_obtainable), or if the pickable treasure is already found (for a saved one).
@@ -759,7 +759,7 @@ Creates an entity of type [destructible object](./map-entities/destructible.md) 
 : Name of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the destructible object.
 
 `destruction_sound` (string, optional)
-: Sound to [play](./audio/overview.md#solaudioplay_soundsound_id) when the destructible object is cut or broken after being thrown. No value means no sound.
+: Sound to [play](./audio/index.md#solaudioplay_soundsound_id) when the destructible object is cut or broken after being thrown. No value means no sound.
 
 `weight` (number, optional)
 : Level of `"lift"` [ability](./game.md#gameget_abilityability_name) required to lift the object. `0` allows the player to lift the object unconditionally. The special value `-1` means that the object can never be lifted. The default value is `0`
@@ -783,7 +783,7 @@ Creates an entity of type [destructible object](./map-entities/destructible.md) 
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([destructible object](./map-entities/destructible.md))
 : The destructible object created.
@@ -852,7 +852,7 @@ Creates an entity of type [treasure chest](./map-entities/chest.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([chest](./map-entities/chest.md))
 : The treasure chest created.
@@ -896,7 +896,7 @@ Creates an entity of type [jumper](./map-entities/jumper.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([jumper](./map-entities/jumper.md))
 : The jumper created.
@@ -942,7 +942,7 @@ Creates an entity of type [enemy](./map-entities/enemy.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([enemy](./map-entities/enemy.md) or [pickable treasure](./map-entities/pickable.md))
 : The enemy created, except when it is a saved enemy that is already dead. In this case, if the enemy dropped a saved treasure that is not obtained yet, this [pickable treasure](./map-entities/pickable.md) is created and returned. Otherwise, `nil` is returned.
@@ -993,7 +993,7 @@ Creates an entity of type [non-playing character](./map-entities/npc.md) (NPC) o
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([NPC](./map-entities/npc.md))
 : The NPC created.
@@ -1039,7 +1039,7 @@ Creates an entity of type [block](./map-entities/block.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([block](./map-entities/block.md))
 : The block created.
@@ -1076,7 +1076,7 @@ Creates an entity of type [dynamic tile](./map-entities/dynamic-tile.md) on the 
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([dynamic tile](./map-entities/dynamic-tile.md))
 : The dynamic tile created.
@@ -1125,7 +1125,7 @@ Creates an entity of type [switch](./map-entities/switch.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([switch](./map-entities/switch.md))
 : The switch created.
@@ -1174,7 +1174,7 @@ Creates an entity of type [wall](./map-entities/wall.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([wall](./map-entities/wall.md))
 : The wall created.
@@ -1208,7 +1208,7 @@ Creates an entity of type [sensor](./map-entities/sensor.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([sensor](./map-entities/sensor.md))
 : The sensor created.
@@ -1233,7 +1233,7 @@ Creates an entity of type [crystal](./map-entities/crystal.md) on the map.
 : Y coordinate on the map.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([crystal](./map-entities/crystal.md))
 : The crystal created.
@@ -1270,7 +1270,7 @@ Creates an entity of type [crystal block](./map-entities/crystal-block.md) on th
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([crystal block](./map-entities/crystal-block.md))
 : The crystal block created.
@@ -1316,7 +1316,7 @@ Creates an entity of type [shop treasure](./map-entities/shop-treasure.md) on th
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([shop treasure](./map-entities/shop-treasure.md))
 : The shop treasure created, or `nil` if the item is not [obtainable](./equipment-items.md#itemis_obtainable), or if the shop treasure was already purchased (for a saved one).
@@ -1366,7 +1366,7 @@ Creates an entity of type [stream](./map-entities/stream.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([stream](./map-entities/stream.md))
 : The stream created.
@@ -1431,7 +1431,7 @@ Creates an entity of type [door](./map-entities/door.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([door](./map-entities/door.md))
 : The [door](./map-entities/door.md) created.
@@ -1471,7 +1471,7 @@ Creates an entity of type [stairs](./map-entities/stairs.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([stairs](./map-entities/stairs.md))
 : The stairs created.
@@ -1499,7 +1499,7 @@ Creates an entity of type [bomb](./map-entities/bomb.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([bomb](./map-entities/bomb.md))
 : The bomb created.
@@ -1527,7 +1527,7 @@ Creates an entity of type [explosion](./map-entities/explosion.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([explosion](./map-entities/explosion.md))
 : The explosion created.
@@ -1555,7 +1555,7 @@ Creates an entity of type [fire](./map-entities/fire.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([fire](./map-entities/fire.md))
 : The fire created.
@@ -1589,7 +1589,7 @@ Creates an entity of type [separator](./map-entities/separator.md) on the map.
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([separator](./map-entities/separator.md))
 : The separator created.
@@ -1641,7 +1641,7 @@ Creates an entity of type [custom entity](./map-entities/custom-entity.md) on th
 : Whether the entity should be initially enabled. The default value is `true`.
 
 `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/overview.md#entityset_propertiesproperties) for the specification.
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([custom entity](./map-entities/custom-entity.md))
 : The custom entity created.
@@ -1686,7 +1686,7 @@ The engine has already drawn the map contents, but not the [menus](./menus.md) o
 
 Called when the map has just been suspended or resumed.
 
-The map is suspended by the engine in a few cases, like when the [game](./game.md) is paused or when a dialog is active. When this happens, all [map entities](./map-entities/overview.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation.
+The map is suspended by the engine in a few cases, like when the [game](./game.md) is paused or when a dialog is active. When this happens, all [map entities](./map-entities/index.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation.
 
 `suspended` (boolean)
 : `true` if the map was just suspended, `false` if it was resumed.
@@ -1782,7 +1782,7 @@ Returns the currently visible area of the map.
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.5, the [camera](./map-entities/camera.md) is now an entity. Therefore, you can get its coordinates and size like any other entity. Use [`map:get_camera():get_bounding_box()`](./map-entities/overview.md#entityget_bounding_box) instead.
+    This method is deprecated because since Solarus 1.5, the [camera](./map-entities/camera.md) is now an entity. Therefore, you can get its coordinates and size like any other entity. Use [`map:get_camera():get_bounding_box()`](./map-entities/index.md#entityget_bounding_box) instead.
 
 ### `map:move_camera(x, y, speed, callback, [delay_before], [delay_after])`
 
@@ -1865,4 +1865,4 @@ After a camera sequence initiated by [`map:move_camera()`](#mapmove_camerax-y-sp
 
 !!! warning "Deprecated"
 
-    This event is deprecated because since Solarus 1.5, [`camera:move()`](#mapmove_camerax-y-speed-callback-delay_before-delay_after) is deprecated. The [camera](./map-entities/camera.md) is now an entity and now has much more customization possibilities. Use [`camera:on_state_changed()`](./map-entities/camera.md#cameraon_state_changednew_state_name) instead, or the callback parameter of [`movement:start()`](./movements/overview.md#movementstartobject_to_move-callback)
+    This event is deprecated because since Solarus 1.5, [`camera:move()`](#mapmove_camerax-y-speed-callback-delay_before-delay_after) is deprecated. The [camera](./map-entities/camera.md) is now an entity and now has much more customization possibilities. Use [`camera:on_state_changed()`](./map-entities/camera.md#cameraon_state_changednew_state_name) instead, or the callback parameter of [`movement:start()`](./movements/index.md#movementstartobject_to_move-callback)

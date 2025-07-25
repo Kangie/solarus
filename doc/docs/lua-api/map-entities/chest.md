@@ -4,7 +4,7 @@
 
 A chest is a box that contains a treasure.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_chest()`](../map.md#mapcreate_chestproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_chest()`](../map.md#mapcreate_chestproperties).
 
 A chest may contain a treasure or be empty. When opening the chest, the following happens by default:
 
@@ -19,9 +19,9 @@ A chest appears initially open on the [map](../map.md) if its state is saved and
 
 ## Methods Inherited from map entity
 
-Chests are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Chests are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type chest
 
@@ -163,9 +163,9 @@ You can use this function if you want another sound to be played.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Chests are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Chests are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type chest
 

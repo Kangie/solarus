@@ -50,9 +50,9 @@ Return value (surface)
 
 ## Methods Inherited from `drawable`
 
-Surfaces are particular [drawable](./overview.md) objects. Therefore, they inherit all methods from the type drawable.
+Surfaces are particular [drawable](./index.md) objects. Therefore, they inherit all methods from the type drawable.
 
-See [`drawable`](./overview.md) to know these methods.
+See [`drawable`](./index.md) to know these methods.
 
 ## Methods of the type `surface`
 

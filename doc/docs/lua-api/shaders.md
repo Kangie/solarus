@@ -16,7 +16,7 @@ A shader program, represented by the `shader` Solarus datatype, is composed of a
 
 The rest of this documentation page explains how to use shaders with the Solarus Lua API. We assume that you have some basic knowledge of shaders and GLSL or GLSL ES. See [the documentation of OpenGL and OpenGL ES](https://registry.khronos.org/OpenGL-Refpages) for more information about shaders and shading languages.
 
-Solarus compiles them at runtime when you create them with [`sol.shader.create()`](#solshadercreateshader_id). You can either apply a shader to the whole window with [`sol.video.set_shader()`](./video.md#solvideoset_shadershader), or to an individual surface, text surface or sprite with [`drawable:set_shader()`](./drawable-objects/overview.md#drawableset_shadershader).
+Solarus compiles them at runtime when you create them with [`sol.shader.create()`](#solshadercreateshader_id). You can either apply a shader to the whole window with [`sol.video.set_shader()`](./video.md#solvideoset_shadershader), or to an individual surface, text surface or sprite with [`drawable:set_shader()`](./drawable-objects/index.md#drawableset_shadershader).
 
 ### Current Window Shader
 
@@ -26,7 +26,7 @@ This defines how the quest surface (whose size is [`sol.video.get_quest_size()`]
 
 ### Shaders on Drawable Objects
 
-Shaders can also alter how [drawable objects](./drawable-objects/overview.md) are rendered on the screen, using [`drawable:set_shader()`](./drawable-objects/overview.md#drawableset_shadershader). In other words, you can apply a shader to any [surface](./drawable-objects/surface.md), [text surface](./drawable-objects/text-surface.md) or [sprite](./drawable-objects/sprite.md).
+Shaders can also alter how [drawable objects](./drawable-objects/index.md) are rendered on the screen, using [`drawable:set_shader()`](./drawable-objects/index.md#drawableset_shadershader). In other words, you can apply a shader to any [surface](./drawable-objects/surface.md), [text surface](./drawable-objects/text-surface.md) or [sprite](./drawable-objects/sprite.md).
 
 For example, if you want to apply a shader to the map surface without affecting what is displayed above, like the HUD elements or the dialog box, you can apply the shader to the [camera](./map-entities/camera.md)'s surface, with `map:get_camera():get_surface():set_shader(my_shader)`.
 
@@ -234,7 +234,7 @@ Return value (number)
 
 Sets the scaling factor of this shader. The scaling factor indicates how much the input texture will be scaled by the shader when the shader is applied to the window.
 
-This value only has an effect when the shader is applied to the window (with [`sol.video.set_shader()`](./video.md#solvideoset_shadershader)), and does nothing when the shader is applied to a drawable object (with [`drawable:set_shader()`](./drawable-objects/overview.md#drawableset_shadershader)).
+This value only has an effect when the shader is applied to the window (with [`sol.video.set_shader()`](./video.md#solvideoset_shadershader)), and does nothing when the shader is applied to a drawable object (with [`drawable:set_shader()`](./drawable-objects/index.md#drawableset_shadershader)).
 
 If no value is set (the default), then the output texture of the shader will directly have the size of the window. If a value is set, then the output texture of the shader will have the size of the input texture multiplied by this scaling factor (however, that output texture will then be scaled a second time to fit to the actual window). This is only useful for scaling shaders.
 

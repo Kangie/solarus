@@ -6,7 +6,7 @@ Objects placed on the [map](../map.md) are called map entities (or just entities
 
 There exists many types of entities. They can be either declared in the [map data file](../../files-specs/map-data-file.md), or created dynamically by using the `map:create_*` methods of the [map API](../map.md).
 
-All entities have a position on the map (X, Y and layer) and a size. Depending on their type, they can be visible or not. When they are visible, they are usually represented by one or several [sprites](../drawable-objects/sprite.md). Some entities are fixed, others move according to a [movement](../movements/overview.md) object.
+All entities have a position on the map (X, Y and layer) and a size. Depending on their type, they can be visible or not. When they are visible, they are usually represented by one or several [sprites](../drawable-objects/sprite.md). Some entities are fixed, others move according to a [movement](../movements/index.md) object.
 
 Entities can also have a name that uniquely identifies them on the map. This is useful to access them from the [map API](../map.md). The name is optional, but if an entity has a name, it must be unique on the map.
 
@@ -48,7 +48,7 @@ Here are the existing types of entities.
 
 !!! note "Note"
 
-    Note that [sprites](../drawable-objects/sprite.md) and [movements](../movements/overview.md) are not map entities, but they can be attached to map entities (to display them and to move them, respectively). Sprites and movements can also be used outside a [map](../map.md), for example in your title screen or in other [menus](../menus.md).
+    Note that [sprites](../drawable-objects/sprite.md) and [movements](../movements/index.md) are not map entities, but they can be attached to map entities (to display them and to move them, respectively). Sprites and movements can also be used outside a [map](../map.md), for example in your title screen or in other [menus](../menus.md).
 
 ## Methods of all entity types
 
@@ -127,7 +127,7 @@ Return value (boolean)
 
 Enables or disables this entity.
 
-When an entity is disabled, it is not displayed on the map, it does not move and does not detect collisions. Its [movement](../movements/overview.md), its [sprites](../drawable-objects/sprite.md) and its [timers](../timers.md) if any are suspended and will be resumed when the entity gets enabled again. While the entity is disabled, it still exists, it still has a position and it can be enabled again later.
+When an entity is disabled, it is not displayed on the map, it does not move and does not detect collisions. Its [movement](../movements/index.md), its [sprites](../drawable-objects/sprite.md) and its [timers](../timers.md) if any are suspended and will be resumed when the entity gets enabled again. While the entity is disabled, it still exists, it still has a position and it can be enabled again later.
 
 `enabled` (boolean, optional)
 : `true` to enable the entity, `false` to disable it. No value means `true`.
@@ -764,7 +764,7 @@ Return value ([stream](./stream.md))
 
 Returns the current movement of this map entity.
 
-Return value ([movement](../movements/overview.md))
+Return value ([movement](../movements/index.md))
 : The current movement, or `nil` if the entity has currently no movement.
 
 !!! note "Note"
@@ -873,30 +873,30 @@ Called when the coordinates of this entity have just changed.
 
 ### `entity:on_obstacle_reached(movement)`
 
-Called when the [movement](../movements/overview.md) of this entity was stopped because of an obstacle.
+Called when the [movement](../movements/index.md) of this entity was stopped because of an obstacle.
 
 When an obstacle is reached, this event is called instead of [`entity:on_position_changed()`](#entityon_position_changedx-y-layer).
 
-`movement` ([movement](../movements/overview.md))
+`movement` ([movement](../movements/index.md))
 : The movement of the entity.
 
 ### `entity:on_movement_started(movement)`
 
-Called when a [movement](../movements/overview.md) is started on this entity.
+Called when a [movement](../movements/index.md) is started on this entity.
 
-`movement` ([movement](../movements/overview.md))
+`movement` ([movement](../movements/index.md))
 : The movement that was just started on this entity.
 
 ### `entity:on_movement_changed(movement)`
 
-Called when some characteristics of this entity's [movement](../movements/overview.md) (like the speed or the angle) have just changed.
+Called when some characteristics of this entity's [movement](../movements/index.md) (like the speed or the angle) have just changed.
 
-`movement` ([movement](../movements/overview.md))
+`movement` ([movement](../movements/index.md))
 : The movement of the entity.
 
 ### `entity:on_movement_finished()`
 
-Called when the [movement](../movements/overview.md) of the entity is finished (if there is an end).
+Called when the [movement](../movements/index.md) of the entity is finished (if there is an end).
 
 ### `entity:on_lifting(carrier, carried_object)`
 

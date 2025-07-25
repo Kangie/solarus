@@ -22,7 +22,7 @@ When a game is running, more features are available (like pausing the game, hand
 
 ### Game Commands
 
-Commands moved to [controls](./controls/overview.md)
+Commands moved to [controls](./controls/index.md)
 
 ### Accessing the game like tables
 
@@ -309,7 +309,7 @@ Return value ([map](./map.md))
 
 Returns one of the current [heroes](./map-entities/hero.md).
 
-Heroes are [map entities](./map-entities/overview.md) that can follow cameras from map to map. For this reason, they can be seen as belonging to the game more than to the current maps. That's why this function exists.
+Heroes are [map entities](./map-entities/index.md) that can follow cameras from map to map. For this reason, they can be seen as belonging to the game more than to the current maps. That's why this function exists.
 
 Return value ([hero](./map-entities/hero.md))
 : The hero, or `nil` if the game is not running.
@@ -598,7 +598,7 @@ Built-in ability levels indicate whether the hero can perform some built-in acti
     - `"sword_knowledge"`: Ability to make the super spin-attack. This is deprecated and equivalent to a `sword_spin_attack` ability value of 2.
     - `"tunic"`: Resistance level that reduces the damage received by the hero. Determines the default sprite used for the hero's body. The initial value is `1`
     - `"shield"`: Protection against enemies. Allows to avoid some attacks. Determines the default shield sprite.
-    - `"lift"`: Ability to [lift other entities](./map-entities/overview.md#entityget_weight).
+    - `"lift"`: Ability to [lift other entities](./map-entities/index.md#entityget_weight).
     - `"swim"`: Ability to swim in deep water.
     - `"jump_over_water"`: Automatically jumping when arriving into water without the `"swim"` ability.
     - `"run"`: Running when pressing the action command.
@@ -740,7 +740,7 @@ Returns the joypad input that triggers the specified game command.
 : Name of a game command. Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
 
 Return value (string)
-: Joypad binding code (see [controls](./controls/overview.md#controlsset_joypad_bindingcommand-button))
+: Joypad binding code (see [controls](./controls/index.md#controlsset_joypad_bindingcommand-button))
 
 !!! note "Note"
 
@@ -754,7 +754,7 @@ Sets the joypad input that should trigger the specified game command.
 : Name of a game command. Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
 
 `joypad_string` (string)
-: Joypad binding code (see [controls](./controls/overview.md#controlsset_joypad_bindingcommand-button))
+: Joypad binding code (see [controls](./controls/index.md#controlsset_joypad_bindingcommand-button))
 
 !!! note "Note"
 
@@ -849,16 +849,16 @@ Everything acts like if the player had just released an input mapped to this gam
 
 ### `game:get_controls()`
 
-Gets the [controls](./controls/overview.md) object bound to the game (and the hero in the default case).
+Gets the [controls](./controls/index.md) object bound to the game (and the hero in the default case).
 
-Return value ([controls](./controls/overview.md))
+Return value ([controls](./controls/index.md))
 : Main controls of the game.
 
 ### `game:set_controls(controls)`
 
-Sets the [controls](./controls/overview.md) object bound to the game.
+Sets the [controls](./controls/index.md) object bound to the game.
 
-`controls` ([controls](./controls/overview.md))
+`controls` ([controls](./controls/index.md))
 : Controls to set as main game controls.
 
 ### `game:get_legacy_controls_storage()`

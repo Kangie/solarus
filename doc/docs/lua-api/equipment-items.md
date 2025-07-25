@@ -206,7 +206,7 @@ Sets the sound to play when the hero [picks a treasure](./map-entities/pickable.
 The default sound is `"picked_item"`.
 
 `sound_when_picked` (string)
-: Name of the sound to play (as in [`sol.audio.play_sound()`](./audio/overview.md#solaudioplay_soundsound_id)) when the hero picks a treasure of this kind (`nil` means no sound).
+: Name of the sound to play (as in [`sol.audio.play_sound()`](./audio/index.md#solaudioplay_soundsound_id)) when the hero picks a treasure of this kind (`nil` means no sound).
 
 !!! note "Note"
 
@@ -228,7 +228,7 @@ The hero can brandish treasures in various situations: when opening a [chest](./
 The default sound is `"treasure"`.
 
 `sound_when_brandished` (string)
-: Name of the sound to play (as in [`sol.audio.play_sound()`](./audio/overview.md#solaudioplay_soundsound_id)) when the hero brandishes a treasure of this kind (`nil` means no sound).
+: Name of the sound to play (as in [`sol.audio.play_sound()`](./audio/index.md#solaudioplay_soundsound_id)) when the hero brandishes a treasure of this kind (`nil` means no sound).
 
 ### `item:has_variant([variant])`
 
@@ -384,7 +384,7 @@ Called at each cycle of the main loop while the [game](./game.md) is running.
 
 Called when the [map](./map.md) is being suspended or resumed. Only possible when the [game](./game.md) is running.
 
-The map is suspended by the engine in a few cases, like when the game is paused or when the camera is being moved by a script. When this happens, all [map entities](./map-entities/overview.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation. Your item may need to be notified.
+The map is suspended by the engine in a few cases, like when the game is paused or when the camera is being moved by a script. When this happens, all [map entities](./map-entities/index.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation. Your item may need to be notified.
 
 `suspended` (boolean)
 : `true` if the map is being suspended, `false` if it is being resumed.
@@ -406,7 +406,7 @@ The new map is already started at this point.
 
 Called when a [pickable treasure](./map-entities/pickable.md) of your item's kind is created on the [map](./map.md). Only possible when the [game](./game.md) is running.
 
-If you need to do something special when a pickable treasure of this kind appears on the [map](./map.md), like setting a particular [movement](./movements/overview.md), you can use this event.
+If you need to do something special when a pickable treasure of this kind appears on the [map](./map.md), like setting a particular [movement](./movements/index.md), you can use this event.
 
 `pickable` ([pickable treasure](./map-entities/pickable.md))
 : The pickable treasure just created.

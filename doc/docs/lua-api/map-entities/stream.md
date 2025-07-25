@@ -4,9 +4,9 @@
 
 When walking on a stream, the [hero](./hero.md) automatically moves into one of the eight main directions.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_stream()`](../map.md#mapcreate_streamproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_stream()`](../map.md#mapcreate_streamproperties).
 
-A stream is a [map entity](./overview.md) of size 16×16 pixels (the size of the [hero](./hero.md)). When the hero overlaps a significant part of it, he moves into a specific direction (one of the 8 main directions).
+A stream is a [map entity](./index.md) of size 16×16 pixels (the size of the [hero](./hero.md)). When the hero overlaps a significant part of it, he moves into a specific direction (one of the 8 main directions).
 
 During this process, the player may or may not continue to control the hero, use his sword and his equipment items, depending on the stream properties.
 
@@ -18,9 +18,9 @@ If you make a stream that moves toward a hole or other bad ground, it is your re
 
 ## Methods Inherited from map entity
 
-Streams are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Streams are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type stream
 
@@ -104,9 +104,9 @@ Sets whether the player can still use equipment items while being on this stream
 
 Events are callback methods automatically called by the engine if you define them.
 
-Streams are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Streams are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type stream
 

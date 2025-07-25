@@ -1,7 +1,7 @@
 # Upgrade Your Quest from Solarus 1.6 to Solarus 2.0
 
 The multiplayer update! Solarus now supports multiple maps, cameras, heroes and game controllers.
-We also provide brand new APIs for [controllers](../../lua-api/controls/overview.md) with much better joypad support, [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md) with a lot of customization.
+We also provide brand new APIs for [controllers](../../lua-api/controls/index.md) with much better joypad support, [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md) with a lot of customization.
 
 As always, you should make a backup before any upgrade.
 
@@ -55,7 +55,7 @@ Teleportation is now driven by cameras, as there might be multiple heroes and mu
 
 ### Drawing onto the camera surface
 
-Due to new camera features possibly involving complex transformations like scaling and rotation, drawing entities onto the camera surface now expects map coordinates instead of screen coordinates. For instance, with [`entity:set_draw_override()`](../../lua-api/map-entities/overview.md#entityset_draw_overridedraw_override) or [`entity:on_pre_draw()`](../../lua-api/map-entities/overview.md#entityon_pre_drawcamera), quests with format 2.0 should pass map coordinates rather than screen coordinates.
+Due to new camera features possibly involving complex transformations like scaling and rotation, drawing entities onto the camera surface now expects map coordinates instead of screen coordinates. For instance, with [`entity:set_draw_override()`](../../lua-api/map-entities/index.md#entityset_draw_overridedraw_override) or [`entity:on_pre_draw()`](../../lua-api/map-entities/index.md#entityon_pre_drawcamera), quests with format 2.0 should pass map coordinates rather than screen coordinates.
 Yes, it is a breaking change, but the good news is that it simplifies your code, since you no longer have to subtract camera coordinates: you will be able to do
 ```
 camera:get_surface():draw(your_sprite, entity_x, entity_y)
