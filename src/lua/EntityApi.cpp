@@ -568,6 +568,12 @@ void LuaContext::register_entity_module() {
         { "is_inner", stairs_api_is_inner },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 1 })) {
+    stairs_methods.insert(stairs_methods.end(), {
+      { "get_subtype", stairs_api_get_subtype },
+      { "set_subtype", stairs_api_set_subtype },
+    });
+  }
 
   stairs_methods.insert(stairs_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -6691,6 +6697,56 @@ int LuaContext::stairs_api_is_inner(lua_State* l) {
 
     lua_pushboolean(l, stairs.is_inside_floor());
     return 1;
+  });
+}
+
+/**
+ * \brief Implementation of stairs:get_subtype.
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::stairs_api_get_subtype(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    const Stairs& stairs = *check_stairs(l, 1);
+
+    switch (stairs.get_subtype()) {
+      case Stairs::Subtype::INSIDE_FLOOR:
+        push_string(l, "inside_floor");
+        break;
+      case Stairs::Subtype::SPIRAL_DOWNSTAIRS:
+        push_string(l, "spiral_downstairs");
+        break;
+      case Stairs::Subtype::SPIRAL_UPSTAIRS:
+        push_string(l, "spiral_upstairs");
+        break;
+      case Stairs::Subtype::STRAIGHT_DOWNSTAIRS:
+        push_string(l, "straight_downstairs");
+        break;
+      case Stairs::Subtype::STRAIGHT_UPSTAIRS:
+        push_string(l, "straight_upstairs");
+        break;
+    }
+
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of stairs:set_subtype().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::stairs_api_set_subtype(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    Stairs& stairs = *check_stairs(l, 1);
+
+    const std::map<Stairs::Subtype, std::string>& names = Stairs::subtype_names;
+    Stairs::Subtype subtype = LuaTools::check_enum(l, 2, names);
+
+    stairs.set_subtype(subtype);
+
+    return 0;
   });
 }
 

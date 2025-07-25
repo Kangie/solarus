@@ -1,10 +1,12 @@
 # Tutorials
 
+Welcome to this tutorial section. Here you will find guides to use all the features of Solarus and make great 2D adventure games!
+
 !!! info "Work in Progress"
 
-    The Solarus tutorial text version is not ready yet.
+    The Solarus tutorial is still in progress
 
-    However, a complete **video tutorial** made by Christopho is available on YouTube, in two languages:
+    You can find a complete **video tutorial** made by Christopho on YouTube:
 
     * [English](https://www.youtube.com/playlist?list=PLzJ4jb-Y0ufwkbfy49F_NrLtxCAiGJw5r)
     * [French](https://www.youtube.com/playlist?list=PLzJ4jb-Y0ufzi8Qm27zkY_ncdKobEPDfV)

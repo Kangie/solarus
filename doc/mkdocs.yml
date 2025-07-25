@@ -60,16 +60,52 @@ nav:
   - Home: index.md
   - Tutorials:
       - Introduction: tutorials/introduction.md
-      - Basics:
-          - Introduction: tutorials/basics/introduction.md
-          - Installation: tutorials/basics/installation.md
-          - Creating a Quest: tutorials/basics/creating-a-quest.md
-          - Building a Quest Package: tutorials/basics/building-quest-package.md
-          - Choosing a License: tutorials/basics/choosing-a-license.md
-      - Quest Creation:
-          - Introduction: tutorials/quest-creation/introduction.md
-          - Map Editor: tutorials/quest-creation/map-editor.md
-          - Translate a Quest: tutorials/quest-creation/translate-a-quest.md
+      - Getting started:
+          - Introduction: tutorials/getting-started/introduction.md
+          - Installation: tutorials/getting-started/installation.md
+          - Creating a Quest: tutorials/getting-started/creating-a-quest.md
+          - Map editor: tutorials/getting-started/map-editor.md
+      - Manual:
+          #- Import resources: tutorials/manual/import-resources.md
+          #- Teletransportation: tutorials/manual/teletransportation.md
+          #- Layers: tutorials/manual/layers.md
+          #- Grounds: tutorials/manual/grounds.md
+          #- Generate contours: tutorials/manual/generate-contours.md
+          #- Sprites: tutorials/manual/sprites.md
+          #- Tilesets: tutorials/manual/tilesets.md
+          #- Map scripting: tutorials/manual/map-scripting.md
+          #- Global scripts: tutorials/manual/global-scripts.md
+          #- Keyboard and joypads: tutorials/manual/keyboard-joypads.md
+          #- Treasures: tutorials/manual/treasures.md
+          #- Switches and mechanisms: tutorials/manual/switches-mechanisms.md
+          #- Timers: tutorials/manual/timers.md
+          #- Enemies: tutorials/manual/enemies.md
+          #- Separators: tutorials/manual/separators.md
+          #- Blocks: tutorials/manual/blocks.md
+          #- Sensors: tutorials/manual/sensors.md
+          #- Dynamic tiles: tutorials/manual/dynamic-tiles.md
+          #- Equipement items: tutorials/manual/equipment-items.md
+          #- Sound effects: tutorials/manual/soud-effects.md
+          #- Music: tutorials/manual/music.md
+          #- Menus: tutorials/manual/menus.md
+          #- HUD: tutorials/manual/hud.md
+          #- Make a subscreen: tutorials/manual/make-a-subscreen.md
+          #- Quest properties: tutorials/manual/quest-properties.md
+          - Building a Quest Package: tutorials/manual/building-quest-package.md
+          - Translate a Quest: tutorials/manual/translate-a-quest.md
+          - Choosing a License: tutorials/manual/choosing-a-license.md
+      #- Advanced:
+          #- Metatables: tutorials/advanced/metatables.md
+          #- Composables: tutorials/advanced/composables.md
+          #- User properties: tutorials/advanced/user-properties.md
+          #- Custom entities: tutorials/advanced/custom-entities.md
+          #- Map layer transitions: tutorials/advanced/map-layer-transitions.md
+          #- Spatialized sounds: tutorials/manual/spatialized-sounds.md
+          #- Surface layering: tutorials/advanced/surface-layering.md
+          #- Menu components: tutorials/advanced/menu-components.md
+          #- Shader basics: tutorials/advanced/shader-basics.md
+          #- Post-process effects: tutorials/advanced/post-process-effects.md
+          #- Debug HUD: tutorials/advanced/debug-hud.md
       - Distribution:
           - Introduction: tutorials/distribution/introduction.md
           - Android: tutorials/distribution/android.md

@@ -43,8 +43,22 @@ Return value (number)
 
 Returns whether these stairs go from a layer to another layer on the same map or go to another place.
 
-Return value (number)
-: The direction between `0` (East) and `3` (South).
+Return value (boolean)
+: `true` if the stairs entity is considered inner.
+
+### `stairs:get_subtype()`
+
+Returns this stairs entity subtype. Can be one of the following: `"inside_floor"`, `"spiral_downstairs"`, `"spiral_upstairs"`, `"straight_downstairs"` or `"straight_upstairs"`.
+
+Return value (string)
+: the stairs entity subtype.
+
+### `stairs:set_subtype(subtype)`
+
+Changes the subtype for this stairs entity.
+
+`subtype` (string)
+: the new subtype, can be one of the following: `"inside_floor"`, `"spiral_downstairs"`, `"spiral_upstairs"`, `"straight_downstairs"` or `"straight_upstairs"`.
 
 ## Events inherited from map entity
 
