@@ -114,7 +114,7 @@ Return value (boolean, optional)
 
 Returns whether this item can be assigned to an item slot.
 
-When the item is assigned to a slot, the player can use it by pressing the [game command](./game.md#game-commands) of that slot. Some items are meant to be used by pressing a command (like the bow), other are not supposed to (like a key or a rupee). When the player uses your item, the event [`item:on_using()`](#itemon_using) is triggered.
+When the item is assigned to a slot, the player can use it by pressing the [game command](./game.md#game-commands) of that slot. Some items are meant to be used by pressing a command (like the bow), other are not supposed to (like a key or a rupee). When the player uses your item, the event [`item:on_using()`](#itemon_usinghero) is triggered.
 
 Return value (boolean)
 : `true` if this item is assignable.
@@ -123,7 +123,7 @@ Return value (boolean)
 
 Sets whether this item should be assignable to an item slot.
 
-When the item is assigned to a slot, the player can use it by pressing the [game command](./game.md#game-commands) of this slot. Some items are meant to be used by pressing a command (like the bow), other are not supposed to (like a key or a rupee). When the player uses your item, the event [`item:on_using()`](#itemon_using) is triggered.
+When the item is assigned to a slot, the player can use it by pressing the [game command](./game.md#game-commands) of this slot. Some items are meant to be used by pressing a command (like the bow), other are not supposed to (like a key or a rupee). When the player uses your item, the event [`item:on_using()`](#itemon_usinghero) is triggered.
 
 By default, an item is not assignable. Call this function at initialization time if you want your item to be assignable.
 
@@ -340,7 +340,7 @@ Returns whether the item is currently being used by the [hero](./map-entities/he
 
 Notifies the engine that using this item is finished and that the hero can get back to a normal state.
 
-When the player uses this item (by pressing an item [game command](./game.md#game-commands)), your item script takes full control of the [hero](./map-entities/hero.md) (event [`item:on_using()`](#itemon_using) is called) and you have to program the item's behavior. When it is finished, call this function to restore normal control to the player.
+When the player uses this item (by pressing an item [game command](./game.md#game-commands)), your item script takes full control of the [hero](./map-entities/hero.md) (event [`item:on_using()`](#itemon_usinghero) is called) and you have to program the item's behavior. When it is finished, call this function to restore normal control to the player.
 
 This method should only be called when the hero is using this item.
 
@@ -463,7 +463,7 @@ The player is using your item (by pressing an item [game command](./game.md#game
 
 !!! note "Note"
 
-    There is another event for the special case of giving an item to an [non-playing character](./map-entities/npc.md). If the [hero](./map-entities/hero.md) uses an item in front of an [NPC](./map-entities/npc.md) whose property is to notify your item, then event [`item:on_npc_interaction_item()`](#itemon_npc_interaction_itemnpc-item_used) is triggered first. If that event is defined and returns `true`, then [`item:on_using()`](#itemon_using) is not called (the interaction is considered done).
+    There is another event for the special case of giving an item to an [non-playing character](./map-entities/npc.md). If the [hero](./map-entities/hero.md) uses an item in front of an [NPC](./map-entities/npc.md) whose property is to notify your item, then event [`item:on_npc_interaction_item()`](#itemon_npc_interaction_itemnpc-item_used) is triggered first. If that event is defined and returns `true`, then [`item:on_using()`](#itemon_usinghero) is not called (the interaction is considered done).
 
 `hero` ([Hero](./map-entities/hero.md))
 : The hero entity that uses the item.
@@ -497,7 +497,7 @@ Called when the [hero](./map-entities/hero.md) uses any item (the player pressed
 : The item currently used by the player. This is not necessarily your item. The reason why your item gets notified is because the NPC is related to your item. But the player may be using another item.
 
 Return value (boolean)
-: `true` if an interaction happened. If you return `false` or nothing, then [`item_used:on_using()`](#itemon_using) will be called (just like if there was no NPC in front of the hero).
+: `true` if an interaction happened. If you return `false` or nothing, then [`item_used:on_using()`](#itemon_usinghero) will be called (just like if there was no NPC in front of the hero).
 
 ### `item:on_npc_collision_fire(npc)`
 

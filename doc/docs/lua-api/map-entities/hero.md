@@ -349,7 +349,7 @@ If the player is not allowed to perform this attack now (because he does not hav
 
 Makes the hero use an [equipment item](../equipment-items.md).
 
-The [`item:on_using()`](../equipment-items.md#itemon_using) event will be called and the player won't be able to control the hero until you call [`item:set_finished()`](../equipment-items.md#itemset_finished). See the documentation of [equipment items](../equipment-items.md) for more information.
+The [`item:on_using()`](../equipment-items.md#itemon_usinghero) event will be called and the player won't be able to control the hero until you call [`item:set_finished()`](../equipment-items.md#itemset_finished). See the documentation of [equipment items](../equipment-items.md) for more information.
 
 This function does the same as what happens when the player presses a game [command](../game.md#game-commands) corresponding to this equipment item. You can use it to trigger the item from your script instead of from a game command.
 

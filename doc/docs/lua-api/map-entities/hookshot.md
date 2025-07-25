@@ -12,7 +12,7 @@ A hookshot entity is created when you call [`hero:start_hookshot()`](./hero.md#h
 
 It can immobilize or hurt [enemies](./enemy.md) and transport the [hero](./hero.md) to distant places.
 
-Note that there is no predefined hookshot [equipment item](../equipment-items.md). It is your responsability to make one if you want. If you decide to make one, you will typically call [`hero:start_hookshot()`](./hero.md#herostart_hookshot) from the [`item:on_using()`](../equipment-items.md#itemon_using) callback of your hookshot equipment item.
+Note that there is no predefined hookshot [equipment item](../equipment-items.md). It is your responsability to make one if you want. If you decide to make one, you will typically call [`hero:start_hookshot()`](./hero.md#herostart_hookshot) from the [`item:on_using()`](../equipment-items.md#itemon_usinghero) callback of your hookshot equipment item.
 
 ## Methods Inherited from map entity
 

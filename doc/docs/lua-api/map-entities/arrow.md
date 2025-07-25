@@ -10,7 +10,7 @@ An arrow entity is created when you call [`hero:start_bow()`](./hero.md#herostar
 
 It can hurt [enemies](./enemy.md) and activate [switches](./switch.md) that are sensible to arrows.
 
-Note that there are no predefined bow and arrows [equipment items](../equipment-items.md). It is your responsability to make them if you want. If you decide to make them, you will typically call [`hero:start_bow()`](./hero.md#herostart_bow) from the [`item:on_using()`](../equipment-items.md#itemon_using) callback of your bow equipment item.
+Note that there are no predefined bow and arrows [equipment items](../equipment-items.md). It is your responsability to make them if you want. If you decide to make them, you will typically call [`hero:start_bow()`](./hero.md#herostart_bow) from the [`item:on_using()`](../equipment-items.md#itemon_usinghero) callback of your bow equipment item.
 
 ## Methods Inherited from map entity
 

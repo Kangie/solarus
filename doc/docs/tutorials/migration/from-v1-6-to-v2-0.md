@@ -48,7 +48,8 @@ This function is provided for quests that were designed before Solarus 2.0, and 
 ### Camera and hero teletransportation
 
 Teleportation is now driven by cameras, as there might be multiple heroes and multiple cameras.
-- [`hero:teleport()`](../../lua-api/map-entities/hero.md#map_iddestination_nametransition_style) now also teleports the linked camera instead of recreating one.
+
+- [`hero:teleport()`](../../lua-api/map-entities/hero.md#heroteleportmap_id-destination_name-transition_style) now also teleports the linked camera instead of recreating one.
   If no camera is tracking the hero when you call `hero:teleport()` (which can happen during cutscenes), then:
   - If the destination map is already loaded (meaning you are using the new 2.0 multiplayer features), the camera stays on the previous map.
   - If the destination map is not loaded yet, you will get a warning but the camera will automatically be re-linked to the hero for compatibility.

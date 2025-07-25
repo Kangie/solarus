@@ -267,7 +267,7 @@ Returns whether this game is currently showing a game-over sequence.
 
 Only possible when the game is running.
 
-The game-over sequence automatically starts when the player's life gets to zero, or when you call [`game:start_game_over()`](#gamestart_game_over) explicitly. Define the event [`game:on_game_over_started()`](#gameon_game_over_started) to show your game-over menu. If you don't define this event, by default, there is no game-over sequence and the engine immediately restarts the game (but does not save it).
+The game-over sequence automatically starts when the player's life gets to zero, or when you call [`game:start_game_over()`](#gamestart_game_overhero) explicitly. Define the event [`game:on_game_over_started()`](#gameon_game_over_started) to show your game-over menu. If you don't define this event, by default, there is no game-over sequence and the engine immediately restarts the game (but does not save it).
 
 Return value (boolean)
 : `true` if a game-over sequence is running.
@@ -1036,11 +1036,11 @@ Called when the current dialog stops.
 
 Called when a game-over sequence starts.
 
-This event is called when the player's life reaches zero, as soon as the [hero](./map-entities/hero.md) is in a state that allows game-over. It is also called if you started a game-over sequence manually with [`game:start_game_over()`](#gamestart_game_over).
+This event is called when the player's life reaches zero, as soon as the [hero](./map-entities/hero.md) is in a state that allows game-over. It is also called if you started a game-over sequence manually with [`game:start_game_over()`](#gamestart_game_overhero).
 
 If this event is not defined, there is no game-over sequence: the game restarts immediately, like if you called [`game:start()`](#gamestart), and the full life of the player is restored.
 
-If this event is defined, the engine does nothing except suspending the game. Your script is then responsible to show a game-over sequence in any way you want, and to call [`game:stop_game_over()`](#gamestop_game_over) once you have finished.
+If this event is defined, the engine does nothing except suspending the game. Your script is then responsible to show a game-over sequence in any way you want, and to call [`game:stop_game_over()`](#gamestop_game_overhero) once you have finished.
 
 For instance, you may create a [dialog](#gamestart_dialogdialog_id-info-callback) that lets the player [restart the game](#gamestart) or [save](#gamesave) and [quit](./general-features.md#solmainreset), or a [menu](./menus.md) with more options.
 

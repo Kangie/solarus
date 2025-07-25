@@ -271,7 +271,7 @@ Called when the [hero](./hero.md) uses any [equipment item](../equipment-items.m
 : The item currently used by the player.
 
 Return value (boolean)
-: `true` if an interaction happened. If you return `false` or nothing, then [`item_used:on_using()`](../equipment-items.md#itemon_using) will be called (just like if there was no custom entity in front of the hero).
+: `true` if an interaction happened. If you return `false` or nothing, then [`item_used:on_using()`](../equipment-items.md#itemon_usinghero) will be called (just like if there was no custom entity in front of the hero).
 
 !!! note "Note"
 

@@ -11,7 +11,7 @@ A chest may contain a treasure or be empty. When opening the chest, the followin
 - If the chest contains a treasure, the engine automatically gives it to the player, unless the treasure is not [obtainable](../equipment-items.md#itemis_obtainable).
 - If the chest is empty or contains a non-obtainable treasure, then nothing happens.
 
-This is the default behavior of opening a chest, and it can be redefined by your script in the [`chest:on_opened()`](#cheston_openedtreasure_item-treasure_variant-treasure_savegame_variable) event.
+This is the default behavior of opening a chest, and it can be redefined by your script in the [`chest:on_opened()`](#cheston_openedtreasure_item-treasure_variant-treasure_savegame_variable-hero) event.
 
 The state of a chest is either open or closed. When a chest is closed, its treasure (if any) is still inside and the [hero](./hero.md) can get it.
 
