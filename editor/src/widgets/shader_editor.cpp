@@ -190,14 +190,17 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
   ui.fragment_file_field->setAttribute(Qt::WA_LayoutUsesWidgetRect);
   ui.fragment_shader_page->layout()->setAlignment(ui.fragment_file_check_box, Qt::AlignTop);
 
-  const int side_width = 300;
+  EditorSettings settings;
+
+  const int side_width = settings.get_value_int(EditorSettings::shader_side_width);
   ui.main_splitter->setSizes({ side_width, width() - side_width });
   ui.main_splitter->setStretchFactor(0, 0);
   ui.main_splitter->setStretchFactor(1, 1);
-  const int preview_height = 400;
+  
+  const int preview_height = settings.get_value_int(EditorSettings::shader_files_height);
   ui.right_splitter->setSizes({ preview_height, height() - preview_height });
   ui.right_splitter->setStretchFactor(0, 1);
-  ui.right_splitter->setStretchFactor(1, 1);
+  ui.right_splitter->setStretchFactor(1, 0);
 
   ui.shader_previewer->set_model(shader.get());
 
@@ -307,6 +310,11 @@ ShaderEditor::ShaderEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, [this](const QString& message) {
     emit log_message_to_console("Warning", message);
   });
+
+  connect(ui.main_splitter, &QSplitter::splitterMoved,
+          this, &ShaderEditor::side_panel_resized);
+  connect(ui.right_splitter, &QSplitter::splitterMoved,
+          this, &ShaderEditor::preview_panel_resized);
 
   // Qlementine-related stuff.
   for (auto* widget : std::vector<QWidget*>{
@@ -922,6 +930,30 @@ void ShaderEditor::update_preview_image() {
   }
 
   ui.shader_previewer->set_preview_image(image);
+}
+
+/**
+ * @brief Saves the side panel width in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void ShaderEditor::side_panel_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::shader_side_width, pos);
+  }
+}
+
+/**
+ * @brief Saves the preview panel height in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void ShaderEditor::preview_panel_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::shader_files_height, pos);
+  }
 }
 
 }
