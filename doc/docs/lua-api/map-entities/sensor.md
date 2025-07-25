@@ -2,7 +2,7 @@
 
 A sensor is an invisible detector that triggers something when the [hero](./hero.md) overlaps it.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_sensor()`](../map.md#mapcreate_sensorproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_sensor()`](../map.md#mapcreate_sensorproperties).
 
 ## Overview
 
@@ -16,9 +16,9 @@ A sensor is activated only if the bounding box of the hero is entirely on the se
 
 ## Methods Inherited from map entity
 
-Sensors are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Sensors are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `sensor`
 
@@ -28,9 +28,9 @@ None.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Sensors are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Sensors are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type sensor
 

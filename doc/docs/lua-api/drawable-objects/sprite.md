@@ -30,9 +30,9 @@ Return value (sprite)
 
 ## Methods Inherited from `drawable`
 
-Sprites are particular [drawable](./overview.md) objects. Therefore, they inherit all methods from the type drawable.
+Sprites are particular [drawable](./index.md) objects. Therefore, they inherit all methods from the type drawable.
 
-See [drawable](./overview.md) to know these methods.
+See [drawable](./index.md) to know these methods.
 
 ## Methods of the type `sprite`
 
@@ -183,7 +183,7 @@ Returns the coordinates of the origin point of this sprite in an animation and d
 
 The origin is the point of synchronization for sprites that have several animations or directions of different sizes, and for entity sprites that are larger than the entity itself.
 
-See [`entity:get_origin()`](../map-entities/overview.md#entityget_origin) for more details.
+See [`entity:get_origin()`](../map-entities/index.md#entityget_origin) for more details.
 
 In a given animation and direction of a sprite, the origin point is the same for all frames.
 

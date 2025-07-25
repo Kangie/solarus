@@ -19,13 +19,9 @@
 #include "solarus/audio/MusicSystem.h"
 #include "solarus/audio/OggDecoder.h"
 #include "solarus/audio/SpcDecoder.h"
-#include "solarus/core/Debug.h"
 #include "solarus/core/QuestFiles.h"
-#include "solarus/core/String.h"
-#include "solarus/lua/LuaContext.h"
 #include <lua.hpp>
 #include <algorithm>
-#include <sstream>
 
 namespace Solarus {
 
@@ -77,7 +73,7 @@ bool MusicSystem::is_initialized() {
  * \return the volume (0 to 100)
  */
 int MusicSystem::get_global_volume() {
-  return (int) (global_volume * 100.0 + 0.5);
+  return static_cast<int>(global_volume * 100.0 + 0.5);
 }
 
 /**

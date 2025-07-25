@@ -67,14 +67,14 @@ Sets a function to be called after a delay.
 
 If the duration is set to zero, the function is called immediately.
 
-`context` ([map](./map.md), [game](./game.md), [item](./equipment-items.md), [map entity](./map-entities/overview.md), [state](./custom-states.md), [menu](./menus.md) or [sol.main](./general-features.md); optional)
+`context` ([map](./map.md), [game](./game.md), [item](./equipment-items.md), [map entity](./map-entities/index.md), [state](./custom-states.md), [menu](./menus.md) or [sol.main](./general-features.md); optional)
 : Determines the lifetime of the timer. The context is where the timer belongs. If the context gets closed before the timer is finished, then the timer is automatically canceled. More precisely, the following rules are applied.
 
     - If you set the context to a [map](./map.md), the timer is canceled when the player goes to another map. Example: a button that opens a door for a limited time.
 
     - If you set the context to a [game](./game.md) or an [item](./equipment-items.md), the timer is canceled when the game is closed. (Items have the same lifetime as the game they belong to.) This is only possible when the game is running. Example: hot water that becomes cold after a few minutes, and that the player should bring to an NPC on another map while it's still hot.
 
-    - If you set the context to a [map entity](./map-entities/overview.md), the timer is canceled when the entity is removed from the map. In the case of an enemy, the timer is also canceled when the enemy is hurt, immobilized or restarts. Also note that while the entity is suspended, the timer is also suspended. An entity may be suspended when the [game is suspended](./game.md#gameis_suspended), or when the entity is [disabled](./map-entities/overview.md#entityset_enabledenabled). Example: a boss who shoots fireballs every 10 seconds. Most enemy scripts usually create timers.
+    - If you set the context to a [map entity](./map-entities/index.md), the timer is canceled when the entity is removed from the map. In the case of an enemy, the timer is also canceled when the enemy is hurt, immobilized or restarts. Also note that while the entity is suspended, the timer is also suspended. An entity may be suspended when the [game is suspended](./game.md#gameis_suspended), or when the entity is [disabled](./map-entities/index.md#entityset_enabledenabled). Example: a boss who shoots fireballs every 10 seconds. Most enemy scripts usually create timers.
 
     - If you set the context to a [state](./custom-states.md), the timer is canceled when the custom hero state finishes or when the hero is removed. Like entity timers, state timers get suspended when the hero is suspended. Example: charging an attack during 3 seconds in a custom state.
 
@@ -99,7 +99,7 @@ Return value (timer)
 
 !!! note "Note"
 
-    When they are created, [map](./map.md) timers, [map entity](./map-entities/overview.md) timers and [item](./equipment-items.md) timers are initially suspended if a dialog is active. After that, they get automatically suspended and unsuspended when the map is suspended or unsuspended.
+    When they are created, [map](./map.md) timers, [map entity](./map-entities/index.md) timers and [item](./equipment-items.md) timers are initially suspended if a dialog is active. After that, they get automatically suspended and unsuspended when the map is suspended or unsuspended.
 
     This default behavior is suited for most use cases, but if you want to change it, you can use [`timer:set_suspended()`](#timerset_suspendedsuspended) and [`timer:set_suspended_with_map()`](#timerset_suspended_with_mapsuspended_with_map).
 
@@ -109,7 +109,7 @@ Cancels all timers that are currently running in a context.
 
 This function is equivalent to calling [`timer:stop()`](./timers.md) on each timer of the context. It may allow you to avoid to store explicitly all your timers.
 
-`context` ([map](./map.md), [game](./game.md), [item](./equipment-items.md), [map entity](./map-entities/overview.md), [menu](./menus.md) or [sol.main](./general-features.md))
+`context` ([map](./map.md), [game](./game.md), [item](./equipment-items.md), [map entity](./map-entities/index.md), [menu](./menus.md) or [sol.main](./general-features.md))
 : The context where you want to stop timers.
 
 ## Methods of the type `timer`
@@ -161,16 +161,16 @@ Return value (boolean)
 
 Sets whether this timer should automatically be suspended when the [map](./map.md) gets suspended.
 
-The map is suspended by the engine in a few cases, like when the game is paused, when there is a dialog or when the camera is being moved by a script. When this happens, all [map entities](./map-entities/overview.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation. With this setting, you can choose whether your timer gets suspended automatically as well.
+The map is suspended by the engine in a few cases, like when the game is paused, when there is a dialog or when the camera is being moved by a script. When this happens, all [map entities](./map-entities/index.md) stop moving and most [sprites](./drawable-objects/sprite.md) stop their animation. With this setting, you can choose whether your timer gets suspended automatically as well.
 
-By default, [map](./map.md) timers, [entity](./map-entities/overview.md) timers, [state](./custom-states.md) timers and [item](./equipment-items.md) timers are suspended with the map.
+By default, [map](./map.md) timers, [entity](./map-entities/index.md) timers, [state](./custom-states.md) timers and [item](./equipment-items.md) timers are suspended with the map.
 
 `suspended_with_map` (boolean, optional)
 : `true` to suspend the timer when the map is suspended, `false` to continue (no value means `true`)
 
 !!! note "Note"
 
-    When this setting is `true`, entity timers also get automatically suspended when the entity is [disabled](./map-entities/overview.md#entityset_enabledenabled).
+    When this setting is `true`, entity timers also get automatically suspended when the entity is [disabled](./map-entities/index.md#entityset_enabledenabled).
 
 ### `timer:get_duration()`
 

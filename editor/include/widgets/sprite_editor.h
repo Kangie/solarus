@@ -92,6 +92,11 @@ public slots:
   void change_direction_num_frames_columns_requested(
     int num_frames, int num_columns);
 
+private slots:
+
+  void side_panel_resized(int pos, int index);
+  void preview_panel_resized(int pos, int index);
+
 private:
 
   void load_settings();

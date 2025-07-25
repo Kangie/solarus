@@ -561,7 +561,9 @@ void TilesetView::keyPressEvent(QKeyEvent* event) {
  */
 void TilesetView::mousePressEvent(QMouseEvent* event) {
 
-  if (tileset == nullptr || get_scene() == nullptr) {
+  if (tileset == nullptr ||
+        get_scene() == nullptr ||
+        state == nullptr) {
     return;
   }
 
@@ -584,7 +586,9 @@ void TilesetView::mousePressEvent(QMouseEvent* event) {
  */
 void TilesetView::mouseReleaseEvent(QMouseEvent* event) {
 
-  if (tileset != nullptr && get_scene() != nullptr) {
+  if (tileset != nullptr &&
+        get_scene() != nullptr &&
+        state != nullptr) {
     state->mouse_released(*event);
   }
 
@@ -607,7 +611,9 @@ void TilesetView::mouseDoubleClickEvent(QMouseEvent* event) {
  */
 void TilesetView::mouseMoveEvent(QMouseEvent* event) {
 
-  if (tileset != nullptr && get_scene() != nullptr) {
+  if (tileset != nullptr &&
+        get_scene() != nullptr &&
+        state != nullptr) {
     state->mouse_moved(*event);
   }
 

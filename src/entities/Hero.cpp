@@ -841,7 +841,14 @@ void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location
  */
 Point Hero::get_facing_point() const {
 
-  return get_touching_point(get_animation_direction());
+  int direction = get_animation_direction();
+  if (direction > 3) {
+    // 4 directions is recommended for hero sprites.
+    // If there are more than 4 directions,
+    // then we can't guess which one corresponds to "facing".
+    direction = 0;
+  }
+  return get_touching_point(direction);
 }
 
 /**

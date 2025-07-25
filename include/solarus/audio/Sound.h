@@ -23,8 +23,6 @@
 #include <cstdint>
 #include <string>
 #include <list>
-#include <map>
-#include <optional>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <vorbis/vorbisfile.h>
@@ -88,7 +86,6 @@ class SOLARUS_API Sound: public ExportableToLua {
     explicit Sound(const SoundBuffer& data);
     float get_actual_volume() const;
     bool update_playing();
-    void stop_source();
     static void update_device_connection();
     void notify_device_disconnected();
 

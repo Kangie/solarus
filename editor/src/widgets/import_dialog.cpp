@@ -19,6 +19,7 @@
 #include "audio.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "file_tools.h"
 #include <QCheckBox>
 #include <QFileDialog>
@@ -45,6 +46,9 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
 
   Q_ASSERT(destination_quest.exists());
 
+  EditorStyle::setAutoIconColor(ui.source_quest_browse_button, EditorStyle::AutoIconColor::ForegroundColor);
+  EditorStyle::setAutoIconColor(ui.find_missing_button, EditorStyle::AutoIconColor::ForegroundColor);
+
   ui.source_quest_tree_view->set_read_only(true);
   ui.source_quest_tree_view->set_opening_files_allowed(false);
 
@@ -56,6 +60,7 @@ ImportDialog::ImportDialog(Quest& destination_quest, QWidget* parent) :
   QPushButton* importButton = ui.button_box->button(QDialogButtonBox::Apply);
   importButton->setText(tr("Import files"));
   importButton->setIcon(QIcon(":/images/icon_next"));
+  EditorStyle::setAutoIconColor(importButton, EditorStyle::AutoIconColor::ForegroundColor);
 
   connect(ui.source_quest_browse_button, &QToolButton::clicked,
           this, &ImportDialog::browse_source_quest);

@@ -19,9 +19,9 @@ The random path movement is a particular case of [path movement](./path-movement
 
 ## Methods Inherited from `movement`
 
-Random path movements are particular [movement](./overview.md) objects. Therefore, they inherit all methods from the type movement.
+Random path movements are particular [movement](./index.md) objects. Therefore, they inherit all methods from the type movement.
 
-See [movement](./overview.md#methods-of-all-movement-types) to know these methods.
+See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 ## Methods of the type `random_path_movement`
 
@@ -52,10 +52,10 @@ Return value (number)
 
 !!! note "Note"
 
-    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./overview.md#movementget_direction4).
+    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./index.md#movementget_direction4).
 
 ## Events Inherited from `movement`
 
-Random path movements are particular [movement](./overview.md) objects. Therefore, they inherit all events from the type movement.
+Random path movements are particular [movement](./index.md) objects. Therefore, they inherit all events from the type movement.
 
-See [movement](./overview.md#events-of-all-movement-types) to know these events.
+See [movement](./index.md#events-of-all-movement-types) to know these events.

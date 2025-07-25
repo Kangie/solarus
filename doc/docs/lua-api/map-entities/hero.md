@@ -4,7 +4,7 @@
 
 The hero is the character controlled by the player. There is always exactly one hero on the current map. The hero is automatically created by the engine: you cannot create or remove him.
 
-The name of the hero (as returned by [`entity:get_name()`](./overview.md#entityget_name)) is always `"hero"` Therefore, from a script, you can access the hero with `map:get_entity("hero")` or, if you are in a map script, directly with the `hero` variable (see [`map:get_entity()`](../map.md#mapget_entityname) for more details). There are also quick accessors [`map:get_hero()`](../map.md#mapget_hero) and [`game:get_hero()`](../game.md#gameget_hero) to retrieve the hero more easily.
+The name of the hero (as returned by [`entity:get_name()`](./index.md#entityget_name)) is always `"hero"` Therefore, from a script, you can access the hero with `map:get_entity("hero")` or, if you are in a map script, directly with the `hero` variable (see [`map:get_entity()`](../map.md#mapget_entityname) for more details). There are also quick accessors [`map:get_hero()`](../map.md#mapget_hero) and [`game:get_hero()`](../game.md#gameget_hero) to retrieve the hero more easily.
 
 His size is always `16×16` pixels.
 
@@ -14,13 +14,13 @@ We describe here the Lua API that you can use to change the hero's state.
 
 ### Hero sprites
 
-Multiple sprites for the hero are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite([name])`](./overview.md#entityget_spritename).
+Multiple sprites for the hero are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite([name])`](./index.md#entityget_spritename).
 
 Here is the list of hero sprites created by the engine and their names:
 
 | Sprite          | Role                                                                                                                                         |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `"tunic"`       | Main sprite of the hero. It always exists.</br>This is the default one in [`entity:get_sprite([name])`](./overview.md#entityget_spritename). |
+| `"tunic"`       | Main sprite of the hero. It always exists.</br>This is the default one in [`entity:get_sprite([name])`](./index.md#entityget_spritename). |
 | `"shield"`      | Shield if any.                                                                                                                               |
 | `"sword"`       | Sword if any.                                                                                                                                |
 | `"sword_stars"` | Small stars sparkling near the sword in some states.                                                                                         |
@@ -32,9 +32,9 @@ Keep in mind that depending on the hero's equipment, his state and the ground be
 
 ## Methods Inherited from map entity
 
-The hero is a particular [map entity](./overview.md). Therefore, he inherits all methods from the type map entity.
+The hero is a particular [map entity](./index.md). Therefore, he inherits all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type hero
 
@@ -51,7 +51,7 @@ Teletransports the hero to a different place.
 : Name of the [destination entity](./destination.md) where to go on that map, or the special keyword `"_same"` to keep the same coordinates. Can also be the special keyword `"_side0"`, `"_side1"`, `"_side2"` or `"_side3"` to arrive near the East, North, West or South frontier of the map respectively. But the hero should be near the corresponding side of the original map for this to look okay. This is usually used in combination with scrolling transitions. No value means the default destination entity of the map. If the destination does not exist, a debugging message is logged and the default destination is used as a fallback. Finally, if there is no destination at all, then no default destination can be used. In this case, another debugging message is logged and the hero is placed at coordinates `(0,0)`
 
 `transition_style` (string, optional)
-: `"immediate"` (no transition effect) `"fade"` (fade-out and fade-in effect) or `"scrolling"` No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default.
+: `"immediate"` (no transition effect), `"fade"` (fade-out and fade-in effect) or `"scrolling"`. No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default.
 
 !!! note "Note"
 
@@ -66,7 +66,7 @@ Return value (number)
 
 !!! note "Note"
 
-    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/overview.md).
+    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/index.md).
 
 ### `hero:set_direction(direction4)`
 
@@ -77,7 +77,7 @@ Sets the direction of the hero's [sprites](../drawable-objects/sprite.md).
 
 !!! note "Note"
 
-    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/overview.md).
+    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/index.md).
 
 ### `hero:get_walking_speed()`
 
@@ -269,7 +269,7 @@ Return value (boolean)
 
 !!! note "Note"
 
-    The visibility property of the hero is independent from this. Even when the sprites are blinking, the result of [`hero:is_visible()`](./overview.md#entityis_visible) is unchanged.
+    The visibility property of the hero is independent from this. Even when the sprites are blinking, the result of [`hero:is_visible()`](./index.md#entityis_visible) is unchanged.
 
 ### `hero:set_blinking([blinking, [duration]])`
 
@@ -298,7 +298,7 @@ After you call this method, the [state](#heroget_state) of the hero is `"frozen"
 
 ### `hero:unfreeze()`
 
-Restores the control to the player. The control may have been lost for example by a call to [`hero:freeze()`](#herofreeze) or to [`some_movement:start(hero)`](../movements/overview.md#movementstartobject_to_move-callback).
+Restores the control to the player. The control may have been lost for example by a call to [`hero:freeze()`](#herofreeze) or to [`some_movement:start(hero)`](../movements/index.md#movementstartobject_to_move-callback).
 
 ### `hero:walk(path, [loop, [ignore_obstacles]])`
 
@@ -349,7 +349,7 @@ If the player is not allowed to perform this attack now (because he does not hav
 
 Makes the hero use an [equipment item](../equipment-items.md).
 
-The [`item:on_using()`](../equipment-items.md#itemon_using) event will be called and the player won't be able to control the hero until you call [`item:set_finished()`](../equipment-items.md#itemset_finished). See the documentation of [equipment items](../equipment-items.md) for more information.
+The [`item:on_using()`](../equipment-items.md#itemon_usinghero) event will be called and the player won't be able to control the hero until you call [`item:set_finished()`](../equipment-items.md#itemset_finished). See the documentation of [equipment items](../equipment-items.md) for more information.
 
 This function does the same as what happens when the player presses a game [command](../game.md#game-commands) corresponding to this equipment item. You can use it to trigger the item from your script instead of from a game command.
 
@@ -446,7 +446,7 @@ This method hurts the hero even if enemies cannot, including when the hero is te
 
 Same as [`hero:start_hurt(source_x, source_y, damage)`](#herostart_hurtsource_x-source_y-damage), but specifying the source coordinates as an optional entity and possibly its sprite.
 
-`source_entity` ([map entity](./overview.md), optional)
+`source_entity` ([map entity](./index.md), optional)
 : Whatever hurts the hero. The coordinates of this source entity are used to push the hero away from that source. No value means that the hero will not be pushed away.
 
 `source_sprite` ([sprite](../drawable-objects/sprite.md), optional)
@@ -675,7 +675,7 @@ Built-in ability levels indicate whether the hero can perform some built-in acti
     - `"sword_spin_attack"`: Ability to make a spin attack. 1 is a normal spin attack, 2 is a super spin attack where the hero makes circles.
     - `"tunic"`: Resistance level that reduces the damage received by the hero. Determines the default sprite used for the hero's body. The initial value is `1`.
     - `"shield"`: Protection against enemies. Allows to avoid some attacks. Determines the default shield sprite.
-    - `"lift"`: Ability to [lift other entities](./overview.md#entityget_weight).
+    - `"lift"`: Ability to [lift other entities](./index.md#entityget_weight).
     - `"swim"`: Ability to swim in deep water.
     - `"jump_over_water"`: Automatically jumping when arriving into water without the `"swim"` ability.
     - `"run"`: Running when pressing the action command.
@@ -1079,9 +1079,9 @@ You can use this function if you want another sound to be played.
 
 Events are callback methods automatically called by the engine if you define them.
 
-The hero is a particular [map entity](./overview.md). Therefore, he inherits all events from the type map entity.
+The hero is a particular [map entity](./index.md). Therefore, he inherits all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type hero
 

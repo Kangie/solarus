@@ -16,4 +16,4 @@ function sol.main.on_finished()
 end
 ```
 
-See the [Lua API](../lua-api/introduction.md) for more information about Lua scripting in Solarus.
+See the [Lua API](../lua-api/index.md) for more information about Lua scripting in Solarus.

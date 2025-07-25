@@ -4,7 +4,7 @@
 
 This is an explosion whose sprite hurts the [hero](./hero.md) and [enemies](./enemy.md).
 
-You can create this type of [map entity](./overview.md) only dynamically with [`map:create_explosion()`](../map.md#mapcreate_explosionproperties). It cannot be declared in the [map data file](../map.md#map-files).
+You can create this type of [map entity](./index.md) only dynamically with [`map:create_explosion()`](../map.md#mapcreate_explosionproperties). It cannot be declared in the [map data file](../map.md#map-files).
 
 !!! note "Historical Feature"
 
@@ -16,9 +16,9 @@ Explosions hurt the [hero](./hero.md) and [enemies](./enemy.md) that are sensibl
 
 ## Methods Inherited from map entity
 
-Explosions are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Explosions are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type explosion
 
@@ -28,9 +28,9 @@ None.
 
 Events are callback methods automatically called by the engine if you define them.
 
-Explosions are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Explosions are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type explosion
 

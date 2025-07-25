@@ -1232,12 +1232,17 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
   get_undo_stack().setClean();
 
   // Prepare the gui.
-  const int side_width = 400;
+  EditorSettings settings;
+  const int side_width = settings.get_value_int(EditorSettings::map_side_width);;
   ui.splitter->setSizes({ side_width, width() - side_width });
   ui.splitter->setStretchFactor(0, 0);  // Don't expand the left panel
   ui.splitter->setStretchFactor(1, 1);  // but only the map view.
+
+  const int map_props_height = settings.get_value_int(EditorSettings::map_props_height);;
+  ui.map_side_splitter->setSizes({ map_props_height, height() - map_props_height });
   ui.map_side_splitter->setStretchFactor(0, 0);  // Don't expand the map properties view
   ui.map_side_splitter->setStretchFactor(1, 1);  // but only the tileset view.
+
   ui.music_field->set_quest(quest);
   ui.music_field->get_selector().add_special_value("none", tr("<No music>"), 0);
   ui.music_field->get_selector().add_special_value("same", tr("<Same as before>"), 1);
@@ -1391,6 +1396,11 @@ MapEditor::MapEditor(Quest& quest, const QString& path, QWidget* parent) :
           this, &MapEditor::map_selection_changed);
   connect(map, &MapModel::bulk_mode_changed,
           this, &MapEditor::map_bulk_mode_changed);
+
+  connect(ui.splitter, &QSplitter::splitterMoved,
+          this, &MapEditor::map_side_resized);
+  connect(ui.map_side_splitter, &QSplitter::splitterMoved,
+          this, &MapEditor::map_props_resized);
 
   // Qlementine-related stuff.
   for (auto* widget : std::vector<QWidget*>{
@@ -2749,6 +2759,30 @@ void MapEditor::load_settings() {
     settings.get_value_double(EditorSettings::map_tileset_zoom));
 
   reload_settings();
+}
+
+/**
+ * @brief Saves the map side panel width in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void MapEditor::map_side_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::map_side_width, pos);
+  }
+}
+
+/**
+ * @brief Saves the map props height in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void MapEditor::map_props_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::map_props_height, pos);
+  }
 }
 
 }

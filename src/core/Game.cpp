@@ -76,6 +76,22 @@ Game::Game(MainLoop& main_loop, const SavegamePtr& savegame):
   if (get_equipment().get_life() <= 0) {
     get_equipment().restore_all_life();
   }
+}
+
+/**
+ * \brief Starts this game.
+ *
+ * Does nothing if the game is already started.
+ */
+void Game::start() {
+
+  if (started) {
+    return;
+  }
+
+  started = true;
+  get_hero()->get_equipment().notify_game_started();
+  get_lua_context().game_on_started(*this);
 
   // Launch the starting map.
   std::string starting_map_id = savegame->get_string(Savegame::KEY_STARTING_MAP);
@@ -87,8 +103,7 @@ Game::Game(MainLoop& main_loop, const SavegamePtr& savegame):
     if (CurrentQuest::resource_exists(ResourceType::MAP, starting_map_id)) {
       // We are okay: the savegame file refers to an existing map.
       valid_map_saved = true;
-    }
-    else {
+    } else {
       // The savegame refers to a map that no longer exists.
       // Maybe the quest is in an intermediate development phase.
       // Show an error and fallback to the default map.
@@ -109,22 +124,6 @@ Game::Game(MainLoop& main_loop, const SavegamePtr& savegame):
   }
 
   teleport_hero(get_hero(), starting_map_id, starting_destination_name, Transition::Style::FADE);
-}
-
-/**
- * \brief Starts this game.
- *
- * Does nothing if the game is already started.
- */
-void Game::start() {
-
-  if (started) {
-    return;
-  }
-
-  started = true;
-  get_hero()->get_equipment().notify_game_started();
-  get_lua_context().game_on_started(*this);
 
   // Make sure to (re-)enable input
   ControlsDispatcher::get().add_commands(controls);
@@ -248,6 +247,18 @@ const Savegame& Game::get_savegame() const {
 }
 
 /**
+ * \brief Returns whether some save data is associated to this game.
+ *
+ * This is \c true unless the save data was moved to another running game,
+ * typically after restarting a game.
+ *
+ * \return \c true if there is a savegame.
+ */
+bool Game::has_savegame() const {
+  return savegame != nullptr;
+}
+
+/**
  * \brief Returns the equipment of the player.
  *
  * It is equivalent to get_savegame().get_equipment().
@@ -276,9 +287,8 @@ const Equipment& Game::get_equipment() const {
  */
 bool Game::notify_input(const InputEvent& event) {
 
-  if(current_maps.empty()) {
+  if (current_maps.empty()) {
     // no maps, game is not started yet
-
     return true; // pretend we handled the event
   }
 
@@ -287,8 +297,8 @@ bool Game::notify_input(const InputEvent& event) {
   //TODO check if at least one map must be loaded (is_loaded)
   bool handled = get_lua_context().game_on_input(*this, event);
 
-  if(!handled) {
-    for(const MapPtr& current_map : current_maps) {
+  if (!handled) {
+    for (const MapPtr& current_map : current_maps) {
       if (current_map != nullptr && current_map->is_loaded()) {
         handled |= current_map->notify_input(event);
       }
@@ -344,7 +354,7 @@ void Game::notify_control(const ControlEvent& event) {
  */
 void Game::update_teleportations() {
   // Update the transitions between maps.
-  for(auto& ct : cameras_teleportations) {
+  for (auto& ct : cameras_teleportations) {
     ct.removed = update_teleportation(ct);
   }
 
@@ -365,7 +375,7 @@ void Game::update_teleportations() {
 void Game::update() {
   SOL_PFUN(profiler::colors::Red);
 
-  //Update teleportations and transitions
+  // Update teleportations and transitions
   update_teleportations();
 
   if (restarting && cameras_teleportations.empty()) { //All transitions finished ! Restart !
@@ -377,15 +387,15 @@ void Game::update() {
   }
 
 
-  //Remove map that must be unloaded
-  for(auto it = maps_to_unload.begin(); it != maps_to_unload.end();) {
+  // Remove map that must be unloaded
+  for (auto it = maps_to_unload.begin(); it != maps_to_unload.end();) {
     const auto& map = *it;
 
     // Test if this map is target in any teleportations
-    if(std::count_if(cameras_teleportations.begin(), cameras_teleportations.end(), [&](const CameraTeleportation& ct){
+    if (std::count_if(cameras_teleportations.begin(), cameras_teleportations.end(), [&](const CameraTeleportation& ct){
             return ct.next_map == map;
         })) {
-      //skip this unload as a transition targeting the map is there
+      // skip this unload as a transition targeting the map is there
       it++;
       continue;
     }
@@ -399,15 +409,15 @@ void Game::update() {
     maps_to_unload.erase(it++); //This deletion is done
   }
 
-  if(restarting or not started) {
+  if (restarting or not started) {
     return;
   }
 
   // Update the map.
   update_tilesets();
 
-  for(const MapPtr& current_map : current_maps) {
-    if(current_map->is_started()) {
+  for (const MapPtr& current_map : current_maps) {
+    if (current_map->is_started()) {
       current_map->update();
     }
   }
@@ -417,7 +427,7 @@ void Game::update() {
 
   // Update the equipment and HUD.
   get_equipment().update(); //TODO move equipement update were equipement is located
-  //update_commands_effects();
+  // update_commands_effects();
 }
 
 /**
@@ -500,7 +510,7 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
   auto& transition_style = tp.transition_style;
   const auto& camera = tp.camera;
   auto& transition = camera->get_transition();
-  //Create opening transition
+  // Create opening transition
   transition = std::unique_ptr<Transition>(Transition::create(
       transition_style,
       Transition::Direction::OPENING
@@ -519,42 +529,42 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
   }
 
   transition->set_destination_side(next_map->get_destination_side(tp.destination_name));
-  transition->start(); //Start opening transition
+  transition->start(); // Start opening transition
 
   if (next_map != current_map) {
-    if(current_map) {
+    if (current_map) {
       leave_map(camera, current_map);
     }
 
-    //Go to the new map
+    // Go to the new map
     camera->set_layer(next_map->get_max_layer());
     camera->place_on_map(*next_map);
     camera->set_layer(next_map->get_max_layer());
   }
 
-  if(tp.opt_hero) {
+  if (tp.opt_hero) {
       on_hero_map_prepare(tp.opt_hero, tp);
   } else {
-      EntityPtr destination = next_map->get_entities().find_entity(tp.destination_name);
+    EntityPtr destination = next_map->get_entities().find_entity(tp.destination_name);
 
-      if(destination) {
-        camera->track_position(destination->get_center_point());
-      }
+    if (destination) {
+      camera->track_position(destination->get_center_point());
+    }
   }
 
-  //All entities should be there, start the map if necessary
-  if(!next_map->is_started()) {
+  // All entities should be there, start the map if necessary
+  if (!next_map->is_started()) {
     SOLARUS_REQUIRE(next_map->is_loaded(), "This map is not loaded");
     next_map->start(tp.destination_name);
   }
 
-  //Only notify map change if maps are different
-  if(next_map != current_map) {
-     notify_map_changed(*next_map, *camera);
+  // Only notify map change if maps are different
+  if (next_map != current_map) {
+    notify_map_changed(*next_map, *camera);
   }
 
-  if(tp.opt_hero) {
-      on_hero_map_change(tp.opt_hero, tp);
+  if (tp.opt_hero) {
+    on_hero_map_change(tp.opt_hero, tp);
   }
 }
 
@@ -565,7 +575,7 @@ void Game::teleportation_change_map(CameraTeleportation &tp) {
 void Game::draw(const SurfacePtr& dst_surface, const SurfacePtr& screen_surface) {
   SOL_PFUN(profiler::colors::Green);
   /** Draw maps to their camera */
-  for(const MapPtr& current_map : current_maps) {
+  for (const MapPtr& current_map : current_maps) {
     current_map->draw();
   }
 
@@ -574,13 +584,13 @@ void Game::draw(const SurfacePtr& dst_surface, const SurfacePtr& screen_surface)
     camera->draw(dst_surface, screen_surface);
   }
 
-  if(current_maps.size() > 0) {
+  if (current_maps.size() > 0) {
     // Draw the built-in dialog box if any.
     if (is_dialog_enabled()) {
       dialog_box.draw(dst_surface);
     }
 
-    //TODO check if this is at the right place
+    // TODO check if this is at the right place
     get_lua_context().game_on_draw(*this, dst_surface);
   }
 }
@@ -594,7 +604,7 @@ void Game::draw(const SurfacePtr& dst_surface, const SurfacePtr& screen_surface)
  * @param size the new window size
  */
 void Game::notify_window_size_changed(const Size& size) {
-  for(const MapPtr& current_map : current_maps) {
+  for (const MapPtr& current_map : current_maps) {
     current_map->notify_window_size_changed(size);
   }
 }
@@ -716,7 +726,7 @@ void Game::on_hero_map_prepare(const HeroPtr& hero, const CameraTeleportation &t
       previous_map_location = current_map->get_location();
     }
 
-    if(current_map and current_map != next_map) {
+    if (current_map and current_map != next_map) {
       leave_map(hero, current_map);
     }
 
@@ -743,13 +753,13 @@ void Game::teleport_hero(
     const std::string& a_destination_name,
     Transition::Style transition_style) {
 
-  if(hero->get_linked_camera()) {
+  if (hero->get_linked_camera()) {
     teleport_camera(hero->get_linked_camera(),
                     map_id,
                     a_destination_name,
                     transition_style,
                     hero);
-  } else if(is_map_loaded(map_id)) {
+  } else if (is_map_loaded(map_id)) {
     MapPtr current_map = hero->get_map().shared_from_this_cast<Map>();
     MapPtr next_map = prepare_map(map_id);
     hero->place_on_destination(*next_map, current_map->get_location(), a_destination_name);
@@ -761,16 +771,15 @@ void Game::teleport_hero(
 
     Map& map = hero->get_map();
 
-    if (map.get_entities().get_cameras().size() != 1){
+    if (map.get_entities().get_cameras().size() != 1) {
        Debug::error("Ambiguous teleportation of a hero without camera from a map with "
                     + std::to_string(map.get_entities().get_cameras().size())
                     + " cameras.");
     }
 
-    Debug::warning("Deprecated: Teleporting untracked hero to an unloaded map. Consider using camera:teleport() or track hero.");
     set_suspended_by_script(false);  // Keep the pre 2.0 behavior
 
-    // Relink unique camera to hero before teleportation
+    // Relink unique camera to hero before teleportation.
     CameraPtr cam = map.get_camera();
     hero->set_linked_camera(cam);
     cam->set_position_on_screen({0, 0});
@@ -816,7 +825,7 @@ void Game::teleport_camera(const CameraPtr& camera,
   });
 
   // Set the old tp to be removed
-  if(it != cameras_teleportations.end()) {
+  if (it != cameras_teleportations.end()) {
     it->removed = true;
   }
 
@@ -825,12 +834,12 @@ void Game::teleport_camera(const CameraPtr& camera,
   ct.camera = camera;
   ct.opt_hero = opt_hero;
 
-  if(camera->is_on_map()) {
+  if (camera->is_on_map()) {
     ct.current_map = camera->get_map().shared_from_this_cast<Map>();
   }
 
   // prepare the next map
-  if(map_id.empty()) {
+  if (map_id.empty()) {
     ct.next_map = nullptr;
   } else {
     ct.next_map = prepare_map(map_id);
@@ -852,8 +861,8 @@ void Game::teleport_camera(const CameraPtr& camera,
   transition->start();
   ct.camera->set_transition(std::move(transition));
 
-  //Camera teleported without hero, stop tracking
-  if(!opt_hero) {
+  // Camera teleported without hero, stop tracking
+  if (!opt_hero) {
     camera->start_manual();
   }
 
@@ -932,8 +941,8 @@ const MapPtr& Game::prepare_map(const std::string& map_id) {
     return map->get_id() == map_id;
   });
 
-  //If map is already loaded, return it immediatly
-  if(it != current_maps.end()) {
+  // If map is already loaded, return it immediatly
+  if (it != current_maps.end()) {
     return *it;
   }
 

@@ -64,7 +64,7 @@ struct CustomId {
 
 using Command = std::variant<CommandId, CustomId>;
 
-enum class AxisId{
+enum class AxisId {
     NONE = -1,
     X,
     Y

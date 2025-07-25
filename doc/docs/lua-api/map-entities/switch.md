@@ -4,7 +4,7 @@
 
 A switch is a button that can be activated to trigger a mechanism.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_switch()`](../map.md#mapcreate_switchproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_switch()`](../map.md#mapcreate_switchproperties).
 
 A switch may be activated by the [hero](./hero.md), by a [block](./block.md) or by a projectile, depending on its subtype. The following subtypes of switches are available:
 
@@ -12,7 +12,7 @@ A switch may be activated by the [hero](./hero.md), by a [block](./block.md) or 
 - Button to be activated by shooting an [arrow](./arrow.md) on it with the [bow](./hero.md#herostart_bow).
 - Solid switch to be activated with the sword or other weapons.
 
-When a switch is activated, the event [`switch:on_activated()`](#switchon_activatedentity) is called. Define that event to implement what happens: [opening a door](../map.md#mapopen_doorsprefix), [showing a chest](./overview.md#entityset_enabledenabled), etc.
+When a switch is activated, the event [`switch:on_activated()`](#switchon_activatedentity) is called. Define that event to implement what happens: [opening a door](../map.md#mapopen_doorsprefix), [showing a chest](./index.md#entityset_enabledenabled), etc.
 
 Some switches get inactivated when the hero (or the entity that activated them) leaves them. In this case, when the switch is inactivated, the event [`switch:on_inactivated()`](#switchon_inactivatedentity) is called.
 
@@ -20,9 +20,9 @@ The size of a switch is always 16×16 pixels. Its [sprite](../drawable-objects/s
 
 ## Methods Inherited from map entity
 
-Switches are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Switches are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type switch
 
@@ -105,9 +105,9 @@ Sets whether the switch becomes inactivated when the [hero](./hero.md) or the [b
 
 Events are callback methods automatically called by the engine if you define them.
 
-Switches are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Switches are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type switch
 
@@ -117,7 +117,7 @@ The following events are specific to switches.
 
 Called when this switch has just been turned on.
 
-`entity` ([entity](./overview.md))
+`entity` ([entity](./index.md))
 : The entity that activated the switch, or `nil`.
 
 This is the right place to define the action that you want your switch to perform.
@@ -126,12 +126,12 @@ This is the right place to define the action that you want your switch to perfor
 
 Called when a switch has just been turned off.
 
-`entity` ([entity](./overview.md))
+`entity` ([entity](./index.md))
 : The entity that inactivated the switch, or `nil`.
 
 ### `switch:on_left([entity])`
 
 Called when an entity placed on a switch (like the [hero](./hero.md) or a [block](./block.md)) has just left the switch, regardless of whether the switch was activated or not.
 
-`entity` ([entity](./overview.md))
+`entity` ([entity](./index.md))
 : The entity that left the switch, or `nil`.

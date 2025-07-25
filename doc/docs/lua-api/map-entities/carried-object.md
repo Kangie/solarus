@@ -2,15 +2,15 @@
 
 ## Overview
 
-A carried object is a [map entity](./overview.md) that the [hero](./hero.md) is lifting, carrying or throwing.
+A carried object is a [map entity](./index.md) that the [hero](./hero.md) is lifting, carrying or throwing.
 
-A carried object is created automatically by the engine when the [hero](./hero.md) [lifts a map entity](./overview.md#entityget_weight), typically a [destructible object](./destructible.md). The carried object takes the sprite and the features of the lifted entity it is created from.
+A carried object is created automatically by the engine when the [hero](./hero.md) [lifts a map entity](./index.md#entityget_weight), typically a [destructible object](./destructible.md). The carried object takes the sprite and the features of the lifted entity it is created from.
 
 The hero can then walk with his carried object and throw it. He can even go to another map: the carried object is preserved.
 
 ### Carried Object Sprites
 
-Two sprites for a carried object are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite(name)`](./overview.md#entityget_spritename).
+Two sprites for a carried object are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite(name)`](./index.md#entityget_spritename).
 
 `"main"` (default)
 : Main sprite representing the carried object. Its animation set is the one of the original entity he was created from (like a [destructible object](./destructible.md)).
@@ -24,9 +24,9 @@ Two sprites for a carried object are automatically created by the engine. You ca
 
 ## Methods Inherited from map entity
 
-Carried objects are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Carried objects are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type carried object
 
@@ -34,9 +34,9 @@ The following methods are specific to carried objects.
 
 ### `carried_object:get_carrier()`
 
-Returns the [entity](./overview.md) that carried this object.
+Returns the [entity](./index.md) that carried this object.
 
-Return value ([entity](./overview.md))
+Return value ([entity](./index.md))
 : The carrier entity.
 
 ### `carried_object:get_damage_on_enemies()`
@@ -141,9 +141,9 @@ Changes the sound to play when the object is exploding. By default, the sound us
 
 Events are callback methods automatically called by the engine if you define them.
 
-Carried objects are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Carried objects are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type carried object
 

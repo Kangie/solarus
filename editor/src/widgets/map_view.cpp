@@ -683,7 +683,7 @@ void MapView::build_context_menu_layer_actions() {
   set_layer_actions_group = new QActionGroup(this);
   set_layer_actions_group->setExclusive(true);
   for (int layer = get_map()->get_min_layer(); layer <= get_map()->get_max_layer(); ++layer) {
-    const QIcon icon = layer >= 0 && layer <= 3 ? QIcon(QString(":/images/icon_layer_%1.svg").arg(layer)) : QIcon{};
+    const QIcon icon = layer >= 0 && layer < 3 ? QIcon(QString(":/images/icon_layer_%1.svg").arg(layer)) : QIcon{};
     QAction* action = new QAction(icon, tr("Layer %1").arg(layer), set_layer_actions_group);
     action->setCheckable(true);
     connect(action, &QAction::triggered, this, [this, layer]() {

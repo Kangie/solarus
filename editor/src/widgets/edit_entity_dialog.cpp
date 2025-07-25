@@ -18,6 +18,7 @@
 #include "widgets/edit_entity_dialog.h"
 #include "widgets/gui_tools.h"
 #include "widgets/new_entity_user_property_dialog.h"
+#include "editor_style.h"
 #include "map_model.h"
 #include "quest.h"
 #include "tileset_model.h"
@@ -69,6 +70,12 @@ EditEntityDialog::EditEntityDialog(EntityModel& entity_before, QWidget* parent) 
   resize_mode(entity_before.get_resize_mode()) {
 
   ui.setupUi(this);
+
+  EditorStyle::setAutoIconColor(ui.add_property_button, EditorStyle::AutoIconColor::ForegroundColor);
+  EditorStyle::setAutoIconColor(ui.change_property_key_button, EditorStyle::AutoIconColor::ForegroundColor);
+  EditorStyle::setAutoIconColor(ui.delete_property_button, EditorStyle::AutoIconColor::ForegroundColor);
+  EditorStyle::setAutoIconColor(ui.move_property_down_button, EditorStyle::AutoIconColor::ForegroundColor);
+  EditorStyle::setAutoIconColor(ui.move_property_up_button, EditorStyle::AutoIconColor::ForegroundColor);
 
   initialize();
 }

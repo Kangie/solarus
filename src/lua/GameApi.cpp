@@ -621,7 +621,8 @@ int LuaContext::game_api_get_map(lua_State* l) {
       lua_pushnil(l);
     }
     else {
-      push_map(l, game->get_default_map());
+      Map& map = game->get_default_map();
+      push_map(l, map);
     }
     return 1;
   });

@@ -8,10 +8,10 @@ Solarus is a **free and open-source game engine** for **2D games**, licensed und
 
 This website features these sections:
 
-- [**Tutorial**](tutorials/introduction.md): A step-by-step guide to create a game with Solarus.
-- [**Lua API Reference**](lua-api/introduction.md): A reference of everything that Solarus offers to make your game.
-- [**Migration guide**](tutorials/migration/introduction.md): Instructions if you need to upgrade your game to the latest version of Solarus.
-- [**Files Specifications**](files-specs/introduction.md): The specification of the format of every file of your game.
-- [**Resources**](resources/introduction.md): Useful resources (scripts, graphics, music, etc.) for your game.
+- [**Tutorial**](tutorials/index.md): A step-by-step guide to create a game with Solarus.
+- [**Lua API Reference**](lua-api/index.md): A reference of everything that Solarus offers to make your game.
+- [**Migration guide**](tutorials/migration/index.md): Instructions if you need to upgrade your game to the latest version of Solarus.
+- [**Files Specifications**](files-specs/index.md): The specification of the format of every file of your game.
+- [**Resources**](resources/index.md): Useful resources (scripts, graphics, music, etc.) for your game.
 
 ![Screenshot](assets/images/children-of-solarus-screenshot.webp)

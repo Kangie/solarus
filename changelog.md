@@ -1,11 +1,20 @@
 # Changelog
 
-## Solarus 2.0.1 (in progress)
+## Solarus 2.0.2 (In progress)
+
+## Solarus 2.0.1 (2025-07-23)
 
 * Fix `game:start/stop_game_over()` hero optional parameter (#1900).
 * Fix immediate transitions suspending the hero (#1691).
+* Fix teletransporters to unloaded map without camera (#1907).
+* Fix map and hero initialized before `game:on_started()` (#1689).
 * Fix crash when creating a music without playing it immediately (#1896).
+* Fix crash when calling `sol.main.get_game()` while restarting (#1904).
+* Fix crash if hero sprites have more than 4 directions (#1493).
+* Fix legacy support of drawing to camera surface from set_draw_override.
 * Fix possible duplicate name when creating an entity dynamically (#1908).
+* Fix OpenAL error A003 when stopping a music that was just started.
+* Fix OpenAL error A004 when stopping a sound.
 * Fix index offsets for channels of IT music files.
 * Fix possible error when retrieving joypad name (#1895).
 * Add hero argument to `item:on_using()` event (#1899).

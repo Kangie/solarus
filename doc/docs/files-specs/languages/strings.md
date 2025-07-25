@@ -4,7 +4,7 @@
 
 Strings displayed during the game, for example in your menus, need to be localized in the current language. To this end, a `strings.dat` file is placed inside each `languages/xx/text` directory, where `xx` is a language code defined in [project_db.dat](../database-file.md) (e.g. `"en"` or `"fr"`)
 
-When translating the game, you have to translate this `strings.dat`file as well as the [dialogs file](./dialogs.md) (`dialogs.dat`) Have a look at the [translation page](../../tutorials/quest-creation/translate-a-quest.md) if you are interested in translating the game (and you should also contact us).
+When translating the game, you have to translate this `strings.dat`file as well as the [dialogs file](./dialogs.md) (`dialogs.dat`) Have a look at the [translation page](../../tutorials/manual/translate-a-quest.md) if you are interested in translating the game (and you should also contact us).
 
 Solarus Editor fully supports the edition of string files. You can either use it to edit a string file graphically, or you can edit `strings.dat` by hand in a text editor if you prefer.
 

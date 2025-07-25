@@ -1515,7 +1515,9 @@ int LuaContext::userdata_meta_newindex_as_table(lua_State* l) {
     lua_gettable(l, -2);
                                   // ... udata_tables udata_table
   }
-  SOLARUS_REQUIRE(!lua_isnil(l, -1), "Missing userdata table");
+  if (lua_isnil(l, -1)) {
+    LuaTools::arg_error(l, 1, std::string("Cannot find userdata table for object ") + userdata->get_lua_type_name());
+  }
   lua_pushvalue(l, 2);
                                   // ... udata_tables udata_table key
   lua_pushvalue(l, 3);

@@ -4,9 +4,9 @@ A path movement follows a specified path on an 8×8 pixels grid, in an 8-directi
 
 ## Methods Inherited from `movement`
 
-Path movements are particular [movement](./overview.md) objects. Therefore, they inherit all methods from the type `movement`.
+Path movements are particular [movement](./index.md) objects. Therefore, they inherit all methods from the type `movement`.
 
-See [movement](./overview.md#methods-of-all-movement-types) to know these methods.
+See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 ## Methods of the type `path_movement`
 
@@ -72,7 +72,7 @@ Sets whether this movement repeats itself once the end of the path is reached.
 
 ### `path_movement:get_snap_to_grid()`
 
-Returns whether this movement automatically snaps to the [map](../map.md) grid the [map entity](../map-entities/overview.md) that it controls.
+Returns whether this movement automatically snaps to the [map](../map.md) grid the [map entity](../map-entities/index.md) that it controls.
 
 The map grid is composed of squares of 8×8 pixels. All tiles are aligned to the grid. This property has no effect if there is no current map of if this movement is not attached to a map entity.
 
@@ -81,9 +81,9 @@ Return value (boolean)
 
 ### `path_movement:set_snap_to_grid([snap])`
 
-Sets whether this movement should automatically snap to the [map](../map.md) grid the [map entity](../map-entities/overview.md) that it controls.
+Sets whether this movement should automatically snap to the [map](../map.md) grid the [map entity](../map-entities/index.md) that it controls.
 
-The map grid is composed of squares of 8×8 pixels. All tiles are aligned to the grid. This property has no effect if there is no current map of if this movement is not attached to a [map entity](../map-entities/overview.md).
+The map grid is composed of squares of 8×8 pixels. All tiles are aligned to the grid. This property has no effect if there is no current map of if this movement is not attached to a [map entity](../map-entities/index.md).
 
 `snap` (boolean, optional)
 : `true` to make this movement automatically snap its map entity to the map grid. No value means `true`
@@ -99,10 +99,10 @@ Return value (number)
 
 !!! note "Note"
 
-    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./overview.md#movementget_direction4).
+    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./index.md#movementget_direction4).
 
 ## Events Inherited from `movement`
 
-Path movements are particular [movement](./overview.md) objects. Therefore, they inherit all events from the type movement.
+Path movements are particular [movement](./index.md) objects. Therefore, they inherit all events from the type movement.
 
-See [movement](./overview.md#events-of-all-movement-types) to know these events.
+See [movement](./index.md#events-of-all-movement-types) to know these events.

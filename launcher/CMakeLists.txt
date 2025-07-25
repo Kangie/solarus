@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19.0)
 
 project("solarus-launcher"
   LANGUAGES CXX
-  VERSION 2.0.1
+  VERSION 2.0.2
   HOMEPAGE_URL "https://www.solarus-games.org"
   DESCRIPTION "Game Launcher for Solarus Quests"
 )
@@ -19,7 +19,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/addTarget.cmake)
 # Configure build for each platform.
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macOS/macOSConfig.cmake)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT MINGW)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/windowsConfig.cmake)
 elseif(UNIX AND NOT APPLE OR MINGW)
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/linux/linuxConfig.cmake)

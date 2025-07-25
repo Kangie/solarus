@@ -16,4 +16,4 @@ Most tiles don't exist individually at runtime, because the engine makes a speci
 
 !!! note "Note"
 
-    There exists situations where you want to create, remove, enable or disable a tile from your script. [Dynamic tiles](./dynamic-tile.md) are made for that. Dynamic tiles are like normal tiles, except that they are not optimized as explained above: they do exist at runtime. You can access them from your script and call methods such as [`dynamic_tile:set_enabled()`](./overview.md#entityset_enabledenabled).
+    There exists situations where you want to create, remove, enable or disable a tile from your script. [Dynamic tiles](./dynamic-tile.md) are made for that. Dynamic tiles are like normal tiles, except that they are not optimized as explained above: they do exist at runtime. You can access them from your script and call methods such as [`dynamic_tile:set_enabled()`](./index.md#entityset_enabledenabled).

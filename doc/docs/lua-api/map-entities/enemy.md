@@ -4,9 +4,9 @@
 
 An enemy is a bad guy that hurts the [hero](./hero.md) when touching him.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_enemy()`](../map.md#mapcreate_enemyproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_enemy()`](../map.md#mapcreate_enemyproperties).
 
-Enemies can exist in various breeds. Each breed corresponds to a model of enemy with its behavior, its [sprites](../drawable-objects/sprite.md) and its [movements](../movements/overview.md).
+Enemies can exist in various breeds. Each breed corresponds to a model of enemy with its behavior, its [sprites](../drawable-objects/sprite.md) and its [movements](../movements/index.md).
 
 The script file `enemies/XXXX.lua` defines the enemy breed `XXXX` This script is executed every time an enemy of that model is created. The corresponding Lua enemy object is passed as parameter of that script. Use the Lua notation `...` to get this parameter and store it into a regular variable.
 
@@ -47,7 +47,7 @@ Basic enemies often have the same behavior. To avoid duplication of code, you ca
 
 ## Methods Inherited from map entity
 
-Enemies are particular [map entities](./overview.md). Therefore, they inherit [all methods](./overview.md#methods-of-all-entity-types) from the type map entity.
+Enemies are particular [map entities](./index.md). Therefore, they inherit [all methods](./index.md#methods-of-all-entity-types) from the type map entity.
 
 ## Methods of the type enemy
 
@@ -262,11 +262,11 @@ Sets the kind of collision test performed to detect when the hero should be hurt
 collision_mode (string)
 : A collision mode name. This may be one of:
 
-    - `"overlapping"`: Collision if the [bounding box](./overview.md#entityget_bounding_box) of the enemy and the hero overlap.
+    - `"overlapping"`: Collision if the [bounding box](./index.md#entityget_bounding_box) of the enemy and the hero overlap.
     - `"containing"`: Collision if the bounding box of the hero is fully inside the bounding box of this enemy.
-    - `"origin"`: Collision if the [origin point](./overview.md#entityget_origin) or the hero is inside the bounding box of this enemy.
-    - `"center"`: Collision if the [center point](./overview.md#entityget_center_position) of the hero is inside the bounding box of this enemy.
-    - `"facing"`: Collision if the [facing position](./overview.md#entityget_facing_position) of the hero's bounding box is touching this enemy's bounding box. Bounding boxes don't necessarily overlap, but they are in contact: there is no space between them. When you consider the bounding box of the hero, which is a rectangle with four sides, the facing point is the middle point of the side the hero is oriented to.
+    - `"origin"`: Collision if the [origin point](./index.md#entityget_origin) or the hero is inside the bounding box of this enemy.
+    - `"center"`: Collision if the [center point](./index.md#entityget_center_position) of the hero is inside the bounding box of this enemy.
+    - `"facing"`: Collision if the [facing position](./index.md#entityget_facing_position) of the hero's bounding box is touching this enemy's bounding box. Bounding boxes don't necessarily overlap, but they are in contact: there is no space between them. When you consider the bounding box of the hero, which is a rectangle with four sides, the facing point is the middle point of the side the hero is oriented to.
     - `"touching"`: Like `"facing"`, but accepts all four sides of the hero's bounding box, no matter its direction. This `"touching"` collision test is useful when the hero cannot traverse your enemy (see [`enemy:set_traversable()`](#enemyset_traversabletraversable)).
     - `"sprite"`: Collision if the tunic sprite of the hero overlaps a sprite of this enemy. The collision test is pixel precise. This is the default value.
 
@@ -602,9 +602,9 @@ Return value (enemy or [pickable treasure](./pickable.md))
 
 Events are callback methods automatically called by the engine if you define them.
 
-Enemies are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Enemies are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [](./overview.md#events-of-all-entity-types) to know these events.
+See [](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type enemy
 
@@ -620,7 +620,7 @@ Called at each cycle while this enemy is alive.
 
 ### `enemy:on_restarted()`
 
-Called when this enemy should start or restart its [movement](../movements/overview.md) and [timers](../timers.md) because something happened. For example, the enemy has just been created, or it was just hurt or immobilized, or you called [`enemy:restart()`](#enemyrestart). If your enemy should move, this is the right place to create its movement.
+Called when this enemy should start or restart its [movement](../movements/index.md) and [timers](../timers.md) because something happened. For example, the enemy has just been created, or it was just hurt or immobilized, or you called [`enemy:restart()`](#enemyrestart). If your enemy should move, this is the right place to create its movement.
 
 [Timers](../timers.md) associated to the enemy were automatically destroyed. Thus, you should also recreate them from this event.
 
@@ -705,7 +705,7 @@ In all cases, the enemy will be removed from the map when the dying animation en
 
 Called when the enemy's dying animation is finished.
 
-At this point, the enemy no longer exists on the map. In other words, [`enemy:exists()`](./overview.md#entityexists) returns `false`,trying to get the enemy from its name returns `nil`,and functions like [`map:get_entities(prefix)`](../map.md#mapget_entities_countprefix) won't find this enemy.
+At this point, the enemy no longer exists on the map. In other words, [`enemy:exists()`](./index.md#entityexists) returns `false`,trying to get the enemy from its name returns `nil`,and functions like [`map:get_entities(prefix)`](../map.md#mapget_entities_countprefix) won't find this enemy.
 
 This means that you can safely use [`map:has_entities(prefix)`](../map.md#maphas_entitiesprefix) from `enemy:on_dead()` to detect when all enemies with a common prefix are dead.
 

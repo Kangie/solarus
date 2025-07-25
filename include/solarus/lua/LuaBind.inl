@@ -475,7 +475,7 @@ template<typename T>
 T check_arg(lua_State* L, int index, const CheckContext& context);
 
 /**
- * \brief Check the type of the value at index, return it if the type is
+ * \brief Check the type of the value at index, returns it if the type is
  *   correct, otherwise raise a type error.
  * \tparam T C/C++ type to return, should be from AsReturn.
  * \param L The Lua stack.
@@ -508,6 +508,10 @@ struct CheckStack {
     } else {
       if (LuaTypeId<T>::value == lua_type(L, index)) {
         return to_type<T>(L, index);
+      }
+      if (LuaTypeId<T>::value == LUA_TSTRING && lua_type(L, index) == LUA_TNUMBER) {
+          // Allow number to string conversion like lua_tostring does.
+          return to_type<T>(L, index);
       }
       const char * name = lua_typename(L, LuaTypeId<T>::value);
       type_error(context, L, index, name);

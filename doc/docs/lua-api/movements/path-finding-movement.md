@@ -1,6 +1,6 @@
 # Path Finding Movement
 
-A path finding movement is a particular [path movement](./path-movement.md) where the path is calculated to reach a target. The target is a [map entity](../map-entities/overview.md) (by default the [hero](../map-entities/hero.md)).
+A path finding movement is a particular [path movement](./path-movement.md) where the path is calculated to reach a target. The target is a [map entity](../map-entities/index.md) (by default the [hero](../map-entities/hero.md)).
 
 The movement calculates repeatedly the shortest path towards the target entity, taking into account obstacles of the [map](../map.md). With this type of movement, an entity is capable of finding its way in a maze.
 
@@ -12,9 +12,9 @@ The movement calculates repeatedly the shortest path towards the target entity, 
 
 ## Methods Inherited from `movement`
 
-Path finding movements are particular [movement](./overview.md) objects. Therefore, they inherit all methods from the type movement.
+Path finding movements are particular [movement](./index.md) objects. Therefore, they inherit all methods from the type movement.
 
-See [movement](./overview.md#methods-of-all-movement-types) to know these methods.
+See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 ## Methods of the type `path_finding_movement`
 
@@ -24,7 +24,7 @@ The following methods are specific to path finding movements.
 
 Sets the target entity of this movement.
 
-`entity` ([entity](../map-entities/overview.md))
+`entity` ([entity](../map-entities/index.md))
 : The entity to target.
 
 ### `path_finding_movement:get_speed()`
@@ -52,10 +52,10 @@ Return value (number)
 
 !!! note "Note"
 
-    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./overview.md#movementget_direction4).
+    If you prefer a value in a 4-direction system, see [`movement:get_direction4()`](./index.md#movementget_direction4).
 
 ## Events Inherited from `movement`
 
-Path finding movements are particular [movement](./overview.md) objects. Therefore, they inherit all events from the type movement.
+Path finding movements are particular [movement](./index.md) objects. Therefore, they inherit all events from the type movement.
 
-See [movement](./overview.md#events-of-all-movement-types) to know these events.
+See [movement](./index.md#events-of-all-movement-types) to know these events.
