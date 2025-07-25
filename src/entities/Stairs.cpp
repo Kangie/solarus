@@ -28,17 +28,6 @@
 namespace Solarus {
 
 /**
- * \brief Lua name of each value of the Subtype enum.
- */
-const std::map<Stairs::Subtype, std::string> Stairs::subtype_names = {
-  { Subtype::INSIDE_FLOOR, "inside_floor" },
-  { Subtype::SPIRAL_DOWNSTAIRS, "spiral_downstairs" },
-  { Subtype::SPIRAL_UPSTAIRS, "spiral_upstairs" },
-  { Subtype::STRAIGHT_DOWNSTAIRS, "straight_downstairs" },
-  { Subtype::STRAIGHT_UPSTAIRS, "straight_upstairs" },
-};
-
-/**
  * \brief Creates a new stairs entity.
  * \param name Name of the entity to create.
  * \param layer Layer of the entity to create on the map.
@@ -97,24 +86,6 @@ bool Stairs::can_change_ground() const {
  */
 Ground Stairs::get_ground() const {
   return Ground::TRAVERSABLE;
-}
-
-/**
- * \brief Returns the subtype for this stairs entity.
- * 
- * \return The subtype.
- */
-const Stairs::Subtype& Stairs::get_subtype() const {
-  return subtype;
-}
-
-/**
- * \brief Sets the subtype for this stairs entity.
- * 
- * \param subtype The new subtype.
- */
-void Stairs::set_subtype(const Stairs::Subtype& subtype) {
-  this->subtype = subtype;
 }
 
 /**
