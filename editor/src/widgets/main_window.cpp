@@ -99,10 +99,8 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.quest_tree_view->setVisible(quest_tree_visible);
 
   // Console splitter.
-  const int console_height = settings.get_value_int(EditorSettings::console_height);
+  const int console_height = 140; //settings.get_value_int(EditorSettings::console_height);
   ui.console_splitter->setSizes({ height() - console_height, console_height });
-  ui.console_splitter->setStretchFactor(0, 0);  // Don't expand the left panel
-  ui.console_splitter->setStretchFactor(1, 1);  // but only the map view.
   ui.console_widget->setVisible(false);
   ui.console_widget->set_quest_runner(quest_runner);
 
@@ -272,8 +270,6 @@ MainWindow::MainWindow(QWidget* parent) :
 
   connect(ui.quest_tree_splitter, &QSplitter::splitterMoved,
           this, &MainWindow::quest_tree_resized);
-  connect(ui.console_splitter, &QSplitter::splitterMoved,
-          this, &MainWindow::console_resized);
 
   // No editor initially.
   current_editor_changed(-1);
@@ -2603,18 +2599,6 @@ void MainWindow::quest_tree_resized(int pos, int index) {
   if (index == 1) {
     EditorSettings settings;
     settings.set_value(EditorSettings::quest_tree_width, pos);
-  }
-}
-
-/**
- * @brief Saves the console height in settings
- * @param pos the position of the splitter
- * @param index of the element in the splitter
- */
-void MainWindow::console_resized(int pos, int index) {
-  if (index == 1) {
-    EditorSettings settings;
-    settings.set_value(EditorSettings::console_height, pos);
   }
 }
 
