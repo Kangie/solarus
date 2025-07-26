@@ -120,7 +120,7 @@ QMap<QString, QVariant> EditorSettings::default_values = {
   // Layout.
   { EditorSettings::quest_tree_visible, true },
   { EditorSettings::quest_tree_width, 300 },
-  { EditorSettings::console_height, 100 },
+  { EditorSettings::console_height, 140 },
   { EditorSettings::map_side_width, 400 },
   { EditorSettings::map_props_height, 340 },
   { EditorSettings::tileset_side_width, 400 },
