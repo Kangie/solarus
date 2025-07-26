@@ -2,6 +2,8 @@
 
 ## Solarus Quest Editor 2.0.2 (In progress)
 
+* Memorization of layout splitters (#1914).
+
 ## Solarus Quest Editor 2.0.1 (2025-07-23)
 
 * Fix empty tileset selector (#1724).

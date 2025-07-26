@@ -2,6 +2,8 @@
 
 ## Solarus 2.0.2 (In progress)
 
+* Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
+
 ## Solarus 2.0.1 (2025-07-23)
 
 * Fix `game:start/stop_game_over()` hero optional parameter (#1900).

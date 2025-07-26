@@ -121,7 +121,6 @@ private slots:
   void selected_path_changed(const QString& path);
 
   void quest_tree_resized(int pos, int index);
-  void console_resized(int pos, int index);
 
   void reload_settings();
 

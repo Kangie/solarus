@@ -917,9 +917,9 @@ SpriteEditor::SpriteEditor(Quest& quest, const QString& path, QWidget* parent) :
   connect(&model->get_selection_model(), &QItemSelectionModel::selectionChanged,
           this, &SpriteEditor::update_selection);
 
-  connect(ui.horizontal_splitter, QSplitter::splitterMoved,
+  connect(ui.horizontal_splitter, &QSplitter::splitterMoved,
           this, &SpriteEditor::side_panel_resized);
-  connect(ui.vertical_splitter, QSplitter::splitterMoved,
+  connect(ui.vertical_splitter, &QSplitter::splitterMoved,
           this, &SpriteEditor::preview_panel_resized);
 
   // Qlementine-related stuff.
