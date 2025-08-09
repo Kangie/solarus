@@ -3,6 +3,7 @@
 ## Solarus 2.0.2 (In progress)
 
 * Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
+* Fix `music:set_music_channel_volume` crashes the engine if channel number is 0 (#1924).
 
 ## Solarus 2.0.1 (2025-07-23)
 
