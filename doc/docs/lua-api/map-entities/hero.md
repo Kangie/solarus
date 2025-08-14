@@ -40,6 +40,20 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 The following methods are specific to the hero.
 
+### `hero:get_controls()`
+
+Returns the controls currently applied for this hero.
+
+Return value ([controls](../controls/index.md))
+: The Controls object for this hero.
+
+### `hero:set_controls(controls)`
+
+Sets the controls for this hero.
+
+`controls` ([controls](../controls/index.md))
+: The controls to apply to this hero entity.
+
 ### `hero:teleport(map_id, [destination_name, [transition_style]])`
 
 Teletransports the hero to a different place.
