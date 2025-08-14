@@ -290,10 +290,18 @@ Return value (string)
 
 ### `map:get_camera()`
 
-Returns the camera entity of the map.
+Returns the main camera entity of the map.
 
 Return value ([camera](./map-entities/camera.md))
-: The camera.
+: The main camera.
+
+### `map:get_cameras()`
+
+Returns all the camera entities of the map. By default, each camera is tracking a specific hero.
+See [map:get_heroes](./map.md/#mapget_heroes).
+
+Return value (function)
+: An iterator to all camera entities of the map.
 
 ### `map:get_ground(x, y, layer)`
 
@@ -555,14 +563,21 @@ Return value (function)
 
 ### `map:get_hero()`
 
-Returns the [hero](./map-entities/hero.md).
+Returns the main [hero](./map-entities/hero.md) or the first hero in a multiplayer game.
 
 Return value ([hero](./map-entities/hero.md))
-: The hero.
+: The main hero.
 
 !!! note "Note"
 
     Equivalent to `map:get_entity("hero")` but shorter to write. This function is provided for convenience as getting the hero is often needed.
+
+### `map:get_heroes()`
+
+Returns all [hero](./map-entities/hero.md) entities for this map.
+
+Return value (function)
+: An iterator to all hero entities in the map.
 
 ### `map:set_entities_enabled(prefix, [enabled])`
 
@@ -592,6 +607,36 @@ Once an entity is removed, it is destroyed and it no longer exists on the map. A
 !!! note "Note"
 
     Equivalent to calling [`entity:remove()`](./map-entities/index.md#entityremove) on a group of entities.
+
+### `map:create_hero(properties)`
+
+Creates a [hero](./map-entities/hero.md) entity on the map.
+The hero will have no equipment or items, this is not a copy of the main hero but a new one.
+By default, the newly created hero has the same command bindings as the main hero.
+
+`properties` (table)
+: A table that describles all properties of the hero to create. Its key-value pairs must be:
+
+`name` (string, optional)
+: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+
+`layer` (number)
+: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+
+`x` (number)
+: X coordinate on the map.
+
+`y` (number)
+: Y coordinate on the map.
+
+`enabled_at_start` (boolean, optional)
+: Whether the entity should be initially enabled. The default value is `true`.
+
+`properties` (table, optional)
+: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+
+Return value ([hero](./map-entities/hero.md))
+: The hero created.
 
 ### `map:create_destination(properties)`
 

@@ -4,7 +4,7 @@ To distribute your game to players, Solarus offers a convenient way: your quest 
 
 ## From Solarus Editor
 
-Solarus Editor can build the quest package with the **File > Build Quest Package…** menu (<kbd>Ctrl</kbd>+<kbd>B</kbd> keyboard shortcut).
+Solarus Editor can build the quest package with the **File > Build Quest Package…** menu.
 
 ![Build quest package menu](images/building-quest-package/build-quest-package-menu.png)
 
