@@ -60,12 +60,12 @@ Creates the controls using the default mapping for the keyboard. Default mapping
 
 Axes are mapped to their corresponding directions.
 
+Return value (controls)
+: `controls` The controls object created.
+
 ### `sol.controls.create_from_joypad(joypad)`
 
 Creates the controls using the default mapping for a joypad instance. Those contols respond only to the given joypad.
-
-`joypad` (joypad)
-: a joypad instance to create the controls for.
 
 Default mappings are:
 
@@ -79,6 +79,12 @@ Default mappings are:
 | Start        | Pause      |
 | Left Stick X | X          |
 | Left Stick Y | Y          |
+
+`joypad` (joypad)
+: a joypad instance to create the controls for.
+
+Return value (controls)
+: `controls` The controls object created.
 
 ### `sol.controls.set_analog_commands_enabled(enabled)`
 

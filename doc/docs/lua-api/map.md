@@ -610,9 +610,9 @@ Once an entity is removed, it is destroyed and it no longer exists on the map. A
 
 ### `map:create_hero(properties)`
 
-Creates a [hero](./map-entities/hero.md) entity on the map.
+Creates a new [hero](./map-entities/hero.md) entity on the map.
 The hero will have no equipment or items, this is not a copy of the main hero but a new one.
-By default, the newly created hero has the same command bindings as the main hero.
+You can change the hero controls with [hero:set_controls](./map-entities/hero.md#heroset_controlscontrols) method.
 
 `properties` (table)
 : A table that describles all properties of the hero to create. Its key-value pairs must be:
