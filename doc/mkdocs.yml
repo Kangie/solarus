@@ -73,6 +73,7 @@ nav:
           - Map editor: tutorials/getting-started/map-editor.md
       - Manual:
           - Import resources: tutorials/manual/import-resources.md
+          - Editing an existing quest: tutorials/manual/editing-an-existing-quest.md
           #- Teletransportation: tutorials/manual/teletransportation.md
           #- Layers: tutorials/manual/layers.md
           #- Grounds: tutorials/manual/grounds.md
@@ -91,6 +92,7 @@ nav:
           #- Sensors: tutorials/manual/sensors.md
           #- Dynamic tiles: tutorials/manual/dynamic-tiles.md
           #- Equipement items: tutorials/manual/equipment-items.md
+          #- Multiple heroes: tutorials/manual/multiple-heroes.md
           #- Sound effects: tutorials/manual/soud-effects.md
           #- Music: tutorials/manual/music.md
           #- Menus: tutorials/manual/menus.md
@@ -111,7 +113,8 @@ nav:
           #- Menu components: tutorials/advanced/menu-components.md
           #- Shader basics: tutorials/advanced/shader-basics.md
           #- Post-process effects: tutorials/advanced/post-process-effects.md
-          #- Debug HUD: tutorials/advanced/debug-hud.md
+          #- Debug overlay: tutorials/advanced/debug-overlay.md
+          #- External libraries: tutorials/advances/external-libraries.md
       - Distribution:
           - tutorials/distribution/index.md
           #- Android: tutorials/distribution/android.md
