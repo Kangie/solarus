@@ -72,7 +72,7 @@ nav:
           - Creating a Quest: tutorials/getting-started/creating-a-quest.md
           - Map editor: tutorials/getting-started/map-editor.md
       - Manual:
-          #- Import resources: tutorials/manual/import-resources.md
+          - Import resources: tutorials/manual/import-resources.md
           #- Teletransportation: tutorials/manual/teletransportation.md
           #- Layers: tutorials/manual/layers.md
           #- Grounds: tutorials/manual/grounds.md
@@ -114,7 +114,7 @@ nav:
           #- Debug HUD: tutorials/advanced/debug-hud.md
       - Distribution:
           - tutorials/distribution/index.md
-          - Android: tutorials/distribution/android.md
+          #- Android: tutorials/distribution/android.md
           - Nintendo Switch: tutorials/distribution/nintendo-switch.md
       - Migration:
           - tutorials/migration/index.md
