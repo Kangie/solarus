@@ -97,6 +97,7 @@ void StraightMovement::set_dim_speed(uint64_t& delay,
 
   bool same_dir = std::signbit(target_speed) == std::signbit(current_speed);
   int64_t remaining = std::abs(current_speed) <= 1e-6 ? 0 : static_cast<int64_t>(delay) - (static_cast<int64_t>(next_move_date) - static_cast<int64_t>(now));
+  remaining = std::max(0l, remaining); // Remaining time should not be negative
   int64_t to_go = (same_dir ? remaining : -remaining);
 
   current_speed = target_speed;

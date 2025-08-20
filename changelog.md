@@ -86,6 +86,7 @@ See the migration guide for more detailed instructions.
 
 ### Engine bug fixes
 
+* Fix analog movements being stuck on some axes sometimes (#1683).
 * Fix crash when teletransporting to a map without the same layer (#1419).
 * Fix crash when a moving custom entity activates a stream (#1562).
 * Fix crash when a sprite is synchronized to a sprite with more frames (#1117).
