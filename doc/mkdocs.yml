@@ -74,7 +74,7 @@ nav:
       - Manual:
           - Import resources: tutorials/manual/import-resources.md
           - Editing an existing quest: tutorials/manual/editing-an-existing-quest.md
-          #- Teletransportation: tutorials/manual/teletransportation.md
+          - Teletransportation: tutorials/manual/teletransportation.md
           #- Layers: tutorials/manual/layers.md
           #- Grounds: tutorials/manual/grounds.md
           #- Generate contours: tutorials/manual/generate-contours.md
@@ -117,6 +117,7 @@ nav:
           #- External libraries: tutorials/advances/external-libraries.md
       - Distribution:
           - tutorials/distribution/index.md
+          #- Steam: tutorials/distribution/steam.md
           #- Android: tutorials/distribution/android.md
           - Nintendo Switch: tutorials/distribution/nintendo-switch.md
       - Migration:
