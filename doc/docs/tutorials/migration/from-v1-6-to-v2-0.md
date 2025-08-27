@@ -85,6 +85,7 @@ The now deprecated `sword_knowledge` ability is equivalant to a `spin_attack` ab
 There is a whole new audio API with proper types for [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md). The only slightly breaking change is detailed below.
 
 - `hero:get_sword_sound_id()` is now deprecated, please use `hero:get_sword_sound()` instead. This function was renamed for consistency with the rest of the API. Additionally, it now returns `nil` rather than an empty string if there is no sword sound.
+- If you are using IT music files, channels numbers are now between 1 and the number of channels in order to stick to tracker software conventions.
 
 ### Optional booleans are more strict
 

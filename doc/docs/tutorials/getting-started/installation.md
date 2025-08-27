@@ -42,25 +42,7 @@ You won't have to do this again the next time you open the editor or the launche
 
 ### Linux
 
-You can get Solarus as an **AppImage**. After downloading it, you need to make it executable.
-
-On most Linux system, perform a right-click and go to _Properties_. You will be able to check an option called "Executable as Program" or something equivalent.
-
-Otherwise, you can also execute the command:
-
-For the editor:
-
-```bash
-chmod +x solarus-editor-v2.0.1-linux-x64.AppImage
-```
-
-For the launcher:
-
-```bash
-chmod +x solarus-launcher-v2.0.1-linux-x64.AppImage
-```
-
-Then double-click on the AppImage to launch the application.
+You can get Solarus as an **AppImage**. After downloading it, just unzip the archive anywhere on your system. Then double-click on the AppImage to launch the application.
 
 !!! warning
 

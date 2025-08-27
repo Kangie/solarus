@@ -219,8 +219,6 @@ void LuaContext::register_entity_module() {
       { "start_hurt", hero_api_start_hurt },
       { "get_state", entity_api_get_state },
       { "get_state_object", hero_api_get_state_object },
-      { "get_controls", hero_api_get_controls },
-      { "set_controls", hero_api_set_controls }
   };
   if (CurrentQuest::is_format_at_least({ 1, 6 })) {
     hero_methods.insert(hero_methods.end(), {
@@ -230,6 +228,8 @@ void LuaContext::register_entity_module() {
   }
   if (CurrentQuest::is_format_at_least({ 2, 0 })) {
     hero_methods.insert(hero_methods.end(), {
+      { "get_controls", hero_api_get_controls },
+      { "set_controls", hero_api_set_controls },
       { "get_swimming_speed", hero_api_get_swimming_speed },
       { "set_swimming_speed", hero_api_set_swimming_speed },
       { "get_can_swim_faster", hero_api_get_can_swim_faster },

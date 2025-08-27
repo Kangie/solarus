@@ -17,6 +17,7 @@
 #include "solarus/audio/Sound.h"
 #include "solarus/audio/Music.h"
 #include "solarus/audio/MusicSystem.h"
+#include "solarus/core/CurrentQuest.h"
 #include "solarus/core/MainLoop.h"
 #include "solarus/core/ResourceProvider.h"
 #include "solarus/lua/LuaBind.h"
@@ -146,11 +147,17 @@ static std::optional<int> get_music_channel_volume(lua_State * l, int channel) {
   if (MusicSystem::get_current_music_format() != Music::FORMAT_IT) {
     return std::nullopt;
   } else {
-    if (channel < 0 || channel >= MusicSystem::get_current_music_num_channels()) {
+    if (CurrentQuest::is_format_at_most({ 1, 6 })) {
+      // Offset channel number for 1.6 quests and lower
+      channel++;
+    }
+    if (channel < 1 || channel > MusicSystem::get_current_music_num_channels()) {
       LuaTools::arg_error(l, 1,
         "Invalid channel number: " + std::to_string(channel));
+      return std::nullopt;
+    } else {
+      return std::make_optional(MusicSystem::get_current_music_channel_volume(channel));
     }
-    return std::make_optional(MusicSystem::get_current_music_channel_volume(channel));
   }
 }
 
@@ -165,11 +172,16 @@ static bool set_music_channel_volume(lua_State * l, int channel, int volume) {
   if (MusicSystem::get_current_music_format() != Music::FORMAT_IT) {
     return false;
   } else {
-    if (channel < 0 || channel >= MusicSystem::get_current_music_num_channels()) {
+    if (CurrentQuest::is_format_at_most({ 1, 6 })) {
+      // Offset channel number for 1.6 quests and lower
+      channel++;
+    }
+    if (channel < 1 || channel > MusicSystem::get_current_music_num_channels()) {
       LuaTools::arg_error(l, 1,
         "Invalid channel number: " + std::to_string(channel));
+    } else {
+      MusicSystem::set_current_music_channel_volume(channel, volume);
     }
-    MusicSystem::set_current_music_channel_volume(channel, volume);
     return true;
   }
 }
