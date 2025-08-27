@@ -10,6 +10,7 @@ target_link_libraries(solarus-editor
   Qt6::Widgets
   Qt6::OpenGL
   Qt6::OpenGLWidgets
+  Qt6::Svg
   "${SOLARUS_LIBRARIES}"
   "${SDL2_LIBRARY}"
   "${SDL2_IMAGE_LIBRARY}"
