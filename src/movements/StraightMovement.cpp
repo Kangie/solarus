@@ -192,9 +192,11 @@ glm::vec2 StraightMovement::get_subpixel_offset() const {
   auto remaining = [&](uint64_t /*delay*/, uint64_t next_move_date) {
     return now < next_move_date ? static_cast<int64_t>(next_move_date) - static_cast<int64_t>(now) : 0;
   };
+  auto x_rem = std::min(remaining(x_delay, next_move_date_x), (int64_t)x_delay);
+  auto y_rem = std::min(remaining(y_delay, next_move_date_y), (int64_t)y_delay);
   return {
-    x_blocked ? 0.f : remaining(x_delay, next_move_date_x) * -1e-9f * x_move * std::abs(get_x_speed()),
-    y_blocked ? 0.f : remaining(y_delay, next_move_date_y) * -1e-9f * y_move * std::abs(get_y_speed())
+    x_blocked ? 0.f : x_rem * -1e-9f * x_move * std::abs(get_x_speed()),
+    y_blocked ? 0.f : y_rem * -1e-9f * y_move * std::abs(get_y_speed())
   };
 }
 
@@ -476,6 +478,7 @@ void StraightMovement::update_smooth_x() {
         if (!test_collision_with_obstacles(0, y_move)) {
           // Do the vertical move right now, don't wait uselessly.
           update_smooth_y();
+          y_blocked = true;
         }
         else {
           // The x move is not possible and neither is the y move.
@@ -576,6 +579,7 @@ void StraightMovement::update_smooth_y() {
         if (!test_collision_with_obstacles(x_move, 0)) {
           // Do the horizontal move right now, don't wait uselessly.
           update_smooth_x();
+          x_blocked = true;
         }
         else {
           // The y move is not possible and neither is the x move.
