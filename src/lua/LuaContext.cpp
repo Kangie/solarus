@@ -179,8 +179,8 @@ void LuaContext::initialize(const std::string& arg_script) {
   SOLARUS_REQUIRE(lua_gettop(current_l) == 0, "Non-empty Lua stack after initialization");
 
 
-  //Do the script passed as arg
-  if(!arg_script.empty()) {
+  // Do the script passed as arg
+  if (!arg_script.empty()) {
     Debug::warning("Running script arg \"" + arg_script + "\"");
     do_string(arg_script,"script argument (-s)");
   }
@@ -214,6 +214,7 @@ void LuaContext::exit() {
     lua_context = nullptr;
     current_l = nullptr;
     main_l = nullptr;
+    Logger::info("Closed Lua");
   }
 }
 
@@ -1250,8 +1251,8 @@ void LuaContext::push_userdata(lua_State* l, ExportableToLua& userdata) {
   }
 
   //Check if target stack is different from main...
-  if(l != main) {
-    //Move ref to target stack
+  if (l != main) {
+    // Move ref to target stack
     lua_xmove(main,l,1);
   }
 }
@@ -1407,12 +1408,16 @@ void LuaContext::notify_userdata_destroyed(ExportableToLua& userdata) {
 void LuaContext::userdata_close_lua() {
 
   // Tell userdata to forget about this Lua state.
+  // Some userdata like joypads might continue to live in the C++ side when
+  // resetting the simulation.
   lua_getfield(current_l, LUA_REGISTRYINDEX, "sol.all_userdata");
   lua_pushnil(current_l);
   while (lua_next(current_l, -2) != 0) {
     ExportableToLua* userdata = static_cast<ExportableToLua*>(
         lua_touserdata(current_l, -2));
     userdata->set_lua_context(nullptr);
+    userdata->set_with_lua_table(false);
+    userdata->set_known_to_lua(false);
     lua_pop(current_l, 1);
   }
   lua_pop(current_l, 1);

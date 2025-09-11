@@ -59,21 +59,23 @@ class ExportableToLua:
      * @brief helper method to directly cast the shared_from_this result
      * @return
      */
-    inline const std::weak_ptr<T> weak_from_this_cast(){
-      if(weak_from_this().expired()) return {};
+    inline const std::weak_ptr<T> weak_from_this_cast() {
+      if (weak_from_this().expired()) {
+        return {};
+      }
       return std::static_pointer_cast<T>(shared_from_this());
     }
 
     virtual const std::string& get_lua_type_name() const = 0;
+
   private:
 
-    LuaContext* lua_context;     /**< The Solarus Lua API, or nullptr if
-                                  * not currently exported to Lua. */
-
-    bool known_to_lua;           /**< Whether this object was exported to Lua
-                                  * at least once. */
-    bool with_lua_table;         /**< Whether a Lua table was created to make
-                                  * this userdata indexable like a table. */
+    LuaContext* lua_context = nullptr;     /**< The Solarus Lua API, or nullptr if
+                                            * not currently exported to Lua. */
+    bool known_to_lua = false;             /**< Whether this object was exported to Lua
+                                            * at least once. */
+    bool with_lua_table = false;           /**< Whether a Lua table was created to make
+                                            * this userdata indexable like a table. */
 
 };
 

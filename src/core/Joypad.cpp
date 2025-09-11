@@ -84,9 +84,10 @@ std::map<std::string, std::string> Joypad::legacy_bindings_mapping = {
   {"axis 5 -", "trigger_right"},
 };
 
-Joypad::Joypad(SDL_GameController *sdl_gc, SDL_Joystick *sdl_js) :
-  controller(sdl_gc), joystick(sdl_js)
-{}
+Joypad::Joypad(SDL_GameController *sdl_gc, SDL_Joystick *sdl_js):
+    controller(sdl_gc), joystick(sdl_js)
+{
+}
 
 bool Joypad::is_button_pressed(JoyPadButton button) const {
   return SDL_GameControllerGetButton(controller.get(),(SDL_GameControllerButton)button);
