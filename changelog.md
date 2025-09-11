@@ -2,6 +2,7 @@
 
 ## Solarus 2.0.2 (In progress)
 
+* Fix analog movements being stuck on some axes sometimes (#1683).
 * Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
 * Fix `music:set_music_channel_volume` crashes the engine if channel number is 0 (#1924).
 
@@ -86,7 +87,6 @@ See the migration guide for more detailed instructions.
 
 ### Engine bug fixes
 
-* Fix analog movements being stuck on some axes sometimes (#1683).
 * Fix crash when teletransporting to a map without the same layer (#1419).
 * Fix crash when a moving custom entity activates a stream (#1562).
 * Fix crash when a sprite is synchronized to a sprite with more frames (#1117).
