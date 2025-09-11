@@ -1030,7 +1030,7 @@ void Camera::draw(const SurfacePtr& dst_surface, const SurfacePtr &screen_surfac
           get_position_on_screen(),
           *transition);
   } else {
-    if (CurrentQuest::get_properties().is_subpixel_camera()) {
+    if (CurrentQuest::get_properties().is_subpixel_camera() && screen_surface) {
       const ShaderPtr shader = surf->get_shader();
       const DrawProxy& proxy = shader ?
             reinterpret_cast<const DrawProxy&>(*shader) :
