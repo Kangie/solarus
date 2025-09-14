@@ -218,13 +218,13 @@ void ScopedLuaRef::clear_and_call(const std::string& function_name) {
 }
 
 bool ScopedLuaRef::equals(lua_State* l, int index) const {
-  if(is_empty()) {
+  if (is_empty()) {
     return false;
   }
   int pi = LuaTools::get_positive_index(l,index);
   push(l);
-  bool result = lua_equal(l,-1,pi);
-  lua_pop(l,1);
+  bool result = lua_equal(l, -1, pi);
+  lua_pop(l, 1);
   return result;
 }
 
@@ -234,24 +234,24 @@ bool ScopedLuaRef::equals(lua_State* l, int index) const {
  * @return true if value are equal to lua
  */
 bool ScopedLuaRef::operator==(const ScopedLuaRef& other) const {
-  if(is_empty() || other.is_empty()) {
+  if (is_empty() || other.is_empty()) {
     return false;
   }
   push(l);
   other.push(l);
-  bool result = lua_equal(l,-1,-2);
+  bool result = lua_equal(l, -1, -2);
   lua_pop(l,2);
-  return  result;
+  return result;
 }
 
 bool ScopedLuaRef::operator==(ExportableToLua& other) const {
-  if(!other.is_known_to_lua()) {
+  if (!other.is_known_to_lua()) {
     return false;
   }
   push(l);
-  LuaContext::push_userdata(l,other);
-  bool result = lua_equal(l,-1,-2);
-  lua_pop(l,2);
+  LuaContext::push_userdata(l, other);
+  bool result = lua_equal(l, -1, -2);
+  lua_pop(l, 2);
   return result;
 }
 
