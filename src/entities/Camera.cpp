@@ -253,6 +253,7 @@ class ManualState: public Entity::State {
 public:
 
   explicit ManualState(Camera& camera);
+  void update() override;
   void start(const State* previous) override;
   const std::string& get_lua_type_name() const override;
 
@@ -267,6 +268,13 @@ ManualState::ManualState(Camera& camera) :
   set_entity(camera);
 }
 
+void ManualState::update() {
+  Camera& camera = get_entity<Camera>();
+  auto mov = camera.get_movement();
+  if(mov) {
+    camera.set_subpixel_offset(mov->get_subpixel_offset());
+  }
+}
 
 /**
  * @brief Called when this states starts, unlink the hero from previous camera
