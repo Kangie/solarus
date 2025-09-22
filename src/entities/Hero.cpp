@@ -34,6 +34,7 @@
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Jumper.h"
 #include "solarus/entities/Sensor.h"
+#include "solarus/entities/Separator.h"
 #include "solarus/entities/Stairs.h"
 #include "solarus/entities/Stream.h"
 #include "solarus/entities/StreamAction.h"
@@ -2225,6 +2226,17 @@ void Hero::notify_collision_with_separator(
   for(const auto& cam : cameras) {
     if(cam->get_tracked_entity().get() == this){
       cam->notify_tracked_entity_traversing_separator(separator);
+      return;
+    }
+  }
+  // We didnt find any cam, pretend we activated
+  separator.notify_activating(0);
+
+  // Try to notify again, in case lua made a camera tracking again
+  for(const auto& cam : cameras) {
+    if(cam->get_tracked_entity().get() == this){
+      cam->notify_tracked_entity_traversing_separator(separator);
+      return;
     }
   }
 }
