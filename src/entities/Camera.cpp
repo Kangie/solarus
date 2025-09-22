@@ -1041,9 +1041,17 @@ void Camera::draw(const SurfacePtr& dst_surface, const SurfacePtr &screen_surfac
   } else {
     if (CurrentQuest::get_properties().is_subpixel_camera() && screen_surface) {
       const ShaderPtr shader = surf->get_shader();
-      const DrawProxy& proxy = shader ?
-            reinterpret_cast<const DrawProxy&>(*shader) :
-            Video::get_renderer().default_terminal();
+      const ShaderPtr video_shader = Video::get_shader();
+
+      const DrawProxy& proxy = [&]() -> const DrawProxy&{
+        if(shader) {
+          return reinterpret_cast<const DrawProxy&>(*shader);
+        }
+        if(video_shader){
+          return reinterpret_cast<const DrawProxy&>(*video_shader);
+        }
+        return Video::get_renderer().default_terminal();
+      }();
 
       //context.screen_surface->clear();
       //auto camera_size = camera_surface->get_size();
