@@ -112,6 +112,7 @@ void TrackingState::update() {
       if (separator_scrolling_position == separator_target_position) {
         // Finished.
         finished = true;
+        break; // Don't overshoot the scrolling transition
       }
     }
 
@@ -164,24 +165,24 @@ void TrackingState::traverse_separator(Separator& separator) {
     if (tracked_entity_center.y < separator_center.y) {
       separator_scrolling_direction4 = 3;
       separator_scrolling_delta.y = 1;
-      separator_target_position.add_y(camera.get_height());
+      separator_target_position.set_y(separator_center.y);
     }
     else {
       separator_scrolling_direction4 = 1;
       separator_scrolling_delta.y = -1;
-      separator_target_position.add_y(-camera.get_height());
+      separator_target_position.set_y(separator_center.y-camera.get_height());
     }
   }
   else {
     if (tracked_entity_center.x < separator_center.x) {
       separator_scrolling_direction4 = 0;
       separator_scrolling_delta.x = 1;
-      separator_target_position.add_x(camera.get_width());
+      separator_target_position.set_x(separator_center.x);
     }
     else {
       separator_scrolling_direction4 = 2;
       separator_scrolling_delta.x = -1;
-      separator_target_position.add_x(-camera.get_width());
+      separator_target_position.set_x(separator_center.x-camera.get_width());
     }
   }
 
