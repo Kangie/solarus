@@ -54,7 +54,23 @@ function map:on_opening_transition_finished()
         
     return true
   end)
+  
+  local mov2 = sol.movement.create("straight")
+  mov2:set_speed(1)
+  mov2:start(dummy2)
+  sol.timer.start(800, function() 
+    local second_speed = 128
+    local fx, fy = dummy2:get_position()
+    mov2:set_speed(128)
+    local x,y = dummy2:get_position()
+    assert_equal(fx, x)
+    sol.timer.start(1000, function()
+      local expected_x = x + 1*second_speed
+      local new_x = dummy2:get_position()
+      assert_equal(new_x, expected_x)
+    end)
 
+  end)
 end
 
 function hero_arrived_sensor:on_activated()
