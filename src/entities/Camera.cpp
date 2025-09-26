@@ -117,6 +117,10 @@ void TrackingState::update() {
     }
 
     if (finished) {
+      // Replace the camera in an okay state before handing back control to lua
+      auto to_track = camera.get_position_to_track(camera.get_center_point());
+      separator_scrolling_position.set_xy(to_track);
+
       separator_next_scrolling_date = 0;
       separator_traversed->notify_activated(separator_scrolling_direction4);
       separator_traversed = nullptr;
