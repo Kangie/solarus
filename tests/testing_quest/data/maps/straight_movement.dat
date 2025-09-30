@@ -45,3 +45,14 @@ sensor{
   height = 16,
 }
 
+custom_entity{
+  name = "dummy2",
+  layer = 0,
+  x = 8,
+  y = 197,
+  width = 16,
+  height = 16,
+  direction = 0,
+  sprite = "enemies/test_enemy",
+}
+

@@ -348,13 +348,15 @@ void Teletransporter::transport_hero(Hero& hero) {
   }
   get_game().teleport_hero(hero_ptr, destination_map_id, name, transition_style);
 
-  if (!has_linked_camera) {
+  /*if (!has_linked_camera) {
     // Handle edge case of StairsState Stairs::NORMAL_WAY
     // trying to transport a hero without a camera,
     // leaving the clipping rectangle indefinitely.
+    // stdgregwar: this seems to not be meaningful anymore since the camera is automagically relinked to a hero anyway now.
+    // Also this breaks stairs transition when viewed with the unlinked camera
     HeroSprites& sprites = hero.get_hero_sprites();
     sprites.set_clipping_rectangle();
-  }
+  }*/
 
   transporting_hero = false;
   if (is_on_map_side()) {
