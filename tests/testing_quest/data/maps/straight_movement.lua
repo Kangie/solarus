@@ -17,12 +17,13 @@ function map:on_started()
   -- map entities here.
 end
 
+local hspeed = map:get_hero():get_walking_speed()
+local on_return = false
 -- Event called after the opening transition effect of the map,
 -- that is, when the player takes control of the hero.
 function map:on_opening_transition_finished()
   game:simulate_command_pressed("right")
 
-  local hspeed = map:get_hero():get_walking_speed()
   print(hspeed)
   local mov = sol.movement.create("straight")
   mov:set_speed(hspeed)
@@ -44,15 +45,17 @@ function map:on_opening_transition_finished()
   end
 
   sol.timer.start(10, function()
-    phase = phase + 0.1
-    -- immitate gamepad jitter
-    for i=1,100 do 
-      angle = math.sin(phase)+math.random()*0.1
-      speed = hspeed / math.cos(angle)
-      set_mov(speed, angle)
+    if not on_return then
+      phase = phase + 0.1
+      -- immitate gamepad jitter
+      for i=1,100 do 
+        angle = math.sin(phase)+math.random()*0.1
+        speed = hspeed / math.cos(angle)
+        set_mov(speed, angle)
+      end
     end
         
-    return true
+    return not on_return
   end)
   
   local mov2 = sol.movement.create("straight")
@@ -74,7 +77,26 @@ function map:on_opening_transition_finished()
 end
 
 function hero_arrived_sensor:on_activated()
+  game:simulate_command_released("right")
+  local m = dummy:get_movement()
+  dummy:stop_movement()
   diff = map:get_hero():get_position() - dummy:get_position()
+  
+  print("diff", diff)
+  assert(diff < 5)
+  on_return = true
+  
+  sol.timer.start(dummy, 2000, function()
+    m:set_angle(math.pi)
+    m:set_speed(hspeed)
+    m:start(dummy)
+    game:simulate_command_pressed("left")
+  end)
+end
+
+function hero_arrived_sensor_2:on_activated()
+  diff = map:get_hero():get_position() - dummy:get_position()
+  
   print("diff", diff)
   assert(diff < 5)
   sol.main.exit()
