@@ -1093,7 +1093,11 @@ int LuaContext::entity_api_get_map(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
 
-    push_map(l, entity.get_map());
+    if (!entity.is_on_map()) {
+      lua_pushnil(l);
+    } else {
+      push_map(l, entity.get_map());
+    }
     return 1;
   });
 }
@@ -1108,7 +1112,11 @@ int LuaContext::entity_api_get_game(lua_State* l) {
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
 
-    push_game(l, entity.get_game().get_savegame());
+    if (!entity.is_on_map()) {
+      lua_pushnil(l);
+    } else {
+      push_game(l, entity.get_game().get_savegame());
+    }
     return 1;
   });
 }
