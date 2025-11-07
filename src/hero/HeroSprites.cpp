@@ -61,27 +61,7 @@ const int HeroSprites::animation_directions[][2] = {
  */
 HeroSprites::HeroSprites(Hero& hero, Equipment& equipment):
   hero(hero),
-  equipment(equipment),
-  has_default_tunic_sprite(true),
-  tunic_sprite(nullptr),
-  has_default_sword_sprite(true),
-  sword_sprite(nullptr),
-  sword_stars_sprite(nullptr),
-  has_default_sword_sound(true),
-  has_default_shield_sprite(true),
-  shield_sprite(nullptr),
-  shadow_sprite(nullptr),
-  ground_sprite(nullptr),
-  trail_sprite(nullptr),
-  animation_direction_saved(0),
-  when_suspended(0),
-  blinking(false),
-  end_blink_date(0),
-  walking(false),
-  clipping_rectangle(Rectangle()),
-  lifted_item(nullptr),
-  animation_callback_ref() {
-
+  equipment(equipment) {
 }
 
 /**
@@ -140,7 +120,9 @@ void HeroSprites::rebuild_equipment() {
   }
 
   // The trail.
-  trail_sprite->stop_animation();
+  if (trail_sprite != nullptr) {
+    trail_sprite->stop_animation();
+  }
 
   // Restore the animation direction.
   if (animation_direction != -1) {
@@ -488,7 +470,8 @@ bool HeroSprites::is_shield_visible() const {
  * \return true if the trail of dust is currently displayed
  */
 bool HeroSprites::is_trail_visible() const {
-  return trail_sprite->is_animation_started();
+  return trail_sprite != nullptr &&
+           trail_sprite->is_animation_started();
 }
 
 /**
@@ -560,7 +543,9 @@ void HeroSprites::blink(uint32_t duration) {
   if (equipment.has_ability(Ability::SWORD)) {
     sword_sprite->set_blinking(blink_delay);
   }
-  trail_sprite->set_blinking(blink_delay);
+  if (trail_sprite != nullptr) {
+    trail_sprite->set_blinking(blink_delay);
+  }
 
   if (duration == 0) {
     // No end date.
@@ -587,7 +572,9 @@ void HeroSprites::stop_blinking() {
   if (equipment.has_ability(Ability::SWORD)) {
     sword_sprite->set_blinking(0);
   }
-  trail_sprite->set_blinking(0);
+  if (trail_sprite != nullptr) {
+    trail_sprite->set_blinking(0);
+  }
 }
 
 /**
@@ -1367,9 +1354,11 @@ void HeroSprites::set_animation_victory() {
 void HeroSprites::set_animation_prepare_running() {
 
   set_animation_walking_normal();
-  trail_sprite->set_current_animation("running");
-  if (tunic_sprite->get_current_direction() < trail_sprite->get_nb_directions()) {
-    trail_sprite->set_current_direction(tunic_sprite->get_current_direction());
+  if (trail_sprite != nullptr) {
+    trail_sprite->set_current_animation("running");
+    if (tunic_sprite->get_current_direction() < trail_sprite->get_nb_directions()) {
+      trail_sprite->set_current_direction(tunic_sprite->get_current_direction());
+   }
   }
 }
 
@@ -1380,9 +1369,11 @@ void HeroSprites::set_animation_running() {
 
   set_animation_walking_sword_loading();
   stop_displaying_sword_stars();
-  trail_sprite->set_current_animation("running");
-  if (tunic_sprite->get_current_direction() < trail_sprite->get_nb_directions()) {
-    trail_sprite->set_current_direction(tunic_sprite->get_current_direction());
+  if (trail_sprite != nullptr) {
+    trail_sprite->set_current_animation("running");
+    if (tunic_sprite->get_current_direction() < trail_sprite->get_nb_directions()) {
+      trail_sprite->set_current_direction(tunic_sprite->get_current_direction());
+    }
   }
 }
 

@@ -4,6 +4,7 @@
 
 * Fix analog movements being stuck on some axes sometimes (#1683).
 * Fix crash when setting events on a joypad after the game was reset (#1898).
+* Fix crash when setting an ability in map:on_started() (#1920).
 * Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
 * Fix `music:set_music_channel_volume` crashes the engine if channel number is 0 (#1924).
 
