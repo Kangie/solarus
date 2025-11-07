@@ -23,6 +23,7 @@
 #include <QGraphicsView>
 #include <QPointer>
 #include <QMenu>
+#include <memory>
 
 class QAction;
 
@@ -157,7 +158,7 @@ private:
   void notify_tileset_changed();
 
   QPointer<TilesetModel> tileset;      /**< The tileset model. */
-  TilesetScene* scene;                 /**< The scene viewed. */
+  std::unique_ptr<TilesetScene> scene; /**< The scene viewed. */
   QPointer<ViewSettings>
       view_settings;                   /**< How the view is displayed. */
   double zoom = 1.0;                   /**< Zoom factor currently applied. */
