@@ -292,7 +292,7 @@ std::string LuaData::to_lua_string_list(const std::vector<std::string>& value) {
       a += to_lua_string(b);
       return a;
     });
-  return "{ " + string_list + " }";
+  return "{" + string_list + "}";
 }
 
 std::string LuaData::to_lua_multiline_string(const std::string& value) {

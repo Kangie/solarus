@@ -6,6 +6,20 @@
 
 local converter = {}
 
+local function serialize_string_array(strings)
+    local quoted_strings = {}
+
+    -- 1. Quote each string
+    for i, str in ipairs(strings) do
+        quoted_strings[i] = string.format('"%s"', str)
+    end
+    return "{" .. table.concat(quoted_strings, ", ") .. "}"
+end
+
+local function serialize_boolean(value)
+    return value and "true" or "false"
+end
+
 function converter.convert(quest_path)
 
   local properties
@@ -44,6 +58,9 @@ function converter.convert(quest_path)
   if properties.quest_version ~= nil then
     output_file:write("  quest_version = \"" .. properties.quest_version .. "\",\n")
   end
+  if properties.initial_release_date ~= nil then
+    output_file:write("  initial_release_date = \"" .. properties.initial_release_date .. "\",\n")
+  end
   if properties.release_date ~= nil then
     output_file:write("  release_date = \"" .. properties.release_date .. "\",\n")
   end
@@ -58,6 +75,33 @@ function converter.convert(quest_path)
   end
   if properties.max_quest_size ~= nil then
     output_file:write("  max_quest_size = \"" .. properties.max_quest_size .. "\",\n")
+  end
+  if properties.license ~= nil then
+    output_file:write("  license = \"" .. properties.license .. "\",\n")
+  end
+  if properties.languages ~= nil then
+    output_file:write("  languages = " .. serialize_string_array(properties.languages) .. ",\n")
+  end
+  if properties.min_players ~= nil then
+    output_file:write("  min_players = " .. properties.min_players .. ",\n")
+  end
+  if properties.max_players ~= nil then
+    output_file:write("  max_players = " .. properties.max_players .. ",\n")
+  end
+  if properties.genres ~= nil then
+    output_file:write("  genres = " .. serialize_string_array(properties.genres) .. ",\n")
+  end
+  if properties.age ~= nil then
+    output_file:write("  age = \"" .. properties.age .. "\",\n")
+  end
+  if properties.controls ~= nil then
+    output_file:write("  controls = " .. properties.controls .. ",\n")
+  end
+  if properties.dynamic_timestep ~= nil then
+    output_file:write("  dynamic_timestep = " .. serialize_boolean(properties.dynamic_timestep) .. ",\n")
+  end
+  if properties.subpixel_camera ~= nil then
+    output_file:write("  subpixel_camera = " .. serialize_boolean(properties.subpixel_camera) .. ",\n")
   end
 
   output_file:write("}\n\n");
