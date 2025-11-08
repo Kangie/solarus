@@ -11,6 +11,7 @@ local solarus_formats = {
   "1.5",
   "1.6",
   "2.0",
+  "2.1",
 }
 
 local function write_info(message)
@@ -96,4 +97,3 @@ if not success then
   write_info(error_message)
   error(error_message, 0)  -- Passing level 0 avoids an extra addition of file/line info.
 end
-

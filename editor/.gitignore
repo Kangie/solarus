@@ -4,7 +4,6 @@
 tags
 valgrind.out
 callgrind.out.*
-core
 CMakeLists.txt.user
 build/
 .vscode/
