@@ -8,6 +8,7 @@
 * Fix crash when calling `hero:get_map()` from `game:on_started()` (#1937).
 * Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
 * Fix `music:set_music_channel_volume` crashes the engine if channel number is 0 (#1924).
+* Fix diagonal jumpers preventing interactions of entities overlapping them (#1928).
 
 ## Solarus 2.0.1 (2025-07-23)
 
