@@ -19,6 +19,8 @@ endif()
 get_target_property(SOLARUSEDITOR_BUNDLE_BASENAME ${PROJECT_NAME} OUTPUT_NAME)
 set(SOLARUSEDITOR_BUNDLE_NAME "${SOLARUSEDITOR_BUNDLE_BASENAME}.app")
 
+get_filename_component(SOLARUS_LIB_DIR ${SOLARUS_LIBRARY} DIRECTORY)
+
 file(CONFIGURE
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fixup_bundle.cmake
   @ONLY
@@ -35,7 +37,7 @@ file(GLOB_RECURSE QT_PLUGINS "${CMAKE_INSTALL_PREFIX}/@SOLARUSEDITOR_BUNDLE_NAME
 # Fixup the bundle.
 fixup_bundle("${CMAKE_INSTALL_PREFIX}/@SOLARUSEDITOR_BUNDLE_NAME@"
   "${QT_PLUGINS}"
-  "@QT6_INSTALL_PREFIX@/lib;/opt/homebrew/lib;@CMAKE_BINARY_DIR@/_deps/solarus-build"
+  "@QT6_INSTALL_PREFIX@/lib;/opt/homebrew/lib;@CMAKE_BINARY_DIR@/_deps/solarus-build;@SOLARUS_LIB_DIR@"
 )
 ]=]
 )
