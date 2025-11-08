@@ -33,5 +33,6 @@
         <file>quest_converter/1_6_to_2_0/quest_properties_converter_1_6.lua</file>
         <file>quest_converter/converter_1_6_to_2_0.lua</file>
         <file>quest_converter/converter_2_0_to_2_1.lua</file>
+        <file>quest_converter/2_0_to_2_1/quest_properties_converter_2_0.lua</file>
     </qresource>
 </RCC>
