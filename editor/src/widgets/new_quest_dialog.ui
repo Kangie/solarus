@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>444</width>
+    <width>459</width>
     <height>312</height>
    </rect>
   </property>
@@ -41,7 +41,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="quest_title_page">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -258,11 +258,35 @@
               <verstretch>16</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="accessibleName">
+             <string notr="true"/>
+            </property>
             <property name="text">
-             <string/>
+             <string notr="true"/>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::TextFormat::PlainText</enum>
             </property>
             <property name="pixmap">
              <pixmap resource="../../resources/images.qrc">:/images/icon_error.svg</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -375,6 +399,10 @@
            <property name="text">
             <string>Community Resources</string>
            </property>
+           <property name="icon">
+            <iconset resource="../../resources/images.qrc">
+             <normaloff>:/images/icon_copy.svg</normaloff>:/images/icon_copy.svg</iconset>
+           </property>
            <property name="checked">
             <bool>true</bool>
            </property>
@@ -441,6 +469,10 @@
            </property>
            <property name="text">
             <string>Empty Quest</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../resources/images.qrc">
+             <normaloff>:/images/icon_empty_slot.svg</normaloff>:/images/icon_empty_slot.svg</iconset>
            </property>
           </widget>
          </item>

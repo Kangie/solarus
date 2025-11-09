@@ -32,6 +32,7 @@ We give below the author or each image used in the editor.
   - `icon_down.svg`
   - `icon_dynamic_tile.svg`
   - `icon_edit.svg`
+  - `icon_empty_slot.svg`
   - `icon_erase.svg`
   - `icon_error.svg`
   - `icon_external_link.svg`

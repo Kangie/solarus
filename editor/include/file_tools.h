@@ -48,6 +48,8 @@ QString to_file_name(const QString& name);
 
 bool is_path_valid(const QString& path);
 
+QString cd_up_until_exists(const QString& path);
+
 /**
  * @brief Possible errors when checking the path
  * where the new quest folder will be created.

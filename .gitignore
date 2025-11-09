@@ -22,10 +22,12 @@ work/unversioned/
 
 # Build files.
 build/
+solarus-editor-build
 
 # IDEs.
 .vscode
 CMakeLists.txt.user
+.qtcreator
 
 # MkDocs.
 /public/
