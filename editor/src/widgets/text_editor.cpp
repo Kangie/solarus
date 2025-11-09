@@ -20,6 +20,7 @@
 #include "widgets/text_editor_widget.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
+#include "editor_style.h"
 #include "quest.h"
 #include <QFile>
 #include <QIcon>
@@ -66,7 +67,11 @@ TextEditor::TextEditor(Quest& quest, const QString& file_path, QWidget* parent) 
   cursor_position_label = new QLabel(status_bar);
   cursor_position_label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   status_bar->addPermanentWidget(cursor_position_label);
-  cursor_position_label->setFont(QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont));
+
+  // Default styled fixed font for the cursor position label.
+  QFont fixed_font = EditorStyle::get_fixed_font_or_fallback();
+  fixed_font.setPointSize(10);
+  cursor_position_label->setFont(fixed_font);
 
   update_cursor_position_in_status_bar();
   QObject::connect(text_widget, &TextEditorWidget::cursorPositionChanged,
