@@ -9,6 +9,7 @@
 * Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
 * Fix `music:set_music_channel_volume` crashes the engine if channel number is 0 (#1924).
 * Fix diagonal jumpers preventing interactions of entities overlapping them (#1928).
+* Fix `on_joypad_button_pressed` wrong button number in 1.6 quests (#1943).
 
 ## Solarus 2.0.1 (2025-07-23)
 

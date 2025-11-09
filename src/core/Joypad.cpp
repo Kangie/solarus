@@ -84,6 +84,23 @@ std::map<std::string, std::string> Joypad::legacy_bindings_mapping = {
   {"axis 5 -", "trigger_right"},
 };
 
+std::map<JoyPadButton, int> Joypad::legacy_button_number_mapping = {
+  {JoyPadButton::A, 0},
+  {JoyPadButton::B, 1},
+  {JoyPadButton::X, 2},
+  {JoyPadButton::Y, 3},
+  {JoyPadButton::LEFT_SHOULDER, 4},
+  {JoyPadButton::RIGHT_SHOULDER, 5},
+  {JoyPadButton::BACK, 6},
+  {JoyPadButton::START, 7},
+  {JoyPadButton::LEFT_STICK, 8},
+  {JoyPadButton::RIGHT_STICK, 9},
+  {JoyPadButton::DPAD_UP, 10},
+  {JoyPadButton::DPAD_DOWN, 11},
+  {JoyPadButton::DPAD_LEFT, 12},
+  {JoyPadButton::DPAD_RIGHT, 13},
+};
+
 Joypad::Joypad(SDL_GameController *sdl_gc, SDL_Joystick *sdl_js):
     controller(sdl_gc), joystick(sdl_js)
 {
