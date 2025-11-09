@@ -655,8 +655,8 @@ Veuillez mettre à jour vos fichiers de données vers Solarus %2.</translation>
     <message>
         <location filename="../src/new_quest_builder.cpp" line="92"/>
         <source>Could not find the assets directory.
-Make sure that Solarus Quest Editor is properly installed.</source>
-        <translation>Impossible de trouver le dossier &quot;assets&quot;.\nVérifiez que Solarus Quest Editor est correctement installé.</translation>
+Make sure that Solarus Editor is properly installed.</source>
+        <translation>Impossible de trouver le dossier &quot;assets&quot;.\nVérifiez que Solarus Editor est correctement installé.</translation>
     </message>
     <message>
         <location filename="../src/border_kind_traits.cpp" line="61"/>
@@ -2482,8 +2482,8 @@ Voulez-vous l&apos;écraser ?</translation>
     <name>SolarusEditor::MainWindow</name>
     <message>
         <location filename="../src/widgets/main_window.ui" line="20"/>
-        <source>Solarus Quest Editor</source>
-        <translation>Solarus Quest Editor</translation>
+        <source>Solarus Editor</source>
+        <translation>Solarus Editor</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="102"/>
@@ -2928,10 +2928,10 @@ La prochaine étape est de modifier manuellement les propriétés de votre quêt
         <location filename="../src/widgets/main_window.cpp" line="263"/>
         <source>Could not locate the assets directory.
 Some features like creating a new quest will not be available.
-Please make sure that Solarus Quest Editor is correctly installed.</source>
+Please make sure that Solarus Editor is correctly installed.</source>
         <translation>Impossible de trouver le dossier &quot;assets&quot;.
 Certaines fonctionnalités commes créer une nouvelle quête ne seront pas disponibles.
-Vérifiez que Solarus Quest Editor est correctement installé.</translation>
+Vérifiez que Solarus Editor est correctement installé.</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.cpp" line="398"/>
@@ -3024,8 +3024,8 @@ Votre quête a été conservée inchangée au format %1.</translation>
     <message>
         <location filename="../src/widgets/main_window.cpp" line="824"/>
         <source>Could not find the assets directory.
-Make sure that Solarus Quest Editor is properly installed.</source>
-        <translation>Impossible de trouver le dossier &quot;assets&quot;.\nVérifiez que Solarus Quest Editor est correctement installé.</translation>
+Make sure that Solarus Editor is properly installed.</source>
+        <translation>Impossible de trouver le dossier &quot;assets&quot;.\nVérifiez que Solarus Editor est correctement installé.</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.cpp" line="1141"/>
@@ -3118,8 +3118,8 @@ Please save it or close it before renaming.</source>
         <translation>Jouer la musique sélectionnée</translation>
     </message>
     <message>
-        <source>Solarus Quest Editor %1</source>
-        <translation type="vanished">Solarus Quest Editor %1</translation>
+        <source>Solarus Editor %1</source>
+        <translation type="vanished">Solarus Editor %1</translation>
     </message>
     <message>
         <source>Ctrl+N</source>

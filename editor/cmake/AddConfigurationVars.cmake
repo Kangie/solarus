@@ -1,5 +1,5 @@
 set(SOLARUS_INSTALL_DATAROOTDIR "share" CACHE PATH "dataroot dir")
-set(SOLARUS_INSTALL_DATADIR "${SOLARUS_INSTALL_DATAROOTDIR}/solarus-quest-editor" CACHE PATH "data dir")
+set(SOLARUS_INSTALL_DATADIR "${SOLARUS_INSTALL_DATAROOTDIR}/solarus-editor" CACHE PATH "data dir")
 set(SOLARUS_INSTALL_BINDIR "bin" CACHE PATH "bin dir")
 
 # As Qt generates ui header files, the build directory needs to be an include

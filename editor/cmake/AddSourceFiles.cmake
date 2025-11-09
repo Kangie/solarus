@@ -1,5 +1,5 @@
 # Source files.
-set(solarus_quest_editor_SOURCES
+set(SOLARUSEDITOR_SOURCES
   include/entities/block.h
   include/entities/chest.h
   include/entities/crystal.h

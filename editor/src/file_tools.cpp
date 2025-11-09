@@ -45,6 +45,7 @@ namespace {
  *
  * The directory "assets" is searched in the following paths in this order:
  * - The directory containing the executable.
+ * - On macOS, the Resources directory inside the .app bundle.
  * - The source path (macro SOLARUSEDITOR_SOURCE_PATH)
  *   (useful for developer builds).
  * - The install path (macro SOLARUSEDITOR_DATADIR_PATH).
@@ -59,6 +60,11 @@ void initialize_assets() {
 
   // Try the current directory first.
   potential_paths << executable_path + "/assets";
+
+#ifdef Q_OS_MAC
+  // On macOS, the executable is inside the .app bundle.
+  potential_paths << executable_path + "/../Resources/assets";
+#endif
 
 #ifdef SOLARUSEDITOR_BINDIR_PATH
   // Try the source path if we are not running the installed executable.

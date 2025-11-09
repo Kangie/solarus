@@ -279,7 +279,7 @@ MainWindow::MainWindow(QWidget* parent) :
   if (FileTools::get_assets_path().isEmpty()) {
     GuiTools::warning_dialog(tr("Could not locate the assets directory.\n"
                               "Some features like creating a new quest will not be available.\n"
-                              "Please make sure that Solarus Quest Editor is correctly installed."));
+                              "Please make sure that Solarus Editor is correctly installed."));
   }
 
   // Exceptions for automatic icon coloring.
@@ -837,7 +837,7 @@ void MainWindow::add_quest_to_recent_list() {
 void MainWindow::on_action_new_quest_triggered() {
 
   if (FileTools::get_assets_path().isEmpty()) {
-    GuiTools::error_dialog(tr("Could not find the assets directory.\nMake sure that Solarus Quest Editor is properly installed."));
+    GuiTools::error_dialog(tr("Could not find the assets directory.\nMake sure that Solarus Editor is properly installed."));
     return;
   }
 
