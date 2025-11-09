@@ -1,8 +1,8 @@
-Solarus Quest Editor
+Solarus  Editor
 ====================
 
 Solarus is a lightweight, multiplatform, free and open-source 2D game engine.
-It features a game editor named Solarus Quest Editor.
+It features a game editor named Solarus Editor.
 
 This Windows binary package contains:
 
