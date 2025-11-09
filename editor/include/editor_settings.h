@@ -136,12 +136,9 @@ public:
   void restore_default();
 
 private:
+  const QMap<QString, QVariant>& get_default_values();
 
   QSettings settings;  /**< The wrapped settings. */
-
-  static QMap<QString, QVariant>
-    default_values;    /**< The default values. */
-
 };
 
 }
