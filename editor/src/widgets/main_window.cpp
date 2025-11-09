@@ -1992,6 +1992,7 @@ void MainWindow::update_music_actions() {
 void MainWindow::reload_settings() {
 
   ui.tab_widget->reload_settings();
+  ui.console_widget->reload_settings();
 }
 
 /**
