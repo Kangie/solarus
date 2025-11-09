@@ -253,6 +253,14 @@ MainWindow::MainWindow(QWidget* parent) :
           this, &MainWindow::log_message_to_console);
   connect(ui.tab_widget, &EditorTabs::run_map_requested,
           this, &MainWindow::run_quest);
+  connect(ui.tab_widget, &EditorTabs::new_quest_requested,
+          ui.action_new_quest, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::open_quest_requested,
+          ui.action_load_quest, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::documentation_requested,
+          ui.action_doc, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::website_requested,
+          ui.action_website, &QAction::trigger);
 
   connect(grid_size, &PairSpinBox::value_changed,
           this, &MainWindow::change_grid_size);
@@ -377,7 +385,7 @@ QMenu* MainWindow::create_zoom_menu() {
     { tr("200 %"), 2.0 },
     { tr("400 %"), 4.0 }
   };
-  QActionGroup* action_group = new QActionGroup(this);
+  QActionGroup* action_group = new QActionGroup(zoom_menu);
   for (const std::pair<QString, double>& zoom : zooms) {
     QAction* action = new QAction(zoom.first, action_group);
     zoom_actions[zoom.second] = action;
@@ -898,9 +906,9 @@ void MainWindow::on_action_load_quest_triggered() {
         tr("Select quest directory"),
         settings.get_value_string(EditorSettings::working_directory),
 #ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
-        QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog
+        {QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog}
 #else
-        QFileDialog::ShowDirsOnly
+        {QFileDialog::ShowDirsOnly}
 #endif
   );
 
@@ -1406,6 +1414,14 @@ void MainWindow::on_action_settings_triggered() {
 void MainWindow::on_action_website_triggered() {
 
   QDesktopServices::openUrl(QUrl("http://www.solarus-games.org/"));
+}
+
+/**
+ * @brief Slot called when the user triggers the "Welcome" action.
+ */
+void MainWindow::on_action_welcome_triggered() {
+
+  ui.tab_widget->open_welcome_editor_requested(get_quest());
 }
 
 /**
@@ -1984,6 +2000,13 @@ void MainWindow::update_title() {
 void MainWindow::open_file(Quest& quest, const QString& path) {
 
   ui.tab_widget->open_file_requested(quest, path);
+}
+
+/**
+ * @brief Opens the welcome page.
+ */
+void MainWindow::open_welcome() {
+  ui.tab_widget->open_welcome_editor_requested(quest);
 }
 
 /**

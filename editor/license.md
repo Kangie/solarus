@@ -17,6 +17,7 @@ We give below the author or each image used in the editor.
   - `icon_animation_separation_vertical.svg`
   - `icon_author.svg`
   - `icon_border_set.svg`
+  - `icon_book.svg`
   - `icon_bring_to_back.svg`
   - `icon_bring_to_front.svg`
   - `icon_camera.svg`
@@ -43,6 +44,8 @@ We give below the author or each image used in the editor.
   - `icon_go_up.svg`
   - `icon_grid.svg`
   - `icon_group.svg`
+  - `icon_home.svg`
+  - `icon_info.svg`
   - `icon_inside.svg`
   - `icon_last.svg`
   - `icon_layer_0.svg`
@@ -52,8 +55,10 @@ We give below the author or each image used in the editor.
   - `icon_lock.svg`
   - `icon_mastodon.svg`
   - `icon_next.svg`
+  - `icon_new_24x24.svg`
   - `icon_obstacle.svg`
   - `icon_open.svg`
+  - `icon_open_24x24.svg`
   - `icon_outside.svg`
   - `icon_paste.svg`
   - `icon_pause_music.svg`

@@ -26,6 +26,7 @@ build/
 # IDEs.
 .vscode
 CMakeLists.txt.user
+.qtcreator
 
 # MkDocs.
 /public/
@@ -50,3 +51,6 @@ venv
 
 # Other.
 tags
+
+# build files.
+/solarus-editor-build/

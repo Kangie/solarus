@@ -4,6 +4,7 @@
 
 * Memorization of layout splitters (#1914).
 * Fix memory leak when switching tilesets in the map editor (#1940).
+* Show welcome tab when opening the editor without a quest.
 
 ## Solarus Quest Editor 2.0.1 (2025-07-23)
 

@@ -94,6 +94,7 @@ set(SOLARUSEDITOR_SOURCES
   include/widgets/tileset_editor.h
   include/widgets/tileset_scene.h
   include/widgets/tileset_view.h
+  include/widgets/welcome_editor.h
   include/widgets/zoom_tool.h
   include/audio.h
   include/auto_tiler.h
@@ -229,6 +230,7 @@ set(SOLARUSEDITOR_SOURCES
   src/widgets/tileset_editor.cpp
   src/widgets/tileset_scene.cpp
   src/widgets/tileset_view.cpp
+  src/widgets/welcome_editor.cpp
   src/widgets/zoom_tool.cpp
   src/audio.cpp
   src/auto_tiler.cpp
