@@ -129,7 +129,7 @@ void Hero::StairsState::start(const State* previous_state) {
 void Hero::StairsState::stop(const State* next_state) {
 
   HeroState::stop(next_state);
-  get_sprites().set_clipping_rectangle(); // Remove any clipping when leaved
+  get_sprites().set_clipping_rectangle(); // Remove any clipping when leaving
 
   stairs->notify_exited();
 
