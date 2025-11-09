@@ -1,9 +1,9 @@
 # Main executable.
 add_executable(solarus-editor
-  ${solarus_quest_editor_SOURCES}
-  ${solarus_quest_editor_FORMS_HEADERS}
-  ${solarus_quest_editor_RESOURCES_RCC}
-  ${solarus_quest_editor_TRANSLATIONS_QM}
+  ${SOLARUSEDITOR_SOURCES}
+  ${SOLARUSEDITOR_FORMS_HEADERS}
+  ${SOLARUSEDITOR_RESOURCES_RCC}
+  ${SOLARUSEDITOR_TRANSLATIONS_QM}
 )
 
 target_link_libraries(solarus-editor

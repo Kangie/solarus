@@ -19,6 +19,6 @@ else()
   )
 endif()
 
-install(FILES ${solarus_quest_editor_TRANSLATIONS_QM}
+install(FILES ${SOLARUSEDITOR_TRANSLATIONS_QM}
   DESTINATION "${SOLARUS_INSTALL_DATADIR}/translations"
 )

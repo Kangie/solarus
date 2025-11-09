@@ -1,7 +1,7 @@
 # Add the three types of Qt6 files.
 
 # UI files.
-set(solarus_quest_editor_FORMS
+set(SOLARUSEDITOR_FORMS
   src/widgets/change_border_set_id_dialog.ui
   src/widgets/change_dialog_id_dialog.ui
   src/widgets/change_file_info_dialog.ui
@@ -37,12 +37,12 @@ set(solarus_quest_editor_FORMS
 )
 
 # Generate .h from .ui.
-qt6_wrap_ui(solarus_quest_editor_FORMS_HEADERS
-  ${solarus_quest_editor_FORMS}
+qt6_wrap_ui(SOLARUSEDITOR_FORMS_HEADERS
+  ${SOLARUSEDITOR_FORMS}
 )
 
 # Resources.
-set(solarus_quest_editor_RESOURCES
+set(SOLARUSEDITOR_RESOURCES
   resources/images.qrc
   resources/initial_files.qrc
   resources/quest_converter.qrc
@@ -51,17 +51,17 @@ set(solarus_quest_editor_RESOURCES
 )
 
 # Compile resource files.
-qt6_add_resources(solarus_quest_editor_RESOURCES_RCC
-  ${solarus_quest_editor_RESOURCES}
+qt6_add_resources(SOLARUSEDITOR_RESOURCES_RCC
+  ${SOLARUSEDITOR_RESOURCES}
 )
 
 # Translations.
-set(solarus_quest_editor_TRANSLATIONS
+set(SOLARUSEDITOR_TRANSLATIONS
   translations/solarus_editor_es.ts
   translations/solarus_editor_fr.ts
   translations/solarus_editor_zh_CN.ts
   translations/solarus_editor_zh_TW.ts
 )
-qt6_add_translation(solarus_quest_editor_TRANSLATIONS_QM
-  ${solarus_quest_editor_TRANSLATIONS}
+qt6_add_translation(SOLARUSEDITOR_TRANSLATIONS_QM
+  ${SOLARUSEDITOR_TRANSLATIONS}
 )

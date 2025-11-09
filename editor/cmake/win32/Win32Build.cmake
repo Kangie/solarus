@@ -1,17 +1,17 @@
 # Add an icon for the executable in Windows.
 if(MINGW)
-  set(solarus_quest_editor_SOURCES
-    ${solarus_quest_editor_SOURCES}
+  set(SOLARUSEDITOR_SOURCES
+    ${SOLARUSEDITOR_SOURCES}
     cmake/win32/resources-mingw.rc
   )
 elseif(WIN32)
-  set(solarus_quest_editor_SOURCES
-    ${solarus_quest_editor_SOURCES}
+  set(SOLARUSEDITOR_SOURCES
+    ${SOLARUSEDITOR_SOURCES}
     cmake/win32/resources.rc
   )
 endif()
 target_sources(solarus-editor PRIVATE
-  ${solarus_quest_editor_SOURCES}
+  ${SOLARUSEDITOR_SOURCES}
 )
 
 # Windows: disable the console.
