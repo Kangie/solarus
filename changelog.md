@@ -2,6 +2,10 @@
 
 ## Solarus 2.0.2 (In progress)
 
+* Made separator scrolling more robust.
+* Enable custom entities to cross separators.
+* Fix video shader not being applied to subpixel cameras.
+* Fix straight movement smoothness under certain speed modifications scenarios.
 * Fix analog movements being stuck on some axes sometimes (#1683).
 * Fix crash when setting events on a joypad after the game was reset (#1898).
 * Fix crash when setting an ability in game:on_started() (#1920).

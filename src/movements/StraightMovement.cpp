@@ -100,7 +100,7 @@ void StraightMovement::set_dim_speed(uint64_t& delay,
   remaining = std::max((int64_t)0, remaining); // Remaining time should not be negative
   int64_t to_go = (same_dir ? remaining : -remaining);
 
-  auto speed_ratio = current_speed / target_speed;
+  auto speed_ratio = std::abs(current_speed / target_speed);
   to_go *= speed_ratio; //We need to conserve pixel movement not time, if speeds differ by order of magnitude this is really important
 
   current_speed = target_speed;
