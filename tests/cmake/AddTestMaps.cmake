@@ -214,6 +214,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1908_map_create_enemy_suffix"
   "bugs/1917_set_tileset_int"
   "bugs/1683_analog_diagonal"
+  "bugs/1936_stairs_mask/first_floor"
 )
 
 # Test that should succeed when there are non-fatal errors
