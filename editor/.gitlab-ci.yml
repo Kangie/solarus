@@ -227,7 +227,7 @@ mingw-x64-package:
     - PACKAGE=$PACKAGE_PREFIX-$PACKAGE_REF.zip
     - 'echo "Package: $PACKAGE"'
   script:
-    - find staging/share/solarus-quest-editor/assets/initial_quest
+    - find staging/share/solarus-editor/assets/initial_quest
         \( -iname "*.dat" -or -iname "*.lua" \)
         -print0 | xargs -0 unix2dos -k -o
     - mingw_make_pkg.sh $ARCH $PACKAGE $BASE_DIR $BINARIES
@@ -258,8 +258,8 @@ mingw-x64-package:
       staging/bin/solarus-run.exe
       staging/bin/solarus-editor.exe
     EXTRAS: >-
-      staging/share/solarus-quest-editor/assets
-      staging/share/solarus-quest-editor/translations
+      staging/share/solarus-editor/assets
+      staging/share/solarus-editor/translations
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/iconengines
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/imageformats
       /usr/$ARCH-w64-mingw32/lib/qt6/plugins/platforms

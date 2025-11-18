@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/Debug.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Jumper.h"
 
@@ -27,30 +26,33 @@ namespace Solarus {
  * \param layer layer of the entity on the map
  * \param xy Coordinates of the top-left corner of the entity's rectangle.
  * \param size Size of the entity's rectangle.
- * \param direction direction of the jump (0 to 7 as the jump may be diagonal)
+ * \param direction8 direction of the jump (0 to 7 as the jump may be diagonal)
  * \param jump_length length of the jump in pixels (usually a multiple of 8)
  */
 Jumper::Jumper(const std::string& name,
     int layer,
     const Point& xy,
     const Size& size,
-    int direction,
+    int direction8,
     int jump_length):
   Entity(name, 0, layer, xy, size),
   jump_length(jump_length) {
 
   // Facing point detection is necessary to avoid sword tapping.
-  set_collision_modes(CollisionMode::COLLISION_CUSTOM | COLLISION_FACING);
+  int collision_modes = direction8 % 4 == 0 ?
+      (CollisionMode::COLLISION_CUSTOM | COLLISION_FACING) :
+      CollisionMode::COLLISION_CUSTOM;
+  set_collision_modes(collision_modes);
 
-  set_direction(direction);
+  set_direction(direction8);
 
   // check the size
-  if (direction % 2 != 0) {
+  if (direction8 % 2 != 0) {
     SOLARUS_ASSERT(size.is_square(),
         "This jumper has a diagonal direction but is not square");
   }
   else {
-    if (direction % 4 == 0) {
+    if (direction8 % 4 == 0) {
       SOLARUS_ASSERT(size.width == 8,
           "This jumper is horizontal but its height is not 8");
     }

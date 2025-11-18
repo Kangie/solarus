@@ -588,9 +588,9 @@ Please upgrade your quest  data files to Solarus %2.</source>
     <message>
         <location filename="../src/new_quest_builder.cpp" line="92"/>
         <source>Could not find the assets directory.
-Make sure that Solarus Quest Editor is properly installed.</source>
+Make sure that Solarus Editor is properly installed.</source>
         <translation>找不到資料目錄。
-請確保 Solarus Quest Editor 已正確安裝。</translation>
+請確保 Solarus 編輯 已正確安裝。</translation>
     </message>
     <message>
         <location filename="../src/border_kind_traits.cpp" line="61"/>
@@ -2266,8 +2266,8 @@ Do you want to overwrite it?</source>
     <name>SolarusEditor::MainWindow</name>
     <message>
         <location filename="../src/widgets/main_window.ui" line="20"/>
-        <source>Solarus Quest Editor</source>
-        <translation>Solarus 任務編輯器</translation>
+        <source>Solarus Editor</source>
+        <translation>Solarus 編輯</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.ui" line="102"/>
@@ -2661,10 +2661,10 @@ La prochaine étape est de modifier manuellement les propriétés de votre quêt
         <location filename="../src/widgets/main_window.cpp" line="263"/>
         <source>Could not locate the assets directory.
 Some features like creating a new quest will not be available.
-Please make sure that Solarus Quest Editor is correctly installed.</source>
+Please make sure that Solarus Editor is correctly installed.</source>
         <translation>無法找到資料目錄。
 某些功能(例如建立新任務)將無法使用。
-請確保 Solarus Quest Editor 已正確安裝。</translation>
+請確保 Solarus 編輯 已正確安裝。</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.cpp" line="398"/>
@@ -2726,9 +2726,9 @@ Your quest was kept unchanged in format %1.</source>
     <message>
         <location filename="../src/widgets/main_window.cpp" line="824"/>
         <source>Could not find the assets directory.
-Make sure that Solarus Quest Editor is properly installed.</source>
+Make sure that Solarus Editor is properly installed.</source>
         <translation>找不到資料目錄。
-請確保 Solarus Quest Editor 已正確安裝。</translation>
+請確保 Solarus 編輯 已正確安裝。</translation>
     </message>
     <message>
         <location filename="../src/widgets/main_window.cpp" line="1141"/>

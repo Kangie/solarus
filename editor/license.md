@@ -2,19 +2,15 @@
 
 ## Source code
 
-The original source code of Solarus Quest Editor is licensed under the terms of
-the [GNU General Public License in version 3](license_gpl.txt).
+The original source code of Solarus Editor is licensed under the terms of the [GNU General Public License in version 3](license_gpl.txt).
 
 ## Data files
-
-Images used in the editor
 
 We give below the author or each image used in the editor.
 
 ### Icons in `resources/images`
 
 - Icons from [Qlementine Icons](https://github.com/oclero/qlementine-icons) are licensed under [MIT](https://github.com/oclero/qlementine-icons/blob/master/LICENSE):
-
   - `icon_add_folder.svg`
   - `icon_add.svg`
   - `icon_animation_separation_horizontal.svg`
@@ -94,7 +90,6 @@ We give below the author or each image used in the editor.
   - `icon_zoom.svg`
 
 - Other icons are licensed under [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/), and made by [Olivier Cléro](https://www.olivierclero.com/):
-
   - `border_kind_0.svg`
   - `border_kind_1.svg`
   - `border_kind_10.svg`
@@ -235,23 +230,17 @@ We give below the author or each image used in the editor.
 ### Other images
 
 Other images were made by the Solarus team. Solarus' logo and icon were made
-by [Olivier Cléro](https://www.olivierclero.com/).
+by [Olivier Cléro](https://www.olivierclero.com).
 
 ## Initial quest
 
-Solarus Quest Editor provides assets (images, sounds and scripts) when
-creating a new quest (File > New quest).
+Solarus Editor provides assets (images, sounds and scripts) when creating a new quest (File > New quest).
 They are located in the directory `assets/initial_quest`.
 
 - Lua scripts are licensed under the terms of the GNU General Public License in version 3.
-
-- Most data files other than Lua scripts are licensed under
-  Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0).
-
+- Most data files other than Lua scripts are licensed under Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0).
 - A few data files are in public domain.
 
-Most data files of these assets come from the official
-[Solarus Free Resource Pack](https://gitlab.com/solarus-games/solarus-free-resource-pack.)
+Most data files of these assets come from the official [Solarus Free Resource Pack](https://gitlab.com/solarus-games/solarus-free-resource-pack.)
 
-More detailed information about the authors and license of every file
-is displayed when you open this project with Solarus Quest Editor.
+More detailed information about the authors and license of every file is displayed when you open this project with Solarus Editor.

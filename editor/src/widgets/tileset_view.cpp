@@ -249,8 +249,8 @@ void TilesetView::set_tileset(TilesetModel* tileset) {
 
   if (tileset != nullptr) {
     // Create the scene from the model.
-    scene = new TilesetScene(*tileset, this);
-    setScene(scene);
+    scene = std::make_unique<TilesetScene>(*tileset, this);
+    setScene(scene.get());  // The view does not take ownership of the scene.
 
     if (tileset->get_patterns_image().isNull()) {
       return;
@@ -293,7 +293,6 @@ void TilesetView::set_tileset(TilesetModel* tileset) {
  * @brief Called when the tileset model has changed.
  */
 void TilesetView::notify_tileset_changed() {
-
   start_state_idle();
 }
 
@@ -302,7 +301,7 @@ void TilesetView::notify_tileset_changed() {
  * @return The scene or nullptr if no tileset was set.
  */
 TilesetScene* TilesetView::get_scene() {
-  return scene;
+  return scene.get();
 }
 
 /**
@@ -1039,7 +1038,6 @@ TilesetView& TilesetView::State::get_view() {
  * @return The map scene.
  */
 const TilesetScene& TilesetView::State::get_scene() const {
-
   return *view.get_scene();
 }
 
@@ -1049,7 +1047,6 @@ const TilesetScene& TilesetView::State::get_scene() const {
  * Non-const version.
  */
 TilesetScene& TilesetView::State::get_scene() {
-
   return *view.get_scene();
 }
 

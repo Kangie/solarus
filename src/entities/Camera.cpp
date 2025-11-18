@@ -112,10 +112,15 @@ void TrackingState::update() {
       if (separator_scrolling_position == separator_target_position) {
         // Finished.
         finished = true;
+        break; // Don't overshoot the scrolling transition
       }
     }
 
     if (finished) {
+      // Replace the camera in an okay state before handing back control to lua
+      auto to_track = camera.get_position_to_track(camera.get_center_point());
+      separator_scrolling_position.set_xy(to_track);
+
       separator_next_scrolling_date = 0;
       separator_traversed->notify_activated(separator_scrolling_direction4);
       separator_traversed = nullptr;
@@ -164,24 +169,24 @@ void TrackingState::traverse_separator(Separator& separator) {
     if (tracked_entity_center.y < separator_center.y) {
       separator_scrolling_direction4 = 3;
       separator_scrolling_delta.y = 1;
-      separator_target_position.add_y(camera.get_height());
+      separator_target_position.set_y(separator_center.y);
     }
     else {
       separator_scrolling_direction4 = 1;
       separator_scrolling_delta.y = -1;
-      separator_target_position.add_y(-camera.get_height());
+      separator_target_position.set_y(separator_center.y-camera.get_height());
     }
   }
   else {
     if (tracked_entity_center.x < separator_center.x) {
       separator_scrolling_direction4 = 0;
       separator_scrolling_delta.x = 1;
-      separator_target_position.add_x(camera.get_width());
+      separator_target_position.set_x(separator_center.x);
     }
     else {
       separator_scrolling_direction4 = 2;
       separator_scrolling_delta.x = -1;
-      separator_target_position.add_x(-camera.get_width());
+      separator_target_position.set_x(separator_center.x-camera.get_width());
     }
   }
 
@@ -253,6 +258,7 @@ class ManualState: public Entity::State {
 public:
 
   explicit ManualState(Camera& camera);
+  void update() override;
   void start(const State* previous) override;
   const std::string& get_lua_type_name() const override;
 
@@ -267,6 +273,13 @@ ManualState::ManualState(Camera& camera) :
   set_entity(camera);
 }
 
+void ManualState::update() {
+  Camera& camera = get_entity<Camera>();
+  auto mov = camera.get_movement();
+  if(mov) {
+    camera.set_subpixel_offset(mov->get_subpixel_offset());
+  }
+}
 
 /**
  * @brief Called when this states starts, unlink the hero from previous camera
@@ -1032,9 +1045,17 @@ void Camera::draw(const SurfacePtr& dst_surface, const SurfacePtr &screen_surfac
   } else {
     if (CurrentQuest::get_properties().is_subpixel_camera() && screen_surface) {
       const ShaderPtr shader = surf->get_shader();
-      const DrawProxy& proxy = shader ?
-            reinterpret_cast<const DrawProxy&>(*shader) :
-            Video::get_renderer().default_terminal();
+      const ShaderPtr video_shader = Video::get_shader();
+
+      const DrawProxy& proxy = [&]() -> const DrawProxy&{
+        if(shader) {
+          return reinterpret_cast<const DrawProxy&>(*shader);
+        }
+        if(video_shader){
+          return reinterpret_cast<const DrawProxy&>(*video_shader);
+        }
+        return Video::get_renderer().default_terminal();
+      }();
 
       //context.screen_surface->clear();
       //auto camera_size = camera_surface->get_size();

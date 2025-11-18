@@ -100,6 +100,9 @@ void StraightMovement::set_dim_speed(uint64_t& delay,
   remaining = std::max((int64_t)0, remaining); // Remaining time should not be negative
   int64_t to_go = (same_dir ? remaining : -remaining);
 
+  auto speed_ratio = std::abs(current_speed / target_speed);
+  to_go *= speed_ratio; //We need to conserve pixel movement not time, if speeds differ by order of magnitude this is really important
+
   current_speed = target_speed;
   // compute x_delay, x_move and next_move_date_x
   if (target_speed == 0) {
@@ -129,7 +132,6 @@ void StraightMovement::set_dim_speed(uint64_t& delay,
  * \param x_speed the x speed of the object in pixels per second
  */
 void StraightMovement::set_x_speed(double x_speed) {
-  x_blocked = true;
   set_dim_speed(x_delay, next_move_date_x, this->x_speed, x_move, x_speed);
 }
 
@@ -138,7 +140,6 @@ void StraightMovement::set_x_speed(double x_speed) {
  * \param y_speed the y speed of the object in pixels per second
  */
 void StraightMovement::set_y_speed(double y_speed) {
-  y_blocked = true;
   set_dim_speed(y_delay, next_move_date_y, this->y_speed, y_move, y_speed);
 }
 
@@ -195,8 +196,8 @@ glm::vec2 StraightMovement::get_subpixel_offset() const {
   auto x_rem = std::min(remaining(x_delay, next_move_date_x), (int64_t)x_delay);
   auto y_rem = std::min(remaining(y_delay, next_move_date_y), (int64_t)y_delay);
   return {
-    x_blocked ? 0.f : x_rem * -1e-9f * x_move * std::abs(get_x_speed()),
-    y_blocked ? 0.f : y_rem * -1e-9f * y_move * std::abs(get_y_speed())
+    x_blocked ? 0.f : x_move + x_rem * -1e-9f * x_move * std::abs(get_x_speed()),
+    y_blocked ? 0.f : y_move + y_rem * -1e-9f * y_move * std::abs(get_y_speed())
   };
 }
 

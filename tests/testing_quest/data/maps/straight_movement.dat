@@ -29,7 +29,7 @@ custom_entity{
   name = "dummy",
   layer = 0,
   x = 64,
-  y = 157,
+  y = 85,
   width = 16,
   height = 16,
   direction = 0,
@@ -40,6 +40,26 @@ sensor{
   name = "hero_arrived_sensor",
   layer = 0,
   x = 256,
+  y = 125,
+  width = 16,
+  height = 16,
+}
+
+custom_entity{
+  name = "dummy2",
+  layer = 0,
+  x = 8,
+  y = 197,
+  width = 16,
+  height = 16,
+  direction = 0,
+  sprite = "enemies/test_enemy",
+}
+
+sensor{
+  name = "hero_arrived_sensor_2",
+  layer = 0,
+  x = 48,
   y = 125,
   width = 16,
   height = 16,

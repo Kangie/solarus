@@ -242,11 +242,11 @@ int run_quest(int argc, char* argv[]) {
  * @brief Entry point of the quest editor.
  *
  * To run the editor GUI:
- *   solarus-quest-editor [quest_path [file_path]]
+ *   solarus-editor [quest_path [file_path]]
  * To directly run a quest (no GUI, similar to solarus-run):
- *   solarus-quest-editor -run quest_path
+ *   solarus-editor -run quest_path
  * To directly run a map of a quest quest for testing purposes:
- *   solarus-quest-editor -run -map=your_map_id quest_path
+ *   solarus-editor -run -map=your_map_id quest_path
  *
  * @param argc Number of arguments of the command line.
  * @param argv Command-line arguments.

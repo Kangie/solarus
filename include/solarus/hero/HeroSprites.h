@@ -163,14 +163,14 @@ class HeroSprites {
     // Tunic.
     std::string tunic_sprite_id;            /**< Animation set used for the tunic.
                                              * By default, "hero/tunicX" where X is the tunic level. */
-    bool has_default_tunic_sprite;          /**< Whether tunic_sprite_id has the defaut value. */
+    bool has_default_tunic_sprite = true;   /**< Whether tunic_sprite_id has the defaut value. */
     SpritePtr tunic_sprite;                 /**< sprite of the current tunic */
 
     // Sword.
     std::string sword_sprite_id;            /**< Animation set used for the sword.
                                              * An empty string means no sword sprite.
                                              * By default, "hero/swordX" where X is the sword level. */
-    bool has_default_sword_sprite;          /**< Whether sword_sprite_id has the defaut value. */
+    bool has_default_sword_sprite = true;   /**< Whether sword_sprite_id has the defaut value. */
     SpritePtr sword_sprite;                 /**< Current sword sprite. */
     std::string sword_stars_sprite_id;      /**< Animation set used for the sword stars.
                                              * An empty string means no sword stars sprite. */
@@ -178,13 +178,13 @@ class HeroSprites {
 
     std::string sword_sound_id;             /**< Sound played when using the sword.
                                              * By default, "swordX" where X is the sword level. */
-    bool has_default_sword_sound;           /**< Whether sword_sound_id has the defaut value. */
+    bool has_default_sword_sound = true;    /**< Whether sword_sound_id has the defaut value. */
 
     // Shield.
     std::string shield_sprite_id;           /**< Animation set used for the shield.
                                              * An empty string means no shield sprite.
                                              * By default, "hero/shieldX" where X is the shield level. */
-    bool has_default_shield_sprite;         /**< Whether shield_sprite_id has the defaut value. */
+    bool has_default_shield_sprite = true;  /**< Whether shield_sprite_id has the defaut value. */
     SpritePtr shield_sprite;                /**< Current shield sprite. */
 
     // Other sprites.
@@ -199,14 +199,14 @@ class HeroSprites {
     static const int
         animation_directions[8][2];         /**< possible directions of the animation for each movement direction */
 
-    int animation_direction_saved;          /**< direction of the hero's sprites, saved before
+    int animation_direction_saved = 0;      /**< direction of the hero's sprites, saved before
                                               * showing a sprite animation having only one direction */
-    uint32_t when_suspended;                /**< date when the game was suspended */
+    uint32_t when_suspended = 0;            /**< date when the game was suspended */
 
-    bool blinking;                          /**< Whether the hero's sprites are blinking. */
-    uint32_t end_blink_date;                /**< When the hero's sprites stop blinking.
+    bool blinking = false;                  /**< Whether the hero's sprites are blinking. */
+    uint32_t end_blink_date = 0;            /**< When the hero's sprites stop blinking.
                                              * 0 means infinite. */
-    bool walking;                           /**< stopped or walking? */
+    bool walking = false;                   /**< stopped or walking? */
     Rectangle clipping_rectangle;           /**< when drawing the sprites onto a map, indicates an area of the map to be restricted to
                                              * (usually, the whole map is considered and this rectangle's values are all 0) */
     std::shared_ptr<CarriedObject>

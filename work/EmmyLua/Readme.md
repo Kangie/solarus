@@ -19,11 +19,13 @@ typing `> User Settings` and clicking `Preferences: Open User Settings (JSON)`.
 
 If there is no property called `"Lua.workspace.library"`, create it at the bottom of
 the file like so:
+
 ```lua
-    "Lua.workspace.library": [
-        "<path_to_solarus>\\work\\EmmyLua\\api"
-    ],
+"Lua.workspace.library": [
+    "<path_to_solarus>\\work\\EmmyLua\\api"
+],
 ```
+
 Be sure to add a comma before creating this property if there are others before it.
 
 If there is a property called `"Lua.workspace.library"` then add
@@ -32,15 +34,14 @@ elements already there, be sure to add a comma before taking a new line.
 
 Be sure to replace `<path_to_solarus>` with the path to the Solarus local repository.
 
-## Use VS Code as text editor from Solarus Quest Editor
+## Use VS Code as text editor from Solarus Editor
 
-You can tell Solarus Quest Editor to use VS Code to edit Lua scripts,
+You can tell Solarus Editor to use VS Code to edit Lua scripts,
 instead of the default internal code editor.
 
-In Solarus Quest Editor, go to Tools > Options > Text Editor and enable
-External Editor.
-In the command field, put `<path_to_vscode> "%p/data/" "%f"`.
-On Linux or Mac OS X,
-`<path_to_vscode>` can be as simple as `vscode`.
-Windows users can either add
-Code.exe to their `PATH` or paste the full path of the executable.
+In Solarus Editor, go to Tools > Options > Text Editor and enable
+External Editor. In the command field, put `<path_to_vscode> "%p/data/" "%f"`.
+
+On Linux or Mac OS X, `<path_to_vscode>` can be as simple as `vscode`.
+
+Windows users can either add `code.exe` to their `PATH` or paste the full path of the executable.
