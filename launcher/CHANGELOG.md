@@ -1,9 +1,9 @@
-# Solarus Launcher (legacy)
+# Changelog
 
-## v2.0.1
+## Solarus Launcher 2.0.1 (2025-07-23)
 
 * Disable 'Add folder' action (#1696).
 
-## v2.0.0
+## Solarus Launcher 2.0.0 (2025-04-01)
 
 * Rewrite of the old launcher with Qt6 and Qlementine.
