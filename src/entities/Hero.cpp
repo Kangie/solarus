@@ -841,7 +841,14 @@ void Hero::place_on_destination(Map& map, const Rectangle& previous_map_location
  */
 Point Hero::get_facing_point() const {
 
-  return get_touching_point(get_animation_direction());
+  int direction = get_animation_direction();
+  if (direction > 3) {
+    // 4 directions is recommended for hero sprites.
+    // If there are more than 4 directions,
+    // then we can't guess which one corresponds to "facing".
+    direction = 0;
+  }
+  return get_touching_point(direction);
 }
 
 /**
@@ -1887,7 +1894,7 @@ void Hero::attack_hero(Hero& hero, Sprite* this_sprite) {
     }
 
     if (hero_protected) {
-      hero.get_equipment().notify_ability_used(Ability::SHIELD);
+      hero.get_equipment().notify_ability_used(Ability::SHIELD, hero);
     }
     else {
       // Let the enemy script handle this if it wants.
@@ -2806,7 +2813,7 @@ void Hero::start_running() {
  */
 void Hero::start_pushing() {
 
-  get_equipment().notify_ability_used(Ability::PUSH);
+  get_equipment().notify_ability_used(Ability::PUSH, *this);
   set_state(std::make_shared<PushingState>(*this));
 }
 
@@ -2815,7 +2822,7 @@ void Hero::start_pushing() {
  */
 void Hero::start_grabbing() {
 
-  get_equipment().notify_ability_used(Ability::GRAB);
+  get_equipment().notify_ability_used(Ability::GRAB, *this);
   set_state(std::make_shared<GrabbingState>(*this));
 }
 
@@ -2824,7 +2831,7 @@ void Hero::start_grabbing() {
  */
 void Hero::start_pulling() {
 
-  get_equipment().notify_ability_used(Ability::PULL);
+  get_equipment().notify_ability_used(Ability::PULL, *this);
   set_state(std::make_shared<PullingState>(*this));
 }
 

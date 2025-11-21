@@ -56,10 +56,7 @@ Sound::Sound(const SoundBuffer& data):
  * \brief Destroys the sound.
  */
 Sound::~Sound() {
-
-  if (device != nullptr && source != AL_NONE) {
-    stop_source();
-  }
+  stop();
 }
 
 /**
@@ -464,6 +461,8 @@ void Sound::update() {
     }
   }
 
+  check_openal_clean_state("Sound::update");
+
   // also update the music
   MusicSystem::update();
 }
@@ -484,8 +483,8 @@ bool Sound::update_playing() {
   ALint status;
   alGetSourcei(source, AL_SOURCE_STATE, &status);
 
-  if (status == AL_STOPPED) {
-    stop_source();
+  if (status == AL_STOPPED) {  // The sound has just finished.
+    stop();
   }
 
   return source != AL_NONE;
@@ -551,7 +550,7 @@ bool Sound::start() {
 }
 
 /**
- * \brief Stops playing this sound.
+ * \brief Stops playing this sound, cleans the source and releases the buffer.
  */
 void Sound::stop() {
 
@@ -559,31 +558,17 @@ void Sound::stop() {
     return;
   }
 
-  check_openal_clean_state("Sound::stop");
-
   if (source == AL_NONE) {
-    // Nothing to do.
     return;
   }
 
-  ALint status;
+  ALint status = 0;
   alGetSourcei(source, AL_SOURCE_STATE, &status);
   if (status == AL_PLAYING || status == AL_PAUSED) {
-    stop_source();
+    // Stops the source if still active.
+    alSourceStop(source);
   }
-}
-
-/**
- * \brief Stops playing the sound.
- */
-void Sound::stop_source() {
-
-  if (source == AL_NONE) {
-    return;
-  }
-
-  alSourceStop(source);
-  alSourcei(source, AL_BUFFER, 0);
+  alSourcei(source, AL_BUFFER, 0);  // This allows the buffer to get deleted later.
   alDeleteSources(1, &source);
 
   ALenum error = alGetError();

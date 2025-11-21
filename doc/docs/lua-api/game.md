@@ -272,28 +272,38 @@ The game-over sequence automatically starts when the player's life gets to zero,
 Return value (boolean)
 : `true` if a game-over sequence is running.
 
-### `game:start_game_over()`
+### `game:start_game_over([hero])`
 
 Starts the game-over sequence manually.
 
 Only possible when the game is running.
 
-This function is seldom needed since the game-over sequence automatically starts when the player's life reaches zero. But you can use it if you want to start a game-over sequence even when the player's life is greater than zero.
+This function is seldom needed since the game-over sequence automatically starts when the hero's life reaches zero. But you can use it if you want to start a game-over sequence even when the hero's life is greater than zero.
 
-### `game:stop_game_over()`
+`hero` ([hero](./map-entities/hero.md), optional)
+: The hero that triggers the game-over sequence. No value means the main hero.
 
-Finishes the current game-over sequence.
+### `game:stop_game_over([hero])`
+
+Finishes the game-over sequence of the hero.
 
 Only possible during a game-over sequence.
 
 The game is suspended during the whole game-over sequence. Call this function to resume it. If the [life](#gameget_life) is still zero at this point, then the engine automatically restores full life.
+`hero` ([hero](./map-entities/hero.md), optional)
+: The hero whose the game-over sequence should be stopped. No value means the main hero.
 
 ### `game:get_map()`
 
-Returns one of the current maps.
+Returns the current map.
+
+If more than one maps are loaded, returns the one that has the default hero if any.
+Otherwise, returns the first map of the current maps.
+
+Returns `nil` if the game is not running, or if the game has no map initialized yet, typically from `game:on_started()`.
 
 Return value ([map](./map.md))
-: The current map of this game (`nil` if this game is not running).
+: The current map of this game, or `nil` if no map is currently running.
 
 ### `game:get_hero()`
 

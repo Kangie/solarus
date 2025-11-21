@@ -20,7 +20,6 @@
 #include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
-#include "solarus/core/QuestFiles.h"
 #include "solarus/graphics/Sprite.h"
 #include "solarus/lua/LuaContext.h"
 
@@ -342,11 +341,14 @@ void Teletransporter::transport_hero(Hero& hero) {
   }
 
   HeroPtr hero_ptr = std::static_pointer_cast<Hero>(hero.shared_from_this());
+  const bool has_linked_camera = hero.get_linked_camera() != nullptr;
 
-  if(hero.get_linked_camera()) {
-    hero.set_suspended(true); //Suspend the traveling hero so that it does not trigger more tp
-    get_game().teleport_hero(hero_ptr, destination_map_id, name, transition_style);
-  } else {
+  if (has_linked_camera) {
+    hero.set_suspended(true);  // Suspend the travelling hero so that it does not trigger more tp.
+  }
+  get_game().teleport_hero(hero_ptr, destination_map_id, name, transition_style);
+
+  if (!has_linked_camera) {
     // Handle edge case of StairsState Stairs::NORMAL_WAY
     // trying to transport a hero without a camera,
     // leaving the clipping rectangle indefinitely.
@@ -355,7 +357,7 @@ void Teletransporter::transport_hero(Hero& hero) {
   }
 
   transporting_hero = false;
-  if(is_on_map_side()) {
+  if (is_on_map_side()) {
     hero.set_xy(hero_x, hero_y);
   }
 }

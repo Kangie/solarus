@@ -1,8 +1,9 @@
-#include "solarus/graphics/VertexArray.h"
-
+#include "solarus/graphics/SolarusGl.h"
 #include "solarus/graphics/Surface.h"
+#include "solarus/graphics/VertexArray.h"
 #include "solarus/core/Debug.h"
-#include <cstddef> //offsetof
+
+#include <cstddef>  // offsetof
 
 namespace Solarus {
 

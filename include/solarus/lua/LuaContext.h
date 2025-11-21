@@ -424,8 +424,8 @@ class LuaContext {
     void item_on_obtained(EquipmentItem& item, const Treasure& treasure);
     void item_on_variant_changed(EquipmentItem& item, int variant);
     void item_on_amount_changed(EquipmentItem& item, int amount);
-    void item_on_using(EquipmentItem& item);
-    void item_on_ability_used(EquipmentItem& item, Ability ability);
+    void item_on_using(EquipmentItem& item, Hero& hero);
+    void item_on_ability_used(EquipmentItem& item, Ability ability, Hero& hero);
     void item_on_npc_interaction(EquipmentItem& item, Npc& npc);
     bool item_on_npc_interaction_item(EquipmentItem& item, Npc& npc,
         EquipmentItem& item_used);
@@ -600,6 +600,8 @@ class LuaContext {
       music_api_create,
       music_api_play,
       music_api_stop,
+      music_api_is_paused,
+      music_api_set_paused,
       music_api_get_volume,
       music_api_set_volume,
       music_api_get_channel_volume,
@@ -1685,8 +1687,8 @@ private:
     void on_amount_changed(int amount);
     void on_obtaining(const Treasure& treasure);
     void on_obtained(const Treasure& treasure);
-    void on_using();
-    void on_ability_used(Ability ability);
+    void on_using(Hero& hero);
+    void on_ability_used(Ability ability, Hero& hero);
     void on_created();
     void on_removed();
     void on_enabled();

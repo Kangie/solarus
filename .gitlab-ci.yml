@@ -4,22 +4,17 @@
 # This file configures a pipeline for building, testing and packaging the
 # Solarus Engine. Packaging uses two jobs: staging-install and package.
 # Artifacts from staging-install jobs can be used in other projects that
-# depend on the Solarus Engine, e.g. the Solarus Quest Editor.
+# depend on the Solarus Engine, e.g. the Solarus Launcher and Editor.
 #
-# There are three build targets currently supported:
+# There are two build targets currently supported:
 #
 # - Linux 64-bit (using gcc)
-# - Windows 32-bit (using MinGW)
 # - Windows 64-bit (using MinGW)
 #
 # Note that only the Windows targets generate redistributable packages.
 #
 # At the moment, only Linux-based testing is available. However, Windows
 # staging-install and package jobs will not run if Linux testing fails.
-#
-# If a pipeline is started for the 'dev' or 'master' branches, a pipeline
-# for the Solarus Quest Editor repository on the same branch will be
-# triggered after the packaging jobs are completed.
 
 variables:
   IMAGE_REPOSITORY: registry.gitlab.com/solarus-games/solarus-devops
@@ -32,7 +27,6 @@ stages:
   - install
   - package
   - deploy
-  - trigger
 
 #------------------------------------------------------------------------------------
 # Template for Generic Build Jobs
@@ -93,55 +87,6 @@ stages:
     CMAKE_CMD: cmake
 
 #------------------------------------------------------------------------------------
-# Template for MinGW Package Jobs
-#
-# An artifact is generated with binaries, libraries and assets required to
-# run the Solarus Engine that expires one month after creation unless the
-# pipeline is for the most recent commit on a branch or tag.
-#
-# Jobs must define a `BINARIES` variable with a list of all binary objects
-# to include in the package. Jobs can optionally define an `EXTRAS` variable
-# with a list of additional files and directories to include in the package.
-# Jobs can optionally define a `TEXT_FILES` variable with a list of text
-# files to include in the root of the package.
-#
-# Jobs can optionally define a `BASE_DIR` variable with the name of the base
-# directory to create inside the package (default: `solarus`). Jobs must
-# define an `ARCH` variable with the MinGW target architecture for packaging.
-# Possible values are `i686` (32-bit) or `x86_64` (64-bit). Jobs must also
-# define a `PACKAGE_PREFIX` variable with a prefix for the package name.
-#
-# The generated packages are named `<package-prefix>-<commit-hash>.zip` for
-# non-releases (based on commits) or `<package-prefix>-<tag-name>.zip` for
-# releases (based on tags). Text files are newline-converted for Windows.
-
-.mingw-package:
-  stage: package
-  image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
-  before_script:
-    - PACKAGE_REF=${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-    - PACKAGE=$PACKAGE_PREFIX-$PACKAGE_REF.zip
-    - 'echo "Package: $PACKAGE"'
-  script:
-    - mingw_make_pkg.sh $ARCH $PACKAGE $BASE_DIR $BINARIES
-    - if [[ -n $EXTRAS ]]; then pkg_add.sh $PACKAGE $BASE_DIR $EXTRAS; fi
-    - if [[ -n $TEXT_FILES ]]; then
-        unix2dos -k -o $TEXT_FILES;
-        pkg_add.sh $PACKAGE . $TEXT_FILES;
-      fi
-    # START-HOTFIX: ensure that the LuaJIT library is used in the package
-    - cp /usr/$ARCH-w64-mingw32/bin/luajit-2.1.dll lua51.dll
-    - pkg_add.sh $PACKAGE $BASE_DIR lua51.dll
-    # END-HOTFIX: will be properly fixed in mingw_make_pkg.sh later
-  artifacts:
-    name: $CI_JOB_NAME
-    paths:
-      - $PACKAGE_PREFIX-*.zip
-    expire_in: 1 month
-  variables:
-    BASE_DIR: solarus
-
-#------------------------------------------------------------------------------------
 # Linux Build Job (64-bit)
 
 linux-build:
@@ -181,17 +126,6 @@ mingw-x64-noluajit-build:
     CMAKE_GEN_CMD: x86_64-w64-mingw32-cmake
     CMAKE_GEN_EXTRA_FLAGS: >-
       -DSOLARUS_USE_LUAJIT=OFF
-
-#------------------------------------------------------------------------------------
-# MinGW Build Job (32-bit)
-
-mingw-x86-build:
-  extends: .build
-  image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
-  variables:
-    CMAKE_GEN_CMD: i686-w64-mingw32-cmake
-  rules:
-    - if: $CI_COMMIT_TAG
 
 #------------------------------------------------------------------------------------
 # Documentation Build Job
@@ -245,26 +179,47 @@ mingw-x64-install:
     - mingw-x64-build
 
 #------------------------------------------------------------------------------------
-# MinGW Staging Install Job (32-bit)
-
-mingw-x86-install:
-  extends: .install
-  image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
-  dependencies:
-    - mingw-x86-build
-  rules:
-    - if: $CI_COMMIT_TAG
-
-#------------------------------------------------------------------------------------
 # MinGW Package Job (64-bit)
+#
+# An artifact is generated with binaries, libraries and assets required to
+# run the Solarus Engine that expires one month after creation unless the
+# pipeline is for the most recent commit on a branch or tag.
+#
+# The generated packages are named `<package-prefix>-<commit-hash>.zip` for
+# non-releases (based on commits) or `<package-prefix>-<tag-name>.zip` for
+# releases (based on tags). Text files are newline-converted for Windows.
 
 mingw-x64-package:
-  extends: .mingw-package
+  stage: package
+  image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
   dependencies:
     - mingw-x64-install
+  before_script:
+    - PACKAGE_REF=${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
+    - PACKAGE=$PACKAGE_NAME-$PACKAGE_REF-$PACKAGE_PLATFORM-$PACKAGE_ARCH.zip
+    - 'echo "Package: $PACKAGE"'
+  script:
+    - mingw_make_pkg.sh $ARCH $PACKAGE $BASE_DIR $BINARIES
+    - if [[ -n $EXTRAS ]]; then pkg_add.sh $PACKAGE $BASE_DIR $EXTRAS; fi
+    - if [[ -n $TEXT_FILES ]]; then
+        unix2dos -k -o $TEXT_FILES;
+        pkg_add.sh $PACKAGE . $TEXT_FILES;
+      fi
+    # START-HOTFIX: ensure that the LuaJIT library is used in the package
+    - cp /usr/$ARCH-w64-mingw32/bin/luajit-2.1.dll lua51.dll
+    - pkg_add.sh $PACKAGE $BASE_DIR lua51.dll
+    # END-HOTFIX: will be properly fixed in mingw_make_pkg.sh later
+  artifacts:
+    name: $CI_JOB_NAME
+    paths:
+      - $PACKAGE_NAME-*-$PACKAGE_PLATFORM-$PACKAGE_ARCH.zip
+    expire_in: 1 month
   variables:
     ARCH: x86_64
-    PACKAGE_PREFIX: solarus-cli-x64
+    BASE_DIR: solarus
+    PACKAGE_NAME: solarus-cli
+    PACKAGE_PLATFORM: windows
+    PACKAGE_ARCH: x64
     BINARIES: >-
       staging/bin/libsolarus.dll
       staging/bin/solarus-run.exe
@@ -274,28 +229,6 @@ mingw-x64-package:
       changelog.md
       license
       license-details.md
-
-#------------------------------------------------------------------------------------
-# MinGW Package Job (32-bit)
-
-mingw-x86-package:
-  extends: .mingw-package
-  dependencies:
-    - mingw-x86-install
-  variables:
-    ARCH: i686
-    PACKAGE_PREFIX: solarus-cli-x86
-    BINARIES: >-
-      staging/bin/libsolarus.dll
-      staging/bin/solarus-run.exe
-    EXTRAS: >-
-      staging/share/solarus/gamecontrollerdb.txt
-    TEXT_FILES: >-
-      changelog.md
-      license
-      license-details.md
-  rules:
-    - if: $CI_COMMIT_TAG
 
 #------------------------------------------------------------------------------------
 # Documentation Deploy Job
@@ -321,30 +254,4 @@ docs-deploy:
   variables:
     GIT_STRATEGY: none  # no repository content is needed
   rules:
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-
-#------------------------------------------------------------------------------------
-# Trigger CI/CD pipeline for the Solarus Quest Editor
-#
-# Only the 'dev' or 'master' branches are used for this trigger.
-
-quest-editor-trigger:
-  stage: trigger
-  trigger:
-    project: solarus-games/solarus-quest-editor
-    branch: $CI_COMMIT_BRANCH
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
-
-#------------------------------------------------------------------------------------
-# Trigger CI/CD pipeline for the Solarus Launcher
-#
-# Only the 'dev' or 'master' branches are used for this trigger.
-
-launcher-trigger:
-  stage: trigger
-  trigger:
-    project: solarus-games/solarus-launcher
-    branch: $CI_COMMIT_BRANCH
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^(?:dev|master)$/
+    - if: $CI_COMMIT_TAG

@@ -19,13 +19,9 @@
 #include "solarus/audio/MusicSystem.h"
 #include "solarus/audio/OggDecoder.h"
 #include "solarus/audio/SpcDecoder.h"
-#include "solarus/core/Debug.h"
 #include "solarus/core/QuestFiles.h"
-#include "solarus/core/String.h"
-#include "solarus/lua/LuaContext.h"
 #include <lua.hpp>
 #include <algorithm>
-#include <sstream>
 
 namespace Solarus {
 
@@ -54,7 +50,9 @@ void MusicSystem::quit() {
     current_music = nullptr;
 
     for (const MusicPtr& music: current_musics) {
-      music->stop();
+      if (music->is_playing()) {
+        music->stop();
+      }
     }
     current_musics.clear();
 
@@ -75,7 +73,7 @@ bool MusicSystem::is_initialized() {
  * \return the volume (0 to 100)
  */
 int MusicSystem::get_global_volume() {
-  return (int) (global_volume * 100.0 + 0.5);
+  return static_cast<int>(global_volume * 100.0 + 0.5);
 }
 
 /**
@@ -314,8 +312,10 @@ void MusicSystem::update() {
   // Update current musics from sol.music API
   std::list<MusicPtr> musics_to_remove;
   for (const MusicPtr& music: current_musics) {
-    if (!music->update_playing()) {
-      musics_to_remove.push_back(music);
+    if (music->is_playing()) {
+      if (!music->update_playing()) {
+        musics_to_remove.push_back(music);
+      }
     }
   }
 

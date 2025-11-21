@@ -76,6 +76,7 @@ class SOLARUS_API Game {
     CommandsEffects& get_commands_effects();
     Savegame& get_savegame();
     const Savegame& get_savegame() const;
+    bool has_savegame() const;
     Equipment& get_equipment();
     const Equipment& get_equipment() const;
 

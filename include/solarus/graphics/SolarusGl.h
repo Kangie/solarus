@@ -26,6 +26,7 @@
 #include <glad/glad.h> // Only include glad to have GL work
 #include <SDL_video.h>
 #endif
+#include <utility>  // std::pair
 
 namespace Solarus { namespace Gl {
     inline std::pair<GLint, GLint> getVersion() {

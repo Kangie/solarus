@@ -45,7 +45,7 @@ EquipmentItem& EquipmentItemUsage::get_item() {
 /**
  * \brief Starts using this item.
  */
-void EquipmentItemUsage::start() {
+void EquipmentItemUsage::start(Hero& hero) {
 
   SOLARUS_REQUIRE(variant > 0,
       std::string("Attempt to use equipment item '") + item.get_name()
@@ -53,7 +53,7 @@ void EquipmentItemUsage::start() {
 
   this->finished = false;
   item.set_being_used(true);
-  item.notify_using();
+  item.notify_using(hero);
 }
 
 /**

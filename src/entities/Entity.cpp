@@ -289,7 +289,7 @@ void Entity::set_map(Map& map) {
     finish_initialization();
   }
 
-  being_removed = false; //Ensure this entity restarts after being removed from another map
+  being_removed = false; // Ensure this entity restarts after being removed from another map.
 }
 
 /**
@@ -317,8 +317,9 @@ void Entity::place_on_map(Map& map) {
   const EntityPtr& shared_entity = std::static_pointer_cast<Entity>(shared_from_this());
   map.get_entities().add_entity(shared_entity);
 
-  if(get_state())
+  if (get_state() != nullptr) {
     get_state()->set_map(map);
+  }
 
   Entity::set_map(map);
 
@@ -3928,7 +3929,7 @@ void Entity::set_draw_override(const ScopedLuaRef& draw_override) {
  * \return The state.
  */
 std::shared_ptr<Entity::State> Entity::get_state() const {
-    return state;
+  return state;
 }
 
 /**

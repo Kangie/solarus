@@ -26,6 +26,19 @@ Starts playing the music.
 
 Stops playing the music.
 
+### `music:is_paused()`
+
+Returns if the music is currently paused.
+
+Return value (boolean)
+: `true` if the music is paused.
+
+### `music:set_paused(paused)`
+
+Sets if the music is paused.
+
+`paused` (boolean) `true` to pause the music, `false` to resume from pause.
+
 ### `music:get_volume()`
 
 Returns the volume for this music.
@@ -44,12 +57,22 @@ Sets the volume for this music relative to the global volume (see [`sol.audio.se
 
 Returns the volume for a specified channel.
 
+**Note**: this method works only with .it files.
+
+`channel` (integer)
+: The channel to retrieve the volume. From 1 to the channel number in IT file.
+
 Return value (integer)
 : The volume between 0 and 64 (like in your tracker software).
 
 ### `music:set_channel_volume(channel, volume)`
 
 Sets the volume for a specified channel.
+
+**Note**: this method works only with .it files.
+
+`channel` (integer)
+: The channel for which the volume will be set. From 1 to the channel number in IT file.
 
 `volume` (integer)
 : The volume between 0 and 64 (like in your tracker software).
@@ -58,6 +81,11 @@ Sets the volume for a specified channel.
 
 Returns the pan for a specified channel.
 
+**Note**: this method works only with .it files.
+
+`channel` (integer)
+: The channel to retrieve the pan. From 1 to the channel number in IT file.
+
 Return value (integer)
 : The pan between 0 (left) and 256 (right).
 
@@ -65,5 +93,10 @@ Return value (integer)
 
 Sets the pan for a specified channel.
 
-`volume` (integer)
+**Note**: this method works only with .it files.
+
+`channel` (integer)
+: The channel for which the pan will be set. From 1 to the channel number in IT file.
+
+`pan` (integer)
 : The pan between 0 (left) and 256 (right).

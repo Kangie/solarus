@@ -1,12 +1,3 @@
--- Lua script of map event_order.
--- This script is executed every time the hero enters this map.
-
--- Feel free to modify the code below.
--- You can add more events and remove the ones you don't need.
-
--- See the Solarus Lua API documentation:
--- http://www.solarus-games.org/doc/latest
-
 local map = ...
 local game = map:get_game()
 local hero = game:get_hero()
@@ -45,12 +36,12 @@ function game:on_started()
   error("game:on_started called after map loading")
 end
 
-
 -- test events that should be raised on first map load
 check_event(map, "on_started")
 check_event(game, "on_map_changed")
-check_event(destination, "on_activated") -- new in 1.7
+check_event(destination, "on_activated") -- new in 2.0
 check_event(map, "on_suspended", false)
+check_event(hero, "on_state_changed", "free")
 check_event(map, "on_opening_transition_finished")
 
 -- when pausing
@@ -61,8 +52,10 @@ check_event(map, "on_suspended", false)
 
 -- on teleporting to same map
 check_event(map, "on_suspended", true)
+check_event(hero, "on_state_changed", "free")
 check_event(destination, "on_activated")
 check_event(map, "on_suspended", false)
+check_event(hero, "on_state_changed", "free")
 check_event(map, "on_opening_transition_finished")
 
 -- pause and unpause the game

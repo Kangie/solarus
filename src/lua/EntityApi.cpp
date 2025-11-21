@@ -1054,7 +1054,17 @@ void LuaContext::do_entity_draw_override_function(
   push_ref(current_l, draw_override);
   push_entity(current_l, entity);
   push_camera(current_l, camera);
+
+  if (CurrentQuest::is_format_at_most({1, 6})) {
+    // Pre Solarus 2.0 behavior: screen coordinates are expected.
+    // In 2.0 we should draw on the camera surface in map coordinates.
+    camera.reset_view();
+  }
   call_function(2, 0, "entity draw override");
+
+  if (CurrentQuest::is_format_at_most({1, 6})) {
+    camera.apply_view();
+  }
 }
 
 /**
@@ -1935,7 +1945,7 @@ int LuaContext::entity_api_set_visible(lua_State* l) {
 
   return state_boundary_handle(l, [&] {
     Entity& entity = *check_entity(l, 1);
-    bool visible = LuaTools::opt_boolean(l, 2, true);
+    const bool visible = LuaTools::opt_boolean(l, 2, true);
 
     entity.set_visible(visible);
 
@@ -9959,7 +9969,7 @@ void LuaContext::entity_on_state_changed(
   if (!userdata_has_field(entity, "on_state_changed")) {
     return;
   }
- run_on_main([this, &entity, new_state_name](lua_State* l){
+  run_on_main([this, &entity, new_state_name](lua_State* l){
     push_entity(l, entity);
     on_state_changed(new_state_name);
     lua_pop(l, 1);

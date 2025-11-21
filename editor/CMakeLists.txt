@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(solarus-quest-editor VERSION 2.0.1)
+
+include(cmake/AddOptions.cmake)
+include(cmake/AddConfigurationVars.cmake)
+include(cmake/AddMetadata.cmake)
+include(cmake/AddCompilationFlags.cmake)
+include(cmake/AddDependencies.cmake)
+include(cmake/AddIncludeDirectories.cmake)
+include(cmake/AddGeneratedHeaders.cmake)
+include(cmake/AddSourceFiles.cmake)
+include(cmake/AddQtFiles.cmake)
+include(cmake/AddEditorExecutable.cmake)
+include(cmake/AddInstallTargets.cmake)
+include(cmake/AddUninstallTargets.cmake)
+
+# Platform specific configuration for build and deployment.
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  include(cmake/macOS/macOSBuild.cmake)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  include(cmake/win32/Win32Build.cmake)
+elseif(UNIX AND NOT APPLE)
+  include(cmake/linux/LinuxBuild.cmake)
+endif() 

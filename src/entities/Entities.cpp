@@ -1523,7 +1523,14 @@ std::string Entities::ensure_unique_name(const std::string &candidate_name) {
 void Entities::set_entity_name(const EntityPtr& entity, const std::string &name) {
 
   const std::string &old_name = entity->get_name();
-  named_entities.erase(old_name);
+
+  const auto it = named_entities.find(old_name);
+  if (it != named_entities.end() && it->second == entity) {
+    // Remove the entity itself from the names map,
+    // otherwise it would clash with itself.
+    named_entities.erase(old_name);
+  }
+
   std::string new_name = name;
   if (!new_name.empty()) {
     new_name = ensure_unique_name(new_name);

@@ -76,6 +76,7 @@ class SOLARUS_API Music: public ExportableToLua {
     void stop();
     bool update_playing();
 
+    bool is_playing() const;
     bool is_paused() const;
     void set_paused(bool pause);
     const ScopedLuaRef& get_callback() const;
@@ -96,6 +97,7 @@ class SOLARUS_API Music: public ExportableToLua {
     void decode_ogg(ALuint destination_buffer, ALsizei nb_samples);
 
     bool load_successful;                        /**< If the music loading phase has been successful. */
+    bool playing;                                /**< If the music is currently playing. */
     std::string id;                              /**< id of this music */
     std::string file_name;                       /**< name of the file to play */
     Format format;                               /**< format of the music, detected from the file name */

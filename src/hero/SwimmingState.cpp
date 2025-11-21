@@ -44,7 +44,7 @@ void Hero::SwimmingState::start(const State* previous_state) {
 
   PlayerMovementState::start(previous_state);
 
-  get_equipment().notify_ability_used(Ability::SWIM);
+  get_equipment().notify_ability_used(Ability::SWIM, get_entity());
   get_entity().set_walking_speed(get_slow_swimming_speed());
   get_commands_effects().set_action_key_effect(CommandsEffects::ACTION_KEY_SWIM);
 }

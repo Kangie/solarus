@@ -25,7 +25,6 @@
 #include <lua.hpp>
 #include <algorithm>
 #include <sstream>
-#include <iostream>
 
 namespace Solarus {
 
@@ -49,6 +48,7 @@ const std::vector<std::string> Music::format_names = {
  * \brief Creates an empty music.
  */
 Music::Music():
+  playing(false),
   id(none),
   format(FORMAT_NONE),
   loop(false),
@@ -76,6 +76,7 @@ Music::Music(
     const std::string& music_id,
     bool loop,
     const ScopedLuaRef& callback_ref):
+  playing(false),
   id(music_id),
   format(FORMAT_OGG),
   loop(loop),
@@ -85,8 +86,6 @@ Music::Music(
   it_decoder(std::unique_ptr<ItDecoder>(new ItDecoder())),
   ogg_decoder(std::unique_ptr<OggDecoder>(new OggDecoder())),
   volume(1.0) {
-
-  load(music_id);
 
   SOLARUS_REQUIRE(!loop || callback_ref.is_empty(),
       "Attempt to set both a loop and a callback to music");
@@ -108,6 +107,7 @@ MusicPtr Music::create(const std::string& music_id) {
  * \brief Performs the loading of music into memory
  */
 void Music::load(const std::string& music_id) {
+  Sound::check_openal_clean_state("Music::load");
   // Detect format from file_name
   std::string file_name;
   MusicSystem::find_music_file(music_id, file_name, format);
@@ -152,7 +152,7 @@ Music::Format Music::get_format() {
  * \return the volume (0 to 100)
  */
 int Music::get_volume() const {
-  return (int) (volume * 100.0 + 0.5);
+  return static_cast<int>(volume * 100.0 + 0.5);
 }
 
 /**
@@ -320,7 +320,7 @@ bool Music::update_playing() {
   // Check whether there is still something playing.
   ALint status;
   alGetSourcei(source, AL_SOURCE_STATE, &status);
-  if (status != AL_PLAYING) {
+  if (status != AL_PLAYING && status != AL_PAUSED) {
     // The end of the file is reached, or we need to decode more data.
     alSourcePlay(source);
   }
@@ -329,24 +329,27 @@ bool Music::update_playing() {
   return status == AL_PLAYING;
 }
 
-
-
 /**
  * \brief Notifies this music that the audio device was disconnected.
  */
 void Music::notify_device_disconnected() {
+
+  Sound::check_openal_clean_state("Music::notify_device_disconnected beginning");
 
   // All sources and buffers are already destroyed by OpenAL at this point.
   source = AL_NONE;
   for (int i = 0; i < nb_buffers; ++i) {
     buffers[i] = AL_NONE;
   }
+  Sound::check_openal_clean_state("Music::notify_device_disconnected end");
 }
 
 /**
  * \brief Notifies this music that the audio device was reconnected.
  */
 void Music::notify_device_reconnected() {
+
+  Sound::check_openal_clean_state("Music::notify_device_reconnected beginning");
 
   if (buffers[0] == AL_NONE) {
     // Recreate a source and buffers.
@@ -377,6 +380,7 @@ void Music::notify_device_reconnected() {
     }
     alSourcePlay(source);
   }
+  Sound::check_openal_clean_state("Music::notify_device_reconnected end");
 }
 
 /**
@@ -392,6 +396,8 @@ void Music::notify_global_volume_changed() {
  * \param nb_samples number of samples to write
  */
 void Music::decode_spc(ALuint destination_buffer, ALsizei nb_samples) {
+
+  Sound::check_openal_clean_state("Music::decode_spc");
 
   // decode the SPC data
   std::vector<ALushort> raw_data(nb_samples);
@@ -415,6 +421,8 @@ void Music::decode_spc(ALuint destination_buffer, ALsizei nb_samples) {
  * \param nb_samples number of samples to write
  */
 void Music::decode_it(ALuint destination_buffer, ALsizei nb_samples) {
+
+  Sound::check_openal_clean_state("Music::decode_it");
 
   // Decode the IT data.
   std::vector<ALushort> raw_data(nb_samples);
@@ -459,6 +467,8 @@ bool Music::start() {
     return false;
   }
 
+  Sound::check_openal_clean_state("Music::start");
+
   // First time: find the file.
   if (file_name.empty()) {
     MusicSystem::find_music_file(id, file_name, format);
@@ -470,6 +480,9 @@ bool Music::start() {
       return false;
     }
   }
+
+  // loading the music file
+  load(id);
 
   // create the buffers and the source
   alGenBuffers(nb_buffers, buffers);
@@ -496,7 +509,7 @@ bool Music::start() {
       }
       break;
     case FORMAT_NONE:
-      Debug::die("start: Invalid music format");
+      Debug::die("Music::start: Invalid music format");
       break;
   }
 
@@ -518,6 +531,8 @@ bool Music::start() {
 
   // The update() function will then take care of filling the buffers
 
+  playing = true;
+
   return start_successful;
 }
 
@@ -532,24 +547,61 @@ void Music::stop() {
     return;
   }
 
+  Sound::check_openal_clean_state("Music::stop beginning");
+
   // Release the callback if any.
   callback_ref.clear();
 
-  // empty the source
+  // Empty the source.
   alSourceStop(source);
-
-  ALint nb_queued;
-  ALuint buffer;
-  alGetSourcei(source, AL_BUFFERS_QUEUED, &nb_queued);
-  for (int i = 0; i < nb_queued; i++) {
-    alSourceUnqueueBuffers(source, 1, &buffer);
+  ALenum error = alGetError();
+  if (error != AL_NO_ERROR) {
+    std::ostringstream oss;
+    oss << "Failed to stop music source" << source << ": " << std::hex << error;
+    Debug::error(oss.str());
   }
 
-  // delete the source
-  alDeleteSources(1, &source);
+  // Unqueue buffers.
+  ALint nb_processed = 0;
+  ALuint processed_buffers[nb_buffers];
+  alGetSourcei(source, AL_BUFFERS_PROCESSED, &nb_processed);
+  if (nb_processed > 0) {
+    alSourceUnqueueBuffers(source, 1, processed_buffers);
+    error = alGetError();
+    if (error != AL_NO_ERROR) {
+      std::ostringstream oss;
+      oss << "Failed to unqueue " << nb_processed << " processed buffers: " << std::hex << error;
+      Debug::error(oss.str());
+    }
+  }
 
-  // delete the buffers
+  ALint nb_queued = 0;
+  ALuint queued_buffers[nb_buffers];
+  alGetSourcei(source, AL_BUFFERS_QUEUED, &nb_queued);
+  if (nb_queued > 0) {
+    alSourceUnqueueBuffers(source, 1, queued_buffers);
+    alGetError();
+    // OpenAL Soft refuses to unqueue buffers that were just queued but this is fine,
+    // they will still deleted properly in alDeleteBuffers().
+  }
+
+  // Delete the source.
+  alDeleteSources(1, &source);
+  error = alGetError();
+  if (error != AL_NO_ERROR) {
+    std::ostringstream oss;
+    oss << "Failed to delete source " << source << ": " << std::hex << error;
+    Debug::error(oss.str());
+  }
+
+  // Delete the buffers.
   alDeleteBuffers(nb_buffers, buffers);
+  error = alGetError();
+  if (error != AL_NO_ERROR) {
+    std::ostringstream oss;
+    oss << "Failed to delete " << nb_buffers << " buffers: " << std::hex << error;
+    Debug::error(oss.str());
+  }
 
   switch (format) {
     case FORMAT_SPC:
@@ -564,6 +616,17 @@ void Music::stop() {
       Debug::die("stop: Invalid music format");
       break;
   }
+
+  playing = false;
+}
+
+/**
+ * \brief Returns the playing status of this music
+ * 
+ * \return \c true if the music is currently playing
+ */
+bool Music::is_playing() const {
+  return playing;
 }
 
 /**

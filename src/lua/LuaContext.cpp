@@ -1515,7 +1515,9 @@ int LuaContext::userdata_meta_newindex_as_table(lua_State* l) {
     lua_gettable(l, -2);
                                   // ... udata_tables udata_table
   }
-  SOLARUS_REQUIRE(!lua_isnil(l, -1), "Missing userdata table");
+  if (lua_isnil(l, -1)) {
+    LuaTools::arg_error(l, 1, std::string("Cannot find userdata table for object ") + userdata->get_lua_type_name());
+  }
   lua_pushvalue(l, 2);
                                   // ... udata_tables udata_table key
   lua_pushvalue(l, 3);
@@ -2907,22 +2909,25 @@ void LuaContext::on_obtained(const Treasure& treasure) {
 /**
  * \brief Calls the on_using() method of the object on top of the stack.
  */
-void LuaContext::on_using() {
+void LuaContext::on_using(Hero& hero) {
   check_callback_thread();
   if (find_method("on_using")) {
-    call_function(1, 0, "on_using");
+    push_hero(current_l, hero);
+    call_function(2, 0, "on_using");
   }
 }
 
 /**
  * \brief Calls the on_ability_used() method of the object on top of the stack.
  * \param ability A built-in ability.
+ * \param hero The hero that uses this ability.
  */
-void LuaContext::on_ability_used(Ability ability) {
+void LuaContext::on_ability_used(Ability ability, Hero& hero) {
   check_callback_thread();
   if (find_method("on_ability_used")) {
     push_string(current_l, enum_to_name(ability));
-    call_function(2, 0, "on_ability_used");
+    push_hero(current_l, hero);
+    call_function(3, 0, "on_ability_used");
   }
 }
 
