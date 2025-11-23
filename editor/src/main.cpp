@@ -132,6 +132,7 @@ int run_editor_gui(int argc, char* argv[]) {
   for (const QString& searchPath : std::vector<QString>{
            QApplication::applicationDirPath(),
            QApplication::applicationDirPath() + "/translations",
+           QApplication::applicationDirPath() + "/../Resources/translations",
            SOLARUSEDITOR_DATADIR_PATH "/translations"}) {
     if (app_translator.load(locale, "solarus_editor", "_", searchPath)) {
       break;
