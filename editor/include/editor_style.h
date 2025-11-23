@@ -67,6 +67,10 @@ public:
 
   explicit EditorStyle(QObject* parent = nullptr);
 
+  QFont get_fixed_font() const;
+
+  static QFont get_fixed_font_or_fallback();
+
   Mode get_mode() const;
   void set_mode(Mode mode);
   Mode get_actual_mode() const;

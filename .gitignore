@@ -22,7 +22,7 @@ work/unversioned/
 
 # Build files.
 build/
-solarus-editor-build
+solarus-editor-build/
 
 # IDEs.
 .vscode
