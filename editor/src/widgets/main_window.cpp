@@ -49,6 +49,7 @@
 #include <QSplitter>
 #include <QToolButton>
 #include <QUndoGroup>
+#include <QStandardPaths>
 
 #include <oclero/qlementine/widgets/AboutDialog.hpp>
 
@@ -857,6 +858,11 @@ void MainWindow::on_action_new_quest_triggered() {
     default_path = settings.get_value_string(EditorSettings::working_directory);
   }
 
+  // Fallback to the user's Documents folder.
+  if (default_path.isEmpty()) {
+    default_path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+  }
+
   // Open the new quest dialog and then get its results.
   NewQuestDialog new_quest_dialog(default_path, this);
   if (QDialog::Rejected == new_quest_dialog.exec()) {
@@ -872,12 +878,16 @@ void MainWindow::on_action_new_quest_triggered() {
     if (open_quest(config.quest_path)) {
       // Open the quest properties editor initially.
       open_file(quest, quest.get_data_path());
+
+      // Save the working directory.
+      const QString quest_dir = QFileInfo(config.quest_path).absoluteDir().absolutePath();
+      EditorSettings settings;
+      settings.set_value(EditorSettings::working_directory, quest_dir);
     }
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
   }
-
 }
 
 /**
