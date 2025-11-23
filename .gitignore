@@ -52,3 +52,6 @@ venv
 
 # Other.
 tags
+
+# build files.
+/solarus-editor-build/

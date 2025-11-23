@@ -120,9 +120,9 @@ int run_editor_gui(int argc, char* argv[]) {
 
   // Set up Qt translations.
   QTranslator qt_translator;
-  const bool success = qt_translator.load(
+  const bool translator_success = qt_translator.load(
       locale, "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
-  if (!success) {
+  if (!translator_success) {
     qWarning() << "Failed to load translations";
   }
   application.installTranslator(&qt_translator);
@@ -180,6 +180,7 @@ int run_editor_gui(int argc, char* argv[]) {
   }
 
   // Open the quest.
+  bool open_success = false;
   if (!quest_path.isEmpty()) {
     window.open_quest(quest_path);
 
@@ -193,7 +194,13 @@ int run_editor_gui(int argc, char* argv[]) {
         // Restore the active tab.
         window.open_file(window.get_quest(), active_file_path);
       }
+
+      open_success = true;
     }
+  }
+
+  if (!open_success) {
+    window.open_welcome();
   }
 
   window.show();

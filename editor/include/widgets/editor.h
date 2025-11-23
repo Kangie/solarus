@@ -106,6 +106,10 @@ signals:
   void run_map_requested(const QString& map_id);
   void clear_console();
   void log_message_to_console(const QString& log_level, const QString& message);
+  void new_quest_requested();
+  void open_quest_requested();
+  void documentation_requested();
+  void website_requested();
 
 public slots:
 

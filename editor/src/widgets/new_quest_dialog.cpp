@@ -17,6 +17,7 @@
 #include "widgets/new_quest_dialog.h"
 #include "file_tools.h"
 #include "editor_style.h"
+
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
