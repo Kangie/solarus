@@ -279,6 +279,8 @@ void TilesetView::set_tileset(TilesetModel* tileset) {
     // Start the state mechanism.
     start_state_idle();
 
+    connect(tileset, &TilesetModel::modelAboutToBeReset,
+            this, &TilesetView::start_state_idle);
     connect(tileset, &TilesetModel::modelReset,
             this, &TilesetView::notify_tileset_changed);
     connect(tileset, &TilesetModel::tileset_image_file_reloaded,
@@ -1434,11 +1436,12 @@ void MovingPatternsState::start() {
     current_area_items.append(item);
   }
 
+  const TilesetView& view = get_view();
   const QRect& pattern_frame = get_tileset().get_pattern_frame(selected_indexes.first());
-  const QPoint& hot_spot = get_view().mapFromScene(initial_point) - get_view().mapFromScene(pattern_frame.topLeft());
+  const QPoint& hot_spot = view.mapFromScene(initial_point) - view.mapFromScene(pattern_frame.topLeft());
   QPixmap drag_pixmap = get_tileset().get_pattern_image(selected_indexes.first());
 
-  const ViewSettings* view_settings = get_view().get_view_settings();
+  const ViewSettings* view_settings = view.get_view_settings();
   if (view_settings != nullptr) {
     double zoom = view_settings->get_zoom();
     drag_pixmap = drag_pixmap.scaled(pattern_frame.size() * zoom);
