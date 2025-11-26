@@ -56,6 +56,7 @@ map{ id = "bugs/1268_movement_ignore_suspend_in_timer", description = "#1268: mo
 map{ id = "bugs/1269_coroutines", description = "#1269: Coroutines make engine crash" }
 map{ id = "bugs/1275_map_set_tileset", description = "#1275: map:set_tileset()" }
 map{ id = "bugs/1286_crash_state_set_can_traverse", description = "#1286: Crash in state:set_can_traverse()" }
+map{ id = "bugs/1290_crash_state_on_finished", description = "#1290: Crash when changing state in state:on_finished" }
 map{ id = "bugs/1291_hero_start_attack_loading", description = "#1291: hero:start_attack_loading" }
 map{ id = "bugs/1297_target_movement_speed", description = "#1297: Target movement wrong speed" }
 map{ id = "bugs/1299_crash_invalid_tile_pattern", description = "#1299: Crash when loading a map with an invalid tile pattern" }
@@ -590,6 +591,8 @@ file{ path = "maps/bugs/1275_map_set_tileset.dat", author = "Christopho", licens
 file{ path = "maps/bugs/1275_map_set_tileset.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1286_crash_state_set_can_traverse.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1286_crash_state_set_can_traverse.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1290_crash_state_on_finished.dat", author = "Christopho", license = "CC-BY SA 4.0" }
+file{ path = "maps/bugs/1290_crash_state_on_finished.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1297_target_movement_speed.dat", author = "Christopho", license = "CC BY-SA 4.0" }

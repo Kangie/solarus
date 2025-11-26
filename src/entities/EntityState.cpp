@@ -220,7 +220,7 @@ void Entity::State::start(const State* /* previous_state */) {
  */
 void Entity::State::stop(const State* next_state) {
 
-  SOLARUS_ASSERT(!is_stopping(),
+  SOLARUS_REQUIRE(!is_stopping(),
       std::string("This state is already stopping: ") + get_name());
 
   // Notify Lua.
