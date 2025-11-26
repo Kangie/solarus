@@ -38,14 +38,45 @@
 
 namespace SolarusEditor {
 
-namespace {
+/**
+ * @brief Indicates what the user is currently doing on the tileset view.
+ */
+class TilesetViewState : public QObject {
+    Q_OBJECT
+
+public:
+    explicit TilesetViewState(TilesetView& view);
+    virtual ~TilesetViewState() = default;
+
+    const TilesetView& get_view() const;
+    TilesetView& get_view();
+    const TilesetScene& get_scene() const;
+    TilesetScene& get_scene();
+    const TilesetModel& get_tileset() const;
+    TilesetModel& get_tileset();
+
+    virtual void start();
+    virtual void stop();
+
+    virtual void mouse_pressed(const QMouseEvent& event);
+    virtual void mouse_released(const QMouseEvent& event);
+    virtual void mouse_moved(const QMouseEvent& event);
+    virtual void drag_enter(QDragEnterEvent& event);
+    virtual void drag_move(QDragMoveEvent& event);
+    virtual void drop(QDropEvent& event);
+    virtual void context_menu_requested(const QPoint& where);
+
+private:
+    TilesetView& view;
+};
 
 /**
  * @brief State of the tileset view corresponding to the user doing nothing special.
  *
  * They can select or unselect patterns.
  */
-class IdleState : public TilesetView::State {
+class IdleState : public TilesetViewState {
+    Q_OBJECT
 
 public:
   explicit IdleState(TilesetView& view);
@@ -56,7 +87,8 @@ public:
 /**
  * @brief Drawing a rectangle for a selection or a new pattern.
  */
-class DrawingRectangleState : public TilesetView::State {
+class DrawingRectangleState : public TilesetViewState {
+    Q_OBJECT
 
 public:
   DrawingRectangleState(TilesetView& view, const QPoint& initial_point);
@@ -81,7 +113,8 @@ private:
 /**
  * @brief State of the tileset view of moving the selected patterns.
  */
-class MovingPatternsState : public TilesetView::State {
+class MovingPatternsState : public TilesetViewState {
+    Q_OBJECT
 
 public:
   MovingPatternsState(TilesetView& view, const QPoint& initial_point);
@@ -107,7 +140,8 @@ private:
 /**
  * @brief Changing the size of the selected pattern.
  */
-class ResizingPatternState : public TilesetView::State {
+class ResizingPatternState : public TilesetViewState {
+    Q_OBJECT
 
 public:
   ResizingPatternState(TilesetView& view);
@@ -131,25 +165,12 @@ private:
   QRect current_box;            /**< Modified position of the pattern. */
 };
 
-}  // Anonymous namespace.
-
 /**
  * @brief Creates a tileset view.
  * @param parent The parent widget or nullptr.
  */
 TilesetView::TilesetView(QWidget* parent) :
-  QGraphicsView(parent),
-  scene(nullptr),
-  view_settings(nullptr),
-  zoom(1.0),
-  state(),
-  resize_pattern_action(nullptr),
-  create_border_set_action(nullptr),
-  change_pattern_id_action(nullptr),
-  delete_patterns_action(nullptr),
-  last_integer_pattern_id(0),
-  read_only(false),
-  multi_selection_enabled(true) {
+  QGraphicsView(parent) {
 
   setAcceptDrops(true);
   setAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -872,19 +893,28 @@ void TilesetView::tileset_selection_changed() {
 }
 
 /**
+ * @brief Returns the current state of the view.
+ * @return The current state.
+ */
+const TilesetViewState* TilesetView::get_state() const {
+  return state;
+}
+
+/**
  * @brief Changes the state of the view.
  *
- * The previous state if any is destroyed.
+ * The previous state if any will be destroyed in the next event process.
  *
  * @param state The new state.
  */
-void TilesetView::set_state(std::unique_ptr<State> state) {
+void TilesetView::set_state(TilesetViewState* state) {
 
   if (this->state != nullptr) {
     this->state->stop();
+    this->state->deleteLater();
   }
 
-  this->state = std::move(state);
+  this->state = state;
 
   if (this->state != nullptr) {
     this->state->start();
@@ -896,7 +926,7 @@ void TilesetView::set_state(std::unique_ptr<State> state) {
  */
 void TilesetView::start_state_idle() {
 
-  set_state(std::unique_ptr<State>(new IdleState(*this)));
+  set_state(new IdleState(*this));
 }
 
 /**
@@ -907,7 +937,7 @@ void TilesetView::start_state_idle() {
  */
 void TilesetView::start_state_drawing_rectangle(const QPoint& initial_point) {
 
-  set_state(std::unique_ptr<State>(new DrawingRectangleState(*this, initial_point)));
+  set_state(new DrawingRectangleState(*this, initial_point));
 }
 
 /**
@@ -921,7 +951,7 @@ void TilesetView::start_state_moving_patterns(const QPoint& initial_point) {
     return;
   }
 
-  set_state(std::unique_ptr<State>(new MovingPatternsState(*this, initial_point)));
+  set_state(new MovingPatternsState(*this, initial_point));
 }
 
 /**
@@ -933,7 +963,7 @@ void TilesetView::start_state_resizing_pattern() {
     return;
   }
 
-  set_state(std::unique_ptr<State>(new ResizingPatternState(*this)));
+  set_state(new ResizingPatternState(*this));
 }
 
 void TilesetView::dragEnterEvent(QDragEnterEvent* event) {
@@ -1011,18 +1041,19 @@ QRect TilesetView::get_selection_bounding_box() const {
 
 /**
  * @brief Creates a state.
- * @param view The map view to manage.
+ * @param view The tileset view to manage.
  */
-TilesetView::State::State(TilesetView& view) :
+TilesetViewState::TilesetViewState(TilesetView& view) :
+  QObject(&view),
   view(view) {
 
 }
 
 /**
- * @brief Returns the map view managed by this state.
- * @return The map view.
+ * @brief Returns the tileset view managed by this state.
+ * @return The tileset view.
  */
-const TilesetView& TilesetView::State::get_view() const {
+const TilesetView& TilesetViewState::get_view() const {
   return view;
 }
 
@@ -1031,15 +1062,15 @@ const TilesetView& TilesetView::State::get_view() const {
  *
  * Non-const version.
  */
-TilesetView& TilesetView::State::get_view() {
+TilesetView& TilesetViewState::get_view() {
   return view;
 }
 
 /**
- * @brief Returns the map scene managed by this state.
- * @return The map scene.
+ * @brief Returns the tileset scene managed by this state.
+ * @return The tileset scene.
  */
-const TilesetScene& TilesetView::State::get_scene() const {
+const TilesetScene& TilesetViewState::get_scene() const {
   return *view.get_scene();
 }
 
@@ -1048,15 +1079,15 @@ const TilesetScene& TilesetView::State::get_scene() const {
  *
  * Non-const version.
  */
-TilesetScene& TilesetView::State::get_scene() {
+TilesetScene& TilesetViewState::get_scene() {
   return *view.get_scene();
 }
 
 /**
- * @brief Returns the map model represented in the view.
- * @return The map model.
+ * @brief Returns the tileset model represented in the view.
+ * @return The tileset model.
  */
-const TilesetModel& TilesetView::State::get_tileset() const {
+const TilesetModel& TilesetViewState::get_tileset() const {
   return *view.get_tileset();
 }
 
@@ -1065,7 +1096,7 @@ const TilesetModel& TilesetView::State::get_tileset() const {
  *
  * Non-const version.
  */
-TilesetModel& TilesetView::State::get_tileset() {
+TilesetModel& TilesetViewState::get_tileset() {
   return *view.get_tileset();
 }
 
@@ -1074,7 +1105,7 @@ TilesetModel& TilesetView::State::get_tileset() {
  *
  * Subclasses can reimplement this function to initialize data.
  */
-void TilesetView::State::start() {
+void TilesetViewState::start() {
 }
 
 /**
@@ -1082,7 +1113,7 @@ void TilesetView::State::start() {
  *
  * Subclasses can reimplement this function to clean data.
  */
-void TilesetView::State::stop() {
+void TilesetViewState::stop() {
 }
 
 /**
@@ -1092,7 +1123,7 @@ void TilesetView::State::stop() {
  *
  * @param event The event to handle.
  */
-void TilesetView::State::mouse_pressed(const QMouseEvent& event) {
+void TilesetViewState::mouse_pressed(const QMouseEvent& event) {
   Q_UNUSED(event);
 }
 
@@ -1103,7 +1134,7 @@ void TilesetView::State::mouse_pressed(const QMouseEvent& event) {
  *
  * @param event The event to handle.
  */
-void TilesetView::State::mouse_released(const QMouseEvent& event) {
+void TilesetViewState::mouse_released(const QMouseEvent& event) {
   Q_UNUSED(event);
 }
 
@@ -1114,7 +1145,7 @@ void TilesetView::State::mouse_released(const QMouseEvent& event) {
  *
  * @param event The event to handle.
  */
-void TilesetView::State::mouse_moved(const QMouseEvent& event) {
+void TilesetViewState::mouse_moved(const QMouseEvent& event) {
   Q_UNUSED(event);
 }
 
@@ -1123,7 +1154,7 @@ void TilesetView::State::mouse_moved(const QMouseEvent& event) {
  * during this state.
  * @param event The event to handle.
  */
-void TilesetView::State::drag_enter(QDragEnterEvent& event) {
+void TilesetViewState::drag_enter(QDragEnterEvent& event) {
   Q_UNUSED(event);
 }
 
@@ -1132,7 +1163,7 @@ void TilesetView::State::drag_enter(QDragEnterEvent& event) {
  * during this state.
  * @param event The event to handle.
  */
-void TilesetView::State::drag_move(QDragMoveEvent& event) {
+void TilesetViewState::drag_move(QDragMoveEvent& event) {
   Q_UNUSED(event);
 }
 
@@ -1141,7 +1172,7 @@ void TilesetView::State::drag_move(QDragMoveEvent& event) {
  * during this state.
  * @param event The event to handle.
  */
-void TilesetView::State::drop(QDropEvent& event) {
+void TilesetViewState::drop(QDropEvent& event) {
   Q_UNUSED(event);
 }
 
@@ -1153,7 +1184,7 @@ void TilesetView::State::drop(QDropEvent& event) {
  *
  * @param where Where to show the context menu, in global coordinates.
  */
-void TilesetView::State::context_menu_requested(const QPoint& where) {
+void TilesetViewState::context_menu_requested(const QPoint& where) {
   Q_UNUSED(where);
 }
 
@@ -1162,7 +1193,7 @@ void TilesetView::State::context_menu_requested(const QPoint& where) {
  * @param view The tileset view to manage.
  */
 IdleState::IdleState(TilesetView& view):
-  TilesetView::State(view) {
+  TilesetViewState(view) {
 
 }
 
@@ -1241,7 +1272,7 @@ void IdleState::mouse_pressed(const QMouseEvent& event) {
  * @param initial_point Point where the drawing started, in view coordinates.
  */
 DrawingRectangleState::DrawingRectangleState(TilesetView& view, const QPoint& initial_point):
-  TilesetView::State(view),
+  TilesetViewState(view),
   initial_point(view.mapToScene(initial_point).toPoint() / 8 * 8),
   current_point(this->initial_point),
   current_area_item(nullptr),
@@ -1419,7 +1450,7 @@ void DrawingRectangleState::mouse_moved(const QMouseEvent& event) {
 }
 
 MovingPatternsState::MovingPatternsState(TilesetView& view, const QPoint& initial_point):
-  TilesetView::State(view),
+  TilesetViewState(view),
   initial_point(Point::floor_8(get_view().mapToScene(initial_point))),
   last_point(this->initial_point) {
 
@@ -1436,7 +1467,7 @@ void MovingPatternsState::start() {
     current_area_items.append(item);
   }
 
-  const TilesetView& view = get_view();
+  TilesetView& view = get_view();
   const QRect& pattern_frame = get_tileset().get_pattern_frame(selected_indexes.first());
   const QPoint& hot_spot = view.mapFromScene(initial_point) - view.mapFromScene(pattern_frame.topLeft());
   QPixmap drag_pixmap = get_tileset().get_pattern_image(selected_indexes.first());
@@ -1463,9 +1494,9 @@ void MovingPatternsState::start() {
   data->setText(text_data);
 
   drag->setMimeData(data);
-  Qt::DropAction drop_action = drag->exec(Qt::MoveAction | Qt::CopyAction);  // Blocking call during the drag operation.
-  if (drop_action == Qt::IgnoreAction) {
-    get_view().start_state_idle();
+  drag->exec(Qt::MoveAction | Qt::CopyAction);  // Blocking call during the drag operation.
+  if (view.get_state() == this) {
+    view.start_state_idle();
   }
 }
 
@@ -1601,7 +1632,7 @@ void MovingPatternsState::drop(QDropEvent& event) {
  * @brief Constructor.
  */
 ResizingPatternState::ResizingPatternState(TilesetView& view):
-  TilesetView::State(view),
+  TilesetViewState(view),
   current_area_item(nullptr) {
 
 }
@@ -1704,3 +1735,5 @@ void ResizingPatternState::apply_resize() {
 }
 
 }
+
+#include "tileset_view.moc"
