@@ -3,6 +3,7 @@
 ## Solarus Quest Editor 2.0.2 (In progress)
 
 * Memorization of layout splitters (#1914).
+* Fix crash when dragging patterns onto the contours list (#1948).
 * Fix memory leak when switching tilesets in the map editor (#1940).
 * Show welcome tab when opening the editor without a quest.
 
