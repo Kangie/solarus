@@ -1473,7 +1473,7 @@ static void offer_online_docs(MainWindow *parent) {
       MainWindow::tr("Local documentation not found"),
       MainWindow::tr(
           "The local copy of Solarus Documentation could not be found. "
-          "Would you like to try going on line to find the documentaion?"),
+          "Would you like to try going online to find the documentation?"),
       QMessageBox::Ok | QMessageBox::Cancel,
       QMessageBox::Ok
   );
