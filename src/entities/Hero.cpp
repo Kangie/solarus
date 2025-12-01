@@ -2689,7 +2689,7 @@ bool Hero::is_grabbing_or_pulling() const {
  * \brief Lets the hero walk normally.
  */
 void Hero::start_free() {
-
+  sprites->set_clipping_rectangle();
   set_state(std::make_shared<FreeState>(*this));
 }
 
@@ -2790,6 +2790,7 @@ void Hero::start_victory(const ScopedLuaRef& callback_ref) {
  * You can call start_free() to unfreeze him.
  */
 void Hero::start_frozen() {
+  sprites->set_clipping_rectangle();
   set_state(std::make_shared<FrozenState>(*this));
 }
 
