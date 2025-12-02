@@ -14,7 +14,7 @@ The hero is not the only map entity that can follow a stream: [Bombs](./bomb.md)
 
 ## Streams and holes
 
-If you make a stream that moves toward a hole or other bad ground, it is your responsibility to make sure to call [`hero:save_solid_ground()`](./hero.md#herosave_solid_groundx-y-layer-herosave_solid_groundcallback) before (typically, when entering the room), otherwise the [hero](./hero.md) will reappear on the stream, one pixel before the hole and he will fall again repeatedly.
+If you make a stream that moves toward a hole or other bad ground, it is your responsibility to make sure to call [`hero:save_solid_ground()`](./hero.md#herosave_solid_groundx-y-layer) before (typically, when entering the room), otherwise the [hero](./hero.md) will reappear on the stream, one pixel before the hole and he will fall again repeatedly.
 
 ## Methods Inherited from `entity`
 

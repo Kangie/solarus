@@ -200,7 +200,7 @@ The default origin point depends on the type of entity. By convention, it is usu
 
 This origin point property allows entities of different sizes to have comparable reference points. Indeed, when two entities to be drawn in Y order overlap, the engine needs to determine which one has to be displayed first (it is always the one with the lowest Y coordinate). Using the upper left corner Y coordinate for this would not work well with entities of different sizes.
 
-Similarly, if you need to compute an [angle](#entityget_anglex-y) between two entities to move an entity away from another one, the calculation uses the origin point of both entities. Using the upper left corner of their bounding box would not give the accurate angle with entities of different sizes.
+Similarly, if you need to compute an [angle](#entityget_anglex-y-entityget_angleother_entity) between two entities to move an entity away from another one, the calculation uses the origin point of both entities. Using the upper left corner of their bounding box would not give the accurate angle with entities of different sizes.
 
 The origin point is also the point of synchronization of an entity with its [sprites](../drawable-objects/sprite.md) (because again, an entity that has a given size may have sprites with different sizes).
 
@@ -433,85 +433,61 @@ Return value (boolean)
 
     For custom entities, see also [`custom_entity:add_collision_test()`](./custom-entity.md#custom_entityadd_collision_testcollision_mode-callback) to be automatically notified when a collision is detected.
 
-### `entity:get_distance(x, y)`
+### `entity:get_distance(x, y), entity:get_distance(other_entity)`
 
 Returns the distance in pixels between this map entity and a point or another map entity.
 
 To compute the distance to a specified point:
 
-`x` (number)
-: X coordinate of the point.
-
-`y` (number)
-: Y coordinate of the point.
+| With coordinates | With another entity |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the point.</dd><dt>`y` (number)</dt><dd>Y coordinate of the point.</dd></dl> | <dl><dt>`other_entity` (entity)</dt><dd>The entity to compute the distance to.</dd></dl>|
 
 Return value (number)
 : The Euclidean distance in pixels between the origin point of this entity and the point. The result is rounded down to the nearest integer.
 
-!!! note "Note"
-
-    You can pass another entity as argument instead of coordinates.
-
-### `entity:get_angle(x, y)`
+### `entity:get_angle(x, y), entity:get_angle(other_entity)`
 
 Returns the angle between the X axis and the vector that joins this entity to a point.
 
 To compute the angle to a specified point:
 
-`x` (number)
-: X coordinate of the point.
-
-`y` (number)
-: Y coordinate of the point.
+| With coordinates | With another entity |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the point.</dd><dt>`y` (number)</dt><dd>Y coordinate of the point.</dd></dl> | <dl><dt>`other_entity` (entity)</dt><dd>The entity to compute the angle to.</dd></dl>|
 
 Return value (number)
 : The angle in radians between the origin point of this entity and the specified point. The angle is between `0` and `2 * math.pi`.
 
-!!! note "Note"
+### `entity:get_direction4_to(x, y), entity:get_direction4_to(other_entity)`
 
-    You can pass another entity as argument instead of coordinates.
+Like [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity), but instead of an angle in radians, returns the closest direction among the 4 main directions.
 
-### `entity:get_direction4_to(x, y)`
-
-Like [`entity:get_angle()`](#entityget_anglex-y), but instead of an angle in radians, returns the closest direction among the 4 main directions.
-
-This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y).
+This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity).
 
 To compute the direction to a specified point:
 
-`x` (number)
-: X coordinate of the point.
-
-`y` (number)
-: Y coordinate of the point.
+| With coordinates | With another entity |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the point.</dd><dt>`y` (number)</dt><dd>Y coordinate of the point.</dd></dl> | <dl><dt>`other_entity` (entity)</dt><dd>The entity to compute the direction to.</dd></dl>|
 
 Return value (number)
 : The direction this entity should take to look at this point, between 0 (East) and 3 (South).
 
-!!! note "Note"
+### `entity:get_direction8_to(x, y), entity:get_direction8_to(other_entity)`
 
-    You can pass another entity as argument instead of coordinates.
+Like [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity), but instead of an angle in radians, returns the closest direction among the 8 main directions.
 
-### `entity:get_direction8_to(x, y)`
-
-Like [`entity:get_angle()`](#entityget_anglex-y), but instead of an angle in radians, returns the closest direction among the 8 main directions.
-
-This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y).
+This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity).
 
 To compute the direction to a specified point:
 
-`x` (number)
-: X coordinate of the point.
-
-`y` (number)
-: Y coordinate of the point.
+| With coordinates | With another entity |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the point.</dd><dt>`y` (number)</dt><dd>Y coordinate of the point.</dd></dl> | <dl><dt>`other_entity` (entity)</dt><dd>The entity to compute the direction to.</dd></dl>|
 
 Return value (number)
 : The direction this entity should take to look at this point, between `0` (East) and `7` (South-East).
-
-!!! note "Note"
-
-    You can pass another entity as argument instead of coordinates.
 
 ### `entity:snap_to_grid()`
 
@@ -587,7 +563,7 @@ A value of `0` means an infinite distance (the entity is never optimized away). 
 `optimization_distance` (number)
 : The optimization distance hint to set in pixels.
 
-### `entity:is_in_same_region(x, y)`
+### `entity:is_in_same_region(x, y), entity:is_in_same_region(other_entity)`
 
 Returns whether this entity is in the same region as a position or another entity.
 
@@ -597,20 +573,14 @@ Regions should be rectangular. Non-convex regions, for example with an "L" shape
 
 You can use this function to make sure that an entity is in the same region as an arbitrary point.
 
-`x` (number)
-: X coordinate of the point.
-
-`y` (number)
-: Y coordinate of the point.
+| With coordinates | With another entity |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the point.</dd><dt>`y` (number)</dt><dd>Y coordinate of the point.</dd></dl> | <dl><dt>`other_entity` (entity)</dt><dd>The entity to get the region from.</dd></dl>|
 
 Return value (boolean)
 : `true` if the entity is in the same region as the position.
 
 You can use this function to make sure that an [enemy](./enemy.md) close to the [hero](./hero.md) but in the other side of a separator won't attack the hero.
-
-!!! note "Note"
-
-    You can pass another entity as argument instead of coordinates.
 
 ### `entity:test_obstacles([dx, dy, [layer]])`
 

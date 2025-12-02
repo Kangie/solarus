@@ -64,26 +64,21 @@ The default position is `0, 0`, meaning that the upper left corner of the camera
 `y` (number)
 : Y coordinate of the camera on the screen, in quest screen coordinates.
 
-### `camera:get_position_to_track(x, y)`
+### `camera:get_position_to_track(x, y), camera:get_position_to_track(entity)`
 
 Returns the coordinates this camera should have in order to track the given entity or point, respecting constraints of map limits and separators.
 
 The returned coordinates make their best to have the entity or point centered in the camera, but make sure that the camera does not cross [separators](./separator.md) or map limits. This function can be used to compute legal coordinates for the camera, and for example pass them to [`camera:set_position()`](./index.md#entityset_positionx-y-layer) or start a [movement](../movements/index.md#movementstartobject_to_move-callback).
 
-`x` (number)
-: X coordinate of the point to center the camera on.
-
-`y` (number)
-: Y coordinate of the point to center the camera on.
+| With coordinates | With an [entity](./index.md) |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the point to center the camera on.</dd><dt>`y` (number)</dt><dd>Y coordinate of the point to center the camera on.</dd></dl> | <dl><dt>`entity` ([entity](./index.md))</dt><dd>Entity to center the camera on.</dd></dl>|
 
 Return value 1 (number)
 : X coordinate this camera should have.
 
 Return value 2 (number)
 : Y coordinate this camera should have.
-
-!!! note "Note"
-    You can also pass an [entity](./index.md) as argument instead of coordinates.
 
 ### `camera:get_state()`
 

@@ -549,32 +549,28 @@ end
 Return value (function)
 : An iterator to all entities intersecting the rectangle. Entities are returned in Z order (insertion order).
 
-### `map:get_entities_in_region(x, y)`
+### `map:get_entities_in_region(x, y), map:get_entities_in_region(entity)`
 
 Returns an iterator to all [map entities](./map-entities/index.md) that are in a region. Regions of the map are defined by the position of [separators](./map-entities/separator.md) and map limits. The region of an entity is the one of its center point.
 
 Regions should be rectangular. Non-convex regions, for example with an "L" shape, are not supported by this function.
 
+The typical usage of this function is:
+
+```lua
+for entity in map:get_entities_in_region(my_entity) do
+    -- some code related to the entity
+end
+```
+
 To get entities in the same region as a point:
 
-`x` (number)
-: X coordinate of the region to get.
-
-`y` (number)
-: Y coordinate of the region to get.
+| With coordinates | With an [entity](./map-entities/index.md) |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the region to get.</dd><dt>`y` (number)</dt><dd>Y coordinate of the region to get.</dd></dl> | <dl><dt>`entity` ([entity](./map-entities/index.md))</dt><dd>The entity whose region to get.</dd></dl>|
 
 Return value (function)
 : An iterator to all entities in the same region as the point.
-
-!!! note "Note"
-
-    You can also pass an [entity](./map-entities/index.md) to this function instead of coordinate. The typical usage of this function is:
-
-    ```lua
-    for entity in map:get_entities_in_region(my_entity) do
-      -- some code related to the entity
-    end
-    ```
 
 ### `map:get_hero()`
 
