@@ -20,13 +20,13 @@ Stairs that move from a layer to another layer inside the same map are called in
 
 Stairs are invisible: it is up to you to place appropriate tiles where you make stairs.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Stairs are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
 See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
-## Methods of the type stairs
+## Methods of the type `stairs`
 
 The following methods are specific to stairs.
 

@@ -12,7 +12,7 @@ During the jump, the hero cannot be controlled by the player, and he can travers
 
 Think of a jumper like an horizontal, vertical or diagonal line (depending on the direction of the jump: one of the 8 main directions). This line has actually a thickness of 8 pixels so that it can be handled more easily in the editor, but this thickness does not really matter: the jump starts as soon as the hero touches the jumper.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Jumpers are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -34,7 +34,7 @@ Sets the length of the jump.
 `jump` (number)
 : the length in pixels.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

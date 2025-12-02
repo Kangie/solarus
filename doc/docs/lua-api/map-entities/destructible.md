@@ -8,7 +8,7 @@ This type of [map entity](./index.md) can be declared in the [map data file](../
 
 Destructible objects can be customized in various ways. You can allow the hero to lift them or to cut them. The ones that can be lifted may require a minimum level of the `"lift"` [ability](../game.md#gameget_abilityability_name). Their size is always 16×16 pixels (like the [hero](./hero.md)).
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Destructible objects are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -22,40 +22,40 @@ The following methods are specific to destructible objects.
 
 Returns what [pickable treasure](./pickable.md) this object will drop when being lifted, when being cut or when exploding.
 
-Return value 1 (string)
+Return value 1 (string or `nil`)
 : Name of an [equipment item](../equipment-items.md). `nil` means no item (in this case, other return values are `nil` too).
 
 Return value 2 (number)
 : Variant of this equipment item (`1` means the first variant).
 
-Return value 3 (string)
+Return value 3 (string or `nil`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether the treasure dropped is found. `nil` means that the treasure is not saved.
 
 ### `destructible:set_treasure([item_name, [variant, [savegame_variable]]])`
 
 Sets the [pickable treasure](./pickable.md) that this object will drop when being lifted, when being cut or when exploding.
 
-`item_name` (string, optional)
+`item_name` (string or `nil`, optional)
 : Name of an [equipment item](../equipment-items.md). `nil` or no value means no item.
 
-`variant` (number, optional)
-: Variant of this equipment item (`1` means the first variant). The default value is `1`.
+`variant` (number, optional, requires: `item_name`, default: `1`)
+: Variant of this equipment item (`1` means the first variant).
 
-`savegame_variable` (string, optional)
+`savegame_variable` (string or `nil`, optional, requires: `variant`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether the treasure dropped is found. `nil` or no value means that the treasure is not saved.
 
 ### `destructible:get_destruction_sound()`
 
 Returns the sound to be played when this object is cut or broken.
 
-Return value (string)
+Return value (string or `nil`)
 : Id of the destruction sound. `nil` means that no sound will be played.
 
 ### `destructible:set_destruction_sound(destruction_sound_id)`
 
 Sets the sound to be played when this object is cut or broken.
 
-`destruction_sound_id` (string)
+`destruction_sound_id` (string or `nil`)
 : Id of the destruction sound. `nil` means that no sound will be played.
 
 ### `destructible:get_exploding_sound()`
@@ -69,8 +69,8 @@ Return value (string)
 
 Changes the sound to play when the object is exploding. By default, the sound used for exploding is "explosion". You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `destructible:get_can_be_cut()`
 
@@ -83,8 +83,8 @@ Return value (boolean)
 
 Sets whether this object can be cut by the sword.
 
-`can_be_cut` (boolean, optional)
-: `true` to allow the player to cut this object with the sword. No value means `true`.
+`can_be_cut` (boolean, optional, default: `true`)
+: `true` to allow the player to cut this object with the sword.
 
 ### `destructible:get_cut_method()`
 
@@ -114,12 +114,12 @@ Returns whether this object explodes when it is hit or after a delay when it is 
 Return value (boolean)
 : `true` if this object can explode.
 
-### `destructible:set_can_explode(can_explode)`
+### `destructible:set_can_explode([can_explode])`
 
 Sets whether this object explodes when it is hit or after a delay when it is lifted.
 
-`can_explode` (boolean, optional)
-: `true` to make the object able to explode. No value means `true`.
+`can_explode` (boolean, optional, default: `true`)
+: `true` to make the object able to explode.
 
 ### `destructible:get_can_regenerate()`
 
@@ -128,12 +128,12 @@ Returns whether this object regenerates after a delay when it is destroyed.
 Return value (boolean)
 : `true` if this object can regenerate.
 
-### `destructible:set_can_regenerate(can_regenerate)`
+### `destructible:set_can_regenerate([can_regenerate])`
 
 Sets whether this object regenerates after a delay when it is destroyed.
 
-`can_regenerate` (boolean, optional)
-: `true` to make the object able to regenerate. No value means `true`.
+`can_regenerate` (boolean, optional, default: `true`)
+: `true` to make the object able to regenerate.
 
 ### `destructible:get_damage_on_enemies()`
 
@@ -158,7 +158,7 @@ The presence of a destructible object can modify the ground of the map. The grou
 Return value (string)
 : The ground defined by this destructible object. See [`map:get_ground()`](../map.md#mapget_groundx-y-layer) for the list of possible grounds.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

@@ -30,7 +30,7 @@ Furthermore, when the dialog finishes, you have to tell the engine the decision 
 
     Recall that when the [`game:on_dialog_started()`](../game.md#gameon_dialog_starteddialog-info) event is not defined, the engine uses by default a built-in dialog box with minimal features. This built-in dialog box works correctly with shop items, providing that the text of the `"_shop.question"` dialog has the expected format. It should have three lines. The `"$v"` sequence (if any) is subsituted by the actual price like suggested above, and the user can select one of the last two lines: the first one is yes and the second one is no.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Shop treasures are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -49,10 +49,10 @@ Return value (string)
 
 Changes the sound to play when the player is unable to buy the shop treasure. By default, the sound used is "wrong". You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

@@ -37,11 +37,11 @@ Sets the target of this movement as a fixed point or a [map entity](../map-entit
 `entity` ([entity](../map-entities/index.md))
 : The entity to target.
 
-`x` (number, optional)
-: X offset to add to the target entity's coordinates. Default is `0`.
+`x` (number, optional, requires `y`, default: `0`)
+: X offset to add to the target entity's coordinates.
 
-`y` (number, optional)
-: Y offset to add to the target entity's coordinates. Default is `0`.
+`y` (number, optional, requires `x`, default: `0`)
+: Y offset to add to the target entity's coordinates.
 
 ### `target_movement:get_speed()`
 
@@ -81,8 +81,8 @@ Return value (boolean)
 
 Sets whether this movement should adjust its trajectory when an obstacle of the [map](../map.md) is reached. This property has no effect if the movement is not attached to a [map entity](../map-entities/index.md) or if the movement ignores obstacles.
 
-`smooth` (boolean, optional)
-: `true` to make this movement smooth. No value means `true`
+`smooth` (boolean, optional, default: `true`)
+: `true` to make this movement smooth.
 
 ## Events Inherited from `movement`
 

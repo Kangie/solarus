@@ -47,8 +47,8 @@ Return value (boolean)
 
 Pauses or resumes the sound effect.
 
-`paused` (boolean, optional)
-: `true` to pause the sound, `false` to unpause it. No value means `true`.
+`paused` (boolean, optional, default: `true`)
+: `true` to pause the sound, `false` to unpause it.
 
 ### `sound:is_looped()`
 
@@ -61,8 +61,8 @@ Return value (boolean)
 
 Sets that the sound effect should be played in a loop.
 
-`looped` (boolean, optional)
-: `true` to set the loop, `false` to clear the loop. No value means `true`.
+`looped` (boolean, optional, default: `true`)
+: `true` to set the loop, `false` to clear the loop.
 
 !!! note "Note"
 

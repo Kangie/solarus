@@ -19,7 +19,7 @@ Return value (string)
 
 Returns the version of the currently running quest as specified in the [Quest Properties file](../files-specs/properties-file.md).
 
-Return value (string)
+Return value (string or `nil`)
 : The quest version, or `nil` if no quest version was set the quest properties.
 
 ### `sol.main.get_quest_format()`
@@ -38,7 +38,7 @@ This function is a replacement to the usual Lua function `loadfile()`. The diffe
 `script_name` (string)
 : Name of the Lua file to load (with or without extension), relative to the data directory or the write directory of your quest.
 
-Return value (function)
+Return value (function or `nil`)
 : A function representing the chunk loaded, or `nil` if the file does not exist or could not be loaded as Lua.
 
 !!! note "Note"
@@ -89,7 +89,7 @@ Return value (number)
 
 Returns the subdirectory where files specific to the quest are saved, like savegames and settings. The quest write directory is specified in your [quest.dat](../files-specs/properties-file.md) file and may be changed dynamically with [`sol.main.set_quest_write_dir()`](#solmainget_quest_write_dir).
 
-Return value (string)
+Return value (string or `nil`)
 : The quest write directory, relative to the Solarus write directory, or `nil` if it was not set.
 
 ### `sol.main.set_quest_write_dir(quest_write_dir)`
@@ -98,7 +98,7 @@ Changes the subdirectory where files specific to the quest are saved, like saveg
 
 Note that the quest write directory can already be specified in your [quest.dat](../files-specs/properties-file.md) file. You usually don't have to call this function, unless you need to change it dynamically for some reason.
 
-`quest_write_dir` (string)
+`quest_write_dir` (string or `nil`)
 : The quest write directory, relative to the Solarus write directory, or `nil` to unset it.
 
 ### `sol.main.load_settings([file_name])`
@@ -109,8 +109,8 @@ Note that all these settings can already be modified individually with the Lua A
 
 A valid quest write directory must be set (in your [quest.dat](../files-specs/properties-file.md) file or by calling [`sol.main.set_quest_write_dir()`](#solmainset_quest_write_dirquest_write_dir)), otherwise this function generates a Lua error.
 
-`file_name` (string, optional)
-: Settings file to read, relative to the quest write directory. The default file name is `settings.dat`
+`file_name` (string, optional, default: `"settings.dat"`)
+: Settings file to read, relative to the quest write directory.
 
 Return value (boolean)
 : `true` if settings were successfully loaded and applied.
@@ -127,8 +127,8 @@ Note that all these settings can already be modified individually with the Lua A
 
 A valid quest write directory must be set (in your [quest.dat](../files-specs/properties-file.md) file or by calling [`sol.main.set_quest_write_dir()`](#solmainset_quest_write_dirquest_write_dir)), otherwise this function generates a Lua error.
 
-`file_name` (string, optional)
-: Settings file to read, relative to the quest write directory. The default file name is `settings.dat`
+`file_name` (string, optional, default: `"settings.dat"`)
+: Settings file to read, relative to the quest write directory.
 
 Return value (boolean)
 : `true` if settings were successfully saved.
@@ -180,7 +180,19 @@ Return value (number)
 Returns an array of all resource elements ids of the given type declared in the [quest database](../files-specs/database-file.md).
 
 `resource_type` (string)
-: Name of a resource type.</br>Must be one of: `"enemy"`, `"entity"`, `"font"`, `"item"`, `"language"`, `"map"`, `"music"`, `"shader"`, `"sound"`, `"sprite"`, `"tileset"`.
+: Name of a resource type. Must be one of:
+
+    - `"enemy"`
+    - `"entity"`
+    - `"font"`
+    - `"item"`
+    - `"language"`
+    - `"map"`
+    - `"music"`
+    - `"shader"`
+    - `"sound"`
+    - `"sprite"`
+    - `"tileset"`
 
 Return value (table)
 : An array of all elements of this resource type declared in the quest. This is a standard Lua array (the first index is 1), and values are all strings.
@@ -256,7 +268,7 @@ Return value (string)
 
 | Category                    | Possibilities                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Standard Lua type names     | `"nil"` (a string, not the value nil), `"number"`, `"string"`, `"boolean"`, `"table"`, `"function"`, `"thread"`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Standard Lua type names     | `"nil"` (a string, not the value `nil`), `"number"`, `"string"`, `"boolean"`, `"table"`, `"function"`, `"thread"`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Userdata unknown to Solarus | `"userdata"`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | Solarus userdata            | `"game"`, `"map"`, `"item"`, `"surface"`, `"text_surface"`, `"sprite"`, `"shader"`, `"timer"`, `"movement"`, `"straight_movement"`, `"target_movement"`, `"random_movement"`, `"path_movement"`, `"random_path_movement"`, `"path_finding_movement"`, `"circle_movement"`, `"jump_movement"`, `"pixel_movement"`, `"state"`, `"hero"`, `"dynamic_tile"`, `"teletransporter"`, `"destination"`, `"pickable"`, `"destructible"`, `"carried_object"`, `"chest"`, `"shop_treasure"`, `"enemy"`, `"npc"`, `"block"`, `"jumper"`, `"switch"`, `"sensor"`, `"separator"`, `"wall"`, `"crystal"`, `"crystal_block"`, `"stream"`, `"door"`, `"stairs"`, `"bomb"`, `"explosion"`, `"fire"`, `"arrow"`, `"hookshot"`, `"boomerang"`, `"camera"`, `"custom_entity"` |
 
@@ -299,7 +311,7 @@ Similarly, you can even remove (by assigning `nil`) or modify (by assigning a ne
 `type_name` (string)
 : Name of a Solarus userdata Lua type (see the list of types in [`sol.main.get_type()`](#solmainget_typevalue) above).
 
-Return value (table)
+Return value (table or `nil`)
 : The metatable of this type, or `nil` if there is no such Solarus type.
 
 !!! warning "With great power comes great responsibility"
@@ -310,7 +322,7 @@ Return value (table)
 
 ### `sol.main.get_os()`
 
-Returns the name of the running OS. Possible values are : `"Windows"`, `"Mac OS X"`, `"Linux"`, `"iOS"`, `"Android"` If the correct OS name is not available, returns a string beginning with the text `"Unknown"`
+Returns the name of the running OS. Possible values are: `"Windows"`, `"Mac OS X"`, `"Linux"`, `"iOS"`, `"Android"`. If the correct OS name is not available, returns a string beginning with the text `"Unknown"`
 
 Return value (string)
 : The name of the running OS.
@@ -319,7 +331,7 @@ Return value (string)
 
 Returns the current [game](./game.md) if a game is running.
 
-Return value ([game](./game.md))
+Return value ([game](./game.md) or `nil`)
 : The game currently running, or `nil` if no game is running.
 
 ### `sol.main.rawget(object, key)`
@@ -342,8 +354,8 @@ Set a value on a table or a Solarus userdata that acts as a table without using 
 `object` (table or userdata)
 : The table or userdata.
 
-`key` (any type)
-: The key to set. The key should not be `nil` or `NaN`.
+`key` (any type except `nil` or `NaN`)
+: The key to set.
 
 `value` (any type)
 : The value that should now be associated with the key.

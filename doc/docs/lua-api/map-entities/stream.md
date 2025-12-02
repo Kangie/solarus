@@ -16,7 +16,7 @@ The hero is not the only map entity that can follow a stream: [Bombs](./bomb.md)
 
 If you make a stream that moves toward a hole or other bad ground, it is your responsibility to make sure to call [`hero:save_solid_ground()`](./hero.md#herosave_solid_groundx-y-layer-herosave_solid_groundcallback) before (typically, when entering the room), otherwise the [hero](./hero.md) will reappear on the stream, one pixel before the hole and he will fall again repeatedly.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Streams are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -65,12 +65,12 @@ Returns whether the player can still move the hero while being on this stream.
 Return value (boolean)
 : `true` if the player can still move, `false` if this is a blocking stream.
 
-### `stream:set_allow_movement(allow_movement)`
+### `stream:set_allow_movement([allow_movement])`
 
 Sets whether the player can still move the hero while being on this stream.
 
-`allow_movement` (boolean)
-: `true` to allow the player to move, `false` to make a blocking stream. No value means `true`.
+`allow_movement` (boolean, optional, default: `true`)
+: `true` to allow the player to move, `false` to make a blocking stream.
 
 ### `stream:get_allow_attack()`
 
@@ -79,12 +79,12 @@ Returns whether the player can still use the sword while being on this stream.
 Return value (boolean)
 : `true` if the player use his sword.
 
-### `stream:set_allow_attack(allow_attack)`
+### `stream:set_allow_attack([allow_attack])`
 
 Sets whether the player can still use the sword while being on this stream.
 
-`allow_attack` (boolean)
-: `true` to allow the player to use the sword. No value means `true`.
+`allow_attack` (boolean, optional, default: `true`)
+: `true` to allow the player to use the sword.
 
 ### `stream:get_allow_item()`
 
@@ -93,14 +93,14 @@ Returns whether the player can still use equipment items while being on this str
 Return value (boolean)
 : `true` if the player can still use equipment itens.
 
-### `stream:set_allow_item(allow_item)`
+### `stream:set_allow_item([allow_item])`
 
 Sets whether the player can still use equipment items while being on this stream.
 
-`allow_item` (boolean)
-: `true` to allow the player to use equipment items. No value means `true`.
+`allow_item` (boolean, optional, default: `true`)
+: `true` to allow the player to use equipment items.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

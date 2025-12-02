@@ -10,38 +10,54 @@ A text surface is a single line of text that you can display. A text surface can
 
 Creates a text surface with the specified properties.
 
-`properties` (optional table)
+`properties` (table, optional)
 : A table that describes all properties of the text surface to create. Its key-value pairs are all optional, they can be:
 
-`horizontal_alignment` (string, default `"left"`)
-: `"left"`, `"center"` or `"right"` When you draw the text surface at some coordinates on a destination surface, it is anchored at this position.
+    `horizontal_alignment` (string, optional, default: `"left"`)
+    : When you draw the text surface at some coordinates on a destination surface, it is anchored at this position. Possible values are:
+        
+        - `"left"`
+        - `"center"`
+        - `"right"`
 
-`vertical_alignment` (string, default `"middle"`)
-: `"top"`, `"middle"` or `"bottom"`. When you draw the text surface at some coordinates on a destination surface, it is anchored at this position.
+    `vertical_alignment` (string, optional, default: `"middle"`)
+    : When you draw the text surface at some coordinates on a destination surface, it is anchored at this position. Possible values are:
 
-`font` (string, default the first one in alphabetical order)
-: Name of the font file to use, relative to the `fonts` directory and without extension. It must be a declared in the resource list of the [quest database](../../files-specs/database-file.md). The following extensions are auto-detected in this order: `.png`, `.ttf`, `.otf`, `.ttc` and `.fon`
+        - `"top"`
+        - `"middle"`
+        - `"bottom"`
 
-`rendering_mode` (string, default `"solid"`)
-: `"solid"` (faster) or `"antialiasing"` (smooth effect on letters).
+    `font` (string, optional)
+    : Name of the font file to use, relative to the `fonts` directory and without extension. It must be a declared in the resource list of the [quest database](../../files-specs/database-file.md). The following extensions are auto-detected in this order: `.png`, `.ttf`, `.otf`, `.ttc` and `.fon`. The default is the first one in alphabetical order.
 
-`color` (table, default white)
-: Color of the text to draw (array of 3 RGB values between 0 and 255). No effect on bitmap fonts.
+    `rendering_mode` (string, optional, default: `"solid"`)
+    : Valid values are:
 
-`font_size` (number, default `11`)
-: Font size to use. No effect on bitmap fonts.
+        - `"solid"` (default): faster.
+        - `"antialiasing"`: smooth effect on letters.
 
-`font_hinting` (string, default `"normal"`)
-: Sets the font hinting mode for the surface, which controls how characters are rendered, there are four options: `"none"`, `"normal"`, `"light"` or `"mono"` No effect on bitmap fonts.
+    `color` (table, optional, default: `{255, 255, 255}`)
+    : Color of the text to draw (array of 3 RGB values between 0 and 255). No effect on bitmap fonts.
 
-`font_kerning` (boolean, default `true`)
-: Whether kerning is used for the surface, which controls spacing between characters. Font dependent. No effect on bitmap fonts.
+    `font_size` (number, optional, default: `11`)
+    : Font size to use. No effect on bitmap fonts.
 
-`text` (string, default `""`)
-: The text to show (must be valid UTF-8).
+    `font_hinting` (string, optional, default: `"normal"`)
+    : Sets the font hinting mode for the surface, which controls how characters are rendered, there are four options: 
 
-`text_key` (string, default `nil`)
-: Key of the localized text to show. The string must exist in the file [text/strings.dat](../../files-specs/languages/strings.md) of the current [language](../language-functions.md).
+        - `"normal"` (default)
+        - `"none"`
+        - `"light"`
+        - `"mono"`: No effect on bitmap fonts.
+
+    `font_kerning` (boolean, optional, default: `true`)
+    : Whether kerning is used for the surface, which controls spacing between characters. Font dependent. No effect on bitmap fonts.
+
+    `text` (string, optional, default: `""`)
+    : The text to show (must be valid UTF-8).
+
+    `text_key` (string or `nil`, optional, default: `nil`)
+    : Key of the localized text to show. The string must exist in the file [text/strings.dat](../../files-specs/languages/strings.md) of the current [language](../language-functions.md).
 
 Return value (text surface)
 : The text surface created.
@@ -82,7 +98,11 @@ Returns the horizontal alignment of the text.
 When you draw the text surface at some coordinates on a destination surface, it is anchored at this position.
 
 Return value (string)
-: `"left"`, `"center"` or `"right"`
+: Possible values are:
+
+    - `"left"`
+    - `"center"`
+    - `"right"`
 
 ### `text_surface:set_horizontal_alignment(horizontal_alignment)`
 
@@ -91,7 +111,11 @@ Sets the horizontal alignment of the text.
 When you draw the text surface at some coordinates on a destination surface, it is anchored at this position.
 
 `horizontal_alignment` (string)
-: `"left"`, `"center"` or `"right"`
+: Possible values are:
+
+    - `"left"`
+    - `"center"`
+    - `"right"`
 
 ### `text_surface:get_vertical_alignment()`
 
@@ -100,7 +124,11 @@ Returns the vertical alignment of the text.
 When you draw the text surface at some coordinates on a destination surface, it is anchored at this position.
 
 Return value (string)
-: `"top"`, `"middle"` or `"bottom"`
+: Possible values are:
+
+    - `"top"`
+    - `"middle"`
+    - `"bottom"`
 
 ### `text_surface:set_vertical_alignment(vertical_alignment)`
 
@@ -109,7 +137,11 @@ Sets the vertical alignment of the text.
 When you draw the text surface at some coordinates on a destination surface, it is anchored at this position.
 
 `vertical_alignment` (string)
-: `"top"`, `"middle"` or `"bottom"`
+: Possible values are:
+
+    - `"top"`
+    - `"middle"`
+    - `"bottom"`
 
 ### `text_surface:get_font()`
 
@@ -130,14 +162,20 @@ Sets the font used to draw this text surface.
 Returns the rendering mode of the text.
 
 Return value (string)
-: `"solid"` (faster) or `"antialiasing"` (smooth effect on letters).
+: Possible values are:
+
+    - `"solid"`: faster.
+    - `"antialiasing"`: smooth effect on letters.
 
 ### `text_surface:set_rendering_mode(rendering_mode)`
 
 Sets the rendering mode of the text.
 
 `rendering_mode` (string)
-: `"solid"` (faster) or `"antialiasing"` (smooth effect on letters).
+: Possible values are:
+
+    - `"solid"`: faster.
+    - `"antialiasing"`: smooth effect on letters.
 
 ### `text_surface:get_color()`
 

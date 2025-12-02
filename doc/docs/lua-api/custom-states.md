@@ -58,7 +58,7 @@ Return value (state)
 
 Returns the description of this state.
 
-Return value (string)
+Return value (string or `nil`)
 : The description, or `nil` if no description was set.
 
 ### `state:set_description(description)`
@@ -67,14 +67,14 @@ Sets the description of this state.
 
 The engine does nothing special with this description, but it may help you distinguish states.
 
-`description` (string or nil)
+`description` (string or `nil`)
 : The description to set, or `nil` to set no description.
 
 ### `state:get_entity()`
 
 Returns the [entity](./map-entities/index.md) controlled by this state.
 
-Return value ([entity](./map-entities/index.md))
+Return value ([entity](./map-entities/index.md) or `nil`)
 : The entity controlled by this state (which can only by the [hero](./map-entities/hero.md)), or `nil` if the state is not associated to an entity yet.
 
 !!! note "Note"
@@ -85,14 +85,14 @@ Return value ([entity](./map-entities/index.md))
 
 Returns the [map](./map.md) of the entity controlled by this state.
 
-Return value ([map](./map.md))
+Return value ([map](./map.md) or `nil`)
 : The map, or `nil` if the state is not associated to an entity yet.
 
 ### `state:get_game()`
 
 Returns the [game](./game.md) of the entity controlled by this state.
 
-Return value ([game](./game.md))
+Return value ([game](./game.md) or `nil`)
 : The game, or `nil` if the state is not associated to an entity yet.
 
 ### `state:is_started()`
@@ -109,12 +109,12 @@ Returns whether the entity is visible during this state.
 Return value (boolean)
 : `true` if the entity is visible during this state, `false` if it is hidden.
 
-### `state:set_visible([visible])`
+### `state:set_visible(visible)`
 
 Returns whether the entity should be visible during this state.
 
-`visible` (boolean, optional)
-: `true` to make the entity visible during this state, `false` to hide it. No value means `true`
+`visible` (boolean, default: `true`)
+: `true` to make the entity visible during this state, `false` to hide it.
 
 ### `state:get_draw_override()`
 
@@ -122,7 +122,7 @@ Returns the draw function of this state.
 
 See [`state:set_draw_override()`](#stateset_draw_overridedraw_override) for more details.
 
-Return value (function or nil)
+Return value (function or `nil`)
 : The draw function, or `nil` if the draw function was not overridden.
 
 ### `state:set_draw_override(draw_override)`
@@ -131,14 +131,14 @@ Changes how this entity is drawn during this state.
 
 You can use this to replace the built-in draw implementation of the engine by your own function, if the default behavior does not fit your needs. To do so, your function can either call [`map:draw_visual()`](./map.md#mapdraw_visualdrawable-x-y) or draw on [`camera:get_surface()`](./map-entities/camera.md#cameraget_surface).
 
-`draw_override` (function or nil)
+`draw_override` (function or `nil`)
 : The draw function, or `nil` to restore the built-in drawing. Your function will receive the following parameters:
 
-`state` (state)
-: The custom state of the entity to draw.
+    `state` (state)
+    : The custom state of the entity to draw.
 
-`camera` ([camera](./map-entities/camera.md))
-: Camera where the entity is drawn.
+    `camera` ([camera](./map-entities/camera.md))
+    : Camera where the entity is drawn.
 
 !!! note "Note"
 
@@ -155,10 +155,10 @@ Return value (boolean)
 
 Sets whether the player controls the direction of entity's sprites during this state.
 
-The default value is `true` If you set this to `false`, then the entity's sprites no longer automatically take the direction pressed by the player.
+If you set this to `false`, then the entity's sprites no longer automatically take the direction pressed by the player.
 
-`can_control_direction` (boolean)
-: `true` to let the player control the sprites direction. No value means `true`
+`can_control_direction` (boolean, default: `true`)
+: `true` to let the player control the sprites direction.
 
 ### `state:get_can_control_movement()`
 
@@ -171,9 +171,9 @@ Return value (boolean)
 
 Sets whether the player controls the movement of the entity during this state.
 
-The default value is `true` If this setting is `true`, a movement is automatically created on the entity and this movement reacts to the player's input. If you set this to `false`, then the entity has no automatic movement during this state.
+If this setting is `true`, a movement is automatically created on the entity and this movement reacts to the player's input. If you set this to `false`, then the entity has no automatic movement during this state.
 
-`can_control_movement` (boolean)
+`can_control_movement` (boolean, default: `true`)
 : `true` to let the player control the movement.
 
 ### `state:set_can_traverse([entity_type], traversable)`
@@ -185,7 +185,7 @@ By default, this depends on the other entities: for example, [sensors](./map-ent
 `entity_type` (string, optional)
 : A type of entity. See [`entity:get_type()`](./map-entities/index.md#entityget_type) for the possible values. If not specified, the setting will be applied to all entity types for which you don't override this setting.
 
-`traversable` (boolean, function or `nil`)
+`traversable` (boolean or function or `nil`)
 : Whether the entity controlled by this state can traverse the other entity type. This can be:
 
     - A boolean: `true` to allow your entity to traverse entities of the specified type, `false` otherwise.
@@ -229,9 +229,9 @@ Sets whether the entity is affected by gravity during this state.
 
 If yes, the entity will fall to the lower layer when the ground below it is `"empty"`
 
-The default value is `true` You should typically set this to `false` when the entity is jumping of flying.
+You should typically set this to `false` when the entity is jumping of flying.
 
-`gravity_enabled` (boolean)
+`gravity_enabled` (boolean, default: `true`)
 : `true` to make the entity affected by gravity during this state.
 
 ### `state:is_affected_by_ground(ground)`
@@ -261,13 +261,11 @@ Returns whether this state remembers the last solid position of the entity as a 
 Return value (boolean)
 : `true` if solid positions in this state are considered as places to come back to when falling into bad grounds.
 
-### `state:set_can_come_from_bad_ground()`
+### `state:set_can_come_from_bad_ground(can_come_from_bad_ground)`
 
 Sets whether this state remembers the last solid position of the entity as a place to come back to later if it falls into bad ground like holes or lava.
 
-The default value is `true`.
-
-`can_come_from_bad_ground` (boolean)
+`can_come_from_bad_ground` (boolean, default: `true`)
 : `true` if solid positions in this state should be considered as places to come back to when falling into bad grounds.
 
 ### `state:get_can_be_hurt()`
@@ -285,19 +283,17 @@ Return value (boolean)
 
 Sets whether the entity can be hurt during this state.
 
-The default value is `true`.
-
-`can_be_hurt` (boolean or function)
+`can_be_hurt` (boolean or function, default: `true`)
 : Whether the entity controlled by this state can be hurt. You can pass a function if you want to decide this depending at the last moment, for example depending on the attacker. In this case, your function should accept the following parameters and return value:
 
-`state` (state)
-: The current state itself.
+    `state` (state)
+    : The current state itself.
 
-`attacker` ([entity](./map-entities/index.md) or nil)
-: The attacker entity, or `nil` if the attack does not come from an entity.
+    `attacker` ([entity](./map-entities/index.md) or `nil`)
+    : The attacker entity, or `nil` if the attack does not come from an entity.
 
-Return value (boolean)
-: `true` to allow your entity to get hurt by this attacker.
+    Return value (boolean)
+    : `true` to allow your entity to get hurt by this attacker.
 
 ### `state:get_can_use_sword()`
 
@@ -310,9 +306,7 @@ Return value (boolean)
 
 Sets whether the entity can swing the sword during this state.
 
-The default value is `true`.
-
-`can_use_sword` (boolean)
+`can_use_sword` (boolean, default: `true`)
 : `true` to allow to use the sword.
 
 ### `state:get_can_cut()`
@@ -332,16 +326,14 @@ Sets whether the entity can cut another [entity](./map-entities/index.md) with t
 
 When the sword sprite overlaps a destructible object that [`destructible:get_can_be_cut()`](./map-entities/destructible.md#destructibleget_can_be_cut) can be cut, this setting decides if the destructible will actually be cut.
 
-The default value is `true`.
-
-`can_cut` (boolean or function)
+`can_cut` (boolean or function, default: `true`)
 : Whether the sword can cut another entity during this state. You can pass a function if you want to decide this at the last moment, for example depending on the exact position of the entity about to be cut. In this case, your function should support the following parameters and return value:
 
-`state` (state)
-: The current state itself.
+    `state` (state)
+    : The current state itself.
 
-`entity` ([entity](./map-entities/index.md) or nil)
-: The entity that would be cut, or `nil` if there is no entity about to be cut.
+    `entity` ([entity](./map-entities/index.md) or `nil`)
+    : The entity that would be cut, or `nil` if there is no entity about to be cut.
 
 Return value (boolean)
 : `true` to allow to cut the entity with the sword.
@@ -357,9 +349,7 @@ Return value (boolean)
 
 Sets whether the entity can stop attacks with the shield during this state.
 
-The default value is `true`.
-
-`can_use_shield` (boolean)
+`can_use_shield` (boolean, default: `true`)
 : `true` if the entity can stop attacks with the shield.
 
 ### `state:get_can_use_item([item_id])`
@@ -367,7 +357,7 @@ The default value is `true`.
 Returns whether an [equipment item](./equipment-items.md) can be used during this state.
 
 `item_id` (string, optional)
-: Name of the item to test, or `nil` to mean items in general.
+: Name of the item to test, or leave empty to mean items in general.
 
 Return value (boolean)
 : `true` if the player can use an equipment item during this state.
@@ -376,12 +366,10 @@ Return value (boolean)
 
 Sets whether an [equipment item](./equipment-items.md) can be used during this state.
 
-The default value is `true`.
-
-`item_id` (string, optional)
+`item_id` (string or `nil`, optional)
 : Name of the item to allow or disallow, or `nil` to mean items in general.
 
-`can_use_item` (boolean)
+`can_use_item` (boolean, default: `true`)
 : `true` to allow the player to use an equipment item during this state.
 
 ### `state:get_can_interact()`
@@ -397,9 +385,7 @@ Sets whether the entity can interact with the entities it is facing.
 
 If `true`, when the action game command is pressed while facing an entity that reacts to interactions (like an [NPC](./map-entities/npc.md)), then an interaction will occur.
 
-The default value is `true`.
-
-`can_interact` (boolean)
+`can_interact` (boolean, default: `true`)
 : `true` to allow to interact in this state.
 
 ### `state:get_can_grab()`
@@ -437,9 +423,7 @@ Sets whether the entity can start pushing the obstacles it is facing.
 
 If `true`, the entity will go to state `"pushing"` when it reaches an obstacle and continues to move toward this obstacle for a configurable [delay](#stateget_pushing_delay). This does not mean that the obstacle being pushed will actually move ([blocks](./map-entities/block.md) can move when being pushed, but other entities usually cannot).
 
-The default value is `true`.
-
-`can_push` (boolean)
+`can_push` (boolean, default: `true`)
 : `true` to allow to push in this state.
 
 !!! note "Note"
@@ -459,9 +443,7 @@ Sets the delay before pushing when moving towards an obstacle during this state.
 
 This only has an effect if [`state:get_can_push()`](#stateget_can_push) is `true`.
 
-The default value is `1000` ms.
-
-`pushing_delay` (number)
+`pushing_delay` (number, default: `1000`)
 : The pushing delay in milliseconds (`0` for no delay).
 
 ### `state:get_can_pick_treasure()`
@@ -475,9 +457,7 @@ Return value (boolean)
 
 Sets whether [pickable treasures](./map-entities/pickable.md) can be picked during this state.
 
-The default value is `true`.
-
-`can_pick_treasure` (boolean)
+`can_pick_treasure` (boolean, default: `true`)
 : `true` to allow the entity to pick treasures during this state.
 
 ### `state:get_can_use_teletransporter()`
@@ -491,9 +471,7 @@ Return value (boolean)
 
 Sets whether the entity can take [teletransporters](./map-entities/teletransporter.md) during this state.
 
-The default value is `true`.
-
-`can_use_teletransporter` (boolean)
+`can_use_teletransporter` (boolean, default: `true`)
 : `true` to allow the entity to take teletransporters during this state.
 
 ### `state:get_can_use_switch()`
@@ -507,9 +485,7 @@ Return value (boolean)
 
 Sets whether the entity can activate [switches](./map-entities/switch.md) during this state.
 
-The default value is `true`.
-
-`can_use_switch` (boolean)
+`can_use_switch` (boolean, default: `true`)
 : `true` to allow the entity to activate switches during this state.
 
 ### `state:get_can_use_stream()`
@@ -523,9 +499,7 @@ Return value (boolean)
 
 Sets whether the entity can take [streams](./map-entities/stream.md) during this state.
 
-The default value is `true`.
-
-`can_use_stream` (boolean)
+`can_use_stream` (boolean, default: `true`)
 : `true` to allow the entity to take streams during this state.
 
 ### `state:get_can_use_stairs()`
@@ -539,9 +513,7 @@ Return value (boolean)
 
 Sets whether the entity can take [stairs](./map-entities/stairs.md) during this state.
 
-The default value is `true`.
-
-`can_use_stairs` (boolean)
+`can_use_stairs` (boolean, default: `true`)
 : `true` to allow the entity to take stairs during this state.
 
 ### `state:get_can_use_jumper()`
@@ -555,9 +527,7 @@ Return value (boolean)
 
 Sets whether the entity can take [jumpers](./map-entities/jumper.md) during this state.
 
-The default value is `true`.
-
-`can_use_jumper` (boolean)
+`can_use_jumper` (boolean, default: `true`)
 : `true` to allow the entity to take jumpers during this state.
 
 ### `state:get_jumper_delay()`
@@ -573,9 +543,7 @@ Sets the delay before jumping when taking a jumper during this state.
 
 This only has an effect if [`state:get_can_use_jumper()`](#stateget_can_use_jumper) is `true`
 
-The default value is `200` ms.
-
-`jumper_delay` (number)
+`jumper_delay` (number, default: `200`)
 : The jump delay in milliseconds (`0` for no delay).
 
 ### `state:get_carried_object_action()`
@@ -585,7 +553,7 @@ Returns what happens during this state to an object that was [carried](./map-ent
 Return value (string)
 : One of:
 
-    - `"throw"` (default) : The carried object is automatically thrown.
+    - `"throw"` (default): The carried object is automatically thrown.
     - `"remove"`: The carried object is silently destroyed.
     - `"keep"`: The carried object continues to be carried.
 
@@ -608,20 +576,20 @@ Events are callback methods automatically called by the engine if you define the
 
 Called when this state starts.
 
-`previous_state_name` (string or nil)
+`previous_state_name` (string or `nil`)
 : Name of the state that was active before. See [`hero:get_state()`](./map-entities/hero.md#heroget_state) for the possible values. This value is `nil` if there was no state before (only possible for the first state of an entity).
 
-`previous_state` (state or nil)
+`previous_state` (state or `nil`)
 : Custom state object that was active before, if it was a custom one, `nil` otherwise.
 
 ### `state:on_finished(next_state_name, next_state)`
 
 Called when this state finishes.
 
-`next_state_name` (string or nil)
+`next_state_name` (string or `nil`)
 : Name of the state that is about to be active after yours. See [`hero:get_state()`](./map-entities/hero.md#heroget_state) for the possible values. This value is `nil` if there is no state after yours (only possible if the entity is being removed).
 
-`next_state` (state or nil)
+`next_state` (state or `nil`)
 : Custom state object about to start, if it is a custom one, `nil` otherwise.
 
 ### `state:on_update()`
@@ -666,7 +634,7 @@ Called when a map starts (when the player enters it) during this state.
 `map` ([map](./map.md))
 : The new map.
 
-`destination` ([destination](./map-entities/destination.md))
+`destination` ([destination](./map-entities/destination.md) or `nil`)
 : The destination entity from where the [hero](./map-entities/hero.md) arrives on the map, or `nil` if he used another way than a destination entity (like the side of the map or direct coordinates).
 
 ### `state:on_map_finished()`
@@ -680,7 +648,7 @@ When a map begins during this state, called when the opening transition effect f
 `map` ([map](./map.md))
 : The map.
 
-`destination` ([destination](./map-entities/destination.md))
+`destination` ([destination](./map-entities/destination.md) or `nil`)
 : The destination entity from where the [hero](./map-entities/hero.md) arrived on the map, or `nil` if he used another way than a destination entity (like the side of the map or direct coordinates).
 
 ### `state:on_position_changed(x, y, layer)`
@@ -737,7 +705,7 @@ Called when the entity has just attacked an enemy during this state, even if the
 `enemy` ([enemy](./map-entities/enemy.md))
 : The attacked enemy.
 
-`enemy_sprite` ([sprite](./drawable-objects/sprite.md))
+`enemy_sprite` ([sprite](./drawable-objects/sprite.md) or `nil`)
 : Sprite of the enemy that received the attack, or `nil` if the attack does not come from a pixel-precise collision test.
 
 `attack` (string)
@@ -751,9 +719,17 @@ Called when the entity has just attacked an enemy during this state, even if the
 Called when the player presses a [game command](./game.md#game-commands) (a keyboard key or a joypad action mapped to a built-in game behavior) during this state. You can use this event to override the normal built-in behavior of the game command.
 
 `command` (string)
-: Name of the built-in game command that was pressed.
+: Name of the built-in game command that was pressed. Possible commands are:
 
-    Possible commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (boolean)
 : Indicates whether the event was handled. If you return `true`, the event won't be propagated to other objects (you are overriding the built-in behavior of pressing this game command).
@@ -767,9 +743,17 @@ Return value (boolean)
 Called when the player released a [game command](./game.md#game-commands) (a keyboard key or a joypad action mapped to a built-in game behavior). during this state. You can use this event to override the normal built-in behavior of the game command.
 
 `command` (string)
-: Name of the built-in game command that was released.
+: Name of the built-in game command that was released. Possible commands are:
 
-    Possible commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (boolean)
 : Indicates whether the event was handled. If you return `true`, the event won't be propagated to other objects (you are overriding the built-in behavior of releasing this game command).

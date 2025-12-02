@@ -17,7 +17,7 @@ The state of a chest is either open or closed. When a chest is closed, its treas
 
 A chest appears initially open on the [map](../map.md) if its state is saved and the corresponding [boolean value](../game.md#gameget_valuesavegame_variable) is `true` If is possible to save the state of a chest (open or closed) even if it contains no treasure.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Chests are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -38,8 +38,8 @@ Return value (boolean)
 
 Sets the state of this chest (open or closed). If you close the chest, its treasure (as returned by [`chest:get_treasure()`](#chestget_treasure)) is restored and can be obtained again later.
 
-`open` (boolean, optional)
-: `true` to make the chest open, `false` to make it closed. No value means `true`.
+`open` (boolean, optional, default: `true`)
+: `true` to make the chest open, `false` to make it closed.
 
 ### `chest:get_treasure()`
 
@@ -47,13 +47,13 @@ Returns the treasure the player will obtain when opening this chest.
 
 If the chest is already open, this function still works: it returns the treasure that was inside the chest before it was open.
 
-Return value 1 (string)
+Return value 1 (string or `nil`)
 : Name of an [equipment item](../equipment-items.md). `nil` means that the chest is empty.
 
-Return value 2 (number)
+Return value 2 (number or `nil`)
 : Variant of this equipment item (`1` means the first variant). `nil` means that the chest is empty.
 
-Return value 3 (string)
+Return value 3 (string or `nil`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether the chest is open. `nil` means that the chest is not saved.
 
 !!! note "Note"
@@ -66,13 +66,13 @@ Sets the treasure the player will obtain when opening this chest.
 
 If the chest is already open, this function still works, it sets the treasure that will be put back in case you [close](#chestset_openopen) the chest later.
 
-`item_name` (string, optional)
+`item_name` (string or `nil`, optional)
 : Name of an [equipment item](../equipment-items.md). `nil` makes the chest empty.
 
-`variant` (number, optional)
+`variant` (number or `nil`, optional, requires: `item_name`, default: `1`)
 : Variant of this equipment item (`1` means the first variant). The default value is `1`. Must be `nil` when `item_name` is `nil`.
 
-`savegame_variable` (string, optional)
+`savegame_variable` (string or `nil`, optional, requires: `variant`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether the chest is open. `nil` means that the chest is not saved.
 
 !!! note "Note"
@@ -122,8 +122,8 @@ Returns whether the [opening condition](#chestget_opening_condition) of this che
 
 See [`chest:is_opening_condition_consumed()`](#chestis_opening_condition_consumed) for more information about what happens when the condition is consumed.
 
-`condition_consumed` (boolean)
-: `true` if the condition is consumed, `false` if it is not. No value means `true`.
+`condition_consumed` (boolean, optional, default: `true`)
+: `true` if the condition is consumed, `false` if it is not.
 
 ### `chest:get_cannot_open_sound()`
 
@@ -140,8 +140,8 @@ By default, the sound used is `"wrong"`.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `chest:get_opening_sound()`
 
@@ -156,10 +156,10 @@ Changes the sound to play when the chest is opening. By default, the sound used 
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
@@ -183,14 +183,14 @@ Your script can define this event to customize what happens. By calling [`hero:s
 
 The hero is automatically frozen during the whole process of opening a chest. If you don't give him a treasure, then you have to unblock him explicitly by calling [`hero:unfreeze()`](./hero.md#herounfreeze) when you want to restore control to the player.
 
-`treasure_item` ([item](../equipment-items.md))
+`treasure_item` ([item](../equipment-items.md) or `nil`)
 : Equipment item in the chest, or `nil` if the chest is empty or contains a [non-obtainable item](../equipment-items.md#itemis_obtainable).
 
-`treasure_variant` (number)
+`treasure_variant` (number or `nil`)
 : Variant of the treasure or `nil` if the chest is empty or contains a [non-obtainable item](../equipment-items.md#itemis_obtainable).
 
-`treasure_savegame_variable` (string)
+`treasure_savegame_variable` (string or `nil`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether this chest is open, or `nil` if this chest is not saved.
 
 `hero` ([hero](hero.md))
-: The hero who opened the chest. 
+: The hero who opened the chest.

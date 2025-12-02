@@ -41,11 +41,11 @@ Sets the center of this movement as a [map entity](../map-entities/index.md) (on
 `entity` ([entity](../map-entities/index.md))
 : The center entity.
 
-`dx` (number, optional)
-: X offset to add to the center entity's coordinates (default `0`).
+`dx` (number, optional, requires: `dy`, default: `0`)
+: X offset to add to the center entity's coordinates.
 
-`dy` (number, optional)
-: Y offset to add to the center entity's coordinates (default `0`).
+`dy` (number, optional, requires: `dx`, default: `0`)
+: Y offset to add to the center entity's coordinates.
 
 ### `circle_movement:get_radius()`
 
@@ -90,8 +90,8 @@ Return value (boolean)
 
 Sets whether circles are made clockwise or counter-clockwise.
 
-`clockwise` (boolean, optional)
-: `true` to make circles clockwise. No value means `true`.
+`clockwise` (boolean, optional, default: `true`)
+: `true` to make circles clockwise.
 
 ### `circle_movement:get_angle_from_center()`
 

@@ -37,7 +37,8 @@ Return value (boolean)
 
 Sets if the music is paused.
 
-`paused` (boolean) `true` to pause the music, `false` to resume from pause.
+`paused` (boolean)
+: `true` to pause the music, `false` to resume from pause.
 
 ### `music:get_volume()`
 

@@ -16,7 +16,7 @@ Fire hurts [enemies](./enemy.md) that are sensible to it. It does not hurt the [
 
 Fire can also be detected by [non-playing characters](./npc.md): this is useful to implement a torch as a generalized NPC that interacts with fire.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Fire entities are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -26,7 +26,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

@@ -18,7 +18,7 @@ Teletransporters can have any size, but like all entities, their width and heigh
 
     You can also teletransport the [hero](./hero.md) explicitly with [`hero:teleport()`](./hero.md#heroteleportmap_id-destination_name-transition_style).
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Teletransporters are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -32,15 +32,15 @@ The following methods are specific to teletransporters.
 
 Returns the sound to be played when the hero uses this teletransporter.
 
-Return value (string)
+Return value (string or `nil`)
 : Id of the teletransporter's sound. `nil` means that no sound will be played.
 
-### `teletransporter:set_sound(sound_id)`
+### `teletransporter:set_sound([sound_id])`
 
 Sets the sound to be played when the hero uses this teletransporter.
 
-`sound_id` (string)
-: Id of the teletransporter's sound. `nil` means that no sound will be played.
+`sound_id` (string or `nil`, optional)
+: Id of the teletransporter's sound. `nil` or empty string means that no sound will be played.
 
 ### `teletransporter:get_transition()`
 
@@ -82,7 +82,7 @@ Sets the destination [map](../map.md) of this teletransporter.
 
 Returns the name of the destination place on the destination map.
 
-Return value (string)
+Return value (string or `nil`)
 : Location on the destination map.
 
     Can be the name of a [destination](./destination.md) entity, the special value `"_same"` to keep the hero's coordinates, or the special value `"_side"` to place on hero on the corresponding side of an adjacent map (normally used with the scrolling transition style).
@@ -93,14 +93,14 @@ Return value (string)
 
 Sets the destination place on the destination map.
 
-`destination_name` (string)
+`destination_name` (string or `nil`)
 : Location on the destination map.
 
     Can be the name of a [destination](./destination.md) entity, the special value `"_same"` to keep the hero's coordinates, or the special value `"_side"` to place on hero on the corresponding side of an adjacent map (normally used with the scrolling transition style).
 
     `nil` means the default destination entity of the map.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

@@ -59,9 +59,37 @@ These methods exist in all entity types.
 Returns the type of entity.
 
 Return value (string)
-: The type of this entity.
+: The type of this entity. Can be one of:
 
-    Can be one of: `"hero"`, `"dynamic_tile"`, `"teletransporter"`, `"destination"`, `"pickable"`, `"destructible"`, `"carried_object"`, `"chest"`, `"shop_treasure"`, `"enemy"`, `"npc"`, `"block"`, `"jumper"`, `"switch"`, `"sensor"`, `"separator"`, `"wall"`, `"crystal"`, `"crystal_block"`, `"stream"`, `"door"`, `"stairs"`, `"bomb"`, `"explosion"`, `"fire"`, `"arrow"`, `"hookshot"`, `"boomerang"` or `"custom_entity"`.
+    - `"hero"`
+    - `"dynamic_tile"`
+    - `"teletransporter"`
+    - `"destination"`
+    - `"pickable"`
+    - `"destructible"`
+    - `"carried_object"`
+    - `"chest"`
+    - `"shop_treasure"`
+    - `"enemy"`
+    - `"npc"`
+    - `"block"`
+    - `"jumper"`
+    - `"switch"`
+    - `"sensor"`
+    - `"separator"`
+    - `"wall"`
+    - `"crystal"`
+    - `"crystal_block"`
+    - `"stream"`
+    - `"door"`
+    - `"stairs"`
+    - `"bomb"`
+    - `"explosion"`
+    - `"fire"`
+    - `"arrow"`
+    - `"hookshot"`
+    - `"boomerang"`
+    - `"custom_entity"`
 
 !!! note "Note"
 
@@ -87,7 +115,7 @@ Returns the name of this map entity.
 
 The name uniquely identifies the entity on the map.
 
-Return value (string)
+Return value (string or `nil`)
 : The name of this entity, or `nil` if the entity has no name (because the name is optional).
 
 ### `entity:set_name(name)`
@@ -96,7 +124,7 @@ Sets the name of this map entity.
 
 The name uniquely identifies the entity on the map. If there is already another entity on the same map with this name, then a numbered suffix is automatically appended to make sure that entity names are unique.
 
-`name` (string or nil)
+`name` (string or `nil`)
 : The name of this entity, or `nil` to set no name (because the name is optional).
 
 ### `entity:exists()`
@@ -129,8 +157,8 @@ Enables or disables this entity.
 
 When an entity is disabled, it is not displayed on the map, it does not move and does not detect collisions. Its [movement](../movements/index.md), its [sprites](../drawable-objects/sprite.md) and its [timers](../timers.md) if any are suspended and will be resumed when the entity gets enabled again. While the entity is disabled, it still exists, it still has a position and it can be enabled again later.
 
-`enabled` (boolean, optional)
-: `true` to enable the entity, `false` to disable it. No value means `true`.
+`enabled` (boolean, optional, default: `true`)
+: `true` to enable the entity, `false` to disable it.
 
 ### `entity:get_size()`
 
@@ -172,7 +200,7 @@ The default origin point depends on the type of entity. By convention, it is usu
 
 This origin point property allows entities of different sizes to have comparable reference points. Indeed, when two entities to be drawn in Y order overlap, the engine needs to determine which one has to be displayed first (it is always the one with the lowest Y coordinate). Using the upper left corner Y coordinate for this would not work well with entities of different sizes.
 
-Similarly, if you need to compute an [angle](#entityget_anglex-y-entityget_angleother_entity) between two entities to move an entity away from another one, the calculation uses the origin point of both entities. Using the upper left corner of their bounding box would not give the accurate angle with entities of different sizes.
+Similarly, if you need to compute an [angle](#entityget_anglex-y) between two entities to move an entity away from another one, the calculation uses the origin point of both entities. Using the upper left corner of their bounding box would not give the accurate angle with entities of different sizes.
 
 The origin point is also the point of synchronization of an entity with its [sprites](../drawable-objects/sprite.md) (because again, an entity that has a given size may have sprites with different sizes).
 
@@ -260,7 +288,7 @@ Returns the entity this entity is looking at, if any.
 
 This is an entity overlapping the [facing position](#entityget_facing_position) of this entity. If several entities are overlapping the facing position, the first one in Z order is returned.
 
-Return value (entity)
+Return value (entity or `nil`)
 : The facing entity, or `nil` if there is no entity in front of this entity.
 
 ### `entity:get_ground_position()`
@@ -346,7 +374,7 @@ Return value (number)
 
 Changes the layer of this entity on the map. The X and Y coordinates of the entity are unchanged. Any previous movement or action performed by the entity continues normally.
 
-`layer` (number, optional)
+`layer` (number)
 : Layer to set, between [`map:get_min_layer()`](../map.md#mapget_min_layer) and [`map:get_max_layer()`](../map.md#mapget_max_layer).
 
 !!! note "Note"
@@ -365,11 +393,11 @@ To test if this entity overlaps a rectangle or a point (a point is a rectangle o
 `y` (number)
 : Y coordinate of the upper left corner of the rectangle to check.
 
-`width` (number, optional)
-: Width of the rectangle (default `1`).
+`width` (number, optional, requires: `height`, default: `1`)
+: Width of the rectangle.
 
-`height` (number, optional)
-: Height of the rectangle (default `1`).
+`height` (number, optional, requires: `width`, default: `1`)
+: Height of the rectangle.
 
 Return value (boolean)
 : `true` if the bounding box of this entity overlaps the rectangle.
@@ -392,10 +420,10 @@ Returns whether another entity collides with this entity according to the specif
     - `"touching"`: Like `"facing"`, but accepts all four sides of the other entity's bounding box, no matter its direction.
     - `"sprite"`: Collision if a sprite of the other entity overlaps a sprite of this entity. The collision test is pixel precise. The last two optional sprite parameters can then indicate which sprite of both entities you want to test. If you don't set them, all sprites of both entities will be tested.
 
-`entity_sprite` ([sprite](../drawable-objects/sprite.md) or nil, optional)
+`entity_sprite` ([sprite](../drawable-objects/sprite.md) or `nil`, optional, requires: `collision_mode`)
 : Sprite of this entity you want to test (only with collision mode `"sprite"`) `nil` or no value means to test all sprites of this entity.
 
-`other_entity_sprite` ([sprite](../drawable-objects/sprite.md) or nil, optional)
+`other_entity_sprite` ([sprite](../drawable-objects/sprite.md) or `nil`, optional, requires: `entity_sprite`)
 : Sprite of the other entity you want to test (only with collision mode `"sprite"`) `nil` or no value means to test all sprites of the other entity.
 
 Return value (boolean)
@@ -405,7 +433,7 @@ Return value (boolean)
 
     For custom entities, see also [`custom_entity:add_collision_test()`](./custom-entity.md#custom_entityadd_collision_testcollision_mode-callback) to be automatically notified when a collision is detected.
 
-### `entity:get_distance(x, y), entity:get_distance(other_entity)`
+### `entity:get_distance(x, y)`
 
 Returns the distance in pixels between this map entity and a point or another map entity.
 
@@ -420,15 +448,11 @@ To compute the distance to a specified point:
 Return value (number)
 : The Euclidean distance in pixels between the origin point of this entity and the point. The result is rounded down to the nearest integer.
 
-To compute the distance to another map entity:
+!!! note "Note"
 
-`other_entity` (entity)
-: The entity to compute the distance to.
+    You can pass another entity as argument instead of coordinates.
 
-Return value (number)
-: The Euclidean distance in pixels between the origin point of this entity and the origin point of the other entity. The result is rounded down to the nearest integer.
-
-### `entity:get_angle(x, y), entity:get_angle(other_entity)`
+### `entity:get_angle(x, y)`
 
 Returns the angle between the X axis and the vector that joins this entity to a point.
 
@@ -443,19 +467,15 @@ To compute the angle to a specified point:
 Return value (number)
 : The angle in radians between the origin point of this entity and the specified point. The angle is between `0` and `2 * math.pi`.
 
-To compute the angle to another map entity:
+!!! note "Note"
 
-`other_entity` (entity)
-: The entity to compute the angle to.
+    You can pass another entity as argument instead of coordinates.
 
-Return value (number)
-: The angle in radians between the origin point of this entity and the origin point of the other entity. The angle is between `0` and `2 * math.pi`.
+### `entity:get_direction4_to(x, y)`
 
-### `entity:get_direction4_to(x, y), entity:get_direction4_to(other_entity)`
+Like [`entity:get_angle()`](#entityget_anglex-y), but instead of an angle in radians, returns the closest direction among the 4 main directions.
 
-Like [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity), but instead of an angle in radians, returns the closest direction among the 4 main directions.
-
-This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity).
+This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y).
 
 To compute the direction to a specified point:
 
@@ -468,19 +488,15 @@ To compute the direction to a specified point:
 Return value (number)
 : The direction this entity should take to look at this point, between 0 (East) and 3 (South).
 
-To compute the direction to another map entity:
+!!! note "Note"
 
-`other_entity` (entity)
-: An entity to target.
+    You can pass another entity as argument instead of coordinates.
 
-Return value (number)
-: The direction this entity should take to look at the other entity, between 0 (East) and 3 (South).
+### `entity:get_direction8_to(x, y)`
 
-### `entity:get_direction8_to(x, y), entity:get_direction8_to(other_entity)`
+Like [`entity:get_angle()`](#entityget_anglex-y), but instead of an angle in radians, returns the closest direction among the 8 main directions.
 
-Like [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity), but instead of an angle in radians, returns the closest direction among the 8 main directions.
-
-This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y-entityget_angleother_entity).
+This is a utility function that essentially rounds the result of [`entity:get_angle()`](#entityget_anglex-y).
 
 To compute the direction to a specified point:
 
@@ -493,13 +509,9 @@ To compute the direction to a specified point:
 Return value (number)
 : The direction this entity should take to look at this point, between `0` (East) and `7` (South-East).
 
-To compute the direction to another map entity:
+!!! note "Note"
 
-`other_entity` (entity)
-: An entity to target.
-
-Return value (number)
-: The direction this entity should take to look at the other entity, between `0` (East) and `7` (South-East).
+    You can pass another entity as argument instead of coordinates.
 
 ### `entity:snap_to_grid()`
 
@@ -552,8 +564,8 @@ Sets whether this entity should be drawn in Y order or in Z order.
 
 See [`entity:is_drawn_in_y_order()`](#entityis_drawn_in_y_order) for details about the Y order and the Z order.
 
-`y_order` (boolean, optional)
-: `true` to display this entity in Y order, `false` to display it in Z order. No value means `true`.
+`y_order` (boolean, optional, default: `true`)
+: `true` to display this entity in Y order, `false` to display it in Z order.
 
 ### `entity:get_optimization_distance()`
 
@@ -575,7 +587,7 @@ A value of `0` means an infinite distance (the entity is never optimized away). 
 `optimization_distance` (number)
 : The optimization distance hint to set in pixels.
 
-### `entity:is_in_same_region(x, y), entity:is_in_same_region(other_entity)`
+### `entity:is_in_same_region(x, y)`
 
 Returns whether this entity is in the same region as a position or another entity.
 
@@ -596,23 +608,21 @@ Return value (boolean)
 
 You can use this function to make sure that an [enemy](./enemy.md) close to the [hero](./hero.md) but in the other side of a separator won't attack the hero.
 
-`other_entity` (entity)
-: Another entity.
+!!! note "Note"
 
-Return value (boolean)
-: `true` if both entities are in the same region.
+    You can pass another entity as argument instead of coordinates.
 
 ### `entity:test_obstacles([dx, dy, [layer]])`
 
 Returns whether there would be a collision with obstacles if this map entity was placed at a given offset from its current position.
 
-`dx` (number, optional)
-: X offset in pixels (`0` means the current X position). No value means `0`.
+`dx` (number, optional, requires: `dy`, default: `0`)
+: X offset in pixels (`0` means the current X position).
 
-`dy` (number, optional)
-: Y offset in pixels (`0` means the current Y position). No value means `0`.
+`dy` (number, optional, requires: `dx`, default: `0`)
+: Y offset in pixels (`0` means the current Y position).=
 
-`layer` (number, optional)
+`layer` (number, optional, requires: `dx` and `dy`)
 : Layer to test. No value means the current layer.
 
 Return value (boolean)
@@ -627,7 +637,7 @@ To manage entities with multiple sprites, you can set names when you create spri
 `name` (string, optional)
 : Name of the sprite to get. Only useful for entities that have multiple sprites. No value means the main sprite.
 
-Return value ([sprite](../drawable-objects/sprite.md))
+Return value ([sprite](../drawable-objects/sprite.md) or `nil`)
 : The entity sprite with this name, or its main sprite if no name is specified. Returns `nil` if the entity has no such sprite.
 
 ### `entity:get_sprites()`
@@ -702,8 +712,8 @@ Hides or shows the entity.
 
 When the entity is hidden, its sprites (if any) are not displayed, but everything else continues normally, including collisions.
 
-`visible` (boolean, optional)
-: `true` to show the entity, `false` to hide it. No value means `true`.
+`visible` (boolean, optional, default: `true`)
+: `true` to show the entity, `false` to hide it.
 
 ### `entity:get_draw_override()`
 
@@ -711,7 +721,7 @@ Returns the draw function of this entity.
 
 See [`entity:set_draw_override()`](#entityset_draw_overridedraw_override) for more details.
 
-Return value (function or nil)
+Return value (function or `nil`)
 : The draw function, or `nil` if the draw function was not overridden.
 
 ### `entity:set_draw_override(draw_override)`
@@ -720,14 +730,14 @@ Changes how this entity is drawn.
 
 You can use this to replace the built-in draw implementation of the engine by your own function, if the default behavior does not fit your needs. To do so, your function can either call [`map:draw_visual()`](../map.md#mapdraw_visualdrawable-x-y) or draw on [`camera:get_surface()`](./camera.md).
 
-`draw_override` (function or nil)
+`draw_override` (function or `nil`)
 : The draw function, or `nil` to restore the built-in drawing. Your function will receive the following parameters:
 
-`entity` (entity)
-: The entity to draw.
+    `entity` (entity)
+    : The entity to draw.
 
-`camera` ([camera](./camera.md))
-: Camera where this entity is drawn.
+    `camera` ([camera](./camera.md))
+    : Camera where this entity is drawn.
 
 !!! note "Note"
 
@@ -757,14 +767,14 @@ See [`entity:get_weight()`](#entityget_weight) for more details.
 
 Returns the [stream](./stream.md) that is currently controlling this entity, if any.
 
-Return value ([stream](./stream.md))
+Return value ([stream](./stream.md) or `nil`)
 : The current stream, or `nil` if this entity is not being controlled by a stream.
 
 ### `entity:get_movement()`
 
 Returns the current movement of this map entity.
 
-Return value ([movement](../movements/index.md))
+Return value ([movement](../movements/index.md) or `nil`)
 : The current movement, or `nil` if the entity has currently no movement.
 
 !!! note "Note"
@@ -784,7 +794,7 @@ User-defined properties are arbitrary key-value pairs that you can set to any en
 `key` (string)
 : Name of the property to get.
 
-Return value (string)
+Return value (string or `nil`)
 : The corresponding value, or `nil` if there is no such property.
 
 ### `entity:set_property(key, value)`
@@ -798,7 +808,7 @@ User-defined properties are arbitrary key-value pairs that you can set to any en
 `key` (string)
 : Name of the property to set. It must be a valid identifier (only alphanumeric ASCII characters or `'_'`).
 
-`value` (string or nil)
+`value` (string or `nil`)
 : The value to set, or `nil` to remove the property.
 
 ### `entity:get_properties()`

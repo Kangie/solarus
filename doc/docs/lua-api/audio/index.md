@@ -39,15 +39,15 @@ to the beginning. Since they already loop forever internally, they don't have an
 
 See [Music Loop Settings](../../files-specs/audio/musics.md#loop-settings) to know how Solarus supports internal loop information for each format.
 
-`music_id` (string)
+`music_id` (string or `nil`)
 : Name of the music file to play, relative to the `musics` directory and without extension. The following extensions will be tried in this order: `.ogg`, `.it` and `.spc`. Passing `nil` stops playing any music (the second parameter has no effect in this case).
 
     If you set the music name to the same music that is already playing, or to the special value `"same"`, then this function does nothing: the music keeps playing (it does not restart) and the second parameter is ignored.
 
-`action` (function or boolean, optional)
+`action` (function or boolean, optional, default: `true`)
 : What to do when the music finishes (reaches its end).
 
-    - A **boolean** value indicates whether or not the music should loop. The default is `true`.
+    - A **boolean** value indicates whether or not the music should loop.
     - A **function** value indicates a custom action (and implies no loop). It will be called when the music finishes. This allows you to perform an action of your choice, like playing another music.
 
         Note however that there might be some small delay between the exact end of the music and the time when your function is called, because the music can end between simulation frames but your function will be called the frame after that.
@@ -56,7 +56,7 @@ See [Music Loop Settings](../../files-specs/audio/musics.md#loop-settings) to kn
 
 Returns the name of the music currently playing.
 
-Return value (string)
+Return value (string or `nil`)
 : Name of the music file currently playing, relative to the `musics` directory and without extension. Returns `nil` if no music is playing.
 
 ### `sol.audio.stop_music()`
@@ -97,14 +97,18 @@ Sets the volume of musics. This volume applies to all musics played by [`sol.aud
 
 Returns the format of the music currently playing.
 
-Return value (string)
-: Format of the music: `"ogg"`, `"it"` or `"spc"`. Returns `nil` if no music is playing.
+Return value (string or `nil`)
+: Returns `nil` if no music is playing. Format of the music:
+
+    - `"ogg"`
+    - `"it"`
+    - `"spc"`
 
 ### `sol.audio.get_music_num_channels()`
 
 Returns the number of channels of the current `.it` music. This function is only supported for `.it` musics.
 
-Return value (number)
+Return value (number or `nil`)
 : Number of channels of the music. Returns `nil` if the current music format is not `.it`.
 
 ### `sol.audio.get_music_channel_volume(channel)`
@@ -112,9 +116,9 @@ Return value (number)
 Returns the volume of notes of a channel for the current `.it` music. This function is only supported for `.it` musics.
 
 `channel` (number)
-: Index of a channel (the first one is `0`).
+: Index of a channel (the first one is zero).
 
-Return value (number)
+Return value (number or `nil`)
 : Volume of the channel. Returns `nil` if the current music format is not `.it`.
 
 !!! note "Note"
@@ -135,7 +139,7 @@ Sets the volume of all notes of a channel for the current `.it` music. This func
 
 Returns the tempo of the current `.it` music. This function is only supported for `.it` musics.
 
-Return value (number)
+Return value (number or `nil`)
 : Tempo of the music. Returns `nil` if the current music format is not `.it`.
 
 ### `sol.audio.set_tempo(tempo)`

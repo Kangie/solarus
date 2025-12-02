@@ -37,7 +37,7 @@ This function just calls `io.open()` with the actual path and the mode as parame
 `mode` (string, optional)
 : Opening mode (see the Lua documentation of [`io.open()`](http://www.lua.org/manual/5.1/manual.html#pdf-io.open) ).
 
-Return value (file or nil+string)
+Return value (file or `nil`+string)
 : The file object created, or `nil` plus an error message in case of failure. The file value is the standard Lua file object as returned by `io.open()`, and you can then use all Lua file functions (file:read(), file:write(), file:lines(), file:close(), etc.).
 
 ### `sol.file.exists(file_name)`
@@ -73,7 +73,7 @@ A valid quest write directory must be set (in your [quest.dat](../files-specs/pr
 `file_name` (string)
 : Name of the file to delete, relative to the [quest write directory](./general-features.md#solmainget_quest_write_dir). If it is a directory, it must be empty before you delete it.
 
-Return value (boolean and string)
+Return value (boolean or `nil`+string)
 : `true` in case of success, `nil` plus an error message in case of failure.
 
 ### `sol.file.rename(old_file_name, new_file_name)`
@@ -88,7 +88,7 @@ A valid quest write directory must be set (in your [quest.dat](../files-specs/pr
 `new_file_name` (string)
 : New name to set, relative to the [quest write directory](./general-features.md#solmainget_quest_write_dir).
 
-Return value (boolean and string)
+Return value (boolean or `nil`+string)
 : `true` in case of success, `nil` plus an error message in case of failure.
 
 ### `sol.file.mkdir(dir_name)`
@@ -100,7 +100,7 @@ A valid quest write directory must be set (in your [quest.dat](../files-specs/pr
 `dir_name` (string)
 : Name of the directory to create, relative to the [quest write directory](./general-features.md#solmainget_quest_write_dir).
 
-Return value (boolean or nil+string)
+Return value (boolean or `nil`+string)
 : `true` in case of success, `nil` plus an error message in case of failure.
 
 ### `sol.file.list_dir(dir_name)`
@@ -110,5 +110,5 @@ Returns the list of files in a directory.
 `dir_name` (string)
 : Name of the directory to explore, relative to the [quest write directory](./general-features.md#solmainget_quest_write_dir) or to the data directory.
 
-Return value (table)
+Return value (table or `nil`)
 : An array with the name of files and directories inside the directory. Names are ordered alphabetically. Returns `nil` if the given name is not a directory or does not exist.
