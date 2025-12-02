@@ -45,7 +45,7 @@ Such a script is all what you need to define a model of enemy. The engine handle
 
 Basic enemies often have the same behavior. To avoid duplication of code, you can factorize some code into a generic file and call it from each enemy breed script with `require()`,[`sol.main.do_file()`](../general-features.md#solmaindo_filescript_name) or [`sol.main.load_file()`](../general-features.md#solmainload_filescript_name).
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Enemies are particular [map entities](./index.md). Therefore, they inherit [all methods](./index.md#methods-of-all-entity-types) from the type map entity.
 
@@ -125,8 +125,8 @@ Return value (boolean)
 
 Sets whether the enemy should be pushed away when it is hurt. The default value is `true`.
 
-`pushed_back_when_hurt` (boolean, optional)
-: `true` to make the enemy pushed away when hurt. No value means `true`.
+`pushed_back_when_hurt` (boolean, optional, default: `true`)
+: `true` to make the enemy pushed away when hurt.
 
 ### `enemy:get_push_hero_on_sword()`
 
@@ -141,8 +141,8 @@ Sets whether the [hero](./hero.md) should be pushed away when he hits this enemy
 
 The default value is `false`.
 
-`push_hero_on_sword` (boolean, optional)
-: `true` to push the hero away when hitting this enemy with his sword. No value means `true`.
+`push_hero_on_sword` (boolean, optional, default: `true`)
+: `true` to push the hero away when hitting this enemy with his sword.
 
 ### `enemy:get_can_hurt_hero_running()`
 
@@ -157,22 +157,30 @@ Sets whether this enemy can hurt the [hero](./hero.md) even when the hero is run
 
 The default value is `false`.
 
-`can_hurt_hero_running` (boolean, optional)
-: `true` so that the hero can be hurt by this enemy even when running. No value means `true`.
+`can_hurt_hero_running` (boolean, optional, default: `true`)
+: `true` so that the hero can be hurt by this enemy even when running.
 
 ### `enemy:get_hurt_style()`
 
 Returns the style of sounds and animations to play when this enemy is hurt.
 
 Return value (string)
-: `"normal"`, `"monster"` or `"boss"`.
+: Possible values are:
+
+    - `"normal"`
+    - `"monster"`
+    - `"boss"`
 
 ### `enemy:set_hurt_style(hurt_style)`
 
 Sets the style of sounds and animations to play when this enemy is hurt. The default values is `"normal"`.
 
 `hurt_style` (string)
-: `"normal"`, `"monster"` or `"boss"`.
+: Possible values are:
+
+    - `"normal"`
+    - `"monster"`
+    - `"boss"`
 
 ### `enemy:get_dying_sprite_id()`
 
@@ -182,7 +190,7 @@ This sprite is displayed during the usual dying animation. It is not used when t
 
 The default dying sprite id is `"enemies/enemy_killed"`.
 
-Return value (string or nil)
+Return value (string or `nil`)
 : Id of the sprite to use for the dying animation, or `nil` to show no dying animation.
 
 ### `enemy:set_dying_sprite_id(dying_sprite_id)`
@@ -191,7 +199,7 @@ Sets the id of the sprite to show when this enemy is dying.
 
 See [`enemy:get_dying_sprite_id()`](#enemyget_dying_sprite_id) for more details.
 
-`dying_sprite_id` (string or nil)
+`dying_sprite_id` (string or `nil`)
 : Id of the sprite to use for the dying animation, or `nil` to show no dying animation.
 
 ### `enemy:get_can_attack()`
@@ -207,8 +215,8 @@ Sets whether this enemy can currently attack the [hero](./hero.md).
 
 When the enemy restarts after being hurt, `can_attack` is always set to `true`.
 
-`can_attack` (boolean, optional)
-: `true` to allow the enemy to attack the hero. No value means `true`.
+`can_attack` (boolean, optional, default: `true`)
+: `true` to allow the enemy to attack the hero..
 
 ### `enemy:get_minimum_shield_needed()`
 
@@ -241,8 +249,8 @@ Sets whether this enemy can be traversed by other entities.
 
 By default, the enemy is traversable. For example, if you want to prevent the [hero](./hero.md) to pass without killing the enemy, you can use this function to make the enemy become an obstacle.
 
-`traversable` (boolean, optional)
-: `true` to make this enemy traversable. No value means `true`.
+`traversable` (boolean, optional, default: `true`)
+: `true` to make this enemy traversable.
 
 !!! note "Note"
 
@@ -277,9 +285,17 @@ Returns how this enemy reacts when he receives an attack.
 Recall that enemies may have several [sprites](../drawable-objects/sprite.md). This attack consequence applies to all sprites of the enemy, unless you override some of them with [`enemy:set_attack_consequence_sprite()`](#enemyset_attack_consequence_spritesprite-attack-consequence).
 
 `attack` (string)
-: Name of an attack against the enemy: `"sword"`, `"thrown_item"`, `"explosion"`, `"arrow"`, `"hookshot"`, `"boomerang"` or `"fire"`.
+: Name of an attack against the enemy:
 
-`consequence` (number, string or function)
+    - `"sword"`
+    - `"thrown_item"`
+    - `"explosion"`
+    - `"arrow"`
+    - `"hookshot"`
+    - `"boomerang"`
+    - `"fire"`
+
+`consequence` (number or string or function)
 : Indicates what happens when this enemy receives the attack. The possible values are the same as in [`enemy:set_attack_consequence()`](#enemyset_attack_consequenceattack-consequence).
 
 ### `enemy:set_attack_consequence(attack, consequence)`
@@ -289,9 +305,17 @@ Sets how this enemy reacts when he receives an attack.
 Recall that enemies may have several [sprites](../drawable-objects/sprite.md). This attack consequence applies to all sprites of the enemy, unless you override some of them with [`enemy:set_attack_consequence_sprite()`](#enemyset_attack_consequence_spritesprite-attack-consequence).
 
 `attack` (string)
-: Name of an attack against the enemy: `"sword"`, `"thrown_item"`, `"explosion"`, `"arrow"`, `"hookshot"`, `"boomerang"` or `"fire"`.
+: Name of an attack against the enemy:
 
-`consequence` (number, string or function)
+    - `"sword"`
+    - `"thrown_item"`
+    - `"explosion"`
+    - `"arrow"`
+    - `"hookshot"`
+    - `"boomerang"`
+    - `"fire"`
+
+`consequence` (number or string or function)
 : Indicates what happens when this enemy receives the attack. It may be:
 
     - A positive integer: The enemy is hurt and loses this number of life points. In the particular case of a sword attack, this number will by default be increased by the level of the sword (see [`enemy:on_hurt_by_sword()`](#enemyon_hurt_by_swordhero-enemy_sprite)).
@@ -311,9 +335,17 @@ This method returns the same result as [`enemy:get_attack_consequence()`](#enemy
 : A sprite of this enemy.
 
 `attack` (string)
-: Name of an attack against the enemy: `"sword"`, `"thrown_item"`, `"explosion"`, `"arrow"`, `"hookshot"`, `"boomerang"` or `"fire"`.
+: Name of an attack against the enemy:
 
-`consequence` (number, string or function)
+    - `"sword"`
+    - `"thrown_item"`
+    - `"explosion"`
+    - `"arrow"`
+    - `"hookshot"`
+    - `"boomerang"`
+    - `"fire"`
+
+`consequence` (number or string or function)
 : Indicates what happens when this sprite receives the attack. The possible values are the same as in [`enemy:set_attack_consequence()`](#enemyset_attack_consequenceattack-consequence).
 
 ### `enemy:set_attack_consequence_sprite(sprite, attack, consequence)`
@@ -326,9 +358,17 @@ This method overrides for a particular sprite the attack consequences defined by
 : A sprite of this enemy.
 
 `attack` (string)
-: Name of an attack against the enemy: `"sword"`, `"thrown_item"`, `"explosion"`, `"arrow"`, `"hookshot"`, `"boomerang"` or `"fire"`.
+: Name of an attack against the enemy:
 
-`consequence` (number, string or function)
+    - `"sword"`
+    - `"thrown_item"`
+    - `"explosion"`
+    - `"arrow"`
+    - `"hookshot"`
+    - `"boomerang"`
+    - `"fire"`
+
+`consequence` (number or string or function)
 : Indicates what happens when this sprite receives the attack. The possible values are the same as in [`enemy:set_attack_consequence()`](#enemyset_attack_consequenceattack-consequence).
 
 ### `enemy:set_default_attack_consequences()`
@@ -346,8 +386,8 @@ Restores the default attack consequences for a particular sprite of this enemy.
 
 Returns the name of the savegame variable where the state of this enemy is stored.
 
-Return value (string or nil)
-: the name of the variable (or nil if the enemy is not saved).
+Return value (string or `nil`)
+: the name of the variable (or `nil` if the enemy is not saved).
 
 ### `enemy:set_invincible()`
 
@@ -379,33 +419,33 @@ Sets whether this enemy can detect collisions with entities even if they are not
 
 By default, enemies can only have collisions with entities on the same layer. If you set this property to `true`, this enemy will be able to hurt the [hero](./hero.md) even from a different layer.
 
-`independent` (boolean, optional)
-: `true` to make this enemy detect collisions even with entities on other layers. No value means `true`.
+`independent` (boolean, optional, default: `true`)
+: `true` to make this enemy detect collisions even with entities on other layers.
 
 ### `enemy:get_treasure()`
 
 Returns the [pickable treasure](./pickable.md) that will drop this enemy when killed.
 
-Return value 1 (string)
+Return value 1 (string or `nil`)
 : Name of an [equipment item](../equipment-items.md). `nil` means no item dropped (in this case, other return values are `nil` too).
 
 Return value 2 (number)
 : Variant of this equipment item (`1` means the first variant).
 
-Return value 3 (string)
+Return value 3 (string or `nil`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether the treasure dropped is found. `nil` means that the treasure is not saved.
 
 ### `enemy:set_treasure([item_name, [variant, [savegame_variable]]])`
 
 Sets the [pickable treasure](./pickable.md) that will drop this enemy when killed.
 
-`item_name` (string, optional)
+`item_name` (string or `nil`, optional)
 : Name of an [equipment item](../equipment-items.md). `nil` or no value means no item.
 
-`variant` (number, optional)
-: Variant of this equipment item (`1` means the first variant). The default value is `1`.
+`variant` (number, optional, requires: `item_name`, default: `1`)
+: Variant of this equipment item (`1` means the first variant).
 
-`savegame_variable` (string, optional)
+`savegame_variable` (string or `nil`, optional, requires: `variant`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether the treasure dropped is found. `nil` or no value means that the treasure is not saved.
 
 ### `enemy:get_obstacle_behavior()`
@@ -413,14 +453,22 @@ Sets the [pickable treasure](./pickable.md) that will drop this enemy when kille
 Returns how the enemy behaves with obstacles.
 
 Return value (string)
-: `"normal"`, `"flying"` or `"swimming"`.
+: Can be one of:
+
+    - `"normal"`
+    - `"flying"`
+    - `"swimming"`
 
 ### `enemy:set_obstacle_behavior(obstacle_behavior)`
 
 Sets how this enemy should behave with obstacles. The default value is `"normal"` `"swimming"` allow the enemy to traverse water. `"flying"` allows the enemy to traverse holes, water and lava.
 
 `obstacle_behavior` (string)
-: `"normal"`, `"flying"` or `"swimming"`.
+: Possible values are:
+
+    - `"normal"`
+    - `"flying"`
+    - `"swimming"`
 
 ### `enemy:get_immobilization_duration()`
 
@@ -447,8 +495,8 @@ Return value (string)
 
 Changes the sound to play when an attack against the enemy fails. By default, the sound used is `"sword_tapping"`. You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `enemy:get_falling_sound()`
 
@@ -461,8 +509,8 @@ Return value (string)
 
 Changes the sound to play when the enemy is falling into a hole. By default, the sound used is `"jump"`. You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `enemy:get_sinking_sound()`
 
@@ -475,8 +523,8 @@ Return value (string)
 
 Changes the sound to play when the enemy is sinking into deep water or lava. By default, the sound used is `"splash"`. You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `enemy:get_dying_sound()`
 
@@ -489,8 +537,8 @@ Return value (string)
 
 Changes the sound to play when the enemy is dying. By default, the sound used is `"enemy_killed"`. You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `enemy:get_exploding_sound()`
 
@@ -503,8 +551,8 @@ Return value (string)
 
 Changes the sound to play when the enemy is exploding. By default, the sound used is `"explosion"`. You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `enemy:get_hurt_sound()`
 
@@ -517,8 +565,8 @@ Return value (string)
 
 Changes the sound to play when the enemy is hurt. You can use this function if you want another sound to be played. Calling this function disable sounds related to `hurt_style`.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `enemy:restart()`
 
@@ -565,40 +613,40 @@ This function is similar to [`map:create_enemy()`](../map.md#mapcreate_enemyprop
 `properties` (table)
 : A table that describes all properties of the enemy to create. Its key-value pairs must be:
 
-`name` (string, optional)
-: Name identifying the entity. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique. No value means no name.
+    `name` (string, optional)
+    : Name identifying the entity. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique. No value means no name.
 
-`layer` (number, optional)
-: The layer, between [`map:get_min_layer()`](../map.md#mapget_min_layer) and [`map:get_max_layer()`](../map.md#mapget_max_layer). No value means the same layer as the current enemy.
+    `layer` (number, optional)
+    : The layer, between [`map:get_min_layer()`](../map.md#mapget_min_layer) and [`map:get_max_layer()`](../map.md#mapget_max_layer). No value means the same layer as the current enemy.
 
-`x` (number, optional)
-: X coordinate on the map, relative to the current enemy. The default value is `0`.
+    `x` (number, optional, default: `0`)
+    : X coordinate on the map, relative to the current enemy.
 
-`y` (number, optional)
-: Y coordinate on the map, relative to the current enemy. The default value is `0`.
+    `y` (number, optional, default: `0`)
+    : Y coordinate on the map, relative to the current enemy.
 
-`direction` (number, optional)
-: Initial direction of the enemy, between `0` (East) and `3` (South). The default value is `3`.
+    `direction` (number, optional, default: `3`)
+    : Initial direction of the enemy, between `0` (East) and `3` (South).
 
-`breed` (string)
-: Model of enemy to create.
+    `breed` (string)
+    : Model of enemy to create.
 
-`savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](../game.md) whether this enemy is dead. No value means that the enemy is not saved. If the enemy is saved and was already killed, then no enemy is created. Instead, its [pickable treasure](./pickable.md) is created if it is a saved one.
+    `savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](../game.md) whether this enemy is dead. No value means that the enemy is not saved. If the enemy is saved and was already killed, then no enemy is created. Instead, its [pickable treasure](./pickable.md) is created if it is a saved one.
 
-`treasure_name` (string, optional)
-: Kind of [pickable treasure](./pickable.md) to drop when the enemy is killed (the name of an [equipment item](../equipment-items.md)). If this value is not set, or corresponds to a [non obtainable](../equipment-items.md#itemis_obtainable) item, then the enemy won't drop anything.
+    `treasure_name` (string, optional)
+    : Kind of [pickable treasure](./pickable.md) to drop when the enemy is killed (the name of an [equipment item](../equipment-items.md)). If this value is not set, or corresponds to a [non obtainable](../equipment-items.md#itemis_obtainable) item, then the enemy won't drop anything.
 
-`treasure_variant` (number, optional)
-: Variant of the treasure (because some [equipment items](../equipment-items.md) may have several variants). The default value is `1` (the first variant).
+    `treasure_variant` (number, optional, default: `1`)
+    : Variant of the treasure (because some [equipment items](../equipment-items.md) may have several variants). The default value is the first variant.
 
-`treasure_savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](../game.md) whether the [pickable treasure](./pickable.md) of this enemy was obtained. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then the enemy won't drop anything.
+    `treasure_savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](../game.md) whether the [pickable treasure](./pickable.md) of this enemy was obtained. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then the enemy won't drop anything.
 
-Return value (enemy or [pickable treasure](./pickable.md))
+Return value (enemy or [pickable treasure](./pickable.md) or `nil`)
 : The enemy created, except when it is a saved enemy that is already dead. In this case, if the enemy dropped a saved treasure that is not obtained yet, this [pickable treasure](./pickable.md) is created and returned. Otherwise, `nil` is returned.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
@@ -644,10 +692,22 @@ Called when this enemy receives an attack with a custom effect.
 This function is called if you have set [consequence of the attack](#enemyget_attack_consequenceattack) to `"custom"` You have to define what happens, for example hurting the enemy, making a special reaction, etc.
 
 `attack` (string)
-: The attack that was received: `"sword"`, `"thrown_item"`, `"explosion"`, `"arrow"`, `"hookshot"`, `"boomerang"` or `"fire"` In the particular case of a `"sword"` attack, the sword state is stopped and the hero goes back to state `"free"`.
+: The attack that was received:
 
-`sprite` ([sprite](../drawable-objects/sprite.md))
+    - `"sword"`
+    - `"thrown_item"`
+    - `"explosion"`
+    - `"arrow"`
+    - `"hookshot"`
+    - `"boomerang"`
+    - `"fire"`
+
+`sprite` ([sprite](../drawable-objects/sprite.md) or `nil`)
 : The sprite of this enemy that receives the attack, or `nil` if the attack does not come from a pixel-precise collision.
+
+!!! note "Note"
+
+    In the particular case of a `"sword"` attack, the sword state is stopped and the hero goes back to state `"free"`.
 
 !!! note "Note"
 
@@ -680,7 +740,16 @@ This event can only be called if the [reaction](#enemyget_attack_consequenceatta
 At this point, the enemy is in the state of being hurt. His hurting animation and sound have just started and he has just lost some life.
 
 `attack` (string)
-: The attack that was received: `"sword"`, `"thrown_item"`, `"explosion"`, `"arrow"`, `"hookshot"`, `"boomerang"`, `"fire"`, or `"script"`.
+: The attack that was received:
+
+    - `"sword"`
+    - `"thrown_item"`
+    - `"explosion"`
+    - `"arrow"`
+    - `"hookshot"`
+    - `"boomerang"`
+    - `"fire"`
+    - `"script"`
 
 !!! note "Note"
 
@@ -692,7 +761,7 @@ Called when the enemy's life comes to `0`.
 
 When the life comes to `0`, the movement of the enemy is stopped, its timers are stopped too, the dying animation starts and a sound is played. The details of the dying animation and the sound played depend on the [hurt style](#enemyset_hurt_stylehurt_style) property.
 
-- If the hurt style is `"enemy"` or `"monster"`, any sprite of the enemy is automatically removed and replaced by the sprite indicated by [`enemy:get_dying_sprite_id()`](#enemyget_dying_sprite_id) if any (which is by default `"enemies/enemy_killed")`
+- If the hurt style is `"enemy"` or `"monster"`, any sprite of the enemy is automatically removed and replaced by the sprite indicated by [`enemy:get_dying_sprite_id()`](#enemyget_dying_sprite_id) if any (which is by default `"enemies/enemy_killed"`)
 - If the hurt style is `"boss"`, your sprites continue to exist and to play animation "hurt", while explosions appear on the enemy.
 
 In all cases, the enemy will be removed from the map when the dying animation ends.
@@ -726,7 +795,7 @@ If you don't define this event, the hero is hurt with the predefined behavior as
 `hero` ([hero](./hero.md))
 : The hero being attacked.
 
-`enemy_sprite` ([sprite](../drawable-objects/sprite.md))
+`enemy_sprite` ([sprite](../drawable-objects/sprite.md) or `nil`)
 : The sprite of the enemy that caused the collision with the hero. You may use this information if your enemy has several sprites with different behaviors. This value is `nil` if the attack does not come from a sprite collision test (see [`enemy:set_attacking_collision_mode()`](#enemyset_attacking_collision_modecollision_mode)).
 
 !!! note "Note"

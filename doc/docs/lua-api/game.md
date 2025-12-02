@@ -122,8 +122,8 @@ Note that the game is also automatically suspended by the engine in the followin
 
 Therefore, if you call `game:set_suspended(false)` during one of these sequences, it will only take effect at the end of it.
 
-`suspended` (boolean, optional)
-: `true` to suspend the game, `false` to resume it. No value means `true`
+`suspended` (boolean, optional, default: `true`)
+: `true` to suspend the game, `false` to resume it.
 
 !!! note "Note"
 
@@ -142,8 +142,8 @@ Pauses or resumes the game explictly.
 
 Note that by default, a built-in game command already exists to pause and unpause the game.
 
-`paused` (boolean, optional)
-: `true` to pause the game, `false` to unpause it. Only possible when the game is running. No value means `true`
+`paused` (boolean, optional, default: `true`)
+: `true` to pause the game, `false` to unpause it. Only possible when the game is running.
 
 ### `game:is_pause_allowed()`
 
@@ -156,8 +156,8 @@ Return value (boolean)
 
 Sets whether the player can pause or unpause the [game](#game).
 
-`pause_allowed` (boolean, optional)
-: `true` to allow the player to pause the game. No value means `true`
+`pause_allowed` (boolean, optional, default: `true`)
+: `true` to allow the player to pause the game.
 
 !!! note "Note"
 
@@ -187,7 +187,7 @@ On the contrary, if the event [`game:on_dialog_started()`](#gameon_dialog_starte
 `dialog_id` (string)
 : Id of the dialog to show. The corresponding dialog must exist in the [dialogs.dat](../files-specs/languages/dialogs.md) file of the current [language](./language-functions.md).
 
-`info` (any type, optional)
+`info` (any type except function, optional)
 : Any information you want to pass to the [`game:on_dialog_started()`](#gameon_dialog_starteddialog-info) event. You can use this parameter to include in the dialog any information that is only known at runtime, for example the name of the player, the best score of a mini-game or the time spent so far in the game. See the examples below.
 
 `callback` (function, optional)
@@ -290,6 +290,7 @@ Finishes the game-over sequence of the hero.
 Only possible during a game-over sequence.
 
 The game is suspended during the whole game-over sequence. Call this function to resume it. If the [life](#gameget_life) is still zero at this point, then the engine automatically restores full life.
+
 `hero` ([hero](./map-entities/hero.md), optional)
 : The hero whose the game-over sequence should be stopped. No value means the main hero.
 
@@ -302,7 +303,7 @@ Otherwise, returns the first map of the current maps.
 
 Returns `nil` if the game is not running, or if the game has no map initialized yet, typically from `game:on_started()`.
 
-Return value ([map](./map.md))
+Return value ([map](./map.md) or `nil`)
 : The current map of this game, or `nil` if no map is currently running.
 
 ### `game:get_hero()`
@@ -311,7 +312,7 @@ Returns one of the current [heroes](./map-entities/hero.md).
 
 Heroes are [map entities](./map-entities/index.md) that can follow cameras from map to map. For this reason, they can be seen as belonging to the game more than to the current maps. That's why this function exists.
 
-Return value ([hero](./map-entities/hero.md))
+Return value ([hero](./map-entities/hero.md) or `nil`)
 : The hero, or `nil` if the game is not running.
 
 !!! note "Note"
@@ -325,7 +326,7 @@ Returns a saved value.
 `savegame_variable` (string)
 : Name of the value to get from the savegame.
 
-Return value (string, number or boolean)
+Return value (string or number or boolean or `nil`)
 : The corresponding value (`nil` if no value is defined with this key).
 
 ### `game:set_value(savegame_variable, value)`
@@ -337,7 +338,7 @@ This function allows to store key-value pairs in the savegame. Values can be str
 `savegame_variable` (string)
 : Name of the value to save (must contain alphanumeric characters or `'_'` only, and must start with a letter).
 
-`value` (string, number or boolean)
+`value` (string or number or boolean or `nil`)
 : The value to set, or `nil` to unset this value.
 
 !!! note "Note"
@@ -357,10 +358,10 @@ Return value (table)
 
 Returns the location where the hero is placed when this game is started or restarted.
 
-Return value 1 (string)
+Return value 1 (string or `nil`)
 : Id of the starting map. `nil` means that it was not set: in this case, the first map declared in [project_db.dat](../files-specs/database-file.md) will be used.
 
-Return value 2 (string)
+Return value 2 (string or `nil`)
 : Name of the destination where the hero will be placed on that map. `nil` means that it was not set: in this case, the default destination entity of that map will be used.
 
 ### `game:set_starting_location([map_id, [destination_name]])`
@@ -370,7 +371,7 @@ Sets the location where the hero should be placed when this game is started or r
 `map_id` (string, optional)
 : Id of the starting map. By default, the first map declared in [project_db.dat](../files-specs/database-file.md) is used.
 
-`destination_name` (string, optional)
+`destination_name` (string, optional, requires: `map_id`)
 : Name of the destination where the hero should be placed on that map. By default, the default destination of the map is used.
 
 !!! note "Note"
@@ -651,7 +652,7 @@ Returns the equipment item assigned to a slot.
 `slot` (number)
 : The slot to get (`1` or `2`).
 
-Return value ([item](./equipment-items.md))
+Return value ([item](./equipment-items.md) or `nil`)
 : The equipment item associated to this slot (`nil` means none).
 
 ### `game:set_item_assigned(slot, item)`
@@ -661,7 +662,7 @@ Assigns an equipment item to a slot.
 `slot` (number)
 : The slot to set (`1` or `2`).
 
-`item` ([item](./equipment-items.md))
+`item` ([item](./equipment-items.md) or `nil`)
 : The equipment item to associate to this slot, or `nil` to make the slot empty.
 
 ### `game:get_command_effect(command)`
@@ -671,11 +672,19 @@ Returns the current built-in effect of a game command.
 This function is useful if you want to show a HUD that indicates to the player the current effect of pressing a game command, especially for command `"action"` whose effect changes a lot depending on the context.
 
 `command` (string)
-: Name of a game command.
+: Name of a game command. Valid commands are:
 
-    Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
-Return value (string)
+Return value (string or `nil`)
 : A string describing the current built-in effect of this game command. `nil` means that this command has currently no built-in effect (for example because the game is paused). Possible values are:
 
     - For command `"action"`: `"next"`, `"look"`, `"open"`, `"lift"`, `"throw"`, `"grab"`, `"speak"`, `"swim"`, `"run"` or `nil`
@@ -705,9 +714,19 @@ Return value (string)
 Returns the keyboard key that triggers the specified game command.
 
 `command` (string)
-: Name of a game command. Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+: Name of a game command. Valid commands are:
 
-Return value (string)
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
+
+Return value (string or `nil`)
 : Name of the keyboard key that triggers this game command, or `nil` if no keyboard key is mapped to this game command.
 
 !!! note "Note"
@@ -719,9 +738,19 @@ Return value (string)
 Sets the keyboard key that triggers a game command.
 
 `command` (string)
-: Name of a game command. Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+: Name of a game command. Valid commands are:
 
-`key` (string)
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
+
+`key` (string or `nil`)
 : Name of the keyboard key that should trigger this game command (`nil` means none).
 
 !!! note "Note"
@@ -737,7 +766,17 @@ Sets the keyboard key that triggers a game command.
 Returns the joypad input that triggers the specified game command.
 
 `command` (string)
-: Name of a game command. Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+: Name of a game command. Valid commands are:
+
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (string)
 : Joypad binding code (see [controls](./controls/index.md#controlsset_joypad_bindingcommand-button))
@@ -751,7 +790,17 @@ Return value (string)
 Sets the joypad input that should trigger the specified game command.
 
 `command` (string)
-: Name of a game command. Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+: Name of a game command. Valid commands are:
+
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 `joypad_string` (string)
 : Joypad binding code (see [controls](./controls/index.md#controlsset_joypad_bindingcommand-button))
@@ -771,9 +820,17 @@ Makes the next keyboard or joypad input become the new binding for the specified
 This function returns immediately. After you call it, the next time the player presses a keyboard key or performs a joypad input, this input is treated differently: instead of being forwarded to your script or handled by the engine as usual, it automatically becomes the new keyboard or joypad binding for a game command.
 
 `command` (string)
-: Name of a game command.
+: Name of a game command. Valid commands are:
 
-    Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`.
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 `callback` (function, optional)
 : A function to call when the new input occurs.
@@ -791,9 +848,17 @@ This function returns immediately. After you call it, the next time the player p
 Returns whether a built-in game command is currently pressed.
 
 `command` (string)
-: Name of a game command.
+: Name of a game command. Valid commands are:
 
-    Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`.
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (boolean)
 : `true` if this game command is currently pressed by the player.
@@ -806,7 +871,7 @@ Return value (boolean)
 
 Returns the direction (in an 8-direction system) formed by the combination of directional game commands currently pressed by the player.
 
-Return value (number)
+Return value (number or `nil`)
 : The direction wanted by the player (`0` to `7`), or `nil` for no direction. No direction means that no directional command is pressed, or that contradictory directional commands are pressed, like left and right at the same time (impossible with most joypads, but easy with a keyboard).
 
 !!! note "Note"
@@ -824,9 +889,17 @@ Creates a command pressed input event.
 Everything acts like if the player had just pressed an input mapped to this game command.
 
 `command` (string)
-: Name of a game command.
+: Name of a game command. Valid commands are:
 
-    Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`.
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 !!! note "Note"
 
@@ -839,9 +912,17 @@ Creates a command released input event.
 Everything acts like if the player had just released an input mapped to this game command.
 
 `command` (string)
-: Name of a game command.
+: Name of a game command. Valid commands are:
 
-    Valid commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`.
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 !!! note "Note"
 
@@ -881,10 +962,10 @@ When legacy storage is enabled, controls are loaded and saved automtically with 
 
 The default value is `false` to allow maximum customization. You can still enable this option if you are okay with the limitations or if your quest was designed before Solarus 2.0.
 
-`legacy_controls_storage` (boolean, optional)
-: `true` to enable legacy controls storage. No value means `true`
+`legacy_controls_storage` (boolean, optional, default: `true`)
+: `true` to enable legacy controls storage.
 
-### `game:create_camera(id, map_id, [detination id, [transition_style]])`
+### `game:create_camera(id, map_id, [destination_id, [transition_style]])`
 
 Creates a new camera on the map with id `map_id`. If the map is already loaded, camera is added to currently running map, else it loads the new map.
 
@@ -894,10 +975,10 @@ Creates a new camera on the map with id `map_id`. If the map is already loaded, 
 `map_id` (string)
 : Id of the map to create this camera onto
 
-`destination_id` (string)
+`destination_id` (string or `nil`, optional)
 : Id of the destination that this camera should look at when created
 
-`transition_style` (string)
+`transition_style` (string, optional, requires: `destination_id`)
 : Style of the transition the camera will use to fade-in.
 
 ### `game:remove_camera(camera, [transition_style])`
@@ -907,7 +988,7 @@ Remove a camera from this game. If the camera was the last on its map, the map g
 `camera` ([camera](./map-entities/camera.md))
 : Camera to remove.
 
-`transition_style` (string)
+`transition_style` (string, optional)
 : Style of the transition the camera will use to fade-out.
 
 ### `game:get_cameras()`
@@ -971,10 +1052,10 @@ Recall that maps without a world property are considered to be in their own worl
 
 This event is called right after [`game:on_map_changed()`](#gameon_map_changedmap-camera).
 
-`previous_world` (string)
+`previous_world` (string or `nil`)
 : The world of the previous map if any, or `nil` if the previous map had no world set or if there was no previous map.
 
-`new_world` (string)
+`new_world` (string or `nil`)
 : The world of the new map if any, or `nil` if the mew map had no world set.
 
 !!! note "Note"
@@ -1014,15 +1095,15 @@ If this event is defined, the engine does nothing and your script is responsible
 `dialog` (table)
 : All properties of the dialog to show. This table is identical to the one returned by [`sol.language.get_dialog()`](./language-functions.md#sollanguageget_dialogdialog_id). It is a table with at least the following two entries:
 
-`dialog_id` (string)
-: Id of the dialog.
+    `dialog_id` (string)
+    : Id of the dialog.
 
-`text` (string)
-: Text of the dialog in the current language. It may have several lines. When it is not empty, it always ends with a newline character.
+    `text` (string)
+    : Text of the dialog in the current language. It may have several lines. When it is not empty, it always ends with a newline character.
 
-The table also contains all custom entries defined in [text/dialogs.dat](../files-specs/languages/dialogs.md) for this dialog. These custom entries always have string keys and string values. Values that were defined as numbers in `"text/dialogs.dat"` are replaced in this table by their string representation, and values that were defined as booleans are replaced by the string `"1"` for `true` and `"0"` for `false`
+    The table also contains all custom entries defined in [text/dialogs.dat](../files-specs/languages/dialogs.md) for this dialog. These custom entries always have string keys and string values. Values that were defined as numbers in `"text/dialogs.dat"` are replaced in this table by their string representation, and values that were defined as booleans are replaced by the string `"1"` for `true` and `"0"` for `false`
 
-`info` (any value, optional)
+`info` (any type except function, optional)
 : Some additional information for this particular dialog. You can get here some data that is only known at runtime. See the examples of [`game:start_dialog()`](#gamestart_dialogdialog_id-info-callback).
 
 ### `game:on_dialog_finished(dialog)`
@@ -1057,7 +1138,17 @@ This event is also called if you did not define a game-over sequence.
 Called when the player presses a game command (a keyboard key or a joypad action mapped to a built-in game behavior) while this game is running. You can use this event to override the normal built-in behavior of the game command.
 
 `command` (string)
-: Name of the built-in game command that was pressed. Possible commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+: Name of the built-in game command that was pressed. Possible commands are:
+
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (boolean)
 : Indicates whether the event was handled. If you return `true`, the event won't be propagated to other objects (you are overriding the built-in behavior of pressing this game command).
@@ -1071,7 +1162,17 @@ Return value (boolean)
 Called when the player released a game command (a keyboard key or a joypad action mapped to a built-in game behavior). while this game is running. You can use this event to override the normal built-in behavior of the game command.
 
 `command` (string)
-: Name of the built-in game command that was released. Possible commands are
+: Name of the built-in game command that was released. Possible commands are:
+
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (boolean)
 : Indicates whether the event was handled. If you return `true`, the event won't be propagated to other objects (you are overriding the built-in behavior of releasing this game command).

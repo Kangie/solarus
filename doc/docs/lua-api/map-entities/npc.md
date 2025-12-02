@@ -26,13 +26,13 @@ Generalized NPCs are more customizable. They are solid entities that the hero ca
 
 **Example of use of a generalized NPC:** a stone with something to read on it.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Non-playing characters are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
 See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
-## Methods of the type non-playing character
+## Methods of the type `npc`
 
 The following methods are specific to non-playing characters.
 
@@ -47,8 +47,8 @@ Return value (number)
 
 Sets the subtype for this NPC.
 
-`subtype` (number, optional)
-: the subtype number, 0 for generalized, 1 for usual. Default is 1.
+`subtype` (number, optional, default: `1`)
+: the subtype number, 0 for generalized, 1 for usual.
 
 ### `npc:is_traversable()`
 
@@ -67,9 +67,10 @@ By default, NPCs are not traversable. However, be aware that some entities can o
 
 If you want to allow the [hero](./hero.md) to be able to traverse this NPC, you can use this function.
 
-`traversable` (boolean, optional): `true` to make this NPC traversable. No value means `true`.
+`traversable` (boolean, optional, default: `true`)
+: `true` to make this NPC traversable.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

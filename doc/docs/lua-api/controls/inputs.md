@@ -21,8 +21,8 @@ Enables or disables legacy joypad support. For new joypad support see [joypad fu
 
 Joypad support may be enabled even without any joypad plugged.
 
-`joypad_enabled` (boolean)
-: `true` to enable joypad support, `false` to disable it. No value means `true`.
+`joypad_enabled` (boolean, default: `true`)
+: `true` to enable joypad support, `false` to disable it.
 
 ### `sol.input.is_key_pressed(key)`
 
@@ -88,7 +88,13 @@ Return value 2 (integer)
 Returns whether a mouse button is currently down.
 
 `button` (string)
-: The name of a mouse button. Possible values are `"left"`, `"middle"`, `"right"`, `"x1"` and `"x2"`
+: The name of a mouse button. Possible values are:
+
+    - `"left"`
+    - `"middle"`
+    - `"right"`
+    - `"x1"`
+    - `"x2"`
 
 Return value (boolean)
 : `true` if mouse button is down.
@@ -100,7 +106,7 @@ Returns the current position of a finger if it exists.
 `finger` (integer)
 : The finger id to check.
 
-Return value 1 (integer)
+Return value 1 (integer or `nil`)
 : The `x` position of the finger in [quest size](../video.md#solvideoget_quest_size) coordinates. Return `nil` if the finger does not exist or is not pressed.
 
 Return value 2 (integer)
@@ -113,7 +119,7 @@ Returns the current pressure of a finger if it exists.
 `finger` (integer)
 : The finger id to check.
 
-Return value (number)
+Return value (number or `nil`)
 : The `pressure` of the finger between `0.0` and `1.0`. Return `nil` if there is no such finger.
 
 ### `sol.input.is_finger_pressed(finger)`

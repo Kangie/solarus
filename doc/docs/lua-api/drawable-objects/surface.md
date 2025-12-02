@@ -10,10 +10,10 @@ A surface is a 2D image. It is essentially a rectangle of pixels. Its main featu
 
 Creates an empty surface.
 
-`width` (number, optional)
+`width` (number, requires: `height`, optional)
 : Width of the surface to create in pixels. The default value is the width of the logical screen.
 
-`height` (number, optional)
+`height` (number, requires: `width`, optional)
 : Height of the surface to create in pixels. The default value is the height of the logical screen.
 
 Return value (surface)
@@ -26,10 +26,10 @@ Creates a surface from an image file inside a predefined directory.
 `file_name` (string)
 : Name of the image file to load, relative to either the `sprites` directory or the `images` subdirectory of the current language directory.
 
-`language_specific` (boolean, optional)
+`language_specific` (boolean, optional, default: `false`)
 : `true` to load the image from the `images` subdirectory of the current language directory. The default is `false` and loads the image from the `sprites` directory.
 
-Return value (surface)
+Return value (surface or `nil`)
 : The surface created, or `nil` if the image file could not be loaded.
 
 !!! warning "Deprecated"
@@ -92,16 +92,16 @@ If no region is specified, the entire surface is filled. If the color has an alp
 `color` (table)
 : The color as an array of 3 RGB values or 4 RGBA values (`0` to `255`)
 
-`x` (number, optional)
+`x` (number, requires: `y` and `width` and `height`, optional)
 : X coordinate of the region to fill on this surface.
 
-`y` (number, optional)
+`y` (number, requires: `x` and `width` and `height`, optional)
 : Y coordinate of the region to fill on this surface.
 
-`width` (number, optional)
+`width` (number, requires: `x` and `y` and `height`, optional)
 : Width of the region to fill on this surface.
 
-`height` (number, optional)
+`height` (number, requires: `x` and `y` and `width`, optional)
 : Height of the region to fill on this surface.
 
 ### `surface:get_pixels()`

@@ -20,7 +20,7 @@ A door may be opened by one of the following methods:
 
 For doors whose opening method is `"interaction_if_savegame_variable"` or `"interaction_if_item"`,you can specify which savegame variable or [equipment item](../equipment-items.md) is required. You can also choose whether opening the door should consume the savegame variable of equipment item that was required.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Doors are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -76,8 +76,8 @@ Makes the door open or closed like [`door:open()`](#dooropen) or [`door:close()`
 
 This function is intended to be called when you don't want the player to notice the change, typically when your map starts (i.e. from the [`map:on_started()`](../map.md#mapon_starteddestination) event).
 
-`open` (boolean, optional)
-: `true` to open the door, `false` to close it. No value means `true`.
+`open` (boolean, optional, default: `true`)
+: `true` to open the door, `false` to close it.
 
 ### `door:get_savegame_variable()`
 
@@ -127,8 +127,8 @@ Sets the name of the item or savegame variable required to open this door (if th
 
 Returns whether the [opening condition](#doorget_opening_condition) of this door is consumed when you open it (only if the [opening method](#doorget_opening_condition) is `"interaction_if_item"` or `"interaction_if_savegame_variable"`) See lua_api_door_is_opening_condition_consumed "door:is_opening_condition_consumed()" for more information about what happens when the condition is consumed.
 
-`condition_consumed` (boolean)
-: `true` if the condition is consumed, `false` if it is not. No value means `true`
+`condition_consumed` (boolean, optional, default: `true`)
+: `true` if the condition is consumed, `false` if it is not.
 
 ### `door:get_cannot_open_sound()`
 
@@ -145,8 +145,8 @@ By default, the sound used is `"wrong"`.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `door:get_opening_sound()`
 
@@ -163,8 +163,8 @@ By default, the sound used for door opening phase is `"door_open"`.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `door:get_closing_sound()`
 
@@ -181,8 +181,8 @@ By default, the sound used for door closing phase is `"door_open"`.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `door:get_unlocking_sound()`
 
@@ -199,10 +199,10 @@ By default, the sound used for door unlocking phase is `"door_unlocked"`.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
+`sound_id` (string or `nil`, optional)
 : The sound id. An empty string or `nil` means no sound.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

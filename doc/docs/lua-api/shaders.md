@@ -160,14 +160,14 @@ This function can be used for advanced purposes, but the normal way is to use [`
 `properties` (table)
 : Source and parameters of the shader program. Can have the following entries:
 
-`vertex_source` (string, optional)
-: GLSL code of the vertex shader. No values means to use a default shader that does nothing special
+    `vertex_source` (string, optional)
+    : GLSL code of the vertex shader. No values means to use a default shader that does nothing special
 
-`fragment_source` (string, optional)
-: GLSL code of the fragment shader. No values means to use a default shader that does nothing special.
+    `fragment_source` (string, optional)
+    : GLSL code of the fragment shader. No values means to use a default shader that does nothing special.
 
-`scaling_factor` (number, optional)
-: When the shader is applied to the whole window, indicates how much the input texture will be scaled by the shader. See [`shader:set_scaling_factor()`](#shaderset_scaling_factorscaling_factor) for more details.
+    `scaling_factor` (number, optional)
+    : When the shader is applied to the whole window, indicates how much the input texture will be scaled by the shader. See [`shader:set_scaling_factor()`](#shaderset_scaling_factorscaling_factor) for more details.
 
 Return value (shader)
 : The shader program created.
@@ -199,7 +199,7 @@ Return value (string)
 
 Returns the name of the vertex shader file of this shader program.
 
-Return value (string)
+Return value (string or `nil`)
 : The vertex shader file name, relative to the `"shaders"` directory, or `nil` if no vertex shader file was set.
 
 ### `shader:get_vertex_source()`
@@ -213,7 +213,7 @@ Return value (string)
 
 Returns the name of the fragment shader file of this shader program.
 
-Return value (string)
+Return value (string or `nil`)
 : The fragment shader file name, relative to the `"shaders"` directory, or `nil` if no fragment shader file was set.
 
 ### `shader:get_fragment_source()`
@@ -227,7 +227,7 @@ Return value (string)
 
 Returns the scaling factor of this shader. The scaling factor indicates how much the input texture will be scaled by the shader. See [`shader:set_scaling_factor()`](#shaderset_scaling_factorscaling_factor) for more details.
 
-Return value (number)
+Return value (number or `nil`)
 : The scaling factor. Returns `nil` if no scaling factor is set.
 
 ### `shader:set_scaling_factor(scaling_factor)`
@@ -238,7 +238,7 @@ This value only has an effect when the shader is applied to the window (with [`s
 
 If no value is set (the default), then the output texture of the shader will directly have the size of the window. If a value is set, then the output texture of the shader will have the size of the input texture multiplied by this scaling factor (however, that output texture will then be scaled a second time to fit to the actual window). This is only useful for scaling shaders.
 
-`scaling_factor` (number)
+`scaling_factor` (number or `nil`)
 : The scaling factor. A `nil` value means to set no scaling factor.
 
 ### `shader:set_uniform(uniform_name, value)`
@@ -265,7 +265,7 @@ If the shader has no uniform with the given name, then this method does nothing.
 `uniform_name` (string)
 : Name of the uniform in your shader program.
 
-`value` (boolean, number, table or surface)
+`value` (boolean or number or table or surface)
 : The value to set. If it is a table, it should be an array of 2, 3 or 4 numbers.
 
 !!! note "Note"

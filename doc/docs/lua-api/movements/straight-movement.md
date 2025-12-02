@@ -77,8 +77,8 @@ Return value (boolean)
 
 Sets whether this movement should adjust its trajectory when an obstacle of the [map](../map.md) is reached. This property has no effect if the movement is not attached to a [map entity](../map-entities/index.md) or if the movement ignores obstacles.
 
-`smooth` (boolean, optional)
-: `true` to make this movement smooth. No value means `true`.
+`smooth` (boolean, optional, default: `true`)
+: `true` to make this movement smooth.
 
 ## Events Inherited from `movement`
 

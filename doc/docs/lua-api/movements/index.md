@@ -55,9 +55,7 @@ These methods exist in all movement types.
 Returns the type of movement.
 
 Return value (string)
-: The type of this movement.
-
-    Can be one of:
+: The type of this movement. Can be one of:
 
     - `"straight_movement"`
     - `"random_movement"`
@@ -76,9 +74,7 @@ Starts this movement on an object.
 The movement will be applied until it finishes (if it has an end) or until it is replaced by another one. It does not matter if the movement gets out of scope in your Lua script.
 
 `object_to_move` ([map entity](../map-entities/index.md), [drawable object](../drawable-objects/index.md) or table)
-: The object to move. It may be a map entity, a drawable object or a table with two fields `x` and `y` In the case of the table, if the fields `x` and `y` don't exist, they are created and initialized to `0`.
-
-    An empty table will be initialized with `{x = 0, y = 0}`.
+: The object to move. It may be a map entity, a drawable object or a table with two fields `x` and `y` In the case of the table, if the fields `x` and `y` don't exist, they are created and initialized to `0`. An empty table will be initialized with `{x = 0, y = 0}`.
 
 `callback` (function, optional)
 : A function to call when the movement finishes.
@@ -137,8 +133,8 @@ Return value (boolean)
 
 Sets whether the movement should continue even when the [game](../game.md) is suspended.
 
-`ignore` (boolean, optional)
-: `true` to continue the movement even when the game is suspended. No value means `true`
+`ignore` (boolean, optional, default: `true`)
+: `true` to continue the movement even when the game is suspended.
 
 ### `movement:get_ignore_obstacles()`
 
@@ -155,8 +151,8 @@ Sets whether a map entity controlled by this movement should ignore obstacles of
 
 If the movement is not attached to a [map entity](../map-entities/index.md) yet, it is not an error to call this function: your choice will have an effect when the movement gets attached to a map entity.
 
-`ignore_obstacles` (boolean, optional)
-: `true` to make this movement ignore obstacles of the map (no value means `true`)
+`ignore_obstacles` (boolean, optional, default: `true`)
+: `true` to make this movement ignore obstacles of the map.
 
 ### `movement:get_direction4()`
 

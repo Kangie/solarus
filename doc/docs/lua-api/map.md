@@ -189,7 +189,7 @@ The world property is used to decide when to set the starting location of the pl
 
 Some other features may also rely on the world property, like the state of [crystal blocks](./map-entities/crystal-block.md). Their state persists between all maps of the current world and is reset when entering a map whose world is different.
 
-Return value (string)
+Return value (string or `nil`)
 : Name of the world of the current map. `nil` means no world.
 
 ### `map:set_world(world)`
@@ -198,7 +198,7 @@ Changes the world of this map.
 
 The world property remains until the map is destroyed: If you reload the same map again later, the world is reset to the one defined in the [map data file](#map-files).
 
-`world` (string)
+`world` (string or `nil`)
 : The new world name to set, or `nil` to set no world.
 
 ### `map:get_floor()`
@@ -209,7 +209,7 @@ The floor is an optional property defined in the [map data file](#map-files).
 
 The engine does not do anything particular with this floor property. But you can use it in scripts, for example to show the current floor on the HUD when it changes or to make a minimap [menu](./menus.md).
 
-Return value (number)
+Return value (number or `nil`)
 : The current floor. `0` is the first floor, `1` is the second floor, `-1` is the first basement floor, etc. `nil` means that this map is not part of a floor system.
 
 ### `map:set_floor(floor)`
@@ -218,7 +218,7 @@ Changes the floor of this map.
 
 The floor property remains until the map is destroyed: If you reload the same map again later, the floor is reset to the one defined in the [map data file](#map-files).
 
-`floor` (number)
+`floor` (number or `nil`)
 : The new floor number to set, or `nil` to set no floor.
 
 ### `map:get_min_layer()`
@@ -285,8 +285,8 @@ Returns the name of the music associated to this map.
 
 This is the music to play when the map starts, as specified in the map file. It may be different from the music currently being played. To get the music currently being played, see [`sol.audio.get_music()`](./audio/index.md#solaudioplay_musicmusic_id-action).
 
-Return value (string)
-: Name of the music of this map, relative to the `musics` directory and without extension. It can also be the special value `"same"` if the map specifies to keep the music unchanged, or `nil` if the map specifies to play no music.
+Return value (string or `nil`)
+: Name of the music of this map, relative to the `musics` directory and without extension. It can also be the special value `"same"` if the map specifies to keep the music unchanged, or `nil`. If the map specifies to play no music.
 
 ### `map:get_camera()`
 
@@ -319,7 +319,28 @@ The ground is defined by [tiles](./map-entities/tile.md) (and other entities tha
 : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
 Return value (string)
-: The kind of ground. The possible values are the same as the `ground` property of the [tileset file](../files-specs/tileset-data-file.md): `"empty"`, `"traversable"`, `"wall"`, `"low_wall"`, `"wall_top_right"`, `"wall_top_left"`, `"wall_bottom_left"`, `"wall_bottom_right"`, `"wall_top_right_water"`, `"wall_top_left_water"`, `"wall_bottom_left_water"`, `"wall_bottom_right_water"`, `"deep_water"`, `"shallow_water"`, `"grass"`, `"hole"`, `"ice"`, `"ladder"`, `"prickles"` or `"lava"`
+: The kind of ground. The possible values are the same as the `ground` property of the [tileset file](../files-specs/tileset-data-file.md):
+
+    - `"empty"`
+    - `"traversable"`
+    - `"wall"`
+    - `"low_wall"`
+    - `"wall_top_right"`
+    - `"wall_top_left"`
+    - `"wall_bottom_left"`
+    - `"wall_bottom_right"`
+    - `"wall_top_right_water"`
+    - `"wall_top_left_water"`
+    - `"wall_bottom_left_water"`
+    - `"wall_bottom_right_water"`
+    - `"deep_water"`
+    - `"shallow_water"`
+    - `"grass"`
+    - `"hole"`
+    - `"ice"`
+    - `"ladder"`
+    - `"prickles"`
+    - `"lava"`
 
 ### `map:draw_visual(drawable, x, y)`
 
@@ -407,8 +428,8 @@ This function is intended to be called when you don't want the player to notice 
 `prefix` (string)
 : Prefix of the name of doors to set.
 
-`open` (boolean, optional)
-: `true` to open the doors, `false` to close them (no value means `true`)
+`open` (boolean, optional, default: `true`)
+: `true` to open the doors, `false` to close them.
 
 ### `map:get_entity(name)`
 
@@ -419,8 +440,8 @@ As a convenient feature, map entities can also be accessed directly through the 
 `name` (string)
 : Name of the map entity to get.
 
-Return value ([entity](./map-entities/index.md))
-: The corresponding entity, or `nil` if there exists no entity with this name on the map.
+Return value ([entity](./map-entities/index.md) or `nil`)
+: The corresponding entity, or `nil`. If there exists no entity with this name on the map.
 
 !!! note "Note"
 
@@ -538,28 +559,18 @@ The typical usage of this function is:
 
 ```lua
 for entity in map:get_entities_in_region(my_entity) do
-  -- some code related to the entity
+    -- some code related to the entity
 end
 ```
 
 To get entities in the same region as a point:
 
-`x` (number)
-: X coordinate of the region to get.
-
-`y` (number)
-: Y coordinate of the region to get.
+| With coordinates | With an [entity](./map-entities/index.md) |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the region to get.</dd><dt>`y` (number)</dt><dd>Y coordinate of the region to get.</dd></dl> | <dl><dt>`entity` ([entity](./map-entities/index.md))</dt><dd>The entity whose region to get.</dd></dl>|
 
 Return value (function)
 : An iterator to all entities in the same region as the point.
-
-To get entities in the same region as another entity:
-
-`entity` (entity)
-: An entity.
-
-Return value (function)
-: An iterator to all other entities in the same region.
 
 ### `map:get_hero()`
 
@@ -588,8 +599,8 @@ Disabled entities are not displayed and are not updated. Therefore, they don't m
 `prefix` (string)
 : Prefix of the entities to change.
 
-`enable` (boolean, optional)
-: `true` to enable them, `false` to disable them. No value means `true`
+`enable` (boolean, optional, default: `true`)
+: `true` to enable them, `false` to disable them.
 
 !!! note "Note"
 
@@ -617,23 +628,23 @@ You can change the hero controls with [hero:set_controls](./map-entities/hero.md
 `properties` (table)
 : A table that describles all properties of the hero to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([hero](./map-entities/hero.md))
 : The hero created.
@@ -645,39 +656,39 @@ Creates an entity of type [destination](./map-entities/destination.md) on the ma
 `properties` (table)
 : A table that describles all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `direction` (number)
-: Direction that the hero should take when arriving on the destination, between `0` (East) and `3` (South), or `-1` to keep his direction unchanged.
+    `direction` (number)
+    : Direction that the hero should take when arriving on the destination, between `0` (East) and `3` (South), or `-1` to keep his direction unchanged.
 
-- `sprite` (string, optional)
-: Id of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the destination. No value means no sprite (the destination will then be invisible).
+    `sprite` (string, optional)
+    : Id of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the destination. No value means no sprite (the destination will then be invisible).
 
-- `save_location` (string, optional)
-: Whether to update the [starting location](./game.md#gameset_starting_locationmap_id-destination_name) of the player when arriving to this destination. If yes, when the player restarts his game, he will restart at this destination. Must be one of:
+    `save_location` (string, optional)
+    : Whether to update the [starting location](./game.md#gameset_starting_locationmap_id-destination_name) of the player when arriving to this destination. If yes, when the player restarts his game, he will restart at this destination. Must be one of:
 
-    - `"when_world_changes"` (default): Updates the starting location if the current [world](#mapget_world) has just changed when arriving to this destination.
-    - `"yes"`: Updates the starting location.
-    - `"no"`: Does not update the starting location.
+        - `"when_world_changes"` (default): Updates the starting location if the current [world](#mapget_world) has just changed when arriving to this destination.
+        - `"yes"`: Updates the starting location.
+        - `"no"`: Does not update the starting location.
 
-- `default` (boolean, optional)
-: Sets this destination as the default one when teletransporting the hero to this map without destination specified. No value means `false` Only one destination can be the default one on a map. If no default destination is set, then the first one declared becomes the default one.
+    `default` (boolean, optional, default: `false`)
+    : Sets this destination as the default one when teletransporting the hero to this map without destination specified. Only one destination can be the default one on a map. If no default destination is set, then the first one declared becomes the default one.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([destination](./map-entities/destination.md))
 : The destination created.
@@ -689,48 +700,48 @@ Creates an entity of type [teletransporter](./map-entities/teletransporter.md) o
 `properties` (table)
 : A table that describles all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `width` (number)
-: Width of the entity in pixels.
+    `width` (number)
+    : Width of the entity in pixels.
 
-- `height` (number)
-: Height of the entity in pixels.
+    `height` (number)
+    : Height of the entity in pixels.
 
-- `sprite` (string, optional)
-: Id of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the teletransporter. No value means no sprite (the teletransporter will then be invisible).
+    `sprite` (string, optional)
+    : Id of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the teletransporter. No value means no sprite (the teletransporter will then be invisible).
 
-- `sound` (string, optional)
-: Sound to [play](./audio/index.md#solaudioplay_soundsound_id) when the [hero](./map-entities/hero.md) uses the teletransporter. No value means no sound.
+    `sound` (string, optional)
+    : Sound to [play](./audio/index.md#solaudioplay_soundsound_id) when the [hero](./map-entities/hero.md) uses the teletransporter. No value means no sound.
 
-- `transition` (string, optional)
-: Style of transition to play when the hero uses the teletransporter. Must be one of:
+    `transition` (string, optional, default: `"fade"`)
+    : Style of transition to play when the hero uses the teletransporter. Must be one of:
 
-    - `"immediate"`: No transition.
-    - `"fade"`: Fade-out and fade-in effect.
-    - `"scrolling"`: Scrolling between maps. The default value is `"fade"`
+        - `"fade"` (default): Fade-out and fade-in effect.
+        - `"immediate"`: No transition.
+        - `"scrolling"`: Scrolling between maps.
 
-- `destination_map` (string)
-: Id of the map to transport to (can be the id of the current map).
+    `destination_map` (string)
+    : Id of the map to transport to (can be the id of the current map).
 
-- `destination` (string, optional)
-: Location on the destination map. Can be the name of a [destination](./map-entities/destination.md) entity, the special value `"_same"` to keep the hero's coordinates, or the special value `"_side"` to place on hero on the corresponding side of an adjacent map (normally used with the scrolling transition style). No value means the default destination entity of the map.
+    `destination` (string, optional)
+    : Location on the destination map. Can be the name of a [destination](./map-entities/destination.md) entity, the special value `"_same"` to keep the hero's coordinates, or the special value `"_side"` to place on hero on the corresponding side of an adjacent map (normally used with the scrolling transition style). No value means the default destination entity of the map.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([teletransporter](./map-entities/teletransporter.md))
 : The teletransporter created.
@@ -742,35 +753,35 @@ Creates an entity of type [pickable treasure](./map-entities/pickable.md) on the
 `properties` (table)
 : A table that describles all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `treasure_name` (string, optional)
-: Kind of treasure to create (the name of an [equipment item](./equipment-items.md)). If this value is not set, or corresponds to a [non-obtainable](./equipment-items.md#itemis_obtainable) item, then no entity is created and `nil` is returned.
+    `treasure_name` (string, optional)
+    : Kind of treasure to create (the name of an [equipment item](./equipment-items.md)). If this value is not set, or corresponds to a [non-obtainable](./equipment-items.md#itemis_obtainable) item, then no entity is created and `nil` is returned.
 
-- `treasure_variant` (number, optional)
-: Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is `1` (the first variant).
+    `treasure_variant` (number, optional, default: `1`)
+    : Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is the first variant.
 
-- `treasure_savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](./game.md) whether this pickable treasure was found. No value means that the treasure is not saved. If the treasure is saved and the player already has it, then no entity is be created and `nil` is returned.
+    `treasure_savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](./game.md) whether this pickable treasure was found. No value means that the treasure is not saved. If the treasure is saved and the player already has it, then no entity is be created and `nil` is returned.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
-Return value ([pickable treasure](./map-entities/pickable.md))
-: The pickable treasure created, or `nil` if the item is not set, not [obtainable](./equipment-items.md#itemis_obtainable), or if the pickable treasure is already found (for a saved one).
+Return value ([pickable treasure](./map-entities/pickable.md) or `nil`)
+: The pickable treasure created, or `nil`. If the item is not set, not [obtainable](./equipment-items.md#itemis_obtainable), or if the pickable treasure is already found (for a saved one).
 
 ### `map:create_destructible(properties)`
 
@@ -779,56 +790,56 @@ Creates an entity of type [destructible object](./map-entities/destructible.md) 
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `treasure_name` (string, optional)
-: Kind of [pickable treasure](./map-entities/pickable.md) to hide in the destructible object (the name of an [equipment item](./equipment-items.md)). If this value is not set, then no treasure is placed in the destructible object. If the treasure is not obtainable when the object is destroyed, no pickable treasure is created.
+    `treasure_name` (string, optional)
+    : Kind of [pickable treasure](./map-entities/pickable.md) to hide in the destructible object (the name of an [equipment item](./equipment-items.md)). If this value is not set, then no treasure is placed in the destructible object. If the treasure is not obtainable when the object is destroyed, no pickable treasure is created.
 
-- `treasure_variant` (number, optional)
-: Variant of the treasure if any (because some [equipment items](./equipment-items.md) may have several variants). The default value is `1` (the first variant).
+    `treasure_variant` (number, optional, default: `1`)
+    : Variant of the treasure if any (because some [equipment items](./equipment-items.md) may have several variants). The default value is the first variant.
 
-- `treasure_savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](./game.md) whether the [pickable treasure](./map-entities/pickable.md) hidden in the destructible object was found. No value means that the treasure (if any) is not saved. If the treasure is saved and the player already has it, then no treasure is put in the destructible object.
+    `treasure_savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](./game.md) whether the [pickable treasure](./map-entities/pickable.md) hidden in the destructible object was found. No value means that the treasure (if any) is not saved. If the treasure is saved and the player already has it, then no treasure is put in the destructible object.
 
-- `sprite` (string)
-: Name of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the destructible object.
+    `sprite` (string)
+    : Name of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the destructible object.
 
-- `destruction_sound` (string, optional)
-: Sound to [play](./audio/index.md#solaudioplay_soundsound_id) when the destructible object is cut or broken after being thrown. No value means no sound.
+    `destruction_sound` (string, optional)
+    : Sound to [play](./audio/index.md#solaudioplay_soundsound_id) when the destructible object is cut or broken after being thrown. No value means no sound.
 
-- `weight` (number, optional)
-: Level of `"lift"` [ability](./game.md#gameget_abilityability_name) required to lift the object. `0` allows the player to lift the object unconditionally. The special value `-1` means that the object can never be lifted. The default value is `0`
+    `weight` (number, optional, default: `0`)
+    : Level of `"lift"` [ability](./game.md#gameget_abilityability_name) required to lift the object. `0` allows the player to lift the object unconditionally. The special value `-1` means that the object can never be lifted.
 
-- `can_be_cut` (boolean, optional)
-: Whether the hero can cut the object with the sword. No value means `false`
+    `can_be_cut` (boolean, optional, default: `false`)
+    : Whether the hero can cut the object with the sword.
 
-- `can_explode` (boolean, optional)
-: Whether the object should explode when it is cut, hit by a weapon and after a delay when the hero lifts it. The default value is `false`
+    `can_explode` (boolean, optional, default: `false`)
+    : Whether the object should explode when it is cut, hit by a weapon and after a delay when the hero lifts it.
 
-- `can_regenerate` (boolean, optional)
-: Whether the object should automatically regenerate after a delay when it is destroyed. The default value is `false`
+    `can_regenerate` (boolean, optional, default: `false`)
+    : Whether the object should automatically regenerate after a delay when it is destroyed.
 
-- `damage_on_enemies` (number, optional)
-: Number of life points to remove from an enemy that gets hit by this object after the [hero](./map-entities/hero.md) throws it. If the value is `0`, enemies will ignore the object. The default value is `1`.
+    `damage_on_enemies` (number, optional, default: `1`)
+    : Number of life points to remove from an enemy that gets hit by this object after the [hero](./map-entities/hero.md) throws it. If the value is `0`, enemies will ignore the object.
 
-- `ground` (string, optional)
-: Ground defined by this entity. The ground is usually `"wall"`, but you may set `"traversable"` to make the object traversable, or for example `"grass"` to make it traversable too but with an additional grass sprite below the hero. The default value is `"wall"`
+    `ground` (string, optional, default: `"wall"`)
+    : Ground defined by this entity. The ground is usually `"wall"`, but you may set `"traversable"` to make the object traversable, or for example `"grass"` to make it traversable too but with an additional grass sprite below the hero.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([destructible object](./map-entities/destructible.md))
 : The destructible object created.
@@ -844,60 +855,58 @@ Creates an entity of type [treasure chest](./map-entities/chest.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `treasure_name` (string, optional)
-: Kind of treasure to place in the chest (the name of an [equipment item](./equipment-items.md)). If this value is not set, then the chest will be empty. If the treasure is not obtainable when the hero opens the chest, it becomes empty.
+    `treasure_name` (string, optional)
+    : Kind of treasure to place in the chest (the name of an [equipment item](./equipment-items.md)). If this value is not set, then the chest will be empty. If the treasure is not obtainable when the hero opens the chest, it becomes empty.
 
-- `treasure_variant` (number, optional)
-: Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is `1` (the first variant).
+    `treasure_variant` (number, optional, default: `1`)
+    : Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is the first variant.
 
-- `treasure_savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](./game.md) whether this chest is open. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then no treasure is placed in the chest (the chest will appear open).
+    `treasure_savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](./game.md) whether this chest is open. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then no treasure is placed in the chest (the chest will appear open).
 
-- `sprite` (string)
-: Name of the animation set of the [sprite](./drawable-objects/sprite.md) to create for the chest. The sprite must have animations `"open"` and `"closed"`
+    `sprite` (string)
+    : Name of the animation set of the [sprite](./drawable-objects/sprite.md) to create for the chest. The sprite must have animations `"open"` and `"closed"`
 
-- `opening_method` (string, optional)
-: Specifies the permissions for the hero to open the chest. Must be one of:
+    `opening_method` (string, optional, default: `"interaction"`)
+    : Specifies the permissions for the hero to open the chest. Must be one of:
 
-- `interaction` (default)
-: Can be opened by pressing the [action command](./game.md#game-commands) in front of it.
+        - `"interaction"` (default): Can be opened by pressing the [action command](./game.md#game-commands) in front of it.
+        - `"interaction_if_savegame_variable"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that a specific savegame variable is set.
+        - `"interaction_if_item"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that the player has a specific [equipment item](./equipment-items.md).
 
-    - `"interaction_if_savegame_variable"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that a specific savegame variable is set.
-    - `"interaction_if_item"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that the player has a specific [equipment item](./equipment-items.md).
+    `opening_condition` (string, optional)
+    : The condition required to open the chest. Only for opening methods `"interaction_if_savegame_variable"` and `"interaction_if_item"`
 
-- `opening_condition` (string, optional)
-: The condition required to open the chest. Only for opening methods `"interaction_if_savegame_variable"` and `"interaction_if_item"`
+        - For opening method `"interaction_if_savegame_variable"`, it must be the name of a savegame variable. The [hero](./map-entities/hero.md) will be allowed to open the chest if this saved value is either `true`, an integer greater than zero or a non-empty string.
+        - For opening method `"interaction_if_item"`, it must be the name of an [equipment item](./equipment-items.md). The hero will be allowed to open the chest if he has that item and, for items with an amount, if the amount is greater than zero.
+        - For the default opening method (`"interaction"`), this setting has no effect.
 
-    - For opening method `"interaction_if_savegame_variable"`, it must be the name of a savegame variable. The [hero](./map-entities/hero.md) will be allowed to open the chest if this saved value is either `true`, an integer greater than zero or a non-empty string.
-    - For opening method `"interaction_if_item"`, it must be the name of an [equipment item](./equipment-items.md). The hero will be allowed to open the chest if he has that item and, for items with an amount, if the amount is greater than zero.
-    - For the default opening method (`"interaction"`), this setting has no effect.
+    `opening_condition_consumed` (boolean, optional)
+    : Whether opening the chest should consume the savegame variable or the [equipment item](./equipment-items.md) that was required. The default setting is `false` If you set it to `true`, the following rules are applied when the [hero](./map-entities/hero.md) successfully opens the chest:
 
-- `opening_condition_consumed` (boolean, optional)
-: Whether opening the chest should consume the savegame variable or the [equipment item](./equipment-items.md) that was required. The default setting is `false` If you set it to `true`, the following rules are applied when the [hero](./map-entities/hero.md) successfully opens the chest:
+        - For opening method `"interaction_if_savegame_variable"`, the savegame variable that was required is reset to `false`, `0` or `""` (depending on its type).
+        - For opening method is `"interaction_if_item"`, the equipment item that was required is removed. This means setting its [possessed variant](./equipment-items.md#itemset_variantvariant) to `0`, unless it has an associated amount: in this case, the amount is decremented.
 
-    - For opening method `"interaction_if_savegame_variable"`, the savegame variable that was required is reset to `false`, `0` or `""` (depending on its type).
-    - For opening method is `"interaction_if_item"`, the equipment item that was required is removed. This means setting its [possessed variant](./equipment-items.md#itemset_variantvariant) to `0`, unless it has an associated amount: in this case, the amount is decremented.
+    `cannot_open_dialog` (string, optional)
+    : Id of the dialog to show if the hero fails to open the chest. If you don't set this value, no dialog is shown.
 
-- `cannot_open_dialog` (string, optional)
-: Id of the dialog to show if the hero fails to open the chest. If you don't set this value, no dialog is shown.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
-
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([chest](./map-entities/chest.md))
 : The treasure chest created.
@@ -913,35 +922,35 @@ Creates an entity of type [jumper](./map-entities/jumper.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `width` (number)
-: Width of the entity in pixels.
+    `width` (number)
+    : Width of the entity in pixels.
 
-- `height` (number)
-: Height of the entity in pixels.
+    `height` (number)
+    : Height of the entity in pixels.
 
-- `direction` (number)
-: Direction of the jump, between `0` (East) and `7` (South-East). If the direction is horizontal, the width must be `8` pixels. If the direction is vertical, the height must be `8` pixels. If the direction is diagonal, the size must be square.
+    `direction` (number)
+    : Direction of the jump, between `0` (East) and `7` (South-East). If the direction is horizontal, the width must be `8` pixels. If the direction is vertical, the height must be `8` pixels. If the direction is diagonal, the size must be square.
 
-- `jump_length` (number)
-: Length of the baseline of the jump in pixels (see the [jump movement](./movements/jump-movement.md) page for details).
+    `jump_length` (number)
+    : Length of the baseline of the jump in pixels (see the [jump movement](./movements/jump-movement.md) page for details).
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([jumper](./map-entities/jumper.md))
 : The jumper created.
@@ -953,43 +962,43 @@ Creates an entity of type [enemy](./map-entities/enemy.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `direction` (number)
-: Initial direction of the enemy, between `0` (East) and `3` (South).
+    `direction` (number)
+    : Initial direction of the enemy, between `0` (East) and `3` (South).
 
-- `breed` (string)
-: Model of enemy to create.
+    `breed` (string)
+    : Model of enemy to create.
 
-- `savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](./game.md) whether this enemy is dead. No value means that the enemy is not saved. If the enemy is saved and was already killed, then no enemy is created. Instead, its [pickable treasure](./map-entities/pickable.md) is created if it is a saved one.
+    `savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](./game.md) whether this enemy is dead. No value means that the enemy is not saved. If the enemy is saved and was already killed, then no enemy is created. Instead, its [pickable treasure](./map-entities/pickable.md) is created if it is a saved one.
 
-- `treasure_name` (string, optional)
-: Kind of [pickable treasure](./map-entities/pickable.md) to drop when the enemy is killed (the name of an [equipment item](./equipment-items.md)). If this value is not set, then the enemy won't drop anything. If the treasure is not obtainable when the enemy is killed, then nothing is dropped either.
+    `treasure_name` (string, optional)
+    : Kind of [pickable treasure](./map-entities/pickable.md) to drop when the enemy is killed (the name of an [equipment item](./equipment-items.md)). If this value is not set, then the enemy won't drop anything. If the treasure is not obtainable when the enemy is killed, then nothing is dropped either.
 
-- `treasure_variant` (number, optional)
-: Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is `1` (the first variant).
+    `treasure_variant` (number, optional, default: `1`)
+    : Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is the first variant.
 
-- `treasure_savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](./game.md) whether the [pickable treasure](./map-entities/pickable.md) of this enemy was obtained. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then the enemy won't drop anything.
+    `treasure_savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](./game.md) whether the [pickable treasure](./map-entities/pickable.md) of this enemy was obtained. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then the enemy won't drop anything.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
-Return value ([enemy](./map-entities/enemy.md) or [pickable treasure](./map-entities/pickable.md))
+Return value ([enemy](./map-entities/enemy.md) or [pickable treasure](./map-entities/pickable.md) or `nil`)
 : The enemy created, except when it is a saved enemy that is already dead. In this case, if the enemy dropped a saved treasure that is not obtained yet, this [pickable treasure](./map-entities/pickable.md) is created and returned. Otherwise, `nil` is returned.
 
 !!! note "Note"
@@ -1003,39 +1012,39 @@ Creates an entity of type [non-playing character](./map-entities/npc.md) (NPC) o
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `direction` (number)
-: Initial direction of the NPC's sprite, between `0` (East) and `3` (South).
+    `direction` (number)
+    : Initial direction of the NPC's sprite, between `0` (East) and `3` (South).
 
-- `subtype` (number)
-: Kind of NPC to create: `1` for a usual NPC who the player can talk to, `0` for a generalized NPC (not necessarily a person). See the [NPC documentation](./map-entities/npc.md) for more details.
+    `subtype` (number)
+    : Kind of NPC to create: `1` for a usual NPC who the player can talk to, `0` for a generalized NPC (not necessarily a person). See the [NPC documentation](./map-entities/npc.md) for more details.
 
-- `sprite` (string, optional)
-: Name of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the NPC. No value means no sprite (the NPC will then be invisible).
+    `sprite` (string, optional)
+    : Name of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the NPC. No value means no sprite (the NPC will then be invisible).
 
-- `behavior` (string, optional)
-: What to do when there is an interaction with the NPC.
+    `behavior` (string, optional, default: `"map"`)
+    : What to do when there is an interaction with the NPC.
 
-    - `"dialog#XXXX"`: Starts the dialog with id `XXXX` when the player talks to this NPC.
-    - `map` (default): Forwards events to the map script (for example, calls the [`on_interaction()`](./map-entities/npc.md#npcon_interaction) event of the NPC).
-    - `"item#XXXX"`: Forwards events to an [equipment item](./equipment-items.md) script (for example, calls the [`on_interaction()`](./equipment-items.md#itemon_npc_interactionnpc) event of the equipment item with id `XXXX`)
+        - `"map"` (default): Forwards events to the map script (for example, calls the [`on_interaction()`](./map-entities/npc.md#npcon_interaction) event of the NPC).
+        - `"dialog#XXXX"`: Starts the dialog with id `XXXX` when the player talks to this NPC.
+        - `"item#XXXX"`: Forwards events to an [equipment item](./equipment-items.md) script (for example, calls the [`on_interaction()`](./equipment-items.md#itemon_npc_interactionnpc) event of the equipment item with id `XXXX`)
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled. The default value is `true`.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([NPC](./map-entities/npc.md))
 : The NPC created.
@@ -1047,41 +1056,41 @@ Creates an entity of type [block](./map-entities/block.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `direction` (number, optional)
-: The only direction where the block can be moved, between `0` (East) and `3` (South). `nil` means no restriction and allows the block to be moved in any of the four main directions. The default value is `nil`.
+    `direction` (number or `nil`, optional, default: `nil`)
+    : The only direction where the block can be moved, between `0` (East) and `3` (South). `nil` means no restriction and allows the block to be moved in any of the four main directions.
 
-- `sprite` (string)
-: Name of the animation set of a [sprite](../files-specs/sprite-data-file.md) to create for the block.
+    `sprite` (string)
+    : Name of the animation set of a [sprite](../files-specs/sprite-data-file.md) to create for the block.
 
-- `pushable` (boolean)
-: `true` to allow the block to be pushed.
+    `pushable` (boolean)
+    : `true` to allow the block to be pushed.
 
-- `pullable` (boolean)
-: `true` to allow the block to be pulled.
+    `pullable` (boolean)
+    : `true` to allow the block to be pulled.
 
-- `max_moves` (number, optional)
-: `How` many times the block can be moved (`nil` means unlimited). The default value is `nil`.
+    `max_moves` (number or `nil`, optional, default: `nil`)
+    : `How` many times the block can be moved (`nil` means unlimited).
 
-- `maximum_moves` (number, optional, deprecated)
-: Like `max_moves`, but for historical reasons, only supports `0`, `1` or the special value `2` to mean infinite. New scripts should only use `max_moves` It is an error to set both values.
+    `maximum_moves` (number, optional, deprecated: `1.6`)
+    : Like `max_moves`, but for historical reasons, only supports `0`, `1` or the special value `2` to mean infinite. New scripts should only use `max_moves` It is an error to set both values.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([block](./map-entities/block.md))
 : The block created.
@@ -1093,32 +1102,32 @@ Creates an entity of type [dynamic tile](./map-entities/dynamic-tile.md) on the 
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate of the top-left corner of the dynamic tile on the map.
+    `x` (number)
+    : X coordinate of the top-left corner of the dynamic tile on the map.
 
-- `y` (number)
-: Y coordinate of the top-left corner of the dynamic tile on the map.
+    `y` (number)
+    : Y coordinate of the top-left corner of the dynamic tile on the map.
 
-- `width` (number)
-: Width of the dynamic tile in pixels. The tile pattern will be repeated horizontally to fit to this width.
+    `width` (number)
+    : Width of the dynamic tile in pixels. The tile pattern will be repeated horizontally to fit to this width.
 
-- `height` (number)
-: Height of the entity in pixels. The tile pattern will be repeated vertically to fit to this height.
+    `height` (number)
+    : Height of the entity in pixels. The tile pattern will be repeated vertically to fit to this height.
 
-- `pattern` (string)
-: Id of the tile pattern to use from the tileset.
+    `pattern` (string)
+    : Id of the tile pattern to use from the tileset.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([dynamic tile](./map-entities/dynamic-tile.md))
 : The dynamic tile created.
@@ -1130,44 +1139,42 @@ Creates an entity of type [switch](./map-entities/switch.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `subtype` (string)
-: Kind of switch to create:
+    `subtype` (string)
+    : Kind of switch to create:
 
-    - `"walkable"`: A traversable pressure plate that gets activated when the hero walks on it.
+        - `"walkable"`: A traversable pressure plate that gets activated when the hero walks on it.
+        - `"solid"`: A non-traversable, solid switch that can be activated in various conditions: by the sword, by an explosion or by a projectile (a thrown object, an arrow, the boomerang or the hookshot).
+        - `"arrow_target"` A switch that can be only activated by shooting an arrow on it.
 
-    - `"solid"`: A non-traversable, solid switch that can be activated in various conditions: by the sword, by an explosion or by a projectile (a thrown object, an arrow, the boomerang or the hookshot).
+    `sprite` (string)
+    : Name of the animation set of a [sprite](../files-specs/sprite-data-file.md) to create for the switch. The animation set must at least contain animations `"activated"` and `"inactivated"` No value means no sprite.
 
-    - `"arrow_target"` A switch that can be only activated by shooting an arrow on it.
+    `sound` (string, optional)
+    : Sound to play when the switch is activated. No value means no sound.
 
-- `sprite` (string)
-: Name of the animation set of a [sprite](../files-specs/sprite-data-file.md) to create for the switch. The animation set must at least contain animations `"activated"` and `"inactivated"` No value means no sprite.
+    `needs_block` (boolean)
+    : If `true`, the switch can only be activated by a [block](./map-entities/block.md) (only for a walkable switch).
 
-- `sound` (string, optional)
-: Sound to play when the switch is activated. No value means no sound.
+    `inactivate_when_leaving` (boolean)
+    : If `true`, the switch becomes inactivated when the [hero](./map-entities/hero.md) or the [block](./map-entities/block.md) leaves it (only for a walkable switch).
 
-- `needs_block` (boolean)
-: If `true`, the switch can only be activated by a [block](./map-entities/block.md) (only for a walkable switch).
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `inactivate_when_leaving` (boolean)
-: If `true`, the switch becomes inactivated when the [hero](./map-entities/hero.md) or the [block](./map-entities/block.md) leaves it (only for a walkable switch).
-
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
-
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([switch](./map-entities/switch.md))
 : The switch created.
@@ -1179,44 +1186,44 @@ Creates an entity of type [wall](./map-entities/wall.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `width` (number)
-: Width of the entity in pixels.
+    `width` (number)
+    : Width of the entity in pixels.
 
-- `height` (number)
-: Height of the entity in pixels.
+    `height` (number)
+    : Height of the entity in pixels.
 
-- `stops_hero` (boolean, optional)
-: `true` to make the wall stop the [hero](./map-entities/hero.md). No value means `false`
+    `stops_hero` (boolean, optional, default: `false`)
+    : `true` to make the wall stop the [hero](./map-entities/hero.md).
 
-- `stops_npcs` (boolean, optional)
-: `true` to make the wall stop [non-playing characters](./map-entities/npc.md). No value means `false`
+    `stops_npcs` (boolean, optional, default: `false`)
+    : `true` to make the wall stop [non-playing characters](./map-entities/npc.md).
 
-- `stops_enemies` (boolean, optional)
-: `true` to make the wall stop [enemies](./map-entities/enemy.md). No value means `false`
+    `stops_enemies` (boolean, optional, default: `false`)
+    : `true` to make the wall stop [enemies](./map-entities/enemy.md).
 
-- `stops_blocks` (boolean, optional)
-: `true` to make the wall stop [blocks](./map-entities/block.md). No value means `false`
+    `stops_blocks` (boolean, optional, default: `false`)
+    : `true` to make the wall stop [blocks](./map-entities/block.md).
 
-- `stops_projectiles` (boolean, optional)
-: `true` to make the wall stop projectiles: [thrown objects](./map-entities/carried-object.md), [arrows](./map-entities/arrow.md), the [hookshot](./map-entities/hookshot.md) and [the boomerang](./map-entities/boomerang.md). No value means `false`
+    `stops_projectiles` (boolean, optional, default: `false`)
+    : `true` to make the wall stop projectiles: [thrown objects](./map-entities/carried-object.md), [arrows](./map-entities/arrow.md), the [hookshot](./map-entities/hookshot.md) and [the boomerang](./map-entities/boomerang.md).
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([wall](./map-entities/wall.md))
 : The wall created.
@@ -1228,29 +1235,29 @@ Creates an entity of type [sensor](./map-entities/sensor.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `width` (number)
-: Width of the entity in pixels.
+    `width` (number)
+    : Width of the entity in pixels.
 
-- `height` (number)
-: Height of the entity in pixels.
+    `height` (number)
+    : Height of the entity in pixels.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([sensor](./map-entities/sensor.md))
 : The sensor created.
@@ -1262,20 +1269,23 @@ Creates an entity of type [crystal](./map-entities/crystal.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
+
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([crystal](./map-entities/crystal.md))
 : The crystal created.
@@ -1287,32 +1297,35 @@ Creates an entity of type [crystal block](./map-entities/crystal-block.md) on th
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `width` (number)
-: Width of the entity in pixels.
+    `width` (number)
+    : Width of the entity in pixels.
 
-- `height` (number)
-: Height of the entity in pixels.
+    `height` (number)
+    : Height of the entity in pixels.
 
-- `subtype` (number)
-: Kind of crystal block to create: `0` for a block initially lowered (orange), `1` for a block initially raised (blue).
+    `subtype` (number)
+    : Kind of crystal block to create: 
+        
+        - `0`: a block initially lowered (orange)
+        - `1`: a block initially raised (blue).
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([crystal block](./map-entities/crystal-block.md))
 : The crystal block created.
@@ -1324,44 +1337,44 @@ Creates an entity of type [shop treasure](./map-entities/shop-treasure.md) on th
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `price` (number)
-: Money amount required to buy the treasure.
+    `price` (number)
+    : Money amount required to buy the treasure.
 
-- `font` (string, optional)
-: Id of the font to use to display to price. The default value is the first one in alphabetical order.
+    `font` (string, optional)
+    : Id of the font to use to display to price. The default value is the first one in alphabetical order.
 
-- `dialog` (string)
-: Id of the dialog to show when the [hero](./map-entities/hero.md) asks for information about the treasure.
+    `dialog` (string)
+    : Id of the dialog to show when the [hero](./map-entities/hero.md) asks for information about the treasure.
 
-- `treasure_name` (string)
-: Kind of treasure to sell (the name of an [equipment item](./equipment-items.md)). If this value or corresponds to a [non-obtainable](./equipment-items.md#itemis_obtainable) item, then the shop treasure is not created and `nil` is returned.
+    `treasure_name` (string)
+    : Kind of treasure to sell (the name of an [equipment item](./equipment-items.md)). If this value or corresponds to a [non-obtainable](./equipment-items.md#itemis_obtainable) item, then the shop treasure is not created and `nil` is returned.
 
-- `treasure_variant` (number, optional)
-: Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is `1` (the first variant).
+    `treasure_variant` (number, optional, default: `1`)
+    : Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants). The default value is the first variant.
 
-- `treasure_savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](./game.md) whether the player has purchased this treasure. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then the shop treasure is not created and `nil` is returned.
+    `treasure_savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](./game.md) whether the player has purchased this treasure. No value means that the state of the treasure is not saved. If the treasure is saved and the player already has it, then the shop treasure is not created and `nil` is returned.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
-Return value ([shop treasure](./map-entities/shop-treasure.md))
-: The shop treasure created, or `nil` if the item is not [obtainable](./equipment-items.md#itemis_obtainable), or if the shop treasure was already purchased (for a saved one).
+Return value ([shop treasure](./map-entities/shop-treasure.md) or `nil`)
+: The shop treasure created, or `nil`. If the item is not [obtainable](./equipment-items.md#itemis_obtainable), or if the shop treasure was already purchased (for a saved one).
 
 !!! note "Note"
 
@@ -1374,41 +1387,41 @@ Creates an entity of type [stream](./map-entities/stream.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `direction` (number)
-: Direction where the stream moves the [hero](./map-entities/hero.md), between `0` (East) and `7` (South-East).
+    `direction` (number)
+    : Direction where the stream moves the [hero](./map-entities/hero.md), between `0` (East) and `7` (South-East).
 
-- `sprite` (string, optional)
-: Id of the animation set of a [sprite](../files-specs/sprite-data-file.md) to create for the stream. No value means no sprite (the stream will then be invisible).
+    `sprite` (string, optional)
+    : Id of the animation set of a [sprite](../files-specs/sprite-data-file.md) to create for the stream. No value means no sprite (the stream will then be invisible).
 
-- `speed` (number, optional)
-: Speed of the movement applied to the hero by the stream, in pixels per second. The default value is `64`
+    `speed` (number, optional, default: `64`)
+    : Speed of the movement applied to the hero by the stream, in pixels per second.
 
-- `allow_movement` (boolean, optional)
-: Whether the player can still move the hero when he is on the stream. The default value is `true`.
+    `allow_movement` (boolean, optional, default: `true`)
+    : Whether the player can still move the hero when he is on the stream.
 
-- `allow_attack` (boolean, optional)
-: Whether the player can use the sword when he is on the stream. The default value is `true`.
+    `allow_attack` (boolean, optional, default: `true`)
+    : Whether the player can use the sword when he is on the stream.
 
-- `allow_item` (boolean, optional)
-: Whether the player can use equipment items when he is on the stream. The default value is `true`.
+    `allow_item` (boolean, optional, default: `true`)
+    : Whether the player can use equipment items when he is on the stream.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([stream](./map-entities/stream.md))
 : The stream created.
@@ -1420,58 +1433,58 @@ Creates an entity of type [door](./map-entities/door.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `direction` (number)
-: Direction of the door, between `0` (East of the room) and `3` (South of the room).
+    `direction` (number)
+    : Direction of the door, between `0` (East of the room) and `3` (South of the room).
 
-- `sprite` (string)
-: Name of the animation set of the [sprite](./drawable-objects/sprite.md) to create for the door. The sprite must have an animation `"closed"`, that will be shown while the door is closed. When the door is open, no sprite is displayed. Optionally, the sprite can also have animations `"opening"` and `"closing"`, that will be shown (if they exist) while the door is being opened or closed, respectively. If they don't exist, the door will open close instantly.
+    `sprite` (string)
+    : Name of the animation set of the [sprite](./drawable-objects/sprite.md) to create for the door. The sprite must have an animation `"closed"`, that will be shown while the door is closed. When the door is open, no sprite is displayed. Optionally, the sprite can also have animations `"opening"` and `"closing"`, that will be shown (if they exist) while the door is being opened or closed, respectively. If they don't exist, the door will open close instantly.
 
-- `savegame_variable` (string, optional)
-: Name of the boolean value that stores in the [savegame](./game.md) whether this door is open. No value means that the door is not saved. If the door is saved as open, then it appears open.
+    `savegame_variable` (string, optional)
+    : Name of the boolean value that stores in the [savegame](./game.md) whether this door is open. No value means that the door is not saved. If the door is saved as open, then it appears open.
 
-- `opening_method` (string, optional)
-: How the door is supposed to be opened by the player. Must be one of:
+    `opening_method` (string, optional, default: `"none"`)
+    : How the door is supposed to be opened by the player. Must be one of:
 
-    - `"none"` (default): Cannot be opened by the player. You can only open it from Lua.
-    - `"interaction"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it.
-    - `"interaction_if_savegame_variable"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that a specific savegame variable is set.
-    - `"interaction_if_item"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that the player has a specific [equipment item](./equipment-items.md).
-    - `"explosion"`: Can be opened by an explosion.
+        - `"none"` (default): Cannot be opened by the player. You can only open it from Lua.
+        - `"interaction"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it.
+        - `"interaction_if_savegame_variable"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that a specific savegame variable is set.
+        - `"interaction_if_item"`: Can be opened by pressing the [action command](./game.md#game-commands) in front of it, provided that the player has a specific [equipment item](./equipment-items.md).
+        - `"explosion"`: Can be opened by an explosion.
 
-- `opening_condition` (string, optional)
-: The condition required to open the door. Only for opening methods `"interaction_if_savegame_variable"` and `"interaction_if_item"`
+    `opening_condition` (string, optional)
+    : The condition required to open the door. Only for opening methods `"interaction_if_savegame_variable"` and `"interaction_if_item"`
 
-    - For opening method `"interaction_if_savegame_variable"`, it must be the name of a savegame variable. The [hero](./map-entities/hero.md) will be allowed to open the door if this saved value is either `true`, an integer greater than zero or a non-empty string.
-    - For opening method `"interaction_if_item"`, it must be the name of an [equipment item](./equipment-items.md). The hero will be allowed to open the door if he has that item and, for items with an amount, if the amount is greater than zero.
-    - For other opening methods, this setting has no effect.
+        - For opening method `"interaction_if_savegame_variable"`, it must be the name of a savegame variable. The [hero](./map-entities/hero.md) will be allowed to open the door if this saved value is either `true`, an integer greater than zero or a non-empty string.
+        - For opening method `"interaction_if_item"`, it must be the name of an [equipment item](./equipment-items.md). The hero will be allowed to open the door if he has that item and, for items with an amount, if the amount is greater than zero.
+        - For other opening methods, this setting has no effect.
 
-- `opening_condition_consumed` (boolean, optional)
-: Whether opening the door should consume the savegame variable or the [equipment item](./equipment-items.md) that was required. The default setting is `false` If you set it to `true`, the following rules are applied when the [hero](./map-entities/hero.md) successfully opens the door:
+    `opening_condition_consumed` (boolean, optional)
+    : Whether opening the door should consume the savegame variable or the [equipment item](./equipment-items.md) that was required. The default setting is `false` If you set it to `true`, the following rules are applied when the [hero](./map-entities/hero.md) successfully opens the door:
 
-    - For opening method `"interaction_if_savegame_variable"`, the savegame variable that was required is reset to `false`, `0` or `""` (depending on its type).
-    - For opening method is `"interaction_if_item"`, the equipment item that was required is removed. This means setting its [possessed variant](./equipment-items.md#itemset_variantvariant) to `0`, unless it has an associated amount: in this case, the amount is decremented.
-    - With other opening methods, this setting has no effect.
+        - For opening method `"interaction_if_savegame_variable"`, the savegame variable that was required is reset to `false`, `0` or `""` (depending on its type).
+        - For opening method is `"interaction_if_item"`, the equipment item that was required is removed. This means setting its [possessed variant](./equipment-items.md#itemset_variantvariant) to `0`, unless it has an associated amount: in this case, the amount is decremented.
+        - With other opening methods, this setting has no effect.
 
-- `cannot_open_dialog` (string, optional)
-: Id of the dialog to show if the hero fails to open the door. If you don't set this value, no dialog is shown.
+    `cannot_open_dialog` (string, optional)
+    : Id of the dialog to show if the hero fails to open the door. If you don't set this value, no dialog is shown.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([door](./map-entities/door.md))
 : The [door](./map-entities/door.md) created.
@@ -1483,35 +1496,35 @@ Creates an entity of type [stairs](./map-entities/stairs.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `direction` (number)
-: Direction where the stairs should be turned between `0` (East of the room) and `3` (South of the room). For stairs inside a single floor, this is the direction of going upstairs.
+    `direction` (number)
+    : Direction where the stairs should be turned between `0` (East of the room) and `3` (South of the room). For stairs inside a single floor, this is the direction of going upstairs.
 
-- `subtype` (number)
-: Kind of stairs to create:
+    `subtype` (number)
+    : Kind of stairs to create:
 
-    - `0`: Spiral staircase going upstairs.
-    - `1`: Spiral staircase going downstairs.
-    - `2`: Straight staircase going upstairs.
-    - `3`: Straight staircase going downstairs.
-    - `4`: Small stairs inside a single floor (change the layer of the [hero](./map-entities/hero.md)).
+        - `0`: Spiral staircase going upstairs.
+        - `1`: Spiral staircase going downstairs.
+        - `2`: Straight staircase going upstairs.
+        - `3`: Straight staircase going downstairs.
+        - `4`: Small stairs inside a single floor (change the layer of the [hero](./map-entities/hero.md)).
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([stairs](./map-entities/stairs.md))
 : The stairs created.
@@ -1523,23 +1536,23 @@ Creates an entity of type [bomb](./map-entities/bomb.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([bomb](./map-entities/bomb.md))
 : The bomb created.
@@ -1551,23 +1564,23 @@ Creates an entity of type [explosion](./map-entities/explosion.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([explosion](./map-entities/explosion.md))
 : The explosion created.
@@ -1579,23 +1592,23 @@ Creates an entity of type [fire](./map-entities/fire.md) on the map.
 `properties` (table)
 : A table that describes all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([fire](./map-entities/fire.md))
 : The fire created.
@@ -1607,29 +1620,29 @@ Creates an entity of type [separator](./map-entities/separator.md) on the map.
 `properties` (table)
 : A table that describles all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `width` (number)
-: Width of the entity in pixels.
+    `width` (number)
+    : Width of the entity in pixels.
 
-- `height` (number)
-: Height of the entity in pixels. One of `width` or `height` must be 16 pixels.
+    `height` (number)
+    : Height of the entity in pixels. One of `width` or `height` must be 16 pixels.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([separator](./map-entities/separator.md))
 : The separator created.
@@ -1641,47 +1654,47 @@ Creates an entity of type [custom entity](./map-entities/custom-entity.md) on th
 `properties` (table)
 : A table that describles all properties of the entity to create. Its key-value pairs must be:
 
-- `name` (string, optional)
-: Name identifying the entity or `nil` If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
+    `name` (string or `nil`, optional)
+    : Name identifying the entity or `nil`. If the name is already used by another entity, a suffix (of the form `"_2"`, `"_3"`, etc.) will be automatically appended to keep entity names unique.
 
-- `direction` (number)
-: Direction of the custom entity, between `0` (East) and `3` (South). This direction will be applied to the entity's sprites if possible.
+    `direction` (number)
+    : Direction of the custom entity, between `0` (East) and `3` (South). This direction will be applied to the entity's sprites if possible.
 
-- `layer` (number)
-: The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
+    `layer` (number)
+    : The layer, between [`map:get_min_layer()`](#mapget_min_layer) and [`map:get_max_layer()`](#mapget_max_layer).
 
-- `x` (number)
-: X coordinate on the map.
+    `x` (number)
+    : X coordinate on the map.
 
-- `y` (number)
-: Y coordinate on the map.
+    `y` (number)
+    : Y coordinate on the map.
 
-- `width` (number)
-: Width of the entity in pixels (default `16`)
+    `width` (number, optional, default: `16`)
+    : Width of the entity in pixels.
 
-- `height` (number)
-: Height of the entity in pixels (default `16`)
+    `height` (number, optional, default: `16`)
+    : Height of the entity in pixels.
 
-- `origin_x` (number, optional)
-: X coordinate of the origin point, relative to the entity's upper left corner. The default origin is `8, 13`.
+    `origin_x` (number, optional, default: `8`)
+    : X coordinate of the origin point, relative to the entity's upper left corner.
 
-- `origin_y` (number, optional)
-: Y coordinate of the origin point, relative to the entity's upper left corner. The default origin is `8, 13`.
+    `origin_y` (number, optional, default: `13`)
+    : Y coordinate of the origin point, relative to the entity's upper left corner.
 
-- `sprite` (string, optional)
-: Name of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the custom entity.
+    `sprite` (string, optional)
+    : Name of the animation set of a [sprite](./drawable-objects/sprite.md) to create for the custom entity.
 
-- `tiled` (boolean, optional)
-: Whether to repeat the sprite with tiling to fit the size of the custom entity, when the size is bigger than the sprite. No value means `false`
+    `tiled` (boolean, optional, default: `false`)
+    : Whether to repeat the sprite with tiling to fit the size of the custom entity, when the size is bigger than the sprite.
 
-- `model` (string, optional)
-: Model of custom entity or `nil` The model is the name of a Lua script in the `"entities"` directory of your quest. It will define the behavior of your entity. This script will be called with the entity as parameter. Models are useful when you need to create lots of similar entities, especially in different maps. `nil` means no model: in this case, no particular script will be called but you can still define the behavior of your entity in the map script.
+    `model` (string, optional)
+    : Model of custom entity or `nil` The model is the name of a Lua script in the `"entities"` directory of your quest. It will define the behavior of your entity. This script will be called with the entity as parameter. Models are useful when you need to create lots of similar entities, especially in different maps. `nil` means no model: in this case, no particular script will be called but you can still define the behavior of your entity in the map script.
 
-- `enabled_at_start` (boolean, optional)
-: Whether the entity should be initially enabled. The default value is `true`.
+    `enabled_at_start` (boolean, optional, default: `true`)
+    : Whether the entity should be initially enabled.
 
-- `properties` (table, optional)
-: Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
+    `properties` (table, optional)
+    : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
 Return value ([custom entity](./map-entities/custom-entity.md))
 : The custom entity created.
@@ -1694,8 +1707,8 @@ Events are callback methods automatically called by the engine if you define the
 
 Called when this map starts (when the player enters it).
 
-`destination` ([destination](./map-entities/destination.md))
-: The destination entity from where the [hero](./map-entities/hero.md) arrives on the map, or `nil` if he used another way than a destination entity (like the side of the map or direct coordinates).
+`destination` ([destination](./map-entities/destination.md) or `nil`)
+: The destination entity from where the [hero](./map-entities/hero.md) arrives on the map, or `nil`. If he used another way than a destination entity (like the side of the map or direct coordinates).
 
 ### `map:on_finished()`
 
@@ -1735,7 +1748,7 @@ The map is suspended by the engine in a few cases, like when the [game](./game.m
 
 When the map begins, called when the opening transition effect finishes.
 
-`destination` ([destination](./map-entities/destination.md))
+`destination` ([destination](./map-entities/destination.md) or `nil`)
 : The destination entity from where the [hero](./map-entities/hero.md) arrived on the map, or `nil` if he used another way than a destination entity (like the side of the map or direct coordinates).
 
 ### `map:on_obtaining_treasure(treasure_item, treasure_variant, treasure_savegame_variable, hero)`
@@ -1748,7 +1761,7 @@ Called when the [hero](./map-entities/hero.md) is obtaining a treasure on this m
 `treasure_variant` (number)
 : Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants).
 
-`treasure_savegame_variable` (string)
+`treasure_savegame_variable` (string or `nil`)
 : Name of the boolean value that stores in the [savegame](./game.md) whether this treasure is found, or `nil` if this treasure is not saved.
 
 `hero` ([hero](./map-entities/hero.md))
@@ -1766,7 +1779,7 @@ In the case of a brandished treasure, this event is called once the treasure's d
 `treasure_variant` (number)
 : Variant of the treasure (because some [equipment items](./equipment-items.md) may have several variants).
 
-`treasure_savegame_variable` (string)
+`treasure_savegame_variable` (string or `nil`)
 : Name of the boolean value that stores in the [savegame](./game.md) whether this treasure is found, or `nil` if this treasure is not saved.
 
 `hero` ([hero](./map-entities/hero.md))
@@ -1777,9 +1790,17 @@ In the case of a brandished treasure, this event is called once the treasure's d
 Called when the player presses a [game command](./game.md#game-commands) (a keyboard key or a joypad action mapped to a built-in game behavior) while this map is active. You can use this event to override the normal built-in behavior of the game command.
 
 `command` (string)
-: Name of the built-in game command that was pressed.
+: Name of the built-in game command that was pressed. Possible commands are:
 
-    Possible commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (boolean)
 : Indicates whether the event was handled. If you return `true`, the event won't be propagated to other objects (you are overriding the built-in behavior of pressing this game command).
@@ -1793,9 +1814,17 @@ Return value (boolean)
 Called when the player released a [game command](./game.md#game-commands) (a keyboard key or a joypad action mapped to a built-in game behavior). while this map is active. You can use this event to override the normal built-in behavior of the game command.
 
 `command` (string)
-: Name of the built-in game command that was released.
+: Name of the built-in game command that was released. Possible commands are:
 
-    Possible commands are `"action"`, `"attack"`, `"pause"`, `"item_1"`, `"item_2"`, `"right"`, `"up"`, `"left"` and `"down"`
+    - `"action"`
+    - `"attack"`
+    - `"pause"`
+    - `"item_1"`
+    - `"item_2"`
+    - `"right"`
+    - `"up"`
+    - `"left"`
+    - `"down"`
 
 Return value (boolean)
 : Indicates whether the event was handled. If you return `true`, the event won't be propagated to other objects (you are overriding the built-in behavior of releasing this game command).
@@ -1812,7 +1841,7 @@ The current map is checked after the game and before the hero's state.
 
 See [inputs](./controls/inputs.md) to see all of these events.
 
-## Deprecated methods of the type map
+## Deprecated methods of the type `map`
 
 The following methods are deprecated and may be removed it future releases.
 
@@ -1822,15 +1851,11 @@ Returns the currently visible area of the map.
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.5, the [camera](./map-entities/camera.md) is now an entity. Therefore, you can get its coordinates and size like any other entity. Use [`map:get_camera():get_bounding_box()`](./map-entities/index.md#entityget_bounding_box) instead.
+    This method is deprecated since Solarus 1.5, because the [camera](./map-entities/camera.md) is now an entity. Therefore, you can get its coordinates and size like any other entity. Use [`map:get_camera():get_bounding_box()`](./map-entities/index.md#entityget_bounding_box) instead.
 
 ### `map:move_camera(x, y, speed, callback, [delay_before], [delay_after])`
 
 Starts a camera moving sequence.
-
-!!! warning "Deprecated"
-
-    This method is deprecated because since Solarus 1.5, the [camera](./map-entities/camera.md) is now an entity. Therefore, you can move the camera like any other entity and have much more customization possibilities. It can be rewritten in pure Lua as follows.
 
 ```lua
 function map:move_camera(x, y, speed, callback, delay_before, delay_after)
@@ -1889,13 +1914,17 @@ The camera first moves towards a target point. When the target is reached, after
 `callback` (function)
 : A function to be called when the camera reaches the target (after `delay_before`)
 
-`delay_before` (number, optional)
+`delay_before` (number or `nil`)
 : A delay in milliseconds before calling your function once the target is reached (default `1000`)
 
 `delay_after` (number, optional)
 : A delay in milliseconds after calling your function, before the camera goes back (default `1000`)
 
-## Deprecated events of a map
+!!! warning "Deprecated"
+
+    This method is deprecated since Solarus 1.5, because the [camera](./map-entities/camera.md) is now an entity. Therefore, you can move the camera like any other entity and have much more customization possibilities. It can be rewritten in pure Lua as follows.
+
+## Deprecated events of the type `map`
 
 The following events are deprecated and may be removed it future releases.
 
@@ -1905,4 +1934,4 @@ After a camera sequence initiated by [`map:move_camera()`](#mapmove_camerax-y-sp
 
 !!! warning "Deprecated"
 
-    This event is deprecated because since Solarus 1.5, [`camera:move()`](#mapmove_camerax-y-speed-callback-delay_before-delay_after) is deprecated. The [camera](./map-entities/camera.md) is now an entity and now has much more customization possibilities. Use [`camera:on_state_changed()`](./map-entities/camera.md#cameraon_state_changednew_state_name) instead, or the callback parameter of [`movement:start()`](./movements/index.md#movementstartobject_to_move-callback)
+    This event is deprecated since Solarus 1.5, because [`camera:move()`](#mapmove_camerax-y-speed-callback-delay_before-delay_after) is deprecated. The [camera](./map-entities/camera.md) is now an entity and now has much more customization possibilities. Use [`camera:on_state_changed()`](./map-entities/camera.md#cameraon_state_changednew_state_name) instead, or the callback parameter of [`movement:start()`](./movements/index.md#movementstartobject_to_move-callback)

@@ -19,7 +19,7 @@ Two sprites for a crystal are automatically created by the engine. You can acces
 - `"main"`: Main sprite representing the crystal. Its animation set is `"entities/crystal"` This is the default one in [`entity:get_sprite([name])`](./index.md#entityget_spritename).
 - `"star"`: Star twinkling over the crystal. Its animation set is `"entities/star"`.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Crystals are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -29,7 +29,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

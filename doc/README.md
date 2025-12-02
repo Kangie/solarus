@@ -2,6 +2,11 @@
 
 Source code for the **documentation** of the [Solarus game engine](https://www.solarus-games.org/), built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
 
+## Contribute
+
+If you want to contribute to the lua API reference, please read the [contribution guide](CONTRIBUTING.md) first.
+Note that this guide is currently in progress and may not be complete, so feel free to improve it.
+
 ## Setup
 
 First, install `mkdocs` and plugins:
