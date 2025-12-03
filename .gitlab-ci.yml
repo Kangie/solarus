@@ -142,6 +142,7 @@ docs-build:
   script:
     - cd doc
     - mkdocs build --site-dir public
+    - python igen.py
     - OFFLINE=true mkdocs build --site-dir offline
   artifacts:
     name: $CI_JOB_NAME
