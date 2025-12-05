@@ -106,7 +106,7 @@ def generate_returns(section):
     """
 
     returns = []
-    returns_section = re.findall(r'\n\n(Return value .*?)\n\n[^\s]', section, re.DOTALL)
+    returns_section = re.findall(r'\n\n(Return value .*?)(?=\n\n#|$)', section, re.DOTALL)
     
     for return_section in returns_section:
         return_details = re.findall(rf'Return value .*?\((.*?)\)\n', return_section)[0]
