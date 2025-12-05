@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus 2.0.2 (In progress)
+## Solarus 2.0.2 (2025-12-05)
 
 * Made separator scrolling more robust.
 * Enable custom entities to cross separators.
