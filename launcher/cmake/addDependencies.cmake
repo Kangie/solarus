@@ -49,7 +49,7 @@ set_target_properties(qlementine
 # QtAppInstanceManager: a library to manage multiple instances of a Qt application.
 FetchContent_Declare(QtAppInstanceManager
  GIT_REPOSITORY "https://github.com/oclero/qtappinstancemanager.git"
- GIT_TAG v1.3.0
+ GIT_TAG v1.3.1
  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(QtAppInstanceManager)
