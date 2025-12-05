@@ -36,6 +36,7 @@
 #include <QUndoGroup>
 #include <QUndoStack>
 #include <QProcess>
+#include <QStringList>
 #include <QTabBar>
 
 namespace SolarusEditor {
@@ -220,10 +221,26 @@ void EditorTabs::open_text_editor(
       //Should open the external editor instead
       QString project_path = quest.get_root_path();
       QString cmd_str = settings.get_value_string(EditorSettings::external_text_editor_cmd);
+#ifdef Q_OS_WIN
+      // For Windows, use startDetached with the full command string
       cmd_str.replace("%f",path).replace("%p",project_path);
       if(QProcess::startDetached(cmd_str)) {
           return;
       }
+#else
+      // For Linux/Mac, replace placeholders in each argument after splitting
+      QStringList cmd_args = cmd_str.split(' ', Qt::SkipEmptyParts);
+      for (QString &arg : cmd_args) {
+          arg.replace("%f", path);
+          arg.replace("%p", project_path);
+      }
+      if (!cmd_args.isEmpty()) {
+          QString cmd_prog = cmd_args.takeFirst();
+          if (QProcess::startDetached(cmd_prog, cmd_args)) {
+              return;
+          }
+      }
+#endif
   }
 
   // Find the existing tab if any.
