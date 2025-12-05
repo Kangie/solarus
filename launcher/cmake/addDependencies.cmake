@@ -21,7 +21,7 @@ include(FetchContent)
 # Qlementine-Icons: an SVG icon library made for Qt.
 FetchContent_Declare(qlementine-icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
-  GIT_TAG v1.12.0
+  GIT_TAG v1.13.0
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(qlementine-icons)
