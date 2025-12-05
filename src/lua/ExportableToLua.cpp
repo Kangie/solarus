@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/core/Debug.h"
 #include "solarus/lua/ExportableToLua.h"
 #include "solarus/lua/LuaContext.h"
 
@@ -23,11 +22,7 @@ namespace Solarus {
 /**
  * \brief Creates an object exportable to Lua.
  */
-ExportableToLua::ExportableToLua():
-  lua_context(nullptr),
-  known_to_lua(false),
-  with_lua_table(false) {
-
+ExportableToLua::ExportableToLua() {
 }
 
 /**

@@ -65,7 +65,7 @@ else()
   FetchContent_Declare(
     qlementine
     GIT_REPOSITORY https://github.com/oclero/qlementine.git
-    GIT_TAG        73d1f490e1942c8c140d764844c9d31a1ef0206c
+    GIT_TAG        v1.4.0
     EXCLUDE_FROM_ALL
   )
 endif()

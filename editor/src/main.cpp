@@ -55,7 +55,7 @@ void setup_application_information() {
   QApplication::setOrganizationDomain("solarus-games.org");
   // Set desktop filename so that the QtWayland backend will report the correct AppID
   // based on this and make the launcher icon and startup notification work.
-  QGuiApplication::setDesktopFileName(SOLARUSEDITOR_APP_ID ".desktop");
+  QGuiApplication::setDesktopFileName(SOLARUSEDITOR_APP_ID);
 }
 
 
@@ -120,9 +120,9 @@ int run_editor_gui(int argc, char* argv[]) {
 
   // Set up Qt translations.
   QTranslator qt_translator;
-  const bool success = qt_translator.load(
+  const bool translator_success = qt_translator.load(
       locale, "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
-  if (!success) {
+  if (!translator_success) {
     qWarning() << "Failed to load translations";
   }
   application.installTranslator(&qt_translator);
@@ -132,6 +132,7 @@ int run_editor_gui(int argc, char* argv[]) {
   for (const QString& searchPath : std::vector<QString>{
            QApplication::applicationDirPath(),
            QApplication::applicationDirPath() + "/translations",
+           QApplication::applicationDirPath() + "/../Resources/translations",
            SOLARUSEDITOR_DATADIR_PATH "/translations"}) {
     if (app_translator.load(locale, "solarus_editor", "_", searchPath)) {
       break;
@@ -179,6 +180,7 @@ int run_editor_gui(int argc, char* argv[]) {
   }
 
   // Open the quest.
+  bool open_success = false;
   if (!quest_path.isEmpty()) {
     window.open_quest(quest_path);
 
@@ -192,7 +194,13 @@ int run_editor_gui(int argc, char* argv[]) {
         // Restore the active tab.
         window.open_file(window.get_quest(), active_file_path);
       }
+
+      open_success = true;
     }
+  }
+
+  if (!open_success) {
+    window.open_welcome();
   }
 
   window.show();
@@ -242,11 +250,11 @@ int run_quest(int argc, char* argv[]) {
  * @brief Entry point of the quest editor.
  *
  * To run the editor GUI:
- *   solarus-quest-editor [quest_path [file_path]]
+ *   solarus-editor [quest_path [file_path]]
  * To directly run a quest (no GUI, similar to solarus-run):
- *   solarus-quest-editor -run quest_path
+ *   solarus-editor -run quest_path
  * To directly run a map of a quest quest for testing purposes:
- *   solarus-quest-editor -run -map=your_map_id quest_path
+ *   solarus-editor -run -map=your_map_id quest_path
  *
  * @param argc Number of arguments of the command line.
  * @param argv Command-line arguments.

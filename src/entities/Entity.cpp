@@ -296,7 +296,7 @@ void Entity::set_map(Map& map) {
  * \brief Puts the entity on a map.
  *
  * This function is called when the current map is changed.
- * Does nothing if the hero is already on this map.
+ * Does nothing if the entity is already on this map.
  *
  * \param map The map.
  */

@@ -4,7 +4,7 @@
 
 A _non-playing character_ (NPC) is somebody or something that the [hero](./hero.md) can interact with by pressing the [action command](../game.md#game-commands) or by using an [equipment item](../equipment-items.md) just in front of it.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_npc()`](../map.md#mapcreate_npcproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_npc()`](../map.md#mapcreate_npcproperties).
 
 An NPC is not necessarily a person: it can also be a more general, solid interactive entity. In this case, it is called a generalized NPC.
 
@@ -14,9 +14,9 @@ Interactions with an NPC may start a dialog or be forwarded to Lua. More precise
 - A Lua event is called on the NPC itself, for instance [`npc:on_interaction()`](#npcon_interaction) or [`npc:on_interaction_item()`](#npcon_interaction_itemitem_used).
 - A Lua event is called on an [equipment item](../equipment-items.md), for instance [`item:on_npc_interaction()`](../equipment-items.md#itemon_npc_interactionnpc) or [`item:on_npc_interaction_item()`](../equipment-items.md#itemon_npc_interaction_itemnpc-item_used).
 
-An NPC can move if you apply a movement to it by calling [`movement:start(npc)`](../movements/overview.md#movementstartobject_to_move-callback).
+An NPC can move if you apply a movement to it by calling [`movement:start(npc)`](../movements/index.md#movementstartobject_to_move-callback).
 
-The size of an NPC is always 16×16 pixels (like the [hero](./hero.md)) and by default, the NPC is an obstacle for most [map entities](./overview.md), including the hero.
+The size of an NPC is always 16×16 pixels (like the [hero](./hero.md)) and by default, the NPC is an obstacle for most [map entities](./index.md), including the hero.
 
 Usual NPCs (i.e. non-generalized ones) are suited to usual interactions with people. They must have a sprite with at least four directions, and with animations named `"stopped"` and (if you move them) `"walking"` These predefined animations are automatically started by the engine when you make the NPC move. When the hero talks to them, their sprite automatically stops its animation and looks into his direction.
 
@@ -26,13 +26,13 @@ Generalized NPCs are more customizable. They are solid entities that the hero ca
 
 **Example of use of a generalized NPC:** a stone with something to read on it.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
-Non-playing characters are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Non-playing characters are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
-## Methods of the type non-playing character
+## Methods of the type `npc`
 
 The following methods are specific to non-playing characters.
 
@@ -47,8 +47,8 @@ Return value (number)
 
 Sets the subtype for this NPC.
 
-`subtype` (number, optional)
-: the subtype number, 0 for generalized, 1 for usual. Default is 1.
+`subtype` (number, optional, default: `1`)
+: the subtype number, 0 for generalized, 1 for usual.
 
 ### `npc:is_traversable()`
 
@@ -67,15 +67,16 @@ By default, NPCs are not traversable. However, be aware that some entities can o
 
 If you want to allow the [hero](./hero.md) to be able to traverse this NPC, you can use this function.
 
-`traversable` (boolean, optional): `true` to make this NPC traversable. No value means `true`.
+`traversable` (boolean, optional, default: `true`)
+: `true` to make this NPC traversable.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
-Non-playing characters are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Non-playing characters are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type non-playing character
 
@@ -96,7 +97,7 @@ Called when the [hero](./hero.md) uses any [equipment item](../equipment-items.m
 : The item currently used by the player.
 
 Return value (boolean)
-: `true` if an interaction happened. If you return `false` or nothing, then [`item_used:on_using()`](../equipment-items.md#itemon_using) will be called (just like if there was no NPC in front of the hero).
+: `true` if an interaction happened. If you return `false` or nothing, then [`item_used:on_using()`](../equipment-items.md#itemon_usinghero) will be called (just like if there was no NPC in front of the hero).
 
 ### `npc:on_collision_fire()`
 

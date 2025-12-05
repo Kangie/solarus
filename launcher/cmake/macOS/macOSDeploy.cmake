@@ -1,7 +1,7 @@
 set(SOLARUSLAUNCHER_CODESIGN_IDENTITY "4464B2CGYB" CACHE STRING "Codesigning identity (`security find-identity -v -p codesigning`)")
 set(SOLARUSLAUNCHER_CODESIGN_ENABLED OFF CACHE BOOL "Enable codesigning")
 set(SOLARUSLAUNCHER_NOTARIZE_ENABLED OFF CACHE BOOL "Enable notarization")
-
+set(SOLARUSLAUNCHER_NOTARIZE_PROFILE "notarytool-password" CACHE STRING "Notarization profile (`xcrun notarytool store-credentials --apple-id <YOUR_APPLE_ID_EMAIL> --team-id 4464B2CGYB --password <APP_SPECIFIC_PASSWORD> --name <PROFILE_NAME>`)")
 # set(DEPLOY_TOOL_OPTIONS_ARG "-libpath=/opt/homebrew/lib")
 
 install(TARGETS ${PROJECT_NAME}
@@ -89,7 +89,7 @@ execute_process(COMMAND ditto -c -k --keepParent
 )
 
 execute_process(COMMAND xcrun notarytool submit --wait
-  --keychain-profile "notarytool-password"
+  --keychain-profile "@SOLARUSLAUNCHER_NOTARIZE_PROFILE@"
   "${TMP_ZIP_PATH}"
   RESULT_VARIABLE NOTARIZE_RESULT
   COMMAND_ERROR_IS_FATAL ANY
@@ -97,7 +97,7 @@ execute_process(COMMAND xcrun notarytool submit --wait
 
 if(NOT NOTARIZE_RESULT EQUAL 0)
   message(STATUS "Notarization failed with error code ${NOTARIZE_RESULT}")
-  message(FATAL_ERROR "run : xcrun notarytool log --keychain-profile \"notarytool-password\" <id>"
+  message(FATAL_ERROR "run : xcrun notarytool log --keychain-profile \"@SOLARUSLAUNCHER_NOTARIZE_PROFILE@\" <id>"
     COMMAND_ERROR_IS_FATAL ANY
   )
 endif()

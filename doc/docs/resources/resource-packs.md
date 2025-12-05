@@ -14,7 +14,7 @@ Resources packs are collections of sprites, music, sounds, maps, etc. that you c
 
     In every case, please **credit the authors**.
 
-- [Solarus Free Resource Pack](https://gitlab.com/solarus-games/solarus-free-resource-pack)
+- [Solarus Free Resource Pack](https://gitlab.com/solarus-games/resource-packs/solarus-free-resource-pack)
 
     Contains only GPL and CC-BY-SA-licensed elements, scripts and resources in various styles, and my be used to bootstrap your first game.
 

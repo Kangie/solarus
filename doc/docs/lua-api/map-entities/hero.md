@@ -4,7 +4,7 @@
 
 The hero is the character controlled by the player. There is always exactly one hero on the current map. The hero is automatically created by the engine: you cannot create or remove him.
 
-The name of the hero (as returned by [`entity:get_name()`](./overview.md#entityget_name)) is always `"hero"` Therefore, from a script, you can access the hero with `map:get_entity("hero")` or, if you are in a map script, directly with the `hero` variable (see [`map:get_entity()`](../map.md#mapget_entityname) for more details). There are also quick accessors [`map:get_hero()`](../map.md#mapget_hero) and [`game:get_hero()`](../game.md#gameget_hero) to retrieve the hero more easily.
+The name of the hero (as returned by [`entity:get_name()`](./index.md#entityget_name)) is always `"hero"` Therefore, from a script, you can access the hero with `map:get_entity("hero")` or, if you are in a map script, directly with the `hero` variable (see [`map:get_entity()`](../map.md#mapget_entityname) for more details). There are also quick accessors [`map:get_hero()`](../map.md#mapget_hero) and [`game:get_hero()`](../game.md#gameget_hero) to retrieve the hero more easily.
 
 His size is always `16×16` pixels.
 
@@ -14,13 +14,13 @@ We describe here the Lua API that you can use to change the hero's state.
 
 ### Hero sprites
 
-Multiple sprites for the hero are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite([name])`](./overview.md#entityget_spritename).
+Multiple sprites for the hero are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite([name])`](./index.md#entityget_spritename).
 
 Here is the list of hero sprites created by the engine and their names:
 
 | Sprite          | Role                                                                                                                                         |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `"tunic"`       | Main sprite of the hero. It always exists.</br>This is the default one in [`entity:get_sprite([name])`](./overview.md#entityget_spritename). |
+| `"tunic"`       | Main sprite of the hero. It always exists.</br>This is the default one in [`entity:get_sprite([name])`](./index.md#entityget_spritename). |
 | `"shield"`      | Shield if any.                                                                                                                               |
 | `"sword"`       | Sword if any.                                                                                                                                |
 | `"sword_stars"` | Small stars sparkling near the sword in some states.                                                                                         |
@@ -30,15 +30,29 @@ Here is the list of hero sprites created by the engine and their names:
 
 Keep in mind that depending on the hero's equipment, his state and the ground below him, all of these built-in sprites don't always exist, and some of them may exist at some point but without being currently displayed.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
-The hero is a particular [map entity](./overview.md). Therefore, he inherits all methods from the type map entity.
+The hero is a particular [map entity](./index.md). Therefore, he inherits all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type hero
 
 The following methods are specific to the hero.
+
+### `hero:get_controls()`
+
+Returns the controls currently applied for this hero.
+
+Return value ([controls](../controls/index.md))
+: The Controls object for this hero.
+
+### `hero:set_controls(controls)`
+
+Sets the controls for this hero.
+
+`controls` ([controls](../controls/index.md))
+: The controls to apply to this hero entity.
 
 ### `hero:teleport(map_id, [destination_name, [transition_style]])`
 
@@ -47,10 +61,10 @@ Teletransports the hero to a different place.
 `map_id` (string)
 : Id of the [map](../map.md) to go to (may be the same map or another one). If the map does not exist, the teletransportation fails and this function generates a Lua error. If the map exists, then the teletransportation is always successful even if there is no viable destination (see below).
 
-`destination_name` (string, optional)
+`destination_name` (string or `nil`, optional)
 : Name of the [destination entity](./destination.md) where to go on that map, or the special keyword `"_same"` to keep the same coordinates. Can also be the special keyword `"_side0"`, `"_side1"`, `"_side2"` or `"_side3"` to arrive near the East, North, West or South frontier of the map respectively. But the hero should be near the corresponding side of the original map for this to look okay. This is usually used in combination with scrolling transitions. No value means the default destination entity of the map. If the destination does not exist, a debugging message is logged and the default destination is used as a fallback. Finally, if there is no destination at all, then no default destination can be used. In this case, another debugging message is logged and the hero is placed at coordinates `(0,0)`
 
-`transition_style` (string, optional)
+`transition_style` (string, optional, requires: `destination_name`)
 : `"immediate"` (no transition effect), `"fade"` (fade-out and fade-in effect) or `"scrolling"`. No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default.
 
 !!! note "Note"
@@ -66,7 +80,7 @@ Return value (number)
 
 !!! note "Note"
 
-    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/overview.md).
+    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/index.md).
 
 ### `hero:set_direction(direction4)`
 
@@ -77,7 +91,7 @@ Sets the direction of the hero's [sprites](../drawable-objects/sprite.md).
 
 !!! note "Note"
 
-    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/overview.md).
+    The direction of the hero's sprites may be different from both the direction pressed by the [player's commands](../game.md#gameget_commands_direction) and from the actual direction of the hero's [movement](../movements/index.md).
 
 ### `hero:get_walking_speed()`
 
@@ -94,7 +108,7 @@ Sets the speed of the normal walking movement of hero.
 
 The default walking speed is 88 pixels per second. This speed is automatically reduced when the hero walks on special ground like grass, ladders or holes.
 
-`walking` speed (number)
+`walking_speed` (number)
 : The speed of normal walk in pixels per second.
 
 ### `hero:get_swimming_speed()`
@@ -110,7 +124,7 @@ Sets the swimming speed movement of hero.
 
 The default swimming speed is 44 pixels per second. When the player perform the swim boost, the speed is doubled.
 
-`swimming` speed (number)
+`swimming_speed` (number)
 : The swimming speed n pixels per second.
 
 ### `hero:get_can_swim_faster()`
@@ -124,7 +138,7 @@ Return value (boolean)
 
 Sets the ability for the player to perform a swim boost in deep water.
 
-`can_swim_faster` (boolean)
+`can_swim_faster` (boolean, optional, default: `true`)
 : true if the hero is allowed to swim faster.
 
 ### `hero:get_push_delay()`
@@ -157,7 +171,7 @@ Sets the height carried objects will be displayed at, i.e. carried objects will 
 `height` (number)
 : The new height.
 
-### `hero:save_solid_ground([x, y, layer]), hero:save_solid_ground(callback)`
+### `hero:save_solid_ground([x, y, layer])`
 
 Sets a position to go back to if the hero falls into a hole or other bad ground.
 
@@ -167,23 +181,24 @@ The position can be specified either as coordinates and a layer, or as a functio
 
 To memorize a position directly:
 
-`x` (number, optional)
+`x` (number, optional, requires: `y` and `layer`)
 : X coordinate to memorize (no value means the current position).
 
-`y` (number, optional)
+`y` (number, optional, requires: `x` and `layer`)
 : Y coordinate to memorize (no value means the current position).
 
-`layer` (number, optional)
+`layer` (number, optional, requires: `x` and `y`)
 : Layer to memorize (no value means the current position).
 
 To set a function that indicates the position to go back to:
 
-`callback` (function)
-: A function to be called whenever the hero falls into bad ground. The function should return 2 or 3 values: x, y and optionally the layer (no layer value means keeping the layer unchanged). A `nil` value unsets any position or function that was previously set.
+!!! note "Note"
+
+    You can instead pass a callback function to be called whenever the hero falls into bad ground. The function should return 2 or 3 values: x, y and optionally the layer (no layer value means keeping the layer unchanged). A `nil` value unsets any position or function that was previously set.
 
 ### `hero:reset_solid_ground()`
 
-Forgets a position that was previously memorized by [`hero:save_solid_ground()`](#herosave_solid_groundx-y-layer-herosave_solid_groundcallback) (if any).
+Forgets a position that was previously memorized by [`hero:save_solid_ground()`](#herosave_solid_groundx-y-layer) (if any).
 
 The initial behavior is restored: the hero will now get back to where he was just before falling, instead going to of a memorized position.
 
@@ -193,11 +208,11 @@ This is equivalent to `hero:save_solid_ground(nil)`.
 
 Returns the position where the hero gets back if he falls into a hole or other bad ground now.
 
-This is the position that was previously memorized by the last call to [`hero:save_solid_ground()`](#herosave_solid_groundx-y-layer-herosave_solid_groundcallback), if any. If the position was passed to [`hero:save_solid_ground()`](#herosave_solid_groundx-y-layer-herosave_solid_groundcallback) as a function, then this function is called to get a position.
+This is the position that was previously memorized by the last call to [`hero:save_solid_ground()`](#herosave_solid_groundx-y-layer), if any. If the position was passed to [`hero:save_solid_ground()`](#herosave_solid_groundx-y-layer) as a function, then this function is called to get a position.
 
 Otherwise, this is the position of the hero the last time he was on solid ground.
 
-Return value 1 (number)
+Return value 1 (number or `nil`)
 : X coordinate where to get back to solid ground, or `nil` if the hero never went on solid ground on this map yet.
 
 Return value 2 (number)
@@ -252,10 +267,10 @@ Sets or unsets the hero temporarily invincible.
 
 When the hero is invincible, [enemies](./enemy.md) cannot attack him, but you can still hurt him manually with [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage).
 
-`invincible` (boolean, optional)
-: `true` to make the hero invincible, or `false` to stop the invincibility. No value means `true`.
+`invincible` (boolean, optional, default: `true`)
+: `true` to make the hero invincible, or `false` to stop the invincibility.
 
-`duration` (number, optional)
+`duration` (number, optional, requires: `invincible`)
 : Duration of the invincibility in milliseconds. Only possible when you set `invincible` to `true` No value means unlimited.
 
 ### `hero:is_blinking()`
@@ -269,7 +284,7 @@ Return value (boolean)
 
 !!! note "Note"
 
-    The visibility property of the hero is independent from this. Even when the sprites are blinking, the result of [`hero:is_visible()`](./overview.md#entityis_visible) is unchanged.
+    The visibility property of the hero is independent from this. Even when the sprites are blinking, the result of [`hero:is_visible()`](./index.md#entityis_visible) is unchanged.
 
 ### `hero:set_blinking([blinking, [duration]])`
 
@@ -277,17 +292,17 @@ Makes the hero's sprites temporarily blink or stop blinking.
 
 This only affects displaying: see [`hero:set_invincible()`](#heroset_invincibleinvincible-duration) if you also want to make the hero invincible.
 
-`blinking` (boolean, optional)
-: `true` to to make the sprites blink, or `false` to stop the blinking. No value means `true`.
+`blinking` (boolean, optional, default: `true`)
+: `true` to to make the sprites blink, or `false` to stop the blinking.
 
-`duration` (number, optional)
+`duration` (number, optional, requires: `blinking`)
 : Duration in milliseconds before stopping the blinking. Only possible when you set `blinking` to `true` No value means unlimited.
 
 ### `hero:get_carried_object()`
 
 Returns the [carried object](./carried-object.md) the hero is currently lifting, carrying or throwing, if any.
 
-Return value ([carried object](./carried-object.md))
+Return value ([carried object](./carried-object.md) or `nil`)
 : The current carried object or `nil`.
 
 ### `hero:freeze()`
@@ -298,7 +313,7 @@ After you call this method, the [state](#heroget_state) of the hero is `"frozen"
 
 ### `hero:unfreeze()`
 
-Restores the control to the player. The control may have been lost for example by a call to [`hero:freeze()`](#herofreeze) or to [`some_movement:start(hero)`](../movements/overview.md#movementstartobject_to_move-callback).
+Restores the control to the player. The control may have been lost for example by a call to [`hero:freeze()`](#herofreeze) or to [`some_movement:start(hero)`](../movements/index.md#movementstartobject_to_move-callback).
 
 ### `hero:walk(path, [loop, [ignore_obstacles]])`
 
@@ -307,11 +322,11 @@ Makes the hero move with the specified path and a walking animation. The player 
 `path` (string)
 : The path as a string sequence of integers. Each value is a number between `0` and `7` that represents a step (move of 8 pixels) in the path. `0` is East, `1` is North-East, etc.
 
-`loop` (boolean, optional)
-: `true` to repeat the path once it is done (default `false`)
+`loop` (boolean, optional, default: `false`)
+: `true` to repeat the path once it is done.
 
-`ignore_obstacles` (boolean, optional)
-: `true` to allow the hero to traverse obstacles during this movement (default `false`) Make sure the movement does not end inside an obstacle.
+`ignore_obstacles` (boolean, optional, requires: `loop`, default: `false`)
+: `true` to allow the hero to traverse obstacles during this movement. Make sure the movement does not end inside an obstacle.
 
 ### `hero:start_jumping(direction8, distance, [ignore_obstacles])`
 
@@ -323,8 +338,8 @@ Makes the hero jump towards the specified direction.
 `distance` (number)
 : Distance of the jump in pixels (see [`jump_movement:set_distance()`](../movements/jump-movement.md#jump_movementset_distancedistance)).
 
-`ignore_obstacles` (boolean, optional)
-: `true` to allow the hero to traverse obstacles during this movement (default `false`) Make sure the movement does not end inside an obstacle.
+`ignore_obstacles` (boolean, optional, default: `false`)
+: `true` to allow the hero to traverse obstacles during this movement. Make sure the movement does not end inside an obstacle.
 
 ### `hero:start_attack()`
 
@@ -342,14 +357,14 @@ This function does the same as what happens when the player keeps pressing the `
 
 If the player is not allowed to perform this attack now (because he does not have the sword [ability](#heroget_abilityability_name) or because the hero is currently busy in another state that does not allow to use the sword), then nothing happens.
 
-`spin_attack_delay` (number, optional)
-: Delay in milliseconds before the sword is loaded, allowing a spin attack then (default `1000`) A value of `0` allows the spin attack immediately. The special value `-1` means infinite: then, no spin attack will be possible.
+`spin_attack_delay` (number, optional, default `1000`)
+: Delay in milliseconds before the sword is loaded, allowing a spin attack then. A value of `0` allows the spin attack immediately. The special value `-1` means infinite: then, no spin attack will be possible.
 
 ### `hero:start_item(item)`
 
 Makes the hero use an [equipment item](../equipment-items.md).
 
-The [`item:on_using()`](../equipment-items.md#itemon_using) event will be called and the player won't be able to control the hero until you call [`item:set_finished()`](../equipment-items.md#itemset_finished). See the documentation of [equipment items](../equipment-items.md) for more information.
+The [`item:on_using()`](../equipment-items.md#itemon_usinghero) event will be called and the player won't be able to control the hero until you call [`item:set_finished()`](../equipment-items.md#itemset_finished). See the documentation of [equipment items](../equipment-items.md) for more information.
 
 This function does the same as what happens when the player presses a game [command](../game.md#game-commands) corresponding to this equipment item. You can use it to trigger the item from your script instead of from a game command.
 
@@ -364,7 +379,7 @@ Makes the hero grab the obstacle he is facing.
 
 This function does the same as what happens when the player presses the `"action"` game [command](../game.md#game-commands) while facing an obstacle. You can use it to start the grabbing state from your script instead of from a game command.
 
-### `hero:start_treasure(treasure_name, [treasure_variant, [treasure_savegame_variable, [callback]]])`
+### `hero:start_treasure(treasure_name, [treasure_variant, [treasure_savegame_variable]], [callback])`
 
 Gives a treasure to the player. The hero will brandish the treasure as follows.
 
@@ -378,7 +393,7 @@ If a dialog called `"_treasure.treasure_name.treasure_variant"` exists, and if t
 `treasure_variant` (number, optional)
 : Variant of the treasure (because some [equipment items](../equipment-items.md) may have several variants). The default value is `1` (the first variant).
 
-`treasure_savegame_variable` (string, optional)
+`treasure_savegame_variable` (string, optional, requires: `treasure_variant`)
 : Name of the boolean value that stores in the [savegame](../game.md) whether this treasure is found. No value means that the state of the treasure is not saved. It is allowed (though strange) to give the same saved treasure twice.
 
 `callback` (function, optional)
@@ -446,10 +461,10 @@ This method hurts the hero even if enemies cannot, including when the hero is te
 
 Same as [`hero:start_hurt(source_x, source_y, damage)`](#herostart_hurtsource_x-source_y-damage), but specifying the source coordinates as an optional entity and possibly its sprite.
 
-`source_entity` ([map entity](./overview.md), optional)
+`source_entity` ([map entity](./index.md), optional)
 : Whatever hurts the hero. The coordinates of this source entity are used to push the hero away from that source. No value means that the hero will not be pushed away.
 
-`source_sprite` ([sprite](../drawable-objects/sprite.md), optional)
+`source_sprite` ([sprite](../drawable-objects/sprite.md), optional, requires: `source_entity`)
 : Which sprite of the source entity is hurting the hero. If you set this value, the hero will be pushed away from the origin of this sprite instead of from the origin of the source entity. Most of the time, you don't need to set this parameter.
 
 `damage` (number)
@@ -462,12 +477,38 @@ This number will be divided by the [tunic](#heroget_abilityability_name) level o
 Returns the name of the current state of the hero, and possibly the corresponding [custom state](../custom-states.md) object if any.
 
 Return value 1 (`string`)
-: The current state.
+: The current state. Can be one of:
 
-    Can be one of: `"back` to solid ground", `"boomerang"`, `"bow"`, `"carrying"`, `"falling"`, `"forced` walking", `"free"`, `"frozen"`, `"grabbing"`, `"hookshot"`, `"hurt"`, `"jumping"`, `"lifting"`, `"plunging"`, `"pulling"`, `"pushing"`, `"running"`, `"stairs"`, `"swimming"`, `"sword` loading", `"sword` spin attack", `"sword` swinging", `"sword` tapping", `"treasure"`, `"using` item", `"victory"` or `"custom"`
+    - `"back_to_solid_ground"`
+    - `"boomerang"`
+    - `"bow"`
+    - `"carrying"`
+    - `"falling"`
+    - `"forced_walking"`
+    - `"free"`
+    - `"frozen"`
+    - `"grabbing"`
+    - `"hookshot"`
+    - `"hurt"`
+    - `"jumping"`
+    - `"lifting"`
+    - `"plunging"`
+    - `"pulling"`
+    - `"pushing"`
+    - `"running"`
+    - `"stairs"`
+    - `"swimming"`
+    - `"sword_loading"`
+    - `"sword_spin_attack"`
+    - `"sword_swinging"`
+    - `"sword_tapping"`
+    - `"treasure"`
+    - `"using_item"`
+    - `"victory"`
+    - `"custom"`
 
-Return value 2 ([state](../custom-states.md) or no value)
-: The custom state object, in case the state name is `"custom"`
+Return value 2 ([state](../custom-states.md))
+: The custom state object, in case the state name is `"custom"`. Otherwise, no value is returned.
 
 ### `hero:start_state(state)`
 
@@ -479,7 +520,7 @@ Custom states allow advanced customization of the hero's behavior. After you cal
 
 Returns the current custom state object of the hero, if any.
 
-Return value ([state](../custom-states.md))
+Return value ([state](../custom-states.md) or `nil`)
 : The custom state, or `nil` if the current state is not a custom one.
 
 ### `hero:get_life()`
@@ -653,7 +694,8 @@ Sets the maximum number of magic points.
 
 Returns whether the player has a built-in ability.
 
-- `ability_name`: Name of the ability to get (see [`hero:get_ability()`](#heroget_abilityability_name) for the list of valid ability names).
+`ability_name` (string)
+: Name of the ability to get (see [`hero:get_ability()`](#heroget_abilityability_name) for the list of valid ability names).
 
 Return value (boolean)
 : `true` if the player has this ability.
@@ -675,7 +717,7 @@ Built-in ability levels indicate whether the hero can perform some built-in acti
     - `"sword_spin_attack"`: Ability to make a spin attack. 1 is a normal spin attack, 2 is a super spin attack where the hero makes circles.
     - `"tunic"`: Resistance level that reduces the damage received by the hero. Determines the default sprite used for the hero's body. The initial value is `1`.
     - `"shield"`: Protection against enemies. Allows to avoid some attacks. Determines the default shield sprite.
-    - `"lift"`: Ability to [lift other entities](./overview.md#entityget_weight).
+    - `"lift"`: Ability to [lift other entities](./index.md#entityget_weight).
     - `"swim"`: Ability to swim in deep water.
     - `"jump_over_water"`: Automatically jumping when arriving into water without the `"swim"` ability.
     - `"run"`: Running when pressing the action command.
@@ -726,9 +768,12 @@ Return value (boolean)
 Returns the equipment item assigned to a slot.
 
 `slot` (number)
-: The slot to get (`1` or `2`)
+: The slot to get:
 
-Return value ([item](../equipment-items.md))
+    - `1`
+    - `2`
+
+Return value ([item](../equipment-items.md) or `nil`)
 : The equipment item associated to this slot (`nil` means none).
 
 ### `hero:set_item_assigned(slot, item)`
@@ -736,9 +781,12 @@ Return value ([item](../equipment-items.md))
 Assigns an equipment item to a slot.
 
 `slot` (number)
-: The slot to set (`1` or `2`)
+: The slot to set:
 
-`item` ([item](../equipment-items.md))
+    - `1`
+    - `2`
+
+`item` ([item](../equipment-items.md) or `nil`)
 : The equipment item to associate to this slot, or `nil` to make the slot empty.
 
 ### `hero:get_tunic_sprite_id()`
@@ -781,10 +829,10 @@ You can use this function if you want to use another sprite.
 
 Returns the name of the sound played when the hero uses the sword.
 
-Return value (string)
+Return value (string or `nil`)
 : The sound id of the hero's sword. `nil` means no sound.
 
-### `hero:set_sword_sound(sound_id)`
+### `hero:set_sword_sound([sound_id])`
 
 Changes the sound to play when the hero uses the sword.
 
@@ -792,7 +840,7 @@ By default, the sound used for the sword is `"swordX"`,where X is the [sword lev
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The sound id of the hero's sword. `nil` or an empty string means no sword sound.
 
 ### `hero:get_shield_sprite_id()`
@@ -817,10 +865,10 @@ You can use this function if you want to use another sprite.
 
 Returns the name of the sound played when the hero is falling in bad grounds like a hole.
 
-Return value (string)
+Return value (string or `nil`)
 : The falling sound id. `nil` means no sound.
 
-### `hero:set_falling_sound(sound_id)`
+### `hero:set_falling_sound([sound_id])`
 
 Changes the sound to play when the hero is falling in bad ground like a hole.
 
@@ -828,17 +876,17 @@ By default, the falling sound is `"hero_falls"`
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The falling sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_respawn_sound()`
 
 Returns the name of the sound played when the hero gets back to solid ground after falling.
 
-Return value (string)
+Return value (string or `nil`)
 : The respawning sound id. `nil` means no sound.
 
-### `hero:set_respawn_sound(sound_id)`
+### `hero:set_respawn_sound([sound_id])`
 
 Changes the sound to play when the hero gets back to solid ground after falling.
 
@@ -846,17 +894,17 @@ By default, this sound is `"message_end"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The respawning sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_landing_sound()`
 
 Returns the name of the sound played when the hero is landing after juming from a jumper or from an upper layer.
 
-Return value (string)
+Return value (string or `nil`)
 : The landing sound id. `nil` means no sound.
 
-### `hero:set_landing_sound(sound_id)`
+### `hero:set_landing_sound([sound_id])`
 
 Changes the sound to play when the hero is landing after juming from a jumper or from an upper layer.
 
@@ -864,17 +912,17 @@ By default, this sound is `"hero_lands"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The landing sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_jumping_sound()`
 
 Returns the name of the sound played when the hero is jumping from a jumper or using the built-in feather item.
 
-Return value (string)
+Return value (string or `nil`)
 : The jumping sound id. `nil` means no sound.
 
-### `hero:set_jumping_sound(sound_id)`
+### `hero:set_jumping_sound([sound_id])`
 
 Changes the sound to play when the hero is jumping from a jumper or using the built-in feather item.
 
@@ -882,17 +930,17 @@ By default, this sound is `"jump"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The jumping sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_hurt_sound()`
 
 Returns the name of the sound played when the hero is getting damage.
 
-Return value (string)
+Return value (string or `nil`)
 : The hurt sound id. `nil` means no sound.
 
-### `hero:set_hurt_sound(sound_id)`
+### `hero:set_hurt_sound([sound_id])`
 
 Changes the sound to play when the hero is getting damage.
 
@@ -900,17 +948,17 @@ By default, this sound is `"hero_hurt"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The hurt sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_sinking_sound()`
 
 Returns the name of the sound played when the hero is sinking into deep water or lava.
 
-Return value (string)
+Return value (string or `nil`)
 : The sinking sound id. `nil` means no sound.
 
-### `hero:set_sinking_sound(sound_id)`
+### `hero:set_sinking_sound([sound_id])`
 
 Changes the sound to play when the hero is sinking into deep water or lava.
 
@@ -918,17 +966,17 @@ By default, this sound is `"splash"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The sinking sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_swimming_sound()`
 
 Returns the name of the sound played when the hero is swimming.
 
-Return value (string)
+Return value (string or `nil`)
 : The swimming sound id. `nil` means no sound.
 
-### `hero:set_swimming_sound(sound_id)`
+### `hero:set_swimming_sound([sound_id])`
 
 Changes the sound to play when the hero is swimming.
 
@@ -936,17 +984,17 @@ By default, this sound is `"swim"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The swimming sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_lifting_sound()`
 
 Returns the name of the sound played when the hero is lifting an entity (if liftable).
 
-Return value (string)
+Return value (string or `nil`)
 : The lifting sound id. `nil` means no sound.
 
-### `hero:set_lifting_sound(sound_id)`
+### `hero:set_lifting_sound([sound_id])`
 
 Changes the sound to play when the hero is lifting an entity (if liftable).
 
@@ -954,17 +1002,17 @@ By default, this sound is `"lift"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The lifting sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_running_sound()`
 
 Returns the name of the sound played when the hero is running.
 
-Return value (string)
+Return value (string or `nil`)
 : The running sound id. `nil` means no sound.
 
-### `hero:set_running_sound(sound_id)`
+### `hero:set_running_sound([sound_id])`
 
 Changes the sound to play when the hero is running.
 
@@ -972,17 +1020,17 @@ By default, this sound is `"running"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The running sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_running_obstacle_sound()`
 
 Returns the name of the sound played when the hero is colliding with an obstacle while running.
 
-Return value (string)
+Return value (string or `nil`)
 : The running_obstacle sound id. `nil` means no sound.
 
-### `hero:set_running_obstacle_sound(sound_id)`
+### `hero:set_running_obstacle_sound([sound_id])`
 
 Changes the sound to play when the hero is colliding with an obstacle while running.
 
@@ -990,17 +1038,17 @@ By default, this sound is `"running_obstacle"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The running_obstacle sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_spin_attack_load_sound()`
 
 Returns the name of the sound played when the hero is loading the spin attack.
 
-Return value (string)
+Return value (string or `nil`)
 : The spin_attack_load sound id. `nil` means no sound.
 
-### `hero:set_spin_attack_load_sound(sound_id)`
+### `hero:set_spin_attack_load_sound([sound_id])`
 
 Changes the sound to play when the hero is loading the spin attack.
 
@@ -1008,17 +1056,17 @@ By default, this sound is `"sword_spin_attack_load"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The spin_attack_load sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_spin_attack_release_sound()`
 
 Returns the name of the sound played when the hero is releasing the spin attack.
 
-Return value (string)
+Return value (string or `nil`)
 : The spin_attack_release sound id. `nil` means no sound.
 
-### `hero:set_spin_attack_release_sound(sound_id)`
+### `hero:set_spin_attack_release_sound([sound_id])`
 
 Changes the sound to play when the hero is releasing the spin attack.
 
@@ -1026,17 +1074,17 @@ By default, this sound is `"sword_spin_attack_release"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The spin_attack_load sound id. `nil` or an empty string means no sound.
 
 ### `hero:get_victory_sound()`
 
 Returns the name of the sound played when the hero is performing the victory animation.
 
-Return value (string)
+Return value (string or `nil`)
 : The victory sound id. `nil` means no sound.
 
-### `hero:set_victory_sound(sound_id)`
+### `hero:set_victory_sound([sound_id])`
 
 Changes the sound to play when the hero is performing the victory animation.
 
@@ -1044,7 +1092,7 @@ By default, this sound is `"victory"` for historical reasons.
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The victory sound id. `nil` or an empty string means no sound.
 
 ## Deprecated methods of Hero
@@ -1053,14 +1101,14 @@ You can use this function if you want another sound to be played.
 
 Returns the name of the sound played when the hero uses the sword.
 
-Return value (string)
+Return value (string or `nil`)
 : The sound id of the hero's sword. `nil` means no sound.
 
 !!! warning "Deprecated"
 
     This method is deprecated since Solarus 2.0. Use hero:get_sword_sound instead.
 
-### `hero:set_sword_sound_id(sound_id)`
+### `hero:set_sword_sound_id([sound_id])`
 
 Changes the sound to play when the hero uses the sword.
 
@@ -1068,20 +1116,20 @@ By default, the sound used for the sword is `"swordX"`,where X is the [sword lev
 
 You can use this function if you want another sound to be played.
 
-`sound_id` (string or nil)
+`sound_id` (string or `nil`, optional)
 : The sound id of the hero's sword. `nil` or an empty string means no sword sound.
 
 !!! warning "Deprecated"
 
     This method is deprecated since Solarus 2.0. Use hero:set_sword_sound instead.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
-The hero is a particular [map entity](./overview.md). Therefore, he inherits all events from the type map entity.
+The hero is a particular [map entity](./index.md). Therefore, he inherits all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type hero
 

@@ -39,12 +39,12 @@ static void rumble(Joypad& joypad, double low_frequency_intensity, double high_f
 void LuaContext::register_joypad_module() {
 
   const std::vector<luaL_Reg> methods = {
-    {"get_axis", LUA_TO_C_BIND(&Joypad::get_axis)},
-    {"is_button_pressed", LUA_TO_C_BIND(&Joypad::is_button_pressed)},
-    {"get_name", LUA_TO_C_BIND(&Joypad::get_name)},
-    {"rumble", LUA_TO_C_BIND(rumble)},
-    {"has_rumble", LUA_TO_C_BIND(&Joypad::has_rumble)},
-    {"is_attached", LUA_TO_C_BIND(&Joypad::is_attached)}
+    { "get_axis", LUA_TO_C_BIND(&Joypad::get_axis) },
+    { "is_button_pressed", LUA_TO_C_BIND(&Joypad::is_button_pressed) },
+    { "get_name", LUA_TO_C_BIND(&Joypad::get_name) },
+    { "rumble", LUA_TO_C_BIND(rumble) },
+    { "has_rumble", LUA_TO_C_BIND(&Joypad::has_rumble) },
+    { "is_attached", LUA_TO_C_BIND(&Joypad::is_attached) }
   };
 
   const std::vector<luaL_Reg> metamethods = {
@@ -89,7 +89,7 @@ std::shared_ptr<Joypad> LuaContext::check_joypad(lua_State* current_l, int index
 
 // Events
 bool LuaContext::on_joypad_axis_moved(Joypad& joypad, JoyPadAxis axis, double val) {
-  if(!userdata_has_field(joypad,"on_axis_moved")) {
+  if (!userdata_has_field(joypad, "on_axis_moved")) {
     return false;
   }
 
@@ -115,14 +115,14 @@ bool LuaContext::on_joypad_axis_moved(Joypad& joypad, JoyPadAxis axis, double va
 }
 
 bool LuaContext::on_joypad_button_pressed(Joypad& joypad, JoyPadButton button) {
-  if(!userdata_has_field(joypad,"on_button_pressed")) {
+  if (!userdata_has_field(joypad, "on_button_pressed")) {
     return false;
   }
 
   push_joypad(current_l, joypad);
   bool handled = false;
 
-  if(find_method("on_button_pressed")) {
+  if (find_method("on_button_pressed")) {
     lua_pushstring(current_l, enum_to_name(button).c_str());
     bool success = call_function(2, 1, "on_button_pressed");
     if (!success) {
@@ -139,14 +139,14 @@ bool LuaContext::on_joypad_button_pressed(Joypad& joypad, JoyPadButton button) {
 }
 
 bool LuaContext::on_joypad_button_released(Joypad& joypad, JoyPadButton button) {
-  if(!userdata_has_field(joypad,"on_button_released")) {
+  if (!userdata_has_field(joypad, "on_button_released")) {
     return false;
   }
 
   push_joypad(current_l, joypad);
   bool handled = false;
 
-  if(find_method("on_button_released")) {
+  if (find_method("on_button_released")) {
     lua_pushstring(current_l, enum_to_name(button).c_str());
 
     bool success = call_function(2, 1, "on_button_released");
@@ -165,13 +165,13 @@ bool LuaContext::on_joypad_button_released(Joypad& joypad, JoyPadButton button) 
 }
 
 bool LuaContext::on_joypad_removed(Joypad& joypad) {
-  if(!userdata_has_field(joypad,"on_removed")) {
+  if (!userdata_has_field(joypad,"on_removed")) {
     return false;
   }
   push_joypad(current_l, joypad);
 
   bool handled = false;
-  if(find_method("on_removed")) {
+  if (find_method("on_removed")) {
     bool success = call_function(1, 1, "on_removed");
 
     if (!success) {
@@ -187,5 +187,4 @@ bool LuaContext::on_joypad_removed(Joypad& joypad) {
   return handled;
 }
 
-} //Solarus
-
+} // Solarus

@@ -22,6 +22,7 @@ namespace Solarus {
 
 const std::string EnumInfoTraits<JoyPadAxis>::pretty_name = "joypad axis";
 const std::string EnumInfoTraits<JoyPadButton>::pretty_name = "joypad button";
+
 const EnumInfo<JoyPadButton>::names_type EnumInfoTraits<JoyPadButton>::names = {
   {JoyPadButton::A, "a"},
   {JoyPadButton::B, "b"},
@@ -55,9 +56,55 @@ const EnumInfo<JoyPadAxis>::names_type EnumInfoTraits<JoyPadAxis>::names = {
   {JoyPadAxis::TRIGGER_RIGHT, "trigger_right"},
 };
 
-Joypad::Joypad(SDL_GameController *sdl_gc, SDL_Joystick *sdl_js) :
-  controller(sdl_gc), joystick(sdl_js)
-{}
+std::map<std::string, std::string> Joypad::legacy_bindings_mapping = {
+  {"button 0", "a"},
+  {"button 1", "b"},
+  {"button 2", "x"},
+  {"button 3", "y"},
+  {"button 4", "left_shoulder"},
+  {"button 5", "right_shoulder"},
+  {"button 6", "back"},
+  {"button 7", "start"},
+  {"button 8", "left_stick"},
+  {"button 9", "right_stick"},
+  {"hat 0 up", "dpad_up"},
+  {"hat 0 down", "dpad_down"},
+  {"hat 0 left", "dpad_left"},
+  {"hat 0 right", "dpad_right"},
+
+  {"axis 0 -", "left_x -"},
+  {"axis 0 +", "left_x +"},
+  {"axis 1 -", "left_y -"},
+  {"axis 1 +", "left_y +"},
+  {"axis 3 -", "right_x -"},
+  {"axis 3 +", "right_x +"},
+  {"axis 4 -", "right_y -"},
+  {"axis 4 +", "right_y +"},
+  {"axis 2 -", "trigger_left"},
+  {"axis 5 -", "trigger_right"},
+};
+
+std::map<JoyPadButton, int> Joypad::legacy_button_number_mapping = {
+  {JoyPadButton::A, 0},
+  {JoyPadButton::B, 1},
+  {JoyPadButton::X, 2},
+  {JoyPadButton::Y, 3},
+  {JoyPadButton::LEFT_SHOULDER, 4},
+  {JoyPadButton::RIGHT_SHOULDER, 5},
+  {JoyPadButton::BACK, 6},
+  {JoyPadButton::START, 7},
+  {JoyPadButton::LEFT_STICK, 8},
+  {JoyPadButton::RIGHT_STICK, 9},
+  {JoyPadButton::DPAD_UP, 10},
+  {JoyPadButton::DPAD_DOWN, 11},
+  {JoyPadButton::DPAD_LEFT, 12},
+  {JoyPadButton::DPAD_RIGHT, 13},
+};
+
+Joypad::Joypad(SDL_GameController *sdl_gc, SDL_Joystick *sdl_js):
+    controller(sdl_gc), joystick(sdl_js)
+{
+}
 
 bool Joypad::is_button_pressed(JoyPadButton button) const {
   return SDL_GameControllerGetButton(controller.get(),(SDL_GameControllerButton)button);

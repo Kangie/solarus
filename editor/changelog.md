@@ -1,5 +1,14 @@
 # Changelog
 
+## Solarus Editor 2.0.2 (2025-12-05)
+
+* Memorization of layout splitters (#1914).
+* Show welcome tab when opening the editor without a quest.
+* Fix crash when dragging patterns onto the contours list (#1948).
+* Fix memory leak when switching tilesets in the map editor (#1940).
+* Fix external text editor option on Linux and macOS (!1625).
+* Fix DMG layout and graphics.
+
 ## Solarus Editor 2.0.1 (2025-07-23)
 
 * Fix empty tileset selector (#1724).

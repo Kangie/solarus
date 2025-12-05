@@ -327,7 +327,7 @@ void Map::load(Game& game) {
   set_floor(data.get_floor());
   tileset_id = data.get_tileset_id();
   tileset = &resource_provider.get_tileset(tileset_id);
-  entities = std::unique_ptr<Entities>(new Entities(game, *this));
+  entities = std::make_unique<Entities>(game, *this);
   entities->create_entities(data);
   loaded = true;
 }

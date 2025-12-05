@@ -2,15 +2,15 @@
 
 ## Overview
 
-A carried object is a [map entity](./overview.md) that the [hero](./hero.md) is lifting, carrying or throwing.
+A carried object is a [map entity](./index.md) that the [hero](./hero.md) is lifting, carrying or throwing.
 
-A carried object is created automatically by the engine when the [hero](./hero.md) [lifts a map entity](./overview.md#entityget_weight), typically a [destructible object](./destructible.md). The carried object takes the sprite and the features of the lifted entity it is created from.
+A carried object is created automatically by the engine when the [hero](./hero.md) [lifts a map entity](./index.md#entityget_weight), typically a [destructible object](./destructible.md). The carried object takes the sprite and the features of the lifted entity it is created from.
 
 The hero can then walk with his carried object and throw it. He can even go to another map: the carried object is preserved.
 
 ### Carried Object Sprites
 
-Two sprites for a carried object are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite(name)`](./overview.md#entityget_spritename).
+Two sprites for a carried object are automatically created by the engine. You can access them like for any other entity, specifying their name in [`entity:get_sprite(name)`](./index.md#entityget_spritename).
 
 `"main"` (default)
 : Main sprite representing the carried object. Its animation set is the one of the original entity he was created from (like a [destructible object](./destructible.md)).
@@ -22,11 +22,11 @@ Two sprites for a carried object are automatically created by the engine. You ca
 `"shadow"`
 : Shadow displayed under the carried object when thrown. Its animation set is `"entities/shadow"`, with the animation name `"big"`.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
-Carried objects are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Carried objects are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type carried object
 
@@ -34,9 +34,9 @@ The following methods are specific to carried objects.
 
 ### `carried_object:get_carrier()`
 
-Returns the [entity](./overview.md) that carried this object.
+Returns the [entity](./index.md) that carried this object.
 
-Return value ([entity](./overview.md))
+Return value ([entity](./index.md))
 : The carrier entity.
 
 ### `carried_object:get_damage_on_enemies()`
@@ -71,14 +71,14 @@ Sets the height this object will me displayed at, relative to the [hero's carry 
 
 Returns the sound to be played when this object is cut or broken.
 
-Return value (string)
+Return value (string or `nil`)
 : Id of the destruction sound. `nil` means that no sound will be played.
 
 ### `carried_object:set_destruction_sound(destruction_sound_id)`
 
 Sets the sound to be played when this object is cut or broken.
 
-`destruction_sound_id` (string)
+`destruction_sound_id` (string or `nil`)
 : Id of the destruction sound. `nil` means that no sound will be played.
 
 ### `carried_object:get_throwing_sound()`
@@ -92,8 +92,8 @@ Return value (string)
 
 Changes the sound to play when the object is thrown. By default, the sound used for throwing is "throw". You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `carried_object:get_falling_sound()`
 
@@ -106,8 +106,8 @@ Return value (string)
 
 Changes the sound to play when the object is falling into a hole. By default, the sound used for falling is "jump". You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `carried_object:get_sinking_sound()`
 
@@ -120,8 +120,8 @@ Return value (string)
 
 Changes the sound to play when the object is sinking into deep water or lava. By default, the sound used for sinking is "walk_on_water". You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
 ### `carried_object:get_exploding_sound()`
 
@@ -134,16 +134,16 @@ Return value (string)
 
 Changes the sound to play when the object is exploding. By default, the sound used for exploding is "explosion". You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
-Carried objects are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Carried objects are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type carried object
 

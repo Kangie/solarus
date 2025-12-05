@@ -4,7 +4,7 @@
 
 Dialogs are all messages shown to the player in the dialog box during the game. Some dialogs are triggered by the engine and others by your quest. They are all defined in the file `languages/xx/text/dialogs.dat,` where `xx` is a language code defined in [project_db.dat](../database-file.md) (e.g. `"en"` or `"fr"`)
 
-When translating the game, you have to translate this `dialogs.dat`file as well as the [strings file](./strings.md) (`strings.dat`) Have a look at the [translation page](../../tutorials/quest-creation/translate-a-quest.md) if you are interested in translating a Solarus game.
+When translating the game, you have to translate this `dialogs.dat`file as well as the [strings file](./strings.md) (`strings.dat`) Have a look at the [translation page](../../tutorials/manual/translate-a-quest.md) if you are interested in translating a Solarus game.
 
 Solarus Editor fully supports the edition of dialog files. You can either use it to edit a dialog file graphically, or you can edit `dialogs.dat` by hand in a text editor if you prefer.
 

@@ -109,8 +109,8 @@ cd build
 cmake ..
 ```
 
-If CMake fails to find Solarus include directories or libraries,
-for example because they are not properly installed in standard paths,
+If CMake fails to find Solarus included directories or libraries,
+for example because they are not properly installed in the standard paths,
 you can explictly indicate their location instead:
 
 ```bash
@@ -134,11 +134,10 @@ make
 
 ## License
 
-The source code of Solarus Quest Editor is licensed under the terms of the
+The source code of Solarus Editor is licensed under the terms of the
 [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 Images used in the editor are licensed under
-[Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)](
-http://creativecommons.org/licenses/by-sa/3.0/).
+[Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)](http://creativecommons.org/licenses/by-sa/3.0/).
 
 See the `license.md` file for more details.

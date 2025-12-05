@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Solarus Quest Editor</string>
+   <string>Solarus Editor</string>
   </property>
   <property name="documentMode">
    <bool>true</bool>
@@ -180,6 +180,7 @@
     <addaction name="action_doc"/>
     <addaction name="separator"/>
     <addaction name="action_about"/>
+    <addaction name="action_welcome"/>
    </widget>
    <widget class="QMenu" name="menu_tools">
     <property name="title">
@@ -563,6 +564,10 @@
    </property>
   </action>
   <action name="action_about">
+   <property name="icon">
+    <iconset resource="../../resources/images.qrc">
+     <normaloff>:/images/icon_info.svg</normaloff>:/images/icon_info.svg</iconset>
+   </property>
    <property name="text">
     <string>About</string>
    </property>
@@ -624,6 +629,15 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="action_welcome">
+   <property name="icon">
+    <iconset resource="../../resources/images.qrc">
+     <normaloff>:/images/icon_home.svg</normaloff>:/images/icon_home.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Welcome</string>
    </property>
   </action>
  </widget>

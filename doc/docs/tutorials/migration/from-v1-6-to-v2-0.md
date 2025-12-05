@@ -1,7 +1,7 @@
 # Upgrade Your Quest from Solarus 1.6 to Solarus 2.0
 
 The multiplayer update! Solarus now supports multiple maps, cameras, heroes and game controllers.
-We also provide brand new APIs for [controllers](../../lua-api/controls/overview.md) with much better joypad support, [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md) with a lot of customization.
+We also provide brand new APIs for [controllers](../../lua-api/controls/index.md) with much better joypad support, [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md) with a lot of customization.
 
 As always, you should make a backup before any upgrade.
 
@@ -48,14 +48,15 @@ This function is provided for quests that were designed before Solarus 2.0, and 
 ### Camera and hero teletransportation
 
 Teleportation is now driven by cameras, as there might be multiple heroes and multiple cameras.
-- [`hero:teleport()`](../../lua-api/map-entities/hero.md#map_iddestination_nametransition_style) now also teleports the linked camera instead of recreating one.
+
+- [`hero:teleport()`](../../lua-api/map-entities/hero.md#heroteleportmap_id-destination_name-transition_style) now also teleports the linked camera instead of recreating one.
   If no camera is tracking the hero when you call `hero:teleport()` (which can happen during cutscenes), then:
   - If the destination map is already loaded (meaning you are using the new 2.0 multiplayer features), the camera stays on the previous map.
   - If the destination map is not loaded yet, you will get a warning but the camera will automatically be re-linked to the hero for compatibility.
 
 ### Drawing onto the camera surface
 
-Due to new camera features possibly involving complex transformations like scaling and rotation, drawing entities onto the camera surface now expects map coordinates instead of screen coordinates. For instance, with [`entity:set_draw_override()`](../../lua-api/map-entities/overview.md#entityset_draw_overridedraw_override) or [`entity:on_pre_draw()`](../../lua-api/map-entities/overview.md#entityon_pre_drawcamera), quests with format 2.0 should pass map coordinates rather than screen coordinates.
+Due to new camera features possibly involving complex transformations like scaling and rotation, drawing entities onto the camera surface now expects map coordinates instead of screen coordinates. For instance, with [`entity:set_draw_override()`](../../lua-api/map-entities/index.md#entityset_draw_overridedraw_override) or [`entity:on_pre_draw()`](../../lua-api/map-entities/index.md#entityon_pre_drawcamera), quests with format 2.0 should pass map coordinates rather than screen coordinates.
 Yes, it is a breaking change, but the good news is that it simplifies your code, since you no longer have to subtract camera coordinates: you will be able to do
 ```
 camera:get_surface():draw(your_sprite, entity_x, entity_y)
@@ -84,6 +85,7 @@ The now deprecated `sword_knowledge` ability is equivalant to a `spin_attack` ab
 There is a whole new audio API with proper types for [music](../../lua-api/audio/music.md) and [sound](../../lua-api/audio/sound.md). The only slightly breaking change is detailed below.
 
 - `hero:get_sword_sound_id()` is now deprecated, please use `hero:get_sword_sound()` instead. This function was renamed for consistency with the rest of the API. Additionally, it now returns `nil` rather than an empty string if there is no sword sound.
+- If you are using IT music files, channels numbers are now between 1 and the number of channels in order to stick to tracker software conventions.
 
 ### Optional booleans are more strict
 

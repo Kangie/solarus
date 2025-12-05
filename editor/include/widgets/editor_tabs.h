@@ -64,6 +64,8 @@ public:
       Quest& quest, const QString& language_id);
   void open_strings_editor(
       Quest& quest, const QString& language_id);
+  void open_welcome_editor(
+      Quest& quest, const QString& path);
   QString get_last_closed_file() const;
   void reopen_last_closed_editor(Quest& quest);
 
@@ -92,6 +94,10 @@ signals:
   void run_map_requested(const QString& map_id);
   void clear_console();
   void log_message_to_console(const QString& log_level, const QString& message);
+  void new_quest_requested();
+  void open_quest_requested();
+  void documentation_requested();
+  void website_requested();
 
 public slots:
 
@@ -103,6 +109,9 @@ public slots:
   void reload_file_requested(int index);
   void file_renamed(const QString& old_path, const QString& new_path);
   void file_deleted(const QString& path);
+  void open_welcome_editor_requested(Quest& quest);
+
+  bool handle_internal_link(Quest& quest, const QString& link);
 
 protected:
 

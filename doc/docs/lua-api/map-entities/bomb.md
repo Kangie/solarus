@@ -4,7 +4,7 @@
 
 A bomb is an entity that explodes after a few seconds.
 
-You can create this type of [map entity](./overview.md) only dynamically with [`map:create_bomb()`](../map.md#mapcreate_bombproperties). It cannot be declared in the [map data file](../map.md#map-files).
+You can create this type of [map entity](./index.md) only dynamically with [`map:create_bomb()`](../map.md#mapcreate_bombproperties). It cannot be declared in the [map data file](../map.md#map-files).
 
 !!! note "Historical Feature"
 
@@ -14,23 +14,23 @@ A bomb can be lifted by the [hero](./hero.md) before it explodes. When it explod
 
 If a bomb is placed on a [stream](./stream.md), it follows a movement corresponding to this stream.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
-Bombs are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Bombs are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `bomb`
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
-Bombs are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Bombs are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type `bomb`
 

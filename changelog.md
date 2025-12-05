@@ -1,5 +1,22 @@
 # Changelog
 
+## Solarus 2.0.2 (2025-12-05)
+
+* Made separator scrolling more robust.
+* Enable custom entities to cross separators.
+* Fix video shader not being applied to subpixel cameras.
+* Fix straight movement smoothness under certain speed modifications scenarios.
+* Fix analog movements being stuck on some axes sometimes (#1683).
+* Fix crash when setting events on a joypad after the game was reset (#1898).
+* Fix crash when setting an ability in game:on_started() (#1920).
+* Fix crash when calling `hero:get_map()` from `game:on_started()` (#1937).
+* Fix crash when attempting to change hero state during state:on_finished() (#1290).
+* Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
+* Fix `music:set_music_channel_volume` crashes the engine if channel number is 0 (#1924).
+* Fix diagonal jumpers preventing interactions of entities overlapping them (#1928).
+* Fix `on_joypad_button_pressed` wrong button number in 1.6 quests (#1943).
+* Fix interrupted stairs state not restoring an empty clip rectangle (#1936).
+
 ## Solarus 2.0.1 (2025-07-23)
 
 * Fix `game:start/stop_game_over()` hero optional parameter (#1900).

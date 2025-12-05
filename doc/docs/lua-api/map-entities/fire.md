@@ -4,7 +4,7 @@
 
 This is some fire whose sprite hurts [enemies](./enemy.md).
 
-You can create this type of [map entity](./overview.md) only dynamically with [`map:create_fire()`](../map.md#mapcreate_fireproperties). It cannot be declared in the [map data file](../map.md#map-files).
+You can create this type of [map entity](./index.md) only dynamically with [`map:create_fire()`](../map.md#mapcreate_fireproperties). It cannot be declared in the [map data file](../map.md#map-files).
 
 !!! note "Historical Feature"
 
@@ -16,23 +16,23 @@ Fire hurts [enemies](./enemy.md) that are sensible to it. It does not hurt the [
 
 Fire can also be detected by [non-playing characters](./npc.md): this is useful to implement a torch as a generalized NPC that interacts with fire.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
-Fire entities are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Fire entities are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type fire
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
-Fire entities are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Fire entities are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type fire
 

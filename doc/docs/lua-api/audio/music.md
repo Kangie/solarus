@@ -37,7 +37,8 @@ Return value (boolean)
 
 Sets if the music is paused.
 
-`paused` (boolean) `true` to pause the music, `false` to resume from pause.
+`paused` (boolean)
+: `true` to pause the music, `false` to resume from pause.
 
 ### `music:get_volume()`
 
@@ -48,7 +49,7 @@ Return value (integer)
 
 ### `music:set_volume(volume)`
 
-Sets the volume for this music relative to the global volume (see [`sol.audio.set_music_volume`](./overview.md#solaudioset_music_volumevolume)).
+Sets the volume for this music relative to the global volume (see [`sol.audio.set_music_volume`](./index.md#solaudioset_music_volumevolume)).
 
 `volume` (integer)
 : The volume between 0 and 100.

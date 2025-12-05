@@ -46,8 +46,10 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QSplitter>
 #include <QToolButton>
 #include <QUndoGroup>
+#include <QStandardPaths>
 
 #include <oclero/qlementine/widgets/AboutDialog.hpp>
 
@@ -84,14 +86,21 @@ MainWindow::MainWindow(QWidget* parent) :
   // Title.
   update_title();
 
+  // Get layout settings
+  EditorSettings settings;
+
   // Quest tree splitter.
-  const int tree_width = 300;
-  ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
+  const bool quest_tree_visible = settings.get_value_bool(EditorSettings::quest_tree_visible);
+  const int quest_tree_width = quest_tree_visible
+    ? settings.get_value_int(EditorSettings::quest_tree_width)
+    : 0;
+  ui.quest_tree_splitter->setSizes({ quest_tree_width, width() - quest_tree_width });
   ui.quest_tree_splitter->setStretchFactor(0, 0);  // Don't expand the left panel
   ui.quest_tree_splitter->setStretchFactor(1, 1);  // but only the map view.
+  ui.quest_tree_view->setVisible(quest_tree_visible);
 
   // Console splitter.
-  const int console_height = 100;
+  const int console_height = 140; //settings.get_value_int(EditorSettings::console_height);
   ui.console_splitter->setSizes({ height() - console_height, console_height });
   ui.console_widget->setVisible(false);
   ui.console_widget->set_quest_runner(quest_runner);
@@ -138,7 +147,7 @@ MainWindow::MainWindow(QWidget* parent) :
   ui.tool_bar->insertWidget(ui.action_show_layer_0, grid_size);
   ui.tool_bar->insertSeparator(ui.action_show_layer_0);
 
-  ui.action_show_quest_files->setChecked(true);
+  ui.action_show_quest_files->setChecked(quest_tree_visible);
   ui.action_show_layer_0->setShortcutContext(Qt::WidgetShortcut);
   ui.action_show_layer_1->setShortcutContext(Qt::WidgetShortcut);
   ui.action_show_layer_2->setShortcutContext(Qt::WidgetShortcut);
@@ -245,6 +254,14 @@ MainWindow::MainWindow(QWidget* parent) :
           this, &MainWindow::log_message_to_console);
   connect(ui.tab_widget, &EditorTabs::run_map_requested,
           this, &MainWindow::run_quest);
+  connect(ui.tab_widget, &EditorTabs::new_quest_requested,
+          ui.action_new_quest, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::open_quest_requested,
+          ui.action_load_quest, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::documentation_requested,
+          ui.action_doc, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::website_requested,
+          ui.action_website, &QAction::trigger);
 
   connect(grid_size, &PairSpinBox::value_changed,
           this, &MainWindow::change_grid_size);
@@ -260,6 +277,9 @@ MainWindow::MainWindow(QWidget* parent) :
   connect(&settings_dialog, &SettingsDialog::settings_changed,
           this, &MainWindow::reload_settings);
 
+  connect(ui.quest_tree_splitter, &QSplitter::splitterMoved,
+          this, &MainWindow::quest_tree_resized);
+
   // No editor initially.
   current_editor_changed(-1);
 
@@ -268,7 +288,7 @@ MainWindow::MainWindow(QWidget* parent) :
   if (FileTools::get_assets_path().isEmpty()) {
     GuiTools::warning_dialog(tr("Could not locate the assets directory.\n"
                               "Some features like creating a new quest will not be available.\n"
-                              "Please make sure that Solarus Quest Editor is correctly installed."));
+                              "Please make sure that Solarus Editor is correctly installed."));
   }
 
   // Exceptions for automatic icon coloring.
@@ -366,7 +386,7 @@ QMenu* MainWindow::create_zoom_menu() {
     { tr("200 %"), 2.0 },
     { tr("400 %"), 4.0 }
   };
-  QActionGroup* action_group = new QActionGroup(this);
+  QActionGroup* action_group = new QActionGroup(zoom_menu);
   for (const std::pair<QString, double>& zoom : zooms) {
     QAction* action = new QAction(zoom.first, action_group);
     zoom_actions[zoom.second] = action;
@@ -826,7 +846,7 @@ void MainWindow::add_quest_to_recent_list() {
 void MainWindow::on_action_new_quest_triggered() {
 
   if (FileTools::get_assets_path().isEmpty()) {
-    GuiTools::error_dialog(tr("Could not find the assets directory.\nMake sure that Solarus Quest Editor is properly installed."));
+    GuiTools::error_dialog(tr("Could not find the assets directory.\nMake sure that Solarus Editor is properly installed."));
     return;
   }
 
@@ -846,6 +866,11 @@ void MainWindow::on_action_new_quest_triggered() {
     default_path = settings.get_value_string(EditorSettings::working_directory);
   }
 
+  // Fallback to the user's Documents folder.
+  if (default_path.isEmpty()) {
+    default_path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+  }
+
   // Open the new quest dialog and then get its results.
   NewQuestDialog new_quest_dialog(default_path, this);
   if (QDialog::Rejected == new_quest_dialog.exec()) {
@@ -861,12 +886,16 @@ void MainWindow::on_action_new_quest_triggered() {
     if (open_quest(config.quest_path)) {
       // Open the quest properties editor initially.
       open_file(quest, quest.get_data_path());
+
+      // Save the working directory.
+      const QString quest_dir = QFileInfo(config.quest_path).absoluteDir().absolutePath();
+      EditorSettings settings;
+      settings.set_value(EditorSettings::working_directory, quest_dir);
     }
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
   }
-
 }
 
 /**
@@ -887,9 +916,9 @@ void MainWindow::on_action_load_quest_triggered() {
         tr("Select quest directory"),
         settings.get_value_string(EditorSettings::working_directory),
 #ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
-        QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog
+        {QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog}
 #else
-        QFileDialog::ShowDirsOnly
+        {QFileDialog::ShowDirsOnly}
 #endif
   );
 
@@ -1241,17 +1270,19 @@ bool MainWindow::is_quest_files_visible() const {
  * @brief Shows or hide the quest file tree.
  * @param quest_files_visible @c true to show the file tree.
  */
-void MainWindow::set_quest_files_visible(bool quest_files_visible) {
+void MainWindow::set_quest_files_visible(bool visible) {
 
-  const int tree_width = 300;
+  EditorSettings settings;
+  const int tree_width = settings.get_value_int(EditorSettings::quest_tree_width);
 
-  if (!quest_files_visible) {
+  if (!visible) {
     ui.quest_tree_splitter->setSizes({ 0, width() });
   } else {
     ui.quest_tree_splitter->setSizes({ tree_width, width() - tree_width });
   }
 
-  ui.quest_tree_view->setVisible(quest_files_visible);
+  ui.quest_tree_view->setVisible(visible);
+  settings.set_value(EditorSettings::quest_tree_visible, visible);
 }
 
 /**
@@ -1396,6 +1427,14 @@ void MainWindow::on_action_website_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Welcome" action.
+ */
+void MainWindow::on_action_welcome_triggered() {
+
+  ui.tab_widget->open_welcome_editor_requested(get_quest());
+}
+
+/**
  * @brief Slot called when the user triggers the "Website" action.
  */
 void MainWindow::on_action_about_triggered() {
@@ -1434,7 +1473,7 @@ static void offer_online_docs(MainWindow *parent) {
       MainWindow::tr("Local documentation not found"),
       MainWindow::tr(
           "The local copy of Solarus Documentation could not be found. "
-          "Would you like to try going on line to find the documentaion?"),
+          "Would you like to try going online to find the documentation?"),
       QMessageBox::Ok | QMessageBox::Cancel,
       QMessageBox::Ok
   );
@@ -1953,6 +1992,7 @@ void MainWindow::update_music_actions() {
 void MainWindow::reload_settings() {
 
   ui.tab_widget->reload_settings();
+  ui.console_widget->reload_settings();
 }
 
 /**
@@ -1971,6 +2011,13 @@ void MainWindow::update_title() {
 void MainWindow::open_file(Quest& quest, const QString& path) {
 
   ui.tab_widget->open_file_requested(quest, path);
+}
+
+/**
+ * @brief Opens the welcome page.
+ */
+void MainWindow::open_welcome() {
+  ui.tab_widget->open_welcome_editor_requested(quest);
 }
 
 /**
@@ -2575,6 +2622,18 @@ bool MainWindow::update_image_in_sprite(
   QString replacement = QString("\n  src_image = \"%1\",\n").arg(image_after);
 
   return FileTools::replace_in_file(path, QRegularExpression(pattern), replacement);
+}
+
+/**
+ * @brief Saves the quest tree width in settings
+ * @param pos the position of the splitter
+ * @param index of the element in the splitter
+ */
+void MainWindow::quest_tree_resized(int pos, int index) {
+  if (index == 1) {
+    EditorSettings settings;
+    settings.set_value(EditorSettings::quest_tree_width, pos);
+  }
 }
 
 }

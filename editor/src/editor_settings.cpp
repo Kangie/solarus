@@ -22,6 +22,18 @@
 
 namespace SolarusEditor {
 
+// Layout keys.
+const QString EditorSettings::quest_tree_visible = "quest_tree_visible";
+const QString EditorSettings::quest_tree_width = "quest_tree_width";
+const QString EditorSettings::console_height = "console_height";
+const QString EditorSettings::map_side_width = "map_side_width";
+const QString EditorSettings::map_props_height = "map_props_height";
+const QString EditorSettings::tileset_side_width = "tileset_side_width";
+const QString EditorSettings::sprite_side_width = "sprite_side_width";
+const QString EditorSettings::sprite_preview_height = "sprite_preview_height";
+const QString EditorSettings::shader_side_width = "shader_side_width";
+const QString EditorSettings::shader_files_height = "shader_files_height";
+
 // General keys.
 const QString EditorSettings::theme = "theme";
 const QString EditorSettings::working_directory = "working_directory";
@@ -103,73 +115,37 @@ const QString EditorSettings::shader_preview_sprite_id = "shader_editor/preview_
 const QString EditorSettings::shader_preview_sprite_animation = "shader_editor/preview_sprite_animation";
 const QString EditorSettings::shader_preview_sprite_direction = "shader_editor/preview_sprite_direction";
 
-QMap<QString, QVariant> EditorSettings::default_values = {
+/**
+ * @brief Get the default fixed font to use in the UI.
+ * 
+ * On macOS and Windows, we tweak the value returned by QFontDatabase, as the
+ * default system fonts on these platforms are old and ugly...
+ * 
+ * @return The QFont to use for all fixed-font widgets in the user interface.
+ */
+QFont get_default_fixed_font() {
+  QFont result = QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont);
 
-  // General.
-  { EditorSettings::theme, "automatic" },
-  { EditorSettings::working_directory, "" },
-  { EditorSettings::last_quests, QStringList() },
-  { EditorSettings::last_files, QStringList() },
-  { EditorSettings::last_file, "" },
-  { EditorSettings::restore_last_files, true },
-  { EditorSettings::save_files_before_running, "ask" },
-  { EditorSettings::audio, true },
-  { EditorSettings::quest_size, QSize() },
-  { EditorSettings::force_software_rendering, false },
-  { EditorSettings::suspend_unfocused, true },
+#ifdef Q_OS_MAC
+  // On macOS, the default fixed font 'Monaco' is not very good.
+  // Use another one instead if available.
+  const QString better_mac_font = QString("Menlo");
+  if (QFontDatabase::families().contains(better_mac_font)) {
+    result = QFont(better_mac_font);
+    result.setPointSize(11);
+  }
+#elif defined(Q_OS_WIN)
+  // On Windows, the default fixed font 'Courier New' is not very good.
+  // Use another one instead if available.
+  const QString better_win_font = QString("Consolas");
+  if (QFontDatabase::families().contains(better_win_font)) {
+    result = QFont(better_win_font);
+    result.setPointSize(11);
+  }
+#endif
 
-  // Import dialog.
-  { EditorSettings::import_last_source_quest, "" },
-
-  // Package dialog.
-  { EditorSettings::package_save_path, "" },
-
-  // Console.
-  { EditorSettings::console_history, QStringList() },
-
-  // Text editor.
-  { EditorSettings::font_family, QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont).family() },
-  { EditorSettings::font_size, 10 },
-  { EditorSettings::tab_length, 2 },
-  { EditorSettings::replace_tab_by_spaces, true },
-  { EditorSettings::external_text_editor_enabled, false},
-  { EditorSettings::external_text_editor_cmd, ""},
-
-  // Map editor.
-  { EditorSettings::map_main_zoom, 2.0 },
-  { EditorSettings::map_grid_show_at_opening, false },
-  { EditorSettings::map_grid_size, QSize(16, 16) },
-  { EditorSettings::map_grid_style, static_cast<int>(GridStyle::DASHED) },
-  { EditorSettings::map_grid_color, "#000000" },
-  { EditorSettings::map_tileset_zoom, 2.0 },
-
-  // Sprite editor.
-  { EditorSettings::sprite_main_zoom, 2.0 },
-  { EditorSettings::sprite_grid_show_at_opening, false },
-  { EditorSettings::sprite_grid_size, QSize(16, 16) },
-  { EditorSettings::sprite_grid_style, static_cast<int>(GridStyle::DASHED) },
-  { EditorSettings::sprite_grid_color, "#000000" },
-  { EditorSettings::sprite_auto_detect_grid, false },
-  { EditorSettings::sprite_previewer_zoom, 2.0 },
-  { EditorSettings::sprite_origin_show_at_opening, false },
-  { EditorSettings::sprite_origin_color, "#0000ff" },
-
-  // Tileset editor.
-  { EditorSettings::tileset_zoom, 2.0 },
-  { EditorSettings::tileset_grid_show_at_opening, false },
-  { EditorSettings::tileset_grid_size, QSize(16, 16) },
-  { EditorSettings::tileset_grid_style, static_cast<int>(GridStyle::DASHED) },
-  { EditorSettings::tileset_grid_color, "#000000" },
-  { EditorSettings::tileset_refactoring_change_pattern_id, true },
-
-  // Shader editor.
-  { EditorSettings::shader_preview_type, "picture" },
-  { EditorSettings::shader_preview_picture_file, "" },
-  { EditorSettings::shader_preview_map_id, "" },
-  { EditorSettings::shader_preview_sprite_id, "" },
-  { EditorSettings::shader_preview_sprite_animation, "" },
-  { EditorSettings::shader_preview_sprite_direction, 0 },
-};
+  return result;
+}
 
 /**
  * @brief Creates settings.
@@ -179,12 +155,113 @@ EditorSettings::EditorSettings() :
 }
 
 /**
+ * @brief Returns the map of default values.
+ * 
+ * Initializes it on the first call.
+ * 
+ * @return The map of default values.
+ */
+const QMap<QString, QVariant>& EditorSettings::get_default_values() {
+
+  static QMap<QString, QVariant> default_values{};
+  static bool populated = false;
+
+  // Populate the map only on the first call.
+  if (!populated) {
+    populated = true;
+    const QFont default_fixed_font = get_default_fixed_font();
+
+    default_values = QMap<QString, QVariant>{
+      // Layout.
+      { EditorSettings::quest_tree_visible, true },
+      { EditorSettings::quest_tree_width, 300 },
+      { EditorSettings::console_height, 140 },
+      { EditorSettings::map_side_width, 400 },
+      { EditorSettings::map_props_height, 340 },
+      { EditorSettings::tileset_side_width, 400 },
+      { EditorSettings::sprite_side_width, 400 },
+      { EditorSettings::sprite_preview_height, 550 },
+      { EditorSettings::shader_side_width, 300 },
+      { EditorSettings::shader_files_height, 400 },
+
+      // General.
+      { EditorSettings::theme, "automatic" },
+      { EditorSettings::working_directory, "" },
+      { EditorSettings::last_quests, QStringList() },
+      { EditorSettings::last_files, QStringList() },
+      { EditorSettings::last_file, "" },
+      { EditorSettings::restore_last_files, true },
+      { EditorSettings::save_files_before_running, "ask" },
+      { EditorSettings::audio, true },
+      { EditorSettings::quest_size, QSize() },
+      { EditorSettings::force_software_rendering, false },
+      { EditorSettings::suspend_unfocused, true },
+
+      // Import dialog.
+      { EditorSettings::import_last_source_quest, "" },
+
+      // Package dialog.
+      { EditorSettings::package_save_path, "" },
+
+      // Console.
+      { EditorSettings::console_history, QStringList() },
+
+      // Text editor.
+      { EditorSettings::font_family, default_fixed_font.family() },
+      { EditorSettings::font_size, default_fixed_font.pointSize() },
+      { EditorSettings::tab_length, 2 },
+      { EditorSettings::replace_tab_by_spaces, true },
+      { EditorSettings::external_text_editor_enabled, false},
+      { EditorSettings::external_text_editor_cmd, ""},
+
+      // Map editor.
+      { EditorSettings::map_main_zoom, 2.0 },
+      { EditorSettings::map_grid_show_at_opening, false },
+      { EditorSettings::map_grid_size, QSize(16, 16) },
+      { EditorSettings::map_grid_style, static_cast<int>(GridStyle::DASHED) },
+      { EditorSettings::map_grid_color, "#000000" },
+      { EditorSettings::map_tileset_zoom, 2.0 },
+
+      // Sprite editor.
+      { EditorSettings::sprite_main_zoom, 2.0 },
+      { EditorSettings::sprite_grid_show_at_opening, false },
+      { EditorSettings::sprite_grid_size, QSize(16, 16) },
+      { EditorSettings::sprite_grid_style, static_cast<int>(GridStyle::DASHED) },
+      { EditorSettings::sprite_grid_color, "#000000" },
+      { EditorSettings::sprite_auto_detect_grid, false },
+      { EditorSettings::sprite_previewer_zoom, 2.0 },
+      { EditorSettings::sprite_origin_show_at_opening, false },
+      { EditorSettings::sprite_origin_color, "#0000ff" },
+
+      // Tileset editor.
+      { EditorSettings::tileset_zoom, 2.0 },
+      { EditorSettings::tileset_grid_show_at_opening, false },
+      { EditorSettings::tileset_grid_size, QSize(16, 16) },
+      { EditorSettings::tileset_grid_style, static_cast<int>(GridStyle::DASHED) },
+      { EditorSettings::tileset_grid_color, "#000000" },
+      { EditorSettings::tileset_refactoring_change_pattern_id, true },
+
+      // Shader editor.
+      { EditorSettings::shader_preview_type, "picture" },
+      { EditorSettings::shader_preview_picture_file, "" },
+      { EditorSettings::shader_preview_map_id, "" },
+      { EditorSettings::shader_preview_sprite_id, "" },
+      { EditorSettings::shader_preview_sprite_animation, "" },
+      { EditorSettings::shader_preview_sprite_direction, 0 },
+    };
+  }
+
+  return default_values;
+}
+
+/**
  * @brief Returns a settings value.
  * @param key The key of the setting.
  * @return The value of the setting.
  */
 QVariant EditorSettings::get_value(const QString& key) {
 
+  const QMap<QString, QVariant>& default_values = get_default_values();
   if (default_values.contains(key)) {
     return settings.value(key, default_values[key]);
   }
@@ -268,6 +345,7 @@ QColor EditorSettings::get_value_color(const QString& key) {
  */
 QVariant EditorSettings::get_default(const QString& key) {
 
+  const QMap<QString, QVariant>& default_values = get_default_values();
   if (!default_values.contains(key)) {
     return QVariant();
   }
@@ -359,9 +437,10 @@ void EditorSettings::set_value_color(const QString& key, const QColor& value) {
  */
 void EditorSettings::restore_default() {
 
+  const QMap<QString, QVariant>& default_values = get_default_values();
   const QStringList& keys = default_values.keys();
   for (const QString& key : keys) {
-    settings.setValue(key, default_values[key]);
+    settings.setValue(key, default_values.value(key));
   }
 }
 

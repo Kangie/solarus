@@ -6,9 +6,9 @@ For now, the baseline can only have one of the 8 main directions. This restricti
 
 ## Methods Inherited from `movement`
 
-Jump movements are particular [movement](./overview.md) objects. Therefore, they inherit all methods from the type movement.
+Jump movements are particular [movement](./index.md) objects. Therefore, they inherit all methods from the type movement.
 
-See [movement](./overview.md#methods-of-all-movement-types) to know these methods.
+See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 ## Methods of the type `jump_movement`
 
@@ -58,6 +58,6 @@ Sets the speed of this movement.
 
 ## Events Inherited from `movement`
 
-Jump movements are particular [movement](./overview.md) objects. Therefore, they inherit all events from the type movement.
+Jump movements are particular [movement](./index.md) objects. Therefore, they inherit all events from the type movement.
 
-See [movement](./overview.md#events-of-all-movement-types) to know these events.
+See [movement](./index.md#events-of-all-movement-types) to know these events.

@@ -83,7 +83,7 @@ The rest of the map data file declares all entities (tiles, enemies, chests, etc
 
     Recall that during the game, after this loading phase, map entities can also be created or destroyed dynamically using the [Lua map scripting API](../lua-api/map.md).
 
-There exists many types of entities and most of them can be declared in the map data file. Here is their list (if you want all types of map entities, including the ones that cannot be declared in the map data file, see the [map entity API](../lua-api/map-entities/overview.md)):
+There exists many types of entities and most of them can be declared in the map data file. Here is their list (if you want all types of map entities, including the ones that cannot be declared in the map data file, see the [map entity API](../lua-api/map-entities/index.md)):
 
 - [Tile](./map-data-file.md#tile): A small brick that composes a piece of the map, with a pattern picked from the [tileset](./tileset-data-file.md).
 - [Dynamic tile](./map-data-file.md#dynamic-tile): A special tile that can be enabled or disabled dynamically (usual tiles are optimized away at runtime).
@@ -123,7 +123,7 @@ The following properties exist for all types of entities (with some exceptions f
 : Layer where the entity is on the map.
 
 `x` (number)
-: X coordinate of the entity relative to the upper-left corner of the map. The [origin point](../lua-api/map-entities/overview.md#entityget_origin) of the entity will be placed at these coordinates (for tiles, it is the upper-left corner).
+: X coordinate of the entity relative to the upper-left corner of the map. The [origin point](../lua-api/map-entities/index.md#entityget_origin) of the entity will be placed at these coordinates (for tiles, it is the upper-left corner).
 
 `y` (number)
 : Y coordinate of the entity relative to the upper-left corner of the map.
@@ -375,7 +375,7 @@ Additional properties:
 : Name of the animation set of a [sprite](../lua-api/drawable-objects/sprite.md) to create for the destructible object.
 
 `destruction_sound` (string, optional)
-: Sound to [play](../lua-api/audio/overview.md#solaudioplay_soundsound_id) when the destructible object is cut or broken after being thrown. No value means no sound.
+: Sound to [play](../lua-api/audio/index.md#solaudioplay_soundsound_id) when the destructible object is cut or broken after being thrown. No value means no sound.
 
 `weight` (number, optional)
 : Level of `"lift"` [ability](../lua-api/game.md#gameset_abilityability_name-level) required to lift the object. `0` allows the player to lift the object unconditionally. The special value `-1` means that the object can never be lifted. The default value is `0`

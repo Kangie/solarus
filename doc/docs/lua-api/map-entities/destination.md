@@ -4,17 +4,17 @@
 
 A destination is a possible arrival place for [teletransporters](./teletransporter.md).
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_destination()`](../map.md#mapcreate_destinationproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_destination()`](../map.md#mapcreate_destinationproperties).
 
 Destinations may either have a sprite or be invisible. They may also have a direction: in this case, the [hero](./hero.md) takes that direction when arriving on the destination. Otherwise, the hero keeps his current direction.
 
 The size of a destination is the one of the [hero](./hero.md) (16×16 pixels).
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
-Destinations are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Destinations are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type `destination`
 
@@ -38,7 +38,7 @@ Return value (boolean)
 
 ### `destination:set_starting_location_mode(mode)`
 
-Sets whether this destination updates the [starting location](../game.md#gameset_starting_locationmap_id-destination_name) of the player when arriving on it. If yes, when the player restarts his game, he will restart at this destination. The default value is `"when` world changes".
+Sets whether this destination updates the [starting location](../game.md#gameset_starting_locationmap_id-destination_name) of the player when arriving on it. If yes, when the player restarts his game, he will restart at this destination. The default value is `"when_world_changes"`.
 
 `mode` (string)
 : The starting location mode. Can be one of:
@@ -54,13 +54,13 @@ Returns the direction this destination gives to heroes using it.
 Return value (number or nil)
 : a direction between `0` (East) and `3` (South), or `nil` if this destination does not change the hero's direction.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
-Destinations are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Destinations are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type `destination`
 

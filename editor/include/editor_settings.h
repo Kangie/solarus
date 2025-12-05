@@ -28,6 +28,18 @@ class EditorSettings {
 
 public:
 
+  // Layout keys.
+  static const QString quest_tree_visible;
+  static const QString quest_tree_width;
+  static const QString console_height;
+  static const QString map_side_width;
+  static const QString map_props_height;
+  static const QString tileset_side_width;
+  static const QString sprite_side_width;
+  static const QString sprite_preview_height;
+  static const QString shader_side_width;
+  static const QString shader_files_height;
+
   // General keys.
   static const QString theme;
   static const QString working_directory;
@@ -124,12 +136,9 @@ public:
   void restore_default();
 
 private:
+  const QMap<QString, QVariant>& get_default_values();
 
   QSettings settings;  /**< The wrapped settings. */
-
-  static QMap<QString, QVariant>
-    default_values;    /**< The default values. */
-
 };
 
 }

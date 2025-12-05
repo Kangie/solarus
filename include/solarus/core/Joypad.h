@@ -84,6 +84,8 @@ class Joypad final : public ExportableToLua
 public:
   // static information
   static constexpr const char module_name[] = "sol.joypad";
+  static std::map<std::string, std::string> legacy_bindings_mapping;
+  static std::map<JoyPadButton, int> legacy_button_number_mapping;
 
   Joypad(SDL_GameController* sdl_gc, SDL_Joystick* sdl_js);
   double get_axis(JoyPadAxis axis) const;

@@ -25,6 +25,7 @@
 #include "widgets/strings_editor.h"
 #include "widgets/text_editor.h"
 #include "widgets/tileset_editor.h"
+#include "widgets/welcome_editor.h"
 #include "editor_exception.h"
 #include "editor_settings.h"
 #include "editor_style.h"
@@ -35,9 +36,15 @@
 #include <QUndoGroup>
 #include <QUndoStack>
 #include <QProcess>
+#include <QStringList>
 #include <QTabBar>
 
 namespace SolarusEditor {
+
+/** 
+ * @brief Protocol for internal URLs handled by the editor.
+ */
+static constexpr auto INTERNAL_URL_PROTOCOL = "solaruseditor://";
 
 /**
  * @brief Creates an editor tab widget.
@@ -214,10 +221,26 @@ void EditorTabs::open_text_editor(
       //Should open the external editor instead
       QString project_path = quest.get_root_path();
       QString cmd_str = settings.get_value_string(EditorSettings::external_text_editor_cmd);
+#ifdef Q_OS_WIN
+      // For Windows, use startDetached with the full command string
       cmd_str.replace("%f",path).replace("%p",project_path);
       if(QProcess::startDetached(cmd_str)) {
           return;
       }
+#else
+      // For Linux/Mac, replace placeholders in each argument after splitting
+      QStringList cmd_args = cmd_str.split(' ', Qt::SkipEmptyParts);
+      for (QString &arg : cmd_args) {
+          arg.replace("%f", path);
+          arg.replace("%p", project_path);
+      }
+      if (!cmd_args.isEmpty()) {
+          QString cmd_prog = cmd_args.takeFirst();
+          if (QProcess::startDetached(cmd_prog, cmd_args)) {
+              return;
+          }
+      }
+#endif
   }
 
   // Find the existing tab if any.
@@ -416,6 +439,28 @@ void EditorTabs::open_strings_editor(
 }
 
 /**
+ * @brief Opens the welcome editor.
+ * @param quest Unused but mandatory quest parameter to fit the Editor Tabs API.
+ * @param path Path of the welcome editor to open.
+ */
+void EditorTabs::open_welcome_editor(Quest& quest, const QString& path) {
+  // Find the existing tab if any.
+  const int index = find_editor(path);
+  if (index != -1) {
+    // Already open.
+    setCurrentIndex(index);
+    return;
+  }
+
+  try {
+    add_editor(std::unique_ptr<Editor>(new WelcomeEditor(quest, path)));
+  }
+  catch (const EditorException &ex) {
+    ex.show_dialog();
+  }
+}
+
+/**
  * @brief Returns the path to the file of the last closed tab.
  */
 QString EditorTabs::get_last_closed_file() const {
@@ -480,6 +525,14 @@ void EditorTabs::insert_editor(std::unique_ptr<Editor> editor, int index) {
           this, &EditorTabs::refactoring_requested);
   connect(editor.get(), &Editor::run_map_requested,
           this, &EditorTabs::run_map_requested);
+  connect(editor.get(), &Editor::new_quest_requested,
+          this, &EditorTabs::new_quest_requested);
+  connect(editor.get(), &Editor::open_quest_requested,
+          this, &EditorTabs::open_quest_requested);
+  connect(editor.get(), &Editor::documentation_requested,
+          this, &EditorTabs::documentation_requested);
+  connect(editor.get(), &Editor::website_requested,
+          this, &EditorTabs::website_requested);
 
   editors.emplace(path, std::move(editor));
 }
@@ -611,6 +664,13 @@ void EditorTabs::open_file_requested(Quest& quest, const QString& path) {
     return;
   }
 
+  // Handle internal links first.
+  if (path.startsWith(INTERNAL_URL_PROTOCOL)) {
+    if (handle_internal_link(quest, path)) {
+      return;
+    }
+  }
+
   QFileInfo file_info(path);
   QString canonical_path = file_info.canonicalFilePath();
   if (!quest.is_in_root_path(canonical_path)) {
@@ -652,6 +712,26 @@ void EditorTabs::open_file_requested(Quest& quest, const QString& path) {
     // Opening the quest root also opens quest.dat.
     open_quest_properties_editor(quest);
   }
+}
+
+/**
+ * @brief Handles an internal link.
+ *
+ * Internal links start with the "solaruseditor://" protocol.
+ *
+ * @param quest Unused but mandatory quest parameter to fit the Editor Tabs API.
+ * @param link The link to handle.
+ * @return @c true if the link was handled.
+ */
+bool EditorTabs::handle_internal_link(Quest& quest, const QString& link) {
+  QString trimmed_link = link.mid(strlen(INTERNAL_URL_PROTOCOL));
+  if (trimmed_link == "welcome") {
+    // solaruseditor://welcome : Open the welcome editor.
+    open_welcome_editor(quest, link);
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -757,6 +837,17 @@ void EditorTabs::file_deleted(const QString& path) {
   if (index != -1) {
     remove_editor(index);
   }
+}
+
+/**
+ * @brief Slot called when the user wants to open the welcome editor.
+ * 
+ * @param quest Unused but mandatory quest parameter to fit the Editor Tabs API.
+ */
+void EditorTabs::open_welcome_editor_requested(Quest& quest) {
+  open_file_requested(
+      quest,
+      QString(INTERNAL_URL_PROTOCOL) + "welcome");
 }
 
 /**

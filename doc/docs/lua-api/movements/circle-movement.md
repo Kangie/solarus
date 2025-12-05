@@ -2,13 +2,13 @@
 
 A circle movement makes a circular trajectory around a center point.
 
-The center can either be some fixed coordinates or a possibly moving [map entity](../map-entities/overview.md).
+The center can either be some fixed coordinates or a possibly moving [map entity](../map-entities/index.md).
 
 ## Methods Inherited from `movement`
 
-Circle movements are particular [movement](./overview.md) objects. Therefore, they inherit all methods from the type movement.
+Circle movements are particular [movement](./index.md) objects. Therefore, they inherit all methods from the type movement.
 
-See [movement](./overview.md#methods-of-all-movement-types) to know these methods.
+See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 ## Methods of the type `circle_movement`
 
@@ -36,16 +36,16 @@ Sets the center of this movement as a fixed point.
 
 ### `circle_movement:set_center(entity, [dx, dy])`
 
-Sets the center of this movement as a [map entity](../map-entities/overview.md) (only during a [game](../game.md)).
+Sets the center of this movement as a [map entity](../map-entities/index.md) (only during a [game](../game.md)).
 
-`entity` ([entity](../map-entities/overview.md))
+`entity` ([entity](../map-entities/index.md))
 : The center entity.
 
-`dx` (number, optional)
-: X offset to add to the center entity's coordinates (default `0`).
+`dx` (number, optional, requires: `dy`, default: `0`)
+: X offset to add to the center entity's coordinates.
 
-`dy` (number, optional)
-: Y offset to add to the center entity's coordinates (default `0`).
+`dy` (number, optional, requires: `dx`, default: `0`)
+: Y offset to add to the center entity's coordinates.
 
 ### `circle_movement:get_radius()`
 
@@ -90,8 +90,8 @@ Return value (boolean)
 
 Sets whether circles are made clockwise or counter-clockwise.
 
-`clockwise` (boolean, optional)
-: `true` to make circles clockwise. No value means `true`.
+`clockwise` (boolean, optional, default: `true`)
+: `true` to make circles clockwise.
 
 ### `circle_movement:get_angle_from_center()`
 
@@ -205,9 +205,9 @@ Sets the delay after which this movement restarts.
 
 ## Events Inherited from `movement`
 
-Circle movements are particular [movement](./overview.md) objects. Therefore, they inherit all events from the type movement.
+Circle movements are particular [movement](./index.md) objects. Therefore, they inherit all events from the type movement.
 
-See [movement](./overview.md#events-of-all-movement-types) to know these events.
+See [movement](./index.md#events-of-all-movement-types) to know these events.
 
 ## Deprecated methods of the type circle movement
 

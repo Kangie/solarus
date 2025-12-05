@@ -56,6 +56,7 @@ map{ id = "bugs/1268_movement_ignore_suspend_in_timer", description = "#1268: mo
 map{ id = "bugs/1269_coroutines", description = "#1269: Coroutines make engine crash" }
 map{ id = "bugs/1275_map_set_tileset", description = "#1275: map:set_tileset()" }
 map{ id = "bugs/1286_crash_state_set_can_traverse", description = "#1286: Crash in state:set_can_traverse()" }
+map{ id = "bugs/1290_crash_state_on_finished", description = "#1290: Crash when changing state in state:on_finished" }
 map{ id = "bugs/1291_hero_start_attack_loading", description = "#1291: hero:start_attack_loading" }
 map{ id = "bugs/1297_target_movement_speed", description = "#1297: Target movement wrong speed" }
 map{ id = "bugs/1299_crash_invalid_tile_pattern", description = "#1299: Crash when loading a map with an invalid tile pattern" }
@@ -128,12 +129,15 @@ map{ id = "bugs/1648_custom_entities_collision_not_happening", description = "#1
 map{ id = "bugs/1652_npc_movement_stop_animation", description = "Christopho" }
 map{ id = "bugs/1657_crash_circle_movement", description = "#1657 circle_movement:set_angular_speed(0) crashes the engine" }
 map{ id = "bugs/1680_music_volume", description = "#1680: Music volume" }
+map{ id = "bugs/1683_analog_diagonal", description = "#1683: Analog diagonals" }
 map{ id = "bugs/1691_immediate_transition_freeze", description = "#1691: Freeze after immediate transition" }
 map{ id = "bugs/1900_game_over_hero_argument", description = "#1900: game:start/stop_game_over() hero should be optional" }
 map{ id = "bugs/1907_teletransporter_manual_camera/map_1", description = "#1907: Map 1" }
 map{ id = "bugs/1907_teletransporter_manual_camera/map_2", description = "#1907: Map 2" }
 map{ id = "bugs/1908_map_create_enemy_suffix", description = "#1908: map:create_enemy() gives dupicate name" }
 map{ id = "bugs/1917_set_tileset_int", description = "#1917: map:set_tileset() fails with an integer" }
+map{ id = "bugs/1936_stairs_mask/first_floor" }
+map{ id = "bugs/1936_stairs_mask/second_floor" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
@@ -587,6 +591,8 @@ file{ path = "maps/bugs/1275_map_set_tileset.dat", author = "Christopho", licens
 file{ path = "maps/bugs/1275_map_set_tileset.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1286_crash_state_set_can_traverse.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1286_crash_state_set_can_traverse.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1290_crash_state_on_finished.dat", author = "Christopho", license = "CC-BY SA 4.0" }
+file{ path = "maps/bugs/1290_crash_state_on_finished.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1291_hero_start_attack_loading.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1297_target_movement_speed.dat", author = "Christopho", license = "CC BY-SA 4.0" }
@@ -732,6 +738,8 @@ file{ path = "maps/bugs/1657_crash_circle_movement.dat", author = "Metallizer", 
 file{ path = "maps/bugs/1657_crash_circle_movement.lua", author = "Metallizer", license = "GPL v3" }
 file{ path = "maps/bugs/1680_music_volume.dat", author = "Metallizer", }
 file{ path = "maps/bugs/1680_music_volume.lua", author = "Metallizer", }
+file{ path = "maps/bugs/1683_analog_diagonal.dat", author = "stdgregwar", license = "CC-BY-SA 4.0" }
+file{ path = "maps/bugs/1683_analog_diagonal.lua", author = "stdgregwar", license = "GPL v3" }
 file{ path = "maps/bugs/1691_immediate_transition_freeze.dat", author = "Christopho", license = "CC-BY SA 4.0" }
 file{ path = "maps/bugs/1691_immediate_transition_freeze.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1900_game_over_hero_argument.dat", author = "Christopho", license = "CC-BY SA 4.0" }
@@ -745,6 +753,11 @@ file{ path = "maps/bugs/1908_map_create_enemy_suffix.dat", author = "Christopho"
 file{ path = "maps/bugs/1908_map_create_enemy_suffix.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1917_set_tileset_int.dat", author = "Christopho", license = "CC-BY SA 4.0" }
 file{ path = "maps/bugs/1917_set_tileset_int.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1936_stairs_mask", author = "stdgregwar", }
+file{ path = "maps/bugs/1936_stairs_mask/first_floor.dat", author = "stdgregwar", license = "CC-BY-SA 4.0" }
+file{ path = "maps/bugs/1936_stairs_mask/first_floor.lua", author = "stdgregwar", license = "GPL v3" }
+file{ path = "maps/bugs/1936_stairs_mask/second_floor.dat", author = "stdgregwar", license = "CC-BY-SA 4.0" }
+file{ path = "maps/bugs/1936_stairs_mask/second_floor.lua", author = "stdgregwar", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }

@@ -4,7 +4,7 @@
 
 A shop treasure is a treasure that can be purchased by the [hero](./hero.md) for money.
 
-This type of [map entity](./overview.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_shop_treasure()`](../map.md#mapcreate_shop_treasureproperties).
+This type of [map entity](./index.md) can be declared in the [map data file](../map.md#map-files). It can also be created dynamically with [`map:create_shop_treasure()`](../map.md#mapcreate_shop_treasureproperties).
 
 A shop treasure entity shows the [sprite](../drawable-objects/sprite.md) of the treasure and its price. Its size is always 32×32 pixels and other entities cannot traverse it.
 
@@ -30,11 +30,11 @@ Furthermore, when the dialog finishes, you have to tell the engine the decision 
 
     Recall that when the [`game:on_dialog_started()`](../game.md#gameon_dialog_starteddialog-info) event is not defined, the engine uses by default a built-in dialog box with minimal features. This built-in dialog box works correctly with shop items, providing that the text of the `"_shop.question"` dialog has the expected format. It should have three lines. The `"$v"` sequence (if any) is subsituted by the actual price like suggested above, and the user can select one of the last two lines: the first one is yes and the second one is no.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
-Shop treasures are particular [map entities](./overview.md). Therefore, they inherit all methods from the type map entity.
+Shop treasures are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
-See [entity](./overview.md#methods-of-all-entity-types) to know these methods.
+See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type shop treasure
 
@@ -49,16 +49,16 @@ Return value (string)
 
 Changes the sound to play when the player is unable to buy the shop treasure. By default, the sound used is "wrong". You can use this function if you want another sound to be played.
 
-`sound_id` (string, optional)
-: The sound id. An empty string or nil means no sound.
+`sound_id` (string or `nil`, optional)
+: The sound id. An empty string or `nil` means no sound.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
-Shop treasures are particular [map entities](./overview.md). Therefore, they inherit all events from the type map entity.
+Shop treasures are particular [map entities](./index.md). Therefore, they inherit all events from the type map entity.
 
-See [entity](./overview.md#events-of-all-entity-types) to know these events.
+See [entity](./index.md#events-of-all-entity-types) to know these events.
 
 ## Events of the type shop treasure
 
@@ -82,4 +82,4 @@ Return value (boolean)
 
 !!! note "Note"
 
-    This event is called right after the more general events [`item:on_obtaining()`](../equipment-items.md#itemon_obtainingvariant-savegame_variable) and [`map:on_obtaining_treasure()`](../map.md#mapon_obtaining_treasuretreasure_item-treasure_variant-treasure_savegame_variable). Those two events are called no matter how the treasure is being obtained: from a [chest](./chest.md), from a [pickable treasure](./pickable.md), from a shop treasure or explicitly with [`hero:start_treasure()`](./hero.md#herostart_treasuretreasure_name-treasure_variant-treasure_savegame_variable-callback).
+    This event is called right after the more general events [`item:on_obtaining()`](../equipment-items.md#itemon_obtainingvariant-savegame_variable) and [`map:on_obtaining_treasure()`](../map.md#mapon_obtaining_treasuretreasure_item-treasure_variant-treasure_savegame_variable-hero). Those two events are called no matter how the treasure is being obtained: from a [chest](./chest.md), from a [pickable treasure](./pickable.md), from a shop treasure or explicitly with [`hero:start_treasure()`](./hero.md#herostart_treasuretreasure_name-treasure_variant-treasure_savegame_variable-callback).

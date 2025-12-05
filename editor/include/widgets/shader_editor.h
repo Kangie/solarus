@@ -51,6 +51,11 @@ public:
   bool has_unsaved_changes() const override;
   void reload_settings() override;
 
+private slots:
+
+  void side_panel_resized(int pos, int index);
+  void preview_panel_resized(int pos, int index);
+
 private:
 
   void update();

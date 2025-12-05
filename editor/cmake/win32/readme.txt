@@ -1,12 +1,12 @@
-Solarus Quest Editor
+Solarus  Editor
 ====================
 
 Solarus is a lightweight, multiplatform, free and open-source 2D game engine.
-It features a game editor named Solarus Quest Editor.
+It features a game editor named Solarus Editor.
 
 This Windows binary package contains:
 
-- solarus-quest-editor.exe:
+- solarus-editor.exe:
   An editor that helps you create your own Solarus quest (i.e. game).
 
 - solarus-run.exe:
@@ -22,8 +22,7 @@ This Windows binary package contains:
 Useful links:
 - Official website and game downloads: https://www.solarus-games.org
 - Official documentation (Lua API, tutorials): https://docs.solarus-games.org
-- Source code of the engine: https://gitlab.com/solarus-games/solarus
-- Source code of the editor: https://gitlab.com/solarus-games/solarus-quest-editor
+- Source code: https://gitlab.com/solarus-games/solarus
 
 Enjoy!
 

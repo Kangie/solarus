@@ -40,6 +40,7 @@ public:
   void set_selected_property(const QString &key);
 
   virtual void save() override;
+  virtual void reload_settings() override;
 
 public slots:
 
@@ -79,6 +80,8 @@ public slots:
 private:
 
   bool validate_custom_property_key(const QString& key);
+
+  void reload_font_settings();
 
   Ui::DialogsEditor ui;                 /**< The dialogs editor widgets. */
   QString language_id;                  /**< Id of the language of dialogs being edited. */

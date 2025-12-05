@@ -1103,6 +1103,12 @@ void CustomEntity::notify_collision_with_block(Block& block) {
 void CustomEntity::notify_collision_with_separator(
     Separator& separator, CollisionMode /* collision_mode */) {
 
+  const auto& cameras = get_map().get_entities().get_cameras();
+  for(const auto& cam : cameras) {
+    if(cam->get_tracked_entity().get() == this){
+      cam->notify_tracked_entity_traversing_separator(separator);
+    }
+  }
   notify_collision_from(separator);
 }
 

@@ -50,6 +50,7 @@ public:
   void close_quest();
   bool open_quest(const QString& quest_path);
   void open_file(Quest& quest, const QString& path);
+  void open_welcome();
   Editor* get_current_editor();
   void run_quest(const QString& map_id);
 
@@ -93,6 +94,7 @@ private slots:
   void on_action_website_triggered();
   void on_action_doc_triggered();
   void on_action_about_triggered();
+  void on_action_welcome_triggered();
 
   void current_editor_changed(int index);
   void rename_file_requested(Quest& quest, const QString& path);
@@ -119,6 +121,8 @@ private slots:
   void current_music_changed(const QString& music_id);
   void update_music_actions();
   void selected_path_changed(const QString& path);
+
+  void quest_tree_resized(int pos, int index);
 
   void reload_settings();
 

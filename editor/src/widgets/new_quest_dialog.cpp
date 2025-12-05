@@ -17,12 +17,15 @@
 #include "widgets/new_quest_dialog.h"
 #include "file_tools.h"
 #include "editor_style.h"
+
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QButtonGroup>
 #include <QPainter>
 #include <QApplication>
+#include <QDir>
+#include <QStandardPaths>
 
 namespace SolarusEditor {
 
@@ -370,8 +373,13 @@ void NewQuestDialog::on_browse_button_clicked() {
 #endif
   );
 
-  const QString current_path = ui.quest_path_directory_lineedit->text();
-  const QString& dialog_start_path = current_path.isEmpty() ? start_directory : current_path;
+  QString current_path = ui.quest_path_directory_lineedit->text();
+  current_path = current_path.isEmpty() ? start_directory : current_path;
+  current_path = FileTools::cd_up_until_exists(current_path);
+
+  const QString& dialog_start_path = current_path.isEmpty()
+    ? QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+    : current_path;
 
   const QString path = QFileDialog::getExistingDirectory(
       this,
