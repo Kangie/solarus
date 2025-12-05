@@ -108,7 +108,7 @@ Sets the speed of the normal walking movement of hero.
 
 The default walking speed is 88 pixels per second. This speed is automatically reduced when the hero walks on special ground like grass, ladders or holes.
 
-`walking` speed (number)
+`walking_speed` (number)
 : The speed of normal walk in pixels per second.
 
 ### `hero:get_swimming_speed()`
@@ -124,7 +124,7 @@ Sets the swimming speed movement of hero.
 
 The default swimming speed is 44 pixels per second. When the player perform the swim boost, the speed is doubled.
 
-`swimming` speed (number)
+`swimming_speed` (number)
 : The swimming speed n pixels per second.
 
 ### `hero:get_can_swim_faster()`

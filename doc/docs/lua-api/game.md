@@ -575,7 +575,7 @@ Sets the maximum number of magic points.
 
 Returns whether the player has a built-in ability.
 
-`ability_name`
+`ability_name` (string)
 : Name of the ability to get (see [`game:get_ability()`](#gameget_abilityability_name) for the list of valid ability names).
 
 Return value (boolean)
