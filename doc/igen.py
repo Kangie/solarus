@@ -189,7 +189,7 @@ def generate_members(feature, member_type):
         members_section = re.findall(rf'(### `(?:sol\.)?{feature["name"]}.*?`\n\n.*?(?=\n### |$))', members_section[0], re.DOTALL)
         
         for member_section in members_section:
-            member_name = re.findall(rf'### `(?:sol\.)?{feature["name"]}(.*?)\(', member_section)[0].replace(".", "").replace(":", "")
+            member_name = re.findall(rf'### `((?:sol\.)?{feature["name"]}(.*?))\(', member_section)[0][0]
             member_desc = re.findall(rf'### `.*?`\n\n(.*?)(?=\n\n`\w+`|\n\n\|.*?<dl>|\n\nReturn value|\n\n!!! |$)', member_section, re.DOTALL)[0]
             
             members.append({"name": member_name, "desc": member_desc, "args": generate_args(member_section), "returns": generate_returns(member_section)})
