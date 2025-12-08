@@ -229,7 +229,7 @@ def generate_features(content):
         else:
             feature_infos = feature_infos[1].split("] ")
             feature_name = feature_infos[0].replace("[", "")
-            feature_desc = feature_infos[1]
+            feature_desc = feature_infos[1] if len(feature_infos) == 2 else ""
 
         features.append({"name": feature_name, "path": feature_path, "description": feature_desc, "functions": [], "methods": [], "events": []})
 
