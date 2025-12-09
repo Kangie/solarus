@@ -791,6 +791,15 @@ void QuestTreeView::new_element_action_triggered() {
       }
     }
 
+    // Check if tilesets exist to create a map
+    if (resource_type == ResourceType::MAP) {
+      QStringList tilesets = database.get_elements(ResourceType::TILESET);
+      if (tilesets.count() == 0) {
+        GuiTools::error_dialog(tr("No tileset present. Create a tileset before creating a new map."));
+        return;
+      }
+    }
+
     NewResourceElementDialog dialog(resource_type, parentWidget());
     dialog.set_element_id(initial_id_value);
     dialog.set_element_description(initial_description_value);
