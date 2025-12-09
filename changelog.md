@@ -3,6 +3,7 @@
 ## Solarus 2.0.3 (In progress)
 
 * Fix a001 error while trying to set volume on a non-playing music (#1935).
+* Updated Game Controller DB.
 
 ## Solarus 2.0.2 (2025-12-05)
 
