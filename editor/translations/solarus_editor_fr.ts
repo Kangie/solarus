@@ -6015,6 +6015,11 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <source>Do you really want to delete file &apos;%1&apos;?</source>
         <translation type="vanished">Voulez-vous vraiment supprimer le fichier &apos;%1&apos; ?</translation>
     </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="794" />
+        <source>No tileset present. Create a tileset before creating a new map.</source>
+        <translation>Aucun tileset présent. Créez un tileset avant de créer une map.</translation>
+    </message>
 </context>
 <context>
     <name>SolarusEditor::SettingsDialog</name>

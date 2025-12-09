@@ -5204,6 +5204,11 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <source>Delete confirmation</source>
         <translation>刪除確認</translation>
     </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="794" />
+        <source>No tileset present. Create a tileset before creating a new map.</source>
+        <translation>目前沒有圖塊集。請先建立圖塊集，然後再建立地圖。</translation>
+    </message>
 </context>
 <context>
     <name>SolarusEditor::SettingsDialog</name>
