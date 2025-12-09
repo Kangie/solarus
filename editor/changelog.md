@@ -1,5 +1,9 @@
 # Changelog
 
+## Solarus Editor 2.0.3 (In progress)
+
+* Fix crash on editor startup if the quest was not found (#1962).
+
 ## Solarus Editor 2.0.2 (2025-12-05)
 
 * Memorization of layout splitters (#1914).
