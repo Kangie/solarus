@@ -1,5 +1,9 @@
 # Changelog
 
+## Solarus 2.0.3 (In progress)
+
+* Fix a001 error while trying to set volume on a non-playing music (#1935).
+
 ## Solarus 2.0.2 (2025-12-05)
 
 * Made separator scrolling more robust.

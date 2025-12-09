@@ -2,6 +2,7 @@
 
 target_sources(solarus
   PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/ALWrapper.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/ItDecoder.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/Music.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/audio/MusicPtr.h"
@@ -243,6 +244,7 @@ target_sources(solarus
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/movements/StraightMovement.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/solarus/movements/TargetMovement.h"
   PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/ALWrapper.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/ItDecoder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/Music.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/audio/MusicSystem.cpp"
