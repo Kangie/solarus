@@ -178,7 +178,7 @@ nav:
           - Chest: lua-api/map-entities/chest.md
           - Shop Treasure: lua-api/map-entities/shop-treasure.md
           - Enemy: lua-api/map-entities/enemy.md
-          - Non-Playing Character: lua-api/map-entities/npc.md
+          - Non-Playing Character: lua-api/map-entities/npc.md # [npc] 
           - Block: lua-api/map-entities/block.md
           - Jumper: lua-api/map-entities/jumper.md
           - Switch: lua-api/map-entities/switch.md

@@ -222,7 +222,7 @@ Return value (number)
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6 because angle functions now all use radians for consistency.
+    This method is deprecated since Solarus 1.6. Angle functions now all use radians for consistency.
 
     Use [`circle_movement:get_angle_from_center()`](#circle_movementget_angle_from_center) instead.
 
@@ -235,7 +235,7 @@ Sets the angle from where the first circle should start.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6 because angle functions now all use radians for consistency.
+    This method is deprecated since Solarus 1.6. Angle functions now all use radians for consistency.
 
     Use [`circle_movement:set_angle_from_center()`](#circle_movementset_angle_from_centerangle_from_center) instead.
 
@@ -248,7 +248,7 @@ Return value (number)
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6 because angle functions now all use radians for consistency.
+    This method is deprecated since Solarus 1.6. Angle functions now all use radians for consistency.
 
     Use [`circle_movement:get_angular_speed()`](#circle_movementget_angular_speed) instead.
 
@@ -261,6 +261,6 @@ Sets the speed of the angle variation.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6 because angle functions now all use radians for consistency.
+    This method is deprecated since Solarus 1.6. Angle functions now all use radians for consistency.
 
     Use [`circle_movement:set_angular_speed()`](#circle_movementset_angular_speedangular_speed) instead.

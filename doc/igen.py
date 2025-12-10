@@ -166,23 +166,42 @@ def generate_args(section):
 
     return args
 
+def generate_deprecated(section):
+    """Generate the deprecated version of a member.
+
+    Args:
+        section (str): Member section.
+
+    Returns:
+        string: Deprecated version of the member or "" if not deprecated.
+    """
+
+    deprecated = ""
+    deprecated_section = re.findall(r'\n\n!!! warning "Deprecated"\n\n(.*?)(?=#|$)', section, re.DOTALL)
+
+    if len(deprecated_section) > 0:
+        deprecated = re.findall(r'This .* is deprecated since Solarus (.*?)(?=\. |\.\n)', deprecated_section[0])[0]
+
+    return deprecated
+
 def generate_members(feature, member_type):
     """Generate a list of feature members.
 
     Args:
         feature (str): Name of the feature.
-        member_type (str): Type of the feature members. Can be "functions", "methods" or "events".
+        member_type (str): Type of the feature members. Can be "functions", "deprecated_functions", "methods", "deprecated_methods", "events", or "deprecated_events".
 
     Returns:
         list: Array of feature members.
     """
 
+    member_type = member_type.replace("_", " ").capitalize()
     members = []
 
     with open(f"{api_root_dir}{feature['path']}.md", 'r', encoding='utf-8') as file:
         content = file.read()
 
-        members_section = re.findall(rf'(## {member_type.capitalize()} of .*?(?=\n## |$))', content, re.DOTALL)
+        members_section = re.findall(rf'(## {member_type} of .*?(?=\n## |$))', content, re.DOTALL)
 
         if len(members_section) <= 0: return []
 
@@ -192,7 +211,7 @@ def generate_members(feature, member_type):
             member_name = re.findall(rf'### `((?:sol\.)?{feature["name"]}(.*?))\(', member_section)[0][0]
             member_desc = re.findall(rf'### `.*?`\n\n(.*?)(?=\n\n`\w+`|\n\n\|.*?<dl>|\n\nReturn value|\n\n!!! |$)', member_section, re.DOTALL)[0]
             
-            members.append({"name": member_name, "desc": member_desc, "args": generate_args(member_section), "returns": generate_returns(member_section)})
+            members.append({"name": member_name, "desc": member_desc, "deprecated": generate_deprecated(member_section), "args": generate_args(member_section), "returns": generate_returns(member_section)})
 
     return members
 
@@ -229,9 +248,18 @@ def generate_features(content):
         else:
             feature_infos = feature_infos[1].split("] ")
             feature_name = feature_infos[0].replace("[", "")
-            feature_desc = feature_infos[1]
+            feature_desc = feature_infos[1] if len(feature_infos) == 2 else ""
 
-        features.append({"name": feature_name, "path": feature_path, "description": feature_desc, "functions": [], "methods": [], "events": []})
+        feature_inherits = ""
+
+        with open(f"{api_root_dir}{feature_path}.md", 'r', encoding='utf-8') as file:
+            feature_content = file.read()
+            inherits_section = re.findall(rf'## .* Inherited from `(.*?)`', feature_content)
+
+            if len(inherits_section) > 0:
+                feature_inherits = inherits_section[0]
+
+        features.append({"name": feature_name, "path": feature_path, "description": feature_desc, "inherits": feature_inherits, "functions": [], "methods": [], "events": []})
 
     return features
 
@@ -270,6 +298,10 @@ def generate_index_file(conf_file, output_file):
         feature['functions'] = generate_members(feature, "functions")
         feature['methods'] = generate_members(feature, "methods")
         feature['events'] = generate_members(feature, "events")
+
+        feature['functions'] += generate_members(feature, "deprecated_functions")
+        feature['methods'] += generate_members(feature, "deprecated_methods")
+        feature['events'] += generate_members(feature, "deprecated_events")
 
         logger.info(f"Generated feature {count}/{len(features)}", "\r")
 
