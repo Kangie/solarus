@@ -23,7 +23,7 @@ Loads all sounds effects into memory for faster future access.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 2.0 and has no effect anymore. Sound effects are always automatically preloaded now.
+    This method is deprecated since Solarus 2.0. Sound effects are always automatically preloaded now.
 
 ### `sol.audio.play_music(music_id, [action])`
 
