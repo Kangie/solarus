@@ -106,7 +106,7 @@ def generate_returns(section):
     """
 
     returns = []
-    returns_section = re.findall(r'\n\n(Return value .*?)(?=\n\n#|$)', section, re.DOTALL)
+    returns_section = re.findall(r'\n\n(Return value .*?)(?=\n\nR|\n\n#|$)', section, re.DOTALL)
     
     for return_section in returns_section:
         return_details = re.findall(rf'Return value .*?\((.*?)\)\n', return_section)[0]
@@ -176,11 +176,12 @@ def generate_deprecated(section):
         string: Deprecated version of the member or "" if not deprecated.
     """
 
-    deprecated = ""
-    deprecated_section = re.findall(r'\n\n!!! warning "Deprecated"\n\n(.*?)(?=#|$)', section, re.DOTALL)
+    deprecated = {"version": "", "message": ""}
+    deprecated_section = re.findall(r'\n\n!!! warning "Deprecated"\n\n(.*?)(?=\n\n#|$)', section, re.DOTALL)
 
     if len(deprecated_section) > 0:
-        deprecated = re.findall(r'This .* is deprecated since Solarus (.*?)(?=\. |\.\n)', deprecated_section[0])[0]
+        deprecated['version'] = re.findall(r'This .*? is deprecated since Solarus (.*?)(?=\. |\.\n)', deprecated_section[0])[0]
+        deprecated['message'] = re.findall(r'(This .*? is deprecated since Solarus .*?$)', deprecated_section[0], re.DOTALL)[0]
 
     return deprecated
 
