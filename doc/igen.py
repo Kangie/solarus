@@ -80,7 +80,7 @@ def generate_values(section):
         values_section = values_section[0].split("\n    ")
 
         for value_section in values_section:
-            value_name = re.findall(r'\- `(.*?)`', value_section)[0].replace('"', "")
+            value_name = re.findall(r'\- `(.*?)`', value_section)[0]
             value_desc = re.findall(r': (.*?)\n', value_section)
 
             default_value = re.findall(r'` \(default\): ', value_section)
