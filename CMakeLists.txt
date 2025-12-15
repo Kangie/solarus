@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(solarus-engine VERSION 2.0.2)
+project(solarus-engine VERSION 2.0.3)
 
 # Organize targets into folders for compatible generators, e.g. Xcode and Visual Studio.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

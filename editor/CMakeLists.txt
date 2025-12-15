@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(solarus-editor VERSION 2.0.2)
+project(solarus-editor VERSION 2.0.3)
 set(COMPONENT_NAME "${PROJECT_NAME}")
 
 include(cmake/AddOptions.cmake)
