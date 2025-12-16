@@ -1,12 +1,15 @@
 from time import perf_counter
 import datetime
 import json
+import os
 import re
 
 api_root_dir = "docs/lua-api" # The local directory where the lua API reference is stored.
 api_root_url = "https://docs.solarus-games.org/lua-api" # The URL where the lua API reference is hosted.
+current_feature = {} # Will be set with the current feature that is being processed.
 start_time = "" # Will be initialized later with the current timestamp.
 logger = None # Will be initialized later with the Logger class.
+links = [] # Will contains the links used by the members.
 
 class Logger:
     """
@@ -43,6 +46,48 @@ class Logger:
 
         date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(f"[\033[31mERROR\033[0m] \u001b[90m{date}\033[0m - {message}")
+
+def generate_links(section):
+    """Generate the links for a section and replace them with the link references.
+
+    Args:
+        section (str): The section to generate the links for.
+
+    Returns:
+        str: The section with the links replaced by the link references.
+    """
+
+    section_links = re.findall(r'\[(.*?)\]\((.*?)\)', section)
+
+    for link in section_links:
+        if link[1].startswith("http"): continue
+
+        section = section.replace(f'[{link[0]}]({link[1]})', f"<%link_{len(links) + 1}%>")
+        link_path = ""
+        link_anchor = ""
+
+        if link[1].startswith("#"):
+            link_path = current_feature['path']
+            link_anchor = link[1].replace("#", "")
+        else:
+            link_parts = link[1].split("#")
+
+            link_path = os.path.join(api_root_dir, link_parts[0])
+            
+            if link_parts[0].startswith(".."):
+                link_path = os.path.join(f"{api_root_dir}{current_feature['path']}", link_parts[0])
+
+            link_path = os.path.abspath(link_path)
+            link_path = link_path.split(api_root_dir.replace("/", "\\"))[1]
+            link_path = link_path.replace("\\", "/").replace(".md", "")
+
+            if len(link_parts) == 2:
+                link_anchor = link_parts[1]
+            
+        
+        links.append({"text": link[0], "path": link_path, "anchor": link_anchor})
+    
+    return section
 
 def generate_properties(section):
     """Generate a list of table properties.
@@ -87,7 +132,7 @@ def generate_values(section):
             default_value = len(default_value) > 0
 
             if len(value_desc) > 0:
-                value_desc = value_desc[0]
+                value_desc = generate_links(value_desc[0])
             else:
                 value_desc = ""
 
@@ -116,6 +161,8 @@ def generate_returns(section):
         if return_desc.endswith(":"):
             return_desc = re.sub(r'\. .*?:$', ".", return_desc)
 
+        return_desc = generate_links(return_desc)
+
         for return_type in return_types:
             return_types[return_types.index(return_type)] = return_type.replace("`", "").replace(" ", "_")
 
@@ -143,6 +190,8 @@ def generate_args(section):
         arg_default_value = ""
         arg_requirements = []
         arg_types = []
+
+        arg_desc = generate_links(arg_desc)
 
         optionnal_arg = False
         deprecated_arg = ""
@@ -182,14 +231,14 @@ def generate_deprecated(section):
     if len(deprecated_section) > 0:
         deprecated['version'] = re.findall(r'This .*? is deprecated since Solarus (.*?)(?=\. |\.\n)', deprecated_section[0])[0]
         deprecated['message'] = re.findall(r'(This .*? is deprecated since Solarus .*?$)', deprecated_section[0], re.DOTALL)[0]
+        deprecated['message'] = generate_links(deprecated['message'])
 
     return deprecated
 
-def generate_members(feature, member_type):
+def generate_members(member_type):
     """Generate a list of feature members.
 
     Args:
-        feature (str): Name of the feature.
         member_type (str): Type of the feature members. Can be "functions", "deprecated_functions", "methods", "deprecated_methods", "events", or "deprecated_events".
 
     Returns:
@@ -199,18 +248,19 @@ def generate_members(feature, member_type):
     member_type = member_type.replace("_", " ").capitalize()
     members = []
 
-    with open(f"{api_root_dir}{feature['path']}.md", 'r', encoding='utf-8') as file:
+    with open(f"{api_root_dir}{current_feature['path']}.md", 'r', encoding='utf-8') as file:
         content = file.read()
 
         members_section = re.findall(rf'(## {member_type} of .*?(?=\n## |$))', content, re.DOTALL)
 
         if len(members_section) <= 0: return []
 
-        members_section = re.findall(rf'(### `(?:sol\.)?{feature["name"]}.*?`\n\n.*?(?=\n### |$))', members_section[0], re.DOTALL)
+        members_section = re.findall(rf'(### `(?:sol\.)?{current_feature["name"]}.*?`\n\n.*?(?=\n### |$))', members_section[0], re.DOTALL)
         
         for member_section in members_section:
-            member_name = re.findall(rf'### `((?:sol\.)?{feature["name"]}(.*?))\(', member_section)[0][0]
+            member_name = re.findall(rf'### `((?:sol\.)?{current_feature["name"]}(.*?))\(', member_section)[0][0]
             member_desc = re.findall(rf'### `.*?`\n\n(.*?)(?=\n\n`\w+`|\n\n\|.*?<dl>|\n\nReturn value|\n\n!!! |$)', member_section, re.DOTALL)[0]
+            member_desc = generate_links(member_desc)
             
             members.append({"name": member_name, "desc": member_desc, "deprecated": generate_deprecated(member_section), "args": generate_args(member_section), "returns": generate_returns(member_section)})
 
@@ -272,13 +322,16 @@ def generate_index_file(conf_file, output_file):
         output_file (str): The path to the output file to write the index to.
     """
 
+    global current_feature
+
     output_content = {
         "root": {
             "local": api_root_dir,
             "public": api_root_url,
             "docs_type": "markdown"
         },
-        "features": []
+        "features": [],
+        "links": []
     }
 
     features = []
@@ -295,21 +348,23 @@ def generate_index_file(conf_file, output_file):
 
     for feature in features:
         count = count + 1
+        current_feature = feature
 
-        feature['functions'] = generate_members(feature, "functions")
-        feature['methods'] = generate_members(feature, "methods")
-        feature['events'] = generate_members(feature, "events")
+        feature['functions'] = generate_members("functions")
+        feature['methods'] = generate_members("methods")
+        feature['events'] = generate_members("events")
 
-        feature['functions'] += generate_members(feature, "deprecated_functions")
-        feature['methods'] += generate_members(feature, "deprecated_methods")
-        feature['events'] += generate_members(feature, "deprecated_events")
+        feature['functions'] += generate_members("deprecated_functions")
+        feature['methods'] += generate_members("deprecated_methods")
+        feature['events'] += generate_members("deprecated_events")
 
         logger.info(f"Generated feature {count}/{len(features)}", "\r")
 
     logger.info(f"Generated feature {count}/{len(features)}")
 
     output_content['features'] = features
-    
+    output_content['links'] = links
+
     with open(output_file, 'w') as file:
         json.dump(output_content, file, indent=4)
 
