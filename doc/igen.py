@@ -170,6 +170,7 @@ def generate_returns(section):
 
     return returns
 
+
 def generate_args(section):
     """Generate a list of member arguments.
 
@@ -178,10 +179,14 @@ def generate_args(section):
 
     Returns:
         list: Array of member arguments.
+        list: Array of overload arguments.
     """
 
     args = []
+    overload_args = []
+
     args_section = re.findall(r'\n\n(`\w+`.*?)(?=\n\n[^\s]|!!! |$)', section, re.DOTALL)
+    overload_args_parts = re.findall(r'\| \<dl\>.*?(?=\<\/dl\> \||\<\/dl\>\|)', section, re.DOTALL)
     
     for arg_section in args_section:
         arg_name = re.findall(r'`(\w+)`', arg_section)[0]
@@ -213,7 +218,53 @@ def generate_args(section):
 
         args.append({"name": arg_name, "desc": arg_desc, "optionnal": optionnal_arg, "deprecated": deprecated_arg, "requires": arg_requirements, "types": arg_types, "default": arg_default_value, "values": generate_values(arg_section), "properties": generate_properties(arg_section)})
 
-    return args
+    if len(overload_args_parts) == 2:
+        common_args = []
+
+        if len(args) > 0:
+            common_args = args.copy()
+            args = []
+        
+        for overload_args_part in overload_args_parts:
+            overload_args_section =  re.findall(r'(\<dt\>.*?\<\/dd\>)', overload_args_part)
+
+            for overload_arg_section in overload_args_section:
+                overload_arg_name = re.findall(r'\<dt\>`(\w+)`', overload_arg_section)[0]
+                overload_arg_desc = re.findall(r'\<dd\>(.*?)\<\/dd\>', overload_arg_section)[0]
+                overload_arg_details = re.findall(rf'\<dt\>`{overload_arg_name}` \((.*?)\)\<\/dt\>', overload_arg_section)[0].split(", ")
+                overload_arg_default_value = ""
+                overload_arg_requirements = []
+                overload_arg_types = []
+
+                overload_arg_desc = generate_links(overload_arg_desc)
+
+                optionnal_overload_arg = False
+                deprecated_overload_arg = ""
+
+                if overload_arg_desc.endswith(":"):
+                    overload_arg_desc = re.sub(r'\. .*?:$', ".", overload_arg_desc)
+
+                for detail in overload_arg_details:
+                    if detail == "optional":
+                        optionnal_overload_arg = True
+                    elif detail.startswith("deprecated: "):
+                        deprecated_overload_arg = detail.replace("deprecated: ", "").replace("`", "")
+                    elif detail.startswith("default: "):
+                        overload_arg_default_value = detail.replace("default: ", "").replace("`", "").replace('"', "")
+                    elif detail.startswith("requires: "):
+                        overload_arg_requirements = detail.replace("requires: ", "").replace("`", "").split(" and ")
+                    else:
+                        overload_arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("map entity", "entity").split(" or ")
+
+                if overload_args_parts.index(overload_args_part) == 0:
+                    args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_section), "properties": generate_properties(overload_arg_section)})
+                else:
+                    overload_args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_section), "properties": generate_properties(overload_arg_section)})
+
+        overload_args += common_args
+        args += common_args
+
+    return args, overload_args
 
 def generate_deprecated(section):
     """Generate the deprecated version of a member.
@@ -259,10 +310,13 @@ def generate_members(member_type):
         
         for member_section in members_section:
             member_name = re.findall(rf'### `((?:sol\.)?{current_feature["name"]}(.*?))\(', member_section)[0][0]
+            
             member_desc = re.findall(rf'### `.*?`\n\n(.*?)(?=\n\n`\w+`|\n\n\|.*?<dl>|\n\nReturn value|\n\n!!! |$)', member_section, re.DOTALL)[0]
             member_desc = generate_links(member_desc)
             
-            members.append({"name": member_name, "desc": member_desc, "deprecated": generate_deprecated(member_section), "args": generate_args(member_section), "returns": generate_returns(member_section)})
+            member_args, member_overload_args = generate_args(member_section)
+            
+            members.append({"name": member_name, "desc": member_desc, "deprecated": generate_deprecated(member_section), "args": member_args, "overload_args": member_overload_args, "returns": generate_returns(member_section)})
 
     return members
 
