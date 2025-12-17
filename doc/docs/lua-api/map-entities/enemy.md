@@ -800,4 +800,4 @@ If you don't define this event, the hero is hurt with the predefined behavior as
 
 !!! note "Note"
 
-    If you call [`hero:start_hurt()`](./hero.md#herostart_hurtsource_entity-source_sprite-damage), you will obtain something equivalent to the default behavior. But if you don't, keep in mind that if the hero can still be hurt after your call, this event will continue to be called while there is a collision with the enemy. To avoid this, see for example [`hero:set_invincible()`](./hero.md#heroset_invincibleinvincible-duration) to make the hero temporarily invincible.
+    If you call [`hero:start_hurt()`](./hero.md#herostart_hurtsource_x-source_y-damage-herostart_hurtsource_entity-source_sprite-damage), you will obtain something equivalent to the default behavior. But if you don't, keep in mind that if the hero can still be hurt after your call, this event will continue to be called while there is a collision with the enemy. To avoid this, see for example [`hero:set_invincible()`](./hero.md#heroset_invincibleinvincible-duration) to make the hero temporarily invincible.
