@@ -78,8 +78,13 @@ def generate_links(section):
                 link_path = os.path.join(f"{api_root_dir}{current_feature['path']}", link_parts[0])
 
             link_path = os.path.abspath(link_path)
-            link_path = link_path.split(api_root_dir.replace("/", "\\"))[1]
-            link_path = link_path.replace("\\", "/").replace(".md", "")
+
+            if os.name == 'nt':
+                link_path = link_path.split(api_root_dir.replace("/", "\\"))[1]
+                link_path = link_path.replace("\\", "/").replace(".md", "")
+            else:
+                link_path = link_path.split(api_root_dir)[1]
+                link_path = link_path.replace(".md", "")
 
             if len(link_parts) == 2:
                 link_anchor = link_parts[1]
