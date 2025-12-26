@@ -82,21 +82,21 @@ set(SOLARUS_LIBRARIES ${SOLARUS_LIBRARY})
 if(SOLARUS_FOUND AND NOT TARGET solarus)
   find_package(SDL2 REQUIRED CONFIG)
 
-  # Temporary fix on Windows MSYS2, we can only building referencing directly solarus libs, no install
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    list(APPEND SOLARUS_INCLUDE_DIRS
-      "${SDL2_INCLUDE_DIR}"
-      "${SOLARUS_INCLUDE_DIR}/../../solarus/build/include"
-      "${SOLARUS_INCLUDE_DIR}/../../solarus/third_party/glad/include"
-      "${SOLARUS_INCLUDE_DIR}/../../solarus/third_party/hqx"
-      "${SOLARUS_INCLUDE_DIR}/../../solarus/third_party/snes_spc"
-    )
-  else()
-    list(APPEND SOLARUS_INCLUDE_DIRS
-      "${SDL2_INCLUDE_DIR}"
-      "${SOLARUS_INCLUDE_DIR}/solarus/third_party"
-    )
-  endif()
+  # TODO: Handle direct definition of libsolarus path in CMAKE
+  # if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  #   list(APPEND SOLARUS_INCLUDE_DIRS
+  #     "${SDL2_INCLUDE_DIR}"
+  #     "${SOLARUS_INCLUDE_DIR}/../../solarus/build/include"
+  #     "${SOLARUS_INCLUDE_DIR}/../../solarus/third_party/glad/include"
+  #     "${SOLARUS_INCLUDE_DIR}/../../solarus/third_party/hqx"
+  #     "${SOLARUS_INCLUDE_DIR}/../../solarus/third_party/snes_spc"
+  #   )
+  # else()
+  list(APPEND SOLARUS_INCLUDE_DIRS
+    "${SDL2_INCLUDE_DIR}"
+    "${SOLARUS_INCLUDE_DIR}/solarus/third_party"
+  )
+  # endif()
 
   add_library(solarus UNKNOWN IMPORTED)
   set_target_properties(solarus PROPERTIES
