@@ -12,3 +12,7 @@ Welcome to this tutorial section. Here you will find guides to use all the featu
     * [French](https://www.youtube.com/playlist?list=PLzJ4jb-Y0ufzi8Qm27zkY_ncdKobEPDfV)
 
     Any help is welcome to transcribe these videos to text format.
+
+!!! info CI test
+
+    Testing update in this file to trigger doc jobs in CI
