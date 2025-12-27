@@ -4,8 +4,8 @@ import json
 import os
 import re
 
-api_root_dir = "docs/lua-api" # The local directory where the lua API reference is stored.
-api_root_url = "https://docs.solarus-games.org/lua-api" # The URL where the lua API reference is hosted.
+api_root_dir = "docs/" # The local directory where the documentation is stored.
+api_root_url = "https://docs.solarus-games.org/" # The URL where the documentation is hosted.
 current_feature = {} # Will be set with the current feature that is being processed.
 start_time = "" # Will be initialized later with the current timestamp.
 logger = None # Will be initialized later with the Logger class.
@@ -72,11 +72,7 @@ def generate_links(section):
         else:
             link_parts = link[1].split("#")
 
-            link_path = os.path.join(api_root_dir, link_parts[0])
-            
-            if link_parts[0].startswith(".."):
-                link_path = os.path.join(f"{api_root_dir}{current_feature['path']}", link_parts[0])
-
+            link_path = os.path.join(f"{api_root_dir}{current_feature['path']}", '..', link_parts[0])
             link_path = os.path.abspath(link_path)
 
             if os.name == 'nt':
@@ -88,7 +84,6 @@ def generate_links(section):
 
             if len(link_parts) == 2:
                 link_anchor = link_parts[1]
-            
         
         links.append({"text": link[0], "path": link_path, "anchor": link_anchor})
     
@@ -350,7 +345,7 @@ def generate_features(content):
         else:
             feature_infos = feature_infos[1].split(" # ")
         
-        feature_path = feature_infos[0].replace("lua-api", "").replace(".md", "")
+        feature_path = feature_infos[0].replace(".md", "")
 
         if len(feature_infos) != 2:
             feature_name = feature.split(": ")[0].lower().replace(" ", "_")
