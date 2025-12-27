@@ -161,7 +161,7 @@ Registers a function to be called when your custom entity detects a collision wh
 
 !!! note "Note"
 
-    See also [`entity:overlaps()`](./index.md#entityoverlapsother_entity-collision_mode-entity_sprite-other_entity_sprite) to directly test a collision rather than registering a callback.
+    See also [`entity:overlaps()`](./index.md#entityoverlapsx-y-width-height-entityoverlapsother_entity-collision_mode-entity_sprite-other_entity_sprite) to directly test a collision rather than registering a callback.
 
 ### `custom_entity:clear_collision_tests()`
 
