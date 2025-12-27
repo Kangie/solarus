@@ -126,7 +126,7 @@ def generate_values(section):
 
         for value_section in values_section:
             value_name = re.findall(r'\- `(.*?)`', value_section)[0]
-            value_desc = re.findall(r': (.*?)\n', value_section)
+            value_desc = re.findall(r': (.*?)$', value_section)
 
             default_value = re.findall(r'` \(default\): ', value_section)
             default_value = len(default_value) > 0
@@ -232,9 +232,17 @@ def generate_args(section):
                 overload_arg_name = re.findall(r'\<dt\>`(\w+)`', overload_arg_section)[0]
                 overload_arg_desc = re.findall(r'\<dd\>(.*?)\<\/dd\>', overload_arg_section)[0]
                 overload_arg_details = re.findall(rf'\<dt\>`{overload_arg_name}` \((.*?)\)\<\/dt\>', overload_arg_section)[0].split(", ")
+                overload_arg_values_section = ""
                 overload_arg_default_value = ""
                 overload_arg_requirements = []
                 overload_arg_types = []
+
+                if overload_arg_desc.startswith("<p>"):
+                    overload_arg_values_section = re.findall(r'\<ul\>(.*?)\<\/ul\>', overload_arg_desc)[0]
+                    overload_arg_values_section = overload_arg_values_section.replace("<li>", "\n    - ").replace("</li>", "")
+                    overload_arg_values_section = f"\n{overload_arg_values_section}\n\n"
+
+                    overload_arg_desc = re.findall(r'\<p\>(.*?)\<\/p\>', overload_arg_desc)[0]
 
                 overload_arg_desc = generate_links(overload_arg_desc)
 
@@ -257,9 +265,9 @@ def generate_args(section):
                         overload_arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("map entity", "entity").split(" or ")
 
                 if overload_args_parts.index(overload_args_part) == 0:
-                    args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_section), "properties": generate_properties(overload_arg_section)})
+                    args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_values_section), "properties": generate_properties(overload_arg_section)})
                 else:
-                    overload_args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_section), "properties": generate_properties(overload_arg_section)})
+                    overload_args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_values_section), "properties": generate_properties(overload_arg_section)})
 
         overload_args += common_args
         args += common_args
