@@ -67,7 +67,7 @@ Sets a function to be called after a delay.
 
 If the duration is set to zero, the function is called immediately.
 
-`context` ([map](./map.md) or [game](./game.md) or [item](./equipment-items.md) or [map entity](./map-entities/index.md) or [state](./custom-states.md) or [menu](./menus.md) or [sol.main](./general-features.md), optional)
+`context` ([map](./map.md) or [game](./game.md) or [item](./equipment-items.md) or [map entity](./map-entities/index.md) or [state](./custom-states.md) or [menu](./menus.md) or [sol.main](./general-features.md) or `nil`)
 : Determines the lifetime of the timer. The context is where the timer belongs. If the context gets closed before the timer is finished, then the timer is automatically canceled. More precisely, the following rules are applied.
 
     - If you set the context to a [map](./map.md), the timer is canceled when the player goes to another map. Example: a button that opens a door for a limited time.
