@@ -24,28 +24,13 @@ Return value 1 (number)
 Return value 2 (number)
 : Y coordinate of the center.
 
-### `circle_movement:set_center(x, y)`
+### `circle_movement:set_center(x, y), circle_movement:set_center(entity, [dx, dy])`
 
-Sets the center of this movement as a fixed point.
+Sets the center of this movement as a fixed point or as a [map entity](../map-entities/index.md) (only during a [game](../game.md)).
 
-`x` (number)
-: X coordinate of the center.
-
-`y` (number)
-: Y coordinate of the center.
-
-### `circle_movement:set_center(entity, [dx, dy])`
-
-Sets the center of this movement as a [map entity](../map-entities/index.md) (only during a [game](../game.md)).
-
-`entity` ([entity](../map-entities/index.md))
-: The center entity.
-
-`dx` (number, optional, requires: `dy`, default: `0`)
-: X offset to add to the center entity's coordinates.
-
-`dy` (number, optional, requires: `dx`, default: `0`)
-: Y offset to add to the center entity's coordinates.
+| With a fixed point | With a [map entity](../map-entities/index.md) |
+|--------------------|-----------------------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the center.</dd><dt>`y` (number)</dt><dd>Y coordinate of the center.</dd></dl> | <dl><dt>`entity` ([entity](../map-entities/index.md))</dt><dd>The center entity.</dd><dt>`dx` (number, optional, requires: `dy`, default: `0`)</dt><dd>X offset to add to the center entity's coordinates.</dd><dt>`dy` (number, optional, requires: `dx`, default: `0`)</dt><dd>Y offset to add to the center entity's coordinates.</dd></dl>|
 
 ### `circle_movement:get_radius()`
 
