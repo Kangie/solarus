@@ -2,6 +2,7 @@
 
 ## Solarus 2.0.3 (In progress)
 
+* Fix flickering of entities drawn in y order at same coordinates (#1498).
 * Fix a001 error while trying to set volume on a non-playing music (#1935).
 * Updated Game Controller DB.
 

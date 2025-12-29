@@ -446,7 +446,7 @@ void finish() {
 }
 
 void invalidate(const SurfaceImpl& texture) {
-  if(context.renderer) {
+  if (context.renderer) {
     context.renderer->invalidate(texture);
   }
 }
