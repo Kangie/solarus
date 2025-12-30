@@ -3,7 +3,8 @@
 ## Solarus Editor 2.0.3 (In progress)
 
 * Fix crash on editor startup if the quest was not found (#1962).
-* Fix countour generator icons column size and dark mode (#1949).
+* Fix contour generator icons column size and dark mode (#1949).
+* Fix non empty tileset on generated contour tiles when it's tileset of the map (#1932).
 * Meaningful error message when trying to create a map when there is no tileset (#1954).
 
 ## Solarus Editor 2.0.2 (2025-12-05)
