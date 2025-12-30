@@ -26,7 +26,7 @@ Sets the target of this movement as a fixed point or a [map entity](../map-entit
 
 | With coordinates | With a [map entity](../map-entities/index.md) |
 |------------------|------------------------------|
-| <dl><dt>`x` (number)</dt><dd>X coordinate of the target.</dd><dt>`y` (number)</dt><dd>Y coordinate of the target.</dd></dl> | <dl><dt>`entity` ([entity](../map-entities/index.md))</dt><dd>The entity to target.</dd><dt>`x` (number, optional, requires `y`, default: `0`)</dt><dd>X offset to add to the target entity's coordinates.</dd><dt>`y` (number, optional, requires `x`, default: `0`)</dt><dd>Y offset to add to the target entity's coordinates.</dd></dl>|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the target.</dd><dt>`y` (number)</dt><dd>Y coordinate of the target.</dd></dl> | <dl><dt>`entity` ([entity](../map-entities/index.md))</dt><dd>The entity to target.</dd><dt>`x` (number, optional, requires: `y`, default: `0`)</dt><dd>X offset to add to the target entity's coordinates.</dd><dt>`y` (number, optional, requires: `x`, default: `0`)</dt><dd>Y offset to add to the target entity's coordinates.</dd></dl>|
 
 ### `target_movement:get_speed()`
 

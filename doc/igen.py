@@ -4,8 +4,8 @@ import json
 import os
 import re
 
-api_root_dir = "docs/lua-api" # The local directory where the lua API reference is stored.
-api_root_url = "https://docs.solarus-games.org/lua-api" # The URL where the lua API reference is hosted.
+api_root_dir = "docs/" # The local directory where the documentation is stored.
+api_root_url = "https://docs.solarus-games.org/" # The URL where the documentation is hosted.
 current_feature = {} # Will be set with the current feature that is being processed.
 start_time = "" # Will be initialized later with the current timestamp.
 logger = None # Will be initialized later with the Logger class.
@@ -72,11 +72,7 @@ def generate_links(section):
         else:
             link_parts = link[1].split("#")
 
-            link_path = os.path.join(api_root_dir, link_parts[0])
-            
-            if link_parts[0].startswith(".."):
-                link_path = os.path.join(f"{api_root_dir}{current_feature['path']}", link_parts[0])
-
+            link_path = os.path.join(f"{api_root_dir}{current_feature['path']}", '..', link_parts[0])
             link_path = os.path.abspath(link_path)
 
             if os.name == 'nt':
@@ -88,7 +84,6 @@ def generate_links(section):
 
             if len(link_parts) == 2:
                 link_anchor = link_parts[1]
-            
         
         links.append({"text": link[0], "path": link_path, "anchor": link_anchor})
     
@@ -131,7 +126,7 @@ def generate_values(section):
 
         for value_section in values_section:
             value_name = re.findall(r'\- `(.*?)`', value_section)[0]
-            value_desc = re.findall(r': (.*?)\n', value_section)
+            value_desc = re.findall(r': (.*?)$', value_section)
 
             default_value = re.findall(r'` \(default\): ', value_section)
             default_value = len(default_value) > 0
@@ -219,7 +214,7 @@ def generate_args(section):
             elif detail.startswith("requires: "):
                 arg_requirements = detail.replace("requires: ", "").replace("`", "").split(" and ")
             else:
-                arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("map entity", "entity").split(" or ")
+                arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("map entity", "entity").replace("carried object", "carried_object").split(" or ")
 
         args.append({"name": arg_name, "desc": arg_desc, "optionnal": optionnal_arg, "deprecated": deprecated_arg, "requires": arg_requirements, "types": arg_types, "default": arg_default_value, "values": generate_values(arg_section), "properties": generate_properties(arg_section)})
 
@@ -237,9 +232,17 @@ def generate_args(section):
                 overload_arg_name = re.findall(r'\<dt\>`(\w+)`', overload_arg_section)[0]
                 overload_arg_desc = re.findall(r'\<dd\>(.*?)\<\/dd\>', overload_arg_section)[0]
                 overload_arg_details = re.findall(rf'\<dt\>`{overload_arg_name}` \((.*?)\)\<\/dt\>', overload_arg_section)[0].split(", ")
+                overload_arg_values_section = ""
                 overload_arg_default_value = ""
                 overload_arg_requirements = []
                 overload_arg_types = []
+
+                if overload_arg_desc.startswith("<p>"):
+                    overload_arg_values_section = re.findall(r'\<ul\>(.*?)\<\/ul\>', overload_arg_desc)[0]
+                    overload_arg_values_section = overload_arg_values_section.replace("<li>", "\n    - ").replace("</li>", "")
+                    overload_arg_values_section = f"\n{overload_arg_values_section}\n\n"
+
+                    overload_arg_desc = re.findall(r'\<p\>(.*?)\<\/p\>', overload_arg_desc)[0]
 
                 overload_arg_desc = generate_links(overload_arg_desc)
 
@@ -262,9 +265,9 @@ def generate_args(section):
                         overload_arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("map entity", "entity").split(" or ")
 
                 if overload_args_parts.index(overload_args_part) == 0:
-                    args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_section), "properties": generate_properties(overload_arg_section)})
+                    args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_values_section), "properties": generate_properties(overload_arg_section)})
                 else:
-                    overload_args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_section), "properties": generate_properties(overload_arg_section)})
+                    overload_args.append({"name": overload_arg_name, "desc": overload_arg_desc, "optionnal": optionnal_overload_arg, "deprecated": deprecated_overload_arg, "requires": overload_arg_requirements, "types": overload_arg_types, "default": overload_arg_default_value, "values": generate_values(overload_arg_values_section), "properties": generate_properties(overload_arg_section)})
 
         overload_args += common_args
         args += common_args
@@ -350,7 +353,7 @@ def generate_features(content):
         else:
             feature_infos = feature_infos[1].split(" # ")
         
-        feature_path = feature_infos[0].replace("lua-api", "").replace(".md", "")
+        feature_path = feature_infos[0].replace(".md", "")
 
         if len(feature_infos) != 2:
             feature_name = feature.split(": ")[0].lower().replace(" ", "_")
