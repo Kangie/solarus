@@ -5,6 +5,7 @@
 * Fix flickering of entities drawn in y order at same coordinates (#1498).
 * Fix a001 error while trying to set volume on a non-playing music (#1935).
 * Fix duplicate teletransporter activation when hero has no linked camera (#1945).
+* Fix left and right inverted when using analog controls and keyboard default mappings (#1588).
 * Updated Game Controller DB.
 
 ## Solarus 2.0.2 (2025-12-05)
