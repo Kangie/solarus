@@ -256,7 +256,10 @@ bool Teletransporter::test_collision_custom(Entity& entity) {
       overlaps(x1, y2) && overlaps(x2, y2);
   }
 
-  if (!collision && !is_on_map_side()) {
+  if (!collision) {
+    // Reset the transporting flag when hero is no longer overlapping.
+    // This happens when the hero leaves the teletransporter area or when
+    // the hero is removed from the map during teleportation.
     transporting_hero = false;
   }
 
@@ -358,7 +361,8 @@ void Teletransporter::transport_hero(Hero& hero) {
     sprites.set_clipping_rectangle();
   }*/
 
-  transporting_hero = false;
+  // Don't reset transporting_hero here - it will be reset when collision ends (line 260)
+  // This prevents double activation for heroes without linked cameras.
   if (is_on_map_side()) {
     hero.set_xy(hero_x, hero_y);
   }
