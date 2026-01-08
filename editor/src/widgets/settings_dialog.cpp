@@ -155,6 +155,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
           this, &SettingsDialog::change_tileset_grid_style);
   connect(ui.tileset_grid_color_field, &ColorChooser::color_changed,
           this, &SettingsDialog::change_tileset_grid_color);
+
+  // Default styled fixed font for the command-line field.
+  ui.editor_cmd_field->setFont(EditorStyle::get_fixed_font_or_fallback());
+
 }
 
 /**

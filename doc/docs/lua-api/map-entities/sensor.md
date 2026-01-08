@@ -14,7 +14,7 @@ Sensors can have any size, but like all entities, their width and height must be
 
 A sensor is activated only if the bounding box of the hero is entirely on the sensor.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Sensors are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -24,7 +24,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
@@ -40,7 +40,7 @@ The following events are specific to sensors.
 
 Called when the [hero](./hero.md) overlaps this sensor.
 
-`hero` ([](./hero.md))
+`hero` ([hero](./hero.md))
 : The hero that activated the sensor.
 
 The bounding box of the hero (of size 16×16 pixels) must fit entirely the sensor. This means that if the sensor has a size of 16×16, the hero and the sensor must overlap perfectly.

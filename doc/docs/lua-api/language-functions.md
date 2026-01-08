@@ -16,7 +16,7 @@ If there is only one language in your quest, then it is automatically set as the
 
 Returns the id of the current language.
 
-Return value (string)
+Return value (string or `nil`)
 : The code that identifies the current language, or `nil` if no language was set.
 
 ### `sol.language.set_language(language_id)`
@@ -56,7 +56,7 @@ Translated strings are defined in the file [text/strings.dat](../files-specs/lan
 `key` (string)
 : Key of the string to get. The corresponding key-value pair must be defined in [text/strings.dat](../files-specs/languages/strings.md).
 
-Return value (string)
+Return value (string or `nil`)
 : The value associated to this key in [text/strings.dat](../files-specs/languages/strings.md), or `nil` if it does not exist.
 
 ### `sol.language.get_dialog(dialog_id)`
@@ -68,7 +68,7 @@ Translated dialogs are defined in the file [text/dialogs.dat](../files-specs/lan
 `dialog_id` (string)
 : Id of the dialog to get.
 
-Return value (table)
+Return value (table or `nil`)
 : The corresponding dialog in the current language, or `nil` if it does not exist. The dialog is a table with at least the following two entries:
 
     `dialog_id` (string)

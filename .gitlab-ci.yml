@@ -24,9 +24,10 @@ variables:
     description: Set to a non-empty value to force creation of the `docs-deploy` job.
 
 stages:
-  - build
+  - build-engine
   - test
-  - install
+  - install-engine
+  - build-clients
   - package
   - deploy
 
@@ -41,7 +42,7 @@ stages:
 # flags to use in CMake during build system generation (default: unset).
 
 .build:
-  stage: build
+  stage: build-engine
   before_script:
     - export CCACHE_BASEDIR=$CI_PROJECT_DIR
     - export CCACHE_DIR=$CI_PROJECT_DIR/ccache
@@ -77,7 +78,7 @@ stages:
 # commit on a branch or tag.
 
 .install:
-  stage: install
+  stage: install-engine
   script:
     - $CMAKE_CMD --install build --strip
   artifacts:
@@ -89,9 +90,9 @@ stages:
     CMAKE_CMD: cmake
 
 #------------------------------------------------------------------------------------
-# Linux Build Job (64-bit)
+# ENGINE - Linux Build Job (64-bit)
 
-linux-build:
+engine-linux-build:
   extends: .build
   image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
   variables:
@@ -99,9 +100,9 @@ linux-build:
       -DSOLARUS_TESTS_INSTALL=ON
 
 #------------------------------------------------------------------------------------
-# Linux without LuaJIT Build Job (64-bit)
+# ENGINE - Linux without LuaJIT Build Job (64-bit)
 
-linux-noluajit-build:
+engine-linux-noluajit-build:
   extends: .build
   image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
   variables:
@@ -110,18 +111,18 @@ linux-noluajit-build:
       -DSOLARUS_USE_LUAJIT=OFF
 
 #------------------------------------------------------------------------------------
-# MinGW Build Job (64-bit)
+# ENGINE - MinGW Build Job (64-bit)
 
-mingw-x64-build:
+engine-mingw-x64-build:
   extends: .build
   image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
   variables:
     CMAKE_GEN_CMD: x86_64-w64-mingw32-cmake
 
 #------------------------------------------------------------------------------------
-# MinGW without LuaJIT Build Job (64-bit)
+# ENGINE - MinGW without LuaJIT Build Job (64-bit)
 
-mingw-x64-noluajit-build:
+engine-mingw-x64-noluajit-build:
   extends: .build
   image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
   variables:
@@ -137,11 +138,12 @@ mingw-x64-noluajit-build:
 # most recent commit on a branch or tag.
 
 docs-build:
-  stage: build
+  stage: build-engine
   image: $IMAGE_REPOSITORY/docs-build-env:20250322  # will be configured in envvar later
   script:
     - cd doc
     - mkdocs build --site-dir public
+    - python igen.py
     - OFFLINE=true mkdocs build --site-dir offline
   artifacts:
     name: $CI_JOB_NAME
@@ -151,34 +153,92 @@ docs-build:
     expire_in: 1 month
 
 #------------------------------------------------------------------------------------
-# Linux Test Job (64-bit)
+# ENGINE - Linux Test Job (64-bit)
 
-linux-test:
+engine-linux-test:
   stage: test
   image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
   dependencies:
-    - linux-build
+    - engine-linux-build
   script:
     - xvfb-run -a --server-args "-screen 0 640x480x24" -e /dev/stderr
         ctest --test-dir build -V
 
 #------------------------------------------------------------------------------------
-# Linux Staging Install Job (64-bit)
+# ENGINE - Linux Staging Install Job (64-bit)
 
-linux-install:
+engine-linux-install:
   extends: .install
   image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
   dependencies:
-    - linux-build
+    - engine-linux-build
 
 #------------------------------------------------------------------------------------
-# MinGW Staging Install Job (64-bit)
+# ENGINE - MinGW Staging Install Job (64-bit)
 
-mingw-x64-install:
+engine-mingw-x64-install:
   extends: .install
   image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
   dependencies:
-    - mingw-x64-build
+    - engine-mingw-x64-build
+
+#------------------------------------------------------------------------------------
+# EDITOR - Linux Build Job (64-bit)
+
+editor-linux-build:
+  before_script:
+    - cd editor
+  extends: .build
+  stage: build-clients
+  artifacts:
+    paths:
+      - editor/build
+  dependencies:
+    - engine-linux-install
+  image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
+
+#------------------------------------------------------------------------------------
+# EDITOR - MinGW Build Job (64-bit)
+
+editor-mingw-x64-build:
+  before_script:
+    - cd editor
+  extends: .build
+  stage: build-clients
+  image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
+  dependencies:
+    - engine-mingw-x64-install
+  variables:
+    CMAKE_GEN_CMD: x86_64-w64-mingw32-cmake  
+
+#------------------------------------------------------------------------------------
+# LAUNCHER - Linux Build Job (64-bit)
+
+launcher-linux-build:
+  before_script:
+    - cd launcher
+  extends: .build
+  stage: build-clients
+  artifacts:
+    paths:
+      - launcher/build
+  dependencies:
+    - engine-linux-install
+  image: $IMAGE_REPOSITORY/linux-build-env:$IMAGE_VERSION
+
+#------------------------------------------------------------------------------------
+# LAUNCHER - MinGW Build Job (64-bit)
+
+launcher-mingw-x64-build:
+  before_script:
+    - cd launcher
+  extends: .build
+  stage: build-clients
+  image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
+  dependencies:
+    - engine-mingw-x64-install
+  variables:
+    CMAKE_GEN_CMD: x86_64-w64-mingw32-cmake 
 
 #------------------------------------------------------------------------------------
 # MinGW Package Job (64-bit)
@@ -191,11 +251,11 @@ mingw-x64-install:
 # non-releases (based on commits) or `<package-prefix>-<tag-name>.zip` for
 # releases (based on tags). Text files are newline-converted for Windows.
 
-mingw-x64-package:
+engine-mingw-x64-package:
   stage: package
   image: $IMAGE_REPOSITORY/mingw-build-env:$IMAGE_VERSION
   dependencies:
-    - mingw-x64-install
+    - engine-mingw-x64-install
   before_script:
     - PACKAGE_REF=${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
     - PACKAGE=$PACKAGE_NAME-$PACKAGE_REF-$PACKAGE_PLATFORM-$PACKAGE_ARCH.zip

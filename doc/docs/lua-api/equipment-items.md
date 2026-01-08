@@ -57,14 +57,14 @@ Return value ([game](./game.md))
 
 Returns the current map.
 
-Return value ([map](./map.md))
+Return value ([map](./map.md) or `nil`)
 : The current map, or `nil` if the [game](./game.md) is not running.
 
 ### `item:get_savegame_variable()`
 
 Returns the name of the integer savegame value that stores the possession state of this item.
 
-Return value (string)
+Return value (string or `nil`)
 : The savegame variable that stores the possessed variant of this item, or `nil` if this item is not saved.
 
 ### `item:set_savegame_variable(savegame_variable)`
@@ -73,14 +73,14 @@ Sets the name of the integer savegame value that stores the possession state of 
 
 You should call this function at initialization time if you want your item to be saved.
 
-`savegame_variable` (string)
+`savegame_variable` (string or `nil`)
 : The savegame variable that should stored the possessed variant of this item, or `nil` to make this item unsaved.
 
 ### `item:get_amount_savegame_variable()`
 
 Returns the name of the integer savegame value that stores the amount associated to this item.
 
-Return value (string)
+Return value (string or `nil`)
 : The savegame variable that stores the possessed amount of this item, or `nil` if this item has no associated amount.
 
 ### `item:set_amount_savegame_variable(amount_savegame_variable)`
@@ -89,7 +89,7 @@ Sets the name of the integer savegame value that stores the amount of this item.
 
 You should call this function at initialization time if you want your item to store an amount (in addition to its possessed variant). This is typically used for items like the bow and the counter of bombs.
 
-Return value (string)
+`amount_savegame_variable` (string or `nil`)
 : The savegame variable that should store the possessed amount of this item, or `nil` to make this item have no associated amount.
 
 ### `item:is_obtainable()`
@@ -107,8 +107,8 @@ Sets whether the player is allowed to obtain this item.
 
 If not, any treasure representing this item is automatically replaced by an empty treasure. There is no risk that the player can obtain it or even see it during the [game](./game.md). You can use this feature to hide some items while the player has not the necessary equipment. For example, you can make arrows unobtainable until the player has the bow. You can also make magic jars unobtainable until the player has a magic bar.
 
-Return value (boolean, optional)
-: `true` if this item is obtainable (no value means `true`)
+Return value (boolean, optional, default: `true`)
+: `true` if this item is obtainable.
 
 ### `item:is_assignable()`
 
@@ -127,8 +127,8 @@ When the item is assigned to a slot, the player can use it by pressing the [game
 
 By default, an item is not assignable. Call this function at initialization time if you want your item to be assignable.
 
-`assignable` (boolean, optional)
-: `true` if this item is assignable (no value means `true`)
+`assignable` (boolean, optional, default: `true`)
+: `true` if this item is assignable.
 
 ### `item:get_can_disappear()`
 
@@ -143,8 +143,8 @@ Sets whether [pickable treasures](./map-entities/pickable.md) of this kind shoul
 
 By default, an item cannot disappear. Call this function at initialization time if you want your item to be ephemeral.
 
-`can_disappear` (boolean, optional)
-: `true` to make such pickable treasures disappear after a few seconds (no value means `true`)
+`can_disappear` (boolean, optional, default: `true`)
+: `true` to make such pickable treasures disappear after a few seconds.
 
 !!! note "Note"
 
@@ -165,17 +165,17 @@ Sets whether the hero should brandish treasures of this kind when he [picks](./m
 
 Treasures coming from a [chest](./map-entities/chest.md) are always brandished, even the most basic ones like simple rupees. However, when treasures are [picked](./map-entities/pickable.md) on the ground (like rupees dropped by an [enemy](./map-entities/enemy.md)), you may want the hero not to brandish them.
 
-By default, this property is `true` Call this function if you don't want your item to be brandished when it is picked on the ground.
+Call this function if you don't want your item to be brandished when it is picked on the ground.
 
-`brandish_when_picked` (boolean, optional)
-: `true` if the hero should brandish such treasures (no value means `true`)
+`brandish_when_picked` (boolean, optional, default: `true`)
+: `true` if the hero should brandish such treasures.
 
 ### `item:get_shadow()`
 
 Returns the name of the animation representing the shadow of this item in the sprite `"entities/shadow"`
 
-Return value (string)
-: Name of the shadow animation adapted to this item in the sprite `"entities/shadow"` `nil` means no shadow displayed.
+Return value (string or `nil`)
+: Name of the shadow animation adapted to this item in the sprite `"entities/shadow"`. `nil` means no shadow displayed.
 
 ### `item:set_shadow(shadow_animation)`
 
@@ -183,9 +183,9 @@ Sets the name of the animation that should represent the shadow of this item in 
 
 When the engine needs to show a treasure representing your item, it sometimes also wants to display a shadow (in addition of the treasure's main sprite). For example, [pickable treasures](./map-entities/pickable.md) dropped by enemies normally have a shadow.
 
-The default shadow animation is `"big"` You should call this function at initialization time if your item sprite is larger or smaller than usual.
+You should call this function at initialization time if your item sprite is larger or smaller than usual.
 
-`shadow_animation` (string)
+`shadow_animation` (string or `nil`, default: `"big"`)
 : Name of the shadow animation in the sprite `"entities/shadow"` to set for this item. `nil` means that no shadow will be displayed.
 
 !!! note "Note"
@@ -196,16 +196,14 @@ The default shadow animation is `"big"` You should call this function at initial
 
 Returns the sound played when the hero [picks a treasure](./map-entities/pickable.md) of this kind.
 
-Return value (string)
+Return value (string or `nil`)
 : Name of the sound played when the hero picks a treasure of this kind (`nil` means no sound).
 
 ### `item:set_sound_when_picked(sound_when_picked)`
 
 Sets the sound to play when the hero [picks a treasure](./map-entities/pickable.md) of this kind.
 
-The default sound is `"picked_item"`.
-
-`sound_when_picked` (string)
+`sound_when_picked` (string or `nil`, default: `"picked_item"`)
 : Name of the sound to play (as in [`sol.audio.play_sound()`](./audio/index.md#solaudioplay_soundsound_id)) when the hero picks a treasure of this kind (`nil` means no sound).
 
 !!! note "Note"
@@ -216,7 +214,7 @@ The default sound is `"picked_item"`.
 
 Returns the sound played when the hero brandishes a treasure of this kind.
 
-Return value (string)
+Return value (string or `nil`)
 : Name of the sound played when the hero brandishes a treasure of this kind (`nil` means no sound).
 
 ### `item:set_sound_when_brandished(sound_when_brandished)`
@@ -225,17 +223,15 @@ Sets the sound to play when the hero brandishes a treasure of this kind.
 
 The hero can brandish treasures in various situations: when opening a [chest](./map-entities/chest.md), when buying a [shop treasure](./map-entities/shop-treasure.md), when picking up a [pickable treasure](./map-entities/pickable.md) (unless you called [`item:set_brandish_when_picked(false)`](#itemset_brandish_when_pickedbrandish_when_picked)), and also when you call [`hero:start_treasure()`](./map-entities/hero.md#herostart_treasuretreasure_name-treasure_variant-treasure_savegame_variable-callback) directly.
 
-The default sound is `"treasure"`.
-
-`sound_when_brandished` (string)
+`sound_when_brandished` (string or `nil`, default: `"treasure"`)
 : Name of the sound to play (as in [`sol.audio.play_sound()`](./audio/index.md#solaudioplay_soundsound_id)) when the hero brandishes a treasure of this kind (`nil` means no sound).
 
 ### `item:has_variant([variant])`
 
 Returns whether the player owns at least the specified variant of this item (only for a saved item).
 
-`variant` (number, optional)
-: The variant to check (default `1`)
+`variant` (number, optional, default: `1`)
+: The variant to check.
 
 Return value (boolean)
 : `true` if the player has at least this variant.
@@ -321,9 +317,9 @@ Return value (number)
 
 ### `item:set_max_amount(max_amount)`
 
-Sets the maximum amount associated to this item (only for an item with an amount value). This maximum value is used in [`item:set_amount()`](#itemset_amountamount) and [`item:add_amount()`](#itemadd_amountamount) to make a limit. The default value is `1000`.
+Sets the maximum amount associated to this item (only for an item with an amount value). This maximum value is used in [`item:set_amount()`](#itemset_amountamount) and [`item:add_amount()`](#itemadd_amountamount) to make a limit.
 
-`max_amount` (number)
+`max_amount` (number, default: `1000`)
 : The maximum amount to set.
 
 !!! note "Note"
@@ -336,6 +332,9 @@ Sets the maximum amount associated to this item (only for an item with an amount
 
 Returns whether the item is currently being used by the [hero](./map-entities/hero.md).
 
+Return value (boolean)
+: `true` if the item is being used, `false` otherwise.
+
 ### `item:set_finished()`
 
 Notifies the engine that using this item is finished and that the hero can get back to a normal state.
@@ -344,7 +343,7 @@ When the player uses this item (by pressing an item [game command](./game.md#gam
 
 This method should only be called when the hero is using this item.
 
-## Events of an `item`
+## Events of the type `item`
 
 Events are callback methods automatically called by the engine if you define them. In the case of a game, they are only called on the game currently running, if any.
 
@@ -418,7 +417,7 @@ Called when the hero is obtaining a treasure of this kind of item. Only possible
 `variant` (number)
 : The variant of item (because some items may have several variants). `1` is the first variant, `2` is the second variant, etc.
 
-`savegame_variable` (string)
+`savegame_variable` (string or `nil`)
 : Name of the boolean saved value that stores the state of the treasure being obtained. `nil` means that the treasure is not saved.
 
 !!! note "Note"
@@ -434,7 +433,7 @@ In the case of a brandished treasure, this event is called once the treasure's d
 `variant` (number)
 : The variant of item (because some items may have several variants). `1` is the first variant, `2` is the second variant, etc.
 
-`savegame_variable` (string)
+`savegame_variable` (string or `nil`)
 : Name of the boolean saved value that stores the state of the treasure just obtained. `nil` means that the treasure is not saved.
 
 ### `item:on_variant_changed(variant)`
@@ -461,12 +460,12 @@ Called when a player is using this item. Only possible when the [game](./game.md
 
 The player is using your item (by pressing an item [game command](./game.md#game-commands)). You now have full control of the [hero](./map-entities/hero.md). From this event, you have to program the item's behavior. For example, your item can remove some magic points and perform a special attack that kills all enemies nearby. When you have finished, call [`item:set_finished()`](#itemset_finished) to restore normal control to the player.
 
+`hero` ([hero](./map-entities/hero.md))
+: The hero entity that uses the item.
+
 !!! note "Note"
 
     There is another event for the special case of giving an item to an [non-playing character](./map-entities/npc.md). If the [hero](./map-entities/hero.md) uses an item in front of an [NPC](./map-entities/npc.md) whose property is to notify your item, then event [`item:on_npc_interaction_item()`](#itemon_npc_interaction_itemnpc-item_used) is triggered first. If that event is defined and returns `true`, then [`item:on_using()`](#itemon_usinghero) is not called (the interaction is considered done).
-
-`hero` ([Hero](./map-entities/hero.md))
-: The hero entity that uses the item.
 
 ### `item:on_ability_used(ability_name, hero)`
 
@@ -476,21 +475,22 @@ Built-in abilities indicate whether the hero can perform some built-in actions l
 
 `ability_name` (string)
 : Name of the ability that was used.
-`hero` ([Hero](./map-entities/hero.md))
+
+`hero` ([hero](./map-entities/hero.md))
 : The hero entity that just used the ability.
 
 ### `item:on_npc_interaction(npc)`
 
 Called when the [hero](./map-entities/hero.md) interacts (the player pressed the [action command](./game.md#game-commands)) in front of an [NPC](./map-entities/npc.md) whose property is to notify your item. Only possible when the [game](./game.md) is running.
 
-`npc` ([NPC](./map-entities/npc.md))
+`npc` ([npc](./map-entities/npc.md))
 : A non-playing character.
 
 ### `item:on_npc_interaction_item(npc, item_used)`
 
 Called when the [hero](./map-entities/hero.md) uses any item (the player pressed an [item command](./game.md#game-commands)) with an [NPC](./map-entities/npc.md) whose property is to notify your item. Only possible when the [game](./game.md) is running.
 
-`npc` ([NPC](./map-entities/npc.md))
+`npc` ([npc](./map-entities/npc.md))
 : A non-playing character.
 
 `item_used` (item)

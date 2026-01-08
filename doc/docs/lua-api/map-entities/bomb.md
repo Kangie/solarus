@@ -14,7 +14,7 @@ A bomb can be lifted by the [hero](./hero.md) before it explodes. When it explod
 
 If a bomb is placed on a [stream](./stream.md), it follows a movement corresponding to this stream.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Bombs are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -24,7 +24,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

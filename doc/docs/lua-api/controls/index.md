@@ -80,7 +80,7 @@ Default mappings are:
 | Left Stick X | X          |
 | Left Stick Y | Y          |
 
-`joypad` (joypad)
+`joypad` ([joypad](./joypad.md))
 : a joypad instance to create the controls for.
 
 Return value (controls)
@@ -152,13 +152,11 @@ Return value (string)
 : Any valid command name
 
 `button` (string)
-: A valid joypad binding code
+: A valid joypad binding code. Binding codes must be one of the following:
 
-Binding codes must be one of the following:
+    - A valid joypad button string (see [joypad](./joypad.md)).
 
-- A valid joypad button string (see [joypad](./joypad.md)).
-
-- An axis binding formed like this: `"<axis_name> {+/-}"` where `axis_name` is a valid joypad axis string (see [joypad](./joypad.md)).
+    - An axis binding formed like this: `"<axis_name> {+/-}"` where `axis_name` is a valid joypad axis string (see [joypad](./joypad.md)).
 
 ### `controls:get_joypad_binding(command)`
 
@@ -187,8 +185,11 @@ Sets the keyboard keys that will move the given axis.
 
 Returns the keys bound to move the given axis.
 
-Return values (string, string)
-: The positive and negative key codes.
+Return value 1 (string)
+: The positive key code.
+
+Return value 2 (string)
+: The negative key code.
 
 ### `controls:set_joypad_axis_binding(axis, joypad_axis_binding)`
 
@@ -211,56 +212,56 @@ Return value (string)
 
 Sets the commands bindings for the keyboard.
 
-`bindings` ({string : {string}})
+`bindings` (table)
 : A table of key codes -> array of commands.
 
 ### `controls:get_keyboard_bindings()`
 
 Gets the command bindings for the keyboard.
 
-Return value ({string : {string}})
+Return value (table)
 : A table of key codes -> array of commands (see [inputs](./inputs.md)).
 
 ### `controls:set_joypad_bindings(bindings)`
 
 Sets the command bindings for the joypad.
 
-`commands` ({string : {string}})
+`commands` (table)
 : A table of joypad command bindings -> array of commands.
 
 ### `controls:get_joypad_bindings()`
 
 Gets the joypad command bindings.
 
-Return value ({string : {string}})
+Return value (table)
 : A table of joypad command bindings -> array of commands.
 
 ### `controls:set_keyboard_axis_bindings(bindings)`
 
 Sets keyboard's axes bindings
 
-`bindings` ({string : {string}})
+`bindings` (table)
 : A table of key codes -> array of axes bindings.
 
 ### `controls:get_keyboard_axis_bindings()`
 
 Gets the keyboard's axes bindings.
 
-Return value ({string : {string}})
+Return value (table)
 : A table of key codes -> array of axes bindings.
 
 ### `controls:set_joypad_axis_bindings(bindings)`
 
 Sets the joypad axes bindings.
 
-`bindings` ({string : {string}})
+`bindings` (table)
 : A table of joypad axis names -> array of axes bindings.
 
 ### `controls:get_joypad_axis_bindings()`
 
 Gets the joypad axes bindings.
 
-Return value ({string : {string}})
+Return value (table)
 : A table of joypad axis names -> array of axes bindings.
 
 ### `controls:get_effect(command)`
@@ -295,21 +296,21 @@ Simulate an axis moved event. You can also simulate custom axis names.
 
 Sets the joypad that is bound to those controls.
 
-`joypad` ([joypad](./joypad.md))
-: joypad to set, nil to disable joypad input.
+`joypad` ([joypad](./joypad.md) or `nil`)
+: joypad to set, `nil` to disable joypad input.
 
 ### `controls:get_joypad()`
 
 Gets the joypad bound to those controls.
 
-Return value ([joypad](./joypad.md))
-: bound joypad or nil if none.
+Return value ([joypad](./joypad.md) or `nil`)
+: bound joypad or `nil` if none.
 
 ### `controls:remove()`
 
 Remove those controls from the event handler, effectively disabling them forever. The Lua object is still usable but will never trigger any output. If the reference is forgotten by Lua the object is freed.
 
-## Control Handlers
+## Events of Control Handlers
 
 Controls raise events that are propagated to all event handlers defined in your code. Objects that can handle controls event are [game](../game.md), [menu](../menus.md), [map](../map.md) and [state](../custom-states.md).
 

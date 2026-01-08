@@ -28,7 +28,7 @@ It is possible to set a smaller size to the camera, in order to show the map onl
 
 Moving the camera does not automatically suspends the game, except when it is scrolling on a [separator](./separator.md) in tracking state. You can call [`game:set_suspended()`](../game.md#gameset_suspendedsuspended) if you want the game to be suspended during your camera sequence. Note that unlike most entities, the camera can still move when the game is suspended.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 A camera is a particular [map entity](./index.md). Therefore, it inherits all methods from the type map entity.
 
@@ -64,31 +64,31 @@ The default position is `0, 0`, meaning that the upper left corner of the camera
 `y` (number)
 : Y coordinate of the camera on the screen, in quest screen coordinates.
 
-### `camera:get_position_to_track(entity), camera:get_position_to_track(x, y)`
+### `camera:get_position_to_track(x, y), camera:get_position_to_track(entity)`
 
 Returns the coordinates this camera should have in order to track the given entity or point, respecting constraints of map limits and separators.
 
 The returned coordinates make their best to have the entity or point centered in the camera, but make sure that the camera does not cross [separators](./separator.md) or map limits. This function can be used to compute legal coordinates for the camera, and for example pass them to [`camera:set_position()`](./index.md#entityset_positionx-y-layer) or start a [movement](../movements/index.md#movementstartobject_to_move-callback).
 
-To get coordinates that center the camera on a map entity:
+| With coordinates | With an [entity](./index.md) |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the point to center the camera on.</dd><dt>`y` (number)</dt><dd>Y coordinate of the point to center the camera on.</dd></dl> | <dl><dt>`entity` ([entity](./index.md))</dt><dd>Entity to center the camera on.</dd></dl>|
 
-`entity` ([entity](./index.md))
-: The entity to center the camera on.
+Return value 1 (number)
+: X coordinate this camera should have.
 
-To get coordinates that center the camera on a point:
-
-`x` (number)
-: X coordinate of the point to center the camera on.
-
-`y` (number)
-: Y coordinate of the point to center the camera on.
+Return value 2 (number)
+: Y coordinate this camera should have.
 
 ### `camera:get_state()`
 
 Returns the name of the current state of the camera.
 
 Return value (string)
-: The current camera state: `"tracking"` or `"manual"`.
+: The current camera state:
+
+    - `"tracking"`
+    - `"manual"`
 
 ### `camera:start_tracking(entity)`
 
@@ -98,14 +98,14 @@ The camera will be focused on an entity to track, and follow it when it moves.
 
 When the tracked entity crosses a separator, the engine automatically starts a scrolling movement on the camera. The game is automatically suspended during the scrolling. After the scrolling, the camera continues to normally track the entity on the other side of the separator.
 
-`entity` (entity)
+`entity` ([entity](./index.md))
 : The entity to track.
 
 ### `camera:get_tracked_entity()`
 
 Returns the entity currently tracked by this camera, if any.
 
-Return value (entity)
+Return value ([entity](./index.md) or `nil`)
 : The tracked entity if the camera is in tracking state, or `nil` if the camera is not in tracking state.
 
 ### `camera:start_manual()`
@@ -129,7 +129,7 @@ Return value ([surface](../drawable-objects/surface.md))
 
 Sets the viewport of the camera, only has an effect if [`sol.video.set_geometry_mode()`](../video.md#solvideoset_geometry_modemode) is set to "dynamic_quest_size" or "dynamic_absolute".
 
-`x` (nomber)
+`x` (number)
 : Relative horizontal position of the viewport on screen `[0, 1]`.
 
 `y` (number)
@@ -191,21 +191,24 @@ Gets the camera rotation around its center.
 Return value (number)
 : Rotation angle, positive is counter-clockwise.
 
-### `camera:teleport(map_id, destination_id)`
+### `camera:teleport(map_id, [destination_name, [transition_style]])`
 
 Teleports the camera to another map and destination.
 
 `map_id` (string)
 : Id of the map to teleport the camera into.
 
-`destination_id` (string)
+`destination_name` (string or `nil`, optional)
 : Name of the destination to place the camera on on arrival.
 
-`transition_style` (string)
-: `"immediate"` (no transition effect), `"fade"` (fade-out and fade-in effect) or `"scrolling"`. No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default.
+`transition_style` (string, optional, requires: `destination_name`)
+: No value means [`game:get_transition_style()`](../game.md#gameget_transition_style), which is `"fade"` by default. Possible values are:
 
+    - `"immediate"`: no transition effect
+    - `"fade"`: fade-out and fade-in effect
+    - `"scrolling"`
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

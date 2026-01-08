@@ -12,7 +12,7 @@ Optionally, a custom entity may be managed by a model. The model is the name of 
 
 If you make an entity that is unique in your game, like for example, a big rock that blocks the entrance of a dungeon and that requires some special action from the player, you don't need a model. You can just program the behavior of your custom entity in the script of its map. Similarly, to define a customized weapon of the hero, like a hammer, you don't need a model. Just create a custom entity from the item script of the hammer and define its behavior there.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Custom entities are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -28,7 +28,7 @@ Returns the model of this custom entity.
 
 The model is the name of a Lua script in the `"entities"` directory that manages this custom entity. This works exactly like the breed of [enemies](./enemy.md), except that it is optional.
 
-Return value (string)
+Return value (string or `nil`)
 : The model of custom entity, or `nil` if the custom entity has no model script.
 
 ### `custom_entity:get_direction()`
@@ -37,7 +37,7 @@ Returns the direction of this custom entity.
 
 This direction is set at creation time or when you can call [`custom_entity:set_direction()`](#custom_entityset_directiondirection).
 
-Return value 1 (number)
+Return value (number)
 : The direction.
 
 ### `custom_entity:set_direction(direction)`
@@ -46,7 +46,7 @@ Sets the direction of this custom entity.
 
 Sprites of your custom entity that have such a direction automatically take it.
 
-Return value 1 (number)
+Return value (number)
 : The direction.
 
 ### `custom_entity:is_tiled()`
@@ -60,8 +60,8 @@ Return value (boolean)
 
 Sets whether the sprite should be repeated with tiling to fit the size of the custom entity when the size is bigger than the sprite.
 
-`tiled` (boolean, optional)
-: `true` to make the sprite tiled. No value means `true`
+`tiled` (boolean, optional, default: `true`)
+: `true` to make the sprite tiled.
 
 ### `custom_entity:set_traversable_by([entity_type], traversable)`
 
@@ -72,7 +72,7 @@ By default, a custom entity can be traversed.
 `entity_type` (string, optional)
 : A type of entity. See [`entity:get_type()`](./index.md#entityget_type) for the possible values. If not specified, the setting will be applied to all entity types that do not override it.
 
-`traversable` (boolean, function or `nil`)
+`traversable` (boolean or function or `nil`)
 : Whether this entity type can traverse your custom entity. This can be:
 
     - A boolean: `true` to make your custom entity traversable by this entity type, `false` to make it obstacle.
@@ -92,7 +92,7 @@ By default, this depends on the other entities: for example, [sensors](./sensor.
 `entity_type` (string, optional)
 : A type of entity. See [`entity:get_type()`](./index.md#entityget_type) for the possible values. If not specified, the setting will be applied to all entity types for which you don't override this setting.
 
-`traversable` (boolean, function or `nil`)
+`traversable` (boolean or function or `nil`)
 : Whether your custom entity can traverse the other entity type. This can be:
 
     - A boolean: `true` to allow your custom entity to traverse entities of the specified type, `false` otherwise.
@@ -161,7 +161,7 @@ Registers a function to be called when your custom entity detects a collision wh
 
 !!! note "Note"
 
-    See also [`entity:overlaps()`](./index.md#entityoverlapsother_entity-collision_mode-entity_sprite-other_entity_sprite) to directly test a collision rather than registering a callback.
+    See also [`entity:overlaps()`](./index.md#entityoverlapsx-y-width-height-entityoverlapsother_entity-collision_mode-entity_sprite-other_entity_sprite) to directly test a collision rather than registering a callback.
 
 ### `custom_entity:clear_collision_tests()`
 
@@ -182,14 +182,14 @@ Sets whether this custom entity can detect collisions with entities even if they
 
 By default, custom entities can only have collisions with entities on the same layer. If you set this property to `true`, the [collision tests](#custom_entityadd_collision_testcollision_mode-callback) will be performed even with entities that are on a different layer.
 
-`independent` (boolean, optional)
-: `true` to make this entity detect collisions even with entities on other layers. No value means `true`
+`independent` (boolean, optional, default: `true`)
+: `true` to make this entity detect collisions even with entities on other layers.
 
 ### `custom_entity:get_modified_ground()`
 
 Returns the kind of [ground](../map.md#mapget_groundx-y-layer) (terrain) defined by this custom entity on the map.
 
-Return value (string)
+Return value (string or `nil`)
 : The ground defined by this custom entity, or `nil` if this custom entity does not modify the ground. See [`map:get_ground()`](../map.md#mapget_groundx-y-layer) for the list of possible grounds.
 
 ### `custom_entity:set_modified_ground(modified_ground)`
@@ -200,7 +200,7 @@ The ground of the map is normally defined by tiles, but other entities may modif
 
 This property allows you to make a custom entity that modifies the ground of the map, for example a hole with a special sprite or ice with particular [collision callbacks](#custom_entityadd_collision_testcollision_mode-callback). The modified ground will be applied on the map in the rectangle of this custom entity's [bounding box](./index.md#entityget_bounding_box). Your custom entity can move: the ground will still be correctly applied.
 
-`modified_ground` (string)
+`modified_ground` (string or `nil`)
 : The ground defined by this custom entity, or `nil` (or `"empty"`) to make this custom entity stop modifying the ground. See [`map:get_ground()`](../map.md#mapget_groundx-y-layer) for the list of possible grounds.
 
 !!! note "Note"
@@ -222,10 +222,10 @@ Sets whether this custom entity should follow [streams](./stream.md).
 
 By default, custom entities are not affected by streams and ignore them.
 
-`follow_streams` (boolean, optional)
-: `true` to make this custom entity follow streams, `false` to ignore them. No value means `true`
+`follow_streams` (boolean, optional, default: `true`)
+: `true` to make this custom entity follow streams, `false` to ignore them.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 
@@ -249,7 +249,7 @@ Called at each cycle while this custom entity lives on the map.
 
 Called when the kind of [ground](../map.md#mapget_groundx-y-layer) on the map below this custom entity has changed. It may change because this custom entity is moving, or when because another entity changes it.
 
-`ground_below` (string)
+`ground_below` (string or `nil`)
 : The kind of ground at the [ground point](./index.md#entityget_ground_position) of this custom entity. `nil` means empty, that is, there is no ground at this point on the current layer.
 
 ### `custom_entity:on_interaction(hero)`

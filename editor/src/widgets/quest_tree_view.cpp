@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "widgets/change_file_info_dialog.h"
+#include "widgets/editor_tabs.h"
 #include "widgets/gui_tools.h"
 #include "widgets/new_resource_element_dialog.h"
 #include "widgets/new_element_dialog.h"
@@ -207,6 +208,9 @@ void QuestTreeView::set_selected_path(const QString& path) {
     return;
   }
 
+  if (path == QString(EditorTabs::INTERNAL_URL_PROTOCOL) + "welcome") {
+    return;
+  }
   set_selected_paths(QStringList() << path);
 }
 
@@ -784,6 +788,15 @@ void QuestTreeView::new_element_action_triggered() {
       }
       else {
         initial_id_value = "";  // Top-level resource directory.
+      }
+    }
+
+    // Check if tilesets exist to create a map
+    if (resource_type == ResourceType::MAP) {
+      QStringList tilesets = database.get_elements(ResourceType::TILESET);
+      if (tilesets.count() == 0) {
+        GuiTools::error_dialog(tr("No tileset present. Create a tileset before creating a new map."));
+        return;
       }
     }
 

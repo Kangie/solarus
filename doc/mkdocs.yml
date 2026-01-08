@@ -131,28 +131,28 @@ nav:
           - From v1.0 to v1.1: tutorials/migration/from-v1-0-to-v1-1.md
   - Lua API:
       - lua-api/index.md
-      - General Features: lua-api/general-features.md
+      - General Features: lua-api/general-features.md # [main] General-purpose features.
       - Audio:
-          - lua-api/audio/index.md
-          - Music: lua-api/audio/music.md
-          - Sound: lua-api/audio/sound.md
-      - Video: lua-api/video.md
-      - Shaders: lua-api/shaders.md
+          - lua-api/audio/index.md # [audio] Playing musics and managing sounds.
+          - Music: lua-api/audio/music.md # [music] Playing musics.
+          - Sound: lua-api/audio/sound.md # [sound] Playing sound effects.
+      - Video: lua-api/video.md # [video] Changing video settings.
+      - Shaders: lua-api/shaders.md # [shader] Modifying the rendering.
       - Controls:
-          - lua-api/controls/index.md
-          - Inputs: lua-api/controls/inputs.md
-          - Joypad: lua-api/controls/joypad.md
-      - Files: lua-api/files.md
-      - Menus: lua-api/menus.md
-      - Language Functions: lua-api/language-functions.md
-      - Timers: lua-api/timers.md
+          - lua-api/controls/index.md # [controls] Binding low-level input to game commands.
+          - Inputs: lua-api/controls/inputs.md # [input] Checking keyboard and joypad state.
+          - Joypad: lua-api/controls/joypad.md # [joypad] Handling joypads.
+      - Files: lua-api/files.md # [file] Directly accessing data files.
+      - Menus: lua-api/menus.md # [menu] Showing various information on the screen.
+      - Language Functions: lua-api/language-functions.md # [language] Handling translations.
+      - Timers: lua-api/timers.md # [timer] Making an action later with a delay.
       - Drawable Objects:
           - lua-api/drawable-objects/index.md
-          - Surfaces: lua-api/drawable-objects/surface.md
-          - Text Surfaces: lua-api/drawable-objects/text-surface.md
-          - Sprites: lua-api/drawable-objects/sprite.md
+          - Surfaces: lua-api/drawable-objects/surface.md # [surface] Displaying fixed images.
+          - Text Surfaces: lua-api/drawable-objects/text-surface.md # [text_surface] Displaying text.
+          - Sprites: lua-api/drawable-objects/sprite.md # [sprite] Displaying animated images.
       - Movements:
-          - lua-api/movements/index.md
+          - lua-api/movements/index.md # [movement] Moving objects.
           - Straight Movement: lua-api/movements/straight-movement.md
           - Random Movement: lua-api/movements/random-movement.md
           - Target Movement: lua-api/movements/target-movement.md
@@ -162,11 +162,11 @@ nav:
           - Circle Movement: lua-api/movements/circle-movement.md
           - Jump Movement: lua-api/movements/jump-movement.md
           - Pixel Movement: lua-api/movements/pixel-movement.md
-      - Game: lua-api/game.md
-      - Equipment Items: lua-api/equipment-items.md
-      - Map: lua-api/map.md
+      - Game: lua-api/game.md # [game] Handling data saved (life, equipment, etc.) and running a game.
+      - Equipment Items: lua-api/equipment-items.md # [item] Controlling a specific type of equipment item and its behavior.
+      - Map: lua-api/map.md # [map] Handling the current map and its properties (only during a game).
       - Map Entities:
-          - lua-api/map-entities/index.md
+          - lua-api/map-entities/index.md # [entity] Managing entities placed on the map (only during a game), like the hero, enemies, chests, non-playing characters, etc.
           - Hero: lua-api/map-entities/hero.md
           - Tile: lua-api/map-entities/tile.md
           - Dynamic Tile: lua-api/map-entities/dynamic-tile.md
@@ -178,7 +178,7 @@ nav:
           - Chest: lua-api/map-entities/chest.md
           - Shop Treasure: lua-api/map-entities/shop-treasure.md
           - Enemy: lua-api/map-entities/enemy.md
-          - Non-Playing Character: lua-api/map-entities/npc.md
+          - Non-Playing Character: lua-api/map-entities/npc.md # [npc] 
           - Block: lua-api/map-entities/block.md
           - Jumper: lua-api/map-entities/jumper.md
           - Switch: lua-api/map-entities/switch.md
@@ -198,7 +198,7 @@ nav:
           - Boomerang: lua-api/map-entities/boomerang.md
           - Camera: lua-api/map-entities/camera.md
           - Custom Entity: lua-api/map-entities/custom-entity.md
-      - Custom States: lua-api/custom-states.md
+      - Custom States: lua-api/custom-states.md # [state] Customizing the behavior of the hero entity.
   - Files Specs:
       - files-specs/index.md
       - Quest Properties File: files-specs/properties-file.md

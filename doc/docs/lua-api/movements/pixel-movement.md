@@ -45,8 +45,8 @@ Return value (boolean)
 
 Sets whether this movement should restart automatically when the trajectory is finished.
 
-`loop` (boolean, optional)
-: `true` to make the movement loop. No value means `true`
+`loop` (boolean, optional, default: `true`)
+: `true` to make the movement loop.
 
 ### `pixel_movement:get_delay()`
 

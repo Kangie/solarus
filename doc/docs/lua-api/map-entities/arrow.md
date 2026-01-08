@@ -12,7 +12,7 @@ It can hurt [enemies](./enemy.md) and activate [switches](./switch.md) that are 
 
 Note that there are no predefined bow and arrows [equipment items](../equipment-items.md). It is your responsability to make them if you want. If you decide to make them, you will typically call [`hero:start_bow()`](./hero.md#herostart_bow) from the [`item:on_using()`](../equipment-items.md#itemon_usinghero) callback of your bow equipment item.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Arrows are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -22,7 +22,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

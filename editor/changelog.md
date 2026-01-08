@@ -1,11 +1,22 @@
 # Changelog
 
-## Solarus Quest Editor 2.0.2 (In progress)
+## Solarus Editor 2.0.3 (In progress)
+
+* Fix crash on editor startup if the quest was not found (#1962).
+* Fix contour generator icons column size and dark mode (#1949).
+* Fix non empty tileset on generated contour tiles when it's tileset of the map (#1932).
+* Meaningful error message when trying to create a map when there is no tileset (#1954).
+
+## Solarus Editor 2.0.2 (2025-12-05)
 
 * Memorization of layout splitters (#1914).
+* Show welcome tab when opening the editor without a quest.
+* Fix crash when dragging patterns onto the contours list (#1948).
 * Fix memory leak when switching tilesets in the map editor (#1940).
+* Fix external text editor option on Linux and macOS (!1625).
+* Fix DMG layout and graphics.
 
-## Solarus Quest Editor 2.0.1 (2025-07-23)
+## Solarus Editor 2.0.1 (2025-07-23)
 
 * Fix empty tileset selector (#1724).
 * Fix crash when opening a tileset without PNG file.
@@ -18,7 +29,7 @@
 * Adjust tree view, map properties and entity toolbar sizes for better usage (#1913).
 * Ability to toggle quest file tree from menu and F6 key (#1707).
 
-## Solarus Quest Editor 2.0.0 (2025-04-01)
+## Solarus Editor 2.0.0 (2025-04-01)
 
 ### New features
 

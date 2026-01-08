@@ -18,7 +18,7 @@ Crystal blocks exists in two colors. One of them is initially lowered and the ot
 
 This state persists accross maps of the same [world](../map.md#mapget_world). It is reset when the world changes and when the [savegame](../game.md) is reloaded.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Crystals are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -28,7 +28,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

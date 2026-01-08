@@ -40,8 +40,8 @@ Return value (boolean)
 
 Turns on or turns off fullscreen, keeping an equivalent video mode.
 
-`fullscreen` (boolean, optional)
-: `true` to set fullscreen (no value means `true`)
+`fullscreen` (boolean, optional, default: `true`)
+: `true` to set fullscreen.
 
 !!! note "Note"
 
@@ -59,8 +59,8 @@ Return value (boolean)
 
 Shows or hides the mouse cursor, keeping an equivalent video mode.
 
-`visible_cursor` (boolean, optional)
-: `true` to show mouse cursor (no value means `true`)
+`visible_cursor` (boolean, optional, default: `true`)
+: `true` to show mouse cursor.
 
 ### `sol.video.get_quest_size()`
 
@@ -100,10 +100,10 @@ Sets the size of the window. See [`sol.video.get_window_size()`](#solvideoget_wi
 
 When the window is in fullscreen, this function still works: the changes will be visible when returning to windowed mode.
 
-Return value 1 (number)
+`width` (number)
 : Width of the window in pixels.
 
-Return value 2 (number)
+`height` (number)
 : Height of the window in pixels.
 
 ### `sol.video.get_shader()`
@@ -117,7 +117,7 @@ Return value ([shader](./shaders.md))
 
 Sets a shader to be applied to the rendering.
 
-`shader` ([shader](./shaders.md))
+`shader` ([shader](./shaders.md) or `nil`)
 : The shader to set. It replaces the previous shader if any. A `nil` value means to apply no shader.
 
 ### `sol.video.set_geometry_mode(mode)`
@@ -125,13 +125,11 @@ Sets a shader to be applied to the rendering.
 Sets the geometry mode of the video module.
 
 `mode` (string)
-: Video geometry mode.
+: Video geometry mode. Mode can be one of the following :
 
-Mode can be one of the following :
-
-- `"letter_boxing"`: This is the default geometry mode of the engine, the quest size dictates the resolution of the quest surface and the surface is then scaled, preserving aspect ratio and applying letter boxing.
-- `"dynamic_quest_size"`: This mode is resizing the quest surface when the output video surfaces changes aspect ratio. It matches the shape of the video output but preserves the quest size pixel density.
-- `"dynamic_absolute"`: This mode resizes the quest surface to match the video output 1:1. This means that the quest surface changes resolution to match the window size exactly.
+    - `"letter_boxing"`: This is the default geometry mode of the engine, the quest size dictates the resolution of the quest surface and the surface is then scaled, preserving aspect ratio and applying letter boxing.
+    - `"dynamic_quest_size"`: This mode is resizing the quest surface when the output video surfaces changes aspect ratio. It matches the shape of the video output but preserves the quest size pixel density.
+    - `"dynamic_absolute"`: This mode resizes the quest surface to match the video output 1:1. This means that the quest surface changes resolution to match the window size exactly.
 
 ## Events of `sol.video`
 
@@ -141,7 +139,7 @@ Events are callback methods automatically called by the engine if you define the
 
 Called at the very end of the engine rendering. This event allows you to draw directly on the screen after the quest surface has been scaled to fit the size of the window (possibly using [shaders](./shaders.md)). One pixel in the surface parameter will correspond to one pixel on screen.
 
-`screen` (surface)
+`screen` ([surface](./drawable-objects/surface.md))
 : Special surface representing the window.
 
 !!! note "Note"
@@ -154,20 +152,20 @@ The following functions are deprecated and may be removed it future releases.
 
 ### `sol.video.get_mode()`
 
-Returns the current video mode. Video modes are built-in software filters that can scale the rendering. The following modes are available:
-
-- `"normal"` (default) : The quest screen is unchanged. In windowed mode, the image is stretched by a factor of 2.
-- `"scale2x"`: The quest screen is scaled by a factor of 2 with the [Scale2X](http://scale2x.sourceforge.net/algorithm.html) algorithm.
-- `"hq2x"`: The quest screen is scaled by a factor of 2 with the [hq2x](http://en.wikipedia.org/wiki/Hqx) algorithm.
-- `"hq3x"`: The quest screen is scaled by a factor of 3 with the [hq3x](http://en.wikipedia.org/wiki/Hqx) algorithm.
-- `"hq4x"`: The quest screen is scaled by a factor of 4 with the [hq4x](http://en.wikipedia.org/wiki/Hqx) algorithm.
+Returns the current video mode. Video modes are built-in software filters that can scale the rendering.
 
 Return value (string)
-: Name of the video mode (see the list above).
+: Name of the video mode. The following modes are available:
+
+    - `"normal"`: The quest screen is unchanged. In windowed mode, the image is stretched by a factor of 2.
+    - `"scale2x"`: The quest screen is scaled by a factor of 2 with the [Scale2X](http://scale2x.sourceforge.net/algorithm.html) algorithm.
+    - `"hq2x"`: The quest screen is scaled by a factor of 2 with the [hq2x](http://en.wikipedia.org/wiki/Hqx) algorithm.
+    - `"hq3x"`: The quest screen is scaled by a factor of 3 with the [hq3x](http://en.wikipedia.org/wiki/Hqx) algorithm.
+    - `"hq4x"`: The quest screen is scaled by a factor of 4 with the [hq4x](http://en.wikipedia.org/wiki/Hqx) algorithm.
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.6, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.get_shader()`](#solvideoget_shader) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.get_shader()`](#solvideoget_shader) instead.
 
 ### `sol.video.set_mode(video_mode)`
 
@@ -175,12 +173,18 @@ Sets the current video mode. Video modes are built-in software filters that can 
 
 The window size is reset to a default value that depends on the video mode.
 
-`video_mode` (string)
-: Name of the video mode (see the list above).
+`video_mode` (string, default: `"normal"`)
+: Name of the video mode. The following modes are available:
+
+    - `"normal"` (default): The quest screen is unchanged. In windowed mode, the image is stretched by a factor of 2.
+    - `"scale2x"`: The quest screen is scaled by a factor of 2 with the [Scale2X](http://scale2x.sourceforge.net/algorithm.html) algorithm.
+    - `"hq2x"`: The quest screen is scaled by a factor of 2 with the [hq2x](http://en.wikipedia.org/wiki/Hqx) algorithm.
+    - `"hq3x"`: The quest screen is scaled by a factor of 3 with the [hq3x](http://en.wikipedia.org/wiki/Hqx) algorithm.
+    - `"hq4x"`: The quest screen is scaled by a factor of 4 with the [hq4x](http://en.wikipedia.org/wiki/Hqx) algorithm.
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.6, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoset_shadershader) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoset_shadershader) instead.
 
 ### `sol.video.switch_mode()`
 
@@ -190,29 +194,35 @@ You can use this function if you want to change the video mode without specifyin
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.6, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoget_shader) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoget_shader) instead.
 
 ### `sol.video.is_mode_supported(video_mode)`
 
 Returns whether a video mode is supported.
 
-`video_mode` (string)
-: Name of a video mode (see the list above).
+`video_mode` (string, default: `"normal"`)
+: Name of a video mode. The following modes are available:
+
+    - `"normal"` (default): The quest screen is unchanged. In windowed mode, the image is stretched by a factor of 2.
+    - `"scale2x"`: The quest screen is scaled by a factor of 2 with the [Scale2X](http://scale2x.sourceforge.net/algorithm.html) algorithm.
+    - `"hq2x"`: The quest screen is scaled by a factor of 2 with the [hq2x](http://en.wikipedia.org/wiki/Hqx) algorithm.
+    - `"hq3x"`: The quest screen is scaled by a factor of 3 with the [hq3x](http://en.wikipedia.org/wiki/Hqx) algorithm.
+    - `"hq4x"`: The quest screen is scaled by a factor of 4 with the [hq4x](http://en.wikipedia.org/wiki/Hqx) algorithm.
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.6, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.shader.create()`](./shaders.md#solshadercreateshader_id) instead and check if it fails.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.shader.create()`](./shaders.md#solshadercreateshader_id) instead and check if it fails.
 
 ### `sol.video.get_modes()`
 
 Returns an array of all video modes supported.
 
-`Return` value (table)
+Return value (table)
 : An array of names of all video modes supported.
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.6, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.main.get_resource_ids("shader")`](./general-features.md#solmainget_resource_idsresource_type) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.main.get_resource_ids("shader")`](./general-features.md#solmainget_resource_idsresource_type) instead.
 
 ### `sol.video.reset_window_size()`
 
@@ -220,4 +230,4 @@ Restores the size of the window to a default value that depends on the current v
 
 !!! warning "Deprecated"
 
-    This method is deprecated because since Solarus 1.6, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_window_size()`](#solvideoset_window_sizewidth-height) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_window_size()`](#solvideoset_window_sizewidth-height) instead.

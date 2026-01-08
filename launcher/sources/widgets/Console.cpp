@@ -14,6 +14,12 @@
 
 namespace solarus::launcher {
 namespace i18n {
+/**
+ * @brief Translates a quest error code to a human-readable string.
+ *
+ * @param error The quest error code.
+ * @return QString The translated error message.
+ */
 QString questError(QuestRunner::ErrorCode error) {
   switch (error) {
     case QuestRunner::ErrorCode::ProcessFailedToStart:
@@ -102,6 +108,11 @@ QString ansi_to_html(const QString& text) {
   return result;
 }
 
+/**
+ * @brief Converts a Qlementine theme to a Console theme.
+ * @param theme The Qlementine theme.
+ * @return The corresponding Console theme.
+ */
 Console::Theme themeFromStyleTheme(const oclero::qlementine::Theme& theme) {
   return {
     theme.primaryColor,
@@ -145,6 +156,9 @@ Console::Console(QWidget* parent)
   }
 }
 
+/**
+ * @brief Sets up the user interface.
+ */
 void Console::setupUi() {
   auto* layout = new QVBoxLayout(this);
   this->setLayout(layout);

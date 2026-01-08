@@ -16,7 +16,7 @@ Enemies and other entities cannot cross separators. But you should take care of 
 
 To get all entities in a given region, see [`map:get_entities_in_region()`](../map.md#mapget_entities_in_regionx-y-mapget_entities_in_regionentity).
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Separators are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -26,7 +26,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

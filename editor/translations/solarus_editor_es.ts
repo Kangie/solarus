@@ -5522,6 +5522,11 @@ Esto será el espacio visible del mapa actual.</translation>
         <source>Do you really want to delete file &apos;%1&apos;?</source>
         <translation type="vanished">¿De verdad quieres eliminar el archivo &apos;%1&apos;?</translation>
     </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="794" />
+        <source>No tileset present. Create a tileset before creating a new map.</source>
+        <translation>No hay ningún tileset. Crees un tileset antes de crear un mapa.</translation>
+    </message>
 </context>
 <context>
     <name>SolarusEditor::SettingsDialog</name>

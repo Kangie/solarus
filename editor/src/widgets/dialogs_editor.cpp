@@ -18,6 +18,7 @@
 #include "widgets/dialogs_editor.h"
 #include "widgets/change_dialog_id_dialog.h"
 #include "editor_exception.h"
+#include "editor_settings.h"
 #include "quest.h"
 #include "dialogs_model.h"
 #include "editor_style.h"
@@ -566,6 +567,8 @@ DialogsEditor::DialogsEditor(
        }) {
     EditorStyle::setAutoIconColor(widget, EditorStyle::AutoIconColor::ForegroundColor);
   }
+
+  reload_font_settings();
 }
 
 /**
@@ -592,6 +595,24 @@ void DialogsEditor::set_selected_property(const QString& key) {
 void DialogsEditor::save() {
 
   model->save();
+}
+
+void DialogsEditor::reload_settings() {
+
+  Editor::reload_settings();
+
+  reload_font_settings();
+}
+
+void DialogsEditor::reload_font_settings() {
+
+  EditorSettings settings;
+  const QString font_family = settings.get_value_string(EditorSettings::font_family);
+  const int font_size = settings.get_value_int(EditorSettings::font_size);
+
+  QFont font(font_family);
+  font.setPointSize(font_size);
+  ui.dialog_text_field->setFont(font);
 }
 
 /**

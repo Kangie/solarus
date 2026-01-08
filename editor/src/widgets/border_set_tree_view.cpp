@@ -71,8 +71,13 @@ void BorderSetTreeView::set_tileset(TilesetModel& tileset) {
 
   connect(&tileset, &TilesetModel::border_set_id_changed,
           this, [this](const QString&, const QString& new_id) {
-    set_selected_border_set_id(new_id);
-  });
+              set_selected_border_set_id(new_id);
+          });
+
+  connect(this, &BorderSetTreeView::expanded,
+          this, [this]() {
+              resizeColumnToContents(0);
+          });
 }
 
 /**

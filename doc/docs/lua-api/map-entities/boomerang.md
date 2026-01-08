@@ -14,7 +14,7 @@ It can immobilize or hurt [enemies](./enemy.md) and activate mechanisms.
 
 Note that there is no predefined boomerang [equipment item](../equipment-items.md). It is your responsability to make one if you want. If you decide to make one, you will typically call [`hero:start_boomerang()`](./hero.md#herostart_boomerangmax_distance-speed-tunic_preparing_animation-sprite_name) from the [`item:on_using()`](../equipment-items.md) callback of your boomerang equipment item.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 A boomerang is a particular [map entity](./index.md). Therefore, it inherits all methods from the type map entity.
 
@@ -24,7 +24,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

@@ -1,6 +1,15 @@
 # Changelog
 
-## Solarus 2.0.2 (In progress)
+## Solarus 2.0.3 (In progress)
+
+* Add methods to customize hero walk on grass and water sounds (#1967).
+* Updated Game Controller DB.
+* Fix flickering of entities drawn in y order at same coordinates (#1498).
+* Fix a001 error while trying to set volume on a non-playing music (#1935).
+* Fix duplicate teletransporter activation when hero has no linked camera (#1945).
+* Fix left and right inverted when using analog controls and keyboard default mappings (#1588).
+
+## Solarus 2.0.2 (2025-12-05)
 
 * Made separator scrolling more robust.
 * Enable custom entities to cross separators.
@@ -10,6 +19,7 @@
 * Fix crash when setting events on a joypad after the game was reset (#1898).
 * Fix crash when setting an ability in game:on_started() (#1920).
 * Fix crash when calling `hero:get_map()` from `game:on_started()` (#1937).
+* Fix crash when attempting to change hero state during state:on_finished() (#1290).
 * Fix `game:set_command_joypad_binding()` with old button identifiers (#1919).
 * Fix `music:set_music_channel_volume` crashes the engine if channel number is 0 (#1924).
 * Fix diagonal jumpers preventing interactions of entities overlapping them (#1928).
