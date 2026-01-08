@@ -970,6 +970,42 @@ You can use this function if you want another sound to be played.
 `sound_id` (string or `nil`, optional)
 : The swimming sound id. `nil` or an empty string means no sound.
 
+### `hero:get_walking_on_grass_sound()`
+
+Returns the name of the sound played when the hero is walking on tall grass.
+
+Return value (string or `nil`)
+: The walking_on_grass sound id. `nil` means no sound.
+
+### `hero:set_walking_on_grass_sound([sound_id])`
+
+Changes the sound to play when the hero is walking on tall grass.
+
+By default, this sound is `"walk_on_grass"` for historical reasons.
+
+You can use this function if you want another sound to be played.
+
+`sound_id` (string or `nil`, optional)
+: The walking_on_grass sound id. `nil` or an empty string means no sound.
+
+### `hero:get_walking_on_water_sound()`
+
+Returns the name of the sound played when the hero is walking on shallow water.
+
+Return value (string or `nil`)
+: The walking_on_water sound id. `nil` means no sound.
+
+### `hero:set_walking_on_water_sound([sound_id])`
+
+Changes the sound to play when the hero is walking on shallow water.
+
+By default, this sound is `"walk_on_water"` for historical reasons.
+
+You can use this function if you want another sound to be played.
+
+`sound_id` (string or `nil`, optional)
+: The walking_on_water sound id. `nil` or an empty string means no sound.
+
 ### `hero:get_lifting_sound()`
 
 Returns the name of the sound played when the hero is lifting an entity (if liftable).
