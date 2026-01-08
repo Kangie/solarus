@@ -49,6 +49,7 @@
 #include <QSplitter>
 #include <QToolButton>
 #include <QUndoGroup>
+#include <QStandardPaths>
 
 #include <oclero/qlementine/widgets/AboutDialog.hpp>
 
@@ -253,6 +254,14 @@ MainWindow::MainWindow(QWidget* parent) :
           this, &MainWindow::log_message_to_console);
   connect(ui.tab_widget, &EditorTabs::run_map_requested,
           this, &MainWindow::run_quest);
+  connect(ui.tab_widget, &EditorTabs::new_quest_requested,
+          ui.action_new_quest, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::open_quest_requested,
+          ui.action_load_quest, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::documentation_requested,
+          ui.action_doc, &QAction::trigger);
+  connect(ui.tab_widget, &EditorTabs::website_requested,
+          ui.action_website, &QAction::trigger);
 
   connect(grid_size, &PairSpinBox::value_changed,
           this, &MainWindow::change_grid_size);
@@ -377,7 +386,7 @@ QMenu* MainWindow::create_zoom_menu() {
     { tr("200 %"), 2.0 },
     { tr("400 %"), 4.0 }
   };
-  QActionGroup* action_group = new QActionGroup(this);
+  QActionGroup* action_group = new QActionGroup(zoom_menu);
   for (const std::pair<QString, double>& zoom : zooms) {
     QAction* action = new QAction(zoom.first, action_group);
     zoom_actions[zoom.second] = action;
@@ -857,6 +866,11 @@ void MainWindow::on_action_new_quest_triggered() {
     default_path = settings.get_value_string(EditorSettings::working_directory);
   }
 
+  // Fallback to the user's Documents folder.
+  if (default_path.isEmpty()) {
+    default_path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+  }
+
   // Open the new quest dialog and then get its results.
   NewQuestDialog new_quest_dialog(default_path, this);
   if (QDialog::Rejected == new_quest_dialog.exec()) {
@@ -872,12 +886,16 @@ void MainWindow::on_action_new_quest_triggered() {
     if (open_quest(config.quest_path)) {
       // Open the quest properties editor initially.
       open_file(quest, quest.get_data_path());
+
+      // Save the working directory.
+      const QString quest_dir = QFileInfo(config.quest_path).absoluteDir().absolutePath();
+      EditorSettings settings;
+      settings.set_value(EditorSettings::working_directory, quest_dir);
     }
   }
   catch (const EditorException& ex) {
     ex.show_dialog();
   }
-
 }
 
 /**
@@ -898,9 +916,9 @@ void MainWindow::on_action_load_quest_triggered() {
         tr("Select quest directory"),
         settings.get_value_string(EditorSettings::working_directory),
 #ifdef SOLARUSEDITOR_NO_NATIVE_DIALOGS
-        QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog
+        {QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog}
 #else
-        QFileDialog::ShowDirsOnly
+        {QFileDialog::ShowDirsOnly}
 #endif
   );
 
@@ -1409,6 +1427,14 @@ void MainWindow::on_action_website_triggered() {
 }
 
 /**
+ * @brief Slot called when the user triggers the "Welcome" action.
+ */
+void MainWindow::on_action_welcome_triggered() {
+
+  ui.tab_widget->open_welcome_editor_requested(get_quest());
+}
+
+/**
  * @brief Slot called when the user triggers the "Website" action.
  */
 void MainWindow::on_action_about_triggered() {
@@ -1447,7 +1473,7 @@ static void offer_online_docs(MainWindow *parent) {
       MainWindow::tr("Local documentation not found"),
       MainWindow::tr(
           "The local copy of Solarus Documentation could not be found. "
-          "Would you like to try going on line to find the documentaion?"),
+          "Would you like to try going online to find the documentation?"),
       QMessageBox::Ok | QMessageBox::Cancel,
       QMessageBox::Ok
   );
@@ -1966,6 +1992,7 @@ void MainWindow::update_music_actions() {
 void MainWindow::reload_settings() {
 
   ui.tab_widget->reload_settings();
+  ui.console_widget->reload_settings();
 }
 
 /**
@@ -1984,6 +2011,13 @@ void MainWindow::update_title() {
 void MainWindow::open_file(Quest& quest, const QString& path) {
 
   ui.tab_widget->open_file_requested(quest, path);
+}
+
+/**
+ * @brief Opens the welcome page.
+ */
+void MainWindow::open_welcome() {
+  ui.tab_widget->open_welcome_editor_requested(quest);
 }
 
 /**

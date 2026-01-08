@@ -67,8 +67,8 @@ Return value (boolean)
 
 Sets whether this movement repeats itself once the end of the path is reached.
 
-`loop` (boolean, optional)
-: `true` to make the path repeat itself. No value means `true`
+`loop` (boolean, optional, default: `true`)
+: `true` to make the path repeat itself.
 
 ### `path_movement:get_snap_to_grid()`
 
@@ -85,8 +85,8 @@ Sets whether this movement should automatically snap to the [map](../map.md) gri
 
 The map grid is composed of squares of 8×8 pixels. All tiles are aligned to the grid. This property has no effect if there is no current map of if this movement is not attached to a [map entity](../map-entities/index.md).
 
-`snap` (boolean, optional)
-: `true` to make this movement automatically snap its map entity to the map grid. No value means `true`
+`snap` (boolean, optional, default: `true`)
+: `true` to make this movement automatically snap its map entity to the map grid.
 
 ### `path_movement:get_angle()`
 

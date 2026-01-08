@@ -445,12 +445,6 @@
           </item>
           <item>
            <widget class="SolarusEditor::PlainTextEdit" name="dialog_text_field">
-            <property name="font">
-             <font>
-              <family>Monospace</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="horizontalScrollBarPolicy">
              <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
             </property>
@@ -468,12 +462,6 @@
           </item>
           <item>
            <widget class="SolarusEditor::PlainTextEdit" name="translation_text_field">
-            <property name="font">
-             <font>
-              <family>Monospace</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
             <property name="horizontalScrollBarPolicy">
              <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
             </property>

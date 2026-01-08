@@ -14,7 +14,7 @@ This menu API does not provide anything fundamental: indeed, the [map](./map.md)
 
 Starts a menu in a context. The Solarus engine will then call the appropriate events on your menu until it is stopped.
 
-`context` ([map](./map.md), [game](./game.md) or table)
+`context` ([map](./map.md) or [game](./game.md) or table)
 : The context your menu will belong to. Similarly to the case of [timers](./timers.md), the context determines the lifetime of your menu. The context must be one of the following four objects:
 
     - If you make a [map](./map.md) menu, your menu will be drawn above the map surface. It will be stopped when the player goes to another map. This may be useful to show head-up information local to a precise map. Example: a counter or a mini-game that only exists on a specific map.
@@ -23,10 +23,10 @@ Starts a menu in a context. The Solarus engine will then call the appropriate ev
     - If you set the context to another menu, then its lifetime will be limited to this other menu. This allows to make nested menus. Example: a popup that shows some information above another menu.
 
 `menu` (table)
-: The menu to activate. It can be any table. The only thing that makes it special is the presence of callback functions (events) as described in section [events](#events-of-a-menu).
+: The menu to activate. It can be any table. The only thing that makes it special is the presence of callback functions (events) as described in section [events](#events-of-the-type-menu).
 
-`on_top` (boolean, optional)
-: Whether this menu should be drawn on top of other existing menus of the same context or behind them. If `true`, the [`on_draw()`](#menuon_drawdst_surface) event of your menu will be the last to be called if there are several menus in the context. If `false`, it will be the first one. No value means `true`
+`on_top` (boolean, optional, default: `true`)
+: Whether this menu should be drawn on top of other existing menus of the same context or behind them. If `true`, the [`on_draw()`](#menuon_drawdst_surface) event of your menu will be the last to be called if there are several menus in the context. If `false`, it will be the first one.
 
 ### `sol.menu.stop(menu)`
 
@@ -43,7 +43,7 @@ Stops all menus that are currently running in a context.
 
 This function is not often needed since menus are already automatically stopped when their context is closed.
 
-`context` ([map](./map.md), [game](./game.md), [sol.main](./general-features.md) or table)
+`context` ([map](./map.md) or [game](./game.md) or [sol.main](./general-features.md) or table)
 : The context where you want to stop menus.
 
 ### `sol.menu.is_started(menu)`
@@ -74,7 +74,7 @@ Your menu will then be the last one to receive input events (keyboard, joypad an
 `menu` (table)
 : The menu to bring to the back.
 
-## Events of a `menu`
+## Events of the type `menu`
 
 Events are callback methods automatically called by the engine if you define them.
 

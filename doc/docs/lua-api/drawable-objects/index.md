@@ -13,11 +13,11 @@ Draws this object on a destination surface.
 `dst_surface` ([surface](./surface.md))
 : The destination surface.
 
-`x` (number, optional)
-: X coordinate of where to draw this object (default `0`)
+`x` (number, optional, requires: `y`, default: `0`)
+: X coordinate of where to draw this object.
 
-`y` (number, optional)
-: Y coordinate of where to draw this object. (default `0`)
+`y` (number, optional, requires: `x`, default: `0`)
+: Y coordinate of where to draw this object.
 
 ### `drawable:draw_region(region_x, region_y, region_width, region_height, dst_surface, [x, y])`
 
@@ -38,11 +38,11 @@ Draws a subrectangle of this object on a destination surface.
 `dst_surface` ([surface](./surface.md))
 : The destination surface.
 
-`x` (number, optional)
-: X coordinate of where to draw this rectangle on the destination surface (default `0`).
+`x` (number, optional, requires: `y`, default: `0`)
+: X coordinate of where to draw this rectangle on the destination surface.
 
-`y` (number, optional)
-: Y coordinate of where to draw this rectangle. on the destination surface (default `0`).
+`y` (number, optional, requires: `x`, default: `0`)
+: Y coordinate of where to draw this rectangle. on the destination surface.
 
 ### `drawable:get_rotation()`
 
@@ -117,20 +117,18 @@ Sets the blend mode of this drawable object.
 The blend mode defines how this drawable object will be drawn on other surfaces when you call [`drawable:draw()`](#drawabledrawdst_surface-x-y) or [`drawable:draw_region()`](#drawabledraw_regionregion_x-region_y-region_width-region_height-dst_surface-x-y).
 
 `blend_mode` (string)
-: The blend mode. See following table for possible values.
+: The blend mode. Possible values are:
 
-|        Value        | Description                                                                                                                                                                                                                          |
-| :-----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|      `"none"`       | No blending. The destination surface is replaced by the pixels of this drawable object.</br></br>`dstRGBA = srcRGBA`                                                                                                                 |
-| `"blend"` (default) | This drawable object is alpha-blended onto the destination surface</br></br>`dstRGB = (srcRGB * srcA) + (dstRGB * (1 - srcA))` `dstA = srcA + (dstA * (1 - srcA))`                                                                   |
-|       `"add"`       | This drawable object is drawn onto the destination surface with additive blending. The clarity of the destination surface is kept. Useful to color and lighten the destination surface.</br></br>`dstRGB = (srcRGB * srcA) + dstRGB` |
-|    `"multiply"`     | Color modulation. Can be used to darken the destination surface without degrading its content.</br></br>`dstRGB = srcRGB * dstRGB`                                                                                                   |
+    - `"blend"` (default): This drawable object is alpha-blended onto the destination surface. `dstRGB = (srcRGB * srcA) + (dstRGB * (1 - srcA))` `dstA = srcA + (dstA * (1 - srcA))`
+    - `"none"`: No blending. The destination surface is replaced by the pixels of this drawable object. `dstRGBA = srcRGBA`
+    - `"add"`: This drawable object is drawn onto the destination surface with additive blending. The clarity of the destination surface is kept. Useful to color and lighten the destination surface. `dstRGB = (srcRGB * srcA) + dstRGB`
+    - `"multiply"`: Color modulation. Can be used to darken the destination surface without degrading its content. `dstRGB = srcRGB * dstRGB`
 
 ### `drawable:get_shader()`
 
 Returns the shader applied to this object.
 
-Return value ([shader](../shaders.md))
+Return value ([shader](../shaders.md) or `nil`)
 : The shader, or `nil` if no shader is set.
 
 ### `drawable:set_shader(shader)`
@@ -139,7 +137,7 @@ Sets the shader used to draw this object.
 
 Default drawing is done with no shader.
 
-`shader` ([shader](../shaders.md))
+`shader` ([shader](../shaders.md) or `nil`)
 : The shader to set, or `nil` to reset drawing to normal.
 
 ### `drawable:get_opacity()`
@@ -180,8 +178,8 @@ You can specify a callback function to be executed when the fade-in effect finis
 
 If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../map-entities/index.md) during a game, the fade-in effect gets the lifetime of that entity. The behavior is probably what you expect: the fade-in effect gets suspended when the entity gets suspended, and it gets canceled (that is, the callback is never executed) when the map entity is destroyed.
 
-`delay` (number, optional)
-: Delay in milliseconds between two frames of the fade-in animation (default `20`) The total number of frames of the animation is 32.
+`delay` (number, optional, default: `20`)
+: Delay in milliseconds between two frames of the fade-in animation. The total number of frames of the animation is 32.
 
 `callback` (function, optional)
 : A function to call when the fade-in effect finishes.
@@ -200,8 +198,8 @@ You can specify a callback function to be executed when the fade-out effect fini
 
 If the drawable object is a [sprite](./sprite.md) attached to a [map entity](../map-entities/index.md) during a game, the fade-out effect gets the lifetime of that entity. The behavior is probably what you expect: the fade-out effect gets suspended when the entity gets suspended, and it gets canceled (that is, the callback is never executed) when the map entity is destroyed.
 
-`delay` (number, optional)
-: Delay in milliseconds between two frames of the fade-out animation (default `20`) The total number of frames of the animation is 32.
+`delay` (number, optional, default: `20`)
+: Delay in milliseconds between two frames of the fade-out animation. The total number of frames of the animation is 32.
 
 `callback` (function, optional)
 : A function to call when the fade-out effect finishes.
@@ -242,7 +240,7 @@ This value is initially `0,0`. It is added to whatever coordinates the object is
 
 Returns the current movement of this drawable object.
 
-Return value ([movement](../movements/index.md))
+Return value ([movement](../movements/index.md) or `nil`)
 : The current movement, or `nil` if the drawable object is not moving.
 
 ### `drawable:stop_movement()`

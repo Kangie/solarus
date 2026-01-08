@@ -14,7 +14,7 @@ Explosions are automatically created by [bombs](./bomb.md) that explode, and by 
 
 Explosions hurt the [hero](./hero.md) and [enemies](./enemy.md) that are sensible to them. But they may also blast [doors](./door.md) and can be detected by [sensors](./sensor.md).
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Explosions are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -24,7 +24,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

@@ -115,12 +115,9 @@ Console::Console(QWidget* parent) :
   ui.setupUi(this);
 
   // Font.
-  EditorSettings settings;
-  QFont font(settings.get_value_string(EditorSettings::font_family));
-  font.setPointSize(settings.get_value_int(EditorSettings::font_size));
-  ui.log_view->setFont(font);
-  ui.command_field->setFont(font);
+  reload_settings();
 
+  // Theme.
   const EditorStyle* style = qobject_cast<EditorStyle*>(qApp->style());
   if (style != nullptr) {
     connect(style, &EditorStyle::actual_mode_changed, this, [this]() {
@@ -134,6 +131,21 @@ Console::Console(QWidget* parent) :
   ui.log_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
   connect(ui.log_view, &QPlainTextEdit::customContextMenuRequested,
           this, &Console::context_menu_requested);
+}
+
+/**
+ * @brief Reloads the settings from the editor settings.
+ */
+void Console::reload_settings() {
+
+  EditorSettings settings;
+  const QString font_family = settings.get_value_string(EditorSettings::font_family);
+  const int font_size = settings.get_value_int(EditorSettings::font_size);
+
+  QFont font(font_family);
+  font.setPointSize(font_size);
+  ui.log_view->setFont(font);
+  ui.command_field->setFont(font);
 }
 
 /**

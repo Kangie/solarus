@@ -10,7 +10,7 @@ Destinations may either have a sprite or be invisible. They may also have a dire
 
 The size of a destination is the one of the [hero](./hero.md) (16×16 pixels).
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Destinations are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -38,7 +38,7 @@ Return value (boolean)
 
 ### `destination:set_starting_location_mode(mode)`
 
-Sets whether this destination updates the [starting location](../game.md#gameset_starting_locationmap_id-destination_name) of the player when arriving on it. If yes, when the player restarts his game, he will restart at this destination. The default value is `"when` world changes".
+Sets whether this destination updates the [starting location](../game.md#gameset_starting_locationmap_id-destination_name) of the player when arriving on it. If yes, when the player restarts his game, he will restart at this destination. The default value is `"when_world_changes"`.
 
 `mode` (string)
 : The starting location mode. Can be one of:
@@ -54,7 +54,7 @@ Returns the direction this destination gives to heroes using it.
 Return value (number or nil)
 : a direction between `0` (East) and `3` (South), or `nil` if this destination does not change the hero's direction.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

@@ -362,6 +362,26 @@ bool is_path_valid(const QString& path) {
 }
 
 /**
+ * @brief Goes up until we find an existing directory.
+ * @param path The starting path.
+ * @return The closest existing parent directory path.
+ */
+QString cd_up_until_exists(const QString& path) {
+  bool found = false;
+  QFileInfo file_info = QFileInfo(path);
+  while (!found) {
+    if (file_info.exists()) {
+      found = true;
+    } else {
+      file_info = QFileInfo(file_info.dir().absolutePath());      
+    }
+  }
+
+  return found ? file_info.canonicalFilePath() : QString{};
+}
+
+
+/**
  * @brief Checks whether a string is a valid path for a new quest.
  * @param path The path to check.
  * @return @c true if it is valid.

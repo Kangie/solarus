@@ -67,7 +67,7 @@ Sets a function to be called after a delay.
 
 If the duration is set to zero, the function is called immediately.
 
-`context` ([map](./map.md), [game](./game.md), [item](./equipment-items.md), [map entity](./map-entities/index.md), [state](./custom-states.md), [menu](./menus.md) or [sol.main](./general-features.md); optional)
+`context` ([map](./map.md) or [game](./game.md) or [item](./equipment-items.md) or [map entity](./map-entities/index.md) or [state](./custom-states.md) or [menu](./menus.md) or [sol.main](./general-features.md) or `nil`)
 : Determines the lifetime of the timer. The context is where the timer belongs. If the context gets closed before the timer is finished, then the timer is automatically canceled. More precisely, the following rules are applied.
 
     - If you set the context to a [map](./map.md), the timer is canceled when the player goes to another map. Example: a button that opens a door for a limited time.
@@ -109,7 +109,7 @@ Cancels all timers that are currently running in a context.
 
 This function is equivalent to calling [`timer:stop()`](./timers.md) on each timer of the context. It may allow you to avoid to store explicitly all your timers.
 
-`context` ([map](./map.md), [game](./game.md), [item](./equipment-items.md), [map entity](./map-entities/index.md), [menu](./menus.md) or [sol.main](./general-features.md))
+`context` ([map](./map.md) or [game](./game.md) or [item](./equipment-items.md) or [map entity](./map-entities/index.md) or [menu](./menus.md) or [sol.main](./general-features.md))
 : The context where you want to stop timers.
 
 ## Methods of the type `timer`
@@ -133,8 +133,8 @@ Return value (boolean)
 
 Sets whether a clock sound is played repeatedly during this timer.
 
-`with_sound` (boolean, optional)
-: `true` to play a clock sound repeatedly (no value means `true`)
+`with_sound` (boolean, optional, default: `true`)
+: `true` to play a clock sound repeatedly.
 
 ### `timer:is_suspended()`
 
@@ -147,8 +147,8 @@ Return value (boolean)
 
 Returns whether this timer is currently suspended.
 
-`suspended` (boolean, optional)
-: `true` to suspend the timer, `false` to unsuspend it (no value means `true`)
+`suspended` (boolean, optional, default: `true`)
+: `true` to suspend the timer, `false` to unsuspend it.
 
 ### `timer:is_suspended_with_map()`
 
@@ -165,8 +165,8 @@ The map is suspended by the engine in a few cases, like when the game is paused,
 
 By default, [map](./map.md) timers, [entity](./map-entities/index.md) timers, [state](./custom-states.md) timers and [item](./equipment-items.md) timers are suspended with the map.
 
-`suspended_with_map` (boolean, optional)
-: `true` to suspend the timer when the map is suspended, `false` to continue (no value means `true`)
+`suspended_with_map` (boolean, optional, default: `true`)
+: `true` to suspend the timer when the map is suspended, `false` to continue.
 
 !!! note "Note"
 

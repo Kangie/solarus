@@ -20,28 +20,13 @@ See [movement](./index.md#methods-of-all-movement-types) to know these methods.
 
 The following methods are specific to target movements.
 
-### `target_movement:set_target(x, y)
-
-Sets the target of this movement as a fixed point.
-
-`x` (number)
-: X coordinate of the target.
-
-`y` (number)
-: Y coordinate of the target.
-
-### `target_movement:set_target(entity, [x, y])`
+### `target_movement:set_target(x, y), target_movement:set_target(entity, [x, y])`
 
 Sets the target of this movement as a fixed point or a [map entity](../map-entities/index.md) (only during a [game](../game.md)).
 
-`entity` ([entity](../map-entities/index.md))
-: The entity to target.
-
-`x` (number, optional)
-: X offset to add to the target entity's coordinates. Default is `0`.
-
-`y` (number, optional)
-: Y offset to add to the target entity's coordinates. Default is `0`.
+| With coordinates | With a [map entity](../map-entities/index.md) |
+|------------------|------------------------------|
+| <dl><dt>`x` (number)</dt><dd>X coordinate of the target.</dd><dt>`y` (number)</dt><dd>Y coordinate of the target.</dd></dl> | <dl><dt>`entity` ([entity](../map-entities/index.md))</dt><dd>The entity to target.</dd><dt>`x` (number, optional, requires: `y`, default: `0`)</dt><dd>X offset to add to the target entity's coordinates.</dd><dt>`y` (number, optional, requires: `x`, default: `0`)</dt><dd>Y offset to add to the target entity's coordinates.</dd></dl>|
 
 ### `target_movement:get_speed()`
 
@@ -81,8 +66,8 @@ Return value (boolean)
 
 Sets whether this movement should adjust its trajectory when an obstacle of the [map](../map.md) is reached. This property has no effect if the movement is not attached to a [map entity](../map-entities/index.md) or if the movement ignores obstacles.
 
-`smooth` (boolean, optional)
-: `true` to make this movement smooth. No value means `true`
+`smooth` (boolean, optional, default: `true`)
+: `true` to make this movement smooth.
 
 ## Events Inherited from `movement`
 

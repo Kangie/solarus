@@ -95,6 +95,28 @@ EditorStyle::EditorStyle(QObject *parent):
 }
 
 /**
+ * @brief Returns a fixed-width font used in the editor.
+ * @return A fixed-width font.
+ */
+QFont EditorStyle::get_fixed_font() const {
+  return theme().fontMonospace;
+}
+
+/**
+ * @brief Returns a fixed-width font used in the editor, or a fallback if the style is not an EditorStyle.
+ * @return A fixed-width font.
+ */
+QFont EditorStyle::get_fixed_font_or_fallback() {
+  if (const EditorStyle* style = qobject_cast<const EditorStyle*>(qApp->style())) {
+    return style->get_fixed_font();
+  } else {
+    QFont font = QFontDatabase::systemFont(QFontDatabase::SystemFont::FixedFont);
+    font.setPointSize(11);
+    return font;
+  }
+}
+
+/**
  * @brief Returns the current mode of the editor.
  * @return The current mode (possibly @c Mode::AUTOMATIC).
  */

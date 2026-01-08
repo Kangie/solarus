@@ -2676,19 +2676,23 @@ void MapEditor::generate_borders_requested(const EntityIndexes& indexes) {
     return;
   }
 
+  // We don't want to change tileset_id value
+  // because it can be empty and it is intended when generating border tiles.
+  QString tileset_id_for_checking = tileset_id;
   if (tileset_id.isEmpty()) {
-    tileset_id = map->get_tileset_id();
+    tileset_id_for_checking = map->get_tileset_id();
   }
-  const TilesetModel* tileset = map->get_quest().get_tileset(tileset_id);
+  const TilesetModel* tileset = map->get_quest().get_tileset(tileset_id_for_checking);
 
   if (tileset == nullptr) {
     return;
   }
-
   if (!tileset->border_set_patterns_exist(border_set_id)) {
     GuiTools::error_dialog(tr("Cannot generate tiles: some patterns of the contour '%1' are missing.\nPlease fix it in the tileset.").arg(border_set_id));
     return;
   }
+
+  // Do generate border tiles
   AutoTiler auto_tiler(get_map(), tileset_id, border_set_id, indexes);
   try_command(new AddEntitiesCommand(*this, auto_tiler.generate_border_tiles(), false));
 }

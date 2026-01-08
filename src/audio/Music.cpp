@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "solarus/audio/ALWrapper.h"
 #include "solarus/audio/ItDecoder.h"
 #include "solarus/audio/Music.h"
 #include "solarus/audio/MusicSystem.h"
@@ -162,8 +164,12 @@ int Music::get_volume() const {
 void Music::set_volume(int volume) {
   this->volume = std::min(100, std::max(0, volume)) / 100.0;
 
+  if (!this->playing) {
+    return;
+  }
+
   if (source != AL_NONE) {
-    alSourcef(source, AL_GAIN, this->volume * (MusicSystem::get_global_volume() / 100.0f));
+    ALWrapper::set_source_float(source, AL_GAIN, this->volume * (MusicSystem::get_global_volume() / 100.0f));
   }
 }
 
@@ -291,12 +297,12 @@ bool Music::update_playing() {
 
   // Get the empty buffers.
   ALint nb_empty;
-  alGetSourcei(source, AL_BUFFERS_PROCESSED, &nb_empty);
+  ALWrapper::get_source_int(source, AL_BUFFERS_PROCESSED, &nb_empty);
 
   // Refill them.
   for (int i = 0; i < nb_empty; i++) {
     ALuint buffer;
-    alSourceUnqueueBuffers(source, 1, &buffer);  // Unqueue the buffer.
+    ALWrapper::unqueue_source_buffers(source, 1, &buffer); // Unqueue the buffer.
 
     // Fill it by decoding more data.
     switch (format) {
@@ -314,18 +320,20 @@ bool Music::update_playing() {
         break;
     }
 
-    alSourceQueueBuffers(source, 1, &buffer);  // Queue it again.
+    ALWrapper::queue_source_buffers(source, 1, &buffer);  // Queue it again.
   }
 
   // Check whether there is still something playing.
   ALint status;
-  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  ALWrapper::get_source_int(source, AL_SOURCE_STATE, &status);
+
   if (status != AL_PLAYING && status != AL_PAUSED) {
     // The end of the file is reached, or we need to decode more data.
-    alSourcePlay(source);
+    ALWrapper::play_source(source);
   }
 
-  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  ALWrapper::get_source_int(source, AL_SOURCE_STATE, &status);
+
   return status == AL_PLAYING;
 }
 
@@ -353,9 +361,9 @@ void Music::notify_device_reconnected() {
 
   if (buffers[0] == AL_NONE) {
     // Recreate a source and buffers.
-    alGenBuffers(nb_buffers, buffers);
-    alGenSources(1, &source);
-    alSourcef(source, AL_GAIN, volume * (MusicSystem::get_global_volume() / 100.0f));
+    ALWrapper::generate_buffers(nb_buffers, buffers);
+    ALWrapper::generate_sources(1, &source);
+    ALWrapper::set_source_float(source, AL_GAIN, volume * (MusicSystem::get_global_volume() / 100.0f));
 
     // Continue playing music.
     // Buffer data that was already decoded to buffers before the
@@ -376,9 +384,9 @@ void Music::notify_device_reconnected() {
           Debug::die("notify_device_reconnected: Invalid music format");
           break;
       }
-      alSourceQueueBuffers(source, 1, &buffer);
+      ALWrapper::queue_source_buffers(source, 1, &buffer);
     }
-    alSourcePlay(source);
+    ALWrapper::play_source(source);
   }
   Sound::check_openal_clean_state("Music::notify_device_reconnected end");
 }
@@ -404,15 +412,17 @@ void Music::decode_spc(ALuint destination_buffer, ALsizei nb_samples) {
   spc_decoder->decode((int16_t*) raw_data.data(), nb_samples);
 
   // put this decoded data into the buffer
-  alBufferData(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), nb_samples * 2, 32000);
+  ALWrapper::set_buffer_data(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), nb_samples * 2, 32000);
 
-  ALenum error = alGetError();
-  if (error != AL_NO_ERROR) {
-    std::ostringstream oss;
-    oss << "Failed to fill the audio buffer with decoded SPC data for music file '"
-      << file_name << ": error " << error;
-    Debug::error(oss.str());
-  }
+  // TODO: Comment this and find a way to bring error context to wrapper
+
+  // ALenum error = alGetError();
+  // if (error != AL_NO_ERROR) {
+  //   std::ostringstream oss;
+  //   oss << "Failed to fill the audio buffer with decoded SPC data for music file '"
+  //     << file_name << ": error " << error;
+  //   Debug::error(oss.str());
+  // }
 }
 
 /**
@@ -430,19 +440,22 @@ void Music::decode_it(ALuint destination_buffer, ALsizei nb_samples) {
 
   if (bytes_read == 0) {
     // End of file.
-    alBufferData(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), 0, 44100);
+    ALWrapper::set_buffer_data(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), 0, 44100);
   }
   else {
     // Put this decoded data into the buffer.
-    alBufferData(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), nb_samples, 44100);
+    ALWrapper::set_buffer_data(destination_buffer, AL_FORMAT_STEREO16, raw_data.data(), nb_samples, 44100);
   }
-  ALenum error = alGetError();
-  if (error != AL_NO_ERROR) {
-    std::ostringstream oss;
-    oss << "Failed to fill the audio buffer with decoded IT data for music file '"
-        << file_name << ": error " << std::hex << error;
-    Debug::error(oss.str());
-  }
+
+  // TODO: Comment this and find a way to bring error context to wrapper
+
+  // ALenum error = alGetError();
+  // if (error != AL_NO_ERROR) {
+  //   std::ostringstream oss;
+  //   oss << "Failed to fill the audio buffer with decoded IT data for music file '"
+  //       << file_name << ": error " << std::hex << error;
+  //   Debug::error(oss.str());
+  // }
 }
 
 /**
@@ -485,9 +498,9 @@ bool Music::start() {
   load(id);
 
   // create the buffers and the source
-  alGenBuffers(nb_buffers, buffers);
-  alGenSources(1, &source);
-  alSourcef(source, AL_GAIN, volume * (MusicSystem::get_global_volume() / 100.0f));
+  ALWrapper::generate_buffers(nb_buffers, buffers);
+  ALWrapper::generate_sources(1, &source);
+  ALWrapper::set_source_float(source, AL_GAIN, volume * (MusicSystem::get_global_volume() / 100.0f));
 
   // decode music from memory
   switch (format) {
@@ -519,15 +532,18 @@ bool Music::start() {
 
   // start the streaming
   bool start_successful = true;
-  alSourceQueueBuffers(source, nb_buffers, buffers);
-  ALenum error = alGetError();
-  if (error != AL_NO_ERROR) {
-    std::ostringstream oss;
-    oss << "Cannot initialize buffers for music '"
-        << file_name << "': error " << error;
-    Debug::error(oss.str());
-    start_successful = false;
-  }
+  ALWrapper::queue_source_buffers(source, nb_buffers, buffers);
+  
+  // TODO: Comment this and find a way to bring error context to wrapper
+
+  // ALenum error = alGetError();
+  // if (error != AL_NO_ERROR) {
+  //   std::ostringstream oss;
+  //   oss << "Cannot initialize buffers for music '"
+  //       << file_name << "': error " << error;
+  //   Debug::error(oss.str());
+  //   start_successful = false;
+  // }
 
   // The update() function will then take care of filling the buffers
 
@@ -553,31 +569,35 @@ void Music::stop() {
   callback_ref.clear();
 
   // Empty the source.
-  alSourceStop(source);
-  ALenum error = alGetError();
-  if (error != AL_NO_ERROR) {
-    std::ostringstream oss;
-    oss << "Failed to stop music source" << source << ": " << std::hex << error;
-    Debug::error(oss.str());
-  }
+  ALWrapper::stop_source(source);
+
+  // ALenum error = alGetError();
+  // if (error != AL_NO_ERROR) {
+  //   std::ostringstream oss;
+  //   oss << "Failed to stop music source" << source << ": " << std::hex << error;
+  //   Debug::error(oss.str());
+  // }
 
   // Unqueue buffers.
   ALint nb_processed = 0;
   ALuint processed_buffers[nb_buffers];
-  alGetSourcei(source, AL_BUFFERS_PROCESSED, &nb_processed);
+  ALWrapper::get_source_int(source, AL_BUFFERS_PROCESSED, &nb_processed);
+
   if (nb_processed > 0) {
-    alSourceUnqueueBuffers(source, 1, processed_buffers);
-    error = alGetError();
-    if (error != AL_NO_ERROR) {
-      std::ostringstream oss;
-      oss << "Failed to unqueue " << nb_processed << " processed buffers: " << std::hex << error;
-      Debug::error(oss.str());
-    }
+    ALWrapper::unqueue_source_buffers(source, 1, processed_buffers);
+
+    // error = alGetError();
+    // if (error != AL_NO_ERROR) {
+    //   std::ostringstream oss;
+    //   oss << "Failed to unqueue " << nb_processed << " processed buffers: " << std::hex << error;
+    //   Debug::error(oss.str());
+    // }
   }
 
   ALint nb_queued = 0;
   ALuint queued_buffers[nb_buffers];
-  alGetSourcei(source, AL_BUFFERS_QUEUED, &nb_queued);
+  ALWrapper::get_source_int(source, AL_BUFFERS_QUEUED, &nb_queued);
+
   if (nb_queued > 0) {
     alSourceUnqueueBuffers(source, 1, queued_buffers);
     alGetError();
@@ -586,22 +606,24 @@ void Music::stop() {
   }
 
   // Delete the source.
-  alDeleteSources(1, &source);
-  error = alGetError();
-  if (error != AL_NO_ERROR) {
-    std::ostringstream oss;
-    oss << "Failed to delete source " << source << ": " << std::hex << error;
-    Debug::error(oss.str());
-  }
+  ALWrapper::delete_sources(1, &source);
+
+  // error = alGetError();
+  // if (error != AL_NO_ERROR) {
+  //   std::ostringstream oss;
+  //   oss << "Failed to delete source " << source << ": " << std::hex << error;
+  //   Debug::error(oss.str());
+  // }
 
   // Delete the buffers.
-  alDeleteBuffers(nb_buffers, buffers);
-  error = alGetError();
-  if (error != AL_NO_ERROR) {
-    std::ostringstream oss;
-    oss << "Failed to delete " << nb_buffers << " buffers: " << std::hex << error;
-    Debug::error(oss.str());
-  }
+  ALWrapper::delete_buffers(nb_buffers, buffers);
+
+  // error = alGetError();
+  // if (error != AL_NO_ERROR) {
+  //   std::ostringstream oss;
+  //   oss << "Failed to delete " << nb_buffers << " buffers: " << std::hex << error;
+  //   Debug::error(oss.str());
+  // }
 
   switch (format) {
     case FORMAT_SPC:
@@ -640,7 +662,8 @@ bool Music::is_paused() const {
   }
 
   ALint status;
-  alGetSourcei(source, AL_SOURCE_STATE, &status);
+  ALWrapper::get_source_int(source, AL_SOURCE_STATE, &status);
+
   return status == AL_PAUSED;
 }
 
@@ -655,10 +678,10 @@ void Music::set_paused(bool pause) {
   }
 
   if (pause) {
-    alSourcePause(source);
+    ALWrapper::pause_source(source);
   }
   else {
-    alSourcePlay(source);
+    ALWrapper::play_source(source);
   }
 }
 

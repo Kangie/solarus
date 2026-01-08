@@ -12,7 +12,7 @@ For example, at the entrance of a village, you can make a wall that blocks enemi
 
 Walls can have any size, but like all entities, their width and height must be multiples of 8 pixels.
 
-## Methods Inherited from map entity
+## Methods Inherited from `entity`
 
 Walls are particular [map entities](./index.md). Therefore, they inherit all methods from the type map entity.
 
@@ -22,7 +22,7 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 None.
 
-## Events inherited from map entity
+## Events Inherited from `entity`
 
 Events are callback methods automatically called by the engine if you define them.
 

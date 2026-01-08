@@ -55,7 +55,7 @@ void setup_application_information() {
   QApplication::setOrganizationDomain("solarus-games.org");
   // Set desktop filename so that the QtWayland backend will report the correct AppID
   // based on this and make the launcher icon and startup notification work.
-  QGuiApplication::setDesktopFileName(SOLARUSEDITOR_APP_ID ".desktop");
+  QGuiApplication::setDesktopFileName(SOLARUSEDITOR_APP_ID);
 }
 
 
@@ -120,10 +120,14 @@ int run_editor_gui(int argc, char* argv[]) {
 
   // Set up Qt translations.
   QTranslator qt_translator;
-  const bool success = qt_translator.load(
-      locale, "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
-  if (!success) {
-    qWarning() << "Failed to load translations";
+  for (const QString& searchPath : std::vector<QString>{
+           QApplication::applicationDirPath(),
+           QApplication::applicationDirPath() + "/translations",
+           QApplication::applicationDirPath() + "/../Resources/translations",
+           SOLARUSEDITOR_DATADIR_PATH "/translations"}) {
+    if (qt_translator.load(locale, "qtbase", "_", searchPath)) {
+      break;
+    }
   }
   application.installTranslator(&qt_translator);
 
@@ -132,6 +136,7 @@ int run_editor_gui(int argc, char* argv[]) {
   for (const QString& searchPath : std::vector<QString>{
            QApplication::applicationDirPath(),
            QApplication::applicationDirPath() + "/translations",
+           QApplication::applicationDirPath() + "/../Resources/translations",
            SOLARUSEDITOR_DATADIR_PATH "/translations"}) {
     if (app_translator.load(locale, "solarus_editor", "_", searchPath)) {
       break;
@@ -179,6 +184,7 @@ int run_editor_gui(int argc, char* argv[]) {
   }
 
   // Open the quest.
+  bool open_success = false;
   if (!quest_path.isEmpty()) {
     window.open_quest(quest_path);
 
@@ -192,7 +198,13 @@ int run_editor_gui(int argc, char* argv[]) {
         // Restore the active tab.
         window.open_file(window.get_quest(), active_file_path);
       }
+
+      open_success = true;
     }
+  }
+
+  if (!open_success) {
+    window.open_welcome();
   }
 
   window.show();

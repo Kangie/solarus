@@ -38,7 +38,6 @@
    ```
 
    Available options when configuring with cmake:
-
    - `-DSOLARUS_FETCHCONTENT=<ON|OFF>`: Will clone Solarus' repo instead of trying to finding it in the system's installed libraries. Default is `ON`.
    - `-DSOLARUSLAUNCHER_DEPLOY_ENABLED=<ON|OFF>`: Enables deploying all the dependencies to the macOS bundle with `macdeployqt`. Default is `ON`.
    - `-DSOLARUSLAUNCHER_CODESIGN_ENABLED=<ON|OFF>`: Enables codesigning the macOS bundle with `codesign`. Default is `OFF`.
@@ -62,6 +61,8 @@
    ```
 
    Note that notarizing may take some time (from 5 minutes to a few hours) as it sends the package to Apple for validation.
+
+   See the [Code-Signing on macOS](#code-signing-on-macos) section for more details.
 
 ### Windows (MSYS2)
 
@@ -158,3 +159,36 @@ On Windows, we use MSYS2, a Unix-like environment that makes installing dependen
    ```
 
 4. Open the `.ts` file(s) with **Qt Linguist** and fill the blanks for all the strings. Don't forget to save the file.
+
+## Code-Signing
+
+### Code-Signing on macOS
+
+On macOS, the app needs to be code-signed and notarized in order to be properly distributed outside the App Store. This process ensures that the app is trusted by macOS and avoids security warnings when users try to run it.
+
+1. Make sure you have access to Solarus Labs' Apple Developer account, with your own Apple ID registered in the Solarus Labs team.
+
+2. Download the following files from Solarus Labs' Apple Developer account and install them in your Keychain Access on your machine:
+   - **For code-signing:** A certificate named `"Developer ID Application: Solarus Labs (4464B2CGYB)"`.
+   - **For notarization:** An App-Specific Password generated from the Apple ID account page.
+
+3. Create a profile for notarization on your machine with the following command:
+
+   ```sh
+   xcrun notarytool store-credentials "notarytool-password" --apple-id "<YOUR_APPLE_ID_EMAIL>" --team-id "4464B2CGYB" --password "<APP_SPECIFIC_PASSWORD>"
+   ```
+
+   - `"notarytool-password"`: is the default name of the profile (see the macOSDeploy.cmake file). It could be "solarus-launcher-notarytool" or any name you want. You can set it with the CMake variable `-DSOLARUSLAUNCHER_NOTARIZE_PROFILE` when configuring the project.
+   - `<YOUR_APPLE_ID_EMAIL>`: is your Apple ID email, registered in Solarus Labs team.
+   - `4464B2CGYB`: is Solarus Labs' Team ID.
+   - `<APP_SPECIFIC_PASSWORD>`: is the app-specific password you generated in step 2.
+
+   It will link your Apple ID and the team to the profile name you chose, and allow your machine to notarize apps on behalf of Solarus Labs.
+
+4. When building the macOS signed and notarized package, make sure to set the following CMake variables, or just use the provided CMake preset `macos-signed` that already includes them:
+   - `-DSOLARUSLAUNCHER_CODESIGN_ENABLED=ON`
+   - `-DSOLARUSLAUNCHER_CODESIGN_IDENTITY="Developer ID Application: Solarus Labs (4464B2CGYB)"` (already set in the CMake presets)
+   - `-DSOLARUSLAUNCHER_NOTARIZE_ENABLED=ON`
+   - `-DSOLARUSLAUNCHER_NOTARIZE_PROFILE="notarytool-password"` (or the name you chose in step 3)
+
+   See the [macOS Build Instructions](#macos) section.

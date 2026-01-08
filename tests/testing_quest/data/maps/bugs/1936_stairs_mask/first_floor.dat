@@ -139,7 +139,6 @@ teletransporter{
   y = 16,
   width = 16,
   height = 16,
-  transition = "immediate",
   destination_map = "bugs/1936_stairs_mask/second_floor",
 }
 

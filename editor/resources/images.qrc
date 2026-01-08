@@ -61,6 +61,7 @@
         <file>images/icon_animation_separation_vertical.svg</file>
         <file>images/icon_author.svg</file>
         <file>images/icon_border_set.svg</file>
+        <file>images/icon_book.svg</file>
         <file>images/icon_bring_to_back.svg</file>
         <file>images/icon_bring_to_front.svg</file>
         <file>images/icon_camera.svg</file>
@@ -80,6 +81,7 @@
         <file>images/icon_down.svg</file>
         <file>images/icon_dynamic_tile.svg</file>
         <file>images/icon_edit.svg</file>
+        <file>images/icon_empty_slot.svg</file>
         <file>images/icon_error.svg</file>
         <file>images/icon_external_link.svg</file>
         <file>images/icon_file_unknown.svg</file>
@@ -105,9 +107,11 @@
         <file>images/icon_go_up.svg</file>
         <file>images/icon_grid.svg</file>
         <file>images/icon_group.svg</file>
+        <file>images/icon_home.svg</file>
         <file>images/icon_image_language.svg</file>
         <file>images/icon_image_tileset.svg</file>
         <file>images/icon_image.svg</file>
+        <file>images/icon_info.svg</file>
         <file>images/icon_inside.svg</file>
         <file>images/icon_last.svg</file>
         <file>images/icon_layer_0.svg</file>
@@ -117,8 +121,10 @@
         <file>images/icon_lock.svg</file>
         <file>images/icon_mastodon.svg</file>
         <file>images/icon_next.svg</file>
+        <file>images/icon_new_24x24.svg</file>
         <file>images/icon_obstacle.svg</file>
         <file>images/icon_open.svg</file>
+        <file>images/icon_open_24x24.svg</file>
         <file>images/icon_outside.svg</file>
         <file>images/icon_paste.svg</file>
         <file>images/icon_pause_music.svg</file>

@@ -134,8 +134,8 @@ Returns the number of frames of this sprites in an animation and direction.
 `animation_name` (string, optional)
 : Name of an animation of the sprite. This animation must exist in the animation set. No value means the current animation and the current direction.
 
-`direction` (number)
-: A direction of this animation, between `0` and `sprite:get_num_directions(animation_name) - 1`. This must be set only if `animation_name` is set.
+`direction` (number, requires: `animation_name`, optional)
+: A direction of this animation, between `0` and `sprite:get_num_directions(animation_name) - 1`.
 
 Return value (number)
 : The number of frames.
@@ -149,7 +149,7 @@ The delay of the current animation may be overriden by [`set_frame_delay()`](#sp
 `animation_name` (string, optional)
 : Name of an animation of the sprite. This animation must exist in the animation set. No value means the current animation.
 
-Return value (number)
+Return value (number or `nil`)
 : The delay in milliseconds between two frames in the current animation. `nil` means infinite and it is only allowed for single-frame animations.
 
 ### `sprite:set_frame_delay(delay)`
@@ -158,7 +158,7 @@ Changes the delay between two frames of this sprite in the current animation.
 
 Use this function if you want to override the normal delay (the one defined in the sprite data file).
 
-`delay` (number)
+`delay` (number or `nil`)
 : The new delay in milliseconds. `nil` means infinite and is only allowed for single-frame animations.
 
 ### `sprite:get_size([animation_name, direction])`
@@ -229,8 +229,8 @@ Return value (boolean)
 
 Pauses or resumes the animation of this sprite.
 
-`paused` (boolean, optional)
-: `true` to pause the sprite, `false` to unpause it. No value means `true`
+`paused` (boolean, optional, default: `true`)
+: `true` to pause the sprite, `false` to unpause it.
 
 ### `sprite:get_ignore_suspend()`
 
@@ -245,14 +245,14 @@ Return value (boolean)
 
 Sets whether the animation should continue even when the [game](../game.md) is suspended.
 
-`ignore` (boolean, optional)
-: `true` to continue the animation even when the game is suspended. No value means `true`
+`ignore` (boolean, optional, default: `true`)
+: `true` to continue the animation even when the game is suspended.
 
 ### `sprite:synchronize([reference_sprite])`
 
 Synchronizes the frames of this sprite with the frames of a reference sprite. The synchronization will be performed whenever both animation names match. The current sprite will no longer apply its normal frame delay: instead, it will now always set its current frame to the current frame of its reference sprite.
 
-`reference_sprite` (sprite, optional)
+`reference_sprite` (sprite or `nil`, optional)
 : The reference sprite. `nil` means stopping any previous synchronization.
 
 ## Events of the type `sprite`

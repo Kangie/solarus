@@ -21,7 +21,7 @@ include(FetchContent)
 # Qlementine-Icons: an SVG icon library made for Qt.
 FetchContent_Declare(qlementine-icons
   GIT_REPOSITORY "https://github.com/oclero/qlementine-icons.git"
-  GIT_TAG v1.12.0
+  GIT_TAG v1.13.0
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(qlementine-icons)
@@ -35,7 +35,7 @@ set_target_properties(qlementine-icons
 # Qlementine: the QStyle library to have a modern look n' feel.
 FetchContent_Declare(qlementine
   GIT_REPOSITORY "https://github.com/oclero/qlementine.git"
-  GIT_TAG v1.4.0
+  GIT_TAG v1.4.1
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(qlementine)
@@ -49,7 +49,7 @@ set_target_properties(qlementine
 # QtAppInstanceManager: a library to manage multiple instances of a Qt application.
 FetchContent_Declare(QtAppInstanceManager
  GIT_REPOSITORY "https://github.com/oclero/qtappinstancemanager.git"
- GIT_TAG v1.3.0
+ GIT_TAG v1.3.1
  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(QtAppInstanceManager)
