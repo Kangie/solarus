@@ -48,6 +48,10 @@ namespace {
  */
 void setup_application_information() {
 
+  // Enable high DPI scaling for Windows/Linux with fractional scaling factors.
+  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+      Qt::HighDpiScaleFactorRoundingPolicy::Round);
+
   QApplication::setApplicationName(SOLARUSEDITOR_EXECUTABLE_NAME);
   QApplication::setApplicationDisplayName(SOLARUSEDITOR_APP_DISPLAY_NAME);
   QApplication::setApplicationVersion(SOLARUSEDITOR_VERSION);
