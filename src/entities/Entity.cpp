@@ -24,6 +24,7 @@
 #include "solarus/core/System.h"
 #include "solarus/core/Profiler.h"
 #include "solarus/entities/CollisionMode.h"
+#include "solarus/entities/CustomEntity.h"
 #include "solarus/entities/Destructible.h"
 #include "solarus/entities/Door.h"
 #include "solarus/entities/Entities.h"
@@ -3021,6 +3022,18 @@ bool Entity::is_raised_block_obstacle(CrystalBlock& /* raised_block */) {
  */
 bool Entity::is_crystal_obstacle(Crystal& /* crystal */) {
   return true;
+}
+
+/**
+ * \brief Returns whether a custom entity is currently considered as an obstacle by this entity.
+ *
+ * By default, custom entities are not obstacles.
+ *
+ * \param custom_entity a custom entity
+ * \return true if the custom entity is currently an obstacle for this entity
+ */
+bool Entity::is_custom_entity_obstacle(CustomEntity& /* custom_entity */) {
+  return false;
 }
 
 /**

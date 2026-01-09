@@ -104,6 +104,7 @@ map{ id = "bugs/1527_entity_set_name", description = "#1527: entity:set_name()" 
 map{ id = "bugs/1533_savegame_write_escape", description = "#1533: Keyboard key binds are not escaped properly when savegame file is written" }
 map{ id = "bugs/1534_unicode_filenames", description = "#1534: Cyrillic or Chinese characters in filepath cause sol.file.open to return nil" }
 map{ id = "bugs/1535_collision_moving_sprite", description = "#1535: Collision of a moving sprite when the entity does not move" }
+map{ id = "bugs/1546_custom_entities_collisions", description = "#1546: Set traversable should operated between custom entities" }
 map{ id = "bugs/1547_teletransporter_on_activated_twice/map_1", description = "#1547 (1): Teletransporter on_activated Twice" }
 map{ id = "bugs/1547_teletransporter_on_activated_twice/map_2", description = "#1547 (2): Teletransporter on_activated Twice" }
 map{ id = "bugs/1550_use_bow", description = "#1550: Using bow crash" }
@@ -691,6 +692,8 @@ file{ path = "maps/bugs/1534_unicode_filenames.dat", author = "hhromic", license
 file{ path = "maps/bugs/1534_unicode_filenames.lua", author = "hhromic", license = "GPL v3" }
 file{ path = "maps/bugs/1535_collision_moving_sprite.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1535_collision_moving_sprite.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1546_custom_entities_collisions.dat", author = "Metallizer", }
+file{ path = "maps/bugs/1546_custom_entities_collisions.lua", author = "Metallizer", }
 file{ path = "maps/bugs/1547_teletransporter_on_activated_twice/map_1.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1547_teletransporter_on_activated_twice/map_1.lua", author = "Cluedrew", license = "GPL v3" }
 file{ path = "maps/bugs/1547_teletransporter_on_activated_twice/map_2.dat", author = "Cluedrew", license = "CC BY-SA 4.0" }

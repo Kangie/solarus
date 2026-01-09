@@ -275,6 +275,13 @@ void CustomEntity::reset_traversable_by_entities(EntityType type) {
  */
 bool CustomEntity::is_obstacle_for(Entity& other) {
 
+  // First check if the other entity considers custom entities as obstacles.
+  // This allows entities to use set_can_traverse() to control traversing custom entities.
+  if (other.is_custom_entity_obstacle(*this)) {
+    return true;
+  }
+
+  // Then check if this custom entity allows the other entity to traverse it.
   return !is_traversable_by_entity(other);
 }
 
@@ -516,6 +523,18 @@ bool CustomEntity::is_crystal_obstacle(Crystal& crystal) {
     return !info.is_traversable(*this, crystal);
   }
   return Entity::is_crystal_obstacle(crystal);
+}
+
+/**
+ * \copydoc Entity::is_custom_entity_obstacle
+ */
+bool CustomEntity::is_custom_entity_obstacle(CustomEntity& custom_entity) {
+
+  const TraversableInfo& info = get_can_traverse_entity_info(custom_entity.get_type());
+  if (!info.is_empty()) {
+    return !info.is_traversable(*this, custom_entity);
+  }
+  return Entity::is_custom_entity_obstacle(custom_entity);
 }
 
 /**
