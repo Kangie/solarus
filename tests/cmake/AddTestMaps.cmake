@@ -212,6 +212,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1644_random_movement_get_angle"
   "bugs/1648_custom_entities_collision_not_happening"
   "bugs/1652_npc_movement_stop_animation"
+  "bugs/1672_wrong_camera_position_on_started"
   "bugs/1691_immediate_transition_freeze"
   "bugs/1900_game_over_hero_argument"
   "bugs/1908_map_create_enemy_suffix"
