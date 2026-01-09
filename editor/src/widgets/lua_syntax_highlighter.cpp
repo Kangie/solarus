@@ -122,21 +122,21 @@ void LuaSyntaxHighlighter::highlightBlock(const QString& text) {
 
   for (const HighlightingRule& rule : std::as_const(rules)) {
     QRegularExpression pattern(rule.pattern);
-    QRegularExpressionMatch match = pattern.match(text);
+    QRegularExpressionMatchIterator match_iterator = pattern.globalMatch(text);
 
-    if (!match.hasMatch()) {
-      continue;
-    }
+    while (match_iterator.hasNext()) {
+      QRegularExpressionMatch match = match_iterator.next();
 
-    if (match.lastCapturedIndex() == 0) {
-      // Only the full regexp matched.
-      setFormat(static_cast<int>(match.capturedStart(0)), static_cast<int>(match.capturedLength(0)), rule.format);
-    } else {
-      // There are some inner captures: only highlight them and not the full regexp.
-      for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
-        const int index = static_cast<int>(match.capturedStart(i));
-        if (index != -1) {
-          setFormat(index, static_cast<int>(match.capturedLength(i)), rule.format);
+      if (match.lastCapturedIndex() == 0) {
+        // Only the full regexp matched.
+        setFormat(static_cast<int>(match.capturedStart(0)), static_cast<int>(match.capturedLength(0)), rule.format);
+      } else {
+        // There are some inner captures: only highlight them and not the full regexp.
+        for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
+          const int index = static_cast<int>(match.capturedStart(i));
+          if (index != -1) {
+            setFormat(index, static_cast<int>(match.capturedLength(i)), rule.format);
+          }
         }
       }
     }
