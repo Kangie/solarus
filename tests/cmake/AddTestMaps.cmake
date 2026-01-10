@@ -218,6 +218,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1900_game_over_hero_argument"
   "bugs/1908_map_create_enemy_suffix"
   "bugs/1917_set_tileset_int"
+  "bugs/1918_movement_started_before_start"
   "bugs/1683_analog_diagonal"
   "bugs/1936_stairs_mask/first_floor"
   "bugs/1945_duplicate_teleport_when_no_linked_camera/first_map"
