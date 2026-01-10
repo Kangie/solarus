@@ -842,6 +842,36 @@ void CustomEntity::clear_collision_tests() {
 }
 
 /**
+ * \copydoc Entity::test_collision_facing_point
+ *
+ * For custom entities, we also check that the other entity is not fully
+ * overlapping this one. This prevents entities standing on a custom entity
+ * from having it set as their facing entity, which would block interactions
+ * with other entities they're actually facing.
+ */
+bool CustomEntity::test_collision_facing_point(const Entity& entity) const {
+
+  // First check the standard facing point test.
+  if (!Entity::test_collision_facing_point(entity)) {
+    return false;
+  }
+
+  // Additionally check that the entity is not fully inside this custom entity.
+  // If the entity's bounding box is fully contained within this custom entity,
+  // the entity is standing on top of us, not facing us from outside.
+  const Rectangle& other_box = entity.get_bounding_box();
+  const Rectangle& this_box = get_bounding_box();
+
+  if (this_box.contains(other_box)) {
+    // The other entity is fully inside this custom entity.
+    // Don't consider this a facing collision.
+    return false;
+  }
+
+  return true;
+}
+
+/**
  * \copydoc Entity::test_collision_custom
  */
 bool CustomEntity::test_collision_custom(Entity& entity) {

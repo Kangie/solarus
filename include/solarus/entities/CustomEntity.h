@@ -131,6 +131,7 @@ class SOLARUS_API CustomEntity: public Entity {
     void clear_collision_tests();
 
     bool test_collision_custom(Entity& entity) override;
+    bool test_collision_facing_point(const Entity& entity) const override;
     void notify_collision(
         Entity& entity_overlapping, CollisionMode collision_mode) override;
     void notify_collision(

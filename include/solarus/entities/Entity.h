@@ -328,7 +328,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     bool test_collision_rectangle(const Entity& entity) const;
     bool test_collision_inside(const Entity& entity) const;
     bool test_collision_origin_point(const Entity& entity) const;
-    bool test_collision_facing_point(const Entity& entity) const;
+    virtual bool test_collision_facing_point(const Entity& entity) const;
     bool test_collision_touching(const Entity& entity) const;
     bool test_collision_center(const Entity& entity) const;
     bool test_collision_sprites(
