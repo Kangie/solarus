@@ -5,6 +5,7 @@
 #include <Utils.h>
 #include <BasicUpdater.h>
 #include <Controller.h>
+#include <SolarusLauncherConfig.h>
 
 #include <QApplication>
 #include <QPushButton>
@@ -180,7 +181,10 @@ void StatusBar::setupUi() {
             _ui.messageWidget->setCurrentPage(MessageWidget::Page::Button, i18n::updateAvailable(),
               i18n::versionComparison().arg(result.currentVersion, result.newVersion));
             _ui.messageWidget->onButtonClicked = [this, result]() {
-              QDesktopServices::openUrl(result.newVersionDownloadUrl);
+              // Temporary, before getting the better update system:
+              // we just redirect the user to the website, and he/she will download
+              // the new version manually.
+              QDesktopServices::openUrl({ SOLARUSLAUNCHER_LINKS_RELEASES });
             };
             break;
           case BasicUpdater::Status::NoUpdate:

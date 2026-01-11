@@ -2,8 +2,6 @@
 #pragma once
 
 #include <QObject>
-#include <QVersionNumber>
-#include <QUrl>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -11,7 +9,7 @@ class QNetworkReply;
 namespace solarus::launcher {
 /**
  * @brief A basic updater for the Solarus Launcher.
- * Should be replacer by the more advanced Updater class from the QtQuick launcher.
+ * Should be replaced by the more advanced Updater class from the QtQuick launcher.
  */
 class BasicUpdater : public QObject {
   Q_OBJECT
@@ -41,7 +39,6 @@ public:
   virtual ~BasicUpdater() = default;
 
   void checkForUpdates(const QString& endpoint);
-  void doUpdate();
 
 signals:
   void checkStarted();
