@@ -147,7 +147,7 @@ nav:
       - Language Functions: lua-api/language-functions.md # [language] Handling translations.
       - Timers: lua-api/timers.md # [timer] Making an action later with a delay.
       - Drawable Objects:
-          - lua-api/drawable-objects/index.md
+          - lua-api/drawable-objects/index.md # [drawable] 
           - Surfaces: lua-api/drawable-objects/surface.md # [surface] Displaying fixed images.
           - Text Surfaces: lua-api/drawable-objects/text-surface.md # [text_surface] Displaying text.
           - Sprites: lua-api/drawable-objects/sprite.md # [sprite] Displaying animated images.
