@@ -9,14 +9,16 @@
 #include <QNetworkReply>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QVersionNumber>
+#include <QUrl>
 
 namespace solarus::launcher {
 namespace {
-QVersionNumber getCurrentVersion() {
+static QVersionNumber getCurrentVersion() {
   return QVersionNumber::fromString(QApplication::applicationVersion());
 }
 
-BasicUpdater::Result fromGitLabApiV4LatestRelease(const QJsonDocument& doc) {
+static BasicUpdater::Result fromGitLabApiV4LatestRelease(const QJsonDocument& doc) {
   const auto currentVersion = getCurrentVersion();
 
   auto result = BasicUpdater::Result{
@@ -35,11 +37,7 @@ BasicUpdater::Result fromGitLabApiV4LatestRelease(const QJsonDocument& doc) {
         if (tagName.startsWith('v', Qt::CaseInsensitive)) {
           tagName.remove(0, 1);
         }
-        auto latestVersion = QVersionNumber::fromString(tagName);
-        latestVersion = QVersionNumber::fromString("2.1.2");
-
-        //qDebug() << latestVersion.toString() << currentVersion.toString();
-
+        const auto latestVersion = QVersionNumber::fromString(tagName);
         if (!latestVersion.isNull()) {
           if (latestVersion > currentVersion) {
             if (jsonObj.contains("_links")) {
@@ -82,16 +80,11 @@ void BasicUpdater::checkForUpdates(const QString& endpoint) {
   if (!_checking) {
     _checking = true;
     emit checkStarted();
-    const auto url = QUrl(endpoint);
-    auto request = QNetworkRequest(url);
+    auto request = QNetworkRequest({ endpoint });
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::SameOriginRedirectPolicy);
     request.setTransferTimeout(5000);
     _manager->get(request);
   }
-}
-
-void BasicUpdater::doUpdate() {
-  // TODO
 }
 
 void BasicUpdater::onReplyReceived(QNetworkReply* reply) {
