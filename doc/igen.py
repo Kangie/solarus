@@ -164,7 +164,7 @@ def generate_returns(section):
         return_desc = generate_links(return_desc)
 
         for return_type in return_types:
-            return_types[return_types.index(return_type)] = return_type.replace("`", "").replace(" ", "_")
+            return_types[return_types.index(return_type)] = return_type.replace("`", "").replace("any type", "any").replace(" ", "_")
 
         returns.append({"types": return_types, "desc": return_desc, "values": generate_values(return_section), "properties": generate_properties(return_section)})
 
@@ -214,7 +214,7 @@ def generate_args(section):
             elif detail.startswith("requires: "):
                 arg_requirements = detail.replace("requires: ", "").replace("`", "").split(" and ")
             else:
-                arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("map entity", "entity").replace("carried object", "carried_object").split(" or ")
+                arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("any type", "any").replace("map entity", "entity").replace("carried object", "carried_object").split(" or ")
 
         args.append({"name": arg_name, "desc": arg_desc, "optionnal": optionnal_arg, "deprecated": deprecated_arg, "requires": arg_requirements, "types": arg_types, "default": arg_default_value, "values": generate_values(arg_section), "properties": generate_properties(arg_section)})
 
