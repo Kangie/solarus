@@ -164,7 +164,7 @@ def generate_returns(section):
         return_desc = generate_links(return_desc)
 
         for return_type in return_types:
-            return_types[return_types.index(return_type)] = return_type.replace("`", "").replace("any type", "any").replace(" ", "_")
+            return_types[return_types.index(return_type)] = re.sub(r'array of (.*?)(?=\s|$)', r'\1[]', return_type).replace("`", "").replace("any type", "any").replace(" ", "_")
 
         returns.append({"types": return_types, "desc": return_desc, "values": generate_values(return_section), "properties": generate_properties(return_section)})
 
