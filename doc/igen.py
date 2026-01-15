@@ -226,11 +226,11 @@ def generate_args(section):
             args = []
         
         for overload_args_part in overload_args_parts:
-            overload_args_section =  re.findall(r'(\<dt\>.*?\<\/dd\>)', overload_args_part)
+            overload_args_section =  re.findall(r'(\<dt\>.*?)(?=\<\/p\>|\<\/dd\>)', overload_args_part)
 
             for overload_arg_section in overload_args_section:
                 overload_arg_name = re.findall(r'\<dt\>`(\w+)`', overload_arg_section)[0]
-                overload_arg_desc = re.findall(r'\<dd\>(.*?)\<\/dd\>', overload_arg_section)[0]
+                overload_arg_desc = re.findall(r'\<dd\>(.*?)$', overload_arg_section)[0]
                 overload_arg_details = re.findall(rf'\<dt\>`{overload_arg_name}` \((.*?)\)\<\/dt\>', overload_arg_section)[0].split(", ")
                 overload_arg_values_section = ""
                 overload_arg_default_value = ""
@@ -238,9 +238,15 @@ def generate_args(section):
                 overload_arg_types = []
 
                 if overload_arg_desc.startswith("<p>"):
-                    overload_arg_values_section = re.findall(r'\<ul\>(.*?)\<\/ul\>', overload_arg_desc)[0]
-                    overload_arg_values_section = overload_arg_values_section.replace("<li>", "\n    - ").replace("</li>", "")
-                    overload_arg_values_section = f"\n{overload_arg_values_section}\n\n"
+                    overload_arg_section = re.findall(rf'(\<dt\>`{overload_arg_name}`.*?\<\/dd\>)', overload_args_part)[0]
+                    overload_arg_desc = re.findall(r'\<dd\>(.*?)$', overload_arg_section)[0]
+                    overload_arg_values_section = re.findall(r'\<ul\>(.*?)\<\/ul\>', overload_arg_desc)
+
+                    if len(overload_arg_values_section) > 0:
+                        overload_arg_values_section = overload_arg_values_section[0].replace("<li>", "\n    - ").replace("</li>", "")
+                        overload_arg_values_section = f"\n{overload_arg_values_section}\n\n"
+                    else:
+                        overload_arg_values_section = ""
 
                     overload_arg_desc = re.findall(r'\<p\>(.*?)\<\/p\>', overload_arg_desc)[0]
 
