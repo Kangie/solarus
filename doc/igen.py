@@ -164,7 +164,7 @@ def generate_returns(section):
         return_desc = generate_links(return_desc)
 
         for return_type in return_types:
-            return_types[return_types.index(return_type)] = return_type.replace("`", "").replace(" ", "_")
+            return_types[return_types.index(return_type)] = re.sub(r'array of (.*?)(?=\s|$)', r'\1[]', return_type).replace("`", "").replace("any type", "any").replace(" ", "_")
 
         returns.append({"types": return_types, "desc": return_desc, "values": generate_values(return_section), "properties": generate_properties(return_section)})
 
@@ -214,7 +214,7 @@ def generate_args(section):
             elif detail.startswith("requires: "):
                 arg_requirements = detail.replace("requires: ", "").replace("`", "").split(" and ")
             else:
-                arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("map entity", "entity").replace("carried object", "carried_object").split(" or ")
+                arg_types = re.sub(r'\]\(.*?\)', "", detail.replace("[", "")).replace("`", "").replace("sol.", "").replace("any type", "any").replace("any except ", "!").replace("map entity", "entity").replace("carried object", "carried_object").split(" or ")
 
         args.append({"name": arg_name, "desc": arg_desc, "optionnal": optionnal_arg, "deprecated": deprecated_arg, "requires": arg_requirements, "types": arg_types, "default": arg_default_value, "values": generate_values(arg_section), "properties": generate_properties(arg_section)})
 
@@ -226,11 +226,11 @@ def generate_args(section):
             args = []
         
         for overload_args_part in overload_args_parts:
-            overload_args_section =  re.findall(r'(\<dt\>.*?\<\/dd\>)', overload_args_part)
+            overload_args_section =  re.findall(r'(\<dt\>.*?)(?=\<\/p\>|\<\/dd\>)', overload_args_part)
 
             for overload_arg_section in overload_args_section:
                 overload_arg_name = re.findall(r'\<dt\>`(\w+)`', overload_arg_section)[0]
-                overload_arg_desc = re.findall(r'\<dd\>(.*?)\<\/dd\>', overload_arg_section)[0]
+                overload_arg_desc = re.findall(r'\<dd\>(.*?)$', overload_arg_section)[0]
                 overload_arg_details = re.findall(rf'\<dt\>`{overload_arg_name}` \((.*?)\)\<\/dt\>', overload_arg_section)[0].split(", ")
                 overload_arg_values_section = ""
                 overload_arg_default_value = ""
@@ -238,9 +238,15 @@ def generate_args(section):
                 overload_arg_types = []
 
                 if overload_arg_desc.startswith("<p>"):
-                    overload_arg_values_section = re.findall(r'\<ul\>(.*?)\<\/ul\>', overload_arg_desc)[0]
-                    overload_arg_values_section = overload_arg_values_section.replace("<li>", "\n    - ").replace("</li>", "")
-                    overload_arg_values_section = f"\n{overload_arg_values_section}\n\n"
+                    overload_arg_section = re.findall(rf'(\<dt\>`{overload_arg_name}`.*?\<\/dd\>)', overload_args_part)[0]
+                    overload_arg_desc = re.findall(r'\<dd\>(.*?)$', overload_arg_section)[0]
+                    overload_arg_values_section = re.findall(r'\<ul\>(.*?)\<\/ul\>', overload_arg_desc)
+
+                    if len(overload_arg_values_section) > 0:
+                        overload_arg_values_section = overload_arg_values_section[0].replace("<li>", "\n    - ").replace("</li>", "")
+                        overload_arg_values_section = f"\n{overload_arg_values_section}\n\n"
+                    else:
+                        overload_arg_values_section = ""
 
                     overload_arg_desc = re.findall(r'\<p\>(.*?)\<\/p\>', overload_arg_desc)[0]
 

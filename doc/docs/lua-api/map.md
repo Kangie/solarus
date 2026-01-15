@@ -1046,7 +1046,7 @@ Creates an entity of type [non-playing character](./map-entities/npc.md) (NPC) o
     `properties` (table, optional)
     : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
-Return value ([NPC](./map-entities/npc.md))
+Return value ([npc](./map-entities/npc.md))
 : The NPC created.
 
 ### `map:create_block(properties)`

@@ -1,5 +1,9 @@
 # Template for Lua API Reference
 
+If you need help, you can ask to [S2009](https://s2009.fr) on Discord.
+
+## Overview
+
 Here is a formatting guide to follow when creating a new Markdown page for the Lua API Reference.  
 You just need to replace the placeholders with the actual content.
 
