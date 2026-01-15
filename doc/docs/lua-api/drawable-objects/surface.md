@@ -19,7 +19,7 @@ Creates an empty surface.
 Return value (surface)
 : The surface created.
 
-### `sol.surface.create(file_name, [language_specific])`
+### `[Deprecated] sol.surface.create(file_name, [language_specific])`
 
 Creates a surface from an image file inside a predefined directory.
 

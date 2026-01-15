@@ -107,8 +107,8 @@ Sets whether the player is allowed to obtain this item.
 
 If not, any treasure representing this item is automatically replaced by an empty treasure. There is no risk that the player can obtain it or even see it during the [game](./game.md). You can use this feature to hide some items while the player has not the necessary equipment. For example, you can make arrows unobtainable until the player has the bow. You can also make magic jars unobtainable until the player has a magic bar.
 
-Return value (boolean, optional, default: `true`)
-: `true` if this item is obtainable.
+`obtainable` (boolean, optional, default: `true`)
+: `true` to make this item obtainable.
 
 ### `item:is_assignable()`
 
@@ -128,7 +128,7 @@ When the item is assigned to a slot, the player can use it by pressing the [game
 By default, an item is not assignable. Call this function at initialization time if you want your item to be assignable.
 
 `assignable` (boolean, optional, default: `true`)
-: `true` if this item is assignable.
+: `true` to make this item assignable.
 
 ### `item:get_can_disappear()`
 

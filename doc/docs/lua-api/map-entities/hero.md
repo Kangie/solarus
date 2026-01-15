@@ -357,7 +357,7 @@ This function does the same as what happens when the player keeps pressing the `
 
 If the player is not allowed to perform this attack now (because he does not have the sword [ability](#heroget_abilityability_name) or because the hero is currently busy in another state that does not allow to use the sword), then nothing happens.
 
-`spin_attack_delay` (number, optional, default `1000`)
+`spin_attack_delay` (number, optional, default: `1000`)
 : Delay in milliseconds before the sword is loaded, allowing a spin attack then. A value of `0` allows the spin attack immediately. The special value `-1` means infinite: then, no spin attack will be possible.
 
 ### `hero:start_item(item)`
@@ -498,6 +498,9 @@ Return value 2 ([state](../custom-states.md))
 Starts a [custom state](../custom-states.md) on the hero.
 
 Custom states allow advanced customization of the hero's behavior. After you call this method, the hero state string as returned by [`hero:get_state()`](#heroget_state) is `"custom"` Use [`hero:get_state_object()`](#heroget_state_object) to get the actual custom state object.
+
+`state` ([custom state](../custom-states.md))
+: The custom state to start.
 
 ### `hero:get_state_object()`
 

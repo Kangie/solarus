@@ -16,7 +16,7 @@ A shader program, represented by the `shader` Solarus datatype, is composed of a
 
 The rest of this documentation page explains how to use shaders with the Solarus Lua API. We assume that you have some basic knowledge of shaders and GLSL or GLSL ES. See [the documentation of OpenGL and OpenGL ES](https://registry.khronos.org/OpenGL-Refpages) for more information about shaders and shading languages.
 
-Solarus compiles them at runtime when you create them with [`sol.shader.create()`](#solshadercreateshader_id). You can either apply a shader to the whole window with [`sol.video.set_shader()`](./video.md#solvideoset_shadershader), or to an individual surface, text surface or sprite with [`drawable:set_shader()`](./drawable-objects/index.md#drawableset_shadershader).
+Solarus compiles them at runtime when you create them with [`sol.shader.create()`](#solshadercreateshader_id-solshadercreateproperties). You can either apply a shader to the whole window with [`sol.video.set_shader()`](./video.md#solvideoset_shadershader), or to an individual surface, text surface or sprite with [`drawable:set_shader()`](./drawable-objects/index.md#drawableset_shadershader).
 
 ### Current Window Shader
 
@@ -141,36 +141,20 @@ In any case, the legacy OpenGL variables and attributes such as `gl_ModelViewPro
 
 ## Functions of `sol.shader`
 
-### `sol.shader.create(shader_id)`
+### `sol.shader.create(shader_id), sol.shader.create(properties)`
 
-Loads and returns a shader program from a shader description file. If the loading or the compilation of the shader program fails, a Lua error is raised.
+Loads and returns a shader program from a shader description file or from the given parameters. If the loading or the compilation of the shader program fails, a Lua error is raised.
 
-`shader_id` (string)
-: Id of the shader program to load (filename without extension, relative to the `shaders` directory).
-
-Return value (shader)
-: The shader program created.
-
-### `sol.shader.create(properties)`
-
-Loads and returns a shader program from the given parameters. If the loading or the compilation of the shader program fails, a Lua error is raised.
-
-This function can be used for advanced purposes, but the normal way is to use [`sol.shader.create(shader_id)`](#solshadercreateshader_id), that is, to load a shader already described in a data file.
-
-`properties` (table)
-: Source and parameters of the shader program. Can have the following entries:
-
-    `vertex_source` (string, optional)
-    : GLSL code of the vertex shader. No values means to use a default shader that does nothing special
-
-    `fragment_source` (string, optional)
-    : GLSL code of the fragment shader. No values means to use a default shader that does nothing special.
-
-    `scaling_factor` (number, optional)
-    : When the shader is applied to the whole window, indicates how much the input texture will be scaled by the shader. See [`shader:set_scaling_factor()`](#shaderset_scaling_factorscaling_factor) for more details.
+| With a shader description file | With custom properties |
+|------------------|------------------------------|
+| <dl><dt>`shader_id` (string)</dt><dd>Id of the shader program to load (filename without extension, relative to the `shaders` directory).</dd></dl> | <dl><dt>`properties` (table)</dt><dd><p>Source and parameters of the shader program. Can have the following entries:</p><dl><dt>`vertex_source` (string, optional)</dt><dd>GLSL code of the vertex shader. No values means to use a default shader that does nothing special</dd><dt>`fragment_source` (string, optional)</dt><dd>GLSL code of the fragment shader. No values means to use a default shader that does nothing special.</dd><dt> `scaling_factor` (number, optional)</dt><dd>When the shader is applied to the whole window, indicates how much the input texture will be scaled by the shader. See [`shader:set_scaling_factor()`](#shaderset_scaling_factorscaling_factor) for more details.</dd></dl></dd></dl>|
 
 Return value (shader)
 : The shader program created.
+
+!!! note "Note"
+  
+    Custom properties can be used for advanced purposes, but the normal way is to use the `shader_id` parameter, that is, to load a shader already described in a data file.
 
 ### `sol.shader.get_opengl_version()`
 

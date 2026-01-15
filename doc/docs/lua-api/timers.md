@@ -67,25 +67,9 @@ Sets a function to be called after a delay.
 
 If the duration is set to zero, the function is called immediately.
 
-`context` ([map](./map.md) or [game](./game.md) or [item](./equipment-items.md) or [map entity](./map-entities/index.md) or [state](./custom-states.md) or [menu](./menus.md) or [sol.main](./general-features.md) or `nil`)
-: Determines the lifetime of the timer. The context is where the timer belongs. If the context gets closed before the timer is finished, then the timer is automatically canceled. More precisely, the following rules are applied.
-
-    - If you set the context to a [map](./map.md), the timer is canceled when the player goes to another map. Example: a button that opens a door for a limited time.
-
-    - If you set the context to a [game](./game.md) or an [item](./equipment-items.md), the timer is canceled when the game is closed. (Items have the same lifetime as the game they belong to.) This is only possible when the game is running. Example: hot water that becomes cold after a few minutes, and that the player should bring to an NPC on another map while it's still hot.
-
-    - If you set the context to a [map entity](./map-entities/index.md), the timer is canceled when the entity is removed from the map. In the case of an enemy, the timer is also canceled when the enemy is hurt, immobilized or restarts. Also note that while the entity is suspended, the timer is also suspended. An entity may be suspended when the [game is suspended](./game.md#gameis_suspended), or when the entity is [disabled](./map-entities/index.md#entityset_enabledenabled). Example: a boss who shoots fireballs every 10 seconds. Most enemy scripts usually create timers.
-
-    - If you set the context to a [state](./custom-states.md), the timer is canceled when the custom hero state finishes or when the hero is removed. Like entity timers, state timers get suspended when the hero is suspended. Example: charging an attack during 3 seconds in a custom state.
-
-    - If you set the context to a [menu](./menus.md), the timer is canceled when the menu is closed. Example: in the title screen, show some animations after a few seconds without action from the user.
-
-    - If you set the context to the [sol.main](./general-features.md) table, the timer is canceled when Lua is closed. Thus, it will be a global timer. This kind of timer is not often needed. Example: dumping some global information periodically while the program is running.
-
-    - If you don't specify a context, then a default context is set for you: the current [map](./map.md) during a [game](./game.md), and [sol.main](./general-features.md) if no game is running.
-
-`duration` (number)
-: Delay before calling the function in milliseconds.
+| With context | Without context |
+|------------------|------------------------------|
+| <dl><dt>`context` ([map](./map.md) or [game](./game.md) or [item](./equipment-items.md) or [map entity](./map-entities/index.md) or [state](./custom-states.md) or [menu](./menus.md) or [sol.main](./general-features.md) or `nil`, default: `sol.main`)</dt><dd><p>Determines the lifetime of the timer. The context is where the timer belongs. If the context gets closed before the timer is finished, then the timer is automatically canceled. More precisely, the following rules are applied.</p><ul><li>If you set the context to a [map](./map.md), the timer is canceled when the player goes to another map. Example: a button that opens a door for a limited time.</li><li>If you set the context to a [game](./game.md) or an [item](./equipment-items.md), the timer is canceled when the game is closed. (Items have the same lifetime as the game they belong to.) This is only possible when the game is running. Example: hot water that becomes cold after a few minutes, and that the player should bring to an NPC on another map while it's still hot.</li><li>If you set the context to a [map entity](./map-entities/index.md), the timer is canceled when the entity is removed from the map. In the case of an enemy, the timer is also canceled when the enemy is hurt, immobilized or restarts. Also note that while the entity is suspended, the timer is also suspended. An entity may be suspended when the [game is suspended](./game.md#gameis_suspended), or when the entity is [disabled](./map-entities/index.md#entityset_enabledenabled). Example: a boss who shoots fireballs every 10 seconds. Most enemy scripts usually create timers.</li><li>If you set the context to a [state](./custom-states.md), the timer is canceled when the custom hero state finishes or when the hero is removed. Like entity timers, state timers get suspended when the hero is suspended. Example: charging an attack during 3 seconds in a custom state.</li><li>If you set the context to a [menu](./menus.md), the timer is canceled when the menu is closed. Example: in the title screen, show some animations after a few seconds without action from the user.</li><li>If you set the context to the [sol.main](./general-features.md) table, the timer is canceled when Lua is closed. Thus, it will be a global timer. This kind of timer is not often needed. Example: dumping some global information periodically while the program is running.</li><li>If you don't specify a context, then a default context is set for you: the current [map](./map.md) during a [game](./game.md), and [sol.main](./general-features.md) if no game is running.</li></ul></dd><dt>`duration` (number)</dt><dd>Delay before calling the function in milliseconds.</dd></dl> | <dl><dt>`duration` (number)</dt><dd>Delay before calling the function in milliseconds.</dd></dl>|
 
 `callback` (function)
 : The function to be called when the timer finishes.
