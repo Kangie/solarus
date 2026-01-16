@@ -144,7 +144,9 @@ QuestData makeQuestData(const QString& path) {
   Solarus::Debug::set_abort_on_die(false);
 
   try {
-    if (Solarus::QuestFiles::open_quest(program_name.toStdString(), path.toStdString())) {
+    if (Solarus::QuestFiles::open_quest(
+        std::string(program_name.toUtf8().constData()),
+        std::string(path.toUtf8().constData()))) {
       // Load all properties.
       const auto properties = Solarus::QuestProperties{ Solarus::CurrentQuest::get_properties() };
       initializeFromProperties(result, properties);
