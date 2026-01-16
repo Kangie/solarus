@@ -9,7 +9,6 @@
 
 #include <string>
 #include <iostream>
-#include <vector>
 
 /**
  * @brief Runs the Solarus Launcher GUI.
@@ -31,7 +30,7 @@ int runGUI(int argc, char* argv[]) {
  * @param argv The arguments.
  * @return int The exit status.
  */
-int runCLI([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
+int runCLI(int argc, char* argv[]) {
   Solarus::Debug::set_abort_on_die(true);
   Solarus::Debug::set_show_popup_on_die(false);
 
