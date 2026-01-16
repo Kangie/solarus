@@ -9,6 +9,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 /**
  * @brief Runs the Solarus Launcher GUI.
@@ -30,14 +31,16 @@ int runGUI(int argc, char* argv[]) {
  * @param argv The arguments.
  * @return int The exit status.
  */
-int runCLI(int argc, char* argv[]) {
+int runCLI([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
   Solarus::Debug::set_abort_on_die(true);
   Solarus::Debug::set_show_popup_on_die(false);
 
-  // Run the Solarus main loop.
-  const Solarus::Arguments args(argc, argv);
-  Solarus::MainLoop(args).run();
+  Solarus::Arguments args;
+  for (int i = 0; i < argc; ++i) {
+    args.add_argument(QString(argv[i]).toUtf8().constData());
+  }
 
+  Solarus::MainLoop(args).run();
   return EXIT_SUCCESS;
 }
 
