@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19.0)
 
 project("solarus-launcher"
   LANGUAGES CXX
-  VERSION 2.0.2
+  VERSION 2.0.3
   HOMEPAGE_URL "https://www.solarus-games.org"
   DESCRIPTION "Game Launcher for Solarus Quests"
 )

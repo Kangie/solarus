@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(solarus-editor VERSION 2.0.2)
+project(solarus-editor VERSION 2.0.3)
 set(COMPONENT_NAME "${PROJECT_NAME}")
 
 include(cmake/AddOptions.cmake)
@@ -41,8 +41,8 @@ if(SOLARUSEDITOR_CPACK_ENABLED)
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/AddPackage.cmake)
   if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macOS/macOSPackage.cmake)
-  elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/windowsPackage.cmake)
+  # elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  #   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows/windowsPackage.cmake)
   endif()
   message(STATUS "CPack package name: ${CPACK_PACKAGE_FILE_NAME}")
   include(CPack)

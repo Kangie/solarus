@@ -227,7 +227,7 @@ void LuaContext::register_entity_module() {
     });
   }
   if (CurrentQuest::is_format_at_least({ 2, 0 })) {
-    hero_methods.insert(hero_methods.end(), {
+    const std::vector<luaL_Reg> hero_2_0_methods = {
       { "get_controls", hero_api_get_controls },
       { "set_controls", hero_api_set_controls },
       { "get_swimming_speed", hero_api_get_swimming_speed },
@@ -280,6 +280,12 @@ void LuaContext::register_entity_module() {
       { "set_sinking_sound", hero_api_set_sinking_sound },
       { "get_swimming_sound", hero_api_get_swimming_sound },
       { "set_swimming_sound", hero_api_set_swimming_sound },
+      { "get_walking_on_grass_sound", hero_api_get_walking_on_grass_sound },
+      { "set_walking_on_grass_sound", hero_api_set_walking_on_grass_sound },
+      { "get_walking_on_water_sound", hero_api_get_walking_on_water_sound },
+      { "set_walking_on_water_sound", hero_api_set_walking_on_water_sound },
+      { "get_swimming_sound", hero_api_get_swimming_sound },
+      { "set_swimming_sound", hero_api_set_swimming_sound },
       { "get_lifting_sound", hero_api_get_lifting_sound },
       { "set_lifting_sound", hero_api_set_lifting_sound },
       { "get_running_sound", hero_api_get_running_sound },
@@ -292,7 +298,10 @@ void LuaContext::register_entity_module() {
       { "set_spin_attack_release_sound", hero_api_set_spin_attack_release_sound },
       { "get_victory_sound", hero_api_get_victory_sound },
       { "set_victory_sound", hero_api_set_victory_sound },
-    });
+    };
+    // Avoid GCC 5.1+ false positive warnings when inserting a big initializer list.
+    hero_methods.reserve(hero_methods.size() + hero_2_0_methods.size());
+    hero_methods.insert(hero_methods.end(), hero_2_0_methods.begin(), hero_2_0_methods.end());
   }
 
   hero_methods.insert(hero_methods.end(), common_methods.begin(), common_methods.end());
@@ -480,7 +489,6 @@ void LuaContext::register_entity_module() {
     switch_methods.insert(switch_methods.end(), {
         { "get_inactivate_when_leaving", switch_api_get_inactivate_when_leaving},
         { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
-        { "set_inactivate_when_leaving", switch_api_set_inactivate_when_leaving},
         { "get_subtype", switch_api_get_subtype },
         { "set_subtype", switch_api_set_subtype },
     });
@@ -557,7 +565,6 @@ void LuaContext::register_entity_module() {
       door_methods,
       metamethods
   );
-
 
   // Stairs.
   std::vector<luaL_Reg> stairs_methods = {
@@ -3194,6 +3201,82 @@ int LuaContext::hero_api_set_swimming_sound(lua_State* l) {
     const std::string& sound_id = LuaTools::opt_string(l, 2, "");
 
     hero.set_swimming_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_walking_on_grass_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_walking_on_grass_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_walking_on_grass_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_walking_on_grass_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_walking_on_grass_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_walking_on_grass_sound_id(sound_id);
+
+    return 0;
+  });
+}
+
+/**
+ * \brief Implementation of hero:get_walking_on_water_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_get_walking_on_water_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+
+    const std::string& sound_id = hero.get_walking_on_water_sound_id();
+
+    if (sound_id.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, sound_id);
+    }
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of hero:set_walking_on_water_sound().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::hero_api_set_walking_on_water_sound(lua_State* l) {
+
+  return state_boundary_handle(l, [&] {
+    Hero& hero = *check_hero(l, 1);
+    const std::string& sound_id = LuaTools::opt_string(l, 2, "");
+
+    hero.set_walking_on_water_sound_id(sound_id);
 
     return 0;
   });

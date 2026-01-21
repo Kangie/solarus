@@ -81,6 +81,7 @@ class EntityZOrderComparator {
 };
 
 using EntityTree = Quadtree<EntityPtr, EntityZOrderComparator>;
+
 /**
  * \brief Manages the whole content of a map.
  *

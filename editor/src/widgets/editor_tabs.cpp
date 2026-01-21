@@ -41,11 +41,6 @@
 
 namespace SolarusEditor {
 
-/** 
- * @brief Protocol for internal URLs handled by the editor.
- */
-static constexpr auto INTERNAL_URL_PROTOCOL = "solaruseditor://";
-
 /**
  * @brief Creates an editor tab widget.
  * @param parent The parent object or nullptr.

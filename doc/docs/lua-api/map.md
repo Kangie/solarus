@@ -1046,7 +1046,7 @@ Creates an entity of type [non-playing character](./map-entities/npc.md) (NPC) o
     `properties` (table, optional)
     : Additional user-defined properties. See [`entity:set_properties()`](./map-entities/index.md#entityset_propertiesproperties) for the specification.
 
-Return value ([NPC](./map-entities/npc.md))
+Return value ([npc](./map-entities/npc.md))
 : The NPC created.
 
 ### `map:create_block(properties)`
@@ -1851,7 +1851,7 @@ Returns the currently visible area of the map.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.5, because the [camera](./map-entities/camera.md) is now an entity. Therefore, you can get its coordinates and size like any other entity. Use [`map:get_camera():get_bounding_box()`](./map-entities/index.md#entityget_bounding_box) instead.
+    This method is deprecated since Solarus 1.5. The [camera](./map-entities/camera.md) is now an entity. Therefore, you can get its coordinates and size like any other entity. Use [`map:get_camera():get_bounding_box()`](./map-entities/index.md#entityget_bounding_box) instead.
 
 ### `map:move_camera(x, y, speed, callback, [delay_before], [delay_after])`
 
@@ -1922,7 +1922,7 @@ The camera first moves towards a target point. When the target is reached, after
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.5, because the [camera](./map-entities/camera.md) is now an entity. Therefore, you can move the camera like any other entity and have much more customization possibilities. It can be rewritten in pure Lua as follows.
+    This method is deprecated since Solarus 1.5. The [camera](./map-entities/camera.md) is now an entity. Therefore, you can move the camera like any other entity and have much more customization possibilities. It can be rewritten in pure Lua as follows.
 
 ## Deprecated events of the type `map`
 
@@ -1934,4 +1934,4 @@ After a camera sequence initiated by [`map:move_camera()`](#mapmove_camerax-y-sp
 
 !!! warning "Deprecated"
 
-    This event is deprecated since Solarus 1.5, because [`camera:move()`](#mapmove_camerax-y-speed-callback-delay_before-delay_after) is deprecated. The [camera](./map-entities/camera.md) is now an entity and now has much more customization possibilities. Use [`camera:on_state_changed()`](./map-entities/camera.md#cameraon_state_changednew_state_name) instead, or the callback parameter of [`movement:start()`](./movements/index.md#movementstartobject_to_move-callback)
+    This event is deprecated since Solarus 1.5. Indeed, [`camera:move()`](#mapmove_camerax-y-speed-callback-delay_before-delay_after) is deprecated. The [camera](./map-entities/camera.md) is now an entity and now has much more customization possibilities. Use [`camera:on_state_changed()`](./map-entities/camera.md#cameraon_state_changednew_state_name) instead, or the callback parameter of [`movement:start()`](./movements/index.md#movementstartobject_to_move-callback)

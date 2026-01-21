@@ -142,6 +142,20 @@ void PixelMovement::set_loop(bool loop) {
 }
 
 /**
+ * \brief Notifies this movement that the object it controls has changed.
+ */
+void PixelMovement::notify_object_controlled() {
+
+  Movement::notify_object_controlled();
+
+  // Reset next move date to current time to avoid the movement "jumping"
+  // to where it would have been if it had started earlier.
+  if (!finished && next_move_date != 0) {
+    next_move_date = System::now_ns() + delay;
+  }
+}
+
+/**
  * \brief Restarts this movement to the beginning.
  */
 void PixelMovement::restart() {

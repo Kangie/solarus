@@ -5204,6 +5204,11 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <source>Delete confirmation</source>
         <translation>删除确认</translation>
     </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="794" />
+        <source>No tileset present. Create a tileset before creating a new map.</source>
+        <translation>当前没有图块集。请先创建图块集，然后再创建地图。</translation>
+    </message>
 </context>
 <context>
     <name>SolarusEditor::SettingsDialog</name>
@@ -7152,6 +7157,49 @@ Voulez-vous recharger l&apos;image ?</translation>
         <location filename="../src/widgets/tileset_view.cpp" line="1507"/>
         <source>Duplicate here</source>
         <translation>复制到这</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::WelcomeEditor</name>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="36"/>
+        <source>Welcome</source>
+        <translation>欢迎</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="80"/>
+        <source>Welcome to %1</source>
+        <translation>欢迎来到%1</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="93"/>
+        <source>Create a New Quest</source>
+        <translation>创建一个新任务</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="95"/>
+        <source>Create a new quest from scratch or from a template.</source>
+        <translation>从头开始或从模板创建新任务。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="103"/>
+        <source>Open an Existing Quest</source>
+        <translation>打开现有任务</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="105"/>
+        <source>Open an existing quest from your computer.</source>
+        <translation>从您的计算机打开现有任务。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="116"/>
+        <source>Documentation</source>
+        <translation>文档</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="124"/>
+        <source>Website</source>
+        <translation>网站</translation>
     </message>
 </context>
 </TS>

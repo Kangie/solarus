@@ -337,6 +337,10 @@ class Hero: public Entity {
     void set_lifting_sound_id(const std::string& sound_id);
     const std::string& get_swimming_sound_id() const;
     void set_swimming_sound_id(const std::string& sound_id);
+    const std::string& get_walking_on_grass_sound_id() const;
+    void set_walking_on_grass_sound_id(const std::string& sound_id);
+    const std::string& get_walking_on_water_sound_id() const;
+    void set_walking_on_water_sound_id(const std::string& sound_id);
     const std::string& get_running_sound_id() const;
     void set_running_sound_id(const std::string& sound_id);
     const std::string& get_running_obstacle_sound_id() const;
@@ -446,6 +450,8 @@ class Hero: public Entity {
     std::string hurt_sound_id;             /**< Sound to play when the hero is getting damage from enemy or bad ground like prickles. */ 
     std::string sinking_sound_id;          /**< Sound to play when the hero is sinking in deep water or lava. */
     std::string swimming_sound_id;         /**< Sound to play when the hero is swimming in deep water. */
+    std::string walking_on_grass_sound_id; /**< Sound to play when the hero is walking on tall grass. */
+    std::string walking_on_water_sound_id; /**< Sound to play when the hero is walking on shallow water. */
     std::string lifting_sound_id;          /**< Sound to play when the hero is lifting an entity. */
     std::string running_sound_id;          /**< Sound to play when the hero is running. */
     std::string running_obstacle_sound_id; /**< Sound to play when the hero is colliding with an obstacle while running. */

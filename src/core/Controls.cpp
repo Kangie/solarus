@@ -823,8 +823,8 @@ void Controls::load_default_keyboard_bindings() {
 
   keyboard_axis_mapping[InputEvent::KeyboardKey::UP] = ControlAxisBinding{AxisId::Y, AxisDirection::MINUS};
   keyboard_axis_mapping[InputEvent::KeyboardKey::DOWN] = ControlAxisBinding{AxisId::Y, AxisDirection::PLUS};
-  keyboard_axis_mapping[InputEvent::KeyboardKey::LEFT] = ControlAxisBinding{AxisId::X, AxisDirection::PLUS};
-  keyboard_axis_mapping[InputEvent::KeyboardKey::RIGHT] = ControlAxisBinding{AxisId::X, AxisDirection::MINUS};
+  keyboard_axis_mapping[InputEvent::KeyboardKey::LEFT] = ControlAxisBinding{AxisId::X, AxisDirection::MINUS};
+  keyboard_axis_mapping[InputEvent::KeyboardKey::RIGHT] = ControlAxisBinding{AxisId::X, AxisDirection::PLUS};
 }
 
 /**

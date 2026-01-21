@@ -48,6 +48,10 @@ namespace {
  */
 void setup_application_information() {
 
+  // Enable high DPI scaling for Windows/Linux with fractional scaling factors.
+  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+      Qt::HighDpiScaleFactorRoundingPolicy::Round);
+
   QApplication::setApplicationName(SOLARUSEDITOR_EXECUTABLE_NAME);
   QApplication::setApplicationDisplayName(SOLARUSEDITOR_APP_DISPLAY_NAME);
   QApplication::setApplicationVersion(SOLARUSEDITOR_VERSION);
@@ -120,10 +124,14 @@ int run_editor_gui(int argc, char* argv[]) {
 
   // Set up Qt translations.
   QTranslator qt_translator;
-  const bool translator_success = qt_translator.load(
-      locale, "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
-  if (!translator_success) {
-    qWarning() << "Failed to load translations";
+  for (const QString& searchPath : std::vector<QString>{
+           QApplication::applicationDirPath(),
+           QApplication::applicationDirPath() + "/translations",
+           QApplication::applicationDirPath() + "/../Resources/translations",
+           SOLARUSEDITOR_DATADIR_PATH "/translations"}) {
+    if (qt_translator.load(locale, "qtbase", "_", searchPath)) {
+      break;
+    }
   }
   application.installTranslator(&qt_translator);
 

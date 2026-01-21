@@ -256,7 +256,7 @@ All sprites of the hero that have an animation with the specified name take the 
 
 Returns whether the hero is currently invincible.
 
-The hero is temporarily invincible after being hurt or after you called [`hero:set_invincible()`](#heroset_invincibleinvincible-duration). In this situation, [enemies](./enemy.md) cannot attack the hero, but you can still hurt him manually with [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage).
+The hero is temporarily invincible after being hurt or after you called [`hero:set_invincible()`](#heroset_invincibleinvincible-duration). In this situation, [enemies](./enemy.md) cannot attack the hero, but you can still hurt him manually with [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage-herostart_hurtsource_entity-source_sprite-damage).
 
 Return value (boolean)
 : `true` if the hero is currently invincible.
@@ -265,7 +265,7 @@ Return value (boolean)
 
 Sets or unsets the hero temporarily invincible.
 
-When the hero is invincible, [enemies](./enemy.md) cannot attack him, but you can still hurt him manually with [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage).
+When the hero is invincible, [enemies](./enemy.md) cannot attack him, but you can still hurt him manually with [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage-herostart_hurtsource_entity-source_sprite-damage).
 
 `invincible` (boolean, optional, default: `true`)
 : `true` to make the hero invincible, or `false` to stop the invincibility.
@@ -357,7 +357,7 @@ This function does the same as what happens when the player keeps pressing the `
 
 If the player is not allowed to perform this attack now (because he does not have the sword [ability](#heroget_abilityability_name) or because the hero is currently busy in another state that does not allow to use the sword), then nothing happens.
 
-`spin_attack_delay` (number, optional, default `1000`)
+`spin_attack_delay` (number, optional, default: `1000`)
 : Delay in milliseconds before the sword is loaded, allowing a spin attack then. A value of `0` allows the spin attack immediately. The special value `-1` means infinite: then, no spin attack will be possible.
 
 ### `hero:start_item(item)`
@@ -438,17 +438,15 @@ Makes the hero throw a [hookshot](./hookshot.md).
 
 Makes the hero run.
 
-### `hero:start_hurt(source_x, source_y, damage)`
+### `hero:start_hurt(source_x, source_y, damage), hero:start_hurt([source_entity, [source_sprite]], damage)`
 
 Hurts the hero, exactly like when he is touched by an [enemy](./enemy.md). The hurting animations and sounds of the hero are played.
 
 This method hurts the hero even if enemies cannot, including when the hero is temporarily [invincible](#herois_invincible) (because he was already hurt recently) or when the hero is in a state where he cannot be hurt (for example when he is brandishing a treasure).
 
-`source_x` (number)
-: X coordinate of whatever hurts the hero. Used to push the hero away from that source.
-
-`source_y` (number)
-: Y coordinate of whatever hurts the hero. Used to push the hero away from that source.
+| With coordinates | With a source [entity](./index.md) |
+|------------------|------------------------------|
+| <dl><dt>`source_x` (number)</dt><dd>X coordinate of whatever hurts the hero. Used to push the hero away from that source.</dd><dt>`source_y` (number)</dt><dd>Y coordinate of whatever hurts the hero. Used to push the hero away from that source.</dd></dl> | <dl><dt>`source_entity` ([map entity](./index.md), optional)</dt><dd>Whatever hurts the hero. The coordinates of this source entity are used to push the hero away from that source. No value means that the hero will not be pushed away.</dd><dt>`source_sprite` ([sprite](../drawable-objects/sprite.md), optional, requires: `source_entity`)</dt><dd>Which sprite of the source entity is hurting the hero. If you set this value, the hero will be pushed away from the origin of this sprite instead of from the origin of the source entity. Most of the time, you don't need to set this parameter.</dd></dl> |
 
 `damage` (number)
 : Base number of life points to remove (possibly `0`) This number will be divided by the [tunic](#heroget_abilityability_name) level of the player, unless you override this default calculation in [`hero:on_taking_damage()`](#heroon_taking_damagedamage).
@@ -456,21 +454,6 @@ This method hurts the hero even if enemies cannot, including when the hero is te
 !!! note "Note"
 
     If you just want to remove some life to the player, without making the hurting animations and sounds of the hero, see [`game:remove_life()`](../game.md#gameremove_lifelife).
-
-### `hero:start_hurt([source_entity, [source_sprite]], damage)`
-
-Same as [`hero:start_hurt(source_x, source_y, damage)`](#herostart_hurtsource_x-source_y-damage), but specifying the source coordinates as an optional entity and possibly its sprite.
-
-`source_entity` ([map entity](./index.md), optional)
-: Whatever hurts the hero. The coordinates of this source entity are used to push the hero away from that source. No value means that the hero will not be pushed away.
-
-`source_sprite` ([sprite](../drawable-objects/sprite.md), optional, requires: `source_entity`)
-: Which sprite of the source entity is hurting the hero. If you set this value, the hero will be pushed away from the origin of this sprite instead of from the origin of the source entity. Most of the time, you don't need to set this parameter.
-
-`damage` (number)
-: Base number of life points to remove (possibly `0`)
-
-This number will be divided by the [tunic](#heroget_abilityability_name) level of the player, unless you override this default calculation in [`hero:on_taking_damage()`](#heroon_taking_damagedamage).
 
 ### `hero:get_state()`
 
@@ -515,6 +498,9 @@ Return value 2 ([state](../custom-states.md))
 Starts a [custom state](../custom-states.md) on the hero.
 
 Custom states allow advanced customization of the hero's behavior. After you call this method, the hero state string as returned by [`hero:get_state()`](#heroget_state) is `"custom"` Use [`hero:get_state_object()`](#heroget_state_object) to get the actual custom state object.
+
+`state` ([custom state](../custom-states.md))
+: The custom state to start.
 
 ### `hero:get_state_object()`
 
@@ -987,6 +973,42 @@ You can use this function if you want another sound to be played.
 `sound_id` (string or `nil`, optional)
 : The swimming sound id. `nil` or an empty string means no sound.
 
+### `hero:get_walking_on_grass_sound()`
+
+Returns the name of the sound played when the hero is walking on tall grass.
+
+Return value (string or `nil`)
+: The walking_on_grass sound id. `nil` means no sound.
+
+### `hero:set_walking_on_grass_sound([sound_id])`
+
+Changes the sound to play when the hero is walking on tall grass.
+
+By default, this sound is `"walk_on_grass"` for historical reasons.
+
+You can use this function if you want another sound to be played.
+
+`sound_id` (string or `nil`, optional)
+: The walking_on_grass sound id. `nil` or an empty string means no sound.
+
+### `hero:get_walking_on_water_sound()`
+
+Returns the name of the sound played when the hero is walking on shallow water.
+
+Return value (string or `nil`)
+: The walking_on_water sound id. `nil` means no sound.
+
+### `hero:set_walking_on_water_sound([sound_id])`
+
+Changes the sound to play when the hero is walking on shallow water.
+
+By default, this sound is `"walk_on_water"` for historical reasons.
+
+You can use this function if you want another sound to be played.
+
+`sound_id` (string or `nil`, optional)
+: The walking_on_water sound id. `nil` or an empty string means no sound.
+
 ### `hero:get_lifting_sound()`
 
 Returns the name of the sound played when the hero is lifting an entity (if liftable).
@@ -1162,14 +1184,14 @@ Called when the state of the hero has just changed.
 
 Called when the hero is hurt and should take damages.
 
-This happens usually after a collision with an [enemy](./enemy.md) or when you call [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage).
+This happens usually after a collision with an [enemy](./enemy.md) or when you call [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage-herostart_hurtsource_entity-source_sprite-damage).
 
 This event allows you to override what happens when the hero takes damage. By default, if you don't define this event, the hero loses some life as follows. The life lost is the damage inflicted by the attacker divided by the [tunic level](../game.md#gameset_abilityability_name-level) of the player, with a minimum of `1` (unless the initial damage was already `0`).
 
 You can define this event if you need to change how the hero takes damage, for example if you want the [shield level](../game.md#gameget_abilityability_name) to give better resistance to injuries.
 
 `damage` (number)
-: Damage inflicted by the attacker, no matter if this was an enemy or a call to [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage).
+: Damage inflicted by the attacker, no matter if this was an enemy or a call to [`hero:start_hurt()`](#herostart_hurtsource_x-source_y-damage-herostart_hurtsource_entity-source_sprite-damage).
 
 ### `hero:on_attacking_hero(other_hero, our_sprite)`
 

@@ -590,6 +590,10 @@ void Camera::notify_movement_started() {
  */
 void Camera::start_tracking(const EntityPtr& tracked_entity) {
   set_state(std::make_shared<TrackingState>(*this, tracked_entity));
+
+  // Immediately update camera position to track the entity.
+  // This ensures the camera is correctly positioned before map:on_started() is called.
+  track_position(tracked_entity->get_center_point() + get_origin(), tracked_entity);
 }
 
 /**

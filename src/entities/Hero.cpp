@@ -120,6 +120,8 @@ Hero::Hero(const EquipmentPtr &equipment, const std::string& name):
   hurt_sound_id("hero_hurt"),
   sinking_sound_id("splash"),
   swimming_sound_id("swim"),
+  walking_on_grass_sound_id("walk_on_grass"),
+  walking_on_water_sound_id("walk_on_water"),
   lifting_sound_id("lift"),
   running_sound_id("running"),
   running_obstacle_sound_id("running_obstacle"),
@@ -3260,6 +3262,38 @@ const std::string& Hero::get_swimming_sound_id() const {
  */
 void Hero::set_swimming_sound_id(const std::string& sound_id) {
   swimming_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is walking on grass.
+ * \return The walking on grass sound or an empty string.
+ */
+const std::string& Hero::get_walking_on_grass_sound_id() const {
+  return walking_on_grass_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is walking on grass.
+ * \param sound_id The walking on grass sound or an empty string.
+ */
+void Hero::set_walking_on_grass_sound_id(const std::string& sound_id) {
+  walking_on_grass_sound_id = sound_id;
+}
+
+/**
+ * \brief Returns the sound to play when the hero is walking on water.
+ * \return The walking on water sound or an empty string.
+ */
+const std::string& Hero::get_walking_on_water_sound_id() const {
+  return walking_on_water_sound_id;
+}
+
+/**
+ * \brief Sets the sound to play when the hero is walking on water.
+ * \param sound_id The walking on water sound or an empty string.
+ */
+void Hero::set_walking_on_water_sound_id(const std::string& sound_id) {
+  walking_on_water_sound_id = sound_id;
 }
 
 /**

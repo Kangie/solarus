@@ -165,7 +165,7 @@ Return value (string)
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6, because [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.get_shader()`](#solvideoget_shader) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.get_shader()`](#solvideoget_shader) instead.
 
 ### `sol.video.set_mode(video_mode)`
 
@@ -184,7 +184,7 @@ The window size is reset to a default value that depends on the video mode.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6, because [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoset_shadershader) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoset_shadershader) instead.
 
 ### `sol.video.switch_mode()`
 
@@ -194,7 +194,7 @@ You can use this function if you want to change the video mode without specifyin
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6, because [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoget_shader) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_shader()`](#solvideoget_shader) instead.
 
 ### `sol.video.is_mode_supported(video_mode)`
 
@@ -211,18 +211,18 @@ Returns whether a video mode is supported.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6, because [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.shader.create()`](./shaders.md#solshadercreateshader_id) instead and check if it fails.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.shader.create()`](./shaders.md#solshadercreateshader_id-solshadercreateproperties) instead and check if it fails.
 
 ### `sol.video.get_modes()`
 
 Returns an array of all video modes supported.
 
-`Return` value (table)
+Return value (table)
 : An array of names of all video modes supported.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6, because [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.main.get_resource_ids("shader")`](./general-features.md#solmainget_resource_idsresource_type) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.main.get_resource_ids("shader")`](./general-features.md#solmainget_resource_idsresource_type) instead.
 
 ### `sol.video.reset_window_size()`
 
@@ -230,4 +230,4 @@ Restores the size of the window to a default value that depends on the current v
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6, because [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_window_size()`](#solvideoset_window_sizewidth-height) instead.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.video.set_window_size()`](#solvideoset_window_sizewidth-height) instead.

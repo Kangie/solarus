@@ -6015,6 +6015,11 @@ Titre de la fenêtre. Vous devriez probablement mettre le titre de votre jeu ici
         <source>Do you really want to delete file &apos;%1&apos;?</source>
         <translation type="vanished">Voulez-vous vraiment supprimer le fichier &apos;%1&apos; ?</translation>
     </message>
+    <message>
+        <location filename="../src/widgets/quest_tree_view.cpp" line="794" />
+        <source>No tileset present. Create a tileset before creating a new map.</source>
+        <translation>Aucun tileset présent. Créez un tileset avant de créer une map.</translation>
+    </message>
 </context>
 <context>
     <name>SolarusEditor::SettingsDialog</name>
@@ -8135,6 +8140,49 @@ Voulez-vous recharger l&apos;image ?</translation>
         <location filename="../src/widgets/tileset_view.cpp" line="1507"/>
         <source>Duplicate here</source>
         <translation>Dupliquer ici</translation>
+    </message>
+</context>
+<context>
+    <name>SolarusEditor::WelcomeEditor</name>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="36"/>
+        <source>Welcome</source>
+        <translation>Bienvenue</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="80"/>
+        <source>Welcome to %1</source>
+        <translation>Bienvenue sur %1</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="93"/>
+        <source>Create a New Quest</source>
+        <translation>Créer une nouvelle quête</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="95"/>
+        <source>Create a new quest from scratch or from a template.</source>
+        <translation>Créer une nouvelle quête du début ou depuis un template.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="103"/>
+        <source>Open an Existing Quest</source>
+        <translation>Ouvrir une quête existante</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="105"/>
+        <source>Open an existing quest from your computer.</source>
+        <translation>Ouvrir une quête existante depuis votre ordinateur.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="116"/>
+        <source>Documentation</source>
+        <translation>Documentation</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="124"/>
+        <source>Website</source>
+        <translation>Site web de Solarus</translation>
     </message>
 </context>
 </TS>

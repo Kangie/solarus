@@ -270,7 +270,7 @@ Return value (boolean)
 
 !!! warning "Deprecated"
 
-    This event is not triggered anymore, hat directions are reported as buttons. Called when the user moves a joypad hat while the handler is active.
+    This event is deprecated since Solarus 2.0. Hat directions are reported as buttons. Called when the user moves a joypad hat while the handler is active.
 
 `hat` (number)
 : Index of the hat that was moved.

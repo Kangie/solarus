@@ -12,8 +12,6 @@
 - [Running a quest](#running-a-quest)
 - [Platform-specific information](#platform-specific-information)
   - [Mac OS X](#mac-os-x)
-  - [OpenPandora](#openpandora)
-  - [GCW-Zero](#gcw-zero)
 
 ## Overview
 
@@ -323,46 +321,4 @@ or run this to update one of the other:
 
 ```bash
 install_name_tool -change <old_path> <new_path>
-```
-
-### OpenPandora
-
-First, you need a working OpenPandora cross-compiling environment.
-See the [OpenPandora website](http://www.openpandora.org).
-
-To compile Solarus, we provide a CMake toolchain file:
-`cmake/pandora/PandoraToolchain.cmake`.
-The role of this toolchain file is essentially to indicate the compiler to
-use to CMake.
-You may want to modify some paths in this toolchain file to better fit your
-configuration.
-Then, compile Solarus normally with CMake, indicating the toolchain file like
-this:
-
-```bash
-mkdir pandora-build
-cd pandora-build
-cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/pandora/PandoraToolchain.cmake ..
-make
-```
-
-### GCW-Zero
-
-First, you need a working GCW-Zero toolchain.
-See the website in <http://www.gcw-zero.com/develop> to see how to set it up.
-
-To compile Solarus, we provide a CMake toolchain file:
-`cmake/gcw-zero/gcw-zero.cmake`.
-The role of this toolchain file is essentially to indicate the compiler to
-use to CMake.
-You may want to modify some paths in this toolchain file to better fit your
-configuration.
-Then, compile Solarus normally with CMake, indicating the toolchain file like
-this:
-
-```bash
-mkdir gcw-zero-build
-cd gcw-zero-build
-cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/gcw-zero/.cmake ..
-make
 ```

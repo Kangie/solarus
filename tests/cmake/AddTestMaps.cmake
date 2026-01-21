@@ -180,6 +180,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1471_pickable_wrong_layer"
   "bugs/1476_crash_command_binding"
   "bugs/1494_no_error_nonexistant_model"
+  "bugs/1498_y_order_tie"
   "bugs/1503_crash_invalid_save_file"
   "bugs/1508_carried_object_height"
   "bugs/1524_push_delay"
@@ -188,6 +189,8 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1533_savegame_write_escape"
   "bugs/1534_unicode_filenames"
   "bugs/1535_collision_moving_sprite"
+  "bugs/1546_custom_entities_collisions"
+  "bugs/1575_custom_entity_below_destructibles"
   "bugs/1547_teletransporter_on_activated_twice/map_1"
   "bugs/1550_use_bow"
   "bugs/1551_error_teletransporter_set_destination_map"
@@ -210,12 +213,15 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1644_random_movement_get_angle"
   "bugs/1648_custom_entities_collision_not_happening"
   "bugs/1652_npc_movement_stop_animation"
+  "bugs/1672_wrong_camera_position_on_started"
   "bugs/1691_immediate_transition_freeze"
   "bugs/1900_game_over_hero_argument"
   "bugs/1908_map_create_enemy_suffix"
   "bugs/1917_set_tileset_int"
+  "bugs/1918_movement_started_before_start"
   "bugs/1683_analog_diagonal"
   "bugs/1936_stairs_mask/first_floor"
+  "bugs/1945_duplicate_teleport_when_no_linked_camera/first_map"
 )
 
 # Test that should succeed when there are non-fatal errors

@@ -1540,11 +1540,11 @@ void HeroSprites::create_ground(Ground ground) {
   std::string sprite_id;
   if (ground == Ground::GRASS) {
     sprite_id = "hero/ground1";
-    ground_sound_id = "walk_on_grass";
+    ground_sound_id = hero.get_walking_on_grass_sound_id();
   }
   else if (ground == Ground::SHALLOW_WATER) {
     sprite_id = "hero/ground2";
-    ground_sound_id = "walk_on_water";
+    ground_sound_id = hero.get_walking_on_water_sound_id();
   }
 
   ground_sprite = hero.create_sprite(sprite_id, "ground", order);

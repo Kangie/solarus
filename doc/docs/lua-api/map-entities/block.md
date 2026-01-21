@@ -176,7 +176,7 @@ Return value (number or `nil`)
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6 because the corresponding parameter `maximum_moves` of [`map:create_block()`](../map.md#mapcreate_blockproperties) is also deprecated. Use [`block:get_max_moves()`](#blockget_max_moves) instead.
+    This method is deprecated since Solarus 1.6. The corresponding parameter `maximum_moves` of [`map:create_block()`](../map.md#mapcreate_blockproperties) is also deprecated. Use [`block:get_max_moves()`](#blockget_max_moves) instead.
 
 ### `block:set_maximum_moves(maximum_moves)`
 
@@ -187,4 +187,4 @@ Same as [`block:set_max_moves()`](#blockget_max_moves).
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6 because the corresponding parameter `maximum_moves` of[`map:create_block()`](../map.md#mapcreate_blockproperties) is also deprecated. Use [`block:set_max_moves()`](#blockset_max_movesmax_moves) instead.
+    This method is deprecated since Solarus 1.6. The corresponding parameter `maximum_moves` of[`map:create_block()`](../map.md#mapcreate_blockproperties) is also deprecated. Use [`block:set_max_moves()`](#blockset_max_movesmax_moves) instead.

@@ -43,6 +43,11 @@ public:
   explicit EditorTabs(QWidget* parent = nullptr);
   ~EditorTabs() override;
 
+  /** 
+   * @brief Protocol for internal URLs handled by the editor.
+   */
+  static constexpr auto INTERNAL_URL_PROTOCOL = "solaruseditor://";
+
   QUndoGroup& get_undo_group();
 
   void open_resource(

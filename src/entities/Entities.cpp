@@ -14,12 +14,10 @@
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-#include "solarus/audio/Music.h"
 #include "solarus/containers/Quadtree.h"
 #include "solarus/core/Debug.h"
 #include "solarus/core/Game.h"
 #include "solarus/core/Map.h"
-#include "solarus/entities/Boomerang.h"
 #include "solarus/entities/CrystalBlock.h"
 #include "solarus/entities/Destination.h"
 #include "solarus/entities/Entities.h"
@@ -28,11 +26,9 @@
 #include "solarus/entities/NonAnimatedRegions.h"
 #include "solarus/entities/Separator.h"
 #include "solarus/entities/SeparatorPtr.h"
-#include "solarus/entities/Stairs.h"
 #include "solarus/entities/Tile.h"
 #include "solarus/entities/TilePattern.h"
 #include "solarus/entities/Tileset.h"
-#include "solarus/graphics/Color.h"
 #include "solarus/graphics/Surface.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/core/Profiler.h"
@@ -79,7 +75,12 @@ class DrawingOrderComparator {
 
       if (first->is_drawn_in_y_order()) {
         // Both entities are displayed in Y order.
-        return first->get_y() < second->get_y();
+        if (first->get_y() != second->get_y()) {
+          return first->get_y() < second->get_y();
+        }
+
+        // Tie-breaker for equal Y coordinates: avoid flickering.
+        return first->get_z() < second->get_z();
       }
 
       // Both entities are displayed in Z order.
@@ -1369,7 +1370,7 @@ void Entities::draw(Camera& camera) {
     }
 
     {
-      SOL_PBLOCK("Draw entitites", profiler::colors::Green);
+      SOL_PBLOCK("Draw entities", profiler::colors::Green);
       for (const EntityPtr& entity: entities_to_draw[layer]) {
         if (!entity->is_being_removed() &&
             entity->is_enabled() &&

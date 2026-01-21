@@ -55,6 +55,16 @@ void StraightMovement::notify_object_controlled() {
 
   Movement::notify_object_controlled();
   initial_xy = get_xy();
+
+  // Reset movement dates to current time to avoid the movement "jumping"
+  // to where it would have been if it had started earlier.
+  uint64_t now = System::now_ns();
+  if (x_delay > 0) {
+    next_move_date_x = now + x_delay;
+  }
+  if (y_delay > 0) {
+    next_move_date_y = now + y_delay;
+  }
 }
 
 /**
