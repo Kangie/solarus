@@ -36,7 +36,7 @@ int runCLI(int argc, char* argv[]) {
 
   Solarus::Arguments args;
   for (int i = 0; i < argc; ++i) {
-    args.add_argument(QString(argv[i]).toUtf8().constData());
+    args.add_argument(QString::fromLocal8Bit(argv[i]).toUtf8().constData());
   }
 
   Solarus::MainLoop(args).run();
