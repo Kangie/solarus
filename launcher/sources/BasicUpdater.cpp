@@ -80,7 +80,7 @@ void BasicUpdater::checkForUpdates(const QString& endpoint) {
   if (!_checking) {
     _checking = true;
     emit checkStarted();
-    auto request = QNetworkRequest({ endpoint });
+    auto request = QNetworkRequest(QUrl(endpoint));
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::SameOriginRedirectPolicy);
     request.setTransferTimeout(5000);
     _manager->get(request);
