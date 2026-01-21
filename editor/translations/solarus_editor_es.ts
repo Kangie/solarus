@@ -7529,4 +7529,46 @@ Do you want to refresh the tileset?</source>
         <translation>Mover aquí</translation>
     </message>
 </context>
+<context>
+    <name>SolarusEditor::WelcomeEditor</name>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="36"/>
+        <source>Welcome</source>
+        <translation>Bienvenido</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="80"/>
+        <source>Welcome to %1</source>
+        <translation>Bienvenido a %1</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="93"/>
+        <source>Create a New Quest</source>
+        <translation>Crear una nueva misión</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="95"/>
+        <source>Create a new quest from scratch or from a template.</source>
+        <translation>Crea una nueva misión desde cero o a partir de una plantilla.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="103"/>
+        <source>Open an Existing Quest</source>
+        <translation>Abrir una misión existente</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="105"/>
+        <source>Open an existing quest from your computer.</source>
+        <translation>Abre una misión existente desde tu computadora.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="116"/>
+        <source>Documentation</source>
+        <translation>Documentación</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="124"/>
+        <source>Website</source>
+        <translation>Sitio web de Solarus</translation>
+    </message>
 </TS>

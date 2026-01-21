@@ -33,7 +33,7 @@ namespace SolarusEditor {
 WelcomeEditor::WelcomeEditor(Quest &quest, const QString &file_path,
                              QWidget *parent)
     : Editor(quest, file_path, parent) {
-  set_title(QObject::tr("Welcome"));
+  set_title(tr("Welcome"));
   set_icon(QIcon(":/images/icon_solarus.svg"));
   setup_ui();
   setFocusPolicy(Qt::NoFocus);
@@ -77,7 +77,7 @@ void WelcomeEditor::setup_ui() {
     ui.app_icon_label->setPixmap(QPixmap(":/app_icon/solarus-editor-1024.png"));
 
     ui.title_label = new oclero::qlementine::Label(container);
-    ui.title_label->setText(QObject::tr("Welcome to %1")
+    ui.title_label->setText(tr("Welcome to %1")
                                 .arg(QApplication::applicationDisplayName()));
     ui.title_label->setAlignment(Qt::AlignHCenter);
     ui.title_label->setRole(oclero::qlementine::TextRole::H3);
@@ -90,9 +90,9 @@ void WelcomeEditor::setup_ui() {
     ui.new_quest_button = new oclero::qlementine::CommandLinkButton(container);
     ui.new_quest_button->setSizePolicy(QSizePolicy::Expanding,
                                        QSizePolicy::Fixed);
-    ui.new_quest_button->setText(QObject::tr("Create a New Quest"));
+    ui.new_quest_button->setText(tr("Create a New Quest"));
     ui.new_quest_button->setDescription(
-        QObject::tr("Create a new quest from scratch or from a template."));
+        tr("Create a new quest from scratch or from a template."));
     ui.new_quest_button->setIcon(QIcon(":/images/icon_new_24x24.svg"));
     QObject::connect(ui.new_quest_button, &QPushButton::clicked, this,
                      &Editor::new_quest_requested);
@@ -100,9 +100,9 @@ void WelcomeEditor::setup_ui() {
     ui.open_quest_button = new oclero::qlementine::CommandLinkButton(container);
     ui.open_quest_button->setSizePolicy(QSizePolicy::Expanding,
                                         QSizePolicy::Fixed);
-    ui.open_quest_button->setText(QObject::tr("Open an Existing Quest"));
+    ui.open_quest_button->setText(tr("Open an Existing Quest"));
     ui.open_quest_button->setDescription(
-        QObject::tr("Open an existing quest from your computer."));
+        tr("Open an existing quest from your computer."));
     ui.open_quest_button->setIcon(QIcon(":/images/icon_open_24x24.svg"));
     QObject::connect(ui.open_quest_button, &QPushButton::clicked, this,
                      &Editor::open_quest_requested);
@@ -113,7 +113,7 @@ void WelcomeEditor::setup_ui() {
       links_layout->setSpacing(8);
 
       ui.documentation_button =
-          new QPushButton(QObject::tr("Documentation"), container);
+          new QPushButton(tr("Documentation"), container);
       ui.documentation_button->setSizePolicy(QSizePolicy::Fixed,
                                              QSizePolicy::Fixed);
       ui.documentation_button->setFlat(true);
@@ -121,7 +121,7 @@ void WelcomeEditor::setup_ui() {
       QObject::connect(ui.documentation_button, &QPushButton::clicked, this,
                        &Editor::documentation_requested);
 
-      ui.website_button = new QPushButton(QObject::tr("Website"), container);
+      ui.website_button = new QPushButton(tr("Website"), container);
       ui.website_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
       ui.website_button->setFlat(true);
       ui.website_button->setIcon(QIcon(":/images/icon_web.svg"));
