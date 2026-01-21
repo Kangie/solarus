@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus 2.0.3 (In progress)
+## Solarus 2.0.3 (2026-01-21)
 
 * Add methods to customize hero walk on grass and water sounds (#1967).
 * Updated Game Controller DB.
