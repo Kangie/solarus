@@ -7159,4 +7159,47 @@ Voulez-vous recharger l&apos;image ?</translation>
         <translation>复制到这</translation>
     </message>
 </context>
+<context>
+    <name>SolarusEditor::WelcomeEditor</name>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="36"/>
+        <source>Welcome</source>
+        <translation>欢迎</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="80"/>
+        <source>Welcome to %1</source>
+        <translation>欢迎来到%1</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="93"/>
+        <source>Create a New Quest</source>
+        <translation>创建一个新任务</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="95"/>
+        <source>Create a new quest from scratch or from a template.</source>
+        <translation>从头开始或从模板创建新任务。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="103"/>
+        <source>Open an Existing Quest</source>
+        <translation>打开现有任务</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="105"/>
+        <source>Open an existing quest from your computer.</source>
+        <translation>从您的计算机打开现有任务。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="116"/>
+        <source>Documentation</source>
+        <translation>文档</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/welcome_editor.cpp" line="124"/>
+        <source>Website</source>
+        <translation>网站</translation>
+    </message>
+</context>
 </TS>

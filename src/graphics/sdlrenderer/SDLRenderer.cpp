@@ -131,6 +131,16 @@ void SDLRenderer::draw(SurfaceImpl& dst, const SurfaceImpl& src, const DrawInfos
 
   set_render_target(sdst.get_texture());
   Rectangle dst_rect = infos.dst_rectangle();
+
+  // Apply the destination surface's view transform (camera offset).
+  // This is necessary for the camera to track entities properly.
+  const View& view = dst.get_view();
+  glm::vec2 view_center = view.get_center();
+  int view_offset_x = static_cast<int>(view_center.x) - dst.get_width() / 2;
+  int view_offset_y = static_cast<int>(view_center.y) - dst.get_height() / 2;
+  dst_rect.add_x(-view_offset_x);
+  dst_rect.add_y(-view_offset_y);
+
   if(!ssrc.get_texture()) {
     Debug::error("Could not draw screen on another surface");
   }

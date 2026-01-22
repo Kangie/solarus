@@ -53,6 +53,7 @@ class SOLARUS_API PixelMovement: public Movement {
     virtual bool is_finished() const override;
     int get_length() const;
 
+    virtual void notify_object_controlled() override;
     virtual void update() override;
     virtual void set_suspended(bool suspended) override;
 

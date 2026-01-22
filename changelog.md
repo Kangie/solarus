@@ -1,6 +1,6 @@
 # Changelog
 
-## Solarus 2.0.3 (In progress)
+## Solarus 2.0.3 (2026-01-21)
 
 * Add methods to customize hero walk on grass and water sounds (#1967).
 * Updated Game Controller DB.
@@ -8,6 +8,11 @@
 * Fix a001 error while trying to set volume on a non-playing music (#1935).
 * Fix duplicate teletransporter activation when hero has no linked camera (#1945).
 * Fix left and right inverted when using analog controls and keyboard default mappings (#1588).
+* Fix `set_can_traverse` between two custom entities (#1546).
+* Fix straight and pixel movement start before calling start method (#1918).
+* Fix custom entities preventing interactions with entities overlapping them (#1575).
+* Fix wrong camera position on map start (#1672).
+* Fix camera not tracking entities when software rendering is on (#1968).
 
 ## Solarus 2.0.2 (2025-12-05)
 

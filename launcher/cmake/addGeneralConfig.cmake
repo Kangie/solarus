@@ -23,6 +23,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/
 # Set the deployment target for macOS.
 if(APPLE)
   if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.6")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "14.0")
   endif()
 endif()

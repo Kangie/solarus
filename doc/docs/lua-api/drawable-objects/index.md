@@ -74,6 +74,7 @@ Set the scale factors for this drawable object. A scale of `1` corresponds to a 
 
 `x` (number)
 : Scale factor in the X dimension.
+
 `y` (number)
 : Scale factor in the Y dimension.
 

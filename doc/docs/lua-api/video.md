@@ -211,7 +211,7 @@ Returns whether a video mode is supported.
 
 !!! warning "Deprecated"
 
-    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.shader.create()`](./shaders.md#solshadercreateshader_id) instead and check if it fails.
+    This method is deprecated since Solarus 1.6. Indeed, [shaders](./shaders.md) are the new recommended way to implement video filters. Use [`sol.shader.create()`](./shaders.md#solshadercreateshader_id-solshadercreateproperties) instead and check if it fails.
 
 ### `sol.video.get_modes()`
 

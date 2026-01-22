@@ -94,6 +94,7 @@ class SOLARUS_API CustomEntity: public Entity {
     bool is_switch_obstacle(Switch& sw) override;
     bool is_raised_block_obstacle(CrystalBlock& raised_block) override;
     bool is_crystal_obstacle(Crystal& crystal) override;
+    bool is_custom_entity_obstacle(CustomEntity& custom_entity) override;
     bool is_npc_obstacle(Npc& npc) override;
     bool is_door_obstacle(Door& block) override;
     bool is_enemy_obstacle(Enemy& enemy) override;
@@ -130,6 +131,7 @@ class SOLARUS_API CustomEntity: public Entity {
     void clear_collision_tests();
 
     bool test_collision_custom(Entity& entity) override;
+    bool test_collision_facing_point(const Entity& entity) const override;
     void notify_collision(
         Entity& entity_overlapping, CollisionMode collision_mode) override;
     void notify_collision(

@@ -47,6 +47,7 @@ class Chest;
 class CommandsEffects;
 class Crystal;
 class CrystalBlock;
+class CustomEntity;
 class Destination;
 class Destructible;
 class Door;
@@ -327,7 +328,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     bool test_collision_rectangle(const Entity& entity) const;
     bool test_collision_inside(const Entity& entity) const;
     bool test_collision_origin_point(const Entity& entity) const;
-    bool test_collision_facing_point(const Entity& entity) const;
+    virtual bool test_collision_facing_point(const Entity& entity) const;
     bool test_collision_touching(const Entity& entity) const;
     bool test_collision_center(const Entity& entity) const;
     bool test_collision_sprites(
@@ -392,6 +393,7 @@ class SOLARUS_API Entity: public ExportableToLua {
     virtual bool is_switch_obstacle(Switch& sw);
     virtual bool is_raised_block_obstacle(CrystalBlock& raised_block);
     virtual bool is_crystal_obstacle(Crystal& crystal);
+    virtual bool is_custom_entity_obstacle(CustomEntity& custom_entity);
     virtual bool is_npc_obstacle(Npc& npc);
     virtual bool is_door_obstacle(Door& door);
     virtual bool is_enemy_obstacle(Enemy& enemy);

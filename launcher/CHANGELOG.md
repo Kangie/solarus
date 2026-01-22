@@ -1,5 +1,9 @@
 # Changelog
 
+## Solarus Launcher 2.0.3 (2026-01-21)
+
+* Fix quest path with special characters on Windows (#1698).
+
 ## Solarus Launcher 2.0.2 (2025-12-05)
 
 * Fix DMG layout and graphics.
