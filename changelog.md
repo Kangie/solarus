@@ -1,5 +1,9 @@
 # Changelog
 
+## Solarus 2.1.0 (In progress)
+
+* Add getter methods to shop_treasure entities.
+
 ## Solarus 2.0.3 (2026-01-21)
 
 * Add methods to customize hero walk on grass and water sounds (#1967).

@@ -821,6 +821,14 @@ void LuaContext::register_entity_module() {
       { "set_cannot_buy_sound", shop_treasure_api_set_cannot_buy_sound },
     });
   }
+  if (CurrentQuest::is_format_at_least({ 2, 1 })) {
+    shop_treasure_methods.insert(shop_treasure_methods.end(), {
+      { "get_treasure", shop_treasure_api_get_treasure },
+      { "get_price", shop_treasure_api_get_price },
+      { "get_price_font", shop_treasure_api_get_price_font },
+      { "get_dialog_id", shop_treasure_api_get_dialog_id },
+    });
+  }
 
   shop_treasure_methods.insert(shop_treasure_methods.end(), common_methods.begin(), common_methods.end());
   register_type(
@@ -7129,6 +7137,73 @@ int LuaContext::shop_treasure_api_set_cannot_buy_sound(lua_State* l) {
     shop_treasure.set_cannot_buy_sound_id(sound_id);
     
     return 0;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:get_treasure().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_get_treasure(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+    const Treasure& treasure = shop_treasure.get_treasure();
+
+    push_item(l, treasure.get_item(shop_treasure.get_game().get_equipment()));
+    lua_pushinteger(l, treasure.get_variant());
+    if (!treasure.is_saved()) {
+      lua_pushnil(l);
+    }
+    else {
+      push_string(l, treasure.get_savegame_variable());
+    }
+    return 3;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:get_price().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_get_price(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+    lua_pushinteger(l, shop_treasure.get_price());
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:get_price_font().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_get_price_font(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+    const std::string font = shop_treasure.get_price_font_id();
+    if (font.empty()) {
+      lua_pushnil(l);
+    } else {
+      push_string(l, font);
+    }
+    
+    return 1;
+  });
+}
+
+/**
+ * \brief Implementation of shop_treasure:get_dialog_id().
+ * \param l The Lua context that is calling this function.
+ * \return Number of values to return to Lua.
+ */
+int LuaContext::shop_treasure_api_get_dialog_id(lua_State* l) {
+  return state_boundary_handle(l, [&] {
+    ShopTreasure& shop_treasure = *check_shop_treasure(l, 1);
+    push_string(l, shop_treasure.get_dialog_id());
+    return 1;
   });
 }
 
