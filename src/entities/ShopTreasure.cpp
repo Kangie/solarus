@@ -130,6 +130,14 @@ int ShopTreasure::get_price() const {
 }
 
 /**
+ * \brief Returns the id of the font used to display the price.
+ * \return The dialog id.
+ */
+const std::string& ShopTreasure::get_price_font_id() const {
+  return price_digits.get_font();
+}
+
+/**
  * \brief Returns the id of the dialog describing this shop item when the
  * player watches it.
  * \return The dialog id.

@@ -68,6 +68,7 @@ class ShopTreasure: public Entity {
 
     const Treasure& get_treasure() const;
     int get_price() const;
+    const std::string& get_price_font_id() const;
     const std::string& get_dialog_id() const;
     const std::string& get_cannot_buy_sound_id() const;
     void set_cannot_buy_sound_id(const std::string& sound_id);

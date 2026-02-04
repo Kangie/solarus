@@ -38,6 +38,40 @@ See [entity](./index.md#methods-of-all-entity-types) to know these methods.
 
 ## Methods of the type shop treasure
 
+### `shop_treasure:get_treasure()`
+
+Returns the treasure the player will obtain when buying the shop treasure.
+
+Return value 1 (string)
+: Name of an [equipment item](../equipment-items.md).
+
+Return value 2 (number)
+: Variant of this equipment item (`1` means the first variant).
+
+Return value 3 (string or `nil`)
+: Name of the boolean value that stores in the [savegame](../game.md) whether the shop treasure is available. `nil` means that the shop treasure is not saved.
+
+### `shop_treasure:get_price()`
+
+Returns the price the hero will have to pay to get the item of the shop treasure.
+
+Return value (number)
+: Price of the shop treasure.
+
+### `shop_treasure:get_price_font()`
+
+Returns the font name used to display the price for the shop treasure.
+
+Return value (string or `nil`)
+: Name of the font. `nil` means the default font will be used.
+
+### `shop_treasure:get_dialog_id()`
+
+Returns the dialog id used when the hero is interacting with the shop treasure.
+
+Return value (string)
+: ID of the dialog.
+
 ### `shop_treasure:get_cannot_buy_sound()`
 
 Returns the sound id defined for this shop treasure when the player is unable to buy it.
