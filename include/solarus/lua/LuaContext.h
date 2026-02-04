@@ -655,14 +655,6 @@ class LuaContext {
       input_api_get_joypad_count,
       input_api_get_joypads,
 
-      // File API.
-      file_api_open,
-      file_api_exists,
-      file_api_remove,
-      file_api_mkdir,
-      file_api_is_dir,
-      file_api_list_dir,
-
       // Menu API.
       menu_api_start,
       menu_api_stop,

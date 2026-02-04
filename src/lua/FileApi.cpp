@@ -16,6 +16,7 @@
  */
 #include "solarus/core/CurrentQuest.h"
 #include "solarus/core/QuestFiles.h"
+#include "solarus/lua/LuaBind.h"
 #include "solarus/lua/LuaContext.h"
 #include "solarus/lua/LuaTools.h"
 #include "solarus/core/Logger.h"
@@ -40,20 +41,214 @@ namespace {
 const std::string LuaContext::file_module_name = "sol.file";
 
 /**
+ * \brief Implementation of sol.file.open().
+ * \param l The Lua context that is calling this function.
+ * \param file_name Name of the file to open, relative to the quest write directory or to the data directory.
+ * \param mode_arg Opening mode (see the Lua documentation of io.open() ).
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack open(lua_State* l,
+    const std::string& file_name, std::optional<std::string> mode_arg) {
+  const std::string& mode = mode_arg.value_or("r");
+  const bool writing = !(mode.rfind("r", 0) == 0);
+
+  // file_name is relative to the data directory, the data archive or the
+  // quest write directory.
+  // Let's determine the full file path to use when opening the file.
+  std::string file_path;
+  if (writing) {
+    // Writing a file.
+    if (QuestFiles::get_quest_write_dir().empty()) {
+      LuaTools::error(l,
+          "Cannot open file for writing: no write directory was specified in quest.dat");
+    }
+
+    file_path = QuestFiles::get_full_quest_write_dir() + "/" + file_name;
+  } else {
+    // Reading a file.
+    QuestFiles::DataFileLocation location = QuestFiles::data_file_get_location(file_name);
+
+    switch (location) {
+    case QuestFiles::DataFileLocation::LOCATION_NONE:
+    {
+      // Not found.
+      lua_pushnil(l);
+      const std::string& message = "Cannot find file '" + file_name
+          + "' in the quest write directory, in data/, data.solarus or in data.solarus.zip";
+      LuaContext::push_string(l, message);
+      return {2};
+    }
+    case QuestFiles::DataFileLocation::LOCATION_WRITE_DIRECTORY:
+      // Found in the quest write directory.
+      file_path = QuestFiles::get_full_quest_write_dir() + "/" + file_name;
+      break;
+
+    case QuestFiles::DataFileLocation::LOCATION_DATA_DIRECTORY:
+      // Found in the data directory.
+      file_path = QuestFiles::get_quest_path() + "/data/" + file_name;
+      break;
+
+    case QuestFiles::DataFileLocation::LOCATION_DATA_ARCHIVE:
+    {
+      // Found in the data archive.
+      // To open the file, we need it to be a regular file, so let's create
+      // a temporary one.
+      const std::string& buffer = QuestFiles::data_file_read(file_name);
+      file_path = QuestFiles::create_temporary_file(buffer);
+      break;
+    }
+    }
+  }
+
+#ifdef SOLARUS_LUA_WIN_UNICODE_WORKAROUND
+  FILE*& file_handle = create_file_pointer(l);
+
+  // In windows, open the file using _wfopen() for Unicode filenames support.
+  errno = EINVAL;  // Start by assuming an invalid argument.
+  int wfp_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+      &file_path[0], file_path.length(), nullptr, 0);
+  int wmode_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+      &mode[0], mode.length(), nullptr, 0);
+  if (wfp_len > 0 && wmode_len > 0) {
+    wchar_t* wfp = static_cast<wchar_t*>(alloca(sizeof(wchar_t) * (wfp_len + 1)));
+    wchar_t* wmode = static_cast<wchar_t*>(alloca(sizeof(wchar_t) * (wmode_len + 1)));
+    wfp_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+        &file_path[0], file_path.length(), wfp, wfp_len);
+    wmode_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+        &mode[0], mode.length(), wmode, wmode_len);
+    if (wfp_len > 0 && wmode_len > 0) {
+      wfp[wfp_len] = 0;
+      wmode[wmode_len] = 0;
+      file_handle = _wfopen(wfp, wmode);
+    }
+  }
+
+  // Note: if you want to test the hack on non-Windows systems you can just do
+  // file_handle = fopen(file_path.c_str(), mode.c_str());
+
+  if (file_handle == nullptr) {
+    lua_pushnil(l);
+    const std::string& message = file_name + ": " + strerror(errno);
+    LuaContext::push_string(l, message);
+    lua_pushinteger(l, errno);
+    return {3};
+  }
+  return {1};
+#else
+
+  // In other than Windows, just call io.open() in Lua.
+  lua_getfield(l, LUA_REGISTRYINDEX, "io.open");
+  LuaContext::push_string(l, file_path);
+  LuaContext::push_string(l, mode);
+
+  bool called = LuaTools::call_function(l, 2, 2, "io.open");
+  if (!called) {
+    LuaTools::error(l, "Unexpected error: failed to call io.open()");
+  }
+  return {2};
+#endif
+}
+
+/**
+ * \brief Implementation of sol.file.exists().
+ * \param file_name Name of the file to test,
+ *     relative to the quest write directory or to the data directory.
+ * \return True if the file exists, false otherwise.
+ */
+static bool exists(const std::string& file_name) {
+  return QuestFiles::data_file_exists(file_name, false);
+}
+
+/**
+ * \brief Implementation of sol.file.remove().
+ * \param l The Lua context that is calling this function.
+ * \param file_name Name of the file to remove,
+ *     relative to the quest write directory or to the data directory.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack remove(lua_State* l, const std::string& file_name) {
+  bool success = QuestFiles::data_file_delete(file_name);
+  if (success) {
+    lua_pushboolean(l, true);
+    return {1};
+  }
+
+  lua_pushnil(l);
+  const std::string& message = "Failed to delete file '" + file_name + "'";
+  LuaContext::push_string(l, message);
+  return {2};
+}
+
+/**
+ * \brief Implementation of sol.file.mkdir().
+ * \param l The Lua context that is calling this function.
+ * \param dir_name Name of the directory to delete,
+ *     relative to the quest write directory.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack mkdir(lua_State* l, const std::string& dir_name) {
+  bool success = QuestFiles::data_file_mkdir(dir_name);
+  if (success) {
+    lua_pushboolean(l, true);
+    return {1};
+  }
+
+  lua_pushnil(l);
+  const std::string& message = "Failed to create directory '" + dir_name + "'";
+  LuaContext::push_string(l, message);
+  return {2};
+}
+
+/**
+ * \brief Implementation of sol.file.is_dir().
+ * \param file_name Name of the file to test,
+ *     relative to the quest write directory or to the data directory.
+ * \return True if the file exists and is a directory, false otherwise.
+ */
+static bool is_dir(const std::string& file_name) {
+  return QuestFiles::data_file_is_dir(file_name);
+}
+
+/**
+ * \brief Implementation of sol.file.list_dir().
+ * \param l The Lua context that is calling this function.
+ * \param dir_name Name of the directory to explore,
+ *     relative to the quest write directory or to the data directory.
+ * \return Number of values to return to Lua.
+ */
+static LuaBind::OnStack list_dir(lua_State* L, const std::string& dir_name) {
+  // Returning an optional vector of strings would be nice, but that doesn't
+  // work and even if it did, it would probably result in extra copies.
+  if (QuestFiles::data_file_is_dir(dir_name)) {
+    const std::vector<std::string>& files = QuestFiles::data_file_list_dir(dir_name);
+    lua_createtable(L, static_cast<int>(files.size()), 0);
+    int i = 1;
+    for (const std::string& file : files) {
+      LuaContext::push_string(L, file);
+      lua_rawseti(L, -2, i);
+      ++i;
+    }
+  } else {
+    lua_pushnil(L);
+  }
+  return {1};
+}
+
+/**
  * \brief Initializes the file features provided to Lua.
  */
 void LuaContext::register_file_module() {
 
   std::vector<luaL_Reg> functions = {
-      { "open", file_api_open },
-      { "exists", file_api_exists },
-      { "remove", file_api_remove },
-      { "mkdir", file_api_mkdir },
+      { "open", LUA_TO_C_BIND(open) },
+      { "exists", LUA_TO_C_BIND(exists) },
+      { "remove", LUA_TO_C_BIND(remove) },
+      { "mkdir", LUA_TO_C_BIND(mkdir) },
   };
   if (CurrentQuest::is_format_at_least({ 1, 6 })) {
     functions.insert(functions.end(), {
-        { "is_dir", file_api_is_dir },
-        { "list_dir", file_api_list_dir },
+        { "is_dir", LUA_TO_C_BIND(is_dir) },
+        { "list_dir", LUA_TO_C_BIND(list_dir) },
     });
   }
   register_functions(file_module_name, functions);
@@ -94,223 +289,6 @@ void LuaContext::register_file_module() {
   lua_pop(current_l, 1);
                                   // --
 #endif
-}
-
-/**
- * \brief Implementation of sol.file.open().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::file_api_open(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const std::string& file_name = LuaTools::check_string(l, 1);
-    const std::string& mode = LuaTools::opt_string(l, 2, "r");
-
-    const bool writing = not (mode.rfind("r", 0) == 0);
-
-    // file_name is relative to the data directory, the data archive or the
-    // quest write directory.
-    // Let's determine the full file path to use when opening the file.
-    std::string file_path;
-    if (writing) {
-      // Writing a file.
-      if (QuestFiles::get_quest_write_dir().empty()) {
-        LuaTools::error(l,
-            "Cannot open file for writing: no write directory was specified in quest.dat");
-      }
-
-      file_path = QuestFiles::get_full_quest_write_dir() + "/" + file_name;
-    }
-    else {
-      // Reading a file.
-      QuestFiles::DataFileLocation location = QuestFiles::data_file_get_location(file_name);
-
-      switch (location) {
-
-      case QuestFiles::DataFileLocation::LOCATION_NONE:
-        // Not found.
-        lua_pushnil(l);
-        push_string(l, std::string("Cannot find file '") + file_name
-            + "' in the quest write directory, in data/, data.solarus or in data.solarus.zip");
-        return 2;
-
-      case QuestFiles::DataFileLocation::LOCATION_WRITE_DIRECTORY:
-        // Found in the quest write directory.
-        file_path = QuestFiles::get_full_quest_write_dir() + "/" + file_name;
-        break;
-
-      case QuestFiles::DataFileLocation::LOCATION_DATA_DIRECTORY:
-        // Found in the data directory.
-        file_path = QuestFiles::get_quest_path() + "/data/" + file_name;
-        break;
-
-      case QuestFiles::DataFileLocation::LOCATION_DATA_ARCHIVE:
-      {
-        // Found in the data archive.
-        // To open the file, we need it to be a regular file, so let's create
-        // a temporary one.
-        const std::string& buffer = QuestFiles::data_file_read(file_name);
-        file_path = QuestFiles::create_temporary_file(buffer);
-        break;
-      }
-      }
-    }
-
-#ifdef SOLARUS_LUA_WIN_UNICODE_WORKAROUND
-    FILE*& file_handle = create_file_pointer(l);
-
-    // In windows, open the file using _wfopen() for Unicode filenames support.
-    errno = EINVAL;  // Start by assuming an invalid argument.
-    int wfp_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-        &file_path[0], file_path.length(), nullptr, 0);
-    int wmode_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-        &mode[0], mode.length(), nullptr, 0);
-    if (wfp_len > 0 && wmode_len > 0) {
-      wchar_t* wfp = static_cast<wchar_t*>(alloca(sizeof(wchar_t) * (wfp_len + 1)));
-      wchar_t* wmode = static_cast<wchar_t*>(alloca(sizeof(wchar_t) * (wmode_len + 1)));
-      wfp_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-          &file_path[0], file_path.length(), wfp, wfp_len);
-      wmode_len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-          &mode[0], mode.length(), wmode, wmode_len);
-      if (wfp_len > 0 && wmode_len > 0) {
-        wfp[wfp_len] = 0;
-        wmode[wmode_len] = 0;
-        file_handle = _wfopen(wfp, wmode);
-      }
-    }
-
-    // Note: if you want to test the hack on non-Windows systems you can just do
-    // file_handle = fopen(file_path.c_str(), mode.c_str());
-
-    if (file_handle == nullptr) {
-      lua_pushnil(l);
-      push_string(l, file_name + ": " + strerror(errno));
-      lua_pushinteger(l, errno);
-      return 3;
-    }
-    return 1;
-#else
-
-    // In other than Windows, just call io.open() in Lua.
-    lua_getfield(l, LUA_REGISTRYINDEX, "io.open");
-    push_string(l, file_path);
-    push_string(l, mode);
-
-    bool called = LuaTools::call_function(l, 2, 2, "io.open");
-    if (!called) {
-      LuaTools::error(l, "Unexpected error: failed to call io.open()");
-    }
-    return 2;
-#endif
-  });
-}
-
-/**
- * \brief Implementation of sol.file.exists().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::file_api_exists(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const std::string& file_name = LuaTools::check_string(l, 1);
-
-    lua_pushboolean(l, QuestFiles::data_file_exists(file_name, false));
-
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of sol.file.remove().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::file_api_remove(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const std::string& file_name = LuaTools::check_string(l, 1);
-
-    bool success = QuestFiles::data_file_delete(file_name);
-
-    if (!success) {
-      lua_pushnil(l);
-      push_string(l, std::string("Failed to delete file '") + file_name + "'");
-      return 2;
-    }
-
-    lua_pushboolean(l, true);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of sol.file.mkdir().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::file_api_mkdir(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const std::string& dir_name = LuaTools::check_string(l, 1);
-
-    bool success = QuestFiles::data_file_mkdir(dir_name);
-
-    if (!success) {
-      lua_pushnil(l);
-      push_string(l, std::string("Failed to create directory '") + dir_name + "'");
-      return 2;
-    }
-
-    lua_pushboolean(l, true);
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of sol.file.is_dir().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::file_api_is_dir(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-    const std::string& file_name = LuaTools::check_string(l, 1);
-
-    lua_pushboolean(l, QuestFiles::data_file_is_dir(file_name));
-
-    return 1;
-  });
-}
-
-/**
- * \brief Implementation of sol.file.list_dir().
- * \param l The Lua context that is calling this function.
- * \return Number of values to return to Lua.
- */
-int LuaContext::file_api_list_dir(lua_State* l) {
-
-  return state_boundary_handle(l, [&] {
-
-    const std::string& dir_name = LuaTools::check_string(l, 1);
-    if (!QuestFiles::data_file_is_dir(dir_name)) {
-      lua_pushnil(l);
-      return 1;
-    }
-
-    const std::vector<std::string>& files = QuestFiles::data_file_list_dir(dir_name);
-
-    lua_createtable(l, static_cast<int>(files.size()), 0);
-    int i = 1;
-    for (const std::string& file : files) {
-      push_string(l, file);
-      lua_rawseti(l, -2, i);
-      ++i;
-    }
-
-    return 1;
-  });
 }
 
 #ifdef SOLARUS_LUA_WIN_UNICODE_WORKAROUND
