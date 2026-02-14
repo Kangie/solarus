@@ -144,12 +144,14 @@ void TargetMovement::update() {
     set_target(nullptr, target);
   }
 
-  if (System::now_ms() >= next_recomputation_date) {
-    recompute_movement();
-    next_recomputation_date += recomputation_delay;
-  }
+  if (!is_suspended()) {
+    if (System::now_ms() >= next_recomputation_date) {
+      recompute_movement();
+      next_recomputation_date += recomputation_delay;
+    }
 
-  check_target_reached();
+    check_target_reached();
+  }
 
   StraightMovement::update();
 }

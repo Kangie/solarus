@@ -222,6 +222,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1683_analog_diagonal"
   "bugs/1936_stairs_mask/first_floor"
   "bugs/1945_duplicate_teleport_when_no_linked_camera/first_map"
+  "bugs/1970_target_movement_teleport_opening_transition"
 )
 
 # Test that should succeed when there are non-fatal errors
