@@ -145,6 +145,7 @@ map{ id = "bugs/1936_stairs_mask/first_floor" }
 map{ id = "bugs/1936_stairs_mask/second_floor" }
 map{ id = "bugs/1945_duplicate_teleport_when_no_linked_camera/first_map", description = "#1945: Duplicate teleport when hero has no linked camera" }
 map{ id = "bugs/1945_duplicate_teleport_when_no_linked_camera/second_map" }
+map{ id = "bugs/1970_target_movement_teleport_opening_transition", description = "#1970: Enemy teleports if the hero is moving during opening transition" }
 map{ id = "bugs/486_diagonal_dynamic_tiles", description = "#486: Wrong obstacles with diagonal dynamic tiles" }
 map{ id = "bugs/496_stream_speed_0", description = "#496: Allow streams to have a speed of zero" }
 map{ id = "bugs/514_allow_x_y_parameters_to_entity_is_in_same_region", description = "#514 Allow x,y parameters in entity:is_in_same_region()" }
@@ -452,6 +453,7 @@ enemy{ id = "bugs/1179_on_restarted_called_twice", description = "#1179: enemy:o
 enemy{ id = "slime_green", description = "Green Slime" }
 enemy{ id = "test_enemy", description = "Test enemy" }
 enemy{ id = "test_flying_enemy", description = "Flying enemy" }
+enemy{ id = "test_follower", description = "Follower enemy" }
 
 
 language{ id = "en", description = "English" }
@@ -467,6 +469,7 @@ file{ path = "enemies/bugs/1179_on_restarted_called_twice.lua", author = "Christ
 file{ path = "enemies/slime_green.lua", author = "Diarandor", license = "GPL v3" }
 file{ path = "enemies/test_enemy.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "enemies/test_flying_enemy.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "enemies/test_follower.lua", author = "Metallizer", license = "GPL v3" }
 file{ path = "fonts/8_bit.png", author = "usr_share, Christopho", license = "Public domain" }
 file{ path = "fonts/enter_command.ttf", author = "Jeti", license = "CC BY 4.0" }
 file{ path = "items/bomb.lua", author = "Christopho", license = "GPL v3" }
@@ -781,6 +784,8 @@ file{ path = "maps/bugs/1945_duplicate_teleport_when_no_linked_camera/first_map.
 file{ path = "maps/bugs/1945_duplicate_teleport_when_no_linked_camera/first_map.lua", author = "Metallizer", }
 file{ path = "maps/bugs/1945_duplicate_teleport_when_no_linked_camera/second_map.dat", author = "Metallizer", }
 file{ path = "maps/bugs/1945_duplicate_teleport_when_no_linked_camera/second_map.lua", author = "Metallizer", }
+file{ path = "maps/bugs/1970_target_movement_teleport_opening_transition.dat", author = "Metallizer", license = "CC BY-SA" }
+file{ path = "maps/bugs/1970_target_movement_teleport_opening_transition.lua", author = "Metallizer", license = "GPL v3" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/486_diagonal_dynamic_tiles.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/496_stream_speed_0.dat", author = "Christopho", license = "CC BY-SA 4.0" }

@@ -3,6 +3,7 @@
 ## Solarus 2.1.0 (In progress)
 
 * Add getter methods to shop_treasure entities.
+* Fix target movements can teleport entities while game is suspended (#1970).
 
 ## Solarus 2.0.3 (2026-01-21)
 
