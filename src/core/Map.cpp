@@ -1044,13 +1044,17 @@ bool Map::test_collision_with_obstacles(
 
   bool is_diagonal_wall = false;
 
+  // Fetch nearby entities so that dynamic tiles are considered in ground checks.
+  Rectangle collision_box(x, y, 1, 1);
+  ConstEntityVector entities_nearby;
+  get_entities().get_entities_in_rectangle_z_sorted(collision_box, entities_nearby);
+
   // Test the terrain.
-  bool collision = test_collision_with_ground(layer, x, y, entity_to_check, is_diagonal_wall, {});
+  bool collision = test_collision_with_ground(layer, x, y, entity_to_check, is_diagonal_wall, entities_nearby);
 
   // Test dynamic entities.
   if (!collision) {
-    Rectangle collision_box(x, y, 1, 1);
-    collision = test_collision_with_entities(layer, collision_box, entity_to_check);
+    collision = test_collision_with_entities(layer, collision_box, entity_to_check, entities_nearby);
   }
 
   return collision;

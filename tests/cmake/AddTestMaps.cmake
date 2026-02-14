@@ -220,6 +220,7 @@ list(APPEND LUA_TEST_MAPS
   "bugs/1917_set_tileset_int"
   "bugs/1918_movement_started_before_start"
   "bugs/1683_analog_diagonal"
+  "bugs/1934_wall_traversable_dynamic_tiles"
   "bugs/1936_stairs_mask/first_floor"
   "bugs/1945_duplicate_teleport_when_no_linked_camera/first_map"
   "bugs/1970_target_movement_teleport_opening_transition"
