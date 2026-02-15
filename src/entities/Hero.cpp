@@ -56,6 +56,7 @@
 #include "solarus/hero/HurtState.h"
 #include "solarus/hero/JumpingState.h"
 #include "solarus/hero/LiftingState.h"
+#include "solarus/hero/PlayerMovementState.h"
 #include "solarus/hero/PlungingState.h"
 #include "solarus/hero/PullingState.h"
 #include "solarus/hero/PushingState.h"
@@ -404,6 +405,14 @@ void Hero::update_ice() {
   if (norm > 1e-3) {
     input_x = std::cos(ang);
     input_y = -std::sin(ang);  // Y is inverted (screen coords: down is positive).
+
+    // Update sprite facing direction from player input.
+    // Convert the angle to a direction8 and then to a 4-direction for sprites.
+    int direction8 = static_cast<int>((Geometry::radians_to_degrees(ang) + 360.0) / 45.0) % 8;
+    int direction4 = sprites->get_animation_direction(direction8, direction8);
+    if (direction4 != -1 && direction4 != sprites->get_animation_direction()) {
+      sprites->set_animation_direction(direction4);
+    }
   }
 
   // X axis: accelerate or decelerate.
@@ -467,6 +476,30 @@ void Hero::update_ice() {
   // Apply movement with collision detection.
   if (pixel_dx != 0 || pixel_dy != 0) {
     apply_ice_movement(pixel_dx, pixel_dy);
+  }
+
+  // Update sprite animation based on ice velocity.
+  // Guard: apply_ice_movement may have moved the hero off ice,
+  // triggering stop_ice_movement() mid-frame. Don't override animations
+  // that were already restored to normal by the ground transition.
+  if (!on_ice) {
+    return;
+  }
+
+  // Use the state's animation methods so carrying/sword-loading states
+  // pick the right animation variant.
+  bool sliding = (std::abs(ice_velocity_x) > ICE_VELOCITY_EPSILON ||
+                  std::abs(ice_velocity_y) > ICE_VELOCITY_EPSILON);
+  bool currently_walking = sprites->is_walking();
+
+  auto* pms = dynamic_cast<PlayerMovementState*>(get_state().get());
+  if (pms != nullptr) {
+    if (sliding && !currently_walking) {
+      pms->set_animation_walking();
+    }
+    else if (!sliding && currently_walking) {
+      pms->set_animation_stopped();
+    }
   }
 }
 
@@ -2767,6 +2800,14 @@ void Hero::start_ice() {
   set_walking_speed(0);
 
   next_ground_date = System::now_ms();
+}
+
+/**
+ * \brief Returns whether the hero is currently on ice ground with ice physics active.
+ * \return \c true if ice physics is active.
+ */
+bool Hero::is_on_ice() const {
+  return on_ice;
 }
 
 /**
