@@ -239,6 +239,13 @@ void Hero::PlayerMovementState::notify_walking_speed_changed() {
  */
 void Hero::PlayerMovementState::notify_movement_changed() {
 
+  // When on ice, ice physics controls the animation directly.
+  // PlayerMovement has zero speed on ice, which would incorrectly
+  // reset the animation to stopped every frame.
+  if (get_entity().is_on_ice()) {
+    return;
+  }
+
   // the movement has changed: update the animation of the sprites
 
   bool movement_walking = get_wanted_movement_direction8() != -1;

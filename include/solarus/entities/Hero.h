@@ -278,6 +278,7 @@ class Hero: public Entity {
     void start_deep_water();
     void start_hole();
     void start_ice();
+    bool is_on_ice() const;
     void start_lava();
     void start_prickle(uint32_t delay);
 
