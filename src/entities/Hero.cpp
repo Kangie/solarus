@@ -2782,16 +2782,10 @@ void Hero::start_ice() {
   on_ice = true;
   ice_last_update_ns = System::now_ns();
 
-  // Capture the hero's current movement velocity to preserve momentum
-  // when entering ice from traversable ground.
-  const auto movement = std::dynamic_pointer_cast<StraightMovement>(get_movement());
-  if (movement != nullptr && movement->is_started()) {
-    ice_velocity_x = movement->get_x_speed();
-    ice_velocity_y = movement->get_y_speed();
-  } else {
-    ice_velocity_x = 0.0;
-    ice_velocity_y = 0.0;
-  }
+  // Always start with zero velocity so the hero accelerates gradually,
+  // even when entering ice from normal ground.
+  ice_velocity_x = 0.0;
+  ice_velocity_y = 0.0;
   ice_remainder_x = 0.0;
   ice_remainder_y = 0.0;
 
@@ -3321,8 +3315,12 @@ void Hero::start_state_from_ground() {
   case Ground::TRAVERSABLE:
   case Ground::EMPTY:
   case Ground::LADDER:
+    start_free_carrying_loading_or_running();
+    break;
+
   case Ground::ICE:
     start_free_carrying_loading_or_running();
+    start_ice();
     break;
 
   case Ground::WALL:
