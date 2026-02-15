@@ -52,6 +52,7 @@ class Hero::PushingState: public HeroState {
     bool is_hole_obstacle() const override;
     bool is_lava_obstacle() const override;
     bool is_prickle_obstacle() const override;
+    bool can_avoid_ice() const override;
 
   private:
 

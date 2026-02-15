@@ -319,7 +319,13 @@ void Hero::update_commands_effects() {
 void Hero::update_ground_effects() {
 
   // Ice physics runs every frame, independent of the ground date timer.
-  if (on_ice && get_ground_below() == Ground::ICE && !get_state()->can_avoid_ice()) {
+  if (get_ground_below() == Ground::ICE && !get_state()->can_avoid_ice()) {
+    if (!on_ice) {
+      // The hero is on ice but ice physics was not started yet.
+      // This happens when a state that avoids ice (e.g. PushingState)
+      // ends while standing on ice ground.
+      start_ice();
+    }
     update_ice();
   }
 
@@ -484,6 +490,23 @@ void Hero::update_ice() {
   // that were already restored to normal by the ground transition.
   if (!on_ice) {
     return;
+  }
+
+  // Notify the current state every frame when the hero is pressing into
+  // an obstacle, so that FreeState can manage the push timer.
+  // On normal ground, StraightMovement does this automatically.  On ice,
+  // PlayerMovement has zero speed and never fires notify_obstacle_reached(),
+  // so we must do it here.
+  if (norm > 1e-3) {
+    int face_dx = (input_x >  0.5) ?  1 : (input_x < -0.5) ? -1 : 0;
+    int face_dy = (input_y >  0.5) ?  1 : (input_y < -0.5) ? -1 : 0;
+    if (face_dx != 0 || face_dy != 0) {
+      Rectangle test_box = get_bounding_box();
+      test_box.add_xy(face_dx, face_dy);
+      if (get_map().test_collision_with_obstacles(get_layer(), test_box, *this)) {
+        notify_obstacle_reached();
+      }
+    }
   }
 
   // Use the state's animation methods so carrying/sword-loading states
