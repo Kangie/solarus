@@ -36,6 +36,7 @@ class Hero::GrabbingState: public HeroState {
     bool is_grabbing_or_pulling() const override;
     bool get_can_be_hurt(Entity* attacker) override;
     bool get_can_pick_treasure(EquipmentItem& item) const override;
+    bool can_avoid_ice() const override;
 
 };
 

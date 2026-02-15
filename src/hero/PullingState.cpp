@@ -306,6 +306,13 @@ bool Hero::PullingState::is_prickle_obstacle() const {
 }
 
 /**
+ * \copydoc Entity::State::can_avoid_ice
+ */
+bool Hero::PullingState::can_avoid_ice() const {
+  return true;
+}
+
+/**
  * \copydoc Entity::State::is_stream_obstacle
  */
 bool Hero::PullingState::is_stream_obstacle(Stream& /* stream */) {

@@ -15,8 +15,10 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "solarus/core/CommandsEffects.h"
+#include "solarus/core/Controls.h"
 #include "solarus/core/Equipment.h"
 #include "solarus/core/Game.h"
+#include "solarus/core/Geometry.h"
 #include "solarus/core/System.h"
 #include "solarus/hero/FreeState.h"
 #include "solarus/hero/GrabbingState.h"
@@ -69,10 +71,24 @@ void Hero::FreeState::update() {
 
   if (!is_suspended()
       && is_current_state()
-      && pushing_direction4 != -1                                       // The hero is trying to push
-      && get_wanted_movement_direction8() != pushing_direction4 * 2) {  // but his movement direction has changed.
+      && pushing_direction4 != -1) {
 
-    pushing_direction4 = -1; // stop trying to push
+    // Check if the hero's intended direction has changed.
+    // On ice, PlayerMovement has zero speed and its wanted direction
+    // alternates between the real input and -1.  Use the controls
+    // directly in that case so the push timer is not spuriously reset.
+    int wanted8 = get_wanted_movement_direction8();
+    Hero& hero = get_entity();
+    if (wanted8 == -1 && hero.is_on_ice()) {
+      auto [norm, ang] = hero.get_controls()->get_wanted_polar();
+      if (norm > 1e-3) {
+        wanted8 = static_cast<int>(
+            (Geometry::radians_to_degrees(ang) + 360) / 45) % 8;
+      }
+    }
+    if (wanted8 != pushing_direction4 * 2) {
+      pushing_direction4 = -1; // stop trying to push
+    }
   }
 }
 

@@ -324,5 +324,12 @@ bool Hero::PushingState::is_prickle_obstacle() const {
   return true;
 }
 
+/**
+ * \copydoc Entity::State::can_avoid_ice
+ */
+bool Hero::PushingState::can_avoid_ice() const {
+  return true;
+}
+
 }
 

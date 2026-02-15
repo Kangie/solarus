@@ -107,5 +107,12 @@ bool Hero::GrabbingState::get_can_pick_treasure(EquipmentItem& /* item */) const
   return true;
 }
 
+/**
+ * \copydoc Entity::State::can_avoid_ice
+ */
+bool Hero::GrabbingState::can_avoid_ice() const {
+  return true;
+}
+
 }
 
