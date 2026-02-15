@@ -77,6 +77,14 @@
 
 namespace Solarus {
 
+// Ice physics constants.
+// Acceleration when the player presses a direction on ice (pixels/second^2).
+constexpr double ICE_ACCELERATION = 60.0;
+// Deceleration when the player releases a direction on ice (pixels/second^2).
+constexpr double ICE_DECELERATION = 60.0;
+// Velocity threshold below which ice speed is clamped to zero (pixels/second).
+constexpr double ICE_VELOCITY_EPSILON = 0.5;
+
 namespace {
 
 /**
@@ -133,8 +141,12 @@ Hero::Hero(const EquipmentPtr &equipment, const std::string& name):
   last_solid_ground_layer(0),
   target_solid_ground_callback(),
   next_ground_date(0),
-  next_ice_date(0),
-  ice_movement_direction8(0),
+  ice_velocity_x(0.0),
+  ice_velocity_y(0.0),
+  ice_remainder_x(0.0),
+  ice_remainder_y(0.0),
+  on_ice(false),
+  ice_last_update_ns(0),
   equipment(equipment),
   push_delay(800)
 {
@@ -305,7 +317,12 @@ void Hero::update_commands_effects() {
  */
 void Hero::update_ground_effects() {
 
-  // see if it's time to do something (depending on the ground)
+  // Ice physics runs every frame, independent of the ground date timer.
+  if (on_ice && get_ground_below() == Ground::ICE && !get_state()->can_avoid_ice()) {
+    update_ice();
+  }
+
+  // Timer-based ground effects (sounds, hole attraction).
   uint32_t now = System::now_ms();
   if (now >= next_ground_date) {
 
@@ -342,72 +359,200 @@ void Hero::update_ground_effects() {
           apply_additional_ground_movement();
         }
       }
-      else if (ground == Ground::ICE) {
-
-        // Slide on ice.
-        if (!get_state()->can_avoid_ice()) {
-          apply_additional_ground_movement();
-        }
-
-        next_ground_date = now + 30;
-
-        if (now >= next_ice_date) {
-          // Time to update the additional movement.
-          update_ice();
-          ice_movement_direction8 = get_wanted_movement_direction8();
-        }
-      }
     }
   }
 }
 
 /**
- * \brief Updates the additional movement applied when the hero is on ice ground.
+ * \brief Updates the ice physics simulation.
+ *
+ * Called every frame when the hero is on ice ground.
+ * Uses independent X and Y floating-point velocities with acceleration
+ * and deceleration for smooth ALttP-style ice sliding.
+ *
+ * When the player presses a direction, that axis accelerates at ICE_ACCELERATION.
+ * When the player releases a direction, that axis decelerates at ICE_DECELERATION.
+ * The velocity magnitude is clamped to normal_walking_speed.
+ * Sub-pixel remainders are accumulated for precision.
  */
 void Hero::update_ice() {
 
-  uint32_t now = System::now_ms();
-  int wanted_movement_direction8 = get_wanted_movement_direction8();
-  if (wanted_movement_direction8 == -1) {
-    // The player wants to stop.
-    if (ice_movement_direction8 == -1) {
-      // And he does for a while so stop.
-      ground_dxy = { 0, 0 };
-      next_ice_date = now + 300;
-    }
-    else {
-      // But he was just moving on ice: continue the ice movement.
-      ground_dxy = direction_to_xy_move(ice_movement_direction8) * 2;
-      next_ice_date = now + 300;
+  uint64_t now_ns = System::now_ns();
+  if (ice_last_update_ns == 0) {
+    ice_last_update_ns = now_ns;
+    return;
+  }
+
+  // Compute delta time in seconds.
+  double dt = static_cast<double>(now_ns - ice_last_update_ns) / 1000000000.0;
+  ice_last_update_ns = now_ns;
+
+  // Clamp dt to prevent physics explosion after pause/lag.
+  if (dt > 0.1) {
+    dt = 0.1;
+  }
+  if (dt <= 0.0) {
+    return;
+  }
+
+  double max_speed = static_cast<double>(normal_walking_speed);
+
+  // Get player input as a 2D unit vector.
+  auto [norm, ang] = get_controls()->get_wanted_polar();
+  double input_x = 0.0;
+  double input_y = 0.0;
+  if (norm > 1e-3) {
+    input_x = std::cos(ang);
+    input_y = -std::sin(ang);  // Y is inverted (screen coords: down is positive).
+  }
+
+  // X axis: accelerate or decelerate.
+  if (std::abs(input_x) > 1e-3) {
+    ice_velocity_x += input_x * ICE_ACCELERATION * dt;
+  } else {
+    if (ice_velocity_x > 0.0) {
+      ice_velocity_x -= ICE_DECELERATION * dt;
+      if (ice_velocity_x < 0.0) ice_velocity_x = 0.0;
+    } else if (ice_velocity_x < 0.0) {
+      ice_velocity_x += ICE_DECELERATION * dt;
+      if (ice_velocity_x > 0.0) ice_velocity_x = 0.0;
     }
   }
-  else {
-    // The player wants to move.
-    if (ice_movement_direction8 == -1) {
-      // But he was not just moving on ice: resist to the wanted movement.
-      ground_dxy = direction_to_xy_move((wanted_movement_direction8 + 4) % 8);
-      next_ice_date = now + 300;
+
+  // Y axis: accelerate or decelerate.
+  if (std::abs(input_y) > 1e-3) {
+    ice_velocity_y += input_y * ICE_ACCELERATION * dt;
+  } else {
+    if (ice_velocity_y > 0.0) {
+      ice_velocity_y -= ICE_DECELERATION * dt;
+      if (ice_velocity_y < 0.0) ice_velocity_y = 0.0;
+    } else if (ice_velocity_y < 0.0) {
+      ice_velocity_y += ICE_DECELERATION * dt;
+      if (ice_velocity_y > 0.0) ice_velocity_y = 0.0;
     }
-    else if (ice_movement_direction8 != wanted_movement_direction8) {
-      // He changed his direction: continue the ice movement strongly.
-      ground_dxy = direction_to_xy_move(ice_movement_direction8) * 2;
-      next_ice_date = now + 300;
-    }
-    else {
-      // He continues in the same direction.
-      ground_dxy = direction_to_xy_move(wanted_movement_direction8);
-      next_ice_date = now + 300;
-    }
+  }
+
+  // Clamp velocity magnitude to max_speed.
+  double speed_sq = ice_velocity_x * ice_velocity_x + ice_velocity_y * ice_velocity_y;
+  if (speed_sq > max_speed * max_speed) {
+    double scale = max_speed / std::sqrt(speed_sq);
+    ice_velocity_x *= scale;
+    ice_velocity_y *= scale;
+  }
+
+  // Epsilon clamp: stop tiny drift when no input.
+  if (std::abs(ice_velocity_x) < ICE_VELOCITY_EPSILON && std::abs(input_x) < 1e-3) {
+    ice_velocity_x = 0.0;
+  }
+  if (std::abs(ice_velocity_y) < ICE_VELOCITY_EPSILON && std::abs(input_y) < 1e-3) {
+    ice_velocity_y = 0.0;
+  }
+
+  // Convert velocity to pixel displacement this frame.
+  double move_x = ice_velocity_x * dt + ice_remainder_x;
+  double move_y = ice_velocity_y * dt + ice_remainder_y;
+
+  // Truncate toward zero to get integer pixels.
+  int pixel_dx = (move_x >= 0.0)
+      ? static_cast<int>(std::floor(move_x))
+      : static_cast<int>(std::ceil(move_x));
+  int pixel_dy = (move_y >= 0.0)
+      ? static_cast<int>(std::floor(move_y))
+      : static_cast<int>(std::ceil(move_y));
+
+  // Store remainder for next frame.
+  ice_remainder_x = move_x - static_cast<double>(pixel_dx);
+  ice_remainder_y = move_y - static_cast<double>(pixel_dy);
+
+  // Apply movement with collision detection.
+  if (pixel_dx != 0 || pixel_dy != 0) {
+    apply_ice_movement(pixel_dx, pixel_dy);
   }
 }
 
 /**
- * \brief Stops the additional movement applied when the hero is on ice ground.
+ * \brief Stops the ice physics and restores normal hero control.
  */
 void Hero::stop_ice_movement() {
 
-  ice_movement_direction8 = 0;
-  ground_dxy = { 0, 0 };
+  if (!on_ice) {
+    return;
+  }
+  on_ice = false;
+  ice_velocity_x = 0.0;
+  ice_velocity_y = 0.0;
+  ice_remainder_x = 0.0;
+  ice_remainder_y = 0.0;
+  ice_last_update_ns = 0;
+
+  // Restore normal walking speed so PlayerMovement takes back control.
+  set_walking_speed(normal_walking_speed);
+}
+
+/**
+ * \brief Applies ice movement with collision detection.
+ *
+ * Tries to move the hero by (dx, dy) pixels. If blocked, tries X-only,
+ * then Y-only. Zeroes the ice velocity on any blocked axis so the hero
+ * does not keep pushing into walls.
+ *
+ * \param dx Horizontal displacement in pixels.
+ * \param dy Vertical displacement in pixels.
+ */
+void Hero::apply_ice_movement(int dx, int dy) {
+
+  bool moved_x = false;
+  bool moved_y = false;
+
+  // Try full movement.
+  Rectangle collision_box = get_bounding_box();
+  collision_box.add_xy(dx, dy);
+
+  if (!get_map().test_collision_with_obstacles(get_layer(), collision_box, *this)) {
+    set_bounding_box(collision_box);
+    notify_position_changed();
+    moved_x = (dx != 0);
+    moved_y = (dy != 0);
+  }
+  else {
+    // Full movement blocked: try X-only.
+    if (dx != 0) {
+      collision_box = get_bounding_box();
+      collision_box.add_xy(dx, 0);
+      if (!get_map().test_collision_with_obstacles(get_layer(), collision_box, *this)) {
+        set_bounding_box(collision_box);
+        notify_position_changed();
+        moved_x = true;
+      }
+    }
+
+    // Try Y-only (regardless of X result, to handle both axes).
+    if (dy != 0) {
+      collision_box = get_bounding_box();
+      collision_box.add_xy(0, dy);
+      if (!get_map().test_collision_with_obstacles(get_layer(), collision_box, *this)) {
+        set_bounding_box(collision_box);
+        notify_position_changed();
+        moved_y = true;
+      }
+    }
+  }
+
+  // Zero velocity on blocked axes.
+  if (dx != 0 && !moved_x) {
+    ice_velocity_x = 0.0;
+    ice_remainder_x = 0.0;
+  }
+  if (dy != 0 && !moved_y) {
+    ice_velocity_y = 0.0;
+    ice_remainder_y = 0.0;
+  }
+
+  // Check if we're stuck on a hole while on ice.
+  if (!moved_x && !moved_y && get_ground_below() == Ground::HOLE) {
+    stop_ice_movement();
+    set_state(std::make_shared<FallingState>(*this));
+  }
 }
 
 /**
@@ -1254,11 +1399,6 @@ void Hero::notify_obstacle_reached() {
   Entity::notify_obstacle_reached();
 
   get_state()->notify_obstacle_reached();
-
-  if (get_ground_below() == Ground::ICE) {
-    ground_dxy = { 0, 0 };
-    ice_movement_direction8 = -1;
-  }
 }
 
 /**
@@ -1294,9 +1434,6 @@ void Hero::notify_movement_changed() {
   get_state()->notify_movement_changed();
   check_position();
 
-  if (get_ground_below() == Ground::ICE) {
-    update_ice();
-  }
   Entity::notify_movement_changed();
 }
 
@@ -1400,7 +1537,13 @@ void Hero::notify_ground_below_changed() {
 
   sprites->destroy_ground();
 
-  switch (get_ground_below()) {
+  // If we were on ice and the ground changed to something else, stop ice physics.
+  const Ground new_ground = get_ground_below();
+  if (on_ice && new_ground != Ground::ICE) {
+    stop_ice_movement();
+  }
+
+  switch (new_ground) {
 
   case Ground::TRAVERSABLE:
     set_walking_speed(normal_walking_speed);
@@ -2592,21 +2735,38 @@ void Hero::start_hole() {
 }
 
 /**
- * \brief Makes the hero slide on ice ground.
+ * \brief Starts ice physics when the hero enters ice ground.
+ *
+ * Captures the hero's current movement velocity so that speed is preserved
+ * when walking from traversable ground onto ice. Then disables PlayerMovement
+ * by setting walking speed to 0, giving full control to the ice physics.
  */
 void Hero::start_ice() {
 
-  next_ground_date = System::now_ms();
-  next_ice_date = System::now_ms();
+  if (on_ice) {
+    return;  // Already on ice.
+  }
+  on_ice = true;
+  ice_last_update_ns = System::now_ns();
 
-  ice_movement_direction8 = get_wanted_movement_direction8();
-  if (ice_movement_direction8 == -1) {
-    ground_dxy = { 0, 0 };
+  // Capture the hero's current movement velocity to preserve momentum
+  // when entering ice from traversable ground.
+  const auto movement = std::dynamic_pointer_cast<StraightMovement>(get_movement());
+  if (movement != nullptr && movement->is_started()) {
+    ice_velocity_x = movement->get_x_speed();
+    ice_velocity_y = movement->get_y_speed();
+  } else {
+    ice_velocity_x = 0.0;
+    ice_velocity_y = 0.0;
   }
-  else {
-    // Exagerate the movement.
-    ground_dxy = direction_to_xy_move(ice_movement_direction8);
-  }
+  ice_remainder_x = 0.0;
+  ice_remainder_y = 0.0;
+
+  // Suppress PlayerMovement by setting walking speed to 0.
+  // This makes PlayerMovement produce zero speed, giving ice physics full control.
+  set_walking_speed(0);
+
+  next_ground_date = System::now_ms();
 }
 
 /**

@@ -3,6 +3,7 @@
 ## Solarus 2.1.0 (In progress)
 
 * Add getter methods to shop_treasure entities.
+* Fix ice grounds to be more natural and playable.
 * Fix test collisions by facing point with entities nearby consideration (#1934).
 * Fix target movements can teleport entities while game is suspended (#1970).
 
