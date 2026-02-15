@@ -411,6 +411,7 @@ class Hero: public Entity {
     void update_ground_effects();
     void update_ice();
     void stop_ice_movement();
+    void apply_ice_movement(int dx, int dy);
 
     // life
     void check_gameover();
@@ -472,9 +473,13 @@ class Hero: public Entity {
                                             * into a hole (or some other bad ground), or an empty ref to indicate
                                             * that the hero will just return to the last solid ground coordinates. */
     uint32_t next_ground_date;             /**< when something will happen with the ground next time (a sound or a movement) */
-    uint32_t next_ice_date;                /**< when recomputing the additional movement on ice */
-    int ice_movement_direction8;           /**< wanted movement direction a while ago */
-    Point ground_dxy;                      /**< additional movement with special ground (hole or ice) */
+    Point ground_dxy;                      /**< additional movement with special ground (hole) */
+    double ice_velocity_x;                 /**< current ice sliding velocity on X axis, in pixels per second */
+    double ice_velocity_y;                 /**< current ice sliding velocity on Y axis, in pixels per second */
+    double ice_remainder_x;                /**< sub-pixel accumulator for X axis ice movement */
+    double ice_remainder_y;                /**< sub-pixel accumulator for Y axis ice movement */
+    bool on_ice;                           /**< whether the hero is currently affected by ice physics */
+    uint64_t ice_last_update_ns;           /**< timestamp (nanoseconds) of last ice physics update */
 
 
     ControlsPtr controls;                  /**< Controls controlling this hero */
