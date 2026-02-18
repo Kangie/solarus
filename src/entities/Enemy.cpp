@@ -114,6 +114,7 @@ Enemy::Enemy(
   dying_sound_id("enemy_killed"),
   exploding_sound_id("explosion"),
   hurt_sound_id(""),
+  has_set_hurt_sound(false),
   treasure(treasure),
   exploding(false),
   nb_explosions(0),

@@ -200,6 +200,12 @@ void SoundBuffer::load() {
   buffer = decode_file(file_name);
 
   // buffer is now AL_NONE if there was an error.
+  // Ensure any OpenAL error generated during decode_file() is consumed here.
+  // This is critical because load() may be called from the background preloader
+  // thread, and a lingering error would be picked up by the main thread's
+  // check_openal_clean_state() in Sound::start(), causing sounds to silently fail.
+  alGetError();
+
   loaded = true;
 }
 
@@ -298,19 +304,25 @@ ALuint SoundBuffer::decode_file(const std::string& file_name) {
         std::ostringstream oss;
         oss << "Failed to generate audio buffer for sound file '" << file_name << "': error " << std::hex << error;
         Debug::error(oss.str());
-      }
-      alBufferData(buffer,
-          format,
-          reinterpret_cast<ALshort*>(samples.data()),
-          ALsizei(samples.size()),
-          sample_rate);
-      if (error != AL_NO_ERROR) {
-        std::ostringstream oss;
-        oss << "Cannot copy the sound samples of '"
-            << file_name << "' into buffer " << buffer
-            << ": error " << std::hex << error;
-        Debug::error(oss.str());
         buffer = AL_NONE;
+      }
+      else {
+        alBufferData(buffer,
+            format,
+            reinterpret_cast<ALshort*>(samples.data()),
+            ALsizei(samples.size()),
+            sample_rate);
+        // Use a fresh alGetError() call - the previous one only checked alGenBuffers.
+        ALenum buffer_data_error = alGetError();
+        if (buffer_data_error != AL_NO_ERROR) {
+          std::ostringstream oss;
+          oss << "Cannot copy the sound samples of '"
+              << file_name << "' into buffer " << buffer
+              << ": error " << std::hex << buffer_data_error;
+          Debug::error(oss.str());
+          alDeleteBuffers(1, &buffer);
+          buffer = AL_NONE;
+        }
       }
     }
     ov_clear(&file);
