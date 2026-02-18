@@ -7,6 +7,7 @@
 * Fix ice grounds to be more natural and playable.
 * Fix test collisions by facing point with entities nearby consideration (#1934).
 * Fix target movements can teleport entities while game is suspended (#1970).
+* Fix enemy hurt sound sometimes not played (#1921).
 
 ## Solarus 2.0.3 (2026-01-21)
 
@@ -52,7 +53,6 @@
 * Fix possible duplicate name when creating an entity dynamically (#1908).
 * Fix OpenAL error A003 when stopping a music that was just started.
 * Fix OpenAL error A004 when stopping a sound.
-* Fix index offsets for channels of IT music files.
 * Fix possible error when retrieving joypad name (#1895).
 * Add hero argument to `item:on_using()` event (#1899).
 * Add hero argument to `item:on_ability_used()` event (#1915).
