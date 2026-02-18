@@ -462,12 +462,12 @@ Returns the name of the current state of the hero, and possibly the correspondin
 Return value 1 (`string`)
 : The current state. Can be one of:
 
-    - `"back_to_solid_ground"`
+    - `"back to solid ground"`
     - `"boomerang"`
     - `"bow"`
     - `"carrying"`
     - `"falling"`
-    - `"forced_walking"`
+    - `"forced walking"`
     - `"free"`
     - `"frozen"`
     - `"grabbing"`
@@ -481,12 +481,12 @@ Return value 1 (`string`)
     - `"running"`
     - `"stairs"`
     - `"swimming"`
-    - `"sword_loading"`
-    - `"sword_spin_attack"`
-    - `"sword_swinging"`
-    - `"sword_tapping"`
+    - `"sword loading"`
+    - `"sword spin attack"`
+    - `"sword swinging"`
+    - `"sword tapping"`
     - `"treasure"`
-    - `"using_item"`
+    - `"using item"`
     - `"victory"`
     - `"custom"`
 
