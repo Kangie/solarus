@@ -948,7 +948,7 @@ bool Map::test_collision_with_entities(
  * \brief Tests whether a rectangle collides with the map obstacles.
  * \param layer Layer of the rectangle in the map.
  * \param collision_box The rectangle to check (its dimensions should be
- * multiples of 8).
+ * multiples of 4).
  * \param entity_to_check The entity to check (used to decide what is
  * considered as obstacle).
  * \return \c true if the rectangle is overlapping an obstacle.
@@ -977,25 +977,25 @@ bool Map::test_collision_with_obstacles(
   ConstEntityVector entities_nearby;
   get_entities().get_entities_in_rectangle_z_sorted(collision_box, entities_nearby);
 
-  // First, only check the terrain of both extremities of each 8-pixel
+  // First, only check the terrain of both extremities of each 4-pixel
   // segment of the border.
   // This is enough for all terrains (except diagonal ones, see below)
-  // because the tested collision box makes at least 8x8 pixels.
+  // because the tested collision box makes at least 4x4 pixels.
   bool found_diagonal_wall = false;
-  for (int x = x1; x <= x2; x += 8) {
+  for (int x = x1; x <= x2; x += 4) {
     if (test_collision_with_ground(layer, x, y1, entity_to_check, found_diagonal_wall, entities_nearby)
         || test_collision_with_ground(layer, x, y2, entity_to_check, found_diagonal_wall, entities_nearby)
-        || test_collision_with_ground(layer, x + 7, y1, entity_to_check, found_diagonal_wall, entities_nearby)
-        || test_collision_with_ground(layer, x + 7, y2, entity_to_check, found_diagonal_wall, entities_nearby)) {
+        || test_collision_with_ground(layer, x + 3, y1, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x + 3, y2, entity_to_check, found_diagonal_wall, entities_nearby)) {
       return true;
     }
   }
 
-  for (int y = y1; y <= y2; y += 8) {
+  for (int y = y1; y <= y2; y += 4) {
     if (test_collision_with_ground(layer, x1, y, entity_to_check, found_diagonal_wall, entities_nearby)
         || test_collision_with_ground(layer, x2, y, entity_to_check, found_diagonal_wall, entities_nearby)
-        || test_collision_with_ground(layer, x1, y + 7, entity_to_check, found_diagonal_wall, entities_nearby)
-        || test_collision_with_ground(layer, x2, y + 7, entity_to_check, found_diagonal_wall, entities_nearby)) {
+        || test_collision_with_ground(layer, x1, y + 3, entity_to_check, found_diagonal_wall, entities_nearby)
+        || test_collision_with_ground(layer, x2, y + 3, entity_to_check, found_diagonal_wall, entities_nearby)) {
       return true;
     }
   }
@@ -1275,12 +1275,12 @@ Ground Map::get_ground_from_entity(const Entity& entity, const Point& xy) const 
     // Malformed entity.
     return Ground::TRAVERSABLE;
   }
-  if (!entity.is_aligned_to_grid() || entity.get_width() % 8 != 0) {
+  if (!entity.is_aligned_to_grid() || entity.get_width() % 4 != 0) {
     // Not supported yet.
     return Ground::TRAVERSABLE;
   }
 
-  if (entity.get_width() == 8) {
+  if (entity.get_width() <= 8) {
     // The entity only occupies one 8x8 square: the ground is then fully diagonal.
     return ground;
   }
