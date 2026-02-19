@@ -8,6 +8,7 @@
 * Fix test collisions by facing point with entities nearby consideration (#1934).
 * Fix target movements can teleport entities while game is suspended (#1970).
 * Fix enemy hurt sound sometimes not played (#1921).
+* Fix blocks can now push enemies (#1002).
 
 ## Solarus 2.0.3 (2026-01-21)
 

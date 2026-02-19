@@ -1,5 +1,6 @@
 map{ id = "all_entities", description = "All entities" }
 map{ id = "basic_test", description = "Basic test" }
+map{ id = "bugs/1002_blocks_versus_enemies", description = "#1002: Blocks should push enemies" }
 map{ id = "bugs/1007_door_open_close", description = "#1007: door:open/close()" }
 map{ id = "bugs/1015_crash_scrolling_to_invalid_layer/map_1", description = "#1015: Crash when scrolling to an invalid layer" }
 map{ id = "bugs/1015_crash_scrolling_to_invalid_layer/map_2", description = "Map 2" }
@@ -491,6 +492,8 @@ file{ path = "maps/all_entities.dat", author = "Christopho", license = "CC BY-SA
 file{ path = "maps/all_entities.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/basic_test.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/basic_test.lua", author = "Christopho", license = "GPL v3" }
+file{ path = "maps/bugs/1002_blocks_versus_enemies.dat", author = "Metallizer", license = "CC BY-SA" }
+file{ path = "maps/bugs/1002_blocks_versus_enemies.lua", author = "Metallizer", license = "GPL v3" }
 file{ path = "maps/bugs/1007_door_open_close.dat", author = "Christopho", license = "CC BY-SA 4.0" }
 file{ path = "maps/bugs/1007_door_open_close.lua", author = "Christopho", license = "GPL v3" }
 file{ path = "maps/bugs/1015_crash_scrolling_to_invalid_layer/map_1.dat", author = "Christopho", license = "CC BY-SA 4.0" }

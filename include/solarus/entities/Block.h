@@ -86,6 +86,7 @@ class Block: public Entity {
   private:
 
     void movement_by_hero_finished();
+    void push_overlapping_enemies();
 
     int max_moves;                /**< indicates whether the block can be pushed
                                    * (-1 means infinite) */
@@ -98,6 +99,7 @@ class Block: public Entity {
     bool can_be_pushed;           /**< indicates that the hero can push this block */
     bool can_be_pulled;           /**< indicates that the hero can pull this block */
     HeroPtr moving_hero;          /**< Moving hero */
+    int push_direction;           /**< Direction (0-3) the block is being pushed, -1 if not moving */
     std::string moving_sound_id;  /**< Sound played when the hero is moving (push or pull) the block. */
     std::string falling_sound_id; /**< Sound played when the block is falling into a hole. */
     std::string sinking_sound_id; /**< Sound played when the block is sinking into water or lava. */

@@ -67,6 +67,21 @@ function assert_equal_xy(actual_entity, expected_entity)
   assert_equal(actual_height, expected_height)
 end
 
+---Performs an assertion on entity position
+---@param actual_entity solarus.entity
+---@param expected_x number
+---@param expected_y number
+---@param expected_layer? number
+function assert_equal_position(actual_entity, expected_x, expected_y, expected_layer)
+  local name = actual_entity:get_name()
+  local ax, ay, alayer = actual_entity:get_position()
+  assert_equal(ax, expected_x, "Entity " .. tostring(name) .. " wrong X coordinate")
+  assert_equal(ay, expected_y, "Entity " .. tostring(name) .. " wrong Y coordinate")
+  if expected_layer ~= nil then
+    assert_equal(alayer, expected_layer, "Entity " .. tostring(name) .. " wrong layer")
+  end
+end
+
 function assert_error(test)
   local success, message = pcall(unpack(test))
   local failure
