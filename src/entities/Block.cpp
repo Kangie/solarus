@@ -22,6 +22,7 @@
 #include "solarus/core/QuestFiles.h"
 #include "solarus/core/System.h"
 #include "solarus/entities/Block.h"
+#include "solarus/entities/Enemy.h"
 #include "solarus/entities/Hero.h"
 #include "solarus/entities/Separator.h"
 #include "solarus/entities/Switch.h"
@@ -64,6 +65,7 @@ Block::Block(
   initial_max_moves(max_moves),
   can_be_pushed(can_be_pushed),
   can_be_pulled(can_be_pulled),
+  push_direction(-1),
   moving_sound_id("hero_pushes"),
   falling_sound_id("jump"),
   sinking_sound_id("splash") {
@@ -158,6 +160,13 @@ bool Block::is_hero_obstacle(Hero& hero) {
  * \return true if this enemy is currently considered as an obstacle by this entity.
  */
 bool Block::is_enemy_obstacle(Enemy& /* enemy */) {
+  // A moving block is never stopped by enemies.
+  // Enemies that cannot be fully displaced will overlap the block and
+  // escape using their own movement (Enemy::is_block_obstacle returns
+  // false while an enemy overlaps a block).
+  if (moving_hero != nullptr) {
+    return false;
+  }
   return true;
 }
 
@@ -245,6 +254,8 @@ bool Block::start_movement_by_hero(Hero& hero) {
     return false;
   }
 
+  push_direction = hero_direction;
+
   int dx = get_x() - hero.get_x();
   int dy = get_y() - hero.get_y();
 
@@ -273,6 +284,11 @@ void Block::notify_position_changed() {
       Sound::play(moving_sound_id);
     }
     sound_played = true;
+  }
+
+  // Push enemies that are now overlapping the block due to the move.
+  if (moving_hero != nullptr && push_direction >= 0) {
+    push_overlapping_enemies();
   }
 }
 
@@ -323,6 +339,7 @@ void Block::notify_ground_below_changed() {
  */
 void Block::stop_movement_by_hero() {
 
+  push_direction = -1;
   clear_movement();
   when_can_move = System::now_ms() + moving_delay;
 
@@ -361,6 +378,7 @@ void Block::reset() {
 
   if (get_movement() != nullptr) {
     // the block was being pushed or pulled by the hero
+    push_direction = -1;
     clear_movement();
     when_can_move = System::now_ms() + moving_delay;
   }
@@ -496,6 +514,76 @@ const std::string& Block::get_sinking_sound_id() const {
 
 void Block::set_sinking_sound_id(const std::string& sound_id) {
   sinking_sound_id = sound_id;
+}
+
+/**
+ * \brief Pushes enemies that are currently overlapping the block in the push direction.
+ *
+ * Called from notify_position_changed() while the block is being moved by the hero.
+ * Each enemy is displaced by the minimum amount needed to resolve the overlap,
+ * up to the maximum that fits without hitting an obstacle.
+ * If an enemy cannot be fully displaced (obstacle behind it), it is left overlapping
+ * the block. Enemy::is_block_obstacle() already returns false when the enemy overlaps
+ * a block, so the enemy can freely use its own movement to escape.
+ */
+void Block::push_overlapping_enemies() {
+
+  // Unit vectors for the four directions: right, up, left, down.
+  static constexpr int direction_dx[] = { 1,  0, -1, 0 };
+  static constexpr int direction_dy[] = { 0, -1,  0, 1 };
+
+  const int dx = direction_dx[push_direction];
+  const int dy = direction_dy[push_direction];
+
+  EntityVector entities_nearby;
+  get_map().get_entities().get_entities_in_rectangle_z_sorted(
+      get_bounding_box(), entities_nearby);
+
+  const Rectangle& block_box = get_bounding_box();
+
+  for (const EntityPtr& entity : entities_nearby) {
+    if (entity->get_type() != EntityType::ENEMY) {
+      continue;
+    }
+    if (!entity->overlaps(*this)) {
+      continue;
+    }
+
+    Enemy& enemy = static_cast<Enemy&>(*entity);
+    const Rectangle& enemy_box = enemy.get_bounding_box();
+
+    // Compute how many pixels the block has entered the enemy's space
+    // (penetration depth in the push direction).
+    int penetration = 0;
+    switch (push_direction) {
+      case 0: penetration = block_box.get_right()  - enemy_box.get_left();   break;
+      case 1: penetration = enemy_box.get_bottom() - block_box.get_top();    break;
+      case 2: penetration = enemy_box.get_right()  - block_box.get_left();   break;
+      case 3: penetration = block_box.get_bottom() - enemy_box.get_top();    break;
+    }
+    if (penetration <= 0) {
+      continue;
+    }
+
+    // Find the maximum displacement the enemy can absorb without hitting an obstacle.
+    int max_push = 0;
+    for (int d = 1; d <= penetration; ++d) {
+      Rectangle candidate = enemy_box;
+      candidate.add_xy(dx * d, dy * d);
+      if (get_map().test_collision_with_obstacles(enemy.get_layer(), candidate, enemy)) {
+        break;
+      }
+      max_push = d;
+    }
+
+    if (max_push > 0) {
+      enemy.set_xy(enemy.get_xy() + Point(dx * max_push, dy * max_push));
+      enemy.notify_position_changed();
+    }
+    // If max_push < penetration the enemy overlaps the block.
+    // Enemy::is_block_obstacle() returns false while overlapping, so the enemy
+    // can walk off using its own movement once it has room.
+  }
 }
 
 }
